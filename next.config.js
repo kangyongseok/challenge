@@ -12,5 +12,14 @@ module.exports = {
   },
   images: {
     domains: [process.env.IMAGE_DOMAIN]
+  },
+  async redirects() {
+    return [
+      {
+        source: '/product/:id',
+        destination: '/products/:id',
+        permanent: true
+      }
+    ];
   }
 };

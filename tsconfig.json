@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "@library": ["./src/library"],
+      "@library/*": ["./src/library/*"],
+      "@styles": ["./src/styles"],
+      "@styles/*": ["./src/styles/*"]
+    },
     "target": "es5",
     "sourceMap": true,
     "esModuleInterop": true,

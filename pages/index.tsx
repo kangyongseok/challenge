@@ -1,7 +1,14 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 function Index() {
-  return <div>Index</div>;
+  const router = useRouter();
+
+  return (
+    <button type="button" onClick={() => router.push('/category')}>
+      Index
+    </button>
+  );
 }
 
 export default Index;
