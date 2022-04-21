@@ -16,6 +16,11 @@ module.exports = {
   async redirects() {
     return [
       {
+        source: '/productList',
+        destination: '/products',
+        permanent: true
+      },
+      {
         source: '/product/:id',
         destination: '/products/:id',
         permanent: true
