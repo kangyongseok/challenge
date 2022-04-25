@@ -2,6 +2,9 @@ module.exports = {
   swcMinify: true,
   reactStrictMode: process.env.NODE_ENV === 'development',
   poweredByHeader: process.env.NODE_ENV === 'development',
+  experimental: {
+    emotion: true
+  },
   env: {
     API_BASE_URL: process.env.API_BASE_URL,
     AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY,

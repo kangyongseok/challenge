@@ -25,7 +25,7 @@ function Login() {
       <GeneralTemplate>
         <Logo>
           <Image
-            src="https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/img/login-logo.png"
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-logo.png`}
             width={207}
             height={48}
             alt="Camel Logo Img"
@@ -36,7 +36,7 @@ function Login() {
             <Image
               width={20}
               height={20}
-              src="https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/img/login-kakao-icon.png"
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
               alt="Kakao Logo Img"
             />
             카카오톡으로 계속하기

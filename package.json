@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.8.1",
     "amplitude-js": "^8.18.1",
     "axios": "^0.26.1",
+    "mrcamel-ui": "file:../MrCamel-UI",
     "next": "^12.1.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
