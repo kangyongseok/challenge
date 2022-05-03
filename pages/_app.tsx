@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { ThemeProvider, GlobalReset } from 'mrcamel-ui';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { Hydrate, QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { AppProps } from 'next/app';
 
@@ -25,7 +25,9 @@ function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme="light">
           <GlobalReset />
-          <Component {...pageProps} />
+          <Hydrate state={pageProps.dehydratedState}>
+            <Component {...pageProps} />
+          </Hydrate>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

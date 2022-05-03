@@ -1,7 +1,13 @@
 import React, { memo } from 'react';
 import { Avatar, Box, Flexbox, Typography } from 'mrcamel-ui';
 
-function MainBrandList() {
+import { Brand } from '@dto/brand';
+
+interface MainBrandListProps {
+  brands: Brand[];
+}
+
+function MainBrandList({ brands = [] }: MainBrandListProps) {
   return (
     <Box
       component="section"
@@ -25,30 +31,33 @@ function MainBrandList() {
           }
         }}
       >
-        {Array.from({ length: 10 }).map((_, index) => (
-          <Box
-            // eslint-disable-next-line react/no-array-index-key
-            key={`brand-${index}`}
-            customStyle={{
-              minWidth: 64,
-              textAlign: 'center'
-            }}
-          >
-            <Avatar
-              width={64}
-              height={64}
-              src="https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/brands/airjordan.png"
-              alt="Brand Img"
+        {brands &&
+          Array.isArray(brands) &&
+          brands.map((brand) => (
+            <Box
+              key={`brand-${brand.name}`}
               customStyle={{
-                borderRadius: '50%',
-                backgroundColor: 'rgb(196, 196, 196)'
+                minWidth: 64,
+                textAlign: 'center'
               }}
-            />
-            <Typography variant="body2" weight="medium" customStyle={{ marginTop: 8 }}>
-              조던
-            </Typography>
-          </Box>
-        ))}
+            >
+              <Avatar
+                width={64}
+                height={64}
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${brand.nameLogo
+                  .toLowerCase()
+                  .replace(/\s/g, '')}.png`}
+                alt="Brand Img"
+                customStyle={{
+                  borderRadius: '50%',
+                  backgroundColor: 'rgb(196, 196, 196)'
+                }}
+              />
+              <Typography variant="body2" weight="medium" customStyle={{ marginTop: 8 }}>
+                {brand.name}
+              </Typography>
+            </Box>
+          ))}
       </Flexbox>
     </Box>
   );
