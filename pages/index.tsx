@@ -8,9 +8,7 @@ import { BRANDS } from '@constants/react-query/brand';
 import { fetchBrands } from '@api/brand';
 
 function Main() {
-  const {
-    data: { brands = [] }
-  } = useQuery(BRANDS.brands, fetchBrands);
+  const { data: brands } = useQuery(BRANDS.brands, fetchBrands);
 
   return (
     <GeneralTemplate footer={<footer>footer</footer>}>
@@ -28,7 +26,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient)))
+      dehydratedState: dehydrate(queryClient)
     }
   };
 }
