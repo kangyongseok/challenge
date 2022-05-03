@@ -9,9 +9,9 @@ interface GeneralTemplateProps {
 function GeneralTemplate({ children, header, footer }: PropsWithChildren<GeneralTemplateProps>) {
   return (
     <Wrapper>
-      {header && <Header>{header}</Header>}
+      {header}
       <Content>{children}</Content>
-      {footer && <Footer>{footer}</Footer>}
+      {footer}
     </Wrapper>
   );
 }
@@ -23,14 +23,16 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const Header = styled.header``;
-
 const Content = styled.main`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-`;
+  padding: 0 20px;
+  overflow-y: auto;
 
-const Footer = styled.footer``;
+  @media (max-width: 320px) {
+    padding: 0 16px;
+  }
+`;
 
 export default GeneralTemplate;

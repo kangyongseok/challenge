@@ -1,9 +1,11 @@
 import React, { useEffect, useCallback } from 'react';
 import Script from 'next/script';
-import Image from 'next/image';
 import Link from 'next/link';
 import styled from '@emotion/styled';
 
+import { Flexbox, Typography, Icon } from 'mrcamel-ui';
+
+import { SocialLoginButton } from '@components/pages/login';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function Login() {
@@ -23,30 +25,37 @@ function Login() {
     <>
       <Script src={process.env.KAKAO_SDK_URL} strategy="beforeInteractive" />
       <GeneralTemplate>
-        <Logo>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-logo.png`}
-            width={207}
-            height={48}
-            alt="Camel Logo Img"
-          />
-        </Logo>
-        <Buttons>
-          <KakaoLogin onClick={handleClick}>
-            <Image
-              width={20}
-              height={20}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
-              alt="Kakao Logo Img"
-            />
-            카카오톡으로 계속하기
-          </KakaoLogin>
+        <Flexbox
+          direction="vertical"
+          justifyContent="center"
+          alignment="center"
+          customStyle={{ flex: 1 }}
+        >
+          <Flexbox gap={10} alignment="center">
+            <Icon name="Logo_45_45" width={47} height={47} />
+            <Icon name="LogoText_96_20" width={150} height={35} />
+          </Flexbox>
+          <Flexbox
+            gap={20}
+            direction="vertical"
+            alignment="center"
+            customStyle={{ marginTop: 40, textAlign: 'center' }}
+          >
+            <Typography>
+              <strong>꿀매물과 가격변동 알림</strong> 부터 내 주변,
+              <br /> <strong>내 사이즈 매물만 보기까지!</strong>
+            </Typography>
+            <Typography variant="h4">로그인하고 득템하세요 🙌</Typography>
+          </Flexbox>
+        </Flexbox>
+        <Flexbox direction="vertical" customStyle={{ textAlign: 'center' }}>
+          <SocialLoginButton onClick={handleClick} />
           <LookAroundButton>
             <Link href="/">
               <a>로그인없이 검색하기</a>
             </Link>
           </LookAroundButton>
-        </Buttons>
+        </Flexbox>
         <AgreementHelp>
           가입/로그인은{' '}
           <Link href="/">
@@ -63,36 +72,6 @@ function Login() {
   );
 }
 
-const Logo = styled.section`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0 24px;
-`;
-
-const Buttons = styled.section`
-  margin: 0 24px;
-  text-align: center;
-`;
-
-const KakaoLogin = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  height: 54px;
-  background-color: #fee500;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: -0.2px;
-  color: #000000;
-`;
-
 const LookAroundButton = styled.button`
   margin: 29px 0 47px 0;
   font-size: 14px;
@@ -106,6 +85,7 @@ const AgreementHelp = styled.p`
   font-size: 10px;
   font-weight: 400;
   color: #999999;
+
   & > a {
     text-decoration: underline;
   }

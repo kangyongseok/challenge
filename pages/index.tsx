@@ -1,25 +1,16 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 
-import { Box } from 'mrcamel-ui';
+import { MainWelcome, MainProductDealAlert, MainBrandList } from '@components/pages/main';
+import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-function Index() {
-  const router = useRouter();
-
+function Main() {
   return (
-    <>
-      <button type="button" onClick={() => router.push('/category')}>
-        Go to category
-      </button>
-      <Box
-        customStyle={{
-          fontFamily: 'Spoqa Han Sans Neo'
-        }}
-      >
-        Box
-      </Box>
-    </>
+    <GeneralTemplate footer={<footer>footer</footer>}>
+      <MainWelcome />
+      <MainProductDealAlert />
+      <MainBrandList />
+    </GeneralTemplate>
   );
 }
 
-export default Index;
+export default Main;

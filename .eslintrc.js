@@ -20,7 +20,9 @@ module.exports = {
         tsx: 'never'
       }
     ],
+    'import/no-cycle': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
+    'import/prefer-default-export': 'off',
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
