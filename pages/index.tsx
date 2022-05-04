@@ -4,11 +4,11 @@ import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { MainWelcome, MainProductDealAlert, MainBrandList } from '@components/pages/main';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-import { BRANDS } from '@constants/react-query/brand';
+import queryKeys from '@constants/queryKeys';
 import { fetchBrands } from '@api/brand';
 
 function Main() {
-  const { data: brands } = useQuery(BRANDS.brands, fetchBrands);
+  const { data: brands } = useQuery(queryKeys.brands.brands, fetchBrands);
 
   return (
     <GeneralTemplate footer={<footer>footer</footer>}>
@@ -22,7 +22,7 @@ function Main() {
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(BRANDS.brands, fetchBrands);
+  await queryClient.prefetchQuery(queryKeys.brands.brands, fetchBrands);
 
   return {
     props: {
