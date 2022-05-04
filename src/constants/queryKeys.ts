@@ -1,4 +1,4 @@
-export const brands = {
+const brands = {
   brands: ['brands'],
   brandById: (brandId: number) => ['brands', brandId],
   hotBrands: ['hotBrands']

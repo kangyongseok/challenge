@@ -1,13 +1,13 @@
-import axios from '@library/axios';
+import Axios from '@library/axios';
 
 import { Brand } from '@dto/brand';
 
-const BASEPATH = '/brands'
+const BASE_PATH = '/brands';
 
-export async function fetchBrands(): Promise<Brand[]> {
-  const { data: { brands = [] } = { brands: [] } } = await axios.get<{
+export async function fetchBrands() {
+  const { data: { brands = [] } = { brands: [] } } = await Axios.getInstance().get<{
     brands: Brand[];
-  }>(BASEPATH);
+  }>(BASE_PATH);
 
   return brands;
 }

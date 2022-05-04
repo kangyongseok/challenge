@@ -2,10 +2,9 @@ import React, { ButtonHTMLAttributes, memo } from 'react';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 
-import { GenericComponentProps, Typography } from 'mrcamel-ui';
+import { Typography } from 'mrcamel-ui';
 
-interface SocialLoginButtonProps
-  extends GenericComponentProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+interface SocialLoginButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'kakao';
   onClick: () => void;
 }
