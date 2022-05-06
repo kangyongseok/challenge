@@ -7,7 +7,8 @@ module.exports = {
     'plugin:import/typescript',
     'plugin:prettier/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@next/next/recommended'
+    'plugin:@next/next/recommended',
+    'plugin:cypress/recommended'
   ],
   rules: {
     quotes: ['error', 'single'],
@@ -32,5 +33,8 @@ module.exports = {
     'import/resolver': {
       typescript: {}
     }
+  },
+  env: {
+    jest: true
   }
 };
