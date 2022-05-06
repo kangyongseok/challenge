@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { useTheme, Alert, Avatar, Box, Flexbox, Typography } from 'mrcamel-ui';
 
 function MainProductDealAlert() {
@@ -48,4 +48,4 @@ function MainProductDealAlert() {
   );
 }
 
-export default memo(MainProductDealAlert);
+export default MainProductDealAlert;

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { useTheme, Box, Flexbox, Icon, Label, Typography } from 'mrcamel-ui';
 
 import { SearchBar } from '@components/UI/molecules';
@@ -84,4 +84,4 @@ function MainWelcome() {
   );
 }
 
-export default memo(MainWelcome);
+export default MainWelcome;

@@ -1,13 +1,13 @@
-import React, { memo } from 'react';
+import React from 'react';
+import { useQuery } from 'react-query';
 import { Avatar, Box, Flexbox, Typography } from 'mrcamel-ui';
 
-import { Brand } from '@dto/brand';
+import queryKeys from '@constants/queryKeys';
+import { fetchBrands } from '@api/brand';
 
-interface MainBrandListProps {
-  brands: Brand[];
-}
+function MainBrandList() {
+  const { data: brands } = useQuery(queryKeys.brands.brands, fetchBrands);
 
-function MainBrandList({ brands = [] }: MainBrandListProps) {
   return (
     <Box
       component="section"
@@ -63,4 +63,4 @@ function MainBrandList({ brands = [] }: MainBrandListProps) {
   );
 }
 
-export default memo(MainBrandList);
+export default MainBrandList;
