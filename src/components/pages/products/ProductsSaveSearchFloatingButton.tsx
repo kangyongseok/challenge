@@ -78,11 +78,13 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
 
   const triggered = useReverseScrollTrigger();
   const [isOpenSavedKeywordToast, setIsOpenSavedKeywordToast] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const showProductKeywordSaveSearchFloatingBtn =
     !!accessUser &&
     !isLoadingProductKeywords &&
     !isLoadingSearchOptions &&
     !userProductKeyword &&
+    !isPending &&
     !!selectedSearchOptions.filter(({ codeId }) => ![filterCodeIds.order].includes(codeId)).length;
 
   const searchKeyword = useMemo(() => {
@@ -96,6 +98,8 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
   const saveProductKeyword = useCallback(
     (isAutoSave?: boolean) => {
       let sourceType: ProductKeywordSourceType = 0;
+
+      setIsPending(true);
 
       switch (variant) {
         case 'brands': {
@@ -135,6 +139,9 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
             } else {
               setIsOpenSavedKeywordToast(true);
             }
+          },
+          onSettled() {
+            setTimeout(() => setIsPending(false), 500);
           }
         }
       );
@@ -150,6 +157,12 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
       variant
     ]
   );
+
+  const handleClick = () => {
+    if (isPending) return;
+
+    saveProductKeyword(false);
+  };
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -187,7 +200,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
             brandColor="black"
             variant="contained"
             isEllipsis={searchKeyword.length > 9}
-            onClick={() => saveProductKeyword(false)}
+            onClick={handleClick}
           >
             <Flexbox alignment="center" gap={2} customStyle={{ overflow: 'hidden' }}>
               <Icon name="BookmarkFilled" size="small" />
