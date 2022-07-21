@@ -1,0 +1,140 @@
+{
+  "shoes": [
+    {
+      "categorySizeId": 88,
+      "viewSize": "225"
+    },
+    {
+      "categorySizeId": 89,
+      "viewSize": "230"
+    },
+    {
+      "categorySizeId": 90,
+      "viewSize": "235"
+    },
+    {
+      "categorySizeId": 91,
+      "viewSize": "240"
+    },
+    {
+      "categorySizeId": 92,
+      "viewSize": "245"
+    },
+    {
+      "categorySizeId": 93,
+      "viewSize": "250"
+    },
+    {
+      "categorySizeId": 94,
+      "viewSize": "255"
+    },
+    {
+      "categorySizeId": 95,
+      "viewSize": "260"
+    }
+  ],
+  "tops": [
+    {
+      "categorySizeId": 13,
+      "viewSize": "S"
+    },
+    {
+      "categorySizeId": 14,
+      "viewSize": "M"
+    },
+    {
+      "categorySizeId": 15,
+      "viewSize": "L"
+    },
+    {
+      "categorySizeId": 16,
+      "viewSize": "XL"
+    },
+    {
+      "categorySizeId": 17,
+      "viewSize": "XXL"
+    },
+    {
+      "categorySizeId": 460,
+      "viewSize": "44"
+    },
+    {
+      "categorySizeId": 461,
+      "viewSize": "55"
+    },
+    {
+      "categorySizeId": 462,
+      "viewSize": "66"
+    },
+    {
+      "categorySizeId": 463,
+      "viewSize": "77"
+    },
+    {
+      "categorySizeId": 18,
+      "viewSize": "85"
+    },
+    {
+      "categorySizeId": 19,
+      "viewSize": "90"
+    },
+    {
+      "categorySizeId": 20,
+      "viewSize": "95"
+    },
+    {
+      "categorySizeId": 21,
+      "viewSize": "100"
+    },
+    {
+      "categorySizeId": 22,
+      "viewSize": "105"
+    }
+  ],
+  "bottoms": [
+    {
+      "categorySizeId": 358,
+      "viewSize": "XS"
+    },
+    {
+      "categorySizeId": 359,
+      "viewSize": "S"
+    },
+    {
+      "categorySizeId": 360,
+      "viewSize": "M"
+    },
+    {
+      "categorySizeId": 361,
+      "viewSize": "L"
+    },
+    {
+      "categorySizeId": 455,
+      "viewSize": "24"
+    },
+    {
+      "categorySizeId": 456,
+      "viewSize": "25"
+    },
+    {
+      "categorySizeId": 457,
+      "viewSize": "26"
+    },
+    {
+      "categorySizeId": 458,
+      "viewSize": "27"
+    },
+    {
+      "categorySizeId": 348,
+      "viewSize": "28"
+    },
+    {
+      "categorySizeId": 349,
+      "viewSize": "29"
+    },
+    {
+      "categorySizeId": 350,
+      "viewSize": "30"
+    }
+  ]
+}

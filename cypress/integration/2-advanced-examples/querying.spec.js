@@ -98,11 +98,11 @@ context('Querying', () => {
       cy.get('[name=submission]').click()
 
       // Better. But still coupled to styling or JS event listeners.
-      cy.get('#main').click()
+      cy.get('#home').click()
 
       // Slightly better. Uses an ID but also ensures the element
       // has an ARIA role attribute
-      cy.get('#main[role=button]').click()
+      cy.get('#home[role=button]').click()
 
       // Much better. But still coupled to text content that may change.
       cy.contains('Submit').click()

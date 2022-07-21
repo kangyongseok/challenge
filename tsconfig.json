@@ -3,6 +3,8 @@
     "module": "commonjs",
     "baseUrl": ".",
     "paths": {
+      "@pages": ["./pages"],
+      "@pages/*": ["./pages/*"],
       "@api": ["./src/api"],
       "@api/*": ["./src/api/*"],
       "@components": ["./src/components"],
@@ -11,38 +13,44 @@
       "@constants/*": ["./src/constants/*"],
       "@dto": ["./src/dto"],
       "@dto/*": ["./src/dto/*"],
+      "@hooks": ["./src/hooks"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@images/*": ["./public/images/*"],
       "@library": ["./src/library"],
       "@library/*": ["./src/library/*"],
       "@styles": ["./src/styles"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@svgs/*": ["./public/svgs/*"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@typings": ["./src/types"],
+      "@typings/*": ["./src/types/*"],
+      "@recoil": ["./src/recoil"],
+      "@recoil/*": ["./src/recoil/*"],
+      "@data": ["./src/data"],
+      "@data/*": ["./src/data/*"]
     },
     "target": "es5",
     "sourceMap": true,
     "esModuleInterop": true,
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsxImportSource": "@emotion/react"
+    "jsxImportSource": "@emotion/react",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "index.d.ts"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "index.d.ts", "public"]
 }

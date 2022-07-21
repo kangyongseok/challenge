@@ -1,7 +1,11 @@
-import React, { forwardRef, InputHTMLAttributes, ReactElement } from 'react';
-import { useTheme, CustomStyle } from 'mrcamel-ui';
+import { InputHTMLAttributes, ReactElement, forwardRef } from 'react';
 
-import { Wrapper, Input } from './SearchBar.styles';
+import { useRecoilValue } from 'recoil';
+import type { CustomStyle } from 'mrcamel-ui';
+
+import { showAppDownloadBannerState } from '@recoil/common';
+
+import { Input, StyledSearchBar, Wrapper } from './SearchBar.styles';
 
 export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'outlined' | 'standard';
@@ -9,19 +13,43 @@ export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
   endIcon?: ReactElement;
   fullWidth?: boolean;
   customStyle?: CustomStyle;
+  isFixed?: boolean;
+  isBottomBorderFixed?: boolean;
 }
 
 const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBar(
-  { variant, startIcon, endIcon, fullWidth, customStyle, ...props },
+  {
+    variant,
+    startIcon,
+    endIcon,
+    fullWidth = false,
+    customStyle,
+    isFixed = false,
+    isBottomBorderFixed = false,
+    ...props
+  },
   ref
 ) {
-  const { theme } = useTheme();
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+
   return (
-    <Wrapper ref={ref} theme={theme} variant={variant} fullWidth={fullWidth} css={customStyle}>
-      {startIcon}
-      <Input theme={theme} {...props} />
-      {endIcon}
-    </Wrapper>
+    <StyledSearchBar
+      ref={ref}
+      isFixed={isFixed}
+      showAppDownloadBanner={showAppDownloadBanner}
+      css={customStyle}
+    >
+      <Wrapper
+        variant={variant}
+        fullWidth={fullWidth}
+        isBottomBorderFixed={isBottomBorderFixed}
+        showAppDownloadBanner={showAppDownloadBanner}
+      >
+        {startIcon}
+        <Input {...props} />
+        {endIcon}
+      </Wrapper>
+    </StyledSearchBar>
   );
 });
 

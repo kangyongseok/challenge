@@ -1,0 +1,34 @@
+[
+  {
+    "brandId": null,
+    "brandName": null,
+    "categoryId": null,
+    "categoryName": null,
+    "count": 47979,
+    "hasHoneyNoti": false,
+    "keyword": "아디다스",
+    "keywordBrand": "아디다스",
+    "keywordDeco": "<b>아디다스</b>",
+    "keywordEng": "adidas",
+    "line": null,
+    "parentId": null,
+    "subParentId": null,
+    "type": 2
+  },
+  {
+    "brandId": 58,
+    "brandName": "아디다스",
+    "categoryId": 11,
+    "categoryName": "스니커즈",
+    "count": 2552,
+    "hasHoneyNoti": false,
+    "keyword": "아디다스 스니커즈",
+    "keywordBrand": null,
+    "keywordDeco": "<b>아디다스</b> 스니커즈",
+    "keywordEng": null,
+    "line": "아디다스 스니커즈",
+    "parentId": null,
+    "subParentId": null,
+    "type": 5
+  }
+]

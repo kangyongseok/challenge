@@ -1,1 +1,8 @@
-{}
+{
+  "baseUrl": "http://localhost:3001",
+  "env": {
+    "api": "http://3.39.230.254:8090/api"
+  },
+  "viewportHeight": 667,
+  "viewportWidth": 375
+}

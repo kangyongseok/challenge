@@ -1,39 +1,51 @@
 @font-face {
-    font-family: Spoqa Han Sans Neo;
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('./fonts/SpoqaHanSansNeo-Regular.woff2') format('woff2')
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Bold.woff2') format('woff2')
 }
 @font-face {
-    font-family: Spoqa Han Sans Neo;
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: url('./fonts/SpoqaHanSansNeo-Medium.woff2') format('woff2')
+  font-family: Camel Product Sans;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Bold.woff2') format('woff2')
 }
 @font-face {
-    font-family: Spoqa Han Sans Neo;
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url('./fonts/SpoqaHanSansNeo-Bold.woff2') format('woff2')
+  font-family: Camel Product Sans;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Medium.woff2') format('woff2')
 }
 @font-face {
-    font-family: Spoqa Han Sans Neo;
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: url('./fonts/SpoqaHanSansNeo-Light.woff2') format('woff2')
+  font-family: Camel Product Sans;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Regular.woff2') format('woff2')
 }
 @font-face {
-    font-family: Spoqa Han Sans Neo;
-    font-style: normal;
-    font-weight: 100;
-    font-display: swap;
-    src: url('./fonts/SpoqaHanSansNeo-Thin.woff2') format('woff2')
+  font-family: Camel Product Sans;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Light.woff2') format('woff2')
+}
+@font-face {
+  font-family: Camel Product Sans;
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url('./fonts/CamelProductSans-Thin.woff2') format('woff2')
 }
 
-#__next {
-    height: 100%;
+* ::-webkit-scrollbar {
+  display: none;
+}
+* ::-webkit-scrollbar-track {
+  display: none;
+}
+* ::-webkit-scrollbar-thumb {
+  display: none;
 }
