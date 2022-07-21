@@ -12,6 +12,7 @@ import type { ProductKeywordSourceType } from '@dto/user';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProductKeywords, postProductKeyword } from '@api/user';
+import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds, orderFilterOptions } from '@constants/productsFilter';
@@ -60,20 +61,28 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
 
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
-  const {
-    data: { content: productKeywords = [] } = {},
-    isLoading,
-    isFetched
-  } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
-    enabled: !!accessUser
-  });
+  const { data: { content: productKeywords = [] } = {}, isLoading: isLoadingProductKeywords } =
+    useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
+      enabled: !!accessUser
+    });
+  const { data: { userProductKeyword } = {}, isLoading: isLoadingSearchOptions } = useQuery(
+    queryKeys.products.searchOptions(searchOptionsParams),
+    () => fetchSearchOptions(searchOptionsParams),
+    {
+      keepPreviousData: true,
+      enabled: Object.keys(searchOptionsParams).length > 0,
+      staleTime: 5 * 60 * 1000
+    }
+  );
   const { mutate } = useMutation(postProductKeyword);
 
   const triggered = useReverseScrollTrigger();
   const [isOpenSavedKeywordToast, setIsOpenSavedKeywordToast] = useState(false);
   const showProductKeywordSaveSearchFloatingBtn =
-    !isLoading &&
-    isFetched &&
+    !!accessUser &&
+    !isLoadingProductKeywords &&
+    !isLoadingSearchOptions &&
+    !userProductKeyword &&
     !!selectedSearchOptions.filter(({ codeId }) => ![filterCodeIds.order].includes(codeId)).length;
 
   const searchKeyword = useMemo(() => {
