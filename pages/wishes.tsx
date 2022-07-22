@@ -118,7 +118,7 @@ const WishesPanelsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
   top: ${({ showAppDownloadBanner }) =>
     showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   width: 100%;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header};
+  z-index: ${({ theme: { zIndex } }) => zIndex.header + 1};
   margin-left: -20px;
 `;
 
