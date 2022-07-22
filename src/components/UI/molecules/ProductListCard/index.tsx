@@ -64,7 +64,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     product,
     hideProductLabel,
     hideAreaWithDateInfo,
-    hideMetaSocialInfo,
+    hideMetaSocialInfo = true,
     hideAlert = true,
     productAtt,
     index,

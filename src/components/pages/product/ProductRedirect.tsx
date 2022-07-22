@@ -92,8 +92,7 @@ function ProductRedirect({
     redirectTimerRef.current = setTimeout(
       () => {
         let productUrl = url;
-        const windowCloseDelayPlatforms = [PRODUCT_SITE.KANGKAS.id];
-        const windowCloseTimeout = windowCloseDelayPlatforms.includes(site.id) ? 2500 : 1000;
+        const windowCloseTimeout = 2500;
 
         if (checkAgent.isMobileApp() && productUrl.includes('//smartstore.naver.com')) {
           productUrl = productUrl.replace('//smartstore.naver.com', '//m.smartstore.naver.com');

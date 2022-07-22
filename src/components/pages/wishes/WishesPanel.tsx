@@ -276,6 +276,7 @@ function WishesPanel() {
                   }
                 }}
                 product={wishItem.product}
+                hideMetaSocialInfo={false}
                 hideAlert={false}
                 name={attrProperty.productName.WISH_LIST}
                 productAtt={{

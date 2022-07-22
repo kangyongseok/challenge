@@ -83,7 +83,6 @@ function SellerProductsPanel() {
             <Box key={`sellerInfo-seller-product-${product.id}`}>
               <ProductListCard
                 product={product}
-                hideMetaSocialInfo
                 productAtt={{
                   name: attrKeys.products.SELLER_PRODUCT,
                   ...product

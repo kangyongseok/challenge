@@ -390,7 +390,10 @@ function ProductCTAButton({
           disabled={
             !product ||
             PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['1'] ||
-            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['3']
+            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['3'] ||
+            (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+              PRODUCT_STATUS['2'] &&
+              (!isDup || !hasTarget))
           }
           onClick={handleClickCTAButton}
           customStyle={{

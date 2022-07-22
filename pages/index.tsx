@@ -24,7 +24,7 @@ import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postManage } from '@api/userHistory';
-import { fetchProductKeywords, fetchUserInfo } from '@api/user';
+import { fetchUserInfo } from '@api/user';
 import { fetchProductDealInfos } from '@api/nextJs';
 import { fetchParentCategories } from '@api/category';
 
@@ -115,7 +115,6 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-    await queryClient.prefetchQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords);
   }
 
   await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);

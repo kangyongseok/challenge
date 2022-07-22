@@ -37,6 +37,7 @@ import {
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -93,7 +94,7 @@ function ProductDetail() {
     const _price = getTenThousandUnitPrice(data?.product.price || 0);
     const _targetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
     let _isPriceDown = _targetProductPrice < _price;
-    let _isDup = !data?.product.targetProductStatus;
+    let _isDup = data?.product.targetProductStatus === 0;
     let _hasTarget = !!data?.product.targetProductId;
     let _salePrice = _isDup && _hasTarget && _isPriceDown ? _price - _targetProductPrice : 0;
 
@@ -508,9 +509,13 @@ function ProductDetail() {
   );
 }
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   try {
     const queryClient = new QueryClient();
+
+    Initializer.initAccessTokenByCookies(req.cookies);
+    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+
     const { id } = query;
 
     const productId = Number(id || 0);
