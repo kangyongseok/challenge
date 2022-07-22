@@ -389,11 +389,13 @@ function ProductCTAButton({
           fullWidth
           disabled={
             !product ||
-            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['1'] ||
-            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['3'] ||
-            (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-              PRODUCT_STATUS['2'] &&
-              (!isDup || !hasTarget))
+            ((!isDup || !hasTarget) &&
+              (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                PRODUCT_STATUS['1'] ||
+                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                  PRODUCT_STATUS['3'] ||
+                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                  PRODUCT_STATUS['2']))
           }
           onClick={handleClickCTAButton}
           customStyle={{
