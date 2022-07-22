@@ -106,7 +106,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
             weight="medium"
             customStyle={{ marginLeft: 4, color: palette.common.grey['40'] }}
           >
-            ({commaNumber(reviewInfo?.productSeller.count || 0)}개)
+            ({commaNumber(sellerProducts?.totalElements || 0)}개)
           </Typography>
         </Flexbox>
         <Icon name="CaretRightOutlined" size="medium" />

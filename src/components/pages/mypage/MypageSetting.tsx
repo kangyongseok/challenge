@@ -103,14 +103,14 @@ function MypageSetting({ data }: SettingProps) {
         onClick={() => {
           if (checkAgent.isAndroidApp()) {
             window.webview.callAuthPush();
-            window.webview.callMoveToSetting();
+            window.webview.moveToSetting();
           }
           if (checkAgent.isIOSApp()) {
             window.webkit.messageHandlers.callAuthPush.postMessage(0);
             window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
           }
           window.getAuthPush = (result: boolean) => {
-            setSystemSetting(result);
+            setSystemSetting(!result);
           };
         }}
       >
