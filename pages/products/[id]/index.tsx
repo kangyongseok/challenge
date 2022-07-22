@@ -151,12 +151,16 @@ function ProductDetail() {
   useEffect(() => {
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {
-        if (window.webview.callReviewRequest) {
+        if (window.webview && window.webview.callReviewRequest) {
           window.webview.callReviewRequest();
           logEvent(attrKeys.products.VIEW_APPREVIEW_PROMPT);
         }
       } else if (checkAgent.isIOSApp()) {
-        if (window.webkit.messageHandlers && window.webkit.messageHandlers.callReviewRequest) {
+        if (
+          window.webkit &&
+          window.webkit.messageHandlers &&
+          window.webkit.messageHandlers.callReviewRequest
+        ) {
           window.webkit.messageHandlers.callReviewRequest.postMessage(0);
           logEvent(attrKeys.products.VIEW_APPREVIEW_PROMPT);
         }
@@ -298,13 +302,14 @@ function ProductDetail() {
         message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${conversionId}`;
       }
 
-      if (checkAgent.isAndroidApp() && window?.webview.callSendMessage) {
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {
         window.webview.callSendMessage(sellerPhoneNumber, message);
         return;
       }
 
       if (
         checkAgent.isIOSApp() &&
+        window.webkit &&
         window.webkit.messageHandlers &&
         window.webkit.messageHandlers.callSendMessage
       ) {

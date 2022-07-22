@@ -10,6 +10,10 @@ import { postWithdraw } from '@api/userAuth';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import checkAgent from '@utils/checkAgent';
+
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 interface ExitProps {
   status: boolean;
   setExtToggle: (close: boolean) => void;
@@ -17,10 +21,25 @@ interface ExitProps {
 
 function ExitDialog({ status, setExtToggle }: ExitProps) {
   const router = useRouter();
+  const { data: accessUser } = useQueryAccessUser();
 
   const { refetch } = useQuery(queryKeys.userAuth.withdraw(), postWithdraw, {
     enabled: false,
     onSuccess: () => {
+      if (checkAgent.isAndroidApp()) {
+        if (window.webview && window.webview.callSetLogoutUser && accessUser)
+          window.webview.callSetLogoutUser(accessUser.userId);
+      }
+      if (checkAgent.isIOSApp()) {
+        if (
+          window.webkit &&
+          window.webkit.messageHandlers &&
+          window.webkit.messageHandlers.callSetLogoutUser &&
+          accessUser
+        ) {
+          window.webkit.messageHandlers.callSetLogoutUser.postMessage(`${accessUser.userId}`);
+        }
+      }
       setExtToggle(false);
       router.push('/logout');
     }

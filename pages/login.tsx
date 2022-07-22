@@ -172,7 +172,13 @@ function Login() {
               // window.webview.callAuthPush();
               // window.webview.callAuthLocation();
               // return;
-            } else if (checkAgent.isIOSApp()) {
+            } else if (
+              checkAgent.isIOSApp() &&
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callAuthPush &&
+              window.webkit.messageHandlers.callAuthLocation
+            ) {
               window.webkit.messageHandlers.callAuthPush.postMessage(0);
               window.webkit.messageHandlers.callAuthLocation.postMessage(0);
               return;

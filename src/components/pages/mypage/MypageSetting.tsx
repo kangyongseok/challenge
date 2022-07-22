@@ -71,10 +71,15 @@ function MypageSetting({ data }: SettingProps) {
   };
 
   useEffect(() => {
-    if (checkAgent.isAndroidApp()) {
+    if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
       window.webview.callAuthPush();
     }
-    if (checkAgent.isIOSApp()) {
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callAuthPush
+    ) {
       window.webkit.messageHandlers.callAuthPush.postMessage(0);
     }
     window.getAuthPush = (result: boolean) => {
@@ -101,11 +106,22 @@ function MypageSetting({ data }: SettingProps) {
         justifyContent="space-between"
         customStyle={{ marginBottom: 24 }}
         onClick={() => {
-          if (checkAgent.isAndroidApp()) {
+          if (
+            checkAgent.isAndroidApp() &&
+            window.webview &&
+            window.webview.callAuthPush &&
+            window.webview.moveToSetting
+          ) {
             window.webview.callAuthPush();
             window.webview.moveToSetting();
           }
-          if (checkAgent.isIOSApp()) {
+          if (
+            checkAgent.isIOSApp() &&
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callAuthPush &&
+            window.webkit.messageHandlers.callMoveToSetting
+          ) {
             window.webkit.messageHandlers.callAuthPush.postMessage(0);
             window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
           }

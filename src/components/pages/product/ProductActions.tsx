@@ -141,12 +141,17 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
         return;
       }
 
-      if (checkAgent.isAndroidApp() && window.webview.callShareProduct) {
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callShareProduct) {
         window.webview.callShareProduct(url, JSON.stringify(product));
         return;
       }
 
-      if (checkAgent.isIOSApp() && window.webkit.messageHandlers?.callShareProduct) {
+      if (
+        checkAgent.isIOSApp() &&
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.callShareProduct
+      ) {
         window.webkit.messageHandlers.callShareProduct.postMessage(
           JSON.stringify({ url, product })
         );
