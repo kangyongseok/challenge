@@ -46,7 +46,11 @@ import { SELLER_STATUS } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { ID_FILTER, LABELS, PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
-import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
+import {
+  ACCESS_USER,
+  DUPLICATED_PRODUCT_IDS,
+  VIEW_PRODUDCT_DETAIL_ATT_SOURCE
+} from '@constants/localStorage';
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -183,7 +187,8 @@ function ProductDetail() {
     if (!isRedirectPage && data?.product.brand && data.product.brand.name) {
       productDetailAtt({
         key: attrKeys.products.VIEW_PRODUCT_DETAIL,
-        product: data.product
+        product: data.product,
+        source: LocalStorage.get(VIEW_PRODUDCT_DETAIL_ATT_SOURCE) || undefined
       });
     }
   }, [isRedirectPage, data]);

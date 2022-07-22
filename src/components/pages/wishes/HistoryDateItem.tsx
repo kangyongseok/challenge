@@ -84,6 +84,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
                   scorePriceRate: product.scorePriceRate,
                   source: attrProperty.productSource.RECENT_LIST
                 }}
+                source={attrProperty.productSource.RECENT_LIST}
                 name={attrProperty.productName.RECENT_LIST}
               />
             );

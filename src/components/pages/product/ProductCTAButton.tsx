@@ -510,6 +510,7 @@ function ProductCTAButton({
                 hideProductLabel
                 hideAreaWithDateInfo
                 name={attrProperty.productName.WISH_MODAL}
+                source={attrProperty.productSource.PRODUCT_RELATED_LIST}
               />
             ))}
           </ProductCardList>

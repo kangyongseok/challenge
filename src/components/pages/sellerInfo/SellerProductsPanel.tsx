@@ -12,6 +12,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchSellerProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function SellerProductsPanel() {
@@ -87,6 +88,7 @@ function SellerProductsPanel() {
                   name: attrKeys.products.SELLER_PRODUCT,
                   ...product
                 }}
+                source={attrProperty.productSource.SELLER_PRODUCT}
               />
             </Box>
           ))

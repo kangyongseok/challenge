@@ -25,12 +25,14 @@ import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
+import { VIEW_PRODUDCT_DETAIL_ATT_SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -57,6 +59,7 @@ interface ProductListCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   onWishAfterChangeCallback?: () => void;
   customStyle?: CustomStyle;
   name?: string;
+  source?: string;
 }
 
 const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(function ProductListCard(
@@ -72,6 +75,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     customStyle,
     name,
     wishAtt,
+    source,
     ...props
   },
   ref
@@ -164,7 +168,9 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
 
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
-
+    if (source) {
+      LocalStorage.set(VIEW_PRODUDCT_DETAIL_ATT_SOURCE, source);
+    }
     router.push(`/products/${id}`);
   };
 

@@ -297,6 +297,7 @@ function WishesPanel() {
                   scorePriceRate: wishItem.product.scorePriceRate,
                   source: attrProperty.productSource.WISH_LIST
                 }}
+                source={attrProperty.productSource.WISH_LIST}
                 onWishAfterChangeCallback={refetch}
                 data-id={wishItem.product.id}
               />

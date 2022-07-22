@@ -73,9 +73,10 @@ function groupingProducts(products: Product[]) {
 interface ProductsInfiniteGridProps {
   variant: ProductsVariant;
   name?: string;
+  source?: string;
 }
 
-function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
+function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridProps) {
   const router = useRouter();
   const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -353,6 +354,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                       productAtt={handleProductAtt(firstProduct, index)}
                       wishAtt={handleWishAtt(firstProduct, index)}
                       onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                      source={source}
                     />
                   </Grid>
                 )}
@@ -365,6 +367,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                       productAtt={handleProductAtt(secondProduct, index)}
                       wishAtt={handleWishAtt(secondProduct, index)}
                       onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                      source={source}
                     />
                   </Grid>
                 )}

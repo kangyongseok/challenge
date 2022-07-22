@@ -238,6 +238,7 @@ function HomePersonalProductCuration() {
                       productAtt={handleProductAtt(product, i)}
                       wishAtt={handleWishAtt(product, i)}
                       name={attrProperty.productName.MAIN_PERSONAL}
+                      source={attrProperty.productSource.MAIN_PERSONAL}
                     />
                   ))}
                 {isFetched && searchAiProducts[index] && (

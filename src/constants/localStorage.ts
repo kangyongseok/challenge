@@ -17,3 +17,4 @@ export const SHOW_SAVE_SEARCH_PRODUCTS_POPUP = 'showSaveSearchProductsPopup';
 export const LAST_LOGIN_TYPE = 'lastLoginType';
 export const IS_NOT_FIRST_VISIT = 'isFirstVisit';
 export const SAVE_SEARCH_BOOSTING_DONE_USERS = 'saveSearchBoostingDoneUsers';
+export const VIEW_PRODUDCT_DETAIL_ATT_SOURCE = 'viewProductDetailAttSource';

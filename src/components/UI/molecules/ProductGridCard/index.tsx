@@ -21,11 +21,13 @@ import { Image, Skeleton, TouchIcon } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { VIEW_PRODUDCT_DETAIL_ATT_SOURCE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
@@ -50,6 +52,7 @@ interface ProductGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   customStyle?: CustomStyle;
   wishAtt?: WishAtt;
   name?: string;
+  source?: string;
   measure?: () => void;
   onWishAfterChangeCallback?: (product: Product, isWish: boolean) => void;
 }
@@ -65,6 +68,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     customStyle,
     wishAtt,
     name,
+    source,
     measure,
     onWishAfterChangeCallback,
     ...props
@@ -111,7 +115,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
-
+    if (source) {
+      LocalStorage.set(VIEW_PRODUDCT_DETAIL_ATT_SOURCE, source);
+    }
     router.push(`/products/${id}`);
   };
 

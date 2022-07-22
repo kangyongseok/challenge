@@ -127,6 +127,7 @@ function ProductRelatedProductList({
                   wishAtt={handleWishAtt(product, i)}
                   productAtt={handleProductAtt(product, i)}
                   name={attrProperty.productName.PRODUCT_DETAIL}
+                  source={attrProperty.productSource.LIST_RELATED}
                 />
               </Grid>
             ))}
