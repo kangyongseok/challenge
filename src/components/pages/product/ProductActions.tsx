@@ -278,9 +278,12 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
   const handleSubmitReport = async () => {
     if (!hasCheckedReportOption || !product) return;
+
     const checkedReportOption = Object.entries(reportOptions).find(([_, { checked }]) => checked);
+
     if (checkedReportOption) {
       const reportType = Number(checkedReportOption[0]);
+
       logEvent(attrKeys.products.CLICK_REPORTSUBMIT, {
         name: attrProperty.productName.PRODUCT_DETAIL,
         id: product.id,
@@ -300,6 +303,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
             setReportOptions((prevState) => {
               const newState = { ...prevState };
               newState[reportType as ReportType].reported = true;
+              newState[reportType as ReportType].count += 1;
 
               return newState;
             });

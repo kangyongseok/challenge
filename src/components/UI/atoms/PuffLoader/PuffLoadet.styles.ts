@@ -26,6 +26,10 @@ const BaseRound = styled.span`
   opacity: 1;
   top: 0;
   left: 0;
+  animation-duration: 2s;
+  animation-name: puff1, puff2;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.3, 0.61, 0.355, 1);
 
   @keyframes puff1 {
     0% {
@@ -47,11 +51,9 @@ const BaseRound = styled.span`
 `;
 
 export const FistRound = styled(BaseRound)`
-  animation: 2s cubic-bezier(0.165, 0.84, 0.44, 1) -1s infinite normal none running puff1,
-    cubic-bezier(0.3, 0.61, 0.355, 1) normal none running puff2;
+  animation-delay: -1s;
 `;
 
 export const SecondRound = styled(BaseRound)`
-  animation: 2s cubic-bezier(0.165, 0.84, 0.44, 1) 0s infinite normal none running puff1,
-    cubic-bezier(0.3, 0.61, 0.355, 1) normal none running puff2;
+  animation-delay: 0s;
 `;

@@ -19,7 +19,7 @@ function ProductsKeywordAutoSavedToast() {
         }}
       >
         홈에서 바로 볼 수 있게
-        <br />이 검색 조건을 저장했어요!
+        <br />이 검색 목록을 저장했어요!
       </Typography>
     </Toast>
   );

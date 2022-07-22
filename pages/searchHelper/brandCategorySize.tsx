@@ -88,7 +88,10 @@ function BrandCategorySize() {
   );
 
   const isShowKeywordsSuggest =
-    focusedBrand && brandValue.length > 0 && !!keywordsSuggest && !isFetchingKeywordsSuggest;
+    focusedBrand &&
+    brandValue.length > 0 &&
+    !!keywordsSuggest?.length &&
+    !isFetchingKeywordsSuggest;
   const hasNoBrand = !isLoading && selectedSearchOptions.brand.id === 0;
   const hasNoGender =
     !isLoading &&
@@ -410,7 +413,7 @@ function BrandCategorySize() {
               ))}
             </Flexbox>
           )}
-          {(!focusedBrand || brandValue.length === 0 || !keywordsSuggest) && (
+          {(!focusedBrand || brandValue.length === 0 || !keywordsSuggest?.length) && (
             <>
               <SearchHelperInput
                 labelText="카테고리"

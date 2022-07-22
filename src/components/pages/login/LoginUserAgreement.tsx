@@ -12,7 +12,7 @@ function LoginUserAgreement() {
       alignment="center"
       justifyContent="center"
       customStyle={{
-        margin: '0 15px 20px',
+        margin: '0 auto 20px',
         textAlign: 'center',
         '& a': {
           textDecoration: 'underline'

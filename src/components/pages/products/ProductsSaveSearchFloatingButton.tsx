@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Chip, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 import type { CSSObject } from '@emotion/styled';
 import styled from '@emotion/styled';
 
@@ -199,7 +199,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
             show={triggered}
             brandColor="black"
             variant="contained"
-            isEllipsis={searchKeyword.length > 9}
+            isEllipsis={searchKeyword.length > 6}
             onClick={handleClick}
           >
             <Flexbox alignment="center" gap={2} customStyle={{ overflow: 'hidden' }}>
@@ -214,10 +214,10 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
                   customStyle={{
                     whiteSpace: 'nowrap',
                     color: palette.common.white,
-                    transform: searchKeyword.length > 9 ? 'translateX(-6px)' : ''
+                    transform: searchKeyword.length > 6 ? 'translateX(-4px)' : ''
                   }}
                 >
-                  ’ 검색 저장
+                  ’ 검색 목록 저장
                 </Typography>
               </Flexbox>
             </Flexbox>
@@ -228,24 +228,17 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
         open={isOpenSavedKeywordToast}
         onClose={() => setIsOpenSavedKeywordToast(false)}
         bottom="32px"
-        customStyle={{ textAlign: 'center' }}
       >
-        <Flexbox
-          justifyContent="center"
-          alignment="center"
-          customStyle={{ maxWidth: 224, margin: '0 auto' }}
-        >
+        <Flexbox justifyContent="center" customStyle={{ overflow: 'hidden' }}>
+          <Box customStyle={{ whiteSpace: 'nowrap', color: palette.common.white }}>‘</Box>
           <Keyword variant="body1" weight="medium">
-            {`‘${searchKeyword}`}
+            {`${searchKeyword}`}
           </Keyword>
-          <Typography
-            variant="body1"
-            weight="medium"
-            customStyle={{ whiteSpace: 'nowrap', color: palette.common.white }}
-          >
-            ’ 이(가) 저장되었어요!
-          </Typography>
+          <Box customStyle={{ whiteSpace: 'nowrap', color: palette.common.white }}>’</Box>
         </Flexbox>
+        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
+          검색 목록을 저장했어요!
+        </Typography>
       </Toast>
     </>
   );
@@ -258,7 +251,7 @@ const CustomChip = styled(Chip)<{ show: boolean; isEllipsis: boolean }>`
   overflow: hidden;
   transition: all 0.2s ease-in;
   border: none;
-  padding: 10px ${({ isEllipsis }) => (isEllipsis ? 12 : 16)}px 10px 16px;
+  padding: 10px 16px 10px ${({ isEllipsis }) => (isEllipsis ? 20 : 16)}px;
   opacity: ${({ show }) => Number(show)};
   transform: translateY(${({ show }) => (show ? 0 : 84)}px);
 
