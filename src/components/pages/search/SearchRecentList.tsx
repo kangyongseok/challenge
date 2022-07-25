@@ -3,10 +3,13 @@ import type { MouseEvent } from 'react';
 import { Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import commaNumber from '@utils/commaNumber';
@@ -32,6 +35,12 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
       title: 'RECENT',
       index: target.dataset.index,
       keyword: target.dataset.keyword
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.SEARCH,
+      title: attrProperty.productTitle.RECENT,
+      type: attrProperty.productType.INPUT
     });
 
     onClick({

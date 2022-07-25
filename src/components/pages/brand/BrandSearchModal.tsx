@@ -9,11 +9,14 @@ import styled from '@emotion/styled';
 
 import SearchBar from '@components/UI/molecules/SearchBar';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchBrandsSuggestWithCollabo } from '@api/brand';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 interface BrandSearchModalProps {
@@ -61,6 +64,12 @@ export default function BrandSearchModal({ close }: BrandSearchModalProps) {
       type: 'BRAND',
       keyword: dataSet.brandName,
       index: dataSet.index
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.BRAND_SEARCH,
+      title: attrProperty.productTitle.AUTO,
+      type: attrProperty.productType.INPUT
     });
 
     router.push(`/products/brands/${dataSet.brandName}`);

@@ -17,6 +17,7 @@ export interface RecentItems {
 export interface TotalSearchItem {
   keyword?: string;
   title?: string;
+  type?: string;
   keywordItem?: SuggestKeyword;
   skipLogging?: boolean;
   expectCount?: number;

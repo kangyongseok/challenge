@@ -18,11 +18,13 @@ import {
   SearchRecentList
 } from '@components/pages/search';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchKeywordsSuggest } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -82,6 +84,12 @@ function Search() {
     delete newItem.categoryKeyword;
     delete newItem.keyword;
 
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.SEARCH,
+      title: attrProperty.productTitle.BANNERB,
+      type: attrProperty.productType.INPUT
+    });
+
     router.push({
       pathname: `/products/categories/${(item.categoryKeyword || '')
         .split('>')[1]
@@ -100,7 +108,8 @@ function Search() {
     keywordItem,
     skipLogging,
     expectCount,
-    count
+    count,
+    type
   }: TotalSearchItem) => {
     const logType = skipLogging ? 'GUIDED' : 'INPUT';
     accumulateStorage(RECENT_SEARCH_LIST, {
@@ -119,6 +128,31 @@ function Search() {
         brand: keywordItem?.brandName,
         category: keywordItem?.categoryName,
         line: keywordItem?.line
+      });
+    }
+    if (type === 'bannerb') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.BANNERB,
+        type: attrProperty.productType.INPUT
+      });
+    } else if (type === 'bannerc') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.BANNERC,
+        type: attrProperty.productType.INPUT
+      });
+    } else if (type === 'auto') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.AUTO,
+        type: attrProperty.productType.INPUT
+      });
+    } else if (type === 'submit') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.SCOPE,
+        type: attrProperty.productType.INPUT
       });
     }
 
@@ -150,7 +184,8 @@ function Search() {
     handleTotalSearch({
       keyword: inputEl.value,
       title: 'SCOPE',
-      count: (data[0] || {}).count || 0
+      count: (data[0] || {}).count || 0,
+      type: 'submit'
     });
   };
 

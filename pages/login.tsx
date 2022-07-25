@@ -18,6 +18,7 @@ import type { AppleAccount, FacebookAccount } from '@dto/userAuth';
 import { KakaoAppAccount } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
+import Initializer from '@library/initializer';
 import Axios from '@library/axios';
 import Amplitude, { logEvent } from '@library/amplitude';
 
@@ -39,7 +40,7 @@ import type { ConvertUserSnsLoginInfoProps } from '@utils/login/convertLoginInfo
 import convertUserSnsLoginInfo from '@utils/login/convertLoginInfo';
 import checkAgent from '@utils/checkAgent';
 
-import { FindLocation } from '@typings/common';
+import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
 
 export const LOGIN_TYPE = {
@@ -153,6 +154,8 @@ function Login() {
         LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
         Axios.setAccessToken(userSnsLoginResult.jwtToken);
         Amplitude.getClient().setUserId(String(userSnsLoginResult.accessUser.userId));
+        Initializer.initAccessUserInAmplitude(Amplitude.getClient());
+        Initializer.initAccessUserInBraze();
 
         fetchUserInfo().then((userInfo) => {
           const { personalStyle: { styles = [] } = {} } = userInfo || {};

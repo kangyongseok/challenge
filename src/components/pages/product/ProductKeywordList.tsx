@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, Chip, Typography } from 'mrcamel-ui';
@@ -6,8 +7,10 @@ import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -20,6 +23,22 @@ interface ProductKeywordListProps {
 
 function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListProps) {
   const router = useRouter();
+
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const dataRelatedKeyword = e.currentTarget.getAttribute('data-related-keyword');
+    logEvent(attrKeys.products.CLICK_RECENT, {
+      title: attrProperty.productTitle.RELATED,
+      name: attrProperty.productName.PRODUCT_DETAIL,
+      productId,
+      keyword: dataRelatedKeyword
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.PRODUCT,
+      title: attrProperty.productTitle.DETAIL,
+      type: attrProperty.productType.ETC
+    });
+    router.push(`/products/search/${dataRelatedKeyword}`);
+  };
 
   return (
     <Box customStyle={{ marginTop: 32 }}>
@@ -35,15 +54,8 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
                 variant="ghost"
                 brandColor="black"
                 customStyle={{ flexWrap: 'wrap', whiteSpace: 'nowrap' }}
-                onClick={() => {
-                  logEvent(attrKeys.products.CLICK_RECENT, {
-                    title: attrProperty.productTitle.RELATED,
-                    name: attrProperty.productName.PRODUCT_DETAIL,
-                    productId,
-                    keyword: relatedKeyword
-                  });
-                  router.push(`/products/search/${relatedKeyword}`);
-                }}
+                data-related-keyword={relatedKeyword}
+                onClick={handleClick}
               >
                 #{relatedKeyword}
               </Chip>

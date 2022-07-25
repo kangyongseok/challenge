@@ -75,7 +75,8 @@ function SearchList({ searchValue, searchResult, onClick, onClickCategory }: Sea
       keywordItem: JSON.parse(target.dataset.item as string),
       count: Number(target.dataset.count),
       brandId: Number(target.dataset.brandId),
-      categoryId: Number(target.dataset.categoryId)
+      categoryId: Number(target.dataset.categoryId),
+      type: 'auto'
     });
   };
 

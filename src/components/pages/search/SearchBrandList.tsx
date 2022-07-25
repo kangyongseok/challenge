@@ -40,7 +40,8 @@ function SearchBrandList({ item, onClickList }: SearchBrandListProps) {
     onClickList({
       keyword: target.dataset.brand,
       title: 'BANNERB',
-      keywordItem: JSON.parse(target.dataset.item as string)
+      keywordItem: JSON.parse(target.dataset.item as string),
+      type: 'bannerb'
     });
   };
 

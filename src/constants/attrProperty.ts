@@ -21,11 +21,16 @@ const productName = {
   ANNOUNCE_DETAIL: 'ANNOUNCE_DETAIL',
   SEARCHMODAL: 'SEARCHMODAL',
   BRAND_LIST: 'BRAND_LIST',
+  BRAND_SEARCH: 'BRAND_SEARCH',
   CATEGORY: 'CATEGORY',
   CRM: 'CRM',
   SEARCH: 'SEARCH',
   WELCOME: 'WELCOME',
-  SIZE: 'SIZE'
+  SIZE: 'SIZE',
+  PRODUCT: 'PRODUCT',
+  DIRECT: 'DIRECT',
+  HISTORY: 'HISTORY',
+  SEARCHHELPER: 'SEARCHHELPER'
 };
 
 const productTitle = {
@@ -39,7 +44,23 @@ const productTitle = {
   GENDER: 'GENDER',
   BIRTH: 'BIRTH',
   RECOMMEND: 'RECOMMEND',
-  INPUT: 'INPUT'
+  INPUT: 'INPUT',
+  DETAIL: 'DETAIL',
+  RECOMMTAG: 'RECOMMTAG',
+  RECENT: 'RECENT',
+  SCOPE: 'SCOPE',
+  AUTO: 'AUTO',
+  BANNERB: 'BANNERB',
+  BANNERC: 'BANNERC',
+  PARENT: 'PARENT',
+  SUBPARENT: 'SUBPARENT',
+  DEFAULT: 'DEFAULT',
+  BEHAVIOR: 'BEHAVIOR',
+  BRAND: 'BRAND',
+  CATEGORY: 'CATEGORY',
+  LIST: 'LIST',
+  HONEYNOTI: 'HONEYNOTI',
+  SEARCHHELPER: 'SEARCHHELPER'
 };
 
 const productSource = {
@@ -59,10 +80,19 @@ const productSource = {
   HONEYNOTI_LIST: 'HONEYNOTI_LIST'
 };
 
+const productType = {
+  INPUT: 'INPUT',
+  ETC: 'ETC',
+  GUIDED: 'GUIDED',
+  CRM: 'CRM',
+  HISTORY: 'HISTORY'
+};
+
 const attrProperty = {
   productName,
   productTitle,
-  productSource
+  productSource,
+  productType
 };
 
 export default attrProperty;

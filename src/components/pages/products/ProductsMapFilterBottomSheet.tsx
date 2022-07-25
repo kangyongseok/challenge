@@ -221,10 +221,10 @@ function ProductsMapFilterBottomSheet() {
   }, [productsOnBoardingTrigger]);
 
   useEffect(() => {
-    if (open) {
+    if (open && complete) {
       logEvent(attrKeys.products.VIEW_MAP_FILTER);
     }
-  }, [open]);
+  }, [open, complete]);
 
   return (
     <BottomSheet disableSwipeable open={open} onClose={handleClose}>

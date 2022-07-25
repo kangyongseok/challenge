@@ -10,8 +10,10 @@ import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { filterGenders } from '@constants/productsFilter';
 import { BRANDS_BY_GENDER } from '@constants/brand';
 import attrProperty from '@constants/attrProperty';
@@ -100,6 +102,12 @@ function HomeBrandList({ isViewSearchHelperOnboarding }: HomeBrandListProps) {
       };
 
       if (!query.genders) delete query.genders;
+
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.MAIN,
+        title: attrProperty.productTitle.BRAND,
+        type: attrProperty.productType.INPUT
+      });
 
       router.push({
         pathname: `/products/brands/${name}`,

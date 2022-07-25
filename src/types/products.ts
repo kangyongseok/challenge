@@ -39,3 +39,12 @@ export type SelectedSearchOptionHistory = {
   index?: number;
   count?: number;
 };
+
+export type ProductsEventProperties = {
+  name?: string | string[];
+  type?: string | string[];
+  title?: string | string[];
+  source?: string | string[];
+  keyword?: string | string[];
+  filters?: string | string[];
+};

@@ -6,11 +6,13 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserNoti } from '@api/user';
+import { fetchProductKeywords, fetchUserNoti } from '@api/user';
 import { fetchDashboard } from '@api/dashboard';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
+
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserNotificationItem from './UserNotificationItem';
 
@@ -18,6 +20,15 @@ function ActivityNotificationPanel() {
   const { data } = useQuery(queryKeys.users.userNoti(0), () => fetchUserNoti(0));
   const { data: dashboard } = useQuery(queryKeys.dashboard.all, () => fetchDashboard());
   const [showDialog, setShowDialog] = useState(false);
+  const { data: accessUser } = useQueryAccessUser();
+
+  const { data: { content: productKeywords = [] } = {} } = useQuery(
+    queryKeys.users.userProductKeywords(),
+    fetchProductKeywords,
+    {
+      enabled: !!accessUser
+    }
+  );
 
   const {
     theme: { palette }
@@ -88,7 +99,11 @@ function ActivityNotificationPanel() {
       >
         {data.content?.map((notification, idx) => (
           <React.Fragment key={`user-noti-${notification.id}`}>
-            <UserNotificationItem type="userNoti" notification={notification} />
+            <UserNotificationItem
+              type="userNoti"
+              notification={notification}
+              productKeywords={productKeywords}
+            />
             {idx !== data.content.length - 1 && (
               <Box
                 customStyle={{

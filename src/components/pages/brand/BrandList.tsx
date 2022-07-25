@@ -5,8 +5,11 @@ import { useRouter } from 'next/router';
 import { Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import type { NewBrands } from '@typings/brands';
@@ -50,6 +53,12 @@ function BrandList({ brands, brandTitles, lang, setListTitles, storageSet }: Bra
     };
 
     if (!query.genders) delete query.genders;
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.BRAND_LIST,
+      title: attrProperty.productTitle.LIST,
+      type: attrProperty.productType.INPUT
+    });
 
     router.push({
       pathname: `/products/brands/${(dataSet.brandName || '').replace(/ x /g, '-')}`,

@@ -1,12 +1,17 @@
+import qs from 'qs';
 import amplitude from 'amplitude-js';
 import type { AmplitudeClient } from 'amplitude-js';
 
 import type { AccessUser } from '@dto/userAuth';
 
+import Initializer from '@library/initializer';
+
 import { postLog } from '@api/log';
 
 import { ACCESS_USER, DEVICE_ID } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
+
+import checkAgent from '@utils/checkAgent';
 
 import LocalStorage from './localStorage';
 
@@ -234,14 +239,24 @@ const appsFlyerEvent = (eventName: string, eventParams: object) => {
 };
 
 const returnPlatform = () => {
-  if (MobileApp.isIOSApp()) return 'iOS';
-  if (MobileApp.isAndroidApp()) return 'Android';
+  const { userAgent } = qs.parse(window.location.search, { ignoreQueryPrefix: true }) || {};
+
+  if (Number(userAgent) === 1) {
+    return 'iOS';
+  }
+  if (Number(userAgent) === 2) {
+    return 'Android';
+  }
+
+  if (checkAgent.isIOSApp()) return 'iOS';
+  if (checkAgent.isAndroidApp()) return 'Android';
   return 'Web';
 };
 
 const initAmplitude = () => {
   const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
   const userId = accessUser?.mrcamelId || accessUser?.userId;
+
   if (userId) {
     amplitude.getInstance().setUserId(String(userId));
   }
@@ -249,6 +264,7 @@ const initAmplitude = () => {
   amplitude.getInstance().setUserProperties({
     platform_agent: returnPlatform()
   });
+  Initializer.initAccessUserInAmplitude(amplitude.getInstance());
 };
 
 export const logEvent = (eventName: string, eventParams?: object) => {

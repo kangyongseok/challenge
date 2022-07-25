@@ -22,14 +22,16 @@ import { Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchSearch } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds } from '@constants/productsFilter';
-import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP } from '@constants/localStorage';
+import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP, UTM_PARAMS } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -38,6 +40,8 @@ import getEventPropertyViewType from '@utils/products/getEventPropertyViewType';
 import { convertSearchParamsByQuery } from '@utils/products';
 
 import type { ProductsVariant } from '@typings/products';
+import { ProductsEventProperties } from '@typings/products';
+import type { UtmParams } from '@typings/common';
 import {
   productsKeywordInduceTriggerState,
   productsSaveSearchPopupState
@@ -391,7 +395,8 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
       openProductsSaveSearchPopup,
       setProductsSaveSearchPopup,
       name,
-      handleWishAfterChangeCallback
+      handleWishAfterChangeCallback,
+      source
     ]
   );
 
@@ -472,27 +477,26 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
     if (!progressDone && isFetched && !loggedViewProductListLogEventRef.current) {
       loggedViewProductListLogEventRef.current = true;
 
-      const { eventName, eventType, eventTitle, eventSource } = router.query;
       const { userProductKeyword } = lastPage || {};
 
-      let eventProperties: {
-        name?: string | string[];
-        type?: string | string[];
-        title?: string | string[];
-        source?: string | string[];
-        keyword?: string | string[];
-        filters?: string | string[];
-      } = {
-        name: eventName,
-        type: eventType,
-        title: eventTitle,
-        source: eventSource
-      };
+      let eventProperties: ProductsEventProperties & UtmParams =
+        SessionStorage.get<ProductsEventProperties>(sessionStorageKeys.productsEventProperties) || {
+          name: 'NONE',
+          title: 'NONE',
+          type: 'ETC'
+        };
 
       if (eventProperties.title === 'MYLIST' && userProductKeyword) {
         const { keyword: userKeyword, keywordFilterJson } = userProductKeyword;
         eventProperties.keyword = userKeyword;
         eventProperties.filters = keywordFilterJson;
+      } else if (router.pathname === '/products/crm/[notice]') {
+        eventProperties = {
+          ...eventProperties,
+          name: attrProperty.productName.DIRECT,
+          title: attrProperty.productTitle.DEFAULT,
+          type: attrProperty.productType.CRM
+        };
       } else {
         eventProperties = {
           ...eventProperties,
@@ -502,9 +506,26 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
         };
       }
 
+      const utmParams = LocalStorage.get<UtmParams>(UTM_PARAMS);
+
+      if (utmParams) {
+        const { utmSource = '', utmMedium, utmCampaign } = utmParams;
+        eventProperties = {
+          ...eventProperties,
+          name: 'DIRECT',
+          title: utmSource.toUpperCase(),
+          type: 'UTM',
+          utmSource,
+          utmMedium,
+          utmCampaign
+        };
+      }
+
       logEvent(attrKeys.products.VIEW_PRODUCT_LIST, eventProperties);
+
+      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
-  }, [router.query, variant, progressDone, isFetched, lastPage]);
+  }, [router.pathname, router.query, variant, progressDone, isFetched, lastPage]);
 
   useEffect(() => {
     if (!progressDone && isFetched && !loggedLoadProductListLogEventRef.current) {

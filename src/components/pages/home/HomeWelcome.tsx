@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
@@ -10,12 +11,15 @@ import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { RecentItems } from '@typings/search';
@@ -65,6 +69,23 @@ function HomeWelcome({ isViewSearchHelperOnboarding }: HomeWelcomeProps) {
     additionalOffsetTop: showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0,
     delay: 0
   });
+
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    const keyword = e.currentTarget.getAttribute('data-keyword');
+    const index = Number(e.currentTarget.getAttribute('data-index') || 0);
+    logEvent(attrKeys.home.CLICK_RECENT, {
+      name: 'MAIN',
+      title: 'RECENT',
+      index: index + 1,
+      keyword
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.RECENT,
+      type: attrProperty.productType.INPUT
+    });
+    router.push(`/products/search/${keyword}`);
+  };
 
   const handleClickSearchBar = () => {
     logEvent(attrKeys.home.CLICK_SEARCHMODAL, {
@@ -154,15 +175,9 @@ function HomeWelcome({ isViewSearchHelperOnboarding }: HomeWelcomeProps) {
                 key={`recent-search-keyword-${keyword}`}
                 variant="body2"
                 weight="medium"
-                onClick={() => {
-                  logEvent(attrKeys.home.CLICK_RECENT, {
-                    name: 'MAIN',
-                    title: 'RECENT',
-                    index: i + 1,
-                    keyword
-                  });
-                  router.push(`/products/search/${keyword}`);
-                }}
+                data-index={i}
+                data-keyword={keyword}
+                onClick={handleClick}
               >
                 {keyword}
               </KeywordChip>

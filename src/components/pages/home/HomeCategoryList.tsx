@@ -8,13 +8,16 @@ import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchParentCategories } from '@api/category';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
 import { CATEGORIES_BY_GENDER } from '@constants/category';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -135,6 +138,12 @@ function HomeCategoryList({ isViewSearchHelperOnboarding }: HomeCategoryListProp
         setSearchHelperPopup(true);
         return;
       }
+
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.MAIN,
+        title: attrProperty.productTitle.CATEGORY,
+        type: attrProperty.productType.INPUT
+      });
 
       router.push({
         pathname: `/products/categories/${parentCategoryName}`,

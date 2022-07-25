@@ -52,6 +52,8 @@ function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     Initializer.initAccessUserInQueryClient(queryClient.current);
+    Initializer.initAccessUserInBraze();
+    Initializer.initUtmParams();
   }, []);
 
   useEffect(() => {

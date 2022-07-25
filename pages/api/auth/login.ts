@@ -17,13 +17,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         userSnsLoginInfo
       });
 
+      const expires = new Date();
+      expires.setDate(365);
+
       res.setHeader('Set-Cookie', [
         `accessUser=${encodeURIComponent(
           JSON.stringify(userSnsLoginResult.accessUser)
-        )}; path=/; httpOnly; sameSite=lax;${
+        )}; expires=${expires.toUTCString()}; path=/; httpOnly; sameSite=lax;${
           process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
         }`,
-        `accessToken=${userSnsLoginResult.jwtToken}; path=/; httpOnly; sameSite=lax;${
+        `accessToken=${
+          userSnsLoginResult.jwtToken
+        }; expires=${expires.toUTCString()}; path=/; httpOnly; sameSite=lax;${
           process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
         }`
       ]);

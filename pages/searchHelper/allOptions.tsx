@@ -8,8 +8,11 @@ import styled from '@emotion/styled';
 
 import { SearchHelperFixedBottomCTAButton } from '@components/pages/searchHelper';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { allSelectedSearchOptionsSelector } from '@recoil/searchHelper';
@@ -43,6 +46,11 @@ function AllOptions() {
 
   const handleClickNext = () => {
     logEvent(attrKeys.searchHelper.SUBMIT_SEARCHHELPER, { name: 'STEP3', att: 'YES' });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.SEARCHHELPER,
+      title: attrProperty.productTitle.SEARCHHELPER,
+      type: attrProperty.productType.INPUT
+    });
     router.replace('/searchHelper/searching');
   };
 

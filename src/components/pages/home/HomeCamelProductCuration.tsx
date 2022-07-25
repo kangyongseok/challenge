@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Box, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
@@ -14,10 +14,12 @@ import { ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { Product } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchSearch } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -32,6 +34,7 @@ import {
 } from '@recoil/camelProductCuration';
 
 function HomeCamelProductCuration() {
+  const router = useRouter();
   const [{ brandsAndCategories, selectedChip }, setCamelProductCurationState] =
     useRecoilState(camelProductCurationState);
   const [chipMenuPrevScroll, setChipMenuPrevScrollState] = useRecoilState(chipMenuPrevScrollState);
@@ -202,6 +205,25 @@ function HomeCamelProductCuration() {
     };
   };
 
+  const handleClickShowAll = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.CAMEL,
+      type: attrProperty.productType.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/camel',
+      query: {
+        siteUrlIds: [161],
+        brandIds,
+        parentIds
+      }
+    });
+  };
+
   return (
     <Box component="section" customStyle={{ marginTop: 64 }}>
       <ProductTitle
@@ -267,34 +289,21 @@ function HomeCamelProductCuration() {
         </ProductCurationList>
         {search?.page.content && (
           <Flexbox alignment="center" justifyContent="center">
-            <Link
-              href={{
-                pathname: '/products/camel',
-                query: {
-                  siteUrlIds: [161],
-                  brandIds,
-                  parentIds
-                }
-              }}
-            >
-              <a>
-                <ShowAllButton>
-                  <Icon
-                    name="ArrowRightOutlined"
-                    width={34}
-                    height={34}
-                    color={palette.common.grey[40]}
-                  />
-                  <Typography
-                    variant="body2"
-                    weight="medium"
-                    customStyle={{ color: palette.common.grey[40] }}
-                  >
-                    전체보기
-                  </Typography>
-                </ShowAllButton>
-              </a>
-            </Link>
+            <ShowAllButton onClick={handleClickShowAll}>
+              <Icon
+                name="ArrowRightOutlined"
+                width={34}
+                height={34}
+                color={palette.common.grey[40]}
+              />
+              <Typography
+                variant="body2"
+                weight="medium"
+                customStyle={{ color: palette.common.grey[40] }}
+              >
+                전체보기
+              </Typography>
+            </ShowAllButton>
           </Flexbox>
         )}
       </ProductCuration>

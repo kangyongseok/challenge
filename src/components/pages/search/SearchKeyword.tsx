@@ -2,9 +2,12 @@ import type { MouseEvent } from 'react';
 
 import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import accumulateStorage from '@utils/search/accumulateStorage';
@@ -41,6 +44,13 @@ function SearchKeyword({ onClick }: SearchKeywordProps) {
       keyword: target.dataset.keyword,
       count: Number(target.dataset.count)
     });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.SEARCH,
+      title: attrProperty.productTitle.RECOMMTAG,
+      type: attrProperty.productType.GUIDED
+    });
+
     onClick({ keyword: target.dataset.keyword });
   };
 

@@ -10,12 +10,15 @@ import type { CSSObject } from '@emotion/react';
 
 import { Accordion } from '@components/UI/molecules';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchParentCategories } from '@api/category';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { CATEGORY_TAB_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import categoryState from '@recoil/category';
@@ -61,6 +64,11 @@ function CategoryCollapse({
         category: selectedParentName,
         gender: gender === 'male' ? 'M' : 'F'
       });
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.CATEGORY,
+        title: attrProperty.productTitle.PARENT,
+        type: attrProperty.productType.GUIDED
+      });
       router.push(
         `/products/categories/${selectedParentName.replace(/\(P\)/g, '')}?genders=${gender}`
       );
@@ -97,7 +105,11 @@ function CategoryCollapse({
           subParentId: subParentCategoryId,
           gender
         }));
-
+        SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+          name: attrProperty.productName.CATEGORY,
+          title: attrProperty.productTitle.SUBPARENT,
+          type: attrProperty.productType.GUIDED
+        });
         router.push(
           `/products/categories/${parentCategoryName.replace(
             /\(P\)/g,

@@ -126,8 +126,7 @@ function SaveSearchList({ page = 'MAIN' }) {
             router.push({
               pathname: `/products/${viewType}/${encodeURIComponent(String(keyword))}`,
               query: { ...searchParams }
-            }),
-          onSuccess: () => refetch()
+            })
         });
       } else {
         router.push({
