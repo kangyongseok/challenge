@@ -201,7 +201,8 @@ function HomeCamelProductCuration() {
       scorePrice: product.scorePrice,
       scorePriceAvg: product.scorePriceAvg,
       scorePriceCount: product.scorePriceCount,
-      scorePriceRate: product.scorePriceRate
+      scorePriceRate: product.scorePriceRate,
+      source: attrProperty.productSource.MAIN_CAMEL
     };
   };
 
@@ -231,13 +232,17 @@ function HomeCamelProductCuration() {
         description="카멜이 인증한 판매자들의 추천매물이에요."
         isSafe
         showAllButtonHref="/products/camel?siteUrlIds=161"
-        onClickShowAllButton={() =>
+        onClickShowAllButton={() => {
           SessionStorage.set(sessionStorageKeys.productsEventProperties, {
             name: attrProperty.productName.MAIN,
             title: attrProperty.productTitle.CAMEL,
             type: attrProperty.productType.GUIDED
-          })
-        }
+          });
+          logEvent(attrKeys.home.CLICK_PRODUCT_LIST, {
+            name: attrProperty.productName.MAIN,
+            title: attrProperty.productTitle.CAMEL
+          });
+        }}
       />
       <ChipMenu ref={chipMenuRef} onScroll={handleScrollChipMenu}>
         <Chip
@@ -291,6 +296,7 @@ function HomeCamelProductCuration() {
                   wishAtt={handleWishAtt(product, i)}
                   productAtt={handleProductAtt(product, i)}
                   name={attrProperty.productName.MAIN_CAMEL}
+                  source={attrProperty.productSource.MAIN_CAMEL}
                 />
               ))}
         </ProductCurationList>

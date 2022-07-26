@@ -24,12 +24,14 @@ import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 
 import type { Product, ProductDetail } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Amplitude, { logEvent } from '@library/amplitude';
 
 import { fetchRelatedProducts } from '@api/product';
 
 import { SELLER_STATUS } from '@constants/user';
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
 import { APP_BANNER, IS_DONE_WISH_ON_BOARDING } from '@constants/localStorage';
@@ -194,20 +196,6 @@ function ProductCTAButton({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   const isBunjangRedirected =
-  //     PRODUCT_SITE.BUNJANG.id &&
-  //     product?.site.id &&
-  //     checkAgent.isIOSApp() &&
-  //     appBanner.counts.IOSBUNJANG === 1 &&
-  //     !isOpenBunJangTooltip;
-  //
-  //   if (isBunjangRedirected) {
-  //     setOpenTooltip((prevState) => ({ ...prevState, isOpenBunJangTooltip: true }));
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [appBanner.counts.IOSBUNJANG, product?.site.id]);
-
   useEffect(() => {
     setIsOpenRelatedProductListBottomSheet(false);
   }, [id]);
@@ -258,6 +246,10 @@ function ProductCTAButton({
 
   const handleClickCTAButton = () => {
     let conversionId = 0;
+    const { source: productDetailSource } =
+      SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
+      {};
+
     if (
       product &&
       product.productSeller &&
@@ -268,6 +260,7 @@ function ProductCTAButton({
       productDetailAtt({
         key: attrKeys.products.CLICK_PURCHASE,
         product,
+        source: productDetailSource || undefined,
         rest: { conversionId }
       });
     }
@@ -313,6 +306,7 @@ function ProductCTAButton({
     productDetailAtt({
       key: attrKeys.products.CLICK_PURCHASE,
       product: product as Product,
+      source: productDetailSource || undefined,
       rest: { conversionId }
     });
 

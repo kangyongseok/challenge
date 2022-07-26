@@ -165,7 +165,8 @@ function HomePersonalProductCuration() {
       scorePrice: product.scorePrice,
       scorePriceAvg: product.scorePriceAvg,
       scorePriceCount: product.scorePriceCount,
-      scorePriceRate: product.scorePriceRate
+      scorePriceRate: product.scorePriceRate,
+      source: attrProperty.productSource.MAIN_PERSONAL
     };
   };
 

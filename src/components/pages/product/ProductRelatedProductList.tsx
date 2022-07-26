@@ -95,7 +95,7 @@ function ProductRelatedProductList({
         scorePriceAvg: prevProduct.scorePriceAvg,
         scorePriceCount: prevProduct.scorePriceCount,
         scorePriceRate: prevProduct.scorePriceRate,
-        source: attrProperty.productSource.MAIN_CAMEL,
+        source: attrProperty.productSource.LIST_RELATED,
         nextId: product.id,
         nextBrand: product.brand.name,
         nextCategory: product.category.name,

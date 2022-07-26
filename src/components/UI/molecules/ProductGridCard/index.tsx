@@ -21,13 +21,13 @@ import { Image, Skeleton, TouchIcon } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
-import LocalStorage from '@library/localStorage';
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { VIEW_PRODUDCT_DETAIL_ATT_SOURCE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
@@ -116,7 +116,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
     if (source) {
-      LocalStorage.set(VIEW_PRODUDCT_DETAIL_ATT_SOURCE, source);
+      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
     router.push(`/products/${id}`);
   };

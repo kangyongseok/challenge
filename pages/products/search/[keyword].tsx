@@ -38,11 +38,7 @@ function SearchProducts() {
           }}
         />
         <ProductsStatus />
-        <ProductsInfiniteGrid
-          source={attrProperty.productSource.PRODUCT_LIST}
-          variant="search"
-          name={attrProperty.productName.SEARCH}
-        />
+        <ProductsInfiniteGrid variant="search" name={attrProperty.productName.SEARCH} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />

@@ -4,7 +4,7 @@ export interface WishAtt {
   name: string;
   title?: string;
   id: number;
-  index: number;
+  index?: number;
   brand: string;
   category: string;
   parentId?: number | null;

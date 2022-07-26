@@ -269,6 +269,7 @@ export type Product = {
   viewDescription: string | null;
   weekAvgPrices: number[] | null;
   wishCount: number;
+  index?: number;
 };
 
 export type ProductResult = {

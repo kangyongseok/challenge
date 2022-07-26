@@ -37,6 +37,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import getEventPropertyViewType from '@utils/products/getEventPropertyViewType';
+import getEventPropertySortValue from '@utils/products/getEventPropertySortValue';
 import { convertSearchParamsByQuery } from '@utils/products';
 
 import type { ProductsVariant } from '@typings/products';
@@ -63,24 +64,24 @@ const cache = new CellMeasurerCache({
 
 function groupingProducts(products: Product[]) {
   const productsLength = products.length;
-  const newProducts = [];
-  const newProductsLength =
+  const newProducts = products.map((product, index) => ({ ...product, index }));
+  const newGroupingProducts = [];
+  const newGroupingProductsLength =
     Math.floor(productsLength / 2) + (Math.floor(productsLength % 2) > 0 ? 1 : 0);
 
-  for (let i = 0; i <= newProductsLength; i += 1) {
-    newProducts.push(products.splice(0, 2));
+  for (let i = 0; i <= newGroupingProductsLength; i += 1) {
+    newGroupingProducts.push(newProducts.splice(0, 2));
   }
 
-  return newProducts.filter((newProduct) => newProduct.length);
+  return newGroupingProducts.filter((newProduct) => newProduct.length);
 }
 
 interface ProductsInfiniteGridProps {
   variant: ProductsVariant;
   name?: string;
-  source?: string;
 }
 
-function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridProps) {
+function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const router = useRouter();
   const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -202,39 +203,44 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
     await fetchNextPage();
   };
 
-  const handleProductAtt = (product: Product, index: number) => {
-    return {
-      name: attrProperty.productName.PRODUCT_LIST,
-      index: index + 1,
-      id: product.id,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-      line: product.line,
-      site: product.site.name,
-      price: product.price,
-      scoreTotal: product.scoreTotal,
-      scoreStatus: product.scoreStatus,
-      scoreSeller: product.scoreSeller,
-      scorePrice: product.scorePrice,
-      scorePriceAvg: product.scorePriceAvg,
-      scorePriceCount: product.scorePriceCount,
-      scorePriceRate: product.scorePriceRate,
-      cluster: product.cluster,
-      listMode: 'LIST',
-      isSafeTrade: product.isSafeTrade,
-      purchaseCount: product.purchaseCount,
-      wishCount: product.wishCount,
-      viewCount: product.viewCount,
-      labels: product.labels && product.labels.map((l) => l.description)
-    };
-  };
+  const handleProductAtt = useCallback(
+    (product: Product) => {
+      return {
+        name: attrProperty.productName.PRODUCT_LIST,
+        index: (product.index || 0) + 1,
+        id: product.id,
+        brand: product.brand.name,
+        category: product.category.name,
+        parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+        line: product.line,
+        site: product.site.name,
+        price: product.price,
+        scoreTotal: product.scoreTotal,
+        scoreStatus: product.scoreStatus,
+        scoreSeller: product.scoreSeller,
+        scorePrice: product.scorePrice,
+        scorePriceAvg: product.scorePriceAvg,
+        scorePriceCount: product.scorePriceCount,
+        scorePriceRate: product.scorePriceRate,
+        cluster: product.cluster,
+        listMode: 'LIST',
+        isSafeTrade: product.isSafeTrade,
+        purchaseCount: product.purchaseCount,
+        wishCount: product.wishCount,
+        viewCount: product.viewCount,
+        labels: product.labels && product.labels.map((l) => l.description),
+        source: attrProperty.productSource.PRODUCT_LIST,
+        sort: getEventPropertySortValue(searchParams.order)
+      };
+    },
+    [searchParams.order]
+  );
 
-  const handleWishAtt = (product: Product, index: number) => {
+  const handleWishAtt = (product: Product) => {
     return {
       name: attrProperty.productName.PRODUCT_LIST,
       id: product.id,
-      index: index + 1,
+      index: (product.index || 0) + 1,
       brand: product.brand.name,
       category: product.category.name,
       parentId: product.category.parentId,
@@ -355,10 +361,10 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
                       product={firstProduct}
                       measure={measure}
                       name={name}
-                      productAtt={handleProductAtt(firstProduct, index)}
-                      wishAtt={handleWishAtt(firstProduct, index)}
+                      source={attrProperty.productSource.PRODUCT_LIST}
+                      productAtt={handleProductAtt(firstProduct)}
+                      wishAtt={handleWishAtt(firstProduct)}
                       onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                      source={source}
                     />
                   </Grid>
                 )}
@@ -368,10 +374,10 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
                       product={secondProduct}
                       measure={measure}
                       name={name}
-                      productAtt={handleProductAtt(secondProduct, index)}
-                      wishAtt={handleWishAtt(secondProduct, index)}
+                      source={attrProperty.productSource.PRODUCT_LIST}
+                      productAtt={handleProductAtt(secondProduct)}
+                      wishAtt={handleWishAtt(secondProduct)}
                       onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                      source={source}
                     />
                   </Grid>
                 )}
@@ -395,8 +401,8 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
       openProductsSaveSearchPopup,
       setProductsSaveSearchPopup,
       name,
-      handleWishAfterChangeCallback,
-      source
+      handleProductAtt,
+      handleWishAfterChangeCallback
     ]
   );
 

@@ -25,14 +25,14 @@ import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
-import LocalStorage from '@library/localStorage';
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
-import { VIEW_PRODUDCT_DETAIL_ATT_SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -169,7 +169,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
     if (source) {
-      LocalStorage.set(VIEW_PRODUDCT_DETAIL_ATT_SOURCE, source);
+      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
     router.push(`/products/${id}`);
   };

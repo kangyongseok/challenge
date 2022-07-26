@@ -31,7 +31,8 @@ const productDetailAtt = ({ key, product, rest, source }: ProductDetailAttProps)
     scorePriceAvg: product.scorePriceAvg,
     scorePriceCount: product.scorePriceCount,
     scorePriceRate: product.scorePriceRate,
-    source: source || attrProperty.productSource.MAIN_CAMEL
+    source: source || attrProperty.productSource.MAIN_CAMEL,
+    imageCount: product.imageCount
   });
 };
 

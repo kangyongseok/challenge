@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 
 import { useQuery } from 'react-query';
-import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { entries, groupBy } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -24,14 +23,12 @@ import WishesNotice from './WishesNotice';
 import HistoryDateItem from './HistoryDateItem';
 
 function HistoryPanel() {
-  const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data, isLoading } = useQuery(
     queryKeys.users.userHistory(0),
     () => fetchUserHistory({ page: 0 }),
     {
-      enabled: !!accessUser && router.isReady,
-      refetchOnMount: true,
+      enabled: !!accessUser,
       keepPreviousData: true
     }
   );
