@@ -49,7 +49,8 @@ function SearchBrandList({ item, onClickList }: SearchBrandListProps) {
     const target = e.currentTarget;
     onClickList({
       keyword: target.dataset.keyword,
-      keywordItem: JSON.parse(target.dataset.item as string)
+      keywordItem: JSON.parse(target.dataset.item as string),
+      type: 'auto'
     });
   };
 

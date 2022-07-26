@@ -231,6 +231,13 @@ function HomeCamelProductCuration() {
         description="카멜이 인증한 판매자들의 추천매물이에요."
         isSafe
         showAllButtonHref="/products/camel?siteUrlIds=161"
+        onClickShowAllButton={() =>
+          SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+            name: attrProperty.productName.MAIN,
+            title: attrProperty.productTitle.CAMEL,
+            type: attrProperty.productType.GUIDED
+          })
+        }
       />
       <ChipMenu ref={chipMenuRef} onScroll={handleScrollChipMenu}>
         <Chip

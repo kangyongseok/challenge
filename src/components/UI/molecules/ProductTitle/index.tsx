@@ -8,13 +8,15 @@ interface ProductTitleProps {
   description: string;
   isSafe?: boolean;
   showAllButtonHref?: string;
+  onClickShowAllButton?: () => void;
 }
 
 function ProductTitle({
   title,
   description,
   isSafe = false,
-  showAllButtonHref
+  showAllButtonHref,
+  onClickShowAllButton
 }: ProductTitleProps) {
   const {
     theme: { palette }
@@ -31,7 +33,7 @@ function ProductTitle({
         </Flexbox>
         {showAllButtonHref && (
           <Link href={showAllButtonHref}>
-            <a>
+            <a onClick={onClickShowAllButton}>
               <Flexbox alignment="center">
                 <Typography variant="body2" weight="bold">
                   전체보기

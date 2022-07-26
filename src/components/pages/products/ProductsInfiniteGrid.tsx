@@ -232,7 +232,7 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
 
   const handleWishAtt = (product: Product, index: number) => {
     return {
-      name: attrProperty.productName.MAIN,
+      name: attrProperty.productName.PRODUCT_LIST,
       id: product.id,
       index: index + 1,
       brand: product.brand.name,
@@ -243,7 +243,7 @@ function ProductsInfiniteGrid({ variant, name, source }: ProductsInfiniteGridPro
       price: product.price,
       scoreTotal: product.scoreTotal,
       cluster: product.cluster,
-      source: attrProperty.productSource.MAIN_CAMEL
+      source: attrProperty.productSource.PRODUCT_LIST
     };
   };
 

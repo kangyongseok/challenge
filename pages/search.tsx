@@ -86,7 +86,7 @@ function Search() {
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.productName.SEARCH,
-      title: attrProperty.productTitle.BANNERB,
+      title: attrProperty.productTitle.BANNERC,
       type: attrProperty.productType.INPUT
     });
 
