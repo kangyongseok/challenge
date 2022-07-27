@@ -15,10 +15,9 @@ import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
-import { PortalConsumer } from '@utils/PortalProvider';
-
 import { showAppDownloadBannerState } from '@recoil/common';
 import categoryState from '@recoil/category';
+import { PortalConsumer } from '@provider/PortalProvider';
 
 interface CategoryTabsProps {
   setSelectedParentCategory: Dispatch<SetStateAction<number>>;
@@ -36,6 +35,7 @@ function CategoryTabs({ setSelectedParentCategory }: CategoryTabsProps) {
         gender: data.info.value.gender === 'F' ? 'female' : 'male'
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const changeSelectedValue = useCallback(

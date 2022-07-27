@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import { MouseEvent } from 'react';
 
 import { Checkbox, Typography, useTheme } from 'mrcamel-ui';
@@ -72,6 +71,7 @@ export default function SearchBrandList({
                   : palette.common.grey['60']
               }}
             />
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label>
               <Typography>{list.name}</Typography>
             </label>
@@ -88,7 +88,7 @@ const SearchListArea = styled.ul<{ isDisplay: boolean }>`
   border-top-left-radius: 0;
   border-top: none;
   border-radius: 8px;
-  padding: 28px 20px 0px 20px;
+  padding: 28px 20px 0 20px;
   position: absolute;
   top: 150px;
   left: 20px;

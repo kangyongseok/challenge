@@ -6,7 +6,7 @@ import { logEvent } from '@library/amplitude';
 
 import { PRODUCT_NAME } from '@constants/product';
 
-import handleClickAppDownload from '@utils/common';
+import { handleClickAppDownload } from '@utils/common';
 
 import { FeatureBox } from './AppDownloadDialog.styles';
 

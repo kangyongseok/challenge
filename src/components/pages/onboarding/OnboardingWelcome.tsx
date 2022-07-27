@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -35,7 +36,7 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
   return (
     <>
       <Flexbox direction="vertical">
-        <img src="/images/onboardingWelcome.png" alt="onboardingWelcome.png" />
+        <OnboardingWelcomeImg src="images/onboardingWelcome.png" alt="onboardingWelcome.png" />
       </Flexbox>
       <Box customStyle={{ padding: '24px 20px 32px', flex: 1 }}>
         <Typography
@@ -58,5 +59,7 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
     </>
   );
 }
+
+const OnboardingWelcomeImg = styled.img``;
 
 export default OnboardingWelcome;

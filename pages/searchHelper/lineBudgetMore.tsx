@@ -65,7 +65,7 @@ function LineBudgetMore() {
   const budgetRef = useRef<HTMLInputElement>(null);
   const debounceBudget = useRef(
     debounce((newMinPrice: number, newMaxPrice: number) => {
-      setSearchParams(({ minPrice: prevMinPrice, maxPrice, ...currVal }) =>
+      setSearchParams(({ minPrice: _prevMinPrice, maxPrice: _maxPrice, ...currVal }) =>
         newMaxPrice === 0
           ? currVal
           : {
@@ -110,14 +110,15 @@ function LineBudgetMore() {
       .join(', ') || '';
 
   const handleOpenLineBottomSheet = useCallback(() => {
-    if (searchParams.lineIds?.length) setSearchParams(({ lineIds, ...currVal }) => currVal);
+    if (searchParams.lineIds?.length)
+      setSearchParams(({ lineIds: _lineIds, ...currVal }) => currVal);
 
     setOpenBottomSheet('line');
   }, [searchParams.lineIds?.length, setSearchParams]);
 
   const handleCloseLine = useCallback(() => {
     setOpenBottomSheet(null);
-    setSearchParams(({ lineIds, ...currVal }) => ({
+    setSearchParams(({ lineIds: _lineIds, ...currVal }) => ({
       ...currVal,
       ...omitBy({ lineIds: selectedSearchOptions?.lines?.map(({ id }) => id) }, isEmpty)
     }));
@@ -155,12 +156,12 @@ function LineBudgetMore() {
 
   const handleBlurBudget = () => {
     setTimeout(() => {
-      setSearchParams(({ minPrice: prevMinPrice, maxPrice, ...currVal }) =>
+      setSearchParams(({ minPrice: _prevMinPrice, maxPrice, ...currVal }) =>
         Number(budget) > 0 && maxPrice !== Number(budget)
           ? { ...currVal, minPrice: minPrice * 10000, maxPrice: Number(budget) * 10000 }
           : currVal
       );
-      setSelectedSearchOptions(({ minPrice: prevMinPrice, maxPrice, ...currVal }) =>
+      setSelectedSearchOptions(({ minPrice: _prevMinPrice, maxPrice: _maxPrice, ...currVal }) =>
         Number(budget) > 0 ? { ...currVal, minPrice, maxPrice: Number(budget) } : currVal
       );
 
@@ -170,12 +171,14 @@ function LineBudgetMore() {
 
   const handleClearBudget = useCallback(() => {
     setBudget('');
-    setSearchParams(({ minPrice: prevMinPrice, maxPrice, ...currVal }) => ({ ...currVal }));
+    setSearchParams(({ minPrice: _prevMinPrice, maxPrice: _maxPrice, ...currVal }) => ({
+      ...currVal
+    }));
     budgetRef.current?.focus();
   }, [setSearchParams]);
 
   const handleOpenMoreBottomSheet = useCallback(() => {
-    setSearchParams(({ siteUrlIds, ...currVal }) => currVal);
+    setSearchParams(({ siteUrlIds: _siteUrlIds, ...currVal }) => currVal);
     setOpenBottomSheet('more');
   }, [setSearchParams]);
 

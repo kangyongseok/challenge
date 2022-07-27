@@ -3,7 +3,6 @@
  * @returns string QueryString 반환
  * @example '?parentIds=1&subParentUds=2&gender=male'
  */
-
 export default function convertQueryStringByObject(object: object, forcedPrefixIgnore = false) {
   return Object.keys(object)
     .map((key) => {

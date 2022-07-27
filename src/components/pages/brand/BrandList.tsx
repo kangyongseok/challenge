@@ -32,7 +32,7 @@ function BrandList({ brands, brandTitles, lang, setListTitles, storageSet }: Bra
 
   useEffect(() => {
     setListTitles(navRefs.current);
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brands]);
 
   const handleClick = (e: MouseEvent<HTMLElement>) => {

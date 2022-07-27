@@ -78,7 +78,7 @@ function Brands() {
       }
     }
 
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, lang, currentTitle]);
 
   const callbackScroll = useCallback(() => {
@@ -96,6 +96,7 @@ function Brands() {
         }
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indexAreaRef]);
 
   const handleScroll = () => {

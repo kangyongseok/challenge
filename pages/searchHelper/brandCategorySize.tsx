@@ -129,7 +129,7 @@ function BrandCategorySize() {
   const handleClearBrand = useCallback(() => {
     setBrandValue('');
     setBrandsSuggestParams({ keyword: '' });
-    setSearchParams(({ brandIds, ...currVal }) => currVal);
+    setSearchParams(({ brandIds: _brnadIds, ...currVal }) => currVal);
     setSelectedSearchOptions((currVal) => ({ ...currVal, brand: { id: 0, name: '' } }));
   }, [setSearchParams, setSelectedSearchOptions]);
 
@@ -159,9 +159,12 @@ function BrandCategorySize() {
 
     if (searchParams.genderIds?.length) {
       if (searchParams.subParentIds?.length) {
-        setSearchParams(({ subParentIds, categorySizeIds, ...currVal }) => currVal);
+        setSearchParams(
+          ({ subParentIds: _subParentIds, categorySizeIds: _categorySizeIds, ...currVal }) =>
+            currVal
+        );
       } else {
-        setSearchParams(({ categorySizeIds, ...currVal }) => currVal);
+        setSearchParams(({ categorySizeIds: _categorySizeIds, ...currVal }) => currVal);
       }
     }
 
@@ -184,7 +187,7 @@ function BrandCategorySize() {
     }
 
     if (searchParams.categorySizeIds?.length) {
-      setSearchParams(({ categorySizeIds, ...currVal }) => currVal);
+      setSearchParams(({ categorySizeIds: _categorySizeIds, ...currVal }) => currVal);
     }
 
     setOpenBottomSheet('size');
@@ -212,11 +215,11 @@ function BrandCategorySize() {
         .join(', ')
     });
     router.replace('/searchHelper/lineBudgetMore');
-  }, []);
+  }, [brandLabel, categoryLabel, router, selectedSearchOptions.sizes]);
 
   const handleCloseSize = useCallback(() => {
     setOpenBottomSheet(null);
-    setSearchParams(({ categorySizeIds, ...currVal }) => ({
+    setSearchParams(({ categorySizeIds: _categorySizeIds, ...currVal }) => ({
       ...currVal,
       ...omitBy({ categorySizeIds: selectedSearchOptions.sizes.map(({ id }) => id) }, isEmpty)
     }));
@@ -263,7 +266,7 @@ function BrandCategorySize() {
     if (!isRequiredSizeCategory) {
       if (isRequireSize) setIsRequireSize(false);
 
-      setSelectedSearchOptions(({ sizes, ...currVal }) => ({ ...currVal, sizes: [] }));
+      setSelectedSearchOptions(({ sizes: _sizes, ...currVal }) => ({ ...currVal, sizes: [] }));
       return;
     }
 
@@ -316,8 +319,11 @@ function BrandCategorySize() {
           .filter((size) => size.length > 0)
           .join(', ')
       });
-      setSelectedSearchOptions(({ sizes, ...currVal }) => ({ ...currVal, sizes: userSizes }));
-      setSearchParams(({ categorySizeIds, ...currVal }) => ({
+      setSelectedSearchOptions(({ sizes: _sizes, ...currVal }) => ({
+        ...currVal,
+        sizes: userSizes
+      }));
+      setSearchParams(({ categorySizeIds: _categorySizeIds, ...currVal }) => ({
         ...currVal,
         categorySizeIds: userSizes.map(({ id }) => id)
       }));

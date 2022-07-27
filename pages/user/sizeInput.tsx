@@ -41,7 +41,7 @@ function SizeInput() {
       name: 'SIZE'
     });
     return () => atomSelectedSize([]);
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBack = () => {

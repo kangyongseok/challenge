@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import type { ChangeEvent } from 'react';
 
 import { Checkbox, Flexbox, Typography } from 'mrcamel-ui';

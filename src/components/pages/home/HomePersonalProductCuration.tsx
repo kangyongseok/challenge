@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment,no-param-reassign */
 import { useEffect, useRef } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';

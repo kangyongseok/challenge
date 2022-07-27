@@ -30,11 +30,6 @@ export interface AllBrand {
   [x: string]: number[] | string | number;
 }
 
-export interface NewBrands extends AllBrand {
-  ko: string;
-  en: string;
-}
-
 export interface SuggestParams {
   keyword: string;
   useCollabo?: boolean;

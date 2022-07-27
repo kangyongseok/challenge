@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { memo, useEffect, useMemo, useState } from 'react';
 
 import { Line } from 'react-chartjs-2';
@@ -167,6 +166,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               align: 'inner',
               font: {
                 size: 14,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 weight: ['400', '400', '400', '500']
               },

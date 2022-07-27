@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
@@ -91,29 +90,30 @@ function ProductDetail() {
   const contentRef = useRef<HTMLHRElement | null>(null);
   const channelTalkRef = useRef<HTMLDivElement | null>(null);
   const { isPriceDown, isDup, hasTarget, salePrice } = useMemo(() => {
-    const _price = getTenThousandUnitPrice(data?.product.price || 0);
-    const _targetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
-    let _isPriceDown = _targetProductPrice < _price;
-    let _isDup = data?.product.targetProductStatus === 0;
-    let _hasTarget = !!data?.product.targetProductId;
-    let _salePrice = _isDup && _hasTarget && _isPriceDown ? _price - _targetProductPrice : 0;
+    const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
+    const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
+    let newIsPriceDown = newTargetProductPrice < newPrice;
+    let newIsDup = data?.product.targetProductStatus === 0;
+    let newHasTarget = !!data?.product.targetProductId;
+    let newSalePrice =
+      newIsDup && newHasTarget && newIsPriceDown ? newPrice - newTargetProductPrice : 0;
 
-    if (_salePrice < 1) {
-      _isPriceDown = false;
+    if (newSalePrice < 1) {
+      newIsPriceDown = false;
     }
 
     if (chainPrice) {
-      _salePrice = Number(chainPrice) - (data?.product.price || 0);
-      _isDup = false;
-      _hasTarget = false;
-      _isPriceDown = false;
+      newSalePrice = Number(chainPrice) - (data?.product.price || 0);
+      newIsDup = false;
+      newHasTarget = false;
+      newIsPriceDown = false;
     }
 
     return {
-      isPriceDown: _isPriceDown,
-      isDup: _isDup,
-      hasTarget: _hasTarget,
-      salePrice: _salePrice
+      isPriceDown: newIsPriceDown,
+      isDup: newIsDup,
+      hasTarget: newHasTarget,
+      salePrice: newSalePrice
     };
   }, [chainPrice, data]);
   const isSafe = useMemo(() => {

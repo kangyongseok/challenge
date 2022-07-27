@@ -16,10 +16,10 @@ import Amplitude, { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import { PortalProvider } from '@utils/PortalProvider';
-import GoogleAnalyticsProvider from '@utils/GoogleAnalyticsProvider';
-import FacebookPixelProvider from '@utils/FacebookPixelProvider';
-import ChannelTalkProvider from '@utils/ChannelTalkProvider';
+import { PortalProvider } from '@provider/PortalProvider';
+import GoogleAnalyticsProvider from '@provider/GoogleAnalyticsProvider';
+import FacebookPixelProvider from '@provider/FacebookPixelProvider';
+import ChannelTalkProvider from '@provider/ChannelTalkProvider';
 
 import '@styles/base.css';
 import 'swiper/css';

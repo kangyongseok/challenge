@@ -121,7 +121,15 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
     } else {
       onClick();
     }
-  }, [mutateAsync, onClick, refetch, selectedBottomList, selectedShoesList, selectedTopList]);
+  }, [
+    hasSize,
+    mutateAsync,
+    onClick,
+    refetch,
+    selectedBottomList,
+    selectedShoesList,
+    selectedTopList
+  ]);
 
   return (
     <>

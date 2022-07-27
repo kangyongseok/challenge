@@ -56,3 +56,7 @@ export function getProductArea(area: string) {
 
   return resultArea;
 }
+
+export function commaNumber(value: number | string) {
+  return Number(value).toLocaleString();
+}

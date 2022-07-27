@@ -20,9 +20,10 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
-import { PortalConsumer } from '@utils/PortalProvider';
 
 import { pulse } from '@styles/transition';
+
+import { PortalConsumer } from '@provider/PortalProvider';
 
 interface ProductImagesProps {
   isLoading: boolean;
@@ -73,15 +74,22 @@ function ProductImages({ isLoading, product, getProductImageOverlay }: ProductIm
   }, [detailImages, product?.imageMain, product?.imageMainLarge]);
 
   useEffect(() => {
+    const newWrapperRef = wrapperRef.current;
     const disabledSafariSwipeBack = (e: TouchEvent) => {
       if (e.targetTouches[0].pageX > 20) return;
 
       e.preventDefault();
     };
 
-    wrapperRef.current?.addEventListener('touchstart', disabledSafariSwipeBack);
+    if (newWrapperRef) {
+      newWrapperRef.addEventListener('touchstart', disabledSafariSwipeBack);
+    }
 
-    return () => wrapperRef.current?.removeEventListener('touchstart', disabledSafariSwipeBack);
+    return () => {
+      if (newWrapperRef) {
+        newWrapperRef.removeEventListener('touchstart', disabledSafariSwipeBack);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -237,7 +245,7 @@ function ProductImages({ isLoading, product, getProductImageOverlay }: ProductIm
                         height: '100vh'
                       }}
                     >
-                      <img
+                      <ProductImg
                         src={image}
                         alt={image.slice(image.lastIndexOf('/') + 1)}
                         onLoad={handleImageLoad(index)}
@@ -318,5 +326,7 @@ const ModalPagination = styled(Pagination)`
   bottom: 20px;
   transform: translateX(-50%);
 `;
+
+const ProductImg = styled.img``;
 
 export default memo(ProductImages);

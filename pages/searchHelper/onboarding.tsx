@@ -10,9 +10,8 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import { PortalConsumer } from '@utils/PortalProvider';
-
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
+import { PortalConsumer } from '@provider/PortalProvider';
 
 function Onboarding() {
   const router = useRouter();

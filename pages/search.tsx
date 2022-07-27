@@ -36,7 +36,6 @@ import type { RecentItems, SelectItem, TotalSearchItem } from '@typings/search';
 
 function Search() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const removeTimeout = useRef<NodeJS.Timeout>();
   const router = useRouter();
   const {
     theme: { palette }
@@ -202,7 +201,6 @@ function Search() {
     if (searchValue.trim()) {
       refetch();
     }
-    return () => clearTimeout(removeTimeout.current);
   }, [refetch, searchValue]);
 
   useEffect(() => {

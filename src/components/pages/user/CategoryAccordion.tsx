@@ -50,6 +50,7 @@ function CategoryAccordion({
     if (openedParentCategoryIds.length === 0) {
       setOpenedParentCategoryIds(categoryState.parentCategoryIds);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryState]);
 
   const handleOpenParentCategory = useCallback(() => {

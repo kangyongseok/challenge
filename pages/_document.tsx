@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
@@ -97,6 +96,7 @@ class MyDocument extends Document {
             content={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/ms-icon-144x144.png`}
           />
           <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               height="1"
               width="1"

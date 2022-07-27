@@ -35,9 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.statusCode = 200;
 
       return res.send(userSnsLoginResult);
-    } catch (error) {
-      console.log('Auth Login API Error:', error);
-
+    } catch {
       return res.end();
     }
   }

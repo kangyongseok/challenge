@@ -40,7 +40,7 @@ function MyPage() {
     logEvent(attrKeys.mypage.VIEW_MY, {
       title: accessUser ? 'LOGIN' : 'NONLOGIN'
     });
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!accessUser || !userInfo) {

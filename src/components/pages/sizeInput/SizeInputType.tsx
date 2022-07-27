@@ -65,6 +65,7 @@ function SizeInputType() {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessUserInfo, selectedSizes]);
 
   useEffect(() => {
@@ -83,6 +84,7 @@ function SizeInputType() {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {

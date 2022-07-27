@@ -79,18 +79,26 @@ function SearchHelperMoreOptionBottomSheet({
     onClose();
     setCurrentSlide(0);
     setSelectedOptions({ platforms: [], colors: [], seasons: [], materials: [] });
-    setSearchParams(({ siteUrlIds, colorIds, seasonIds, materialIds, ...currVal }) => ({
-      ...currVal,
-      ...omitBy(
-        {
-          siteUrlIds: selectedSearchOptions?.platforms?.map(({ id }) => id),
-          colorIds: selectedSearchOptions?.colors?.map(({ id }) => id),
-          seasonIds: selectedSearchOptions?.seasons?.map(({ id }) => id),
-          materialIds: selectedSearchOptions?.materials?.map(({ id }) => id)
-        },
-        isEmpty
-      )
-    }));
+    setSearchParams(
+      ({
+        siteUrlIds: _siteUrlIds,
+        colorIds: _colorIds,
+        seasonIds: _seasonIds,
+        materialIds: _materialIds,
+        ...currVal
+      }) => ({
+        ...currVal,
+        ...omitBy(
+          {
+            siteUrlIds: selectedSearchOptions?.platforms?.map(({ id }) => id),
+            colorIds: selectedSearchOptions?.colors?.map(({ id }) => id),
+            seasonIds: selectedSearchOptions?.seasons?.map(({ id }) => id),
+            materialIds: selectedSearchOptions?.materials?.map(({ id }) => id)
+          },
+          isEmpty
+        )
+      })
+    );
   };
 
   const handleClickOption = (index: number) => () => {
@@ -106,26 +114,36 @@ function SearchHelperMoreOptionBottomSheet({
     setCurrentSlide(activeIndex);
 
     if (Object.entries(selectedOptions).some(([_, value]) => value)) {
-      setSearchParams(({ siteUrlIds, colorIds, seasonIds, materialIds, ...currVal }) => ({
-        ...currVal,
-        ...omitBy(
-          {
-            siteUrlIds:
-              MENU[activeIndex].id === 'platforms'
-                ? []
-                : selectedOptions.platforms.map(({ id }) => id),
-            colorIds:
-              MENU[activeIndex].id === 'colors' ? [] : selectedOptions.colors.map(({ id }) => id),
-            seasonIds:
-              MENU[activeIndex].id === 'seasons' ? [] : selectedOptions.seasons.map(({ id }) => id),
-            materialIds:
-              MENU[activeIndex].id === 'materials'
-                ? []
-                : selectedOptions.materials.map(({ id }) => id)
-          },
-          isEmpty
-        )
-      }));
+      setSearchParams(
+        ({
+          siteUrlIds: _siteUrlIds,
+          colorIds: _colorIds,
+          seasonIds: _seasonIds,
+          materialIds: _materialIds,
+          ...currVal
+        }) => ({
+          ...currVal,
+          ...omitBy(
+            {
+              siteUrlIds:
+                MENU[activeIndex].id === 'platforms'
+                  ? []
+                  : selectedOptions.platforms.map(({ id }) => id),
+              colorIds:
+                MENU[activeIndex].id === 'colors' ? [] : selectedOptions.colors.map(({ id }) => id),
+              seasonIds:
+                MENU[activeIndex].id === 'seasons'
+                  ? []
+                  : selectedOptions.seasons.map(({ id }) => id),
+              materialIds:
+                MENU[activeIndex].id === 'materials'
+                  ? []
+                  : selectedOptions.materials.map(({ id }) => id)
+            },
+            isEmpty
+          )
+        })
+      );
     }
   };
 
@@ -143,22 +161,38 @@ function SearchHelperMoreOptionBottomSheet({
         .join(', ')
     });
     onClose();
-    setSelectedSearchOptions(({ platforms, colors, seasons, materials, ...currVal }) => ({
-      ...currVal,
-      ...omitBy(selectedOptions, isEmpty)
-    }));
-    setSearchParams(({ siteUrlIds, colorIds, seasonIds, materialIds, ...currVal }) => ({
-      ...currVal,
-      ...omitBy(
-        {
-          siteUrlIds: selectedOptions.platforms.map(({ id }) => id),
-          colorIds: selectedOptions.colors.map(({ id }) => id),
-          seasonIds: selectedOptions.seasons.map(({ id }) => id),
-          materialIds: selectedOptions.materials.map(({ id }) => id)
-        },
-        isEmpty
-      )
-    }));
+    setSelectedSearchOptions(
+      ({
+        platforms: _platforms,
+        colors: _colors,
+        seasons: _seasons,
+        materials: _materials,
+        ...currVal
+      }) => ({
+        ...currVal,
+        ...omitBy(selectedOptions, isEmpty)
+      })
+    );
+    setSearchParams(
+      ({
+        siteUrlIds: _siteUrlIds,
+        colorIds: _colorIds,
+        seasonIds: _seasonIds,
+        materialIds: _materialIds,
+        ...currVal
+      }) => ({
+        ...currVal,
+        ...omitBy(
+          {
+            siteUrlIds: selectedOptions.platforms.map(({ id }) => id),
+            colorIds: selectedOptions.colors.map(({ id }) => id),
+            seasonIds: selectedOptions.seasons.map(({ id }) => id),
+            materialIds: selectedOptions.materials.map(({ id }) => id)
+          },
+          isEmpty
+        )
+      })
+    );
     setCurrentSlide(0);
     setSelectedOptions({ platforms: [], colors: [], seasons: [], materials: [] });
   };

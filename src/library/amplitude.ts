@@ -201,8 +201,8 @@ const commonEventBraze = (eventName: string, eventParams: object) => {
           );
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      //
     }
   }
 };

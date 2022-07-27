@@ -54,7 +54,7 @@ function BrandInputFooter({
         setClientHeight(autoHeight.current.clientHeight);
       }
     }
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkList, moreToggle]);
 
   const handleSave = () => {

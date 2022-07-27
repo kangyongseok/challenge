@@ -18,6 +18,8 @@
       "@images/*": ["./public/images/*"],
       "@library": ["./src/library"],
       "@library/*": ["./src/library/*"],
+      "@provider": ["./src/provider"],
+      "@provider/*": ["./src/provider/*"],
       "@styles": ["./src/styles"],
       "@styles/*": ["./src/styles/*"],
       "@svgs/*": ["./public/svgs/*"],

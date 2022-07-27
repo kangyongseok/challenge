@@ -75,7 +75,7 @@ function CategoryInput() {
         selectAllCategoryIds: categoryState.selectAllCategoryIds
       });
     }
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
   const handleSave = () => {

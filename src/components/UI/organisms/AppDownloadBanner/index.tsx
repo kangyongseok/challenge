@@ -9,7 +9,7 @@ import { logEvent } from '@library/amplitude';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 
 import { getPageNameByPathName } from '@utils/getPageNameByPathName';
-import handleClickAppDownload from '@utils/common';
+import { handleClickAppDownload } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 

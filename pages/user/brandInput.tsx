@@ -74,7 +74,7 @@ function BrandInput() {
         setCheckList(result);
       }
     }
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
   useEffect(() => {
@@ -227,7 +227,7 @@ function BrandInput() {
       </Toast>
       <Dialog
         open={isEmptyBack}
-        onClose={() => console.log('close')}
+        onClose={() => setIsEmptyBack(false)}
         customStyle={{ width: '100%', textAlign: 'center' }}
       >
         <Typography>

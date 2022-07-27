@@ -61,6 +61,7 @@ function SizeInputSearch() {
       }
       if (isEmpty(searchValue)) atomSearchModeDisabled(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, tempSelected, searchValue]);
 
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
@@ -135,7 +136,7 @@ function SizeInputSearch() {
 const SearchBarArea = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 206 : 146)}px;
-  left: 0px;
+  left: 0;
   width: 100%;
   padding: 0 20px;
   z-index: 100;

@@ -33,7 +33,7 @@ function BrandIndex({
   useEffect(() => {
     setIndexRefs(indexRef.current);
     setIndexAreaRef(indexAreaRef.current as HTMLDivElement);
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTitle]);
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {

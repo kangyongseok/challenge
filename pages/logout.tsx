@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
@@ -46,18 +45,14 @@ function Logout() {
 }
 
 export async function getServerSideProps({ res }: GetServerSidePropsContext) {
-  try {
-    res.setHeader('Set-Cookie', [
-      `accessUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
-        process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
-      }`,
-      `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
-        process.env.NODE_ENV !== 'development' ? 'domain=domain=.mrcamel.co.kr;' : ''
-      }`
-    ]);
-  } catch (error) {
-    console.log('Logout Error:', error);
-  }
+  res.setHeader('Set-Cookie', [
+    `accessUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
+      process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
+    }`,
+    `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
+      process.env.NODE_ENV !== 'development' ? 'domain=domain=.mrcamel.co.kr;' : ''
+    }`
+  ]);
 
   return {
     props: {}

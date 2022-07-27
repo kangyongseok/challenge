@@ -134,10 +134,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
       )
     ) {
       if (navigator.share) {
-        navigator
-          .share({ text: product.title, url })
-          .then(() => console.log('Successful share'))
-          .catch((error) => console.log('Error sharing', error));
+        navigator.share({ text: product.title, url });
         return;
       }
 

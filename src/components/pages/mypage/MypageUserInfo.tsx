@@ -35,7 +35,7 @@ function MypageUserInfo() {
 
   useEffect(() => {
     queryClient.invalidateQueries(queryKeys.users.userInfo());
-  }, []);
+  }, [queryClient]);
 
   const sizeParser = () => {
     let result = '';

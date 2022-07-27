@@ -14,8 +14,7 @@ import PuffLoader from '@components/UI/atoms/PuffLoader';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LoginButtonList, LoginMainContent, LoginUserAgreement } from '@components/pages/login';
 
-import type { AppleAccount, FacebookAccount } from '@dto/userAuth';
-import { KakaoAppAccount } from '@dto/userAuth';
+import type { AppleAccount, FacebookAccount, KakaoAppAccount } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -224,7 +223,6 @@ function Login() {
           );
         });
       } catch (error) {
-        console.log('Nextjs Auth Login API Error:', error);
         setLoading(false);
         setErrorPopup({ open: true, provider: null });
         logEvent(attrKeys.login.LOAD_LOGIN_SNS, {

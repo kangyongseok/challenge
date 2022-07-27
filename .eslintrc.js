@@ -94,6 +94,9 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     'import/prefer-default-export': 'off',
+    'import/no-unresolved': ['error', { ignore: ['swiper/*'] }],
+    'no-console': ['error'],
+    'react-hooks/exhaustive-deps': ['error'],
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/no-unused-prop-types': 'off',
@@ -102,7 +105,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-explicit-any': ['error'],
-    'import/no-unresolved': ['error', { ignore: ['swiper/*'] }]
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '_' }]
   },
   settings: {
     'import/resolver': {

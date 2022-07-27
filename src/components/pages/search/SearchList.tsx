@@ -157,6 +157,7 @@ function SearchList({ searchValue, searchResult, onClick, onClickCategory }: Sea
                 isType={item.type === 0}
               >
                 <Flexbox gap={8} alignment="center">
+                  {/* eslint-disable-next-line react/no-danger */}
                   <span dangerouslySetInnerHTML={{ __html: item.keywordDeco }} />
                   {item.count > 0 && (
                     <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>

@@ -35,7 +35,7 @@ function BudgetInput() {
     if (userInfo && !budget) {
       setBudget(userInfo.maxMoney);
     }
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
   return (

@@ -2,7 +2,7 @@ import { PropsWithChildren, RefObject, useEffect, useRef, useState } from 'react
 
 import type { CustomStyle } from 'mrcamel-ui';
 
-import { PortalConsumer } from '@utils/PortalProvider';
+import { PortalConsumer } from '@provider/PortalProvider';
 
 import { Backdrop, Spotlight } from './OnBoardingSpotlight.styles';
 

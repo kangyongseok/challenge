@@ -15,7 +15,6 @@ interface BrandSwitchLangProps {
 }
 
 function BrandSwitchLang({ lang, onClick }: BrandSwitchLangProps) {
-  /* eslint-disable react-hooks/exhaustive-deps */
   const {
     theme: { palette }
   } = useTheme();
