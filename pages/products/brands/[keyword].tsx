@@ -1,7 +1,6 @@
 import { ProductsSaveSearchPopup } from '@components/UI/organisms';
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import ProductsSaveSearchFloatingButton from '@components/pages/products/ProductsSaveSearchFloatingButton';
 import {
   ProductsCategoryTags,
   ProductsFilter,
@@ -12,6 +11,7 @@ import {
   ProductsKeywordDialog,
   ProductsMapFilterBottomSheet,
   ProductsRelated,
+  ProductsSaveSearchFloatingButton,
   ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -132,6 +132,15 @@ function BottomNavigation({
   const wishNavRef = useRef<HTMLLIElement | null>(null);
   const openTooltipTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
+  const confirmPriceNotiProducts = useMemo(() => {
+    return priceNotiProducts.filter(({ priceBefore, price }) => {
+      if (priceBefore) {
+        return getTenThousandUnitPrice(priceBefore - price) >= 1;
+      }
+      return false;
+    });
+  }, [priceNotiProducts]);
+
   const handleClickInterceptor =
     (title: string, logName: string, href: string) => (e: MouseEvent<HTMLAnchorElement>) => {
       logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`);
@@ -173,14 +182,14 @@ function BottomNavigation({
 
   useEffect(() => {
     const isHome = router.pathname === '/';
-    if (isHome && priceNotiProducts.length) {
+    if (isHome && confirmPriceNotiProducts.length) {
       setOpenTooltip(true);
       logEvent(attrKeys.home.VIEW_WISHPRICE_TOOLTIP, {
         name: 'MAIN',
-        att: priceNotiProducts.length > 1 ? 'MANY' : 'ONE'
+        att: confirmPriceNotiProducts.length > 1 ? 'MANY' : 'ONE'
       });
     }
-  }, [router.pathname, priceNotiProducts]);
+  }, [router.pathname, confirmPriceNotiProducts]);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -235,8 +244,8 @@ function BottomNavigation({
                   href={{
                     pathname: navData.href,
                     query:
-                      navData.href === '/wishes' && priceNotiProducts.length
-                        ? { scrollToProductId: priceNotiProducts[0].id }
+                      navData.href === '/wishes' && confirmPriceNotiProducts.length
+                        ? { scrollToProductId: confirmPriceNotiProducts[0].id }
                         : undefined
                   }}
                   passHref
@@ -282,7 +291,7 @@ function BottomNavigation({
                 <Icon name="CloseOutlined" onClick={handleClose} color={common.grey['60']} />
               </Flexbox>
             </PriceDownTooltipTitle>
-            {priceNotiProducts.length > 1 && (
+            {confirmPriceNotiProducts.length > 1 && (
               <Typography
                 weight="bold"
                 variant="body1"
@@ -296,7 +305,7 @@ function BottomNavigation({
                 찜한 매물 가격이 내려갔어요. 바로 확인해보세요!
               </Typography>
             )}
-            {priceNotiProducts.length === 1 && (
+            {confirmPriceNotiProducts.length === 1 && (
               <Typography
                 weight="bold"
                 variant="body1"
@@ -308,10 +317,11 @@ function BottomNavigation({
                 }}
               >
                 {`찜한 "${getPriceNotiProductTitle(
-                  priceNotiProducts[0].title
+                  confirmPriceNotiProducts[0].title
                 )}" 가격이 ${commaNumber(
                   getTenThousandUnitPrice(
-                    (priceNotiProducts[0].priceBefore as number) - priceNotiProducts[0].price
+                    (confirmPriceNotiProducts[0].priceBefore as number) -
+                      confirmPriceNotiProducts[0].price
                   )
                 )}만원 내려갔어요!`}
               </Typography>

@@ -31,7 +31,7 @@ import { fetchSearch } from '@api/product';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds } from '@constants/productsFilter';
-import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP, UTM_PARAMS } from '@constants/localStorage';
+import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -39,6 +39,7 @@ import attrKeys from '@constants/attrKeys';
 import getEventPropertyViewType from '@utils/products/getEventPropertyViewType';
 import getEventPropertySortValue from '@utils/products/getEventPropertySortValue';
 import { convertSearchParamsByQuery } from '@utils/products';
+import { getUtmParams } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import { ProductsEventProperties } from '@typings/products';
@@ -512,9 +513,9 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         };
       }
 
-      const utmParams = LocalStorage.get<UtmParams>(UTM_PARAMS);
+      const utmParams = getUtmParams();
 
-      if (utmParams) {
+      if (Object.keys(utmParams).length) {
         const { utmSource = '', utmMedium, utmCampaign } = utmParams;
         eventProperties = {
           ...eventProperties,
