@@ -34,6 +34,7 @@ export interface KaKaoAccount {
     birthday?: string;
     gender_needs_agreement: boolean;
     gender?: string;
+    phone_number?: string;
   };
   properties: {
     nickname: string;
@@ -54,6 +55,7 @@ export interface UserSnsLoginInfo {
   birthday?: string;
   email?: string;
   gender?: string;
+  phone?: string;
   image?: string;
   loginIp?: string;
   mrcamelId?: string;
@@ -71,6 +73,7 @@ export interface AccessUser {
   birthday: string;
   email: string;
   gender: string;
+  phone: string;
   image: string;
   mrcamelId: string;
   snsType: string;
@@ -105,6 +108,7 @@ export interface KakaoAppAccount {
   kakao_account?: {
     email: string;
     gender?: string;
+    phoneNumber?: string;
   };
   properties: {
     nickname: string;
