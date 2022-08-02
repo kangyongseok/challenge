@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://mrcamel.co.kr/sitemap.xml
+
+#DaumWebMasterTool:5d40a6e1c1e9aae0a442577a6729b271f9cd3fb4430310de85b8780dcbebde87:kYQOswXkiJPQ28gVdnUABA==
