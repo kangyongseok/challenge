@@ -107,7 +107,7 @@ function ProductLegitProcessBottomSheet() {
           wrapCustomStyle={{ position: 'absolute', top: 15, right: 10 }}
         />
       </Flexbox>
-      {isNotWorking && <OverTime />}
+      {accessUser && isNotWorking && <OverTime />}
       {!accessUser && <NotAppUser />}
       {accessUser && !isNotWorking && <Basic />}
       <CtaButton
