@@ -113,6 +113,12 @@ const dashboard = {
   legitDashboard: () => [...dashboard.all, 'legitDashboard'] as const
 };
 
+const model = {
+  all: ['model'] as const,
+  suggest: () => [...model.all, 'suggest'] as const,
+  keyword: (value: string) => [...model.all, value] as const
+};
+
 const queryKeys = {
   brands,
   categories,
@@ -124,7 +130,8 @@ const queryKeys = {
   logs,
   dashboard,
   nextJs,
-  client
+  client,
+  model
 };
 
 export default queryKeys;

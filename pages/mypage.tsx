@@ -59,7 +59,7 @@ function MyPage() {
       footer={<BottomNavigation />}
     >
       <MypageWelcome />
-      <Line top={showAppDownloadBanner ? 200 : 0} />
+      <Line top={showAppDownloadBanner ? 284 : 226} />
       <MypageNotice data={userInfo?.announces} />
       <MypageUserInfo />
       <MypageSetting data={userInfo?.alarm} />

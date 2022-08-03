@@ -201,6 +201,9 @@ export function handleClickAppDownload({
       )}&af_adset=productList${oneLinkParams}`;
     return;
   }
+  if (window.location.pathname === '/myPortfolio') {
+    window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=portfolio${deepLinkParams}${oneLinkParams}`;
+  }
 
   window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=not_detail${deepLinkParams}${oneLinkParams}`;
 }

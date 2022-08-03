@@ -3,11 +3,13 @@ import { useEffect } from 'react';
 import { DehydratedState, QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
+import { Box } from 'mrcamel-ui';
 
 import SaveSearchList from '@components/UI/organisms/SaveSearchList';
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
 import {
   HomeAiCategories,
   HomeBrandList,
@@ -31,6 +33,7 @@ import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import checkAgent from '@utils/checkAgent';
@@ -100,6 +103,9 @@ function Home() {
         <HomeBrandList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
         <HomeProductLegitLive />
         <HomeCategoryList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
+        <Box customStyle={{ margin: '0 -20px' }}>
+          <MyPortfolioCommonBanner name={attrProperty.productName.MAIN} />
+        </Box>
         <HomeCamelProductCuration />
         <HomeAiCategories />
         <HomePersonalProductCuration />

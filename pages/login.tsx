@@ -149,7 +149,6 @@ function Login() {
           att: 'SUCCESS',
           successData: userSnsLoginInfo
         });
-
         LocalStorage.set(ACCESS_USER, userSnsLoginResult.accessUser);
         LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
         LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);

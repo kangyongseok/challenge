@@ -173,6 +173,10 @@ export async function fetchSizeMapping() {
   return data;
 }
 
+export async function postPreReserve(params: { model?: string; phone?: string }) {
+  await Axios.getInstance().post(`${BASE_PATH}/model`, params);
+}
+
 export async function fetchUserLegitTargets() {
   const { data } = await Axios.getInstance().get<Product[]>(`${BASE_PATH}/legitTargets`);
 
