@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import { Box, Flexbox, Rating, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -50,8 +52,8 @@ function LegitReviewList() {
   return (
     <StyledReviewList>
       {reviews.map(({ id, date, message, rating }, index) => (
-        <>
-          <ReviewCard key={`legit-review-${id}`}>
+        <Fragment key={`legit-review-${id}`}>
+          <ReviewCard>
             <QuotesIcon />
             <Flexbox gap={3} alignment="flex-end" customStyle={{ marginTop: 8 }}>
               <Typography weight="bold">UserID</Typography>
@@ -77,7 +79,7 @@ function LegitReviewList() {
           {index === reviews.length - 1 && (
             <Box component="span" customStyle={{ minWidth: 20, height: 20 }} />
           )}
-        </>
+        </Fragment>
       ))}
     </StyledReviewList>
   );

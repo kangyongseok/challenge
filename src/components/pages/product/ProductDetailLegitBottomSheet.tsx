@@ -38,12 +38,17 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
         title: attrProperty.productTitle.ABOUT_CTA
       });
     }
-    return () => atomLegitBottomSheet(false);
-  }, [atomLegitBottomSheet, legitBottomSheet]);
+  }, [legitBottomSheet]);
 
   return (
     // eslint-disable-next-line no-console
-    <BottomSheet open={legitBottomSheet} onClose={() => console.log('close')} disableSwipeable>
+    <BottomSheet
+      open={legitBottomSheet}
+      onClose={() => {
+        //
+      }}
+      disableSwipeable
+    >
       <ImageBox>
         <Label
           text="NEW"
@@ -124,6 +129,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
               title: attrProperty.productTitle.ABOUT_CTA,
               att: 'OK'
             });
+            atomLegitBottomSheet(false);
             postProductLegitMutate(
               { id: Number(router.query.id), deviceId },
               {
