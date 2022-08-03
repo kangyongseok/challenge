@@ -229,6 +229,10 @@ export const idFilterOptions = [
   {
     id: 30,
     name: '시세이하'
+  },
+  {
+    id: 100,
+    name: '사진감정'
   }
 ];
 

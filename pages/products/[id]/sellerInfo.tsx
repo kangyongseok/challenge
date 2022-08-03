@@ -86,11 +86,7 @@ function SellerInfoPage() {
     },
     {
       key: 'reviews',
-      value: `후기 ${
-        reviewsLastPage
-          ? reviewsLastPage.totalCount || reviewsLastPage.sellerReviews.totalElements
-          : 0
-      }개`
+      value: `후기 ${reviewsLastPage ? reviewsLastPage.sellerReviews.totalElements : 0}개`
     }
   ];
 

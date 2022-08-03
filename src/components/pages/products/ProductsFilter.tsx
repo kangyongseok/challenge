@@ -39,6 +39,7 @@ import {
 } from '@constants/productsFilter';
 import { PRODUCT_NAME } from '@constants/product';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -171,6 +172,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   const filterButtonsRef = useRef<HTMLDivElement | null>(null);
   const productKeywordSaveChipRef = useRef<HTMLButtonElement | null>(null);
   const mapFilterChipRef = useRef<HTMLButtonElement | null>(null);
+  const legitChipRef = useRef<HTMLButtonElement | null>(null);
 
   const productsFilterRef = useRef<HTMLDivElement | null>(null);
   const prevReverseTriggeredRef = useRef(true);
@@ -191,6 +193,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   const [step1TooltipCustomStyle, setStep1TooltipCustomStyle] = useState<CustomStyle>({});
   const [step2TooltipCustomStyle, setStep2TooltipCustomStyle] = useState<CustomStyle>({});
   const [step3TooltipCustomStyle, setStep3TooltipCustomStyle] = useState<CustomStyle>({});
+  const [step4TooltipCustomStyle, setStep4TooltipCustomStyle] = useState<CustomStyle>({});
 
   const {
     data: {
@@ -441,12 +444,13 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   };
 
   const handleClickIdFilterOption = (e: MouseEvent<HTMLButtonElement>) => {
+    logEvent(attrKeys.products.CLICK_APPLY_IDFILTER);
+
     const dataId = Number(e.currentTarget.getAttribute('data-id') || 0);
+
     const selectedIdFilterOption = idFilterOptions.find(({ id }) => id === dataId);
 
     if (!selectedIdFilterOption) return;
-
-    logEvent(attrKeys.products.CLICK_APPLY_IDFILTER);
 
     const { id } = selectedIdFilterOption;
     const idFilterIds = searchParams.idFilterIds || [];
@@ -470,6 +474,13 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
       newSelectedSearchOptions = selectedSearchOptions.concat({
         id,
         codeId: filterCodeIds.id
+      });
+    }
+
+    if (dataId === 100) {
+      logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
+        name: attrProperty.productName.PRODUCT_LIST,
+        att: selectedIdFilterOptionIndex > -1 ? 'OFF' : 'ON'
       });
     }
 
@@ -902,6 +913,18 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
         height: 'fit-content'
       });
     }
+    if (legitChipRef.current) {
+      const { clientHeight } = legitChipRef.current;
+      const { top } = legitChipRef.current.getBoundingClientRect();
+
+      setStep4TooltipCustomStyle({
+        position: 'fixed',
+        top: top + clientHeight + 20,
+        left: ((mapFilterChipRef.current || {}).clientWidth || 0) + 26,
+        transform: 'none',
+        height: 'fit-content'
+      });
+    }
 
     if (accessUser) {
       setProductsOnBoardingTrigger(productsOnBoardingTrigger);
@@ -933,28 +956,30 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
           css={filterCustomStyle}
         >
           <FilterButtons ref={filterButtonsRef}>
-            {idFilterOptions.map(({ id, name }) => (
-              <Chip
-                key={`id-filter-option-button-${id}`}
-                variant={
-                  (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
-                    ? 'outlinedGhost'
-                    : 'outlined'
-                }
-                brandColor={
-                  (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
-                    ? 'primary'
-                    : 'grey'
-                }
-                size="small"
-                weight="medium"
-                isRound={false}
-                data-id={id}
-                onClick={handleClickIdFilterOption}
-              >
-                {name}
-              </Chip>
-            ))}
+            {idFilterOptions
+              .filter(({ id }) => id !== 100)
+              .map(({ id, name }) => (
+                <Chip
+                  key={`id-filter-option-button-${id}`}
+                  variant={
+                    (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
+                      ? 'outlinedGhost'
+                      : 'outlined'
+                  }
+                  brandColor={
+                    (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
+                      ? 'primary'
+                      : 'grey'
+                  }
+                  data-id={id}
+                  size="small"
+                  weight="medium"
+                  isRound={false}
+                  onClick={handleClickIdFilterOption}
+                >
+                  {name}
+                </Chip>
+              ))}
             {extendsFilterCodes.map(({ codeId, name, count }) => (
               <Chip
                 key={`filter-option-button-${codeId}`}
@@ -979,22 +1004,39 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
               padding: '8px 20px'
             }}
           >
-            <Chip
-              ref={mapFilterChipRef}
-              variant={selectedMapFilterOption ? 'outlinedGhost' : 'ghost'}
-              size="small"
-              weight="medium"
-              brandColor={selectedMapFilterOption ? 'primary' : 'black'}
-              onClick={() =>
-                setProductsMapFilterState(({ type }) => ({
-                  type,
-                  open: true
-                }))
-              }
-            >
-              {selectedMapFilterOption && selectedMapFilterOption.viewName}
-              {!selectedMapFilterOption && '내 주변 위치'}
-            </Chip>
+            <Flexbox gap={6}>
+              <Chip
+                ref={mapFilterChipRef}
+                variant={selectedMapFilterOption ? 'outlinedGhost' : 'ghost'}
+                size="small"
+                weight="medium"
+                brandColor={selectedMapFilterOption ? 'primary' : 'black'}
+                onClick={() =>
+                  setProductsMapFilterState(({ type }) => ({
+                    type,
+                    open: true
+                  }))
+                }
+                customStyle={{
+                  minWidth: 'fit-content'
+                }}
+              >
+                {selectedMapFilterOption && selectedMapFilterOption.viewName}
+                {!selectedMapFilterOption && '내 주변 위치'}
+              </Chip>
+              <LegitChip
+                ref={legitChipRef}
+                variant={(searchParams.idFilterIds || []).includes(100) ? 'outlinedGhost' : 'ghost'}
+                brandColor={(searchParams.idFilterIds || []).includes(100) ? 'primary' : 'black'}
+                data-id={100}
+                size="small"
+                weight="medium"
+                onClick={handleClickIdFilterOption}
+              >
+                <span>🔎&nbsp;</span>사진감정
+                <span>&nbsp;{(searchParams.idFilterIds || []).includes(100) ? 'ON' : 'OFF'}</span>
+              </LegitChip>
+            </Flexbox>
             {showProductKeywordSaveChip && (
               <Tooltip
                 open={tooltip}
@@ -1017,6 +1059,9 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                   weight="medium"
                   startIcon={<Icon name="BookmarkFilled" size="small" />}
                   onClick={handleClickProductsKeywordSave}
+                  customStyle={{
+                    minWidth: 'fit-content'
+                  }}
                 >
                   이 검색 저장
                 </Chip>
@@ -1029,7 +1074,10 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                 size="small"
                 weight="medium"
                 startIcon={<Icon name="BookmarkFilled" size="small" />}
-                customStyle={{ visibility: !complete && step === 1 ? 'visible' : 'hidden' }}
+                customStyle={{
+                  minWidth: 'fit-content',
+                  visibility: !complete && step === 1 ? 'visible' : 'hidden'
+                }}
               >
                 이 검색 저장
               </Chip>
@@ -1041,6 +1089,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                 weight="medium"
                 startIcon={<Icon name="CloseOutlined" size="small" />}
                 customStyle={{
+                  minWidth: 'fit-content',
                   borderColor: common.grey['40']
                 }}
                 onClick={handleClickDeleteProductKeyword}
@@ -1161,6 +1210,33 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
           customStyle={step3TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
+      <OnBoardingSpotlight
+        open={!complete && step === 4}
+        onClose={() =>
+          setUserOnBoardingTriggerState((prevState) => ({
+            ...prevState,
+            products: {
+              complete: true,
+              step: 5
+            }
+          }))
+        }
+        targetRef={legitChipRef}
+        customStyle={{ borderRadius: 36 }}
+      >
+        <Tooltip
+          open={!complete && step === 4}
+          brandColor="primary-highlight"
+          message={
+            <Typography variant="body2" weight="bold">
+              정가품이 궁금하다면 클릭!
+            </Typography>
+          }
+          triangleLeft={12}
+          placement="bottom"
+          customStyle={step4TooltipCustomStyle}
+        />
+      </OnBoardingSpotlight>
       <Tooltip
         className="products-filter-tooltip"
         open={openMyFilterTooltip}
@@ -1248,8 +1324,8 @@ const StyledProductsFilter = styled.div<{
       : {
           position: 'static'
         }}
-  ${({ scrollTriggered, reverseTriggered, prevReverseTriggered }): CSSObject => {
-    if (scrollTriggered && !reverseTriggered && prevReverseTriggered) {
+  ${({ scrollTriggered, prevReverseTriggered, reverseTriggered }): CSSObject => {
+    if (scrollTriggered && prevReverseTriggered) {
       return {
         opacity: 0,
         pointerEvents: 'none',
@@ -1301,6 +1377,15 @@ const NewButton = styled(Button)`
   padding: 5px 6px;
   font-weight: 700;
   font-size: 10px;
+`;
+
+const LegitChip = styled(Chip)`
+  min-width: fit-content;
+  @media (max-width: 355px) {
+    & > span {
+      display: none;
+    }
+  }
 `;
 
 export default ProductsFilter;

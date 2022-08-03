@@ -1,3 +1,4 @@
+import { Label } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
@@ -18,6 +19,7 @@ export const List = styled.ul<{ triggered: boolean }>`
   background: ${({ theme: { palette } }) => palette.common.white};
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
   height: 64px;
   ${({ triggered }): CSSObject =>
@@ -34,6 +36,7 @@ export const List = styled.ul<{ triggered: boolean }>`
 `;
 
 export const ListItem = styled.li`
+  position: relative;
   flex-grow: 1;
   height: 100%;
   text-align: center;
@@ -52,4 +55,24 @@ export const PriceDownTooltipTitle = styled.div`
   display: grid;
   align-items: center;
   grid-template-columns: 1fr 1fr 1fr;
+`;
+
+export const NewLabel = styled(Label)`
+  position: absolute;
+  top: -9.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.white};
+  background-color: ${({
+    theme: {
+      palette: { secondary }
+    }
+  }) => secondary.red.main};
+  border-radius: 10px;
+  font-weight: 700;
 `;

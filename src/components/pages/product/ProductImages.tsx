@@ -25,9 +25,12 @@ import { pulse } from '@styles/transition';
 
 import { PortalConsumer } from '@provider/PortalProvider';
 
+import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
+
 interface ProductImagesProps {
   isLoading: boolean;
   product?: Product;
+  isProductLegit?: boolean;
   getProductImageOverlay: ({
     status,
     variant
@@ -37,7 +40,12 @@ interface ProductImagesProps {
   }) => EmotionJSX.Element | null;
 }
 
-function ProductImages({ isLoading, product, getProductImageOverlay }: ProductImagesProps) {
+function ProductImages({
+  isLoading,
+  product,
+  getProductImageOverlay,
+  isProductLegit
+}: ProductImagesProps) {
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
@@ -212,6 +220,12 @@ function ProductImages({ isLoading, product, getProductImageOverlay }: ProductIm
             {currentSlide + 1}/{detailImages.length + 1}
           </Pagination>
         </Swiper>
+        {isProductLegit && (
+          <ProductDetailLegitImageBottomBanner
+            product={product as Product}
+            data={product?.productLegit}
+          />
+        )}
       </Box>
       {modalImages.length > 0 && openModal && (
         <PortalConsumer>

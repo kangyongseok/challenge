@@ -15,8 +15,14 @@ export const WishButton = styled.button`
   top: 0;
   right: 0;
   padding: 8px 8px 0 0;
-  // TODO UI 라이브러리 zIndex 값 조정 필요
   z-index: ${({ theme: { zIndex } }) => zIndex.button - 7};
+
+  svg {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    padding: 4px;
+    margin-top: -4px;
+  }
 `;
 
 export const Title = styled(Typography)`
@@ -26,7 +32,7 @@ export const Title = styled(Typography)`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 
-  & > strong {
+  & > span {
     color: ${({
       theme: {
         palette: { primary }
@@ -36,7 +42,6 @@ export const Title = styled(Typography)`
 `;
 
 export const Area = styled(Typography)`
-  margin-top: 8px;
   color: ${({
     theme: {
       palette: { common }
@@ -48,6 +53,5 @@ export const Area = styled(Typography)`
 `;
 
 export const MetaSocial = styled(Flexbox)`
-  margin-top: 4px;
-  gap: 7px;
+  gap: 6px;
 `;

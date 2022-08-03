@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 export const StyledHeader = styled.header`
   width: 100%;
   min-height: 56px;
-  background: ${({ theme: { palette } }) => palette.common.white};
 `;
 
 export const VirtualIcon = styled.div<{ isType?: boolean }>`

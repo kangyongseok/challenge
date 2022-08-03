@@ -195,7 +195,7 @@ function ProductsMapFilterBottomSheet() {
       setUserOnBoardingTriggerState((prevState) => ({
         ...prevState,
         products: {
-          complete: true,
+          complete: false,
           step: 4
         }
       }));

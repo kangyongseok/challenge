@@ -69,7 +69,7 @@ function PriceTabPanel() {
       setMaxPriceValue(tenThousandUnitMaxPrice);
       applyMinPrice = Number(minPriceValue) * 10000;
       applyMaxPrice = maxPrice;
-    } else if (minPriceValue < 1) {
+    } else if (minPriceValue < tenThousandUnitMinPrice) {
       setMinPriceValue(tenThousandUnitMinPrice);
       applyMinPrice = minPrice;
       applyMaxPrice = Number(maxPriceValue) * 10000;

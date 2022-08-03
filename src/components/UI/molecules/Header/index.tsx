@@ -2,7 +2,7 @@ import { MouseEvent, PropsWithChildren } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Typography } from 'mrcamel-ui';
+import { CustomStyle, Typography } from 'mrcamel-ui';
 
 import { TouchIcon } from '@components/UI/atoms';
 
@@ -27,6 +27,7 @@ interface HeaderProps {
   onClickBack?: () => void;
   disableProductsKeywordClickInterceptor?: boolean;
   disableAppDownloadBannerVariableTop?: boolean;
+  customStyle?: CustomStyle;
 }
 
 function Header({
@@ -37,7 +38,8 @@ function Header({
   onClickCrm,
   onClickBack,
   disableProductsKeywordClickInterceptor = true,
-  disableAppDownloadBannerVariableTop = false
+  disableAppDownloadBannerVariableTop = false,
+  customStyle
 }: PropsWithChildren<HeaderProps>) {
   const router = useRouter();
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
@@ -184,6 +186,7 @@ function Header({
       <Wrapper
         isFixed={isFixed}
         showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
+        css={customStyle}
       >
         {type === 'isCrm' ? (
           <Typography variant="small2" weight="medium" onClick={onClickCrm}>

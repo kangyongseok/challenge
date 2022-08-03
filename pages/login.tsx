@@ -76,6 +76,7 @@ function Login() {
     open: false,
     provider: null
   });
+  const [loadedKakaoSDK, setLoadedKakaoSDK] = useState(false);
   const transitions = useTransition(show, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -86,6 +87,7 @@ function Login() {
   const handleOnLoadKakao = () => {
     if (window.Kakao && !window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.KAKAO_JS_KEY);
+      setLoadedKakaoSDK(true);
     }
   };
 
@@ -171,22 +173,18 @@ function Login() {
             LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
 
             if (checkAgent.isAndroidApp()) {
-              // window.webview.callAuthPush();
-              // window.webview.callAuthLocation();
-              // return;
-            } else if (
-              checkAgent.isIOSApp() &&
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callAuthPush &&
-              window.webkit.messageHandlers.callAuthLocation
-            ) {
+              window.webview.callAuthPush();
+              window.webview.callAuthLocation();
+              return;
+            }
+
+            if (checkAgent.isIOSApp()) {
               window.webkit.messageHandlers.callAuthPush.postMessage(0);
               window.webkit.messageHandlers.callAuthLocation.postMessage(0);
               return;
-            } else {
-              updateUserArea();
             }
+
+            updateUserArea();
           }
 
           // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
@@ -397,6 +395,12 @@ function Login() {
     };
   }, [authLogin, mutatePostAlarm, mutatePostArea, returnUrl, router, state]);
 
+  useEffect(() => {
+    if (window.Kakao && window.Kakao.isInitialized()) {
+      setLoadedKakaoSDK(true);
+    }
+  }, []);
+
   return (
     <>
       <Script src="https://developers.kakao.com/sdk/js/kakao.min.js" onLoad={handleOnLoadKakao} />
@@ -421,6 +425,7 @@ function Login() {
                     setErrorPopup={setErrorPopup}
                     setShow={setShow}
                     setLoading={setLoading}
+                    loadedKakaoSDK={loadedKakaoSDK}
                   />
                   <LoginUserAgreement />
                 </GeneralTemplate>

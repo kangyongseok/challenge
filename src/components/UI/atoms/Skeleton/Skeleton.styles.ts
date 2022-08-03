@@ -54,7 +54,13 @@ export const SkeletonInner = styled.div`
 export const StyledSkeleton = styled.div<
   Pick<
     SkeletonProps,
-    'maxWidth' | 'maxHeight' | 'minWidth' | 'minHeight' | 'disableAspectRatio' | 'disableAnimation'
+    | 'maxWidth'
+    | 'maxHeight'
+    | 'minWidth'
+    | 'minHeight'
+    | 'disableAspectRatio'
+    | 'disableAnimation'
+    | 'isRound'
   > & {
     customWidth?: CSSValue;
     customHeight?: CSSValue;
@@ -66,6 +72,7 @@ export const StyledSkeleton = styled.div<
   ${({ maxHeight }) => (maxHeight ? `max-height: ${maxHeight}` : '')};
   ${({ minWidth }) => (minWidth ? `min-width: ${minWidth}` : '')};
   ${({ minHeight }) => (minHeight ? `min-height: ${minHeight}` : '')};
+  ${({ isRound }) => (isRound ? 'border-radius: 8px' : '')};
 
   background-color: ${({
     theme: {

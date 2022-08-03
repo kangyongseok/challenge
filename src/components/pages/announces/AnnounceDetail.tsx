@@ -1,5 +1,6 @@
 import { MouseEvent, useEffect } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, CtaButton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -8,8 +9,11 @@ import type { AnnounceDetail as AnnounceDetailType } from '@dto/user';
 
 import { logEvent } from '@library/amplitude';
 
+import { filterGenders } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
+import { selectedSearchOptionsDefault, selectedSearchOptionsState } from '@recoil/searchHelper';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface AnnounceDetailProps {
@@ -20,6 +24,9 @@ let callLog = false;
 
 function AnnounceDetail({ announceDetail }: AnnounceDetailProps) {
   const router = useRouter();
+  const { data: accessUser } = useQueryAccessUser();
+  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
+  const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
 
   useEffect(() => {
     if (!callLog) {
@@ -42,11 +49,24 @@ function AnnounceDetail({ announceDetail }: AnnounceDetailProps) {
     const pathname = event.currentTarget.getAttribute('data-pathname');
 
     if (pathname) {
+      if (pathname.includes('/searchHelper')) {
+        const genderName = gender === 'F' ? 'female' : 'male';
+
+        setSelectedSearchOptions((currVal) => ({
+          ...currVal,
+          pathname: router.asPath,
+          gender: gender
+            ? {
+                id: filterGenders[genderName as keyof typeof filterGenders].id,
+                name: genderName
+              }
+            : selectedSearchOptionsDefault.gender
+        }));
+      }
+
       router.push(pathname);
     }
   };
-
-  const { data: accessUser } = useQueryAccessUser();
 
   if (announceDetail.type === 1) {
     return (

@@ -20,6 +20,7 @@ import type {
   UserInfo,
   UserSizeSuggestParams
 } from '@dto/user';
+import type { PageProductLegit, Product } from '@dto/product';
 
 import Axios from '@library/axios';
 import Amplitude from '@library/amplitude';
@@ -170,4 +171,20 @@ export async function fetchSizeMapping() {
   const { data } = await Axios.getInstance().get<SizeMapping>(`${BASE_PATH}/sizeMapping`);
 
   return data;
+}
+
+export async function fetchUserLegitTargets() {
+  const { data } = await Axios.getInstance().get<Product[]>(`${BASE_PATH}/legitTargets`);
+
+  return data;
+}
+
+export async function fetchUserLegitProducts() {
+  const { data } = await Axios.getInstance().get<PageProductLegit>(`${BASE_PATH}/legitProducts`);
+
+  return data;
+}
+
+export async function postLegitsFollow({ productId }: { productId: number }) {
+  await Axios.getInstance().post(`${BASE_PATH}/legits/${productId}/follow`);
 }

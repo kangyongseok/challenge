@@ -82,7 +82,7 @@ function ProductsRelated() {
           <Flexbox direction="vertical" gap={20}>
             {Array.from({ length: 10 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
-              <ProductListCardSkeleton key={`search-related-product-${index}`} />
+              <ProductListCardSkeleton key={`search-related-product-${index}`} isRound />
             ))}
           </Flexbox>
         </Box>
@@ -104,6 +104,7 @@ function ProductsRelated() {
                 key={`search-related-product-${product.id}`}
                 product={product}
                 name={attrProperty.productName.PRODUCT_DETAIL}
+                isRound
               />
             ))}
           </Flexbox>

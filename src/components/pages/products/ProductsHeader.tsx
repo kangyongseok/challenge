@@ -71,7 +71,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
 
   if (variant === 'search') {
     return (
-      <Box customStyle={{ height: 58 }}>
+      <Box customStyle={{ minHeight: 58 }}>
         <SearchBar
           fullWidth
           variant="standard"

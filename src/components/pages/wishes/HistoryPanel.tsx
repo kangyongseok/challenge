@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { useQuery } from 'react-query';
 import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
@@ -29,12 +29,24 @@ function HistoryPanel() {
     () => fetchUserHistory({ page: 0 }),
     {
       enabled: !!accessUser,
-      keepPreviousData: true
+      refetchOnMount: true
     }
   );
   const {
     theme: { palette }
   } = useTheme();
+
+  const historiesGroupedByDate = useMemo(() => {
+    if (!data) return [];
+
+    return entries(
+      groupBy(data.content, (userHistory: UserHistory) =>
+        dayjs(userHistory.dateTime).format('YYYY.M.D')
+      )
+    ).sort(([a], [b]) => {
+      return dayjs(b).diff(a);
+    });
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -54,12 +66,13 @@ function HistoryPanel() {
           width="50px"
           height="18px"
           disableAspectRatio
+          isRound
           customStyle={{ margin: '28px 0 20px' }}
         />
         <Flexbox direction="vertical" gap={12}>
           {Array.from({ length: 3 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} />
+            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} isRound />
           ))}
         </Flexbox>
         <Box
@@ -72,12 +85,13 @@ function HistoryPanel() {
           width="50px"
           height="18px"
           disableAspectRatio
+          isRound
           customStyle={{ margin: '20px 0' }}
         />
         <Flexbox direction="vertical" gap={12} customStyle={{ marginBottom: 12 }}>
           {Array.from({ length: 7 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} />
+            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} isRound />
           ))}
         </Flexbox>
       </>
@@ -136,13 +150,13 @@ function HistoryPanel() {
     );
   }
 
-  const historiesGroupedByDate = entries(
-    groupBy(data.content, (userHistory: UserHistory) =>
-      dayjs(userHistory.dateTime).format('YYYY.M.D')
-    )
-  ).sort(([a], [b]) => {
-    return dayjs(b).diff(a);
-  });
+  // const historiesGroupedByDate = entries(
+  //   groupBy(data.content, (userHistory: UserHistory) =>
+  //     dayjs(userHistory.dateTime).format('YYYY.M.D')
+  //   )
+  // ).sort(([a], [b]) => {
+  //   return dayjs(b).diff(a);
+  // });
 
   return (
     <>

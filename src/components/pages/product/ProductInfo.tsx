@@ -5,8 +5,9 @@ import LinesEllipsis from 'react-lines-ellipsis';
 import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { ProductLabel } from '@components/UI/organisms';
 import { Divider } from '@components/UI/molecules';
-import { ProductInfoSkeleton } from '@components/pages/product/index';
+import { ProductInfoSkeleton } from '@components/pages/product';
 
 import { Product } from '@dto/product';
 
@@ -18,7 +19,6 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import getProductLabelColor from '@utils/product/getProductLabelColor';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
 import { removeTagAndAddNewLine } from '@utils/common';
 import commaNumber from '@utils/commaNumber';
@@ -31,7 +31,6 @@ interface ProductInfoProps {
 
 function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
   const {
-    theme,
     theme: { palette }
   } = useTheme();
   const [isClamped, setIsClamped] = useState(false);
@@ -45,10 +44,10 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
     [product?.description, product?.viewDescription]
   );
 
-  const productLabels = () => {
+  const productLabels = useMemo(() => {
     if (!product?.productSeller.site || !product?.labels) return [];
 
-    const newLabels = product?.labels
+    return product.labels
       .filter(
         (label) =>
           label.codeId === ID_FILTER &&
@@ -61,26 +60,14 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
       .map(({ id, name, description: labelDescription }) => ({
         id,
         name,
-        description: labelDescription,
-        brandColor: getProductLabelColor(labelDescription, theme)
+        description: labelDescription
       }));
-
-    if (isCamelSeller) {
-      newLabels.push({
-        id: 0,
-        name: '0',
-        description: '가품 시, 100%환불',
-        brandColor: getProductLabelColor('가품 시, 100%환불', theme)
-      });
-    }
-
-    return newLabels;
-  };
+  }, [product?.labels, product?.productSeller.site]);
 
   return !product ? (
     <ProductInfoSkeleton />
   ) : (
-    <Box customStyle={{ marginTop: isCamelSeller ? 16 : 24 }}>
+    <Box customStyle={{ marginTop: isCamelSeller ? 16 : 20 }}>
       {(isCamelProduct || isCamelSeller) && (
         <Flexbox customStyle={{ marginBottom: 8 }}>
           <Icon name="SafeFilled" size="small" customStyle={{ color: palette.primary.main }} />
@@ -91,21 +78,18 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
           </Typography>
         </Flexbox>
       )}
-      <Flexbox customStyle={{ marginBottom: 8 }}>
-        {productLabels().map((label) => (
-          <Label
+      <Flexbox gap={6} customStyle={{ marginBottom: 8 }}>
+        {productLabels.map((label, index) => (
+          <ProductLabel
             key={`product-label-${label.id}`}
+            showDivider={index !== 0}
             text={label.description}
-            variant="contained"
-            size="xsmall"
-            customStyle={{
-              padding: '2px 4px',
-              border: 'none',
-              borderRadius: 0,
-              backgroundColor: label.brandColor
-            }}
+            isSingle={productLabels.length === 1}
           />
         ))}
+        {isCamelSeller && (
+          <Label text="가품 시, 100%환불" size="xsmall" variant="ghost" brandColor="black" />
+        )}
       </Flexbox>
       <Title variant="h4" weight="medium">
         {isSafe && <strong>안전결제 </strong>}

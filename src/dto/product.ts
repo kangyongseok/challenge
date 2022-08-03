@@ -226,6 +226,7 @@ export type Product = {
   isDeleted: boolean | null;
   isSafeTrade: boolean;
   isWish: boolean | null;
+  isProductLegit?: boolean;
   labels: CommonCode[];
   line: string;
   material: string | null;
@@ -237,6 +238,7 @@ export type Product = {
   productLines: ProductLine[] | null;
   productSearchOptions: ProductSearchOption[] | null;
   productSeller: ProductSeller;
+  productLegit: ProductLegit;
   purchaseCount: number;
   quoteTitle: string;
   quoteTitleCount: number | null;
@@ -315,6 +317,7 @@ export interface Search {
 
 export interface ProductDetail {
   product: Product;
+  productLegit: boolean;
   productSearchOptions: ProductSearchOption;
   quoteTitleCount: number;
   relatedKeywords: string[];
@@ -365,6 +368,43 @@ export interface SellerReview {
 
 export type ProductOrder = 'postedDesc' | 'postedAllDesc' | 'recommDesc' | 'priceAsc' | 'priceDesc';
 
+export interface ProductLegit {
+  legitOpinions: LegitOpinion[];
+  dateCreated: number;
+  dateUpdated: number;
+  isWish: boolean;
+  isFollow: boolean;
+  productId: number;
+  productResult: Product;
+  result: 0 | 1 | 2 | 3;
+  status: 1 | 10 | 11 | 20 | 30;
+  userId: number;
+}
+
+export type PageProductLegit = Paged<ProductLegit>;
+
+export interface LegitOpinion {
+  dateCreated: string;
+  dateUpdated: string;
+  description: string;
+  id: number;
+  productId: number;
+  result: 0 | 1 | 2 | 3;
+  roleLegit: RoleLegit;
+}
+
+export interface RoleLegit {
+  dateCreated: string;
+  dateUpdated: string;
+  description: string;
+  image: string;
+  ip: number;
+  name: string;
+  subTitle: string;
+  title: string;
+  userId: number;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface ProductParams {
   deviceId?: string;
@@ -372,6 +412,12 @@ export interface ProductParams {
   productId: number;
   redirect?: boolean;
   source?: string;
+}
+
+export interface LegitProductsParams {
+  page: number;
+  size: number;
+  isOnlyResult: boolean;
 }
 
 export interface ReviewInfoParams {

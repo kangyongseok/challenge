@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { useRouter } from 'next/router';
@@ -26,6 +26,7 @@ interface LoginButtonListProps {
   setErrorPopup: Dispatch<SetStateAction<{ open: boolean; provider: string | null }>>;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  loadedKakaoSDK: boolean;
 }
 
 function LoginButtonList({
@@ -33,7 +34,8 @@ function LoginButtonList({
   returnUrl,
   setErrorPopup,
   setShow,
-  setLoading
+  setLoading,
+  loadedKakaoSDK
 }: LoginButtonListProps) {
   const router = useRouter();
   const {
@@ -41,20 +43,19 @@ function LoginButtonList({
   } = useTheme();
   const [lastLoginType, setLastLoginType] = useState('');
 
+  const kakaoLoginButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const { openLogin } = router.query;
+
   const handleClickKakaoLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'KAKAO' });
 
-    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
+    if (checkAgent.isAndroidApp()) {
       window.webview.callLoginKakao();
       return;
     }
 
-    if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callLoginKakao
-    ) {
+    if (checkAgent.isIOSApp()) {
       window.webkit.messageHandlers.callLoginKakao.postMessage(0);
       return;
     }
@@ -94,14 +95,9 @@ function LoginButtonList({
       }
     };
 
-    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginFacebook) {
+    if (checkAgent.isAndroidApp()) {
       window.webview.callLoginFacebook();
-    } else if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callLoginFacebook
-    ) {
+    } else if (checkAgent.isIOSApp()) {
       window.webkit.messageHandlers.callLoginFacebook.postMessage(0);
     } else {
       window.FB.getLoginStatus((response: FacebookLoginResponse) => {
@@ -122,14 +118,9 @@ function LoginButtonList({
   const handleClickAppleLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'APPLE' });
 
-    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
+    if (checkAgent.isAndroidApp()) {
       window.webview.callLoginApple();
-    } else if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callLoginApple
-    ) {
+    } else if (checkAgent.isIOSApp()) {
       window.webkit.messageHandlers.callLoginApple.postMessage(0);
     }
   };
@@ -139,6 +130,12 @@ function LoginButtonList({
 
     if (savedLastLoginType) setLastLoginType(savedLastLoginType);
   }, []);
+
+  useEffect(() => {
+    if (openLogin === 'kakao' && loadedKakaoSDK) {
+      if (kakaoLoginButtonRef.current) kakaoLoginButtonRef.current?.click();
+    }
+  }, [openLogin, loadedKakaoSDK]);
 
   return (
     <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
@@ -151,7 +148,7 @@ function LoginButtonList({
           ? `( 최근 로그인 : ${LOGIN_TYPE[lastLoginType as keyof typeof LOGIN_TYPE]} )`
           : ''}
       </Typography>
-      <KakaoLoginButton onClick={handleClickKakaoLogin}>
+      <KakaoLoginButton ref={kakaoLoginButtonRef} onClick={handleClickKakaoLogin}>
         <Image
           width={20}
           height={20}

@@ -24,6 +24,8 @@ import {
   ProductActions,
   ProductAveragePriceChart,
   ProductCTAButton,
+  ProductDetailLegitBanner,
+  ProductDetailLegitBottomSheet,
   ProductFixedSummary,
   ProductImages,
   ProductInfo,
@@ -374,6 +376,7 @@ function ProductDetail() {
           !isRedirectPage ? (
             <ProductCTAButton
               product={data?.product}
+              isProductLegit={data?.productLegit}
               isDup={isDup}
               hasTarget={hasTarget}
               isPriceCrm={!!chainPrice}
@@ -412,9 +415,13 @@ function ProductDetail() {
               isLoading={isLoading || isFetching}
               product={data?.product}
               getProductImageOverlay={getProductImageOverlay}
+              isProductLegit={data?.productLegit}
             />
             <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
             <ProductActions product={product} onClickSMS={handleClickSMS} />
+            {data?.productLegit && (
+              <ProductDetailLegitBanner data={data.product.productLegit} product={data.product} />
+            )}
             <ProductSellerReviews product={product} />
             <ProductSellerProductList product={product} />
             <ProductAveragePriceChart product={product} />
@@ -514,6 +521,10 @@ function ProductDetail() {
           </Typography>
         </Flexbox>
       </Toast>
+      <ProductDetailLegitBottomSheet
+        title={String(data?.product.title)}
+        thumbnail={data?.product.imageThumbnail || (data?.product.imageMain as string)}
+      />
     </>
   );
 }

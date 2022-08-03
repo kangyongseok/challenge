@@ -9,6 +9,7 @@ export const UTM_PARAMS = 'utmParams';
 export const IS_DONE_WISH_ON_BOARDING = 'isDoneWishOnBoarding';
 export const DUPLICATED_PRODUCT_IDS = 'duplicatedProductIds';
 export const DEVICE_ID = 'deviceId';
+export const LEGIT_SESSION_ID = 'legitSessionId';
 export const USER_ON_BOARDING_TRIGGER = 'userOnBoardingTrigger';
 export const SEARCH_HELPER_SEARCH_OPTIONS = 'savedSearchHelperSearchOptions';
 export const SIGN_UP_STEP = 'signUpStep';

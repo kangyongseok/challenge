@@ -12,7 +12,7 @@ import {
   ListRowProps,
   WindowScroller
 } from 'react-virtualized';
-import { useInfiniteQuery, useQueryClient } from 'react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, CtaButton, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
@@ -26,7 +26,7 @@ import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchSearch } from '@api/product';
+import { fetchSearch, fetchSearchOptions } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
@@ -88,6 +88,9 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
+  const { searchParams: searchOptionsParams } = useRecoilValue(
+    searchParamsStateFamily(`searchOptions-${atomParam}`)
+  );
   const { selectedSearchOptions } = useRecoilValue(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
@@ -135,6 +138,16 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const [openToast, setOpenToast] = useState(false);
 
   const queryClient = useQueryClient();
+
+  const { data: { userProductKeyword } = {}, isFetched: isSearchOptionsFetched } = useQuery(
+    queryKeys.products.searchOptions(searchOptionsParams),
+    () => fetchSearchOptions(searchOptionsParams),
+    {
+      keepPreviousData: true,
+      enabled: Object.keys(searchOptionsParams).length > 0,
+      staleTime: 5 * 60 * 1000
+    }
+  );
 
   const {
     fetchNextPage,
@@ -481,10 +494,13 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   }, [router, handleRouteChangeStart]);
 
   useEffect(() => {
-    if (!progressDone && isFetched && !loggedViewProductListLogEventRef.current) {
+    if (
+      !progressDone &&
+      isFetched &&
+      isSearchOptionsFetched &&
+      !loggedViewProductListLogEventRef.current
+    ) {
       loggedViewProductListLogEventRef.current = true;
-
-      const { userProductKeyword } = lastPage || {};
 
       let eventProperties: ProductsEventProperties & UtmParams =
         SessionStorage.get<ProductsEventProperties>(sessionStorageKeys.productsEventProperties) || {
@@ -495,8 +511,8 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
 
       if (eventProperties.title === 'MYLIST' && userProductKeyword) {
         const { keyword: userKeyword, keywordFilterJson } = userProductKeyword;
-        eventProperties.keyword = userKeyword;
-        eventProperties.filters = keywordFilterJson;
+        if (userKeyword) eventProperties.keyword = userKeyword;
+        if (keywordFilterJson) eventProperties.filters = JSON.parse(keywordFilterJson);
       } else if (router.pathname === '/products/crm/[notice]') {
         eventProperties = {
           ...eventProperties,
@@ -532,7 +548,15 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
 
       SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
-  }, [router.pathname, router.query, variant, progressDone, isFetched, lastPage]);
+  }, [
+    router.pathname,
+    router.query,
+    variant,
+    progressDone,
+    isFetched,
+    isSearchOptionsFetched,
+    userProductKeyword
+  ]);
 
   useEffect(() => {
     if (!progressDone && isFetched && !loggedLoadProductListLogEventRef.current) {

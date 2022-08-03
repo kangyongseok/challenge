@@ -4,5 +4,7 @@ export { default as OnBoardingSpotlight } from './OnBoardingSpotlight';
 export { default as LoginErrorDialog } from './LoginErrorDialog';
 export { default as AppDownloadBanner } from './AppDownloadBanner';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as ProductLabel } from './ProductLabel';
+export { default as LegitResultSurveyTypeform } from './LegitResultSurveyTypeform';
 export * from './Toasts';
 export * from './Popups';

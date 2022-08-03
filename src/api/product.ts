@@ -1,6 +1,9 @@
 import type {
+  LegitProductsParams,
   PageProduct,
+  PageProductLegit,
   ProductDetail,
+  ProductLegit,
   ProductParams,
   ReviewInfoParams,
   Search,
@@ -102,4 +105,24 @@ export async function fetchSearchRelatedProducts(params?: SearchRelatedProductsP
 
 export async function postSellerReport(params: SellerReportParams) {
   await Axios.getInstance().post(`${BASE_PATH}/sellerReport`, params);
+}
+
+export async function fetchProductLegit(productId: number) {
+  const { data } = await Axios.getInstance().get<ProductLegit>(`${BASE_PATH}/${productId}/legit`);
+
+  return data;
+}
+
+export async function postProductLegit({ id, deviceId }: { id: number; deviceId?: string }) {
+  await Axios.getInstance().post(`${BASE_PATH}/${id}/legit`, {
+    deviceId
+  });
+}
+
+export async function fetchLegitProducts(params: LegitProductsParams) {
+  const { data } = await Axios.getInstance().get<PageProductLegit>(`${BASE_PATH}/legitProducts`, {
+    params
+  });
+
+  return data;
 }

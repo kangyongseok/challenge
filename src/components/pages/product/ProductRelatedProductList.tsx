@@ -117,7 +117,7 @@ function ProductRelatedProductList({
         {isLoading
           ? Array.from(new Array(4), (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>
-                <ProductGridCardSkeleton />
+                <ProductGridCardSkeleton isRound />
               </Grid>
             ))
           : searchRelatedProducts?.page.content.map((product, i) => (
@@ -127,7 +127,9 @@ function ProductRelatedProductList({
                   wishAtt={handleWishAtt(product, i)}
                   productAtt={handleProductAtt(product, i)}
                   name={attrProperty.productName.PRODUCT_DETAIL}
-                  source={attrProperty.productSource.LIST_RELATED}
+                  isRound
+                  compact
+                  gap={17}
                 />
               </Grid>
             ))}

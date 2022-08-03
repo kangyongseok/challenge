@@ -21,14 +21,17 @@ export default function useProductCardState({
   price = 0,
   priceBefore,
   productSeller,
+  productLegit,
+  isProductLegit,
   labels = []
 }: Product) {
   const { theme } = useTheme();
   const imageUrl = imageMain || imageThumbnail;
+  const { status: productLegitStatus } = productLegit || {};
 
   const productLabels = useMemo(() => {
     const { site } = productSeller || {};
-    if (!site || !labels.length) return [];
+    if (!site || !labels || !labels.length) return [];
 
     const newLabels = labels
       .filter(
@@ -58,6 +61,16 @@ export default function useProductCardState({
     return priceBefore - price;
   }, [priceBefore, price]);
 
+  const productLegitStatusText = useMemo(() => {
+    if (!isProductLegit) return '';
+
+    if (productLegitStatus === 30) return '감정완료';
+    if (productLegitStatus === 11) return '감정불가';
+    if (productLegitStatus === 10 || productLegitStatus === 20 || productLegitStatus === 1)
+      return '감정중';
+    return '감정가능';
+  }, [productLegitStatus, isProductLegit]);
+
   const isDuplicate = !targetProductStatus;
 
   const isPriceDown = targetProductPrice ? targetProductPrice < price : false;
@@ -67,7 +80,7 @@ export default function useProductCardState({
   const isSafe = useMemo(() => {
     const { site } = productSeller || {};
 
-    if (!site || !labels.length) return false;
+    if (!site || !labels || !labels.length) return false;
 
     return (
       Object.entries(PRODUCT_SITE).some(
@@ -113,6 +126,7 @@ export default function useProductCardState({
     isPopular,
     isDuplicate,
     isSafe,
-    isPriceDown
+    isPriceDown,
+    productLegitStatusText
   };
 }

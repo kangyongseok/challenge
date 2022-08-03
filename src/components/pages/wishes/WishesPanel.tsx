@@ -191,13 +191,13 @@ function WishesPanel() {
           />
         </Flexbox>
         <Flexbox justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
-          <Skeleton width="30px" height="18px" disableAspectRatio />
-          <Skeleton width="50px" height="18px" disableAspectRatio />
+          <Skeleton width="30px" height="18px" disableAspectRatio isRound />
+          <Skeleton width="50px" height="18px" disableAspectRatio isRound />
         </Flexbox>
         <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 20 }}>
           {Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`wish-product-card-skeleton-${index}`} />
+            <ProductListCardSkeleton key={`wish-product-card-skeleton-${index}`} isRound />
           ))}
         </Flexbox>
       </>
@@ -276,7 +276,6 @@ function WishesPanel() {
                   }
                 }}
                 product={wishItem.product}
-                hideMetaSocialInfo={false}
                 hideAlert={false}
                 name={attrProperty.productName.WISH_LIST}
                 productAtt={{
@@ -297,9 +296,9 @@ function WishesPanel() {
                   scorePriceRate: wishItem.product.scorePriceRate,
                   source: attrProperty.productSource.WISH_LIST
                 }}
-                source={attrProperty.productSource.WISH_LIST}
                 onWishAfterChangeCallback={refetch}
                 data-id={wishItem.product.id}
+                isRound
               />
             ))}
           </Flexbox>

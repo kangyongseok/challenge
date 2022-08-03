@@ -40,6 +40,10 @@
   src: url('./fonts/CamelProductSans-Thin.woff2') format('woff2')
 }
 
+#__next{
+  height: 100%;
+}
+
 * ::-webkit-scrollbar {
   display: none;
 }

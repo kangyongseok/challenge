@@ -48,18 +48,55 @@ export const ImageInner = styled.div`
   transform: translate(50%, 50%);
 `;
 
-export const BackgroundImage = styled.div<{
-  dataSrc?: string;
-}>`
+export const BackgroundImage = styled.div<
+  Pick<ImageProps, 'ratio'> & {
+    dataSrc?: string;
+    isRound?: boolean;
+  }
+>`
   width: 100%;
-  padding-bottom: 100%;
+  ${({ ratio }): CSSObject => {
+    let cssObject;
+    switch (ratio) {
+      case '1:2':
+        cssObject = {
+          paddingTop: '200%'
+        };
+        break;
+      case '2:1':
+        cssObject = {
+          paddingTop: '50%'
+        };
+        break;
+      case '4:3':
+        cssObject = {
+          paddingTop: '75%'
+        };
+        break;
+      case '16:9':
+        cssObject = {
+          paddingTop: '56.25%'
+        };
+        break;
+      default:
+        cssObject = {
+          paddingTop: '100%'
+        };
+        break;
+    }
+    return cssObject;
+  }}
   background-image: url(${({ dataSrc }) => dataSrc});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  border-radius: ${({ isRound }) => isRound && '8px'};
 `;
 
-export const StyledImage = styled.img<Pick<ImageProps, 'variant' | 'disableAspectRatio'>>`
+export const StyledImage = styled.img<
+  Pick<ImageProps, 'variant' | 'disableAspectRatio'> & { isRound?: boolean }
+>`
+  ${({ isRound }) => (isRound ? 'border-radius: 8px' : '')};
   ${({ disableAspectRatio, width, height }): CSSObject =>
     !disableAspectRatio
       ? {

@@ -6,11 +6,10 @@ import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Label, Toast, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Skeleton } from '@components/UI/atoms';
-
 import type { ProductKeywordsContent } from '@dto/user';
 import type { SearchParams } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import {
@@ -20,28 +19,27 @@ import {
   putProductKeywordView
 } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function SaveSearchList({ page = 'MAIN' }) {
   const {
-    theme: { palette, box }
+    theme: { palette }
   } = useTheme();
   const [deleteToast, setDeleteToast] = useState(false);
   const [rollbackToast, setRollbackToast] = useState(false);
   const [deletedId, setDeletedId] = useState<number>(0);
 
   const { data: accessUser } = useQueryAccessUser();
-  const {
-    data: { content: productKeywords = [] } = {},
-    isLoading,
-    refetch
-  } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
-    refetchOnMount: true,
-    enabled: !!accessUser
-  });
+  const { data: { content: productKeywords = [] } = {}, refetch } = useQuery(
+    queryKeys.users.userProductKeywords(),
+    fetchProductKeywords,
+    { refetchOnMount: true }
+  );
   const { mutate } = useMutation(deleteProductKeyword);
   const { mutate: productKeywordRestoreMutate } = useMutation(putProductKeyword);
   const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
@@ -120,6 +118,11 @@ function SaveSearchList({ page = 'MAIN' }) {
 
       const clickProductKeywords = productKeywords.find((item) => item.id === id);
 
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        title: attrProperty.productTitle.MYLIST,
+        source: page
+      });
+
       if (clickProductKeywords && clickProductKeywords.isNew) {
         productKeywordViewMutate(id, {
           onSettled: () =>
@@ -151,42 +154,7 @@ function SaveSearchList({ page = 'MAIN' }) {
     }
   };
 
-  if (!accessUser) return null;
-
-  if (isLoading)
-    return (
-      <Box
-        customStyle={{
-          marginTop: page === 'SEARCH' ? '24px' : '40px',
-          position: 'relative'
-        }}
-      >
-        <Skeleton
-          width="138px"
-          height="21px"
-          disableAspectRatio
-          customStyle={{
-            borderRadius: box.round['4']
-          }}
-        />
-        <SaveSearchCardArea>
-          <Skeleton
-            width="298px"
-            height="89px"
-            disableAspectRatio
-            customStyle={{ borderRadius: box.round['8'] }}
-          />
-          <Skeleton
-            width="298px"
-            height="89px"
-            disableAspectRatio
-            customStyle={{ borderRadius: box.round['8'] }}
-          />
-        </SaveSearchCardArea>
-      </Box>
-    );
-
-  if (!isLoading && !productKeywords.length) return null;
+  if (!accessUser || !productKeywords.length) return null;
 
   return (
     <Box
@@ -319,7 +287,6 @@ const SaveSearchCardArea = styled.section`
   overflow-x: auto;
   white-space: nowrap;
   & > div {
-    display: inline-block;
     margin-right: 12px;
     &:last-child {
       margin-right: 0;

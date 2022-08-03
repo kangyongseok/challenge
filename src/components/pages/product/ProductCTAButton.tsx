@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { UseMutateFunction, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -11,6 +12,7 @@ import {
   CtaButton,
   Flexbox,
   Icon,
+  Label,
   Toast,
   Tooltip,
   Typography,
@@ -35,6 +37,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
 import { APP_BANNER, IS_DONE_WISH_ON_BOARDING } from '@constants/localStorage';
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -45,6 +48,7 @@ import commaNumber from '@utils/commaNumber';
 import checkAgent from '@utils/checkAgent';
 
 import type { AppBanner } from '@typings/common';
+import { productLegitToggleBottomSheetState } from '@recoil/productLegit';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
 
 interface ProductCTAButtonProps {
@@ -55,6 +59,7 @@ interface ProductCTAButtonProps {
   salePrice: number;
   isWish?: boolean;
   isPriceDown?: boolean;
+  isProductLegit?: boolean;
   onClickWish: (isWish: boolean) => boolean;
   onClickSMS: ({
     siteId,
@@ -83,6 +88,7 @@ function ProductCTAButton({
   salePrice,
   isWish = false,
   isPriceDown,
+  isProductLegit,
   onClickWish,
   onClickSMS,
   mutateMetaInfo
@@ -96,11 +102,13 @@ function ProductCTAButton({
     theme: { palette }
   } = useTheme();
 
+  const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
   const { data: relatedProducts } = useQuery(
     queryKeys.products.relatedProducts(Number(product?.id || 0)),
     () => fetchRelatedProducts(Number(product?.id || 0)),
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!product }
   );
+  const [legitTooltip, setLegitTooltip] = useState(true);
 
   const [isDoneWishOnBoarding, setIsDoneWishOnBoarding] = useState(true);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
@@ -377,19 +385,61 @@ function ProductCTAButton({
             </OnBoardingWishButton>{' '}
           </OnBoardingDim>
         )}
+        {isProductLegit && !product?.productLegit && (
+          <ProductLegitCTAButton
+            variant="contained"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
+                name: attrProperty.productName.PRODUCT_DETAIL,
+                title: attrProperty.productTitle.ABOUT_CTA,
+                brand: product?.brand.name,
+                category: product?.category.name,
+                parentCategory: FIRST_CATEGORIES[product?.category.parentId as number],
+                site: product?.site.name,
+                price: product?.price,
+                imageCount: product?.imageCount,
+                legitStatus: product?.productLegit?.status,
+                legitResult: product?.productLegit?.result
+              });
+              setLegitBottomSheet(true);
+            }}
+          >
+            <Tooltip
+              open={legitTooltip && isDoneWishOnBoarding}
+              brandColor="primary-highlight"
+              message={
+                <Flexbox gap={6} alignment="center">
+                  <Label text="NEW" variant="contained" size="xsmall" />
+                  <Typography weight="bold" variant="small1">
+                    지금 보는 사진 그대로 실시간 정가품 의견받기
+                  </Typography>
+                  <Icon
+                    name="CloseOutlined"
+                    size="small"
+                    color={palette.common.grey['20']}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLegitTooltip(false);
+                    }}
+                  />
+                </Flexbox>
+              }
+              customStyle={{ left: '160%' }}
+              triangleLeft={90}
+            >
+              사진감정
+            </Tooltip>
+          </ProductLegitCTAButton>
+        )}
         <CtaButton
           variant="contained"
           brandColor="black"
           fullWidth
           disabled={
             !product ||
-            ((!isDup || !hasTarget) &&
-              (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                PRODUCT_STATUS['1'] ||
-                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                  PRODUCT_STATUS['3'] ||
-                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                  PRODUCT_STATUS['2']))
+            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['1'] ||
+            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['3']
           }
           onClick={handleClickCTAButton}
           customStyle={{
@@ -504,7 +554,8 @@ function ProductCTAButton({
                 hideProductLabel
                 hideAreaWithDateInfo
                 name={attrProperty.productName.WISH_MODAL}
-                source={attrProperty.productSource.PRODUCT_RELATED_LIST}
+                isRound
+                gap={8}
               />
             ))}
           </ProductCardList>
@@ -517,9 +568,11 @@ function ProductCTAButton({
 const Wrapper = styled.div`
   position: fixed;
   bottom: 0;
-  display: grid;
+  display: flex;
+  gap: 6px;
+  /* display: grid;
   column-gap: 6px;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 48px 1fr; */
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -574,6 +627,13 @@ const ProductCardList = styled.div`
 
   grid-auto-columns: 120px;
   column-gap: 8px;
+`;
+
+const ProductLegitCTAButton = styled(CtaButton)`
+  min-width: 81px;
+  padding: 0;
+  background: ${({ theme: { palette } }) => palette.primary.highlight};
+  color: ${({ theme: { palette } }) => palette.primary.main};
 `;
 
 export default memo(ProductCTAButton);

@@ -12,3 +12,4 @@ export { default as TextInput } from './TextInput';
 export { default as TopButton } from './TopButton';
 export * from './Overlay';
 export { default as LinearProgress } from './LinearProgress';
+export { default as ProductLegitCard } from './ProductLegitCard';

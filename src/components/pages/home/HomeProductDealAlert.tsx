@@ -18,8 +18,7 @@ function HomeProductDealAlert() {
   } = useTheme();
   const [index, setIndex] = useState(0);
 
-  const needInitProductDealInfosRef = useRef(false);
-  const loopIntervalRef = useRef<ReturnType<typeof setTimeout> | null>();
+  const loopIntervalRef = useRef<ReturnType<typeof setInterval> | null>();
 
   const { data: productDealInfos = [] } = useQuery(
     queryKeys.nextJs.productDealInfos(),
@@ -36,8 +35,7 @@ function HomeProductDealAlert() {
       loopIntervalRef.current = setInterval(() => {
         setIndex((prevState) => {
           if (prevState + 1 === productDealInfos.length) {
-            setIndex(0);
-            needInitProductDealInfosRef.current = true;
+            return 0;
           }
           return prevState + 1;
         });

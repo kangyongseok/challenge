@@ -4,8 +4,8 @@ import { Box, CustomStyle, Flexbox, Typography } from 'mrcamel-ui';
 
 import Skeleton from '@components/UI/atoms/Skeleton';
 
-import { ProductSeller } from '@dto/product';
-import { CommonCode } from '@dto/common';
+import type { ProductSeller } from '@dto/product';
+import type { CommonCode } from '@dto/common';
 
 import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
 
@@ -14,6 +14,7 @@ interface ProductGridCardSkeletonPros {
   labels?: CommonCode[];
   productSeller?: ProductSeller;
   hasMetaInfo?: boolean;
+  isRound?: boolean;
   customStyle?: CustomStyle;
 }
 
@@ -22,6 +23,7 @@ function ProductGridCardSkeleton({
   labels = [],
   productSeller,
   hasMetaInfo = true,
+  isRound = false,
   customStyle
 }: ProductGridCardSkeletonPros) {
   const isSafe = useMemo(() => {
@@ -44,7 +46,7 @@ function ProductGridCardSkeleton({
   }, [labels, productSeller, title]);
   return (
     <Flexbox gap={18} direction="vertical" customStyle={customStyle}>
-      <Skeleton />
+      <Skeleton isRound={isRound} />
       <Box customStyle={{ padding: '0 12px' }}>
         <Skeleton
           width="100%"
@@ -52,6 +54,7 @@ function ProductGridCardSkeleton({
           minHeight="18px"
           maxHeight="36px"
           disableAspectRatio
+          isRound={isRound}
         >
           {title && (
             <Typography variant="body2" weight="medium" customStyle={{ visibility: 'hidden' }}>
@@ -64,6 +67,7 @@ function ProductGridCardSkeleton({
           maxWidth="50px"
           height="23px"
           disableAspectRatio
+          isRound={isRound}
           customStyle={{ marginTop: 4 }}
         />
         <Skeleton
@@ -71,6 +75,7 @@ function ProductGridCardSkeleton({
           maxWidth="120px"
           height="13px"
           disableAspectRatio
+          isRound={isRound}
           customStyle={{ marginTop: 8 }}
         />
         {hasMetaInfo && (
@@ -79,6 +84,7 @@ function ProductGridCardSkeleton({
             maxWidth="75px"
             height="15px"
             disableAspectRatio
+            isRound={isRound}
             customStyle={{ marginTop: 4 }}
           />
         )}

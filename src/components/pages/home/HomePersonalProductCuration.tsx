@@ -219,12 +219,12 @@ function HomePersonalProductCuration() {
                     <ProductListCardSkeleton
                       // eslint-disable-next-line react/no-array-index-key
                       key={`personal-curation-product-card-skeleton-${uniqKey}-${childIndex}`}
-                      customStyle={{
-                        marginBottom: 20
-                      }}
+                      customStyle={{ marginBottom: 20 }}
+                      isRound
                     />
                   ))}
                 {(!isFetched || !searchAiProducts[index] || !searchAiProducts[index].length) && (
+                  // TODO: height 변경 필요
                   <Skeleton
                     width="100%"
                     height="41px"
@@ -240,13 +240,11 @@ function HomePersonalProductCuration() {
                       product={product}
                       hideAlert
                       hideProductLabel
-                      customStyle={{
-                        marginBottom: 20
-                      }}
+                      customStyle={{ marginBottom: 20 }}
                       productAtt={handleProductAtt(product, i)}
                       wishAtt={handleWishAtt(product, i)}
                       name={attrProperty.productName.MAIN_PERSONAL}
-                      source={attrProperty.productSource.MAIN_PERSONAL}
+                      isRound
                     />
                   ))}
                 {isFetched && searchAiProducts[index] && (

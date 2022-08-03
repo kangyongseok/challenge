@@ -17,7 +17,8 @@ import {
   useTheme
 } from 'mrcamel-ui';
 
-import { Image, Skeleton, TouchIcon } from '@components/UI/atoms';
+import { ProductLabel } from '@components/UI/organisms';
+import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -41,7 +42,7 @@ import useProductCardState from '@hooks/useProductCardState';
 
 import { Area, MetaSocial, SkeletonWrapper, Title, WishButton } from './ProductGridCard.styles';
 
-interface ProductGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick'> {
+interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product;
   compact?: boolean;
   hideProductLabel?: boolean;
@@ -55,6 +56,8 @@ interface ProductGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   source?: string;
   measure?: () => void;
   onWishAfterChangeCallback?: (product: Product, isWish: boolean) => void;
+  isRound?: boolean;
+  gap?: number;
 }
 
 const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(function ProductGridCard(
@@ -71,6 +74,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     source,
     measure,
     onWishAfterChangeCallback,
+    isRound = false,
+    gap,
     ...props
   },
   ref
@@ -97,7 +102,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd);
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove);
-  const { imageUrl, isSafe, productLabels } = useProductCardState(product);
+  const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
 
   const {
     theme: {
@@ -121,7 +126,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     router.push(`/products/${id}`);
   };
 
-  const handleClickWish = async (e: MouseEvent) => {
+  const handleClickWish = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     if (!accessUser) {
@@ -201,7 +206,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       <Flexbox
         ref={ref}
         direction="vertical"
-        gap={compact ? 12 : 18}
+        gap={gap || (compact ? 12 : 17)}
         onClick={handleClick}
         customStyle={cardCustomStyle}
         {...props}
@@ -211,47 +216,30 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             variant="backgroundImage"
             src={imageUrl}
             alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
+            isRound={isRound}
           />
           {!loaded && (
             <SkeletonWrapper>
-              <Skeleton customStyle={{ height: '100%' }} />
+              <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
             </SkeletonWrapper>
           )}
           {!hideProductLabel && productLabels.length > 0 && (
-            <Box customStyle={{ position: 'absolute', left: 12, bottom: -10 }}>
-              {productLabels.map(({ description, brandColor }) => (
-                <Label
+            <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -10 }}>
+              {productLabels.map(({ description }, index) => (
+                <ProductLabel
                   key={`product-label-${description}`}
+                  showDivider={index !== 0}
                   text={description}
-                  size="xsmall"
-                  customStyle={{
-                    borderRadius: 0,
-                    backgroundColor: brandColor,
-                    borderColor: brandColor,
-                    color: common.white
-                  }}
+                  isSingle={productLabels.length === 1}
                 />
               ))}
-            </Box>
+            </Flexbox>
           )}
-          <WishButton>
+          <WishButton onClick={handleClickWish}>
             {isWish ? (
-              <TouchIcon
-                name="HeartFilled"
-                direction="right"
-                color={secondary.red.main}
-                onClick={handleClickWish}
-                wrapCustomStyle={{ marginTop: -6 }}
-              />
+              <Icon name="HeartFilled" color={secondary.red.main} />
             ) : (
-              <TouchIcon
-                name="HeartOutlined"
-                direction="right"
-                color={common.white}
-                onClick={handleClickWish}
-                wrapCustomStyle={{ marginTop: -6 }}
-                customStyle={{ filter: 'drop-shadow(0px 0 2px rgba(0, 0, 0, 0.4))' }}
-              />
+              <Icon name="HeartOutlined" color={common.white} />
             )}
           </WishButton>
           <Avatar
@@ -261,22 +249,26 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               (hasImage && siteUrlId) || (hasImage && siteId) || ''
             }.png`}
             alt="Platform Img"
-            customStyle={{ position: 'absolute', top: 12, left: 12 }}
+            customStyle={{ position: 'absolute', top: 10, left: 10 }}
           />
         </Box>
-        <Box customStyle={{ padding: compact ? 0 : '0 12px' }}>
+        <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
           <Title variant="body2" weight="medium">
-            {isSafe && <strong>안전결제 </strong>}
+            {isSafe && <span>안전결제 </span>}
             {title}
           </Title>
-          <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-            <Typography
-              variant="body1"
-              weight="bold"
-              customStyle={{ marginTop: 2, marginRight: 6 }}
-            >
+          <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
+            <Typography variant="h4" weight="bold">
               {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
+            {productLegitStatusText && (
+              <Label
+                variant="outlined"
+                size="xsmall"
+                brandColor="black"
+                text={productLegitStatusText}
+              />
+            )}
           </Flexbox>
           {!hideAreaWithDateInfo && (
             <Area variant="small2" weight="medium">
@@ -290,7 +282,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0) && (
             <MetaSocial>
               {wishCount > 0 && (
-                <Flexbox alignment="center" gap={3}>
+                <Flexbox alignment="center" gap={2}>
                   <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
                   <Typography
                     variant="small2"
@@ -302,7 +294,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
                 </Flexbox>
               )}
               {purchaseCount > 0 && (
-                <Flexbox alignment="center" gap={3}>
+                <Flexbox alignment="center" gap={2}>
                   <Icon name="MessageOutlined" width={14} height={14} color={common.grey['60']} />
                   <Typography
                     variant="small2"
@@ -315,7 +307,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               )}
             </MetaSocial>
           )}
-        </Box>
+        </Flexbox>
       </Flexbox>
       <Toast
         open={openRemoveWishToast}

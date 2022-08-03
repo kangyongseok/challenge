@@ -6,3 +6,4 @@ export { default as HomePersonalProductCuration } from './HomePersonalProductCur
 export { default as HomeProductDealAlert } from './HomeProductDealAlert';
 export { default as HomeWelcome } from './HomeWelcome';
 export { default as HomeAiCategories } from './HomeAiCategories';
+export { default as HomeProductLegitLive } from './HomeProductLegitLive';

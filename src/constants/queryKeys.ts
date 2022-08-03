@@ -1,6 +1,7 @@
 import type { ManageParams } from '@dto/userHistory';
 import type { CategoryWishesParams } from '@dto/user';
 import type {
+  LegitProductsParams,
   ProductParams,
   ReviewInfoParams,
   SearchAiProductParams,
@@ -57,7 +58,10 @@ const products = {
     params
       ? ([...products.all, 'searchRelatedProducts', params] as const)
       : ([...products.all, 'searchRelatedProducts'] as const),
-  userInfo: () => [...products.all, 'userInfo'] as const
+  userInfo: () => [...products.all, 'userInfo'] as const,
+  productLegit: (params: ProductParams) => [...products.all, 'productLegit', params] as const,
+  legitProducts: (params?: LegitProductsParams) =>
+    [...products.all, 'legitProducts', params] as const
 };
 
 const users = {
@@ -73,7 +77,9 @@ const users = {
   userNoti: (type: number) => [...users.all, 'userNoti', type] as const,
   userHistoryManages: (event: string) => [...users.all, 'userHistoryManages', event] as const,
   sizeMapping: () => [...users.all, 'sizeMapping'] as const,
-  userProductKeywords: () => [...users.all, 'userProductKeywords'] as const
+  userProductKeywords: () => [...users.all, 'userProductKeywords'] as const,
+  legitTargets: () => [...users.all, 'legitTargets'] as const,
+  legitProducts: () => [...users.all, 'legitProducts'] as const
 };
 
 const userAuth = {
@@ -103,7 +109,8 @@ const client = {
 };
 
 const dashboard = {
-  all: ['dashboard'] as const
+  all: ['dashboard'] as const,
+  legitDashboard: () => [...dashboard.all, 'legitDashboard'] as const
 };
 
 const queryKeys = {

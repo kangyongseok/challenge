@@ -14,6 +14,7 @@ export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   minHeight?: CSSValue;
   disableAspectRatio?: boolean;
   disableAnimation?: boolean;
+  isRound?: boolean;
   customStyle?: CustomStyle;
 }
 function Skeleton({
@@ -26,6 +27,7 @@ function Skeleton({
   minHeight,
   disableAspectRatio,
   disableAnimation,
+  isRound = false,
   customStyle,
   ...props
 }: SkeletonProps) {
@@ -40,6 +42,7 @@ function Skeleton({
         minHeight={minHeight}
         disableAspectRatio={disableAspectRatio}
         disableAnimation={disableAnimation}
+        isRound={isRound}
         {...props}
         css={customStyle}
       />
@@ -52,6 +55,7 @@ function Skeleton({
         <StyledSkeleton
           disableAspectRatio={disableAspectRatio}
           disableAnimation={disableAnimation}
+          isRound={isRound}
           {...props}
           css={customStyle}
         />

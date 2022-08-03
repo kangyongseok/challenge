@@ -6,8 +6,8 @@ export default function useReverseScrollTrigger(trigger = true, delay = 50) {
   const [triggered, setTriggered] = useState(true);
   const prevScrollYRef = useRef(0);
 
-  const thrHandleScroll = useRef(
-    throttle(() => {
+  useEffect(() => {
+    const handleScroll = throttle(() => {
       const { scrollY } = window;
 
       if (scrollY <= 0) {
@@ -19,21 +19,18 @@ export default function useReverseScrollTrigger(trigger = true, delay = 50) {
       }
 
       prevScrollYRef.current = scrollY;
-    }, delay)
-  ).current;
+    }, delay);
 
-  useEffect(() => {
     if (trigger) {
-      window.addEventListener('scroll', thrHandleScroll);
+      window.addEventListener('scroll', handleScroll);
     }
 
     return () => {
       if (trigger) {
-        window.removeEventListener('scroll', thrHandleScroll);
+        window.removeEventListener('scroll', handleScroll);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [trigger, delay]);
 
   return triggered;
 }

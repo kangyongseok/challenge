@@ -33,6 +33,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import {
   List,
   ListItem,
+  NewLabel,
   PriceDownTooltipTitle,
   StyledBottomNavigation
 } from './BottomNavigation.styles';
@@ -46,29 +47,36 @@ const data: {
 }[] = [
   {
     title: '홈',
-    defaultIcon: 'HomeOutlined',
-    activeIcon: 'HomeFilled',
+    defaultIcon: 'NewHomeOutlined',
+    activeIcon: 'NewHomeFilled',
     href: '/',
     logName: 'HOME'
   },
   {
+    title: '사진감정',
+    defaultIcon: 'LegitOutlined',
+    activeIcon: 'LegitFilled',
+    href: '/legit',
+    logName: 'LEGIT'
+  },
+  {
     title: '카테고리',
-    defaultIcon: 'MenuOutlined',
-    activeIcon: 'MenuOutlined',
+    defaultIcon: 'NewCategoryOutlined',
+    activeIcon: 'NewCategoryFilled',
     href: '/category',
     logName: 'CATEGORY'
   },
   {
     title: '찜/최근',
-    defaultIcon: 'HeartFavoriteOutlined',
-    activeIcon: 'HeartFavoriteFilled',
+    defaultIcon: 'NewHeartFavoriteOutlined',
+    activeIcon: 'NewHeartFavoriteFilled',
     href: '/wishes',
     logName: 'WISH'
   },
   {
     title: '마이',
-    defaultIcon: 'UserLargeOutlined',
-    activeIcon: 'UserLargeFilled',
+    defaultIcon: 'NewUserLargeOutlined',
+    activeIcon: 'NewUserLargeFilled',
     href: '/mypage',
     logName: 'MY'
   }
@@ -160,6 +168,19 @@ function BottomNavigation({
           pathname: href
         });
       }
+
+      // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
+      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 것 수 있다고 판단 됨/
+      // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
+      if (href === '/legit') {
+        queryClient.resetQueries(
+          queryKeys.products.legitProducts({
+            page: 0,
+            size: 8,
+            isOnlyResult: true
+          })
+        );
+      }
     };
 
   const handleResize = useCallback(() => {
@@ -240,8 +261,18 @@ function BottomNavigation({
                 key={`bottom-navigation-${navData.title}`}
                 ref={navData.href === '/wishes' ? wishNavRef : undefined}
               >
+                {navData.href === '/legit' && (
+                  <NewLabel variant="contained" text="NEW" size="xsmall" />
+                )}
                 <Link
                   href={{
+                    pathname: navData.href,
+                    query:
+                      navData.href === '/wishes' && confirmPriceNotiProducts.length
+                        ? { scrollToProductId: confirmPriceNotiProducts[0].id }
+                        : undefined
+                  }}
+                  as={{
                     pathname: navData.href,
                     query:
                       navData.href === '/wishes' && confirmPriceNotiProducts.length
@@ -256,11 +287,15 @@ function BottomNavigation({
                   >
                     <Icon
                       name={isActive ? navData.activeIcon : navData.defaultIcon}
-                      width={24}
-                      height={22}
-                      color={isActive ? common.grey['20'] : common.grey['90']}
+                      color={isActive ? common.grey['20'] : common.grey['80']}
                     />
-                    <Typography variant="small2" customStyle={{ marginTop: 6 }}>
+                    <Typography
+                      variant="small2"
+                      customStyle={{
+                        marginTop: 4,
+                        color: isActive ? common.grey['20'] : common.grey['80']
+                      }}
+                    >
                       {navData.title}
                     </Typography>
                   </a>

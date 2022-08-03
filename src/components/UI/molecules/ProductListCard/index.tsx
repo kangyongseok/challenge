@@ -20,6 +20,7 @@ import {
   useTheme
 } from 'mrcamel-ui';
 
+import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
 import { Image, Skeleton } from '@components/UI/atoms';
 
@@ -45,9 +46,16 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import { Area, MetaSocial, SkeletonWrapper, Title, WishButton } from './ProductListCard.styles';
+import {
+  Area,
+  Content,
+  MetaSocial,
+  SkeletonWrapper,
+  Title,
+  WishButton
+} from './ProductListCard.styles';
 
-interface ProductListCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick'> {
+interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product;
   hideProductLabel?: boolean;
   hideAreaWithDateInfo?: boolean;
@@ -58,6 +66,7 @@ interface ProductListCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
   index?: number;
   onWishAfterChangeCallback?: () => void;
   customStyle?: CustomStyle;
+  isRound?: boolean;
   name?: string;
   source?: string;
 }
@@ -67,7 +76,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     product,
     hideProductLabel,
     hideAreaWithDateInfo,
-    hideMetaSocialInfo = true,
+    hideMetaSocialInfo,
     hideAlert = true,
     productAtt,
     index,
@@ -76,6 +85,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     name,
     wishAtt,
     source,
+    isRound = false,
     ...props
   },
   ref
@@ -86,7 +96,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     id,
     title,
     site: { id: siteId } = {},
-    siteUrl: { id: siteUrlId } = {},
+    siteUrl,
     targetProductId,
     brand: { name: brandName } = {},
     category: { name: categoryName } = {},
@@ -119,7 +129,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     showDuplicateWithPriceDownAlert,
     isPopular,
     isPriceDown,
-    salePrice
+    salePrice,
+    productLegitStatusText
   } = useProductCardState(product);
 
   const {
@@ -303,122 +314,131 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
 
   return (
     <>
-      <Box css={customStyle}>
+      <Box customStyle={customStyle}>
         <Flexbox
           ref={ref}
-          gap={16}
+          gap={12}
           onClick={handleClick}
           {...props}
           customStyle={{ cursor: 'pointer' }}
         >
-          <Box customStyle={{ position: 'relative', minWidth: 134, maxWidth: 134 }}>
+          <Content isRound={isRound}>
             <Image
               variant="backgroundImage"
               src={imageUrl}
               alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
+              isRound={isRound}
             />
             {!loaded && (
               <SkeletonWrapper>
-                <Skeleton customStyle={{ height: '100%' }} />
+                <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
               </SkeletonWrapper>
             )}
             <WishButton onClick={handleClickWish}>
               {isWish ? (
-                <Icon name="HeartFilled" color={secondary.red.main} />
+                <Icon name="HeartFilled" color={secondary.red.main} size="large" />
               ) : (
-                <Icon
-                  name="HeartOutlined"
-                  color={common.white}
-                  customStyle={{ filter: 'drop-shadow(0px 0 2px rgba(0, 0, 0, 0.4))' }}
-                />
+                <Icon name="HeartOutlined" color={common.white} size="large" />
               )}
             </WishButton>
             <Avatar
               width={20}
               height={20}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                siteUrlId || siteId
+                (siteUrl || {}).id || siteId
               }.png`}
               alt="Platform Img"
-              customStyle={{ position: 'absolute', top: 12, left: 12 }}
+              customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
               (status === 4 ? <ReservingOverlay variant="h4" /> : <SoldOutOverlay variant="h4" />)}
-          </Box>
+          </Content>
           <div>
             {!hideProductLabel && productLabels.length > 0 && (
-              <Flexbox customStyle={{ fontSize: 1, marginBottom: 8 }}>
-                {productLabels.map(({ description, brandColor }) => (
-                  <Label
+              <Flexbox customStyle={{ marginBottom: 8 }}>
+                {productLabels.map(({ description }, childIndex) => (
+                  <ProductLabel
                     key={`product-label-${description}`}
+                    showDivider={childIndex !== 0}
                     text={description}
-                    size="xsmall"
-                    customStyle={{
-                      borderRadius: 0,
-                      backgroundColor: brandColor,
-                      borderColor: brandColor,
-                      color: common.white
-                    }}
+                    isSingle={productLabels.length === 1}
                   />
                 ))}
               </Flexbox>
             )}
-            <Title variant="body2" weight="medium">
-              {isSafe && <strong>안전결제 </strong>}
-              {title}
-            </Title>
-            <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-              <Typography
-                variant="body1"
-                weight="bold"
-                customStyle={{ marginTop: 2, marginRight: 6 }}
-              >
-                {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-              </Typography>
-              {showPriceDown && (
-                <Label variant="outlined" size="xsmall" brandColor="black" text="가격하락" />
+            <Flexbox direction="vertical" gap={4}>
+              <Title variant="body2" weight="medium">
+                {isSafe && <span>안전결제 </span>}
+                {title}
+              </Title>
+              <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
+                <Typography variant="h4" weight="bold">
+                  {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+                </Typography>
+                {productLegitStatusText && (
+                  <Label
+                    variant="outlined"
+                    size="xsmall"
+                    brandColor="black"
+                    text={productLegitStatusText}
+                  />
+                )}
+                {isPopular && (
+                  <Label variant="contained" size="xsmall" brandColor="black" text="인기" />
+                )}
+                {showPriceDown && (
+                  <Label
+                    variant="outlined"
+                    size="xsmall"
+                    brandColor="red"
+                    text="가격하락"
+                    customStyle={{ marginLeft: isPopular ? 4 : 0 }}
+                  />
+                )}
+              </Flexbox>
+              {!hideAreaWithDateInfo && (
+                <Area variant="small2" weight="medium">
+                  <Box component="span">
+                    {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
+                      new Date(datePosted)
+                    )}${area ? ` · ${getProductArea(area)}` : ''}`}
+                  </Box>
+                </Area>
               )}
-              {isPopular && (
-                <Label variant="contained" size="xsmall" brandColor="black" text="인기" />
+              {!hideMetaSocialInfo && (wishCount > 0 || purchaseCount > 0) && (
+                <MetaSocial>
+                  {wishCount > 0 && (
+                    <Flexbox alignment="center" gap={3}>
+                      <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
+                      <Typography
+                        variant="small2"
+                        weight="medium"
+                        customStyle={{ color: common.grey['60'] }}
+                      >
+                        {wishCount}
+                      </Typography>
+                    </Flexbox>
+                  )}
+                  {purchaseCount > 0 && (
+                    <Flexbox alignment="center" gap={3}>
+                      <Icon
+                        name="MessageOutlined"
+                        width={14}
+                        height={14}
+                        color={common.grey['60']}
+                      />
+                      <Typography
+                        variant="small2"
+                        weight="medium"
+                        customStyle={{ color: common.grey['60'] }}
+                      >
+                        {purchaseCount}
+                      </Typography>
+                    </Flexbox>
+                  )}
+                </MetaSocial>
               )}
             </Flexbox>
-            {!hideAreaWithDateInfo && (
-              <Area variant="small2" weight="medium">
-                <Box component="span">
-                  {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
-                    new Date(datePosted)
-                  )}${area ? ` · ${getProductArea(area)}` : ''}`}
-                </Box>
-              </Area>
-            )}
-            {!hideMetaSocialInfo && (wishCount > 0 || purchaseCount > 0) && (
-              <MetaSocial>
-                {wishCount > 0 && (
-                  <Flexbox alignment="center" gap={3}>
-                    <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
-                    <Typography
-                      variant="small2"
-                      weight="medium"
-                      customStyle={{ color: common.grey['60'] }}
-                    >
-                      {wishCount}
-                    </Typography>
-                  </Flexbox>
-                )}
-                {purchaseCount > 0 && (
-                  <Flexbox alignment="center" gap={3}>
-                    <Icon name="MessageOutlined" width={14} height={14} color={common.grey['60']} />
-                    <Typography
-                      variant="small2"
-                      weight="medium"
-                      customStyle={{ color: common.grey['60'] }}
-                    >
-                      {purchaseCount}
-                    </Typography>
-                  </Flexbox>
-                )}
-              </MetaSocial>
-            )}
           </div>
         </Flexbox>
         {!hideAlert && (

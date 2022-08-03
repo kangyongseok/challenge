@@ -124,6 +124,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
                 src={imageThumbnail || imageMain}
                 alt="Seller Product Img"
                 disableAspectRatio
+                isRound
               />
             ))}
       </ProductList>
@@ -150,6 +151,7 @@ const ImageSkeleton = styled.div`
   animation: ${pulse} 800ms linear 0s infinite alternate;
   width: 96px;
   height: 96px;
+  border-radius: 8px;
 `;
 
 export default memo(ProductSellerProductList);

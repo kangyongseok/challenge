@@ -107,24 +107,13 @@ function OnboardingPermission() {
     LocalStorage.remove(SIGN_UP_STEP);
     LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
 
-    if (
-      checkAgent.isAndroidApp() &&
-      window.webview &&
-      window.webview.callAuthPush &&
-      window.webview.callAuthLocation
-    ) {
+    if (checkAgent.isAndroidApp()) {
       window.webview.callAuthPush();
       window.webview.callAuthLocation();
       return;
     }
 
-    if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthLocation
-    ) {
+    if (checkAgent.isIOSApp()) {
       window.webkit.messageHandlers.callAuthPush.postMessage(0);
       window.webkit.messageHandlers.callAuthLocation.postMessage(0);
       return;

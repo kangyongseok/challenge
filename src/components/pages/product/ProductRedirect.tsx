@@ -92,7 +92,8 @@ function ProductRedirect({
     redirectTimerRef.current = setTimeout(
       () => {
         let productUrl = url;
-        const windowCloseTimeout = 2500;
+        const windowCloseDelayPlatforms = [PRODUCT_SITE.KANGKAS.id];
+        const windowCloseTimeout = windowCloseDelayPlatforms.includes(site.id) ? 2500 : 1000;
 
         if (checkAgent.isMobileApp() && productUrl.includes('//smartstore.naver.com')) {
           productUrl = productUrl.replace('//smartstore.naver.com', '//m.smartstore.naver.com');
@@ -112,46 +113,38 @@ function ProductRedirect({
         }
 
         if (isIOSApp || checkAgent.isIOSApp()) {
-          if (
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.callExecuteApp
-          ) {
-            if (site.id === PRODUCT_SITE.BUNJANG.id) {
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                `bunjang://goto?type=product&val=${postId}`
-              );
-              return;
-            }
-            if (site.id === PRODUCT_SITE.DAANGN.id) {
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                `towneers://articles/${postId}`
-              );
-              return;
-            }
-            if (site.id === PRODUCT_SITE.HELLO.id) {
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                `hellomarket://hellomarket.api/item/${postId}`
-              );
-              return;
-            }
+          if (site.id === PRODUCT_SITE.BUNJANG.id) {
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              `bunjang://goto?type=product&val=${postId}`
+            );
+            return;
+          }
+          if (site.id === PRODUCT_SITE.DAANGN.id) {
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              `towneers://articles/${postId}`
+            );
+            return;
+          }
+          if (site.id === PRODUCT_SITE.HELLO.id) {
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              `hellomarket://hellomarket.api/item/${postId}`
+            );
+            return;
           }
           window.location.replace(productUrl);
           windowCloseTimerRef.current = setTimeout(() => window.close(), windowCloseTimeout);
         } else if (isAndroidApp || checkAgent.isAndroidApp()) {
-          if (window.webview && window.webview.callExecuteApp) {
-            if (site.id === PRODUCT_SITE.BUNJANG.id) {
-              window.webview.callExecuteApp(`bunjang://goto?type=product&val=${postId}`);
-              return;
-            }
-            if (site.id === PRODUCT_SITE.DAANGN.id) {
-              window.webview.callExecuteApp(`towneers://articles/${postId}`);
-              return;
-            }
-            if (site.id === PRODUCT_SITE.HELLO.id) {
-              window.webview.callExecuteApp(`hellomarket://hellomarket.api/item/${postId}`);
-              return;
-            }
+          if (site.id === PRODUCT_SITE.BUNJANG.id) {
+            window.webview.callExecuteApp(`bunjang://goto?type=product&val=${postId}`);
+            return;
+          }
+          if (site.id === PRODUCT_SITE.DAANGN.id) {
+            window.webview.callExecuteApp(`towneers://articles/${postId}`);
+            return;
+          }
+          if (site.id === PRODUCT_SITE.HELLO.id) {
+            window.webview.callExecuteApp(`hellomarket://hellomarket.api/item/${postId}`);
+            return;
           }
           window.location.replace(productUrl);
           windowCloseTimerRef.current = setTimeout(() => window.close(), windowCloseTimeout);

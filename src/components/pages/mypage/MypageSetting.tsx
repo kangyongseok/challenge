@@ -71,20 +71,14 @@ function MypageSetting({ data }: SettingProps) {
   };
 
   useEffect(() => {
-    if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
+    if (checkAgent.isAndroidApp()) {
       window.webview.callAuthPush();
     }
-    if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthPush.postMessage
-    ) {
+    if (checkAgent.isIOSApp()) {
       window.webkit.messageHandlers.callAuthPush.postMessage(0);
     }
-    window.getAuthPush = (result: string) => {
-      setSystemSetting(JSON.parse(result));
+    window.getAuthPush = (result: boolean) => {
+      setSystemSetting(!result);
     };
   }, []);
 
@@ -107,32 +101,17 @@ function MypageSetting({ data }: SettingProps) {
         justifyContent="space-between"
         customStyle={{ marginBottom: 24 }}
         onClick={() => {
-          if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
+          if (checkAgent.isAndroidApp()) {
+            window.webview.callAuthPush();
             window.webview.moveToSetting();
           }
-          if (
-            checkAgent.isIOSApp() &&
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.callAuthPush &&
-            window.webkit.messageHandlers.callAuthPush.postMessage
-          ) {
+          if (checkAgent.isIOSApp()) {
+            window.webkit.messageHandlers.callAuthPush.postMessage(0);
             window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
           }
-          setTimeout(() => {
-            if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
-              window.webview.callAuthPush();
-            }
-            if (
-              checkAgent.isIOSApp() &&
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callAuthPush &&
-              window.webkit.messageHandlers.callAuthPush.postMessage
-            ) {
-              window.webkit.messageHandlers.callAuthPush.postMessage(0);
-            }
-          }, 3000);
+          window.getAuthPush = (result: boolean) => {
+            setSystemSetting(!result);
+          };
         }}
       >
         <Box>
@@ -141,7 +120,7 @@ function MypageSetting({ data }: SettingProps) {
               알림 설정
             </Title>
             <Typography customStyle={{ color: palette.common.grey['60'], marginLeft: 10 }}>
-              {systemSetting ? '켜짐' : '꺼짐'}
+              {systemSetting ? '꺼짐' : '켜짐'}
             </Typography>
           </Flexbox>
           <Content variant="small1">기기 설정에서 알림 설정을 변경해주세요.</Content>

@@ -30,7 +30,8 @@ const productName = {
   PRODUCT: 'PRODUCT',
   DIRECT: 'DIRECT',
   HISTORY: 'HISTORY',
-  SEARCHHELPER: 'SEARCHHELPER'
+  SEARCHHELPER: 'SEARCHHELPER',
+  LEGIT_PRODUCT: 'LEGIT_PRODUCT'
 };
 
 const productTitle = {
@@ -60,7 +61,12 @@ const productTitle = {
   CATEGORY: 'CATEGORY',
   LIST: 'LIST',
   HONEYNOTI: 'HONEYNOTI',
-  SEARCHHELPER: 'SEARCHHELPER'
+  SEARCHHELPER: 'SEARCHHELPER',
+  ABOUT_CTA: 'ABOUT_CTA',
+  MIDDLE: 'MIDDLE',
+  TOP: 'TOP',
+  PRE_CONFIRM: 'PRE_CONFIRM',
+  MYLIST: 'MYLIST'
 };
 
 const productSource = {
@@ -88,11 +94,25 @@ const productType = {
   HISTORY: 'HISTORY'
 };
 
+const legitName = {
+  LEGIT_MAIN: 'LEGIT_MAIN',
+  LEGIT_MY: 'LEGIT_MY',
+  LEGIT_POPUP: 'LEGIT_POPUP'
+};
+
+const legitTitle = {
+  LEGIT_CASE: 'LEGIT_CASE',
+  JOIN_BTN: 'JOIN_BTN',
+  HOWTO: 'HOWTO'
+};
+
 const attrProperty = {
   productName,
   productTitle,
   productSource,
-  productType
+  productType,
+  legitName,
+  legitTitle
 };
 
 export default attrProperty;

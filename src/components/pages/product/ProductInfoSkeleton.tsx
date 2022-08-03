@@ -24,6 +24,7 @@ function ProductInfoSkeleton() {
 const BaseSkeleton = styled.div`
   background-color: ${({ theme }) => theme.palette.common.grey['90']};
   animation: ${pulse} 800ms linear 0s infinite alternate;
+  border-radius: 8px;
 `;
 
 const LoadingTitle = styled(BaseSkeleton)`

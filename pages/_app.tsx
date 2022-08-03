@@ -9,7 +9,11 @@ import type { AppProps } from 'next/app';
 import { ThemeProvider, Toast, Typography } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
-import { ErrorBoundary, ProductsKeywordAutoSavedToast } from '@components/UI/organisms';
+import {
+  ErrorBoundary,
+  LegitResultSurveyTypeform,
+  ProductsKeywordAutoSavedToast
+} from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
@@ -26,6 +30,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+import 'swiper/css/effect-cards';
 
 if (global.navigator) {
   Amplitude.init();
@@ -92,6 +97,7 @@ function App({ Component, pageProps }: AppProps) {
                 </ErrorBoundary>
                 <SearchHelperPopup type="break" />
                 <ProductsKeywordAutoSavedToast />
+                <LegitResultSurveyTypeform />
               </PortalProvider>
             </Hydrate>
           </RecoilRoot>

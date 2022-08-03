@@ -91,7 +91,7 @@ function HomeCamelProductCuration() {
     }
   }, [setCamelProductCurationState, search, brandsAndCategories]);
 
-  const handleClickChip = (e: MouseEvent<HTMLDivElement>) => {
+  const handleClickChip = (e: MouseEvent<HTMLButtonElement>) => {
     logEvent(attrKeys.home.CLICK_TAG, {
       name: 'MAIN',
       title: 'CAMEL'
@@ -250,9 +250,6 @@ function HomeCamelProductCuration() {
           brandColor={selectedChip === 0 ? 'black' : 'grey'}
           size="small"
           isRound={false}
-          // TODO UI 라이브러리에서 체크
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           onClick={handleClickChip}
           customStyle={{
             minWidth: 'fit-content'
@@ -274,8 +271,6 @@ function HomeCamelProductCuration() {
             customStyle={{
               minWidth: 'fit-content'
             }}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             onClick={handleClickChip}
           >
             {name}
@@ -286,7 +281,10 @@ function HomeCamelProductCuration() {
         <ProductCurationList>
           {isLoading || isFetching || !search
             ? Array.from(new Array(20), (_, index) => (
-                <ProductGridCardSkeleton key={`carmel-product-curation-card-skeleton-${index}`} />
+                <ProductGridCardSkeleton
+                  key={`carmel-product-curation-card-skeleton-${index}`}
+                  isRound
+                />
               ))
             : search?.page.content.map((product, i) => (
                 <ProductGridCard
@@ -297,6 +295,8 @@ function HomeCamelProductCuration() {
                   productAtt={handleProductAtt(product, i)}
                   name={attrProperty.productName.MAIN_CAMEL}
                   source={attrProperty.productSource.MAIN_CAMEL}
+                  compact
+                  isRound
                 />
               ))}
         </ProductCurationList>

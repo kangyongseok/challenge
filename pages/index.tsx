@@ -16,6 +16,7 @@ import {
   HomeFooter,
   HomePersonalProductCuration,
   HomeProductDealAlert,
+  HomeProductLegitLive,
   HomeWelcome
 } from '@components/pages/home';
 
@@ -24,7 +25,7 @@ import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postManage } from '@api/userHistory';
-import { fetchUserInfo } from '@api/user';
+import { fetchProductKeywords, fetchUserInfo } from '@api/user';
 import { fetchProductDealInfos } from '@api/nextJs';
 import { fetchParentCategories } from '@api/category';
 
@@ -97,6 +98,7 @@ function Home() {
         <HomeProductDealAlert />
         <SaveSearchList />
         <HomeBrandList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
+        <HomeProductLegitLive />
         <HomeCategoryList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
         <HomeCamelProductCuration />
         <HomeAiCategories />
@@ -115,6 +117,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    await queryClient.prefetchQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords);
   }
 
   await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);

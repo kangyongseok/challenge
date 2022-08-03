@@ -76,6 +76,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
     reviewInfo &&
     SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
+  // console.log(reviewInfoParams);
   return reviewInfo?.sellerReviews.totalElements ? (
     <Box customStyle={{ marginTop: 32 }}>
       <Flexbox
@@ -102,8 +103,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
             weight="medium"
             customStyle={{ marginLeft: 4, color: palette.common.grey['40'] }}
           >
-            ({commaNumber(reviewInfo.totalCount || reviewInfo?.sellerReviews.totalElements || 0)}
-            개)
+            ({commaNumber(reviewInfo?.sellerReviews.totalElements || 0)}개)
           </Typography>
         </Flexbox>
         <Icon name="CaretRightOutlined" size="medium" />
@@ -160,7 +160,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
                 reviewInfo.curnScore.length > 1
                   ? reviewInfo?.curnScore
                   : `${reviewInfo?.curnScore}.0` || 0
-              }${reviewInfo?.maxScore ? `/${reviewInfo?.maxScore}` : ''}`}
+              }/${reviewInfo?.maxScore || 0}`}
             </Typography>
           )}
         </Flexbox>
@@ -177,17 +177,16 @@ function ProductSellerReviews({ product }: { product?: Product }) {
                     <Typography variant="body2" weight="medium">
                       {creator}
                     </Typography>
-                    {!Number.isNaN(Number(reviewInfo.curnScore)) &&
-                      Math.floor(Number(score) / 2) !== 0 && (
-                        <Rating
-                          count={5}
-                          value={
-                            reviewInfo.maxScore === '10'
-                              ? Math.floor(Number(score) / 2)
-                              : Number(score)
-                          }
-                        />
-                      )}
+                    {!!reviewInfo.curnScore && Math.floor(Number(score) / 2) !== 0 && (
+                      <Rating
+                        count={5}
+                        value={
+                          reviewInfo.maxScore === '10'
+                            ? Math.floor(Number(score) / 2)
+                            : Number(score)
+                        }
+                      />
+                    )}
                   </Flexbox>
                   <ReviewContent variant="body2">{content}</ReviewContent>
                 </>
