@@ -61,7 +61,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
 `;
 
 const Content = styled.main<{ disablePadding: boolean }>`

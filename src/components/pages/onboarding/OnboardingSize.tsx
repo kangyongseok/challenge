@@ -132,110 +132,113 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
   ]);
 
   return (
-    <GeneralTemplate
-      footer={
-        <OnboardingBottomCTA
-          variant={hasSize ? 'contained' : 'outlined'}
-          onClick={handleClickCTAButton}
-          showBorder
+    <>
+      <GeneralTemplate hideAppDownloadBanner>
+        <Typography
+          variant="h2"
+          weight="bold"
+          customStyle={{ padding: '48px 0px 40px', '& > span': { color: palette.primary.main } }}
         >
-          {hasSize ? '시작하기' : '건너뛰기'}
-        </OnboardingBottomCTA>
-      }
-    >
-      <Typography
-        variant="h2"
-        weight="bold"
-        customStyle={{ padding: '48px 0px 40px', '& > span': { color: palette.primary.main } }}
+          <span>사이즈 정보</span>를 알려주시면
+          <br />
+          맞춤 추천해드릴게요
+        </Typography>
+        {gender.length > 0 && userInfo && (
+          <Box customStyle={{ flex: 1 }}>
+            <Typography
+              variant="body2"
+              weight="medium"
+              customStyle={{ color: palette.common.grey['60'] }}
+            >
+              중복 선택 가능
+            </Typography>
+            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 24 }}>
+              👕 상의
+            </Typography>
+            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
+              {defaultSize.top.map(({ categorySizeId, viewSize }) => (
+                <Chip
+                  key={`top-${viewSize}-${categorySizeId}`}
+                  isRound
+                  variant={selectedTopList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
+                  brandColor={selectedTopList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  onClick={handleClickSizeLabel({
+                    type: 'top',
+                    selectedValue: categorySizeId,
+                    viewSize
+                  })}
+                  customStyle={{
+                    padding: '10px 16px',
+                    height: 41
+                  }}
+                >
+                  {viewSize}
+                </Chip>
+              ))}
+            </Flexbox>
+            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
+              👖 하의
+            </Typography>
+            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
+              {defaultSize.bottom.map(({ categorySizeId, viewSize }) => (
+                <Chip
+                  key={`bottom-${viewSize}-${categorySizeId}`}
+                  isRound
+                  variant={
+                    selectedBottomList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
+                  }
+                  brandColor={selectedBottomList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  onClick={handleClickSizeLabel({
+                    type: 'bottom',
+                    selectedValue: categorySizeId,
+                    viewSize
+                  })}
+                  customStyle={{
+                    padding: '10px 16px',
+                    height: 41
+                  }}
+                >
+                  {viewSize}
+                </Chip>
+              ))}
+            </Flexbox>
+            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
+              👟 신발
+            </Typography>
+            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
+              {defaultSize.shoes.map(({ categorySizeId, viewSize }) => (
+                <Chip
+                  key={`shoes-${viewSize}-${categorySizeId}`}
+                  isRound
+                  variant={
+                    selectedShoesList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
+                  }
+                  brandColor={selectedShoesList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  onClick={handleClickSizeLabel({
+                    type: 'shoes',
+                    selectedValue: categorySizeId,
+                    viewSize
+                  })}
+                  customStyle={{
+                    padding: '10px 16px',
+                    height: 41
+                  }}
+                >
+                  {viewSize}
+                </Chip>
+              ))}
+            </Flexbox>
+          </Box>
+        )}
+      </GeneralTemplate>
+      <OnboardingBottomCTA
+        variant={hasSize ? 'contained' : 'outlined'}
+        onClick={handleClickCTAButton}
+        showBorder
       >
-        <span>사이즈 정보</span>를 알려주시면
-        <br />
-        맞춤 추천해드릴게요
-      </Typography>
-      {gender.length > 0 && userInfo && (
-        <Box customStyle={{ flex: 1 }}>
-          <Typography
-            variant="body2"
-            weight="medium"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
-            중복 선택 가능
-          </Typography>
-          <Typography variant="h4" weight="bold" customStyle={{ marginTop: 24 }}>
-            👕 상의
-          </Typography>
-          <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
-            {defaultSize.top.map(({ categorySizeId, viewSize }) => (
-              <Chip
-                key={`top-${viewSize}-${categorySizeId}`}
-                isRound
-                variant={selectedTopList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
-                brandColor={selectedTopList.includes(categorySizeId) ? 'primary' : 'grey'}
-                onClick={handleClickSizeLabel({
-                  type: 'top',
-                  selectedValue: categorySizeId,
-                  viewSize
-                })}
-                customStyle={{
-                  padding: '10px 16px',
-                  height: 41
-                }}
-              >
-                {viewSize}
-              </Chip>
-            ))}
-          </Flexbox>
-          <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
-            👖 하의
-          </Typography>
-          <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
-            {defaultSize.bottom.map(({ categorySizeId, viewSize }) => (
-              <Chip
-                key={`bottom-${viewSize}-${categorySizeId}`}
-                isRound
-                variant={selectedBottomList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
-                brandColor={selectedBottomList.includes(categorySizeId) ? 'primary' : 'grey'}
-                onClick={handleClickSizeLabel({
-                  type: 'bottom',
-                  selectedValue: categorySizeId,
-                  viewSize
-                })}
-                customStyle={{
-                  padding: '10px 16px',
-                  height: 41
-                }}
-              >
-                {viewSize}
-              </Chip>
-            ))}
-          </Flexbox>
-          <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
-            👟 신발
-          </Typography>
-          <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
-            {defaultSize.shoes.map(({ categorySizeId, viewSize }) => (
-              <Chip
-                key={`shoes-${viewSize}-${categorySizeId}`}
-                isRound
-                variant={selectedShoesList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
-                brandColor={selectedShoesList.includes(categorySizeId) ? 'primary' : 'grey'}
-                onClick={handleClickSizeLabel({
-                  type: 'shoes',
-                  selectedValue: categorySizeId,
-                  viewSize
-                })}
-                customStyle={{
-                  padding: '10px 16px',
-                  height: 41
-                }}
-              >
-                {viewSize}
-              </Chip>
-            ))}
-          </Flexbox>
-        </Box>
-      )}
-    </GeneralTemplate>
+        {hasSize ? '시작하기' : '건너뛰기'}
+      </OnboardingBottomCTA>
+    </>
   );
 }
 

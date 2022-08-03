@@ -177,65 +177,63 @@ function OnboardingPermission() {
   }, [mutatePostAlarm, mutatePostArea, router]);
 
   return (
-    <GeneralTemplate
-      footer={
-        <Flexbox direction="vertical" alignment="center" customStyle={{ paddingTop: 20 }}>
-          <Label variant="body1" weight="medium" customStyle={{ color: palette.common.grey['60'] }}>
-            단말 설정에서 언제든 변경할 수 있어요.
-          </Label>
-          <OnboardingBottomCTA onClick={handleClick} disabled={pending}>
-            시작하기
-          </OnboardingBottomCTA>
+    <>
+      <GeneralTemplate hideAppDownloadBanner>
+        <Typography
+          variant="h2"
+          weight="bold"
+          customStyle={{ padding: '52px 0px', '& > span': { color: palette.primary.main } }}
+        >
+          꿀매물 <span>득템 확률 2배</span> 상승!
+          <br />
+          권한 허용하고 꿀매물 받아보세요
+        </Typography>
+        <Flexbox gap={32} direction="vertical" customStyle={{ paddingBottom: 32, flex: 1 }}>
+          <Flexbox gap={16}>
+            <IconBox>
+              <PinIcon />
+            </IconBox>
+            <Box>
+              <Typography variant="h4" weight="bold">
+                위치(선택)
+              </Typography>
+              <Typography
+                variant="body1"
+                weight="medium"
+                customStyle={{ color: palette.common.grey['40'] }}
+              >
+                당근마켓 ‧ 직거래 매물만 골라 볼 수 있어요
+              </Typography>
+            </Box>
+          </Flexbox>
+          <Flexbox gap={16}>
+            <IconBox>
+              <AlarmIcon />
+            </IconBox>
+            <Box>
+              <Typography variant="h4" weight="bold">
+                알림(선택)
+              </Typography>
+              <Typography
+                variant="body1"
+                weight="medium"
+                customStyle={{ color: palette.common.grey['40'] }}
+              >
+                꿀매물, 가격 변동 알림 등을 받아보실 수 있어요
+              </Typography>
+            </Box>
+          </Flexbox>
         </Flexbox>
-      }
-      hideAppDownloadBanner
-    >
-      <Typography
-        variant="h2"
-        weight="bold"
-        customStyle={{ padding: '52px 0px', '& > span': { color: palette.primary.main } }}
-      >
-        꿀매물 <span>득템 확률 2배</span> 상승!
-        <br />
-        권한 허용하고 꿀매물 받아보세요
-      </Typography>
-      <Flexbox gap={32} direction="vertical" customStyle={{ paddingBottom: 32, flex: 1 }}>
-        <Flexbox gap={16}>
-          <IconBox>
-            <PinIcon />
-          </IconBox>
-          <Box>
-            <Typography variant="h4" weight="bold">
-              위치(선택)
-            </Typography>
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['40'] }}
-            >
-              당근마켓 ‧ 직거래 매물만 골라 볼 수 있어요
-            </Typography>
-          </Box>
-        </Flexbox>
-        <Flexbox gap={16}>
-          <IconBox>
-            <AlarmIcon />
-          </IconBox>
-          <Box>
-            <Typography variant="h4" weight="bold">
-              알림(선택)
-            </Typography>
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['40'] }}
-            >
-              꿀매물, 가격 변동 알림 등을 받아보실 수 있어요
-            </Typography>
-          </Box>
-        </Flexbox>
+      </GeneralTemplate>
+      <Flexbox direction="vertical" alignment="center" customStyle={{ paddingTop: 20 }}>
+        <Label variant="body1" weight="medium" customStyle={{ color: palette.common.grey['60'] }}>
+          단말 설정에서 언제든 변경할 수 있어요.
+        </Label>
+        <OnboardingBottomCTA onClick={handleClick} disabled={pending}>
+          시작하기
+        </OnboardingBottomCTA>
       </Flexbox>
-    </GeneralTemplate>
+    </>
   );
 }
 

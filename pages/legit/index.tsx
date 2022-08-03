@@ -28,6 +28,8 @@ function Legit() {
       header={<Header customStyle={{ backgroundColor: common.grey['95'] }} />}
       footer={<BottomNavigation />}
       customStyle={{
+        height: 'auto',
+        minHeight: '100%',
         backgroundColor: common.grey['95']
       }}
     >
