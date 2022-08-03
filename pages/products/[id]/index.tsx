@@ -91,7 +91,7 @@ function ProductDetail() {
   });
   const contentRef = useRef<HTMLHRElement | null>(null);
   const channelTalkRef = useRef<HTMLDivElement | null>(null);
-  const { isPriceDown, isDup, hasTarget, salePrice } = useMemo(() => {
+  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
     let newIsPriceDown = newTargetProductPrice < newPrice;
@@ -113,6 +113,7 @@ function ProductDetail() {
 
     return {
       isPriceDown: newIsPriceDown,
+      isPriceCrm: newSalePrice >= 1,
       isDup: newIsDup,
       hasTarget: newHasTarget,
       salePrice: newSalePrice
@@ -379,7 +380,7 @@ function ProductDetail() {
               isProductLegit={data?.productLegit}
               isDup={isDup}
               hasTarget={hasTarget}
-              isPriceCrm={!!chainPrice}
+              isPriceCrm={isPriceCrm}
               salePrice={salePrice}
               isPriceDown={isPriceDown}
               isWish={data?.wish}

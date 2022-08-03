@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Tooltip, Typography } from 'mrcamel-ui';
+import { Flexbox, Toast, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 import { Keyframes } from '@emotion/react';
@@ -23,10 +23,18 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function ProductLegitProcessContents() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
   const boxFade = useRecoilValue(animationKeyframesState);
   const isAnimation = useRecoilValue(firstUserAnimationState);
   const [showLegitTooltip, setShowLegitTooltip] = useState(true);
+  const [openToast, setOpenToast] = useState(false);
   const { mutate: mutatePostProductsAdd } = useMutation(postLegitsFollow);
   const { data, isSuccess } = useQuery(
     queryKeys.products.productLegit({ productId: Number(router.query.id) }),
@@ -127,6 +135,7 @@ function ProductLegitProcessContents() {
         },
         {
           onSuccess() {
+            setOpenToast(true);
             setShowLegitTooltip(false);
           }
         }
@@ -183,6 +192,11 @@ function ProductLegitProcessContents() {
           </Typography>
         </FrameBox>
       )}
+      <Toast open={openToast} onClose={() => setOpenToast(false)}>
+        <Typography weight="medium" customStyle={{ color: common.white }}>
+          내 사진감정 목록에 추가되었습니다!
+        </Typography>
+      </Toast>
     </StyledLegitTextArea>
   );
 }

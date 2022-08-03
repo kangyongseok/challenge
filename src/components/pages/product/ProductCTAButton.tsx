@@ -43,6 +43,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
+import { getTenThousandUnitPrice } from '@utils/formats';
 import { getRandomNumber } from '@utils/common';
 import commaNumber from '@utils/commaNumber';
 import checkAgent from '@utils/checkAgent';
@@ -392,7 +393,7 @@ function ProductCTAButton({
             onClick={() => {
               logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
                 name: attrProperty.productName.PRODUCT_DETAIL,
-                title: attrProperty.productTitle.ABOUT_CTA,
+                title: attrProperty.productTitle.CTA,
                 brand: product?.brand.name,
                 category: product?.category.name,
                 parentCategory: FIRST_CATEGORIES[product?.category.parentId as number],
@@ -406,7 +407,7 @@ function ProductCTAButton({
             }}
           >
             <Tooltip
-              open={legitTooltip && isDoneWishOnBoarding}
+              open={legitTooltip && isDoneWishOnBoarding && !isOpenPriceCRMTooltip}
               brandColor="primary-highlight"
               message={
                 <Flexbox gap={6} alignment="center">
@@ -472,7 +473,7 @@ function ProductCTAButton({
             disableShadow
             message={
               <Typography variant="body2" weight="bold">
-                {commaNumber(salePrice)}만원 내려간 지금이 바로 득템 기회🎁
+                {commaNumber(getTenThousandUnitPrice(salePrice))}만원 내려간 지금이 바로 득템 기회🎁
               </Typography>
             }
             customStyle={{ marginTop: -19, marginLeft: -80 }}

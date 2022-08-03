@@ -123,26 +123,26 @@ function UserNotificationItem({
       router.push(notification.parameter);
     }
   };
-
   return (
     <Flexbox onClick={handleClick}>
-      {type === 'honeyNoti' && (
-        <Box
-          customStyle={{
-            marginRight: 16,
-            minWidth: 48
-          }}
-        >
-          <Image
-            src={notification.image ?? ''}
-            width={48}
-            height={48}
-            disableAspectRatio
-            alt="Notification Img"
-            style={{ borderRadius: '50%' }}
-          />
-        </Box>
-      )}
+      <Box
+        customStyle={{
+          marginRight: 16,
+          minWidth: 48
+        }}
+      >
+        <Image
+          src={
+            notification.image ??
+            `https://${process.env.IMAGE_DOMAIN}/assets/images/ico/pic_mr_profile.png`
+          }
+          width={48}
+          height={48}
+          disableAspectRatio
+          alt="Notification Img"
+          style={{ borderRadius: '50%' }}
+        />
+      </Box>
       <Flexbox
         direction="vertical"
         gap={4}

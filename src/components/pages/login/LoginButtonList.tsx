@@ -206,7 +206,7 @@ function LoginButtonList({
         onClick={() => {
           setShow(false);
           logEvent(attrKeys.login.CLICK_NONLOGIN);
-          setTimeout(() => router.replace('/'), 300);
+          setTimeout(() => router.replace(returnUrl || '/'), 300);
         }}
       >
         <Typography

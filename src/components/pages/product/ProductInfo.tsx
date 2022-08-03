@@ -79,14 +79,16 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
         </Flexbox>
       )}
       <Flexbox gap={6} customStyle={{ marginBottom: 8 }}>
-        {productLabels.map((label, index) => (
-          <ProductLabel
-            key={`product-label-${label.id}`}
-            showDivider={index !== 0}
-            text={label.description}
-            isSingle={productLabels.length === 1}
-          />
-        ))}
+        <Flexbox>
+          {productLabels.map((label, index) => (
+            <ProductLabel
+              key={`product-label-${label.id}`}
+              showDivider={index !== 0}
+              text={label.description}
+              isSingle={productLabels.length === 1}
+            />
+          ))}
+        </Flexbox>
         {isCamelSeller && (
           <Label text="가품 시, 100%환불" size="xsmall" variant="ghost" brandColor="black" />
         )}

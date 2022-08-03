@@ -257,7 +257,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {isSafe && <span>안전결제 </span>}
             {title}
           </Title>
-          <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
+          <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4, flexWrap: 'wrap' }}>
             <Typography variant="h4" weight="bold">
               {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>

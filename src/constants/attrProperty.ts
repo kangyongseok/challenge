@@ -62,6 +62,7 @@ const productTitle = {
   LIST: 'LIST',
   HONEYNOTI: 'HONEYNOTI',
   SEARCHHELPER: 'SEARCHHELPER',
+  CTA: 'CTA',
   ABOUT_CTA: 'ABOUT_CTA',
   MIDDLE: 'MIDDLE',
   TOP: 'TOP',

@@ -65,7 +65,7 @@ function ProductLegitProcessBottomSheet() {
         subTitle: 'INFO'
       });
       setOpenBottomSheet(true);
-    }, 8000);
+    }, 4000);
   };
 
   const handleClick = () => {

@@ -209,8 +209,10 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
   ]);
 
   useEffect(() => {
-    logEvent(attrKeys.products.VIEW_MYFILTER);
-  }, []);
+    if (accessUser && (tops.length || bottoms.length || shoes.length)) {
+      logEvent(attrKeys.products.VIEW_MYFILTER);
+    }
+  }, [accessUser, bottoms, shoes, tops]);
 
   if (!accessUser || (!tops.length && !bottoms.length && !shoes.length)) return null;
 

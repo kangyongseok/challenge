@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { Image, ProductLegitLabel } from '@components/UI/atoms';
@@ -26,6 +26,9 @@ function LegitResultCardHolder() {
     }
   } = useTheme();
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
+  const [hideCardSwipeGuideIcon, setHideCardSwipeGuideIcon] = useState(true);
+
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const {
     data: {
@@ -97,6 +100,28 @@ function LegitResultCardHolder() {
       if (img[0]) setBackgroundImageSrc(img[0].src);
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setHideCardSwipeGuideIcon(false);
+
+        if (scrollTimerRef.current) {
+          clearTimeout(scrollTimerRef.current);
+        }
+
+        scrollTimerRef.current = setTimeout(() => {
+          setHideCardSwipeGuideIcon(true);
+        }, 100);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <StyledLegitResultCardHolder>
@@ -171,43 +196,57 @@ function LegitResultCardHolder() {
             '& .swiper-slide-visible > .waiting-behind-card': { opacity: 0 }
           }}
         >
-          <Swiper
-            effect="cards"
-            cardsEffect={{
-              rotate: false,
-              slideShadows: false
-            }}
-            loop
-            modules={[EffectCards]}
-            grabCursor
-            onSlideChange={handleSlideChange}
-            style={{ width: 160 }}
-          >
-            {images.map((image, index) => (
-              <SwiperSlide
-                // eslint-disable-next-line react/no-array-index-key
-                key={`product-legit-result-image-${index}`}
-                style={{
-                  position: 'relative'
-                }}
-              >
-                <Image
-                  className="product-legit-result-image"
-                  width={160}
-                  height={160}
-                  src={image}
-                  disableAspectRatio
-                  alt="Product Legit Result Img"
-                  customStyle={{
-                    borderRadius: 8,
-                    opacity: 0,
-                    transition: 'opacity .2s ease-in'
+          <Box customStyle={{ position: 'relative', width: '100%' }}>
+            <SwipeGuideIcon
+              name="CaretLeftOutlined"
+              color="white"
+              placement="left"
+              hide={hideCardSwipeGuideIcon}
+            />
+            <SwipeGuideIcon
+              name="CaretRightOutlined"
+              color="white"
+              placement="right"
+              hide={hideCardSwipeGuideIcon}
+            />
+            <Swiper
+              effect="cards"
+              cardsEffect={{
+                rotate: false,
+                slideShadows: false
+              }}
+              loop
+              modules={[EffectCards]}
+              grabCursor
+              onSlideChange={handleSlideChange}
+              style={{ width: 160 }}
+            >
+              {images.map((image, index) => (
+                <SwiperSlide
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`product-legit-result-image-${index}`}
+                  style={{
+                    position: 'relative'
                   }}
-                />
-                <WaitingBehindCard className="waiting-behind-card" />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                >
+                  <Image
+                    className="product-legit-result-image"
+                    width={160}
+                    height={160}
+                    src={image}
+                    disableAspectRatio
+                    alt="Product Legit Result Img"
+                    customStyle={{
+                      borderRadius: 8,
+                      opacity: 0,
+                      transition: 'opacity .2s ease-in'
+                    }}
+                  />
+                  <WaitingBehindCard className="waiting-behind-card" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </Box>
           <Typography
             variant="body2"
             customStyle={{ marginTop: 8, textAlign: 'center', color: common.white }}
@@ -351,6 +390,28 @@ const BackgroundImageBlur = styled.div`
   border-radius: ${({ theme: { box } }) => box.round['8']};
   background-color: rgba(21, 25, 54, 0.7);
   backdrop-filter: blur(10px);
+`;
+
+const SwipeGuideIcon = styled(Icon)<{
+  hide?: boolean;
+  placement: 'left' | 'right';
+}>`
+  position: absolute;
+  top: 50%;
+  ${({ placement }): CSSObject => {
+    switch (placement) {
+      case 'left':
+        return {
+          left: 0
+        };
+      default:
+        return {
+          right: 0
+        };
+    }
+  }}
+  transform: translateY(-50%);
+  opacity: ${({ hide }) => (hide ? 0 : 0.5)};
 `;
 
 const WaitingBehindCard = styled.div`

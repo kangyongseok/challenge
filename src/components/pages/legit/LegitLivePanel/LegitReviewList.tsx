@@ -49,59 +49,66 @@ function LegitReviewList() {
   } = useTheme();
   return (
     <StyledReviewList>
-      {reviews.map(({ id, date, message, rating }) => (
-        <ReviewCard key={`legit-review-${id}`}>
-          <QuotesIcon />
-          <Flexbox gap={3} alignment="flex-end" customStyle={{ marginTop: 8 }}>
-            <Typography weight="bold">UserID</Typography>
-            <Typography weight="bold">{id}</Typography>
-            <Typography variant="small1" weight="light" customStyle={{ color: common.grey['60'] }}>
-              {date}
+      {reviews.map(({ id, date, message, rating }, index) => (
+        <>
+          <ReviewCard key={`legit-review-${id}`}>
+            <QuotesIcon />
+            <Flexbox gap={3} alignment="flex-end" customStyle={{ marginTop: 8 }}>
+              <Typography weight="bold">UserID</Typography>
+              <Typography weight="bold">{id}</Typography>
+              <Typography
+                variant="small1"
+                weight="light"
+                customStyle={{ color: common.grey['60'] }}
+              >
+                {date}
+              </Typography>
+            </Flexbox>
+            <Box customStyle={{ marginTop: 10 }}>
+              {/* TODO customStyle 적용되지 않는 문제 수정 */}
+              <Rating count={5} value={rating} size="small" />
+            </Box>
+            <Typography
+              customStyle={{ marginTop: 10, whiteSpace: 'pre-wrap', color: common.grey['40'] }}
+            >
+              {message}
             </Typography>
-          </Flexbox>
-          <Box customStyle={{ marginTop: 10 }}>
-            {/* TODO customStyle 적용되지 않는 문제 수정 */}
-            <Rating count={5} value={rating} size="small" />
-          </Box>
-          <Typography
-            customStyle={{ marginTop: 10, whiteSpace: 'pre-wrap', color: common.grey['40'] }}
-          >
-            {message}
-          </Typography>
-        </ReviewCard>
+          </ReviewCard>
+          {index === reviews.length - 1 && (
+            <Box component="span" customStyle={{ minWidth: 20, height: 20 }} />
+          )}
+        </>
       ))}
     </StyledReviewList>
   );
 }
 
 const StyledReviewList = styled.section`
+  display: flex;
   margin: 52px -20px 0;
-  padding: 0 20px;
-  white-space: nowrap;
+  padding-left: 20px;
   overflow-x: auto;
   overflow-y: hidden;
 
   & > div {
     margin-right: 8px;
-    &:last-child {
+
+    &:nth-child(6) {
       margin-right: 0;
     }
   }
 `;
 
 const ReviewCard = styled.div`
-  display: inline-block;
   min-width: 312px;
   max-width: 312px;
-  height: 184px;
-  padding: 32px 20px 0;
+  padding: 32px 20px 35px;
   border-radius: ${({ theme: { box } }) => box.round['16']};
   background-color: ${({
     theme: {
       palette: { common }
     }
   }) => common.white};
-  vertical-align: middle;
 `;
 
 function QuotesIcon() {

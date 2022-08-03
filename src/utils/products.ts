@@ -668,6 +668,7 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     scorePriceCount: product.scorePriceCount,
     scorePriceRate: product.scorePriceRate,
     source: source || attrProperty.productSource.MAIN_CAMEL,
-    imageCount: product.imageCount
+    imageCount: product.imageCount,
+    isProductLegit: product.isProductLegit
   });
 }

@@ -68,6 +68,14 @@ function LegitRecommendList() {
   };
 
   useEffect(() => {
+    if (open) {
+      logEvent(attrKeys.legit.VIEW_LEGIT_MODAL, {
+        name: attrProperty.legitName.LEGIT_MAIN
+      });
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (isSuccess && !open)
       router.push(
         {

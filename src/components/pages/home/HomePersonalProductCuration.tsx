@@ -170,11 +170,11 @@ function HomePersonalProductCuration() {
   };
 
   return (
-    <Box component="section">
+    <Box component="section" customStyle={{ margin: '0 -20px' }}>
       <Flexbox
         alignment="center"
         justifyContent="space-between"
-        customStyle={{ margin: '16px 0 20px' }}
+        customStyle={{ margin: '16px 20px 20px' }}
       >
         <Typography variant="body2">
           업데이트 <strong>{dayjs().format('YYYY-MM-DD HH:mm')}</strong>
@@ -195,6 +195,9 @@ function HomePersonalProductCuration() {
         autoHeight
         spaceBetween={20}
         onSlideChangeTransitionEnd={handleSlideChange}
+        style={{
+          padding: '0 20px'
+        }}
       >
         {!baseInfo?.aiCategories && (
           <SwiperSlide>

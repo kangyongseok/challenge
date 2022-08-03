@@ -932,6 +932,17 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   }, [router.isReady, productsOnBoardingTrigger, accessUser]);
 
   useEffect(() => {
+    if (accessUser) {
+      if (productsOnBoardingTrigger.complete && productsOnBoardingTrigger.step === 4) {
+        setProductsOnBoardingTrigger({
+          complete: false,
+          step: 4
+        });
+      }
+    }
+  }, [accessUser, productsOnBoardingTrigger]);
+
+  useEffect(() => {
     if (!complete && step === 3) {
       setProductsMapFilterState(({ type }) => ({
         type,
@@ -1319,7 +1330,8 @@ const StyledProductsFilter = styled.div<{
       ? {
           position: 'fixed',
           opacity: 0,
-          zIndex: zIndex.header
+          zIndex: zIndex.header,
+          pointerEvents: 'none'
         }
       : {
           position: 'static'
@@ -1328,13 +1340,13 @@ const StyledProductsFilter = styled.div<{
     if (scrollTriggered && !reverseTriggered && prevReverseTriggered) {
       return {
         opacity: 0,
-        pointerEvents: 'none',
         transition: 'opacity 0.1s ease-in 0ms'
       };
     }
     if (reverseTriggered) {
       return {
         opacity: 1,
+        pointerEvents: 'visible',
         transition: 'opacity 0.1s ease-in 0ms'
       };
     }

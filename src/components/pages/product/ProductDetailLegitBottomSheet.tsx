@@ -32,13 +32,14 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
   const deviceId = useRecoilValue(deviceIdState);
 
   useEffect(() => {
-    logEvent(attrKeys.legit.VIEW_LEGIT_MODAL, {
-      name: attrProperty.productName.PRODUCT_DETAIL,
-      title: attrProperty.productTitle.ABOUT_CTA
-    });
+    if (legitBottomSheet) {
+      logEvent(attrKeys.legit.VIEW_LEGIT_MODAL, {
+        name: attrProperty.productName.PRODUCT_DETAIL,
+        title: attrProperty.productTitle.ABOUT_CTA
+      });
+    }
     return () => atomLegitBottomSheet(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [atomLegitBottomSheet, legitBottomSheet]);
 
   return (
     // eslint-disable-next-line no-console
