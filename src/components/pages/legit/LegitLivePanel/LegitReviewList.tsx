@@ -79,6 +79,7 @@ const StyledReviewList = styled.section`
   padding: 0 20px;
   white-space: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
 
   & > div {
     margin-right: 8px;

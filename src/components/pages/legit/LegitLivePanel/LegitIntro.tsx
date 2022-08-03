@@ -281,6 +281,7 @@ const LegitCounter = styled(Flexbox)`
 
 const LegitLive = styled(Flexbox)`
   padding: 20px 24px;
+  max-height: 59px;
 `;
 
 const LegitLiveTitle = styled(Flexbox)`

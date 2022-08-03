@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Label, Toast, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { Skeleton } from '@components/UI/atoms';
+
 import type { ProductKeywordsContent } from '@dto/user';
 import type { SearchParams } from '@dto/product';
 
@@ -28,18 +30,21 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function SaveSearchList({ page = 'MAIN' }) {
   const {
-    theme: { palette }
+    theme: { palette, box }
   } = useTheme();
   const [deleteToast, setDeleteToast] = useState(false);
   const [rollbackToast, setRollbackToast] = useState(false);
   const [deletedId, setDeletedId] = useState<number>(0);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: { content: productKeywords = [] } = {}, refetch } = useQuery(
-    queryKeys.users.userProductKeywords(),
-    fetchProductKeywords,
-    { refetchOnMount: true }
-  );
+  const {
+    data: { content: productKeywords = [] } = {},
+    isLoading,
+    refetch
+  } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
+    refetchOnMount: true,
+    enabled: !!accessUser
+  });
   const { mutate } = useMutation(deleteProductKeyword);
   const { mutate: productKeywordRestoreMutate } = useMutation(putProductKeyword);
   const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
@@ -154,7 +159,42 @@ function SaveSearchList({ page = 'MAIN' }) {
     }
   };
 
-  if (!accessUser || !productKeywords.length) return null;
+  if (!accessUser) return null;
+
+  if (isLoading)
+    return (
+      <Box
+        customStyle={{
+          marginTop: page === 'SEARCH' ? '24px' : '40px',
+          position: 'relative'
+        }}
+      >
+        <Skeleton
+          width="138px"
+          height="21px"
+          disableAspectRatio
+          customStyle={{
+            borderRadius: box.round['4']
+          }}
+        />
+        <SaveSearchCardArea>
+          <Skeleton
+            width="298px"
+            height="89px"
+            disableAspectRatio
+            customStyle={{ borderRadius: box.round['8'] }}
+          />
+          <Skeleton
+            width="298px"
+            height="89px"
+            disableAspectRatio
+            customStyle={{ borderRadius: box.round['8'] }}
+          />
+        </SaveSearchCardArea>
+      </Box>
+    );
+
+  if (!isLoading && !productKeywords.length) return null;
 
   return (
     <Box
@@ -287,6 +327,7 @@ const SaveSearchCardArea = styled.section`
   overflow-x: auto;
   white-space: nowrap;
   & > div {
+    display: inline-block;
     margin-right: 12px;
     &:last-child {
       margin-right: 0;

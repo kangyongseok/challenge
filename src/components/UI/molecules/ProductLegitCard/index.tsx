@@ -55,7 +55,7 @@ function ProductLegitCard({
         alignment="flex-start"
         gap={16}
         {...props}
-        customStyle={{ ...customStyle, cursor: 'pointer' }}
+        customStyle={{ ...customStyle, maxHeight: 56, cursor: 'pointer' }}
       >
         <Box
           customStyle={{

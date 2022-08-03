@@ -245,6 +245,7 @@ function HomePersonalProductCuration() {
                       wishAtt={handleWishAtt(product, i)}
                       name={attrProperty.productName.MAIN_PERSONAL}
                       isRound
+                      source={attrProperty.productSource.MAIN_PERSONAL}
                     />
                   ))}
                 {isFetched && searchAiProducts[index] && (

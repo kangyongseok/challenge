@@ -438,8 +438,13 @@ function ProductCTAButton({
           fullWidth
           disabled={
             !product ||
-            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['1'] ||
-            PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['3']
+            ((!isDup || !hasTarget) &&
+              (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                PRODUCT_STATUS['1'] ||
+                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                  PRODUCT_STATUS['3'] ||
+                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
+                  PRODUCT_STATUS['2']))
           }
           onClick={handleClickCTAButton}
           customStyle={{
@@ -556,6 +561,7 @@ function ProductCTAButton({
                 name={attrProperty.productName.WISH_MODAL}
                 isRound
                 gap={8}
+                source={attrProperty.productSource.PRODUCT_RELATED_LIST}
               />
             ))}
           </ProductCardList>
@@ -570,9 +576,6 @@ const Wrapper = styled.div`
   bottom: 0;
   display: flex;
   gap: 6px;
-  /* display: grid;
-  column-gap: 6px;
-  grid-template-columns: 48px 1fr; */
   align-items: center;
   justify-content: center;
   width: 100%;

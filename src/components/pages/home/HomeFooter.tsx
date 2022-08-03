@@ -9,9 +9,12 @@ function HomeFooter() {
   return (
     <Box
       component="footer"
+      draggable={false}
       customStyle={{
         padding: '24px 20px',
-        backgroundColor: palette.common.grey['98']
+        backgroundColor: palette.common.grey['98'],
+        userSelect: 'none',
+        cursor: 'default'
       }}
     >
       <Typography variant="body2" weight="bold">

@@ -12,6 +12,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchSellerProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function SellerProductsPanel() {
@@ -83,12 +84,12 @@ function SellerProductsPanel() {
             <Box key={`sellerInfo-seller-product-${product.id}`}>
               <ProductListCard
                 product={product}
-                hideMetaSocialInfo
                 productAtt={{
                   name: attrKeys.products.SELLER_PRODUCT,
                   ...product
                 }}
                 isRound
+                source={attrProperty.productSource.SELLER_PRODUCT}
               />
             </Box>
           ))

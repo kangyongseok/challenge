@@ -276,6 +276,7 @@ function WishesPanel() {
                   }
                 }}
                 product={wishItem.product}
+                hideMetaSocialInfo={false}
                 hideAlert={false}
                 name={attrProperty.productName.WISH_LIST}
                 productAtt={{
@@ -296,6 +297,7 @@ function WishesPanel() {
                   scorePriceRate: wishItem.product.scorePriceRate,
                   source: attrProperty.productSource.WISH_LIST
                 }}
+                source={attrProperty.productSource.WISH_LIST}
                 onWishAfterChangeCallback={refetch}
                 data-id={wishItem.product.id}
                 isRound

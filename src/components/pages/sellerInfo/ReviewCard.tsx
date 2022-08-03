@@ -3,18 +3,19 @@ import { useRouter } from 'next/router';
 import { Button, Flexbox, Rating, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { ProductSellerReview } from '@dto/product';
+import type { ProductSellerReview, Site } from '@dto/product';
 
 import Amplitude from '@library/amplitude';
 
 import { postSellerReport } from '@api/product';
 
-import { REPORT_STATUS } from '@constants/product';
+import { PRODUCT_SITE, REPORT_STATUS } from '@constants/product';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ReviewCardProps {
   sellerReview: ProductSellerReview;
+  site: Site;
   curnScore: string | null;
   maxScore: string | null;
   productId: number;
@@ -24,6 +25,7 @@ interface ReviewCardProps {
 
 function ReviewCard({
   sellerReview: { id, reportStatus, creator, content, score },
+  site: { id: siteId = 0 },
   curnScore,
   maxScore,
   productId,
@@ -98,52 +100,55 @@ function ReviewCard({
     <ReviewCardWrapper>
       {reportStatusText === REPORT_STATUS[0] && (
         <>
-          <Flexbox alignment="center" justifyContent="space-between">
+          {creator && (
             <Flexbox alignment="center" justifyContent="space-between">
-              <Typography variant="body2" weight="medium">
-                {creator}
-              </Typography>
-              <Typography
-                onClick={handleBlock}
-                variant="body2"
-                customStyle={{
-                  marginLeft: 6,
-                  color: palette.common.grey['60']
-                }}
-              >
-                차단
-              </Typography>
-            </Flexbox>
-            <Flexbox alignment="center">
-              <Button
-                variant="ghost"
-                brandColor="black"
-                onClick={handleReport}
-                customStyle={{
-                  padding: '0 4px',
-                  marginRight: 8,
-                  height: 18
-                }}
-              >
+              <Flexbox alignment="center" justifyContent="space-between">
+                <Typography variant="body2" weight="medium">
+                  {creator}
+                </Typography>
                 <Typography
+                  onClick={handleBlock}
                   variant="body2"
-                  weight="medium"
                   customStyle={{
+                    marginLeft: 6,
                     color: palette.common.grey['60']
                   }}
                 >
-                  신고
+                  차단
                 </Typography>
-              </Button>
-              {!!curnScore && (
-                <Rating
-                  count={5}
-                  value={maxScore === '10' ? Math.floor(Number(score) / 2) : Number(score)}
-                />
-              )}
+              </Flexbox>
+              <Flexbox alignment="center" gap={8}>
+                <Button
+                  variant="ghost"
+                  brandColor="black"
+                  onClick={handleReport}
+                  customStyle={{
+                    padding: '0 4px',
+                    height: 18
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    weight="medium"
+                    customStyle={{
+                      color: palette.common.grey['60']
+                    }}
+                  >
+                    신고
+                  </Typography>
+                </Button>
+                {!Number.isNaN(Number(curnScore)) && Math.floor(Number(score) / 2) !== 0 && (
+                  <Rating
+                    count={5}
+                    value={maxScore === '10' ? Math.floor(Number(score) / 2) : Number(score)}
+                  />
+                )}
+              </Flexbox>
             </Flexbox>
-          </Flexbox>
-          <ReviewContent variant="body2">{content}</ReviewContent>
+          )}
+          <ReviewContent variant="body2">{`${content}${
+            siteId === PRODUCT_SITE.DAANGN.id ? ` (${score})` : ''
+          }`}</ReviewContent>
         </>
       )}
       {reportStatusText === REPORT_STATUS[1] && (

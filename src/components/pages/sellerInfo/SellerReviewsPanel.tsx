@@ -4,13 +4,15 @@ import { useSetRecoilState } from 'recoil';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useInView } from 'react-intersection-observer';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
 import { fetchReviewInfo } from '@api/product';
 
+import { SELLER_STATUS } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
+import { PRODUCT_SITE } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
 import atom from '@recoil/productReview';
@@ -64,6 +66,11 @@ function SellerReviewsPanel() {
 
   const firstReviewInfo = data?.pages?.[0];
   const isEmpty = firstReviewInfo?.sellerReviews?.content?.length === 0;
+  const isCamelProduct = PRODUCT_SITE.CAMEL.id === firstReviewInfo?.productSeller.site?.id;
+  const isCamelSeller =
+    firstReviewInfo &&
+    SELLER_STATUS[firstReviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
+      SELLER_STATUS['3'];
 
   const handleClickCard = () => {
     setReviewBlockState(true);
@@ -92,11 +99,29 @@ function SellerReviewsPanel() {
           }}
         >
           <Typography variant="h4" weight="bold">
-            {firstReviewInfo.site.name ?? ''}에서 받은 후기
+            {(firstReviewInfo.siteUrl.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
           </Typography>
-          <Typography variant="h4" weight="bold">
-            {firstReviewInfo.curnScore || '0'}/{firstReviewInfo.maxScore || '0'}
-          </Typography>
+          <Flexbox gap={12}>
+            {isCamelProduct && (
+              <Flexbox alignment="center">
+                <Typography variant="h4" weight="bold">
+                  카멜우수판매자
+                </Typography>
+              </Flexbox>
+            )}
+            {isCamelSeller && (
+              <Flexbox alignment="center">
+                <Icon name="SafeFilled" customStyle={{ color: palette.primary.main }} />
+                <Typography variant="h4" weight="bold">
+                  카멜인증판매자
+                </Typography>
+              </Flexbox>
+            )}
+            <Typography variant="h4" weight="bold">
+              {firstReviewInfo.curnScore || '0'}
+              {firstReviewInfo.maxScore ? `/${firstReviewInfo.maxScore}` : ''}
+            </Typography>
+          </Flexbox>
         </Flexbox>
       )}
       {isEmpty && (
@@ -117,6 +142,7 @@ function SellerReviewsPanel() {
           <ReviewCard
             key={`seller-review-card-${sellerReview.id}`}
             sellerReview={sellerReview}
+            site={reviewInfo.site || {}}
             curnScore={reviewInfo.curnScore}
             maxScore={reviewInfo.maxScore}
             productId={Number(productId)}

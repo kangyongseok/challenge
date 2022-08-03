@@ -50,12 +50,17 @@ function LoginButtonList({
   const handleClickKakaoLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'KAKAO' });
 
-    if (checkAgent.isAndroidApp()) {
+    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
       window.webview.callLoginKakao();
       return;
     }
 
-    if (checkAgent.isIOSApp()) {
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callLoginKakao
+    ) {
       window.webkit.messageHandlers.callLoginKakao.postMessage(0);
       return;
     }
@@ -95,9 +100,14 @@ function LoginButtonList({
       }
     };
 
-    if (checkAgent.isAndroidApp()) {
+    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginFacebook) {
       window.webview.callLoginFacebook();
-    } else if (checkAgent.isIOSApp()) {
+    } else if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callLoginFacebook
+    ) {
       window.webkit.messageHandlers.callLoginFacebook.postMessage(0);
     } else {
       window.FB.getLoginStatus((response: FacebookLoginResponse) => {
@@ -118,9 +128,14 @@ function LoginButtonList({
   const handleClickAppleLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'APPLE' });
 
-    if (checkAgent.isAndroidApp()) {
+    if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
       window.webview.callLoginApple();
-    } else if (checkAgent.isIOSApp()) {
+    } else if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callLoginApple
+    ) {
       window.webkit.messageHandlers.callLoginApple.postMessage(0);
     }
   };

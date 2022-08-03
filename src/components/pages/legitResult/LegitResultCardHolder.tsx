@@ -166,6 +166,7 @@ function LegitResultCardHolder() {
           customStyle={{
             width: '100%',
             height: '100%',
+            padding: '0 20px',
             '& .swiper-slide-visible > .product-legit-result-image': { opacity: 1 },
             '& .swiper-slide-visible > .waiting-behind-card': { opacity: 0 }
           }}
@@ -207,7 +208,10 @@ function LegitResultCardHolder() {
               </SwiperSlide>
             ))}
           </Swiper>
-          <Typography variant="body2" customStyle={{ marginTop: 8, color: common.white }}>
+          <Typography
+            variant="body2"
+            customStyle={{ marginTop: 8, textAlign: 'center', color: common.white }}
+          >
             {title}
           </Typography>
           <Flexbox gap={3} alignment="center" customStyle={{ marginTop: 3 }}>

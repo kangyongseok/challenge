@@ -130,6 +130,7 @@ function ProductRelatedProductList({
                   isRound
                   compact
                   gap={17}
+                  source={attrProperty.productSource.LIST_RELATED}
                 />
               </Grid>
             ))}

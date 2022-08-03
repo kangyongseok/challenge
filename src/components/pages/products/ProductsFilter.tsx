@@ -1324,8 +1324,8 @@ const StyledProductsFilter = styled.div<{
       : {
           position: 'static'
         }}
-  ${({ scrollTriggered, prevReverseTriggered, reverseTriggered }): CSSObject => {
-    if (scrollTriggered && prevReverseTriggered) {
+  ${({ scrollTriggered, reverseTriggered, prevReverseTriggered }): CSSObject => {
+    if (scrollTriggered && !reverseTriggered && prevReverseTriggered) {
       return {
         opacity: 0,
         pointerEvents: 'none',

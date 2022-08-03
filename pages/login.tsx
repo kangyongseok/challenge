@@ -173,18 +173,22 @@ function Login() {
             LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
 
             if (checkAgent.isAndroidApp()) {
-              window.webview.callAuthPush();
-              window.webview.callAuthLocation();
-              return;
-            }
-
-            if (checkAgent.isIOSApp()) {
+              // window.webview.callAuthPush();
+              // window.webview.callAuthLocation();
+              // return;
+            } else if (
+              checkAgent.isIOSApp() &&
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callAuthPush &&
+              window.webkit.messageHandlers.callAuthLocation
+            ) {
               window.webkit.messageHandlers.callAuthPush.postMessage(0);
               window.webkit.messageHandlers.callAuthLocation.postMessage(0);
               return;
+            } else {
+              updateUserArea();
             }
-
-            updateUserArea();
           }
 
           // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
