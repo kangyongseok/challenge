@@ -25,6 +25,8 @@ import type { PageProductLegit, Product } from '@dto/product';
 import Axios from '@library/axios';
 import Amplitude from '@library/amplitude';
 
+import { convertQueryStringByObject } from '@utils/common';
+
 const BASE_PATH = '/users';
 
 export async function fetchUserInfo() {
@@ -174,7 +176,7 @@ export async function fetchSizeMapping() {
 }
 
 export async function postPreReserve(params: { model?: string; phone?: string }) {
-  await Axios.getInstance().post(`${BASE_PATH}/model`, params);
+  await Axios.getInstance().post(`${BASE_PATH}/model${convertQueryStringByObject(params)}`);
 }
 
 export async function fetchUserLegitTargets() {
