@@ -83,6 +83,12 @@ function MyPortfolioBottomSheet({
   // );
 
   useEffect(() => {
+    if (accessUser && accessUser.phone) {
+      setReserveData((props) => ({ ...props, phone: accessUser.phone }));
+    }
+  }, [accessUser, setReserveData]);
+
+  useEffect(() => {
     if (openReservation) {
       logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
         name: attrProperty.productName.MYPORTFOLIO
