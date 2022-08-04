@@ -10,3 +10,4 @@ export { default as MyPortfolioLanding09 } from './MyPortfolioLanding09';
 export { default as MyPortfolioBottomSheet } from './MyPortfolioBottomSheet';
 export { default as MyPortfolioCommonBanner } from './MyPortfolioCommonBanner';
 export { default as MyPotyfolioDialog } from './MyPotyfolioDialog';
+export { default as MyPortfolioPagenation } from './MyPortfolioPagenation';

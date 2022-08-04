@@ -2,20 +2,20 @@ import { useSetRecoilState } from 'recoil';
 import { Box, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import type { Models } from '@dto/model';
+import type { SuggestKeyword } from '@dto/product';
 
 import { PreReserveDataState } from '@recoil/myPortfolio';
 
 interface ModelSearchItemProps {
-  data: Models;
+  data: SuggestKeyword;
   onClick: () => void;
 }
 
 function ProductSearchItem({ data, onClick }: ModelSearchItemProps) {
   const setReserveData = useSetRecoilState(PreReserveDataState);
   const handleClickModel = () => {
+    setReserveData((props) => ({ ...props, model: data.keyword }));
     onClick();
-    setReserveData((props) => ({ ...props, model: data.name }));
   };
 
   return (
@@ -26,7 +26,7 @@ function ProductSearchItem({ data, onClick }: ModelSearchItemProps) {
             weight="medium"
             variant="h4"
             dangerouslySetInnerHTML={{
-              __html: data.modelDeco
+              __html: data.keywordDeco
             }}
           />
         </Box>

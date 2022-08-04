@@ -1,12 +1,24 @@
+import { useEffect } from 'react';
+
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, CtaButton, Dialog, Flexbox, Icon, Typography } from 'mrcamel-ui';
+
+import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
+
+import attrKeys from '@constants/attrKeys';
 
 import { SuccessDialogState } from '@recoil/myPortfolio';
 
 function MyPotyfolioDialog() {
   const router = useRouter();
   const isOpen = useRecoilValue(SuccessDialogState);
+  useEffect(() => {
+    if (isOpen) {
+      logEvent(attrKeys.myPortfolio.VIEW_RESERVATION_COMPLETE_DIALOG);
+    }
+  }, [isOpen]);
   return (
     <Dialog
       open={isOpen}
@@ -27,7 +39,10 @@ function MyPotyfolioDialog() {
           brandColor="primary"
           variant="contained"
           customStyle={{ marginTop: 32 }}
-          onClick={() => router.replace('/')}
+          onClick={() => {
+            LocalStorage.remove('preReserve');
+            router.replace('/');
+          }}
         >
           홈으로 이동
         </CtaButton>

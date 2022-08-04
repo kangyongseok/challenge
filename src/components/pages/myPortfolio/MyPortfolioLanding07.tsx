@@ -19,7 +19,7 @@ function MyPortfolioLanding07() {
 
   return (
     <Flexbox
-      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%' }}
+      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%', position: 'relative' }}
       direction="vertical"
     >
       <Typography weight="bold" customStyle={{ color: palette.primary.main }}>

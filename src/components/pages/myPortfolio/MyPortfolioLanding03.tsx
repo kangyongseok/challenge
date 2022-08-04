@@ -21,14 +21,14 @@ function MyPortfolioLanding03({
       <Typography
         weight="bold"
         variant="h2"
-        customStyle={{ width: 400, margin: '0 auto', display: isHidden ? 'none' : 'block' }}
+        customStyle={{ width: 376, margin: '0 auto', display: isHidden ? 'none' : 'block' }}
       >
         궁금했던 내 명품의 가치를
       </Typography>
       <Typography
         weight="bold"
         variant="h2"
-        customStyle={{ width: 400, margin: '0 auto', display: isHidden ? 'none' : 'block' }}
+        customStyle={{ width: 376, margin: '0 auto', display: isHidden ? 'none' : 'block' }}
       >
         가장 먼저 알아보세요.
       </Typography>
@@ -58,7 +58,7 @@ function MyPortfolioLanding03({
 }
 
 const StyledWrap = styled.div<{ isAnimation: boolean }>`
-  padding: 0 20px;
+  padding: 0 32px;
   ${({ isAnimation }): CSSObject =>
     isAnimation
       ? {

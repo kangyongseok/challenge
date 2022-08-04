@@ -24,7 +24,7 @@ function MyPortfolioLanding02({
 
   return (
     <Flexbox customStyle={{ height: '100%' }} direction="vertical">
-      <Box customStyle={{ marginTop: isSmallHeight ? 20 : 52, padding: '0 20px' }}>
+      <Box customStyle={{ marginTop: isSmallHeight ? 20 : 52, padding: '0 32px' }}>
         <Typography variant="h2" customStyle={{ color: palette.common.grey['60'] }}>
           새것도 아니고...
         </Typography>
@@ -53,9 +53,7 @@ function MyPortfolioLanding02({
                 {isAnimation ? <CountUpAnimation countProps={count} /> : count}
                 {unit}
               </GradiantText>
-              <Typography customStyle={{ color: palette.common.grey['60'] }}>
-                {description}
-              </Typography>
+              <SubText>{description}</SubText>
             </Flexbox>
           ))}
         </Flexbox>
@@ -81,8 +79,15 @@ const GradiantText = styled(Typography)`
   align-items: center;
 `;
 
+const SubText = styled(Typography)`
+  color: ${({ theme: { palette } }) => palette.common.grey['60']};
+  @media (max-width: 398px) {
+    font-size: 13px;
+  }
+`;
+
 const MapCountFlexbox = styled(Flexbox)`
-  padding: 0 20px;
+  padding: 0 32px;
   flex: 1;
 `;
 

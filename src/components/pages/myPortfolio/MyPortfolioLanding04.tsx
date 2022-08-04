@@ -14,13 +14,13 @@ function MyPortfolioLanding04({ isAnimation }: { isAnimation: boolean }) {
     theme: { palette }
   } = useTheme();
   return (
-    <Flexbox customStyle={{ padding: '0 20px', height: '100%' }} direction="vertical">
+    <Flexbox customStyle={{ padding: '0 32px', height: '100%' }} direction="vertical">
       <Box customStyle={{ height: 52 }} />
       <AnimationText isAnimation={isAnimation}>
-        <Typography weight="bold" variant="h2" customStyle={{ width: 400, margin: '0 auto' }}>
+        <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
           궁금했던 내 명품의 가치를
         </Typography>
-        <Typography weight="bold" variant="h2" customStyle={{ width: 400, margin: '0 auto' }}>
+        <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
           가장 먼저 알아보세요.
         </Typography>
       </AnimationText>

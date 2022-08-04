@@ -31,7 +31,7 @@ function LegitResult() {
       <GeneralTemplate
         header={<Header />}
         footer={
-          <Box customStyle={{ height: 89 }}>
+          <Box customStyle={{ minHeight: 89 }}>
             <Box
               customStyle={{
                 position: 'fixed',

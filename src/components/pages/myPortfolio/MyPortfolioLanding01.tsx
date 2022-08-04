@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { Box, CtaButton, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CtaButton, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -28,10 +28,12 @@ const slideImage = [
 
 function MyPortfolioLanding01({
   isSmallHeight,
-  onClick
+  onClick,
+  onClickNext
 }: {
   isSmallHeight: boolean;
   onClick: () => void;
+  onClickNext: () => void;
 }) {
   const {
     theme: { palette }
@@ -142,6 +144,9 @@ function MyPortfolioLanding01({
           )}
         </Flexbox>
       </Flexbox>
+      <ScrollNext alignment="center" justifyContent="center" onClick={onClickNext}>
+        <Icon name="CaretDownOutlined" />
+      </ScrollNext>
     </>
   );
 }
@@ -163,6 +168,29 @@ const AnimationText = styled(Typography)<{ active: boolean }>`
           opacity: 1
         }
       : {}};
+`;
+
+const ScrollNext = styled(Flexbox)`
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  animation: bounce 2s infinite ease-in-out;
+  svg {
+    color: ${({ theme: { palette } }) => palette.common.grey['60']};
+  }
+  @keyframes bounce {
+    0% {
+      bottom: 16px;
+    }
+    50% {
+      bottom: 5px;
+    }
+    100% {
+      bottom: 16px;
+    }
+  }
 `;
 
 function GradationText() {

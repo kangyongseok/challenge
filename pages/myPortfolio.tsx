@@ -16,6 +16,7 @@ import {
   MyPortfolioLanding07,
   MyPortfolioLanding08,
   MyPortfolioLanding09,
+  MyPortfolioPagenation,
   MyPotyfolioDialog
 } from '@components/pages/myPortfolio';
 
@@ -202,7 +203,14 @@ function MyPortfolio() {
     {
       key: 'intro',
       Component: (
-        <MyPortfolioLanding01 onClick={handleClickReservation} isSmallHeight={isSmallHeight} />
+        <MyPortfolioLanding01
+          onClick={handleClickReservation}
+          isSmallHeight={isSmallHeight}
+          onClickNext={() => {
+            setCurrentSection(1);
+            globalCurrentSection += 1;
+          }}
+        />
       )
     },
     {
@@ -294,10 +302,10 @@ function MyPortfolio() {
       {(currentSection === 2 || currentSection === 3) &&
         (scrollDirection === 'down' || currentSection === 2 || scrollDirection === 'up') && (
           <FixedTitle isSmallHeight={isSmallHeight} currentSection={currentSection}>
-            <Typography weight="bold" variant="h2" customStyle={{ width: 400, margin: '0 auto' }}>
+            <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
               궁금했던 내 명품의 가치를
             </Typography>
-            <Typography weight="bold" variant="h2" customStyle={{ width: 400, margin: '0 auto' }}>
+            <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
               가장 먼저 알아보세요.
             </Typography>
           </FixedTitle>
@@ -315,6 +323,9 @@ function MyPortfolio() {
         openReservation={openReservation}
       />
       <MyPotyfolioDialog />
+      {currentSection > 0 && currentSection !== 8 && (
+        <MyPortfolioPagenation currentSection={currentSection} />
+      )}
     </>
   );
 }
@@ -345,7 +356,7 @@ const FixedTitle = styled.div<{ isSmallHeight: boolean; currentSection: number }
   left: 0;
   width: 100%;
   z-index: 5;
-  padding: 0 20px;
+  padding: 0 32px;
   animation: fadeIn 0.8s forwards;
   @keyframes fadeIn {
     0% {
@@ -403,6 +414,7 @@ const Section = styled.section<{
   height: ${({ contentsHeight }) => `${contentsHeight}px` || '100vh'};
   overflow: hidden;
   padding-top: 65px;
+  position: relative;
 `;
 
 function GradationText() {

@@ -15,9 +15,10 @@ import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postPreReserve } from '@api/user';
-import { fetchModelSuggest } from '@api/model';
+import { fetchKeywordsSuggest } from '@api/product';
+// import { fetchModelSuggest } from '@api/model';
 
-import queryKeys from '@constants/queryKeys';
+// import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -37,6 +38,7 @@ interface preReserve {
     model: string;
     phone: string;
   };
+  checkList: string[];
 }
 
 function MyPortfolioBottomSheet({
@@ -62,29 +64,52 @@ function MyPortfolioBottomSheet({
   const [phone, setPhone] = useState('');
   const { mutate: mutatePostManage } = useMutation(postPreReserve);
   const successDialog = useSetRecoilState(SuccessDialogState);
-  const { data: models, refetch } = useQuery(
-    queryKeys.model.keyword(searchValue2),
-    () =>
-      fetchModelSuggest({
-        keyword: searchValue2
-      }),
+  const { data = [], refetch } = useQuery(
+    ['product', searchValue2],
+    () => fetchKeywordsSuggest(searchValue2),
     {
       enabled: false
     }
   );
+  // const { data: models, refetch } = useQuery(
+  //   queryKeys.model.keyword(searchValue2),
+  //   () =>
+  //     fetchModelSuggest({
+  //       keyword: searchValue2
+  //     }),
+  //   {
+  //     enabled: false
+  //   }
+  // );
 
   useEffect(() => {
-    logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
-      name: attrProperty.productName.MYPORTFOLIO
-    });
+    if (openReservation) {
+      logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
+        name: attrProperty.productName.MYPORTFOLIO
+      });
+    }
+  }, [openReservation]);
+
+  useEffect(() => {
     if (router.query.login) {
       const localData = LocalStorage.get('preReserve') as preReserve;
       const postData = LocalStorage.get('preReserve') ? localData.reserveData : reserveData;
       if (accessUser?.phone) {
         postData.phone = accessUser?.phone;
       }
+
+      logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
+        name: attrProperty.productName.MYPORTFOLIO_MODAL,
+        model: postData.model,
+        checkList: localData.checkList,
+        att: 'LOGIN'
+      });
+
       mutatePostManage(postData, {
         onSuccess() {
+          logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
+            name: attrProperty.productName.MYPORTFOLIO
+          });
           successDialog(true);
         }
       });
@@ -92,7 +117,7 @@ function MyPortfolioBottomSheet({
     return () => {
       successDialog(false);
       setValidatorText('');
-      LocalStorage.remove('preReserve');
+      // LocalStorage.remove('preReserve');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -145,14 +170,27 @@ function MyPortfolioBottomSheet({
     const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
     logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
       name: attrProperty.productName.MYPORTFOLIO_MODAL,
-      att: checkList
+      model: reserveData.model,
+      checkList
     });
+
+    if (accessUser?.phone) {
+      mutatePostManage(reserveData, {
+        onSuccess() {
+          successDialog(true);
+          setCheckList([]);
+          setReserveData({ model: '', phone: '' });
+        }
+      });
+    }
 
     if (!phone) setValidatorText('휴대전화번호 입력은 필수입니다.');
     if (phone && !regPhone.test(phone)) setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
     if (phone && regPhone.test(phone)) {
       mutatePostManage(reserveData, {
         onSuccess() {
+          setCheckList([]);
+          setReserveData({ model: '', phone: '' });
           successDialog(true);
         }
       });
@@ -176,8 +214,22 @@ function MyPortfolioBottomSheet({
     }
   };
 
+  const handleClose = () => {
+    reset();
+    onClick();
+  };
+
+  const reset = () => {
+    setSearchValue('');
+    setSearchValue2('');
+    setPhone('');
+    setCheckList([]);
+    setReserveData({ model: '', phone: '' });
+    setValidatorText('');
+  };
+
   return (
-    <BottomSheet open={openReservation} onClose={onClick}>
+    <BottomSheet open={openReservation} onClose={handleClose}>
       <Box customStyle={{ height: innerHeight - 100 }}>
         <Box
           customStyle={{
@@ -215,7 +267,7 @@ function MyPortfolioBottomSheet({
                 pattern="[0-9]*"
                 inputMode="numeric"
                 value={phone}
-                inputStyle={{ fontSize: typography.h4.size }}
+                inputStyle={{ fontSize: typography.h4.size, width: '100%' }}
                 customStyle={{
                   padding: '12px 16px',
                   height: 48,
@@ -243,21 +295,25 @@ function MyPortfolioBottomSheet({
               }}
               onFocus={handleFocus}
               value={reserveData.model || searchValue}
-              inputStyle={{ fontSize: typography.h4.size }}
+              inputStyle={{ fontSize: typography.h4.size, width: '100%' }}
               customStyle={{ padding: '12px 16px', height: 48 }}
             />
-            {models && models.length > 0 && openSearchList && searchValue && (
+            {data && data.length > 0 && openSearchList && searchValue && (
               <SearchResultArea>
-                {models.map((result) => (
-                  <ProductSearchItem
-                    onClick={() => {
-                      setSearchValue(result.name);
-                      setOpenSearchList(false);
-                    }}
-                    key={`camel-seller-product-${result.name}`}
-                    data={result}
-                  />
-                ))}
+                {data
+                  .filter((_, i) => i !== 0)
+                  .map((result) => {
+                    return (
+                      <ProductSearchItem
+                        onClick={() => {
+                          setSearchValue(result.keyword);
+                          setOpenSearchList(false);
+                        }}
+                        key={`camel-seller-product-${result.keyword}`}
+                        data={result}
+                      />
+                    );
+                  })}
               </SearchResultArea>
             )}
           </Flexbox>
