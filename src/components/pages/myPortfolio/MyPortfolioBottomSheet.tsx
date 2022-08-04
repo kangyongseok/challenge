@@ -107,7 +107,7 @@ function MyPortfolioBottomSheet({
       logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
         name: attrProperty.productName.MYPORTFOLIO_MODAL,
         model: postData.model,
-        checkList: localData.checkList,
+        checkList: localData?.checkList || [],
         att: 'LOGIN'
       });
 
