@@ -49,6 +49,19 @@ function ProductLegitCard({
     }
   } = useTheme();
 
+  const getResultText = (
+    legitResult: number
+  ): { text: string; variant: 'authentic' | 'fake' | 'impossible' } => {
+    switch (legitResult) {
+      case 1:
+        return { text: '정품의견', variant: 'authentic' };
+      case 2:
+        return { text: '가품의심', variant: 'fake' };
+      default:
+        return { text: '감정불가', variant: 'impossible' };
+    }
+  };
+
   if (variant === 'list') {
     return (
       <Flexbox
@@ -99,7 +112,10 @@ function ProductLegitCard({
           <Flexbox direction="vertical" gap={6}>
             {!hideProductLegitLabelWithDate && (
               <Flexbox alignment="center" justifyContent="space-between" gap={10}>
-                <ProductLegitLabel text="정품의견" />
+                <ProductLegitLabel
+                  text={getResultText(productLegit?.result as number).text}
+                  variant={getResultText(productLegit?.result as number).variant}
+                />
                 <Typography className="legit-alert-date" variant="small2">
                   {dayjs(dateCreated).fromNow()}
                 </Typography>
