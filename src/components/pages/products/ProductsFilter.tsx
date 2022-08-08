@@ -431,7 +431,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const dataCodeId = Number(e.currentTarget.getAttribute('data-code-id') || 0);
-
+    logEvent(attrKeys.products.CLICK_FILTER, { keyword: router.query.keyword });
     setProductsFilterState(({ type }) => ({
       type,
       open: true

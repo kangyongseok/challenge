@@ -38,7 +38,6 @@ function FilterTabs({ variant }: FilterTabsProps) {
 
     if (variant !== 'search') delete eventProperties.keyword;
 
-    logEvent(attrKeys.products.CLICK_FILTER, eventProperties);
     logEvent(attrKeys.products.SELECT_FILTERTAB, {
       name: PRODUCT_NAME.PRODUCT_LIST,
       title: getEventPropertyTitle(dataCodeId),
