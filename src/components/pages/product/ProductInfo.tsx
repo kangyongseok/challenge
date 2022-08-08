@@ -39,10 +39,16 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
   const isCamelSeller =
     product &&
     SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
-  const convertedDescription = useMemo(
-    () => removeTagAndAddNewLine(product?.viewDescription || product?.description || ''),
-    [product?.description, product?.viewDescription]
-  );
+  const convertedDescription = useMemo(() => {
+    const newDescription = removeTagAndAddNewLine(
+      product?.viewDescription || product?.description || ''
+    );
+
+    // TODO 트렌비 매물 설명이 css코드로 시작되는 경우 공백 표시하도록 임시처리
+    return product?.site.id === PRODUCT_SITE.TRENBE.id && newDescription.startsWith('.box')
+      ? ''
+      : newDescription;
+  }, [product?.description, product?.site.id, product?.viewDescription]);
 
   const productLabels = useMemo(() => {
     if (!product?.productSeller.site || !product?.labels) return [];

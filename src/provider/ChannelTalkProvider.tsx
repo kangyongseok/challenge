@@ -10,6 +10,8 @@ import ChannelTalk from '@library/channelTalk';
 
 import { ACCESS_USER } from '@constants/localStorage';
 
+import type { ChannelTalkBootOption } from '@typings/common';
+
 function ChannelTalkProvider() {
   const router = useRouter();
 
@@ -33,38 +35,40 @@ function ChannelTalkProvider() {
   }, [router.pathname, router.query]);
 
   useEffect(() => {
-    ChannelTalk.boot(
-      {
-        pluginKey: process.env.CHANNEL_TALK_PLUGIN_KEY,
-        trackDefaultEvent: false,
-        mobileMessengerMode: 'iframe',
-        zIndex: 11
-      },
-      (error) => {
-        const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
+    const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
+    const option: ChannelTalkBootOption = {
+      pluginKey: process.env.CHANNEL_TALK_PLUGIN_KEY,
+      trackDefaultEvent: false,
+      mobileMessengerMode: 'iframe',
+      zIndex: 11
+    };
 
-        if (!error && accessUser) {
-          const { email, userName, gender, age } = accessUser;
-          let newGender = gender === 'M' ? '남성' : '여성';
-          if (gender !== 'M' && gender !== 'F') newGender = 'NONE';
-          const profile = {
-            email,
-            name: userName,
-            gender: newGender,
-            age: age ? `${age}세` : undefined
-          };
-          const profileOnce = {
-            email,
-            name: userName
-          };
-          ChannelTalk.updateUser({
-            language: 'ko',
-            profile,
-            profileOnce
-          });
-        }
+    if (accessUser?.userId) {
+      option.memberId = accessUser.userId;
+    }
+
+    ChannelTalk.boot(option, (error) => {
+      if (!error && accessUser) {
+        const { email, userName, gender, age } = accessUser;
+        let newGender = gender === 'M' ? '남성' : '여성';
+        if (gender !== 'M' && gender !== 'F') newGender = 'NONE';
+        const profile = {
+          email,
+          name: userName,
+          gender: newGender,
+          age: age ? `${age}세` : undefined
+        };
+        const profileOnce = {
+          email,
+          name: userName
+        };
+        ChannelTalk.updateUser({
+          language: 'ko',
+          profile,
+          profileOnce
+        });
       }
-    );
+    });
   }, []);
 
   return (

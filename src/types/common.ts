@@ -30,6 +30,7 @@ export type ChannelTalkBootOption = {
   trackDefaultEvent: boolean;
   mobileMessengerMode: string;
   zIndex: number;
+  memberId?: number;
 };
 
 export type ChannelTalkUser = {
