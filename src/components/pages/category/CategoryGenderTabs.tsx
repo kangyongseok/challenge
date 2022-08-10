@@ -1,42 +1,27 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback, useEffect } from 'react';
+import type { MouseEvent } from 'react';
+import { useCallback } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { Box } from 'mrcamel-ui';
 
 import { Tabs } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
 import { GENDER } from '@constants/user';
-import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import categoryState from '@recoil/category';
-import { PortalConsumer } from '@provider/PortalProvider';
 
-interface CategoryTabsProps {
-  setSelectedParentCategory: Dispatch<SetStateAction<number>>;
+interface CategoryGenderTabsProps {
+  resetSelectedParentCategory: () => void;
 }
 
-function CategoryTabs({ setSelectedParentCategory }: CategoryTabsProps) {
+function CategoryGenderTabs({ resetSelectedParentCategory }: CategoryGenderTabsProps) {
   const [{ gender }, setCategoryState] = useRecoilState(categoryState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const { data } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
-  useEffect(() => {
-    if (data) {
-      setCategoryState((prevCategory) => ({
-        ...prevCategory,
-        gender: data.info.value.gender === 'F' ? 'female' : 'male'
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   const changeSelectedValue = useCallback(
     (_: MouseEvent<HTMLButtonElement>, newValue: string) => {
@@ -46,30 +31,30 @@ function CategoryTabs({ setSelectedParentCategory }: CategoryTabsProps) {
       });
       setCategoryState((prevCategory) => ({
         ...prevCategory,
+        parentId: 0,
+        subParentId: 0,
         gender: newValue as keyof typeof GENDER
       }));
-      setSelectedParentCategory(0);
+      resetSelectedParentCategory();
     },
-    [setCategoryState, setSelectedParentCategory]
+    [setCategoryState, resetSelectedParentCategory]
   );
 
   return (
-    <PortalConsumer>
-      <Box
+    <Box component="section" customStyle={{ minHeight: 45, zIndex: 1 }}>
+      <Tabs
+        value={gender}
+        changeValue={changeSelectedValue}
+        labels={Object.entries(GENDER).map(([key, value]) => ({ key, value }))}
         customStyle={{
           position: 'fixed',
           top: showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT,
           width: '100%'
         }}
-      >
-        <Tabs
-          value={gender}
-          changeValue={changeSelectedValue}
-          labels={Object.entries(GENDER).map(([key, value]) => ({ key, value }))}
-        />
-      </Box>
-    </PortalConsumer>
+        customTabStyle={{ padding: 12 }}
+      />
+    </Box>
   );
 }
 
-export default CategoryTabs;
+export default CategoryGenderTabs;

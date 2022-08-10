@@ -1,10 +1,11 @@
-export { default as AppDownloadDialog } from './AppDownloadDialog';
-export { default as SaveSearchList } from './SaveSearchList';
-export { default as OnBoardingSpotlight } from './OnBoardingSpotlight';
-export { default as LoginErrorDialog } from './LoginErrorDialog';
 export { default as AppDownloadBanner } from './AppDownloadBanner';
+export { default as AppDownloadDialog } from './AppDownloadDialog';
+export { default as BrandList } from './BrandList';
+export { default as CategoryList } from './CategoryList';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as LoginErrorDialog } from './LoginErrorDialog';
+export { default as OnBoardingSpotlight } from './OnBoardingSpotlight';
+export * from './Popups';
 export { default as ProductLabel } from './ProductLabel';
 export { default as LegitResultSurveyTypeform } from './LegitResultSurveyTypeform';
 export * from './Toasts';
-export * from './Popups';

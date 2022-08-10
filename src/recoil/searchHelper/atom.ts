@@ -5,10 +5,10 @@ import type { SearchParams } from '@dto/product';
 import LocalStorage from '@library/localStorage';
 
 import { filterGenders } from '@constants/productsFilter';
-import { DEVICE_ID, SEARCH_HELPER_SEARCH_OPTIONS } from '@constants/localStorage';
+import { DEVICE_ID, SAVED_SEARCH_HELPER_SEARCH_OPTIONS } from '@constants/localStorage';
 
 export const searchHelperPopupStateFamily = atomFamily<boolean, 'continue' | 'break'>({
-  key: 'searchHelper/popupState',
+  key: 'searchHelper/popupStateFamily',
   default: false
 });
 
@@ -43,16 +43,16 @@ export const selectedSearchOptionsState = atom<SelectedSearchOptions>({
   effects: [
     ({ onSet, setSelf }) => {
       const savedSearchHelperOptions = LocalStorage.get<SelectedSearchOptions>(
-        SEARCH_HELPER_SEARCH_OPTIONS
+        SAVED_SEARCH_HELPER_SEARCH_OPTIONS
       );
 
       if (savedSearchHelperOptions) setSelf(savedSearchHelperOptions);
 
       onSet((newValue, _, isReset) => {
         if (isReset) {
-          LocalStorage.remove(SEARCH_HELPER_SEARCH_OPTIONS);
+          LocalStorage.remove(SAVED_SEARCH_HELPER_SEARCH_OPTIONS);
         } else {
-          LocalStorage.set(SEARCH_HELPER_SEARCH_OPTIONS, newValue);
+          LocalStorage.set(SAVED_SEARCH_HELPER_SEARCH_OPTIONS, newValue);
         }
       });
     }
@@ -65,7 +65,7 @@ export const searchParamsState = atom<SearchParams>({
   effects: [
     ({ setSelf }) => {
       const savedSearchHelperOptions = LocalStorage.get<SelectedSearchOptions>(
-        SEARCH_HELPER_SEARCH_OPTIONS
+        SAVED_SEARCH_HELPER_SEARCH_OPTIONS
       );
       const deviceId = LocalStorage.get<string>(DEVICE_ID);
 

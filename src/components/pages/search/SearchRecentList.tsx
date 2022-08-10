@@ -1,20 +1,20 @@
 import type { MouseEvent } from 'react';
 
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import type { RecentItems, TotalSearchItem } from '@typings/search';
+import { searchRecentSearchListState } from '@recoil/search';
 
 interface SearchListProps {
   recentSearchList: RecentItems[];
@@ -26,29 +26,33 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
   const {
     theme: { palette }
   } = useTheme();
+  const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
+    searchRecentSearchListState
+  );
+  const resetSavedRecentSearchList = useResetRecoilState(searchRecentSearchListState);
 
-  const handleClickList = (e: MouseEvent<HTMLElement>) => {
-    const target = e.currentTarget as HTMLElement;
+  const handleClickList =
+    ({ keyword, expectCount, index }: { keyword: string; expectCount: number; index: number }) =>
+    () => {
+      logEvent(attrKeys.search.CLICK_RECENT, {
+        name: 'SEARCH',
+        title: 'RECENT',
+        index,
+        keyword
+      });
 
-    logEvent(attrKeys.search.CLICK_RECENT, {
-      name: 'SEARCH',
-      title: 'RECENT',
-      index: target.dataset.index,
-      keyword: target.dataset.keyword
-    });
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.RECENT,
+        type: attrProperty.productType.INPUT
+      });
 
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.productName.SEARCH,
-      title: attrProperty.productTitle.RECENT,
-      type: attrProperty.productType.INPUT
-    });
-
-    onClick({
-      keyword: target.dataset.keyword,
-      title: 'RECENT',
-      expectCount: Number(target.dataset.expectCount)
-    });
-  };
+      onClick({
+        keyword,
+        title: 'RECENT',
+        expectCount
+      });
+    };
 
   const handleRecentListClear = () => {
     logEvent(attrKeys.search.CLICK_RECENT_DELETE, {
@@ -56,7 +60,7 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
       att: 'ALL'
     });
 
-    LocalStorage.remove(RECENT_SEARCH_LIST);
+    resetSavedRecentSearchList();
     refresh([]);
   };
 
@@ -69,26 +73,23 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
       keyword: target.dataset.keyword
     });
 
-    const recentList = LocalStorage.get(RECENT_SEARCH_LIST) as RecentItems[];
-    const result = recentList.filter((list) => list.keyword !== target.dataset.keyword);
-    LocalStorage.set(RECENT_SEARCH_LIST, result);
+    const result = savedRecentSearchList.filter((list) => list.keyword !== target.dataset.keyword);
+    setSavedRecentSearchList(result);
     refresh(result);
   };
 
   return (
-    <>
-      <Flexbox alignment="center" justifyContent="space-between" customStyle={{ marginTop: 16 }}>
-        <Typography
-          variant="h4"
-          weight="bold"
-          customStyle={{
-            marginBottom: 4
-          }}
-        >
+    <Flexbox component="section" gap={8} direction="vertical" customStyle={{ marginTop: 20 }}>
+      <Flexbox
+        alignment="center"
+        justifyContent="space-between"
+        customStyle={{ padding: '0 20px' }}
+      >
+        <Typography variant="h4" weight="bold">
           최근 검색어
         </Typography>
         <Typography
-          variant="small2"
+          variant="body2"
           customStyle={{ color: palette.common.grey['60'] }}
           onClick={handleRecentListClear}
         >
@@ -97,16 +98,16 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
       </Flexbox>
       <ul>
         {recentSearchList.map((item, i) => (
-          /* eslint-disable react/no-danger */
           <ItemLi key={`list-${item.keyword}`}>
             <Flexbox
               gap={8}
               alignment="center"
               customStyle={{ width: '100%' }}
-              data-keyword={item.keyword}
-              data-expect-count={item.expectCount}
-              data-index={i + 1}
-              onClick={handleClickList}
+              onClick={handleClickList({
+                keyword: item.keyword,
+                expectCount: item.expectCount || 0,
+                index: i + 1
+              })}
             >
               <Typography variant="body1">
                 <span dangerouslySetInnerHTML={{ __html: item.keyword as string }} />
@@ -129,12 +130,12 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
           </ItemLi>
         ))}
       </ul>
-    </>
+    </Flexbox>
   );
 }
 
 const ItemLi = styled.li`
-  height: 45px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;

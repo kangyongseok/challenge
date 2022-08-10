@@ -28,7 +28,7 @@ import queryKeys from '@constants/queryKeys';
 import { PARENT_CATEGORY_NEED_SIZE } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import {
@@ -335,6 +335,8 @@ function BrandCategorySize() {
   };
 
   useEffect(() => {
+    logEvent(attrKeys.searchHelper.VIEW_SEARCHHELPER_STEP1);
+
     const {
       brand: { id: brandId },
       parentCategory: { id: parentCategoryId },

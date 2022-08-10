@@ -13,6 +13,7 @@ interface ProductGridCardSkeletonPros {
   title?: string;
   labels?: CommonCode[];
   productSeller?: ProductSeller;
+  hasAreaWithDateInfo?: boolean;
   hasMetaInfo?: boolean;
   isRound?: boolean;
   customStyle?: CustomStyle;
@@ -22,6 +23,7 @@ function ProductGridCardSkeleton({
   title,
   labels = [],
   productSeller,
+  hasAreaWithDateInfo = true,
   hasMetaInfo = true,
   isRound = false,
   customStyle
@@ -70,14 +72,16 @@ function ProductGridCardSkeleton({
           isRound={isRound}
           customStyle={{ marginTop: 4 }}
         />
-        <Skeleton
-          width="100%"
-          maxWidth="120px"
-          height="13px"
-          disableAspectRatio
-          isRound={isRound}
-          customStyle={{ marginTop: 8 }}
-        />
+        {hasAreaWithDateInfo && (
+          <Skeleton
+            width="100%"
+            maxWidth="120px"
+            height="13px"
+            disableAspectRatio
+            isRound={isRound}
+            customStyle={{ marginTop: 8 }}
+          />
+        )}
         {hasMetaInfo && (
           <Skeleton
             width="100%"

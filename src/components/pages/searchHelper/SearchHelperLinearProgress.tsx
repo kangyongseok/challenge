@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 

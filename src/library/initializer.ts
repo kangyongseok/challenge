@@ -15,7 +15,11 @@ import checkAgent from '@utils/checkAgent';
 
 const Initializer = {
   initAccessTokenByCookies({ accessToken }: NextApiRequestCookies) {
-    if (accessToken) Axios.setAccessToken(accessToken);
+    if (accessToken) {
+      Axios.setAccessToken(accessToken);
+    } else {
+      Axios.clearAccessToken();
+    }
   },
   initAccessUserInQueryClientByCookies(
     { accessUser }: NextApiRequestCookies,

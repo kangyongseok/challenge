@@ -15,7 +15,7 @@ import { fetchProductLegit } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 function LegitResultCardHolder() {
   const router = useRouter();

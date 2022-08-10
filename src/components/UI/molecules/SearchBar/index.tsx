@@ -12,9 +12,11 @@ export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
   startIcon?: ReactElement;
   endIcon?: ReactElement;
   fullWidth?: boolean;
-  customStyle?: CustomStyle;
+  brandColor?: 'primary' | 'black';
   isFixed?: boolean;
   isBottomBorderFixed?: boolean;
+  isBorder?: boolean;
+  customStyle?: CustomStyle;
 }
 
 const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBar(
@@ -23,9 +25,11 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBa
     startIcon,
     endIcon,
     fullWidth = false,
-    customStyle,
+    brandColor = 'primary',
     isFixed = false,
     isBottomBorderFixed = false,
+    isBorder = true,
+    customStyle,
     ...props
   },
   ref
@@ -36,17 +40,21 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBa
     <StyledSearchBar
       ref={ref}
       isFixed={isFixed}
+      isBorder={isBorder}
+      brandColor={brandColor}
       showAppDownloadBanner={showAppDownloadBanner}
       css={customStyle}
     >
       <Wrapper
         variant={variant}
         fullWidth={fullWidth}
+        isFixed={isFixed}
         isBottomBorderFixed={isBottomBorderFixed}
+        brandColor={brandColor}
         showAppDownloadBanner={showAppDownloadBanner}
       >
         {startIcon}
-        <Input {...props} />
+        <Input brandColor={brandColor} {...props} />
         {endIcon}
       </Wrapper>
     </StyledSearchBar>

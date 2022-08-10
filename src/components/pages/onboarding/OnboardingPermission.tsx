@@ -16,7 +16,7 @@ import { fetchArea, postAlarm, postArea, postStyle } from '@api/user';
 
 import {
   IS_DONE_SIGN_IN_PERMISSION,
-  SHOW_SAVE_SEARCH_PRODUCTS_POPUP,
+  SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
 } from '@constants/localStorage';
 
@@ -55,8 +55,8 @@ function OnboardingPermission() {
 
   const redirectPage = useCallback(() => {
     // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
-    if (LocalStorage.get(SHOW_SAVE_SEARCH_PRODUCTS_POPUP)) {
-      LocalStorage.remove(SHOW_SAVE_SEARCH_PRODUCTS_POPUP);
+    if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
+      LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
       router.replace({
         pathname: `/products/search/${keyword}`,
         query: omitBy(

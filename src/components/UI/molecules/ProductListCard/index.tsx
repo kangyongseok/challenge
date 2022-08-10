@@ -38,7 +38,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { deviceIdState } from '@recoil/common';

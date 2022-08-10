@@ -117,6 +117,8 @@ export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
 `;
 
 export const Adornment = styled.div`
+  display: flex;
+
   ${({ theme: { typography } }): CSSObject => ({
     fontSize: typography.h3.size,
     fontWeight: typography.h3.weight.medium,

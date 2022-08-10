@@ -8,7 +8,7 @@ import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import Image from '@components/UI/atoms/Image';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 interface ProductFixedSummaryProps {
   isSafe: boolean;

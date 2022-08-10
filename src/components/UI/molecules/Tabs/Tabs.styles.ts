@@ -41,7 +41,7 @@ export const Tab = styled.button<{ selected: boolean; count: number }>`
       bottom: 0,
       width: '100%',
       height: selected ? '2px' : '1px',
-      background: selected ? palette.primary.main : palette.common.grey[90]
+      background: selected ? palette.primary.main : palette.common.grey[80]
     }
   })}
 `;

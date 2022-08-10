@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Chip, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
@@ -16,6 +16,7 @@ import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds, orderFilterOptions } from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
@@ -29,15 +30,16 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import { homeSelectedTabStateFamily } from '@recoil/home';
 import { deviceIdState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-interface ProductsSaveSearchFloatingButtonProps {
+interface ProductsKeywordSaveFloatingButtonProps {
   variant: 'brands' | 'categories' | 'search';
 }
 
-function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatingButtonProps) {
+function ProductsKeywordSaveFloatingButton({ variant }: ProductsKeywordSaveFloatingButtonProps) {
   const {
     theme: { palette }
   } = useTheme();
@@ -58,6 +60,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
     productsKeywordAutoSaveTriggerState
   );
   const setProductsKeywordAutoSavedToast = useSetRecoilState(productsKeywordAutoSavedToast);
+  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
@@ -89,14 +92,26 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
 
   const searchKeyword = useMemo(() => {
     const { keyword }: { keyword?: string } = router.query;
-    const { subParentIds = [] } = convertSearchParamsByQuery(router.query);
-    const subParentCategory = subParentCategories.find(({ id }) => subParentIds.includes(id));
 
-    return subParentCategory ? subParentCategory.name.replace(/\(P\)/g, '') : keyword;
-  }, [router.query, subParentCategories]);
+    switch (variant) {
+      case 'categories': {
+        const { subParentIds = [] } = convertSearchParamsByQuery(router.query);
+        const subParentCategory = subParentCategories.find(({ id }) => subParentIds.includes(id));
+        return subParentCategory ? subParentCategory.name.replace(/\(P\)/g, '') : keyword;
+      }
+      case 'brands':
+      case 'search':
+      default:
+        return keyword;
+    }
+  }, [router.query, subParentCategories, variant]);
 
-  const saveProductKeyword = useCallback(
+  const saveProductsKeyword = useCallback(
     (isAutoSave?: boolean) => {
+      logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, {
+        name: isAutoSave ? attrProperty.productName.AUTO : attrProperty.productName.MANUAL
+      });
+
       let sourceType: ProductKeywordSourceType = 0;
 
       setIsPending(true);
@@ -133,6 +148,8 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
             );
             setProductsKeywordAutoSaveTrigger(false);
             queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
+            resetProductKeyword();
+            queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
 
             if (isAutoSave) {
               setProductsKeywordAutoSavedToast(true);
@@ -150,6 +167,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
       deviceId,
       mutate,
       queryClient,
+      resetProductKeyword,
       searchOptionsParams,
       searchParams,
       setProductsKeywordAutoSaveTrigger,
@@ -161,7 +179,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
   const handleClick = () => {
     if (isPending) return;
 
-    saveProductKeyword(false);
+    saveProductsKeyword(false);
   };
 
   useEffect(() => {
@@ -171,7 +189,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
         !productKeywords.length &&
         productsKeywordAutoSaveTrigger
       ) {
-        saveProductKeyword(true);
+        saveProductsKeyword(true);
       } else {
         setProductsKeywordAutoSaveTrigger(false);
       }
@@ -186,7 +204,7 @@ function ProductsSaveSearchFloatingButton({ variant }: ProductsSaveSearchFloatin
     productKeywords.length,
     productsKeywordAutoSaveTrigger,
     router.events,
-    saveProductKeyword,
+    saveProductsKeyword,
     setProductsKeywordAutoSaveTrigger,
     showProductKeywordSaveSearchFloatingBtn
   ]);
@@ -296,4 +314,4 @@ const Keyword = styled(Typography)`
   color: ${({ theme }) => theme.palette.common.white};
 `;
 
-export default ProductsSaveSearchFloatingButton;
+export default ProductsKeywordSaveFloatingButton;

@@ -11,10 +11,11 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   changeValue: (e: MouseEvent<HTMLButtonElement>, newValue: string) => void;
   labels: { key: string; value: string }[];
   customStyle?: CustomStyle;
+  customTabStyle?: CustomStyle;
 }
 
 const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { value, changeValue, labels, customStyle, id, ...props },
+  { value, changeValue, labels, customStyle, id, customTabStyle, ...props },
   ref
 ) {
   const {
@@ -52,6 +53,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
             selected={selected}
             onClick={handleClick(selected, label.key)}
             count={labels.length}
+            css={customTabStyle}
           >
             <Typography
               variant="body1"

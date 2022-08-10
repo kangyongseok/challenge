@@ -1,28 +1,29 @@
 import { useRef } from 'react';
-import type { MouseEvent } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';
+import Skeleton from '@components/UI/atoms/Skeleton';
 
-import SessionStorage from '@library/sessionStorage';
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { fetchProductDealInfos } from '@api/nextJs';
+
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { RecentItems } from '@typings/search';
+import { commaNumber } from '@utils/common';
+
 import {
   searchHelperPopupStateFamily,
   searchParamsState,
@@ -36,9 +37,10 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface HomeWelcomeProps {
   isViewSearchHelperOnboarding: () => boolean;
+  titleViewType: number;
 }
 
-function HomeWelcome({ isViewSearchHelperOnboarding }: HomeWelcomeProps) {
+function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcomeProps) {
   const {
     theme: { palette }
   } = useTheme();
@@ -52,40 +54,19 @@ function HomeWelcome({ isViewSearchHelperOnboarding }: HomeWelcomeProps) {
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
-  const { data: keywords = [] } = useQuery(
-    queryKeys.client.recentSearchList(),
-    () => LocalStorage.get<RecentItems[]>(queryKeys.client.recentSearchList()[1]),
-    {
-      refetchOnMount: true
-    }
+  const { isLoading, data: productDealInfos = [] } = useQuery(
+    queryKeys.nextJs.productDealInfos(),
+    fetchProductDealInfos
   );
+  const searchBarRef = useRef<HTMLInputElement | null>(null);
   const genderName = gender === 'F' ? 'female' : 'male';
   const genderId = filterGenders[genderName as keyof typeof filterGenders].id;
-
-  const searchBarRef = useRef<HTMLInputElement | null>(null);
 
   const triggered = useScrollTrigger({
     ref: searchBarRef,
     additionalOffsetTop: showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0,
     delay: 0
   });
-
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const keyword = e.currentTarget.getAttribute('data-keyword');
-    const index = Number(e.currentTarget.getAttribute('data-index') || 0);
-    logEvent(attrKeys.home.CLICK_RECENT, {
-      name: 'MAIN',
-      title: 'RECENT',
-      index: index + 1,
-      keyword
-    });
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.productName.MAIN,
-      title: attrProperty.productTitle.RECENT,
-      type: attrProperty.productType.INPUT
-    });
-    router.push(`/products/search/${keyword}`);
-  };
 
   const handleClickSearchBar = () => {
     logEvent(attrKeys.home.CLICK_SEARCHMODAL, {
@@ -127,89 +108,153 @@ function HomeWelcome({ isViewSearchHelperOnboarding }: HomeWelcomeProps) {
   };
 
   return (
-    <Box
+    <Flexbox
       component="section"
-      customStyle={{ margin: '0 -20px', padding: 20, backgroundColor: palette.primary.main }}
+      direction="vertical"
+      gap={20}
+      customStyle={{ backgroundColor: '#0D0D0D' }}
     >
-      <Flexbox direction="horizontal" justifyContent="space-between">
-        <Icon name="LogoText_96_20" color={palette.common.white} />
+      <Flexbox
+        direction="horizontal"
+        justifyContent="space-between"
+        alignment="center"
+        customStyle={{ padding: '16px 20px' }}
+      >
+        <Icon name="LogoText_96_20" color={palette.common.white} width={76} height={16} />
         <Icon
           name="AlarmOutlined"
-          size="large"
           color={palette.common.white}
           onClick={handleClickAlarm}
+          width={23}
+          height={23}
         />
       </Flexbox>
-      <Typography
-        variant="h3"
-        weight="regular"
-        customStyle={{ marginTop: 34, color: palette.common.white }}
-      >
-        {accessUser?.userName ? `${accessUser.userName}님 👋` : '안녕하세요 🐪'}
-      </Typography>
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{ marginBottom: 8, color: palette.common.white }}
-      >
-        대한민국 모든 중고명품 한방에 검색하세요
-      </Typography>
+      <Box customStyle={{ padding: '20px 20px 0' }}>
+        <Title variant="h2" weight="bold">
+          {titleViewType === 0 ? '대한민국 모든 중고명품' : '카멜이 다 모아오니까'}
+        </Title>
+        <Title variant="h2" weight="bold">
+          {titleViewType === 0 ? (
+            <>
+              카멜에서&nbsp;<span>한방에 검색</span>하세요
+            </>
+          ) : (
+            <>
+              {accessUser?.userName || '회원'}님은&nbsp;<span>검색만</span>&nbsp;하세요!
+            </>
+          )}
+        </Title>
+      </Box>
       <SearchBar
         ref={searchBarRef}
         fullWidth
-        startIcon={<Icon name="SearchOutlined" color="primary" />}
-        placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
+        startIcon={<Icon name="SearchOutlined" color="black" size="medium" />}
+        placeholder="오늘은 어떤 명품을 득템해볼까요?"
         isFixed={triggered}
         readOnly
+        brandColor="black"
+        isBorder={false}
+        customStyle={{ padding: triggered ? '12px 20px' : '0 20px' }}
         onClick={handleClickSearchBar}
       />
-      {triggered && <Box customStyle={{ height: 48, visibility: 'hidden' }} />}
-      {keywords && keywords.length > 0 && (
-        <>
-          <Typography weight="medium" customStyle={{ marginTop: 16, color: palette.common.white }}>
-            최근 검색어
-          </Typography>
-          <KeywordList>
-            {keywords.map(({ keyword }, i) => (
-              <KeywordChip
-                key={`recent-search-keyword-${keyword}`}
-                variant="body2"
-                weight="medium"
-                data-index={i}
-                data-keyword={keyword}
-                onClick={handleClick}
-              >
-                {keyword}
-              </KeywordChip>
-            ))}
-          </KeywordList>
-        </>
-      )}
-    </Box>
+      {triggered && <Box customStyle={{ height: 72, visibility: 'hidden' }} />}
+      <Box component="section" customStyle={{ padding: '0 20px 40px' }}>
+        {isLoading ? (
+          <Flexbox alignment="center" gap={8}>
+            <Skeleton
+              width="16px"
+              height="16px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 5 }}
+            />
+            <Flexbox alignment="center" justifyContent="space-between" customStyle={{ flex: 1 }}>
+              <Skeleton
+                width="215px"
+                height="18px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 4 }}
+              />
+              <Skeleton
+                width="54px"
+                height="18px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 4 }}
+              />
+            </Flexbox>
+          </Flexbox>
+        ) : (
+          <Swiper
+            slidesPerView={1}
+            loop
+            direction="vertical"
+            effect="flip"
+            preventClicks
+            allowTouchMove={false}
+            autoplay={{ delay: 2000, disableOnInteraction: false }}
+            speed={700}
+            modules={[Autoplay]}
+            style={{ height: 18 }}
+          >
+            {productDealInfos.map(
+              ({
+                userId,
+                platform: { filename, name: platformName },
+                product: { state, name, price },
+                time,
+                timeUnit
+              }) => (
+                <SwiperSlide key={`product-deal-${userId}`}>
+                  <Flexbox gap={8} alignment="center">
+                    <Avatar
+                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${filename}`}
+                      alt={`${platformName}`}
+                      customStyle={{ width: 15, height: 15 }}
+                    />
+                    <Flexbox
+                      alignment="center"
+                      justifyContent="space-between"
+                      gap={8}
+                      customStyle={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}
+                    >
+                      <Typography
+                        variant="body2"
+                        customStyle={{ color: palette.common.grey['80'] }}
+                      >
+                        {`${userId}님 ${state} ${name} ${commaNumber(price)}만원`}
+                      </Typography>
+                      <Typography
+                        variant="small2"
+                        customStyle={{ color: palette.common.grey['60'] }}
+                      >
+                        {`${time}${timeUnit} 득템`}
+                      </Typography>
+                    </Flexbox>
+                  </Flexbox>
+                </SwiperSlide>
+              )
+            )}
+          </Swiper>
+        )}
+      </Box>
+    </Flexbox>
   );
 }
 
-const KeywordList = styled.div`
+const Title = styled(Typography)`
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 8px -20px 0 -20px;
-  padding: 0 20px;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-`;
-
-const KeywordChip = styled(Typography)`
-  display: inline-flex;
-  align-items: center;
-  min-width: fit-content;
-  color: ${({ theme }) => theme.palette.common.white};
-  border-radius: 16px;
-  height: 30px;
-  padding: 6px 10px;
+  color: ${({ theme: { palette } }) => palette.common.white};
   white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
+
+  > span {
+    :after {
+      content: '';
+      display: block;
+      height: 12px;
+      width: 100%;
+      background: ${({ theme: { palette } }) => palette.primary.main};
+      margin-top: -13px;
+    }
+  }
 `;
 
 export default HomeWelcome;

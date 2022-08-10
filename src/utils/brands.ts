@@ -15,7 +15,7 @@ export function getBrandListTitles(resultKo: Array<string>, regexp: RegExp) {
     }
   });
   if (resultKo.filter((koCon) => regexp.test(koCon)).length > 0) {
-    data.push('0-9');
+    data.push('기타');
   }
   return data;
 }

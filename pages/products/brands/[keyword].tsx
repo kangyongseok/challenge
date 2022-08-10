@@ -9,9 +9,9 @@ import {
   ProductsInfiniteGrid,
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
+  ProductsKeywordSaveFloatingButton,
   ProductsMapFilterBottomSheet,
   ProductsRelated,
-  ProductsSaveSearchFloatingButton,
   ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton
@@ -45,7 +45,7 @@ function BrandProducts() {
         <ProductsTopButton />
       </GeneralTemplate>
       <ProductsTopButton />
-      <ProductsSaveSearchFloatingButton variant="brands" />
+      <ProductsKeywordSaveFloatingButton variant="brands" />
       <ProductsFilterBottomSheet variant="brands" />
       <ProductsMapFilterBottomSheet />
       <ProductsSortFilterBottomSheet />

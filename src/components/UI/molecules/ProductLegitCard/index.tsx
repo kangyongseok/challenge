@@ -9,7 +9,7 @@ import { Image, ProductLegitLabel } from '@components/UI/atoms';
 import type { ProductLegit } from '@dto/product';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 interface ProductLegitCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'grid' | 'list';

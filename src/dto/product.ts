@@ -275,7 +275,33 @@ export type Product = {
 };
 
 export type ProductResult = {
-  area: string;
+  area: string | null;
+  brand: {
+    dateCreated: string;
+    dateUpdated: string;
+    groupId: number;
+    tierId: number;
+    id: number;
+    isLegitProduct: boolean;
+    name: string;
+    nameEng: string;
+    viewName: string | null;
+    parentId: number;
+  };
+  category: {
+    dateCreated: string | null;
+    dateUpdated: string | null;
+    depth: number | null;
+    groupId: number | null;
+    id: number | null;
+    isAuthProduct: boolean;
+    jobRulebaseDetail: JobRuleBaseDetail;
+    name: string;
+    nameEng: string | null;
+    order: number | null;
+    parentId: number | null;
+    subParentId: number | null;
+  };
   cluster: number;
   dateChanged: number | null;
   dateFirstPosted: number;
@@ -289,12 +315,24 @@ export type ProductResult = {
   priceBefore: number | null;
   productSeller: ProductSeller;
   purchaseCount: number;
-  site: Site;
+  site: {
+    code: string;
+    dateCreated: string;
+    dateUpdated: string;
+    hasImage: boolean;
+    id: number;
+    name: string;
+    productCount: number | null;
+    type: string;
+  };
   siteUrl: SiteUrl;
   status: number;
   title: string;
   viewCount: number;
   wishCount: number;
+  targetProductPrice: number | null;
+  targetProductId?: number | null;
+  targetProductStatus?: number | null;
 };
 
 export type PageProduct = Paged<Product>;
@@ -405,6 +443,20 @@ export interface RoleLegit {
   userId: number;
 }
 
+export interface PageProductResult {
+  content: ProductResult[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  pageable: Page;
+  size: number;
+  sort: Sort;
+  totalElements: number;
+  totalPages: number;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface ProductParams {
   deviceId?: string;
@@ -502,4 +554,10 @@ export interface SearchRelatedProductsParams {
   line?: string;
   related?: number;
   size?: number;
+}
+
+export interface RecommProductsParams {
+  page?: number;
+  size?: number;
+  sort?: string[];
 }

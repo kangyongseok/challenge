@@ -12,4 +12,4 @@ export { default as ProductsLandingInfo } from './ProductsLandingInfo';
 export { default as ProductsRelated } from './ProductsRelated';
 export { default as ProductsCategoryTags } from './ProductsCategoryTags';
 export { default as ProductsTopButton } from './ProductsTopButton';
-export { default as ProductsSaveSearchFloatingButton } from './ProductsSaveSearchFloatingButton';
+export { default as ProductsKeywordSaveFloatingButton } from './ProductsKeywordSaveFloatingButton';

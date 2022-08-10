@@ -12,7 +12,7 @@ import { fetchUserInfo } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 const BASE_URL_USER = '/user';
 

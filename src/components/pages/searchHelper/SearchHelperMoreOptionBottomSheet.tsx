@@ -21,7 +21,7 @@ import {
 } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
 

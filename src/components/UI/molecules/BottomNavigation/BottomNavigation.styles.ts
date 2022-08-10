@@ -51,12 +51,6 @@ export const ListItem = styled.li`
   }
 `;
 
-export const PriceDownTooltipTitle = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 1fr 1fr;
-`;
-
 export const NewLabel = styled(Label)`
   position: absolute;
   top: -9.5px;

@@ -7,9 +7,12 @@ import { useRouter } from 'next/router';
 
 import type { ProductDetail, ProductParams } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
+
 import { postProductsAdd, postProductsRemove } from '@api/user';
 import { fetchProduct } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SOURCE } from '@constants/product';
 
@@ -33,15 +36,17 @@ export type UseQueryProductResult = {
 function useQueryProduct(): UseQueryProductResult {
   const queryClient = useQueryClient();
   const {
-    query: { id, redirect, source = PRODUCT_SOURCE.DIRECT }
+    query: { id, redirect }
   } = useRouter();
+  const { source } =
+    SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) || {};
   const deviceId = useRecoilValue(deviceIdState);
   const productId = Number(id);
   const [params, setParams] = useState<ProductParams>({
     productId,
     deviceId,
     isLogging: true,
-    source: typeof source !== 'undefined' ? (source as string) : PRODUCT_SOURCE.DIRECT
+    source: source || PRODUCT_SOURCE.DIRECT
   });
 
   useQuery(queryKeys.products.productLogging(params), () => fetchProduct(params), {

@@ -30,7 +30,7 @@ import {
   ACCESS_USER,
   IS_DONE_SIGN_IN_PERMISSION,
   LAST_LOGIN_TYPE,
-  SHOW_SAVE_SEARCH_PRODUCTS_POPUP,
+  SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
@@ -191,8 +191,8 @@ function Login() {
           }
 
           // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
-          if (LocalStorage.get(SHOW_SAVE_SEARCH_PRODUCTS_POPUP)) {
-            LocalStorage.remove(SHOW_SAVE_SEARCH_PRODUCTS_POPUP);
+          if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
+            LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
             router.replace({
               pathname: `/products/search/${keyword}`,
               query: omitBy(
@@ -277,8 +277,6 @@ function Login() {
   }, [authLogin, code]);
 
   useEffect(() => {
-    logEvent(attrKeys.login.VIEW_LOGIN);
-
     window.getKakaoToken = async (result: KakaoAppAccount) => {
       const provider = 'kakao';
 
@@ -399,6 +397,8 @@ function Login() {
   }, [authLogin, mutatePostAlarm, mutatePostArea, returnUrl, router, state]);
 
   useEffect(() => {
+    logEvent(attrKeys.login.VIEW_LOGIN);
+
     if (window.Kakao && window.Kakao.isInitialized()) {
       setLoadedKakaoSDK(true);
     }

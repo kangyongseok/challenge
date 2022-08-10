@@ -1,2 +1,3 @@
-export { default as CategoryCollapse } from './CategoryCollapse';
-export { default as CategoryTabs } from './CategoryTabs';
+export { default as CategoryBrandList } from './CategoryBrandList';
+export { default as CategoryGenderTabs } from './CategoryGenderTabs';
+export { default as CategoryList } from './CategoryList';

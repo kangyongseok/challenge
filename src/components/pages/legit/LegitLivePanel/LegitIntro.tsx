@@ -10,7 +10,7 @@ import { fetchLegitDashboard } from '@api/dashboard';
 
 import queryKeys from '@constants/queryKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 

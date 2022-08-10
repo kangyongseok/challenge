@@ -12,13 +12,16 @@ import styled from '@emotion/styled';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
 
 import { fetchSizeMapping, postProductKeyword } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP } from '@constants/localStorage';
+import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,
@@ -92,6 +95,8 @@ function Searching() {
     };
 
     if (accessUser) {
+      logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, { name: attrProperty.productName.AUTO });
+
       if (categorySizeIds?.length) {
         fetchSizeMapping().then((sizeMapping) => {
           const { outer, top, bottom, shoe } = sizeMapping[gender.name as keyof typeof sizeMapping];
@@ -150,7 +155,7 @@ function Searching() {
       if (accessUser) {
         resetSearchParams();
       } else {
-        LocalStorage.set(SHOW_SAVE_SEARCH_PRODUCTS_POPUP, true);
+        LocalStorage.set(SHOW_PRODUCTS_KEYWORD_POPUP, true);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

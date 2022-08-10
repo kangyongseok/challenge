@@ -12,13 +12,15 @@ import attrKeys from '@constants/attrKeys';
 
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
 import { PortalConsumer } from '@provider/PortalProvider';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function Onboarding() {
   const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
-  const { brand, parentCategory } = useRecoilValue(selectedSearchOptionsState);
+  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
+  const { brand, parentCategory, subParentCategory } = useRecoilValue(selectedSearchOptionsState);
   const resetSearchParams = useResetRecoilState(searchParamsState);
   const resetSelectedSearchOptions = useResetRecoilState(selectedSearchOptionsState);
 
@@ -39,9 +41,29 @@ function Onboarding() {
     resetSearchParams();
     resetSelectedSearchOptions();
 
-    if (brand.id > 0 || parentCategory.id > 0) {
-      window.location.replace('/');
+    const query: { subParentIds?: number[]; genders?: string[] } = {};
 
+    if (gender.length && ['F', 'M'].includes(gender)) {
+      query.genders = [gender === 'F' ? 'female' : 'male'];
+    }
+
+    if (brand.name.length > 0) {
+      router.replace({
+        pathname: `/products/brands/${brand.name}`,
+        query
+      });
+      return;
+    }
+
+    if (parentCategory.name.length > 0) {
+      if (subParentCategory.id > 0) {
+        query.subParentIds = [subParentCategory.id];
+      }
+
+      router.push({
+        pathname: `/products/categories/${parentCategory.name}`,
+        query
+      });
       return;
     }
 

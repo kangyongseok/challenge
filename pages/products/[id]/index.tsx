@@ -46,7 +46,13 @@ import { fetchProduct } from '@api/product';
 import { SELLER_STATUS } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { ID_FILTER, LABELS, PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
+import {
+  ID_FILTER,
+  LABELS,
+  PRODUCT_SITE,
+  PRODUCT_SOURCE,
+  PRODUCT_STATUS
+} from '@constants/product';
 import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -56,8 +62,7 @@ import { productDetailAtt } from '@utils/products';
 import getMetaDescription from '@utils/getMetaDescription';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { findChannelTalkButtonElement } from '@utils/findChannelTalkButtonElement';
-import { getRandomNumber } from '@utils/common';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import type { User } from '@typings/user';
@@ -327,7 +332,7 @@ function ProductDetail() {
       }
 
       window.location.href = `sms:${sellerPhoneNumber}${
-        checkAgent.isAndroidApp() ? '?' : '&'
+        checkAgent.isAndroid() ? '?' : '&'
       }body=${message}`;
     },
     [data, mutateMetaInfo]
@@ -355,6 +360,7 @@ function ProductDetail() {
     },
     [hasTarget, isDup, isPriceDown]
   );
+
   return (
     <>
       <PageHead
@@ -544,7 +550,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
     const data = await queryClient.fetchQuery(
       queryKeys.products.product({ productId }),
       async () => {
-        const resultProduct = await fetchProduct({ productId });
+        const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
 
         resultProduct.product.viewCount += 1;
 

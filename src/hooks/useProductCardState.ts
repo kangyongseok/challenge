@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useTheme } from 'mrcamel-ui';
 
-import type { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
 
@@ -21,13 +21,11 @@ export default function useProductCardState({
   price = 0,
   priceBefore,
   productSeller,
-  productLegit,
-  isProductLegit,
-  labels = []
-}: Product) {
+  labels = [],
+  ...props
+}: Product | ProductResult) {
   const { theme } = useTheme();
   const imageUrl = imageMain || imageThumbnail;
-  const { status: productLegitStatus } = productLegit || {};
 
   const productLabels = useMemo(() => {
     const { site } = productSeller || {};
@@ -62,14 +60,16 @@ export default function useProductCardState({
   }, [priceBefore, price]);
 
   const productLegitStatusText = useMemo(() => {
-    if (!isProductLegit) return '';
+    if (!(props as Product)?.isProductLegit) return '';
+
+    const { status: productLegitStatus } = (props as Product).productLegit || {};
 
     if (productLegitStatus === 30) return '감정완료';
     if (productLegitStatus === 11) return '감정불가';
     if (productLegitStatus === 10 || productLegitStatus === 20 || productLegitStatus === 1)
       return '감정중';
     return '감정가능';
-  }, [productLegitStatus, isProductLegit]);
+  }, [props]);
 
   const isDuplicate = !targetProductStatus;
 

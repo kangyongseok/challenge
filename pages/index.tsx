@@ -1,24 +1,23 @@
 import { useEffect } from 'react';
 
-import { DehydratedState, QueryClient, dehydrate, useMutation } from 'react-query';
+import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
-import { Box } from 'mrcamel-ui';
+import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { Box, Flexbox } from 'mrcamel-ui';
 
-import SaveSearchList from '@components/UI/organisms/SaveSearchList';
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
 import {
-  HomeAiCategories,
-  HomeBrandList,
+  HomeBrandsCategories,
   HomeCamelProductCuration,
-  HomeCategoryList,
   HomeFooter,
   HomePersonalProductCuration,
-  HomeProductDealAlert,
   HomeProductLegitLive,
+  HomeProductsKeywordList,
+  HomeRecentSearchList,
+  HomeRecommendationsWishes,
   HomeWelcome
 } from '@components/pages/home';
 
@@ -27,7 +26,7 @@ import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postManage } from '@api/userHistory';
-import { fetchUserInfo } from '@api/user';
+import { fetchProductKeywords, fetchRecommWishes, fetchUserInfo } from '@api/user';
 import { fetchProductDealInfos } from '@api/nextJs';
 import { fetchParentCategories } from '@api/category';
 
@@ -41,10 +40,17 @@ import checkAgent from '@utils/checkAgent';
 import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function Home() {
+function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data: userHistoryManage, refetch } = useQueryUserHistoryManages();
+  const {
+    data: { content: productKeywords = [] } = {},
+    isLoading: isLoadingProductKeywords,
+    isFetched: isFetchedProductKeywords
+  } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
+    enabled: !!accessUser
+  });
   const { mutate: mutatePostManage } = useMutation(postManage);
 
   const isViewSearchHelperOnboarding = () => {
@@ -96,19 +102,28 @@ function Home() {
             <BottomNavigation />
           </>
         }
+        disablePadding
       >
-        <HomeWelcome isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
-        <HomeProductDealAlert />
-        <SaveSearchList />
-        <HomeBrandList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
-        <HomeProductLegitLive />
-        <HomeCategoryList isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
-        <Box customStyle={{ margin: '0 -20px' }}>
+        <Flexbox direction="vertical" gap={12} customStyle={{ userSelect: 'none' }}>
+          <HomeWelcome
+            isViewSearchHelperOnboarding={isViewSearchHelperOnboarding}
+            titleViewType={titleViewType}
+          />
+          <HomeRecommendationsWishes />
+          {!!accessUser &&
+          (isLoadingProductKeywords || (isFetchedProductKeywords && productKeywords.length > 0)) ? (
+            <HomeProductsKeywordList />
+          ) : (
+            <HomeRecentSearchList />
+          )}
+          <HomeProductLegitLive />
+          <HomeBrandsCategories isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
+          <Box customStyle={{ height: 8 }} />
           <MyPortfolioCommonBanner name={attrProperty.productName.MAIN} />
-        </Box>
-        <HomeCamelProductCuration />
-        <HomeAiCategories />
-        <HomePersonalProductCuration />
+          <HomeCamelProductCuration />
+          <Box customStyle={{ height: 8 }} />
+          <HomePersonalProductCuration />
+        </Flexbox>
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
     </>
@@ -117,22 +132,29 @@ function Home() {
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
+  const queryClientList: Promise<void>[] = [];
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
   if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    queryClientList.concat([
+      queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo),
+      queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes)
+    ]);
   }
 
-  await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);
-  await queryClient.prefetchQuery(queryKeys.nextJs.productDealInfos(), fetchProductDealInfos);
+  queryClientList.concat([
+    queryClient.prefetchQuery(queryKeys.nextJs.productDealInfos(), fetchProductDealInfos),
+    queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
+  ]);
 
-  const dehydratedState: DehydratedState = dehydrate(queryClient);
+  await Promise.allSettled(queryClientList);
 
   return {
     props: {
-      dehydratedState
+      dehydratedState: dehydrate(queryClient),
+      titleViewType: Number((Math.random() % 2).toFixed(0))
     }
   };
 }

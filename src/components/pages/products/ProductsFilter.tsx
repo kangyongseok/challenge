@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import {
@@ -67,6 +67,7 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import { homeSelectedTabStateFamily } from '@recoil/home';
 import {
   deviceIdState,
   showAppDownloadBannerState,
@@ -176,6 +177,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
 
   const productsFilterRef = useRef<HTMLDivElement | null>(null);
   const prevReverseTriggeredRef = useRef(true);
+  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
   const scrollTriggered = useScrollTrigger({
     ref: productsFilterRef,
@@ -222,6 +224,8 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
         type: 'restored',
         open: false
       });
+      resetProductKeyword();
+      queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
     }
   });
 

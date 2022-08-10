@@ -8,10 +8,10 @@ export interface WishAtt {
   brand: string;
   category: string;
   parentId?: number | null;
-  line: string;
+  line?: string;
   site: string;
   price: number;
-  scoreTotal: number;
+  scoreTotal?: number;
   cluster: number;
   source: string;
 }

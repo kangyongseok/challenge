@@ -16,7 +16,7 @@ import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
 

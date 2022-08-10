@@ -17,7 +17,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
 

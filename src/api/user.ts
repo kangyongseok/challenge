@@ -20,7 +20,7 @@ import type {
   UserInfo,
   UserSizeSuggestParams
 } from '@dto/user';
-import type { PageProductLegit, Product } from '@dto/product';
+import type { PageProductLegit, Product, ProductResult } from '@dto/product';
 
 import Axios from '@library/axios';
 import Amplitude from '@library/amplitude';
@@ -132,19 +132,22 @@ export async function fetchUserNoti(type: number) {
 }
 
 export async function postProductKeyword(data: ProductKeywordData) {
-  const { data: responseData } = await Axios.getInstance().post('/users/productKeyword', data);
+  const { data: responseData } = await Axios.getInstance().post(
+    `${BASE_PATH}/productKeyword`,
+    data
+  );
 
   return responseData;
 }
 
 export async function deleteProductKeyword(id: number) {
-  const { data } = await Axios.getInstance().delete(`/users/productKeyword/${id}`);
+  const { data } = await Axios.getInstance().delete(`${BASE_PATH}/productKeyword/${id}`);
 
   return data;
 }
 
 export async function putProductKeyword(id: number) {
-  const { data } = await Axios.getInstance().put(`/users/productKeyword/${id}/restore`);
+  const { data } = await Axios.getInstance().put(`${BASE_PATH}/productKeyword/${id}/restore`);
 
   return data;
 }
@@ -156,7 +159,7 @@ export async function fetchProductKeywords() {
 }
 
 export async function putProductKeywordView(id: number) {
-  const { data } = await Axios.getInstance().put(`/users/productKeyword/${id}/view`);
+  const { data } = await Axios.getInstance().put(`${BASE_PATH}/productKeyword/${id}/view`);
 
   return data;
 }
@@ -193,4 +196,18 @@ export async function fetchUserLegitProducts() {
 
 export async function postLegitsFollow({ productId }: { productId: number }) {
   await Axios.getInstance().post(`${BASE_PATH}/legits/${productId}/follow`);
+}
+
+export async function fetchRecommWishes() {
+  const { data } = await Axios.getInstance().get<ProductResult[]>(`${BASE_PATH}/recommWishes`);
+
+  return data;
+}
+
+export async function fetchProductKeywordProducts(id: number) {
+  const { data } = await Axios.getInstance().get<ProductResult[]>(
+    `${BASE_PATH}/productKeywords/${id}/products`
+  );
+
+  return data;
 }

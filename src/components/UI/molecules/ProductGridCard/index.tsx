@@ -20,7 +20,7 @@ import {
 import { ProductLabel } from '@components/UI/organisms';
 import { Image, Skeleton } from '@components/UI/atoms';
 
-import type { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -32,7 +32,7 @@ import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { deviceIdState } from '@recoil/common';
@@ -43,19 +43,20 @@ import useProductCardState from '@hooks/useProductCardState';
 import { Area, MetaSocial, SkeletonWrapper, Title, WishButton } from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
-  product: Product;
+  product: Product | ProductResult;
   compact?: boolean;
   hideProductLabel?: boolean;
   hideAreaWithDateInfo?: boolean;
   hideMetaCamelInfo?: boolean;
-  hideAlert?: boolean;
+  showNewLabel?: boolean;
+  hideLegitStatusLabel?: boolean;
   productAtt?: object;
   customStyle?: CustomStyle;
   wishAtt?: WishAtt;
   name?: string;
   source?: string;
   measure?: () => void;
-  onWishAfterChangeCallback?: (product: Product, isWish: boolean) => void;
+  onWishAfterChangeCallback?: (product: Product | ProductResult, isWish: boolean) => void;
   isRound?: boolean;
   gap?: number;
 }
@@ -67,6 +68,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     hideProductLabel,
     hideAreaWithDateInfo,
     hideMetaCamelInfo,
+    showNewLabel = false,
+    hideLegitStatusLabel = false,
     productAtt,
     customStyle,
     wishAtt,
@@ -120,6 +123,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
+
     if (source) {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
@@ -261,13 +265,18 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             <Typography variant="h4" weight="bold">
               {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
-            {productLegitStatusText && (
+            {!hideLegitStatusLabel && productLegitStatusText && (
               <Label
                 variant="outlined"
                 size="xsmall"
                 brandColor="black"
                 text={productLegitStatusText}
               />
+            )}
+            {showNewLabel && (
+              <Typography variant="small2" weight="medium" brandColor="red">
+                NEW
+              </Typography>
             )}
           </Flexbox>
           {!hideAreaWithDateInfo && (

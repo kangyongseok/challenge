@@ -11,8 +11,9 @@ function HomeFooter() {
       component="footer"
       draggable={false}
       customStyle={{
+        marginTop: 12,
         padding: '24px 20px',
-        backgroundColor: palette.common.grey['98'],
+        backgroundColor: palette.common.grey['95'],
         userSelect: 'none',
         cursor: 'default'
       }}

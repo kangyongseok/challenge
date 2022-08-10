@@ -48,7 +48,7 @@ function LegitResultSurveyTypeform() {
       status === 30 &&
       accessUser &&
       accessUser.userId === userId &&
-      LocalStorage.get(LEGIT_SESSION_ID) === Amplitude.getClient().getSessionId()
+      LocalStorage.get(LEGIT_SESSION_ID) !== Amplitude.getClient().getSessionId()
     ) {
       setLoadSurveyTypeform(true);
     }

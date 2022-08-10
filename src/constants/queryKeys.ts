@@ -1,8 +1,11 @@
+import compact from 'lodash-es/compact';
+
 import type { ManageParams } from '@dto/userHistory';
 import type { CategoryWishesParams } from '@dto/user';
 import type {
   LegitProductsParams,
   ProductParams,
+  RecommProductsParams,
   ReviewInfoParams,
   SearchAiProductParams,
   SearchParams,
@@ -28,10 +31,7 @@ const categories = {
 
 const personals = {
   all: ['personals'] as const,
-  baseInfo: (deviceId?: string | null) =>
-    deviceId
-      ? ([...personals.all, 'baseInfo', deviceId] as const)
-      : ([...personals.all, 'baseInfo'] as const)
+  baseInfo: (deviceId?: string | null) => compact([...personals.all, 'baseInfo', deviceId])
 };
 
 const products = {
@@ -42,26 +42,18 @@ const products = {
   reviewInfo: (params: ReviewInfoParams) => [...products.all, 'reviewInfo', params] as const,
   sellerProducts: (params: SellerProductsParams) =>
     [...products.all, 'sellerProducts', params] as const,
-  search: (params?: SearchParams) =>
-    params
-      ? ([...products.all, 'search', params] as const)
-      : ([...products.all, 'search'] as const),
-  searchOptions: (params?: SearchParams) =>
-    params
-      ? ([...products.all, 'searchOptions', params] as const)
-      : ([...products.all, 'searchOptions'] as const),
+  search: (params?: SearchParams) => compact([...products.all, 'search', params]),
+  searchOptions: (params?: SearchParams) => compact([...products.all, 'searchOptions', params]),
   searchAiProduct: (params?: SearchAiProductParams) =>
-    params
-      ? ([...products.all, 'searchAiProduct', params] as const)
-      : ([...products.all, 'searchAiProduct'] as const),
+    compact([...products.all, 'searchAiProduct', params]),
   searchRelatedProducts: (params?: SearchRelatedProductsParams) =>
-    params
-      ? ([...products.all, 'searchRelatedProducts', params] as const)
-      : ([...products.all, 'searchRelatedProducts'] as const),
-  userInfo: () => [...products.all, 'userInfo'] as const,
+    compact([...products.all, 'searchRelatedProducts', params]),
   productLegit: (params: ProductParams) => [...products.all, 'productLegit', params] as const,
   legitProducts: (params?: LegitProductsParams) =>
-    [...products.all, 'legitProducts', params] as const
+    [...products.all, 'legitProducts', params] as const,
+  keywordsSuggest: (keyword: string) => [...products.all, 'keywordsSuggest', keyword] as const,
+  recommProducts: (params?: RecommProductsParams) =>
+    compact([...products.all, 'recommProducts', params])
 };
 
 const users = {
@@ -69,9 +61,7 @@ const users = {
   userInfo: () => [...users.all, 'userInfo'] as const,
   userSuggest: () => [...users.all, 'userSuggest'] as const,
   categoryWishes: (params?: CategoryWishesParams) =>
-    params
-      ? ([...users.all, 'categoryWishes', params] as const)
-      : ([...users.all, 'categoryWishes'] as const),
+    compact([...users.all, 'categoryWishes', params]),
   userHistory: (pageNumber: number) => [...users.all, 'userHistory', pageNumber] as const,
   userHoneyNoti: () => [...users.all, 'userHoneyNoti'] as const,
   userNoti: (type: number) => [...users.all, 'userNoti', type] as const,
@@ -79,7 +69,9 @@ const users = {
   sizeMapping: () => [...users.all, 'sizeMapping'] as const,
   userProductKeywords: () => [...users.all, 'userProductKeywords'] as const,
   legitTargets: () => [...users.all, 'legitTargets'] as const,
-  legitProducts: () => [...users.all, 'legitProducts'] as const
+  legitProducts: () => [...users.all, 'legitProducts'] as const,
+  recommWishes: () => [...users.all, 'recommWishes'] as const,
+  productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const
 };
 
 const userAuth = {

@@ -1,134 +1,74 @@
-import { useEffect, useRef } from 'react';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import type { Swiper as SwiperClass } from 'swiper';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
+import { useRecoilState } from 'recoil';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  Index,
+  InfiniteLoader,
+  List,
+  ListRowProps,
+  WindowScroller
+} from 'react-virtualized';
+import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Icon, Typography } from 'mrcamel-ui';
-import dayjs from 'dayjs';
+import { Box, Flexbox, Typography } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
-import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
+import ProductGridCard from '@components/UI/molecules/ProductGridCard';
+import { ProductGridCardSkeleton } from '@components/UI/molecules';
 
-import { Product } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
-import SessionStorage from '@library/sessionStorage';
-import { logEvent } from '@library/amplitude';
+import { fetchRecommProducts } from '@api/product';
 
-import { fetchSearchAiProduct } from '@api/product';
-import { fetchBaseInfo } from '@api/personal';
-
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
-import personalProductCurationState, {
-  currentSlideState,
-  searchParamsState
-} from '@recoil/personalProductCuration';
-import { deviceIdState } from '@recoil/common';
+import { homePersonalProductCurationPrevScrollState } from '@recoil/home';
+
+const cache = new CellMeasurerCache({
+  fixedWidth: true
+});
 
 function HomePersonalProductCuration() {
   const router = useRouter();
-  const [currentSlide, setCurrentSlideState] = useRecoilState(currentSlideState);
-  const [searchAiProducts, setPersonalProductCurationState] = useRecoilState(
-    personalProductCurationState
-  );
-  const searchParams = useRecoilValue(searchParamsState);
-  const deviceId = useRecoilValue(deviceIdState);
-  const { data: baseInfo, isFetched } = useQuery(queryKeys.personals.baseInfo(deviceId), () =>
-    fetchBaseInfo(deviceId)
-  );
+  const [prevScrollY, setPrevScroll] = useRecoilState(homePersonalProductCurationPrevScrollState);
 
-  const slideUpdateReciveRef = useRef(false);
-  const prevCurrentSlideRef = useRef(-1);
-
-  const { brandIds = [], categoryIds = [], keyword } = searchParams;
-
-  const { data: { content: products = [] } = {}, isFetched: productsFetched } = useQuery(
-    queryKeys.products.searchAiProduct(searchParams),
-    () => fetchSearchAiProduct(searchParams),
+  const [recommProductsParams] = useState({ size: 20 });
+  const {
+    data: { pages = [] } = {},
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage
+  } = useInfiniteQuery(
+    queryKeys.products.recommProducts(recommProductsParams),
+    ({ pageParam = 0 }) => fetchRecommProducts({ ...recommProductsParams, page: pageParam }),
     {
-      enabled: (!!brandIds.length || !!categoryIds.length || !!keyword) && isFetched,
-      staleTime: 10 * 60 * 1000
+      getNextPageParam: ({ number }, allPages) => (allPages.length <= 5 ? number + 1 : undefined),
+      keepPreviousData: true,
+      staleTime: 5 * 60 * 1000
     }
   );
 
-  const swiperRef = useRef<SwiperClass>();
+  const groupedProducts = useMemo(() => {
+    const contents = pages.flatMap(({ content }) => content);
+    const newGroupedProductsLength =
+      Math.floor(contents.length / 2) + (Math.floor(contents.length % 2) > 0 ? 1 : 0);
+    const newGroupedProducts = [];
 
-  const handleClickShowAll = () => {
-    if (baseInfo?.aiCategories) {
-      const { searchTag, brand, category } = baseInfo.aiCategories[currentSlide];
-      logEvent(attrKeys.home.CLICK_PERSONAL_ALL, {
-        name: attrProperty.productName.MAIN,
-        title: attrProperty.productTitle.PERSONAL,
-        att: `${brand?.name} ${category.name}`
-      });
-
-      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.productName.MAIN,
-        title: attrProperty.productTitle.PERSONAL,
-        type: attrProperty.productType.GUIDED
-      });
-
-      if (searchTag) {
-        router.push(`/products/search/${searchTag}`);
-        return;
-      }
-
-      if (brand?.id && category.id) {
-        router.push(
-          `/products/brands/${brand.name}?parentIds=${category.parentId}&subParentIds=${category.id}`
-        );
-        return;
-      }
-
-      if (brand?.id) {
-        router.push(`/products/brands/${brand.name}`);
-        return;
-      }
-
-      if (category.id) {
-        router.push(
-          `/products/categories/${category.name}?parentIds=${category.parentId}&subParentIds=${category.id}`
-        );
-      }
+    for (let i = 0; i <= newGroupedProductsLength; i += 1) {
+      newGroupedProducts.push(contents.splice(0, 2));
     }
-  };
 
-  const handleSlideChange = ({ activeIndex }: SwiperClass) => {
-    setCurrentSlideState(activeIndex);
-  };
+    return newGroupedProducts.filter((product) => product.length);
+  }, [pages]);
 
-  useEffect(() => {
-    if (!slideUpdateReciveRef.current && productsFetched && products.length) {
-      slideUpdateReciveRef.current = true;
-      setPersonalProductCurationState((prevState) => {
-        const newSearchAiProducts = [...prevState];
-        newSearchAiProducts[currentSlide] = products;
-        return newSearchAiProducts;
-      });
-    }
-  }, [setPersonalProductCurationState, currentSlide, products, productsFetched]);
-
-  useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.updateAutoHeight();
-      swiperRef.current.slideTo(currentSlide);
-    }
-  }, [currentSlide, searchAiProducts]);
-
-  useEffect(() => {
-    if (prevCurrentSlideRef.current !== currentSlide) {
-      slideUpdateReciveRef.current = false;
-    }
-    prevCurrentSlideRef.current = currentSlide;
-  }, [currentSlide]);
-
-  const handleWishAtt = (product: Product, i: number) => {
+  const handleWishAtt = (product: ProductResult, i: number) => {
     return {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.PERSONAL,
@@ -137,136 +77,198 @@ function HomePersonalProductCuration() {
       brand: product.brand.name,
       category: product.category.name,
       parentId: product.category.parentId,
-      line: product.line,
       site: product.site.name,
       price: product.price,
-      scoreTotal: product.scoreTotal,
       cluster: product.cluster,
       source: attrProperty.productSource.MAIN_PERSONAL
     };
   };
 
-  const handleProductAtt = (product: Product, i: number) => {
+  const handleProductAtt = (product: ProductResult, i: number) => {
     return {
-      name: attrProperty.productName.MAIN_PERSONAL,
+      name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.PERSONAL,
       index: i + 1,
       id: product.id,
       brand: product.brand.name,
       category: product.category.name,
       parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-      line: product.line,
       site: product.site.name,
       price: product.price,
-      scoreTotal: product.scoreTotal,
-      scoreStatus: product.scoreStatus,
-      scoreSeller: product.scoreSeller,
-      scorePrice: product.scorePrice,
-      scorePriceAvg: product.scorePriceAvg,
-      scorePriceCount: product.scorePriceCount,
-      scorePriceRate: product.scorePriceRate,
       source: attrProperty.productSource.MAIN_PERSONAL
     };
   };
 
+  const loadMoreRows = async () => {
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    await fetchNextPage();
+  };
+
+  const handleResize = useCallback(() => {
+    cache.clearAll();
+  }, []);
+
+  const rowRenderer = useCallback(
+    ({ key, index, parent, style }: ListRowProps) => {
+      const groupedProduct = groupedProducts[index] || [];
+      const firstProduct = groupedProduct[0];
+      const secondProduct = groupedProduct[1];
+
+      return firstProduct || secondProduct ? (
+        // @ts-ignore
+        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
+          {({ registerChild, measure }) => (
+            <ProductGridCardBox
+              ref={(ref) => {
+                if (ref && registerChild) registerChild(ref);
+              }}
+              style={style}
+            >
+              {firstProduct && (
+                <ProductGridCard
+                  product={firstProduct}
+                  measure={measure}
+                  hideProductLabel
+                  wishAtt={handleWishAtt(firstProduct, index)}
+                  productAtt={handleProductAtt(firstProduct, index)}
+                  name={attrProperty.productName.MAIN}
+                  source={attrProperty.productSource.MAIN_PERSONAL}
+                  compact
+                  isRound
+                />
+              )}
+              {secondProduct && (
+                <ProductGridCard
+                  product={secondProduct}
+                  measure={measure}
+                  hideProductLabel
+                  wishAtt={handleWishAtt(secondProduct, index)}
+                  productAtt={handleProductAtt(firstProduct, index)}
+                  name={attrProperty.productName.MAIN}
+                  source={attrProperty.productSource.MAIN_PERSONAL}
+                  compact
+                  isRound
+                />
+              )}
+            </ProductGridCardBox>
+          )}
+        </CellMeasurer>
+      ) : null;
+    },
+    [groupedProducts]
+  );
+
+  useEffect(() => {
+    const handleRouteChangeComplete = () => {
+      if (prevScrollY) {
+        window.scrollTo(0, prevScrollY);
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [prevScrollY, router.events]);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setPrevScroll(window.scrollY);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [router, setPrevScroll]);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [handleResize]);
+
+  // @ts-ignore
   return (
-    <Box component="section" customStyle={{ margin: '0 -20px' }}>
+    <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: '20px 0' }}>
       <Flexbox
-        alignment="center"
-        justifyContent="space-between"
-        customStyle={{ margin: '16px 20px 20px' }}
+        direction="vertical"
+        justifyContent="center"
+        gap={2}
+        customStyle={{ padding: '0 20px' }}
       >
-        <Typography variant="body2">
-          업데이트 <strong>{dayjs().format('YYYY-MM-DD HH:mm')}</strong>
+        <Typography variant="h3" weight="bold">
+          찾는 것과 비슷한 매물 👀
         </Typography>
-        <Flexbox alignment="center" onClick={handleClickShowAll}>
-          <Typography variant="body2" weight="bold">
-            전체보기
-          </Typography>
-          <Icon name="CaretRightOutlined" width={14} height={14} />
-        </Flexbox>
+        <Typography variant="body2">카멜이 전국에서 꿀매물만 모아왔어요.</Typography>
       </Flexbox>
-      <Swiper
-        onInit={(swiper) => {
-          if (swiper) {
-            swiperRef.current = swiper;
-          }
-        }}
-        autoHeight
-        spaceBetween={20}
-        onSlideChangeTransitionEnd={handleSlideChange}
-        style={{
-          padding: '0 20px'
-        }}
-      >
-        {!baseInfo?.aiCategories && (
-          <SwiperSlide>
-            {Array.from({ length: 10 }).map((_, childIndex) => (
-              <ProductListCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`personal-curation-product-card-skeleton-${childIndex}`}
-                customStyle={{
-                  marginBottom: 20
-                }}
-              />
-            ))}
-          </SwiperSlide>
-        )}
-        {baseInfo?.aiCategories &&
-          baseInfo?.aiCategories.map(({ viewTag, brand, category }, index) => {
-            const uniqKey = `${viewTag}-${(brand || {}).id || 0}-${(category || {}).id || 0}`;
-            return (
-              <SwiperSlide key={`aiCategory-product-${uniqKey}`}>
-                {(!isFetched || !searchAiProducts[index] || !searchAiProducts[index].length) &&
-                  Array.from({ length: 10 }).map((_, childIndex) => (
-                    <ProductListCardSkeleton
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={`personal-curation-product-card-skeleton-${uniqKey}-${childIndex}`}
-                      customStyle={{ marginBottom: 20 }}
-                      isRound
-                    />
-                  ))}
-                {(!isFetched || !searchAiProducts[index] || !searchAiProducts[index].length) && (
-                  // TODO: height 변경 필요
-                  <Skeleton
-                    width="100%"
-                    height="41px"
-                    disableAspectRatio
-                    customStyle={{ marginBottom: 20, borderRadius: 8 }}
-                  />
+      {isLoading ? (
+        <ProductCuration>
+          {Array.from(new Array(6), (_, index) => (
+            <ProductGridCardSkeleton
+              key={`carmel-product-curation-card-skeleton-${index}`}
+              isRound
+            />
+          ))}
+        </ProductCuration>
+      ) : (
+        <Box customStyle={{ padding: '0 20px' }}>
+          {/* @ts-ignore */}
+          <InfiniteLoader
+            isRowLoaded={(params: Index) => !!groupedProducts[params.index]}
+            loadMoreRows={loadMoreRows}
+            rowCount={hasNextPage ? groupedProducts.length + 10 : groupedProducts.length}
+          >
+            {({ registerChild, onRowsRendered }) => (
+              // @ts-ignore
+              <WindowScroller>
+                {({ height, isScrolling, scrollTop }) => (
+                  // @ts-ignore
+                  <AutoSizer disableHeight onResize={handleResize}>
+                    {({ width }) => (
+                      // @ts-ignore
+                      <List
+                        ref={registerChild}
+                        onRowsRendered={onRowsRendered}
+                        autoHeight
+                        width={width}
+                        height={height}
+                        isScrolling={isScrolling}
+                        scrollTop={scrollTop}
+                        rowCount={groupedProducts.length}
+                        rowHeight={cache.rowHeight}
+                        rowRenderer={rowRenderer}
+                        deferredMeasurementCache={cache}
+                      />
+                    )}
+                  </AutoSizer>
                 )}
-                {isFetched &&
-                  searchAiProducts[index] &&
-                  searchAiProducts[index].map((product, i) => (
-                    <ProductListCard
-                      key={`personal-curation-product-card-${uniqKey}-${product.id}`}
-                      product={product}
-                      hideAlert
-                      hideProductLabel
-                      customStyle={{ marginBottom: 20 }}
-                      productAtt={handleProductAtt(product, i)}
-                      wishAtt={handleWishAtt(product, i)}
-                      name={attrProperty.productName.MAIN_PERSONAL}
-                      isRound
-                      source={attrProperty.productSource.MAIN_PERSONAL}
-                    />
-                  ))}
-                {isFetched && searchAiProducts[index] && (
-                  <CtaButton
-                    variant="ghost"
-                    fullWidth
-                    onClick={handleClickShowAll}
-                    customStyle={{ marginBottom: 20 }}
-                  >
-                    전체보기
-                  </CtaButton>
-                )}
-              </SwiperSlide>
-            );
-          })}
-      </Swiper>
-    </Box>
+              </WindowScroller>
+            )}
+          </InfiniteLoader>
+        </Box>
+      )}
+    </Flexbox>
   );
 }
+
+const ProductCuration = styled.div`
+  padding: 0 20px;
+  display: grid;
+  gap: 32px 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+`;
+
+const ProductGridCardBox = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 12px;
+  padding-bottom: 32px;
+`;
 
 export default HomePersonalProductCuration;

@@ -1,6 +1,6 @@
 import { MouseEvent, PropsWithChildren } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { CustomStyle, Typography } from 'mrcamel-ui';
 
@@ -15,6 +15,7 @@ import {
   productsKeywordDialogState,
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
+import { homeSelectedTabStateFamily } from '@recoil/home';
 import { showAppDownloadBannerState } from '@recoil/common';
 
 import { StyledHeader, VirtualIcon, Wrapper } from './Header.styles';
@@ -45,6 +46,8 @@ function Header({
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
+  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
+  const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
 
   const parserEventParameterName = () => {
     switch (router.pathname) {
@@ -84,6 +87,8 @@ function Header({
       name: parserEventParameterName()
     });
 
+    resetProductKeyword();
+    resetRecentSearch();
     router.push('/');
   };
 

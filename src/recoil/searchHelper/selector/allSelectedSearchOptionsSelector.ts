@@ -1,6 +1,6 @@
 import { selector } from 'recoil';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { selectedSearchOptionsState } from '@recoil/searchHelper';
 

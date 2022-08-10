@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -24,14 +24,14 @@ function MyPortfolioCommonBanner({ name }: { name: string }) {
       alignment="center"
       justifyContent="center"
     >
-      <Box>
-        <Typography customStyle={{ color: palette.common.white }} variant="h4">
+      <Flexbox gap={1} direction="vertical">
+        <Typography variant="h4" customStyle={{ color: palette.common.white }}>
           내가 쓰던 명품, 얼마에 팔릴까?
         </Typography>
         <Typography weight="bold" customStyle={{ color: palette.common.white, opacity: 0.7 }}>
           MY PORTFOLIO 사전예약
         </Typography>
-      </Box>
+      </Flexbox>
       <Flexbox alignment="center">
         <Image
           disableAspectRatio

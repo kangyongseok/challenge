@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductLegitCard, ProductLegitCardSkeleton } from '@components/UI/molecules';
@@ -18,14 +20,12 @@ import attrKeys from '@constants/attrKeys';
 
 function HomeProductLegitLive() {
   const router = useRouter();
-  const loopIntervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const [params] = useState({
     page: 0,
     size: 8,
     isOnlyResult: true
   });
-  const [index, setIndex] = useState(0);
 
   const { data: { content: legitProducts = [] } = {}, isLoading } = useQuery(
     queryKeys.products.legitProducts(),
@@ -45,32 +45,10 @@ function HomeProductLegitLive() {
     router.push(`/products/${dataProductId}/legit/result`);
   };
 
-  useEffect(() => {
-    if (loopIntervalRef.current) {
-      clearInterval(loopIntervalRef.current);
-    }
-
-    if (legitProducts.length) {
-      loopIntervalRef.current = setInterval(() => {
-        setIndex((prevState) => {
-          if (prevState + 1 === legitProducts.length) {
-            return 0;
-          }
-          return prevState + 1;
-        });
-      }, 2000);
-    }
-    return () => {
-      if (loopIntervalRef.current) {
-        clearInterval(loopIntervalRef.current);
-      }
-    };
-  }, [legitProducts]);
-
   return (
-    <Box component="section" customStyle={{ marginTop: 52 }}>
+    <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: 20 }}>
       <Flexbox justifyContent="space-between">
-        <Typography variant="h4" weight="bold">
+        <Typography variant="h3" weight="bold">
           실시간 사진감정
         </Typography>
         <Flexbox
@@ -78,40 +56,50 @@ function HomeProductLegitLive() {
           onClick={() => router.push('/legit')}
           customStyle={{ cursor: 'pointer' }}
         >
-          <Typography variant="body2" weight="bold">
+          <Typography variant="body2" weight="medium">
             전체보기
           </Typography>
           <Icon name="CaretRightOutlined" size="small" />
         </Flexbox>
       </Flexbox>
       <ProductLegitLiveTransformWrapper>
-        {isLoading ? (
-          <ProductLegitLiveTransform gap={20} dataHeight={76}>
+        <ProductLegitLiveTransform>
+          {isLoading ? (
             <ProductLegitCardSkeleton variant="list" hidePlatformLogoWithPrice />
-          </ProductLegitLiveTransform>
-        ) : (
-          <ProductLegitLiveTransform index={index} gap={20} dataHeight={76}>
-            {legitProducts.map((productLegit) => (
-              <ProductLegitCard
-                key={`home-live-product-legit-${productLegit.productId}`}
-                variant="list"
-                productLegit={productLegit}
-                hidePlatformLogoWithPrice
-                data-product-id={productLegit.productId}
-                onClick={handleClick}
-              />
-            ))}
-          </ProductLegitLiveTransform>
-        )}
+          ) : (
+            <Swiper
+              slidesPerView={1}
+              loop
+              direction="vertical"
+              effect="flip"
+              allowTouchMove={false}
+              autoplay={{ delay: 2000, disableOnInteraction: false }}
+              speed={700}
+              spaceBetween={20}
+              modules={[Autoplay]}
+              style={{ height: 56 }}
+            >
+              {legitProducts.map((productLegit) => (
+                <SwiperSlide key={`home-live-product-legit-${productLegit.productId}`}>
+                  <ProductLegitCard
+                    variant="list"
+                    productLegit={productLegit}
+                    hidePlatformLogoWithPrice
+                    data-product-id={productLegit.productId}
+                    onClick={handleClick}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
+        </ProductLegitLiveTransform>
       </ProductLegitLiveTransformWrapper>
-    </Box>
+    </Flexbox>
   );
 }
 
 const ProductLegitLiveTransformWrapper = styled.div`
-  height: 96px;
   padding: 20px;
-  margin-top: 12px;
   border-radius: ${({
     theme: {
       box: { round }
@@ -121,12 +109,7 @@ const ProductLegitLiveTransformWrapper = styled.div`
   overflow: hidden;
 `;
 
-const ProductLegitLiveTransform = styled.div<{ dataHeight: number; gap?: number; index?: number }>`
-  display: flex;
-  flex-direction: column;
-  ${({ gap }) => (gap ? `gap: ${gap}px` : '')};
-  transition: transform 700ms ease-in-out;
-  transform: ${({ dataHeight, index = 0 }) => `translate3d(0px, -${dataHeight * index}px, 0px)`};
+const ProductLegitLiveTransform = styled.div`
   & * {
     color: ${({
       theme: {

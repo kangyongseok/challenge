@@ -58,10 +58,21 @@ function ProductLegitCardSkeleton({
                   disableAspectRatio
                   customStyle={{ borderRadius: box.round['4'] }}
                 />
-                <Skeleton width="20px" height="15px" disableAspectRatio />
+                <Skeleton
+                  width="20px"
+                  height="15px"
+                  disableAspectRatio
+                  customStyle={{ borderRadius: box.round['4'] }}
+                />
               </Flexbox>
             )}
-            <Skeleton width="100%" height="21px" maxWidth="200px" disableAspectRatio />
+            <Skeleton
+              width="100%"
+              height="21px"
+              maxWidth="200px"
+              disableAspectRatio
+              customStyle={{ borderRadius: box.round['4'] }}
+            />
             {!hidePlatformLogoWithPrice && (
               <Flexbox alignment="center" gap={8}>
                 <Skeleton
@@ -70,7 +81,12 @@ function ProductLegitCardSkeleton({
                   disableAspectRatio
                   customStyle={{ borderRadius: box.round['4'] }}
                 />
-                <Skeleton width="35px" height="18px" disableAspectRatio />
+                <Skeleton
+                  width="35px"
+                  height="18px"
+                  disableAspectRatio
+                  customStyle={{ borderRadius: box.round['4'] }}
+                />
               </Flexbox>
             )}
           </Flexbox>
@@ -88,10 +104,28 @@ function ProductLegitCardSkeleton({
       />
       <Skeleton />
       <Flexbox direction="vertical" gap={8} customStyle={{ padding: '16px 16px 20px' }}>
-        <Skeleton width="100%" maxWidth="50px" height="15px" disableAspectRatio />
+        <Skeleton
+          width="100%"
+          maxWidth="50px"
+          height="15px"
+          disableAspectRatio
+          customStyle={{ borderRadius: box.round['4'] }}
+        />
         <Flexbox direction="vertical" gap={4}>
-          <Skeleton width="100%" maxWidth="125px" height="15px" disableAspectRatio />
-          <Skeleton width="100%" maxWidth="70px" height="18px" disableAspectRatio />
+          <Skeleton
+            width="100%"
+            maxWidth="125px"
+            height="15px"
+            disableAspectRatio
+            customStyle={{ borderRadius: box.round['4'] }}
+          />
+          <Skeleton
+            width="100%"
+            maxWidth="70px"
+            height="18px"
+            disableAspectRatio
+            customStyle={{ borderRadius: box.round['4'] }}
+          />
         </Flexbox>
       </Flexbox>
     </Flexbox>

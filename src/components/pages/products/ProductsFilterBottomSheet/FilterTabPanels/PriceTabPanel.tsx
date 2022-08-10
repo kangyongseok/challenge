@@ -12,7 +12,7 @@ import { filterCodeIds } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import {
   activeTabCodeIdState,

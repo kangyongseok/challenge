@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import {
@@ -29,6 +29,7 @@ import {
   orderFilterOptions
 } from '@constants/productsFilter';
 import { PRODUCT_NAME } from '@constants/product';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
@@ -44,6 +45,7 @@ import {
   searchOptionsStateFamily,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
+import { homeSelectedTabStateFamily } from '@recoil/home';
 
 const { category, size, price, brand, platform, line, season, color, material } = filterCodeIds;
 
@@ -82,6 +84,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
     productsKeywordToastStateFamily('saved')
   );
   const setProductsKeywordInduceTriggerState = useSetRecoilState(productsKeywordInduceTriggerState);
+  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
   const {
     theme: {
@@ -104,6 +107,8 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
         alert: false
       }));
       window.scrollTo(0, 0);
+      resetProductKeyword();
+      queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
     }
   });
 
@@ -119,6 +124,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
       name: PRODUCT_NAME.PRODUCT_LIST,
       att: 'SAVE'
     });
+    logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, { name: attrProperty.productName.MANUAL });
 
     mutate({
       productSearch,

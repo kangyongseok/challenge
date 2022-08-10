@@ -3,7 +3,7 @@ import { selector } from 'recoil';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { SelectedSearchOptionHistory } from '@typings/products';
 

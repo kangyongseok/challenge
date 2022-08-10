@@ -23,9 +23,10 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,
@@ -224,6 +225,7 @@ function LineBudgetMore() {
   ]);
 
   useEffect(() => {
+    logEvent(attrKeys.searchHelper.VIEW_SEARCHHELPER_STEP2);
     setHistoryLabels([brandLabel, categoryLabel, sizeLabel].filter((item) => item));
     setProductTotal(data?.productTotal || 0);
 
@@ -249,6 +251,16 @@ function LineBudgetMore() {
     }
   }, [data?.productTotal, openBottomSheet]);
 
+  useEffect(() => {
+    if (!focusedBudget && budget.length > 0 && !isBudgetLow) {
+      logEvent(attrKeys.searchHelper.SELECT_ITEM, {
+        name: attrProperty.productName.SEARCHHELPER,
+        title: attrProperty.productTitle.MONEY,
+        att: budget
+      });
+    }
+  }, [budget, focusedBudget, isBudgetLow]);
+
   return (
     <>
       <SearchHelperLinearProgress
@@ -271,9 +283,9 @@ function LineBudgetMore() {
         </Typography>
         <CustomBox>
           <SearchHelperInput
-            labelText="라인"
+            labelText="라인 (선택)"
             value={selectedSearchOptions.lines?.map(({ name }) => name).join(', ') || ''}
-            placeholder="찾으시는 라인이 있나요?"
+            placeholder="찾으시는 라인이 있나요? (선택)"
             onClick={handleOpenLineBottomSheet}
             showCheckIcon={!!selectedSearchOptions?.lines?.length}
             readOnly
@@ -281,9 +293,9 @@ function LineBudgetMore() {
           <CustomDivider />
           <SearchHelperInput
             ref={budgetRef}
-            labelText="예산"
+            labelText="예산 (선택)"
             inputMode="numeric"
-            placeholder={focusedBudget ? '만원' : '얼마까지 생각하세요?'}
+            placeholder={focusedBudget ? '만원' : '얼마까지 생각하세요? (선택)'}
             errorMessage={
               budget.length > 0 && isBudgetLow ? (
                 <Typography
@@ -310,8 +322,8 @@ function LineBudgetMore() {
           />
           <CustomDivider />
           <SearchHelperInput
-            labelText="추가할 조건"
-            placeholder="더 추가할 조건은요?"
+            labelText="추가할 조건 (선택)"
+            placeholder="더 추가할 조건은요? (선택)"
             value={moreValue}
             readOnly
             showCheckIcon={

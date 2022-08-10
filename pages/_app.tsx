@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { RecoilRoot } from 'recoil';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -6,7 +6,7 @@ import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from 'react-que
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
-import { ThemeProvider, Toast, Typography } from 'mrcamel-ui';
+import { ThemeProvider, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
@@ -38,6 +38,9 @@ if (global.navigator) {
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const {
+    theme: { palette }
+  } = useTheme();
   const [open, setOpen] = useState<boolean>(false);
   const queryClient = useRef(
     new QueryClient({
@@ -54,6 +57,15 @@ function App({ Component, pageProps }: AppProps) {
       })
     })
   );
+  const themeColor = useMemo(() => {
+    if (router.asPath === '/') return '#0D0D0D';
+
+    if (router.asPath.includes('/myPortfolio')) return palette.common.black;
+
+    if (router.asPath === '/legit') return palette.common.grey['95'];
+
+    return palette.common.white;
+  }, [palette, router.asPath]);
 
   useEffect(() => {
     Initializer.initAccessUserInQueryClient(queryClient.current);
@@ -82,6 +94,7 @@ function App({ Component, pageProps }: AppProps) {
           name="description"
           content="대한민국 모든 중고명품, 한번에 검색&비교하고 득템하세요. 상태 좋고 가격도 저렴한 중고명품을 빠르게 찾도록 도와드릴게요!"
         />
+        <meta name="theme-color" content={themeColor} />
         <title>명품을 중고로 사는 가장 똑똑한 방법, 카멜</title>
       </Head>
       <ChannelTalkProvider />

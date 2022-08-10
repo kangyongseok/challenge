@@ -31,7 +31,7 @@ import { fetchSearch, fetchSearchOptions } from '@api/product';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds } from '@constants/productsFilter';
-import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP } from '@constants/localStorage';
+import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -358,7 +358,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         index === 5 &&
         isVisible &&
         !openProductsSaveSearchPopup &&
-        LocalStorage.get(SHOW_SAVE_SEARCH_PRODUCTS_POPUP)
+        LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)
       ) {
         setProductsSaveSearchPopup(true);
       }
@@ -457,7 +457,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   }, [prevScrollTop]);
 
   useEffect(() => {
-    return () => LocalStorage.remove(SHOW_SAVE_SEARCH_PRODUCTS_POPUP);
+    return () => LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
   }, []);
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-u
 
 import SearchHelperBottomSheetSkeleton from '@components/pages/searchHelper/SearchHelperBottomSheetSkeleton';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { selectedSearchOptionsState } from '@recoil/searchHelper';
 

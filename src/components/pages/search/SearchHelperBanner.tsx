@@ -64,6 +64,7 @@ function SearchHelperBanner({
     parentCategory?.subParentCategories.find(
       (subParentCategory) => subParentCategory.id === subParentId
     )?.name || '';
+  const searchKeyword = `${brandName || ''} ${categoryName || ''}`.trim() || keyword;
 
   const handleClickStart = () => {
     const genderName = gender === 'F' ? 'female' : 'male';
@@ -113,30 +114,19 @@ function SearchHelperBanner({
             <Typography variant="body1" weight="bold" customStyle={{ whiteSpace: 'nowrap' }}>
               검색집사로&nbsp;
             </Typography>
-            {keyword && (
+            {!!searchKeyword && (
               <Keyword variant="body1" weight="bold">
-                {keyword}&nbsp;
+                {searchKeyword}&nbsp;
               </Keyword>
             )}
             <Typography
               variant="body1"
               weight="bold"
-              customStyle={{
-                color: palette.primary.main,
-                whiteSpace: 'nowrap',
-                transform: keyword.length > 5 ? 'translateX(-4px)' : undefined
-              }}
+              customStyle={{ color: palette.primary.main, whiteSpace: 'nowrap' }}
             >
               꿀매물&nbsp;
             </Typography>
-            <Typography
-              variant="body1"
-              weight="bold"
-              customStyle={{
-                whiteSpace: 'nowrap',
-                transform: keyword.length > 5 ? 'translateX(-4px)' : undefined
-              }}
-            >
+            <Typography variant="body1" weight="bold" customStyle={{ whiteSpace: 'nowrap' }}>
               바로 득템 📡
             </Typography>
           </Flexbox>
@@ -157,11 +147,9 @@ function SearchHelperBanner({
   ) : null;
 }
 
-const Wrapper = styled.div`
-  margin: 16px 0 8px;
+const Wrapper = styled.section`
+  padding: 16px 20px;
   background-color: ${({ theme }) => theme.palette.primary.highlight};
-  border-radius: ${({ theme }) => theme.box.round['8']};
-  padding: 16px 24px;
 `;
 
 const Keyword = styled(Typography)`

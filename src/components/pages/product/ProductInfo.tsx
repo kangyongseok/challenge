@@ -20,8 +20,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { removeTagAndAddNewLine } from '@utils/common';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber, removeTagAndAddNewLine } from '@utils/common';
 
 interface ProductInfoProps {
   contentRef: MutableRefObject<HTMLHRElement | null>;

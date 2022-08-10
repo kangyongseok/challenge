@@ -1,18 +1,16 @@
-import type { MouseEvent } from 'react';
-
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useRecoilState } from 'recoil';
+import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import find from 'lodash-es/find';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import accumulateStorage from '@utils/search/accumulateStorage';
-
 import type { SelectItem } from '@typings/search';
+import { searchRecentSearchListState } from '@recoil/search';
 
 interface SearchKeywordProps {
   onClick: (parameter: SelectItem) => void;
@@ -29,21 +27,21 @@ const keywords = [
 
 function SearchKeyword({ onClick }: SearchKeywordProps) {
   const {
-    theme: { palette }
+    theme: { typography }
   } = useTheme();
+  const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
+    searchRecentSearchListState
+  );
 
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    const target = e.target as HTMLButtonElement;
-
+  const handleClick = (keyword: string) => () => {
     logEvent(attrKeys.search.CLICK_RECOMMTAG, {
       name: 'SEARCH',
-      keyword: target.dataset.keyword
+      keyword
     });
 
-    accumulateStorage(RECENT_SEARCH_LIST, {
-      keyword: target.dataset.keyword,
-      count: Number(target.dataset.count)
-    });
+    if (!find(savedRecentSearchList, { keyword })) {
+      setSavedRecentSearchList((currVal) => [{ keyword, count: 0, expectCount: 0 }, ...currVal]);
+    }
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.productName.SEARCH,
@@ -51,48 +49,34 @@ function SearchKeyword({ onClick }: SearchKeywordProps) {
       type: attrProperty.productType.GUIDED
     });
 
-    onClick({ keyword: target.dataset.keyword });
+    onClick({ keyword });
   };
 
   return (
-    <Box customStyle={{ marginTop: 16 }}>
-      <Typography
-        variant="h4"
-        weight="bold"
-        customStyle={{
-          marginBottom: 4
-        }}
-      >
-        최근 본 상품이 없네요!
-      </Typography>
-      <Typography
-        variant="small1"
-        customStyle={{
-          color: palette.common.grey['40']
-        }}
-      >
-        이런 매물은 어떠세요?😎
+    <Flexbox component="section" direction="vertical" gap={12} customStyle={{ marginTop: 20 }}>
+      <Typography variant="h4" weight="bold" customStyle={{ padding: '0 20px' }}>
+        추천 검색어
       </Typography>
       <Flexbox
         customStyle={{
           flexWrap: 'wrap',
-          marginTop: 12,
-          gap: '8px 6px'
+          gap: '8px 6px',
+          padding: '0 20px'
         }}
       >
         {keywords.map((keyword) => (
           <Chip
+            key={`search-${keyword}`}
             variant="ghost"
             brandColor="black"
-            data-keyword={keyword}
-            key={`search-${keyword}`}
-            onClick={handleClick}
+            onClick={handleClick(keyword)}
+            customStyle={{ fontWeight: typography.body1.weight.regular }}
           >
             {keyword}
           </Chip>
         ))}
       </Flexbox>
-    </Box>
+    </Flexbox>
   );
 }
 

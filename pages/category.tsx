@@ -1,71 +1,88 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { QueryClient, dehydrate } from 'react-query';
-import { GetServerSidePropsContext } from 'next';
+import { QueryClient, dehydrate, useQuery } from 'react-query';
+import type { GetServerSidePropsContext } from 'next';
+import { Box, Flexbox, useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { CategoryCollapse, CategoryTabs } from '@components/pages/category';
+import { CategoryBrandList, CategoryGenderTabs, CategoryList } from '@components/pages/category';
 
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
+import { fetchUserInfo } from '@api/user';
 import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import categoryState from '@recoil/category';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Category() {
-  const { data: accessUser } = useQueryAccessUser();
-  const [{ initialized, gender, parentId }, setCategoryState] = useRecoilState(categoryState);
+  const {
+    theme: { palette }
+  } = useTheme();
+  const [{ initialized, parentId }, setCategoryState] = useRecoilState(categoryState);
   const [selectedParentCategory, setSelectedParentCategory] = useState(0);
+  const { data: { info: { value: { gender: userInfoGender = '' } = {} } = {} } = {} } = useQuery(
+    queryKeys.users.userInfo(),
+    fetchUserInfo
+  );
 
   useEffect(() => {
     logEvent(attrKeys.category.VIEW_CATEGORY);
-  }, []);
 
-  useEffect(() => {
     if (selectedParentCategory !== parentId) {
       setSelectedParentCategory(parentId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentId]);
+  }, []);
 
   useEffect(() => {
-    const userGender = accessUser?.gender === 'F' ? 'female' : 'male';
+    const userGender = userInfoGender === 'F' ? 'female' : 'male';
 
-    if (userGender !== gender && !initialized) {
+    if (!initialized) {
       setCategoryState((prevCategory) => ({
         ...prevCategory,
         initialized: true,
-        gender: userGender
+        gender: userGender !== prevCategory.gender ? userGender : prevCategory.gender
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessUser]);
+  }, [initialized, setCategoryState, userInfoGender]);
 
   return (
-    <GeneralTemplate header={<Header />} footer={<BottomNavigation />}>
-      <CategoryTabs setSelectedParentCategory={setSelectedParentCategory} />
-      <CategoryCollapse
-        selectedParentCategory={selectedParentCategory}
-        setSelectedParentCategory={setSelectedParentCategory}
-      />
+    <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding>
+      <Flexbox direction="vertical" gap={12} customStyle={{ marginBottom: 12 }}>
+        <CategoryGenderTabs resetSelectedParentCategory={() => setSelectedParentCategory(0)} />
+        <CategoryList
+          selectedParentCategory={selectedParentCategory}
+          setSelectedParentCategory={setSelectedParentCategory}
+        />
+        <Box customStyle={{ height: 8, backgroundColor: palette.common.grey['95'] }} />
+        <CategoryBrandList />
+      </Flexbox>
     </GeneralTemplate>
   );
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
+  const queryClientList: Promise<void>[] = [];
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-  await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);
+  if (req.cookies.accessToken) {
+    queryClientList.concat([queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo)]);
+  }
+
+  queryClientList.concat([
+    queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
+  ]);
+
+  await Promise.allSettled(queryClientList);
 
   return {
     props: {

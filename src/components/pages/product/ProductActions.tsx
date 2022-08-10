@@ -34,8 +34,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
-import { copyToClipboard, getRandomNumber } from '@utils/common';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber, copyToClipboard, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

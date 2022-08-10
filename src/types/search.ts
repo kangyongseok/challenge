@@ -9,13 +9,13 @@ export interface SelectItem {
 }
 
 export interface RecentItems {
-  keyword?: string;
+  keyword: string;
   count?: number;
   expectCount?: number;
 }
 
 export interface TotalSearchItem {
-  keyword?: string;
+  keyword: string;
   title?: string;
   type?: string;
   keywordItem?: SuggestKeyword;

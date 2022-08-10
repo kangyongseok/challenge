@@ -7,7 +7,7 @@ import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { SHOW_SAVE_SEARCH_PRODUCTS_POPUP } from '@constants/localStorage';
+import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
@@ -29,7 +29,7 @@ function ProductsSaveSearchPopup() {
       name: 'PRODUCT_LIST',
       att: 'NO'
     });
-    LocalStorage.remove(SHOW_SAVE_SEARCH_PRODUCTS_POPUP);
+    LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
     resetSearchParams();
     resetSelectedSearchOptions();
     setProductsSaveSearchPopup(false);

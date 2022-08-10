@@ -1,9 +1,9 @@
-export { default as HomeBrandList } from './HomeBrandList';
 export { default as HomeCamelProductCuration } from './HomeCamelProductCuration';
-export { default as HomeCategoryList } from './HomeCategoryList';
+export { default as HomeBrandsCategories } from './HomeBrandsCategories';
 export { default as HomeFooter } from './HomeFooter';
 export { default as HomePersonalProductCuration } from './HomePersonalProductCuration';
-export { default as HomeProductDealAlert } from './HomeProductDealAlert';
+export { default as HomeProductsKeywordList } from './HomeProductsKeywordList';
+export { default as HomeRecentSearchList } from './HomeRecentSearchList';
+export { default as HomeRecommendationsWishes } from './HomeRecommendationsWishes';
 export { default as HomeWelcome } from './HomeWelcome';
-export { default as HomeAiCategories } from './HomeAiCategories';
 export { default as HomeProductLegitLive } from './HomeProductLegitLive';

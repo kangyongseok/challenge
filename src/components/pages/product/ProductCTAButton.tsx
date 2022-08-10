@@ -44,8 +44,7 @@ import attrKeys from '@constants/attrKeys';
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { getRandomNumber } from '@utils/common';
-import commaNumber from '@utils/commaNumber';
+import { commaNumber, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import type { AppBanner } from '@typings/common';

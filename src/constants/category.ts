@@ -7,6 +7,42 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 383
     },
     {
+      name: '카드지갑',
+      nameEng: 'card wallet',
+      parentId: 98,
+      subParentId: 393
+    },
+    {
+      name: '클러치/파우치',
+      nameEng: 'clutch/pouch',
+      parentId: 45,
+      subParentId: 328
+    },
+    {
+      name: '반팔티',
+      nameEng: 'short sleeve',
+      parentId: 97,
+      subParentId: 365
+    },
+    {
+      name: '시계',
+      nameEng: 'watch',
+      parentId: 96,
+      subParentId: 409
+    },
+    {
+      name: '반지갑',
+      nameEng: 'semi wallet',
+      parentId: 98,
+      subParentId: 390
+    },
+    {
+      name: '장지갑',
+      nameEng: 'long wallet',
+      parentId: 98,
+      subParentId: 391
+    },
+    {
       name: '맨투맨',
       nameEng: 'top',
       parentId: 97,
@@ -31,18 +67,6 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 294
     },
     {
-      name: '카드지갑',
-      nameEng: 'card wallet',
-      parentId: 98,
-      subParentId: 393
-    },
-    {
-      name: '시계',
-      nameEng: 'watch',
-      parentId: 96,
-      subParentId: 409
-    },
-    {
       name: '이어폰/헤드폰',
       nameEng: 'earphone/headphone',
       parentId: 284,
@@ -61,34 +85,10 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 354
     },
     {
-      name: '반지갑',
-      nameEng: 'semi wallet',
-      parentId: 98,
-      subParentId: 390
-    },
-    {
-      name: '클러치/파우치',
-      nameEng: 'clutch/pouch',
-      parentId: 45,
-      subParentId: 328
-    },
-    {
-      name: '장지갑',
-      nameEng: 'long wallet',
-      parentId: 98,
-      subParentId: 391
-    },
-    {
       name: '코트',
       nameEng: 'coat',
       parentId: 119,
       subParentId: 358
-    },
-    {
-      name: '반팔티',
-      nameEng: 'short sleeve',
-      parentId: 97,
-      subParentId: 365
     },
     {
       name: '긴팔티',
@@ -111,16 +111,10 @@ export const CATEGORIES_BY_GENDER = {
   ],
   F: [
     {
-      name: '숄더백/크로스백',
-      nameEng: 'shoulder cross bag',
+      name: '클러치/파우치',
+      nameEng: 'clutch/pouch',
       parentId: 45,
-      subParentId: 327
-    },
-    {
-      name: '스니커즈',
-      nameEng: 'sneakers',
-      parentId: 14,
-      subParentId: 383
+      subParentId: 328
     },
     {
       name: '카드지갑',
@@ -129,16 +123,41 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 393
     },
     {
-      name: '클러치/파우치',
-      nameEng: 'clutch/pouch',
+      name: '숄더백/크로스백',
+      nameEng: 'shoulder cross bag',
       parentId: 45,
-      subParentId: 328
+      subParentId: 327
+    },
+    {
+      name: '주얼리',
+      nameEng: 'jewelry',
+      parentId: 96,
+      subParentId: 339
+    },
+    {
+      name: '스니커즈',
+      nameEng: 'sneakers',
+      parentId: 14,
+      subParentId: 383
+    },
+    {
+      name: '반팔티',
+      nameEng: 'short sleeve',
+      parentId: 97,
+      subParentId: 365
     },
     {
       name: '토트백',
       nameEng: 'tote bag',
       parentId: 45,
       subParentId: 398,
+      categoryId: null
+    },
+    {
+      name: '버킷백',
+      nameEng: 'bucket bag',
+      parentId: 45,
+      subParentId: 401,
       categoryId: null
     },
     {
@@ -152,12 +171,6 @@ export const CATEGORIES_BY_GENDER = {
       nameEng: 'mini bag',
       parentId: 45,
       subParentId: 402
-    },
-    {
-      name: '주얼리',
-      nameEng: 'jewelry',
-      parentId: 96,
-      subParentId: 339
     },
     {
       name: '시계',
@@ -177,12 +190,7 @@ export const CATEGORIES_BY_GENDER = {
       parentId: 97,
       subParentId: 366
     },
-    {
-      name: '반팔티',
-      nameEng: 'short sleeve',
-      parentId: 97,
-      subParentId: 365
-    },
+
     {
       name: '원피스',
       nameEng: 'dress',
@@ -228,34 +236,10 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 383
     },
     {
-      name: '시계',
-      nameEng: 'watch',
-      parentId: 96,
-      subParentId: 409
-    },
-    {
-      name: '맨투맨',
-      nameEng: 'top',
-      parentId: 97,
-      subParentId: 366
-    },
-    {
-      name: '패딩/점퍼',
-      nameEng: 'padding/jumper',
-      parentId: 119,
-      subParentId: 356
-    },
-    {
       name: '카드지갑',
       nameEng: 'card wallet',
       parentId: 98,
       subParentId: 393
-    },
-    {
-      name: '자켓/바람막이',
-      nameEng: 'jacket/windbreak',
-      parentId: 119,
-      subParentId: 286
     },
     {
       name: '클러치/파우치',
@@ -264,10 +248,10 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 328
     },
     {
-      name: '전자제품',
-      nameEng: 'electronics',
-      parentId: 284,
-      subParentId: 419
+      name: '시계',
+      nameEng: 'watch',
+      parentId: 96,
+      subParentId: 409
     },
     {
       name: '숄더백/크로스백',
@@ -276,16 +260,40 @@ export const CATEGORIES_BY_GENDER = {
       subParentId: 327
     },
     {
-      name: '니트웨어',
-      nameEng: 'knitwear',
+      name: '맨투맨',
+      nameEng: 'top',
       parentId: 97,
-      subParentId: 294
+      subParentId: 366
+    },
+    {
+      name: '전자제품',
+      nameEng: 'electronics',
+      parentId: 284,
+      subParentId: 419
     },
     {
       name: '반지갑',
       nameEng: 'semi wallet',
       parentId: 98,
       subParentId: 390
+    },
+    {
+      name: '패딩/점퍼',
+      nameEng: 'padding/jumper',
+      parentId: 119,
+      subParentId: 356
+    },
+    {
+      name: '자켓/바람막이',
+      nameEng: 'jacket/windbreak',
+      parentId: 119,
+      subParentId: 286
+    },
+    {
+      name: '니트웨어',
+      nameEng: 'knitwear',
+      parentId: 97,
+      subParentId: 294
     },
     {
       name: '후드티',

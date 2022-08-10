@@ -497,3 +497,5 @@ export function getUtmParams() {
 
   return utmParams;
 }
+
+export const commaNumber = (value: number | string) => Number(value).toLocaleString();

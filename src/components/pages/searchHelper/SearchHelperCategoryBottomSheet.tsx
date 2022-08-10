@@ -15,7 +15,7 @@ import { logEvent } from '@library/amplitude';
 import { filterGenders } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
-import commaNumber from '@utils/commaNumber';
+import { commaNumber } from '@utils/common';
 
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -313,7 +313,7 @@ function SearchHelperCategoryBottomSheet({
                         </Typography>
                       </Flexbox>
                     )
-                  )}{' '}
+                  )}
               </>
             )}
           </Box>
