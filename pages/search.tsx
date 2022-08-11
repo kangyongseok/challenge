@@ -33,6 +33,8 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import calculateExpectCountPerHour from '@utils/calculateExpectCountPerHour';
+
 import type { RecentItems, SelectItem, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 
@@ -113,13 +115,16 @@ function Search() {
     keywordItem,
     skipLogging,
     expectCount,
-    count,
+    count = 0,
     type
   }: TotalSearchItem) => {
     const logType = skipLogging ? 'GUIDED' : 'INPUT';
 
     if (!find(savedRecentSearchList, { keyword })) {
-      setSavedRecentSearchList((currVal) => [{ keyword, count, expectCount }, ...currVal]);
+      setSavedRecentSearchList((currVal) => [
+        { keyword, count, expectCount: expectCount || calculateExpectCountPerHour(count) },
+        ...currVal
+      ]);
     }
 
     if (!skipLogging) {

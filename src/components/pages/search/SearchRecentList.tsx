@@ -114,7 +114,7 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
               </Typography>
               {(item.count as number) > 0 && (
                 <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
-                  ({commaNumber(Number(item.count))})
+                  {commaNumber(Number(item.count))}
                 </Typography>
               )}
             </Flexbox>

@@ -20,7 +20,7 @@ export const searchRecentSearchListState = atom<RecentItems[]>({
           const updatedList = recentSearchList.map((product) =>
             product.expectCount
               ? product
-              : { ...product, expectCount: calculateExpectCountPerHour(Number(product.count)) }
+              : { ...product, expectCount: calculateExpectCountPerHour(product.count || 0) }
           );
 
           LocalStorage.set(RECENT_SEARCH_LIST, updatedList);

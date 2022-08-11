@@ -158,7 +158,7 @@ function SearchList({ searchResult, onClick, onClickCategory }: SearchListProps)
               </Flexbox>
               <Flexbox gap={4} alignment="center" customStyle={{ marginLeft: 'auto' }}>
                 <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
-                  ({commaNumber(item.count)})
+                  {commaNumber(item.count)}
                 </Typography>
                 <Icon name="CaretRightOutlined" color={palette.common.grey['20']} size="small" />
               </Flexbox>
@@ -184,7 +184,7 @@ function SearchList({ searchResult, onClick, onClickCategory }: SearchListProps)
                 />
                 {item.count > 0 && (
                   <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
-                    {commaNumber(item.count)}회
+                    {commaNumber(item.count)}
                   </Typography>
                 )}
               </ItemLi>

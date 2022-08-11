@@ -157,7 +157,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
         customStyle={{ padding: triggered ? '12px 20px' : '0 20px' }}
         onClick={handleClickSearchBar}
       />
-      {triggered && <Box customStyle={{ height: 72, visibility: 'hidden' }} />}
+      {triggered && <Box customStyle={{ height: 48, visibility: 'hidden' }} />}
       <Box component="section" customStyle={{ padding: '0 20px 40px' }}>
         {isLoading ? (
           <Flexbox alignment="center" gap={8}>

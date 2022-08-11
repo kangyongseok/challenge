@@ -624,7 +624,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
           )}
           <Typography variant="body2" customStyle={{ color: common.grey['40'] }}>
             {!hasSelectedSearchOptions && isNotUsedBrand
-              ? '아직 서비드 대상 브랜드가 아니에요.'
+              ? '아직 서비스 대상 브랜드가 아니에요.'
               : '조건을 만족하는 매물이 없어요.'}
           </Typography>
           <Typography variant="small2" customStyle={{ color: common.grey['60'] }}>
