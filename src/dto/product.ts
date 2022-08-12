@@ -561,3 +561,10 @@ export interface RecommProductsParams {
   size?: number;
   sort?: string[];
 }
+
+export interface CamelProductsParams {
+  page?: number;
+  size?: number;
+  sort?: string[];
+  type?: string[]; // default "recomm"
+}

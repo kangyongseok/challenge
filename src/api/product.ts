@@ -1,4 +1,5 @@
 import type {
+  CamelProductsParams,
   LegitProductsParams,
   PageProduct,
   PageProductLegit,
@@ -131,6 +132,14 @@ export async function fetchLegitProducts(params: LegitProductsParams) {
 
 export async function fetchRecommProducts(params?: RecommProductsParams) {
   const { data } = await Axios.getInstance().get<PageProductResult>(`${BASE_PATH}/recommProducts`, {
+    params
+  });
+
+  return data;
+}
+
+export async function fetchCamelProducts(params: CamelProductsParams) {
+  const { data } = await Axios.getInstance().get<PageProductResult>(`${BASE_PATH}/camelProducts`, {
     params
   });
 

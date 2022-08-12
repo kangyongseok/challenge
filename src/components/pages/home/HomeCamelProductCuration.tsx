@@ -1,59 +1,51 @@
-import { useEffect, useRef } from 'react';
+import { UIEvent, useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import debounce from 'lodash-es/debounce';
+import throttle from 'lodash-es/throttle';
 import styled from '@emotion/styled';
 
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 import { ProductGridCardSkeleton } from '@components/UI/molecules';
 
-import type { Product } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchSearch } from '@api/product';
+import { fetchCamelProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import {
-  camelSearchParamsWithDeviceIdSelector,
-  homeCamelProductCurationPrevScrollState
-} from '@recoil/home';
+import { homeCamelProductCurationPrevScrollState } from '@recoil/home';
 
 function HomeCamelProductCuration() {
   const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
-  const [productCurationPrevScroll, setProductCurationPrevScrollState] = useRecoilState(
-    homeCamelProductCurationPrevScrollState
-  );
-  const searchParams = useRecoilValue(camelSearchParamsWithDeviceIdSelector);
-
+  const [prevScroll, setPrevScroll] = useRecoilState(homeCamelProductCurationPrevScrollState);
+  const [camelProductsParams] = useState({ page: 0, size: 8 });
   const {
-    data: search,
+    data: camelProducts,
     isLoading,
     isFetching
-  } = useQuery(queryKeys.products.search(searchParams), () => fetchSearch(searchParams));
+  } = useQuery(queryKeys.products.camelProducts(camelProductsParams), () =>
+    fetchCamelProducts(camelProductsParams)
+  );
 
   const productCurationRef = useRef<HTMLDivElement | null>(null);
-  const debProductCurationHandleScroll = useRef(
-    debounce(() => {
-      if (productCurationRef.current) {
-        setProductCurationPrevScrollState(productCurationRef.current.scrollLeft);
-      }
-    }, 100)
-  ).current;
+  const throttleScrollProductCuration = useRef(
+    throttle((e: UIEvent<HTMLDivElement>) => {
+      const scrollLeft = e.currentTarget?.scrollLeft;
 
-  const handleScrollProductCuration = debounce(() => {
-    debProductCurationHandleScroll();
-  }, 200);
+      if (scrollLeft) setPrevScroll(scrollLeft);
+    }, 200)
+  );
 
   const handleClickAll = () => {
     logEvent(attrKeys.home.CLICK_PRODUCT_LIST, {
@@ -64,7 +56,7 @@ function HomeCamelProductCuration() {
     router.push('/products/camel?siteUrlIds=161');
   };
 
-  const handleWishAtt = (product: Product, i: number) => {
+  const handleWishAtt = (product: ProductResult, i: number) => {
     return {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.CAMEL,
@@ -73,16 +65,14 @@ function HomeCamelProductCuration() {
       brand: product.brand.name,
       category: product.category.name,
       parentId: product.category.parentId,
-      line: product.line,
       site: product.site.name,
       price: product.price,
-      scoreTotal: product.scoreTotal,
       cluster: product.cluster,
       source: attrProperty.productSource.MAIN_CAMEL
     };
   };
 
-  const handleProductAtt = (product: Product, i: number) => {
+  const handleProductAtt = (product: ProductResult, i: number) => {
     return {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.CAMEL,
@@ -91,25 +81,17 @@ function HomeCamelProductCuration() {
       brand: product.brand.name,
       category: product.category.name,
       parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-      line: product.line,
       site: product.site.name,
       price: product.price,
-      scoreTotal: product.scoreTotal,
-      scoreStatus: product.scoreStatus,
-      scoreSeller: product.scoreSeller,
-      scorePrice: product.scorePrice,
-      scorePriceAvg: product.scorePriceAvg,
-      scorePriceCount: product.scorePriceCount,
-      scorePriceRate: product.scorePriceRate,
       source: attrProperty.productSource.MAIN_CAMEL
     };
   };
 
   useEffect(() => {
-    if (productCurationRef.current && productCurationPrevScroll) {
-      productCurationRef.current.scrollTo(productCurationPrevScroll, 0);
+    if (productCurationRef.current && prevScroll) {
+      productCurationRef.current.scrollTo(prevScroll, 0);
     }
-  }, [productCurationPrevScroll]);
+  }, [prevScroll]);
 
   return (
     <Flexbox
@@ -144,8 +126,8 @@ function HomeCamelProductCuration() {
         </Flexbox>
         <Typography variant="body2">카멜이 따로 인증한 판매자들이에요. 믿고 거래하세요!</Typography>
       </Flexbox>
-      <ProductCuration ref={productCurationRef} onScroll={handleScrollProductCuration}>
-        {isLoading || isFetching || !search
+      <ProductCuration ref={productCurationRef} onScroll={throttleScrollProductCuration.current}>
+        {isLoading || isFetching || !camelProducts
           ? Array.from(new Array(8), (_, index) => (
               <ProductGridCardSkeleton
                 key={`carmel-product-curation-card-skeleton-${index}`}
@@ -154,7 +136,7 @@ function HomeCamelProductCuration() {
                 customStyle={{ minWidth: 144, flex: 1 }}
               />
             ))
-          : search?.page.content
+          : camelProducts?.content
               .slice(0, 8)
               .map((product, i) => (
                 <ProductGridCard

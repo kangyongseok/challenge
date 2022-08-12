@@ -3,6 +3,7 @@ import compact from 'lodash-es/compact';
 import type { ManageParams } from '@dto/userHistory';
 import type { CategoryWishesParams } from '@dto/user';
 import type {
+  CamelProductsParams,
   LegitProductsParams,
   ProductParams,
   RecommProductsParams,
@@ -53,7 +54,9 @@ const products = {
     [...products.all, 'legitProducts', params] as const,
   keywordsSuggest: (keyword: string) => [...products.all, 'keywordsSuggest', keyword] as const,
   recommProducts: (params?: RecommProductsParams) =>
-    compact([...products.all, 'recommProducts', params])
+    compact([...products.all, 'recommProducts', params]),
+  camelProducts: (params?: CamelProductsParams) =>
+    compact([...products.all, 'camelProducts', params])
 };
 
 const users = {

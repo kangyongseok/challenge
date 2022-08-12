@@ -149,11 +149,11 @@ function HomeRecentSearchList() {
   }, [isLoading, router, searchParams.keyword]);
 
   useEffect(() => {
-    if (savedRecentSearchList.length > 0) {
-      const filteredSavedRecentSearchList = savedRecentSearchList.filter(
-        ({ count }) => count && count > 0
-      );
+    const filteredSavedRecentSearchList = savedRecentSearchList.filter(
+      ({ count = 0, expectCount = 0 }) => count > 0 || expectCount > 0
+    );
 
+    if (filteredSavedRecentSearchList.length > 0) {
       setrecentSearchList(filteredSavedRecentSearchList);
       setSearchParams((prevState) => ({
         ...prevState,
