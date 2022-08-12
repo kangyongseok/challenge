@@ -13,7 +13,7 @@ import {
   HomeBrandsCategories,
   HomeCamelProductCuration,
   HomeFooter,
-  HomePersonalProductCuration,
+  // HomePersonalProductCuration,
   HomeProductLegitLive,
   HomeProductsKeywordList,
   HomeRecentSearchList,
@@ -121,8 +121,8 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
           <Box customStyle={{ height: 8 }} />
           <MyPortfolioCommonBanner name={attrProperty.productName.MAIN} />
           <HomeCamelProductCuration />
-          <Box customStyle={{ height: 8 }} />
-          <HomePersonalProductCuration />
+          {/* <Box customStyle={{ height: 8 }} /> */}
+          {/* <HomePersonalProductCuration /> */}
         </Flexbox>
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
