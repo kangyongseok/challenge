@@ -1,4 +1,5 @@
 import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import find from 'lodash-es/find';
 
@@ -9,12 +10,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { SelectItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
-
-interface SearchKeywordProps {
-  onClick: (parameter: SelectItem) => void;
-}
 
 const keywords = [
   '샤넬 클래식 미디움',
@@ -25,7 +21,8 @@ const keywords = [
   '나이키 조던1'
 ];
 
-function SearchKeyword({ onClick }: SearchKeywordProps) {
+function SearchKeyword() {
+  const router = useRouter();
   const {
     theme: { typography }
   } = useTheme();
@@ -48,8 +45,9 @@ function SearchKeyword({ onClick }: SearchKeywordProps) {
       title: attrProperty.productTitle.RECOMMTAG,
       type: attrProperty.productType.GUIDED
     });
-
-    onClick({ keyword });
+    router.push({
+      pathname: `/products/search/${keyword}`
+    });
   };
 
   return (

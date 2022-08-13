@@ -61,9 +61,10 @@ export async function fetchSellerProducts({ productId, ...params }: SellerProduc
   return data;
 }
 
-export async function fetchKeywordsSuggest(value: string) {
+export async function fetchKeywordsSuggest(keyword: string) {
   const { data } = await Axios.getInstance().get<SuggestKeyword[]>(
-    `${BASE_PATH}/keywords/suggest?keyword=${value}`
+    `${BASE_PATH}/keywords/suggest`,
+    { params: { keyword } }
   );
   return data;
 }

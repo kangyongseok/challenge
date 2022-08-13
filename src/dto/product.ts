@@ -2,6 +2,25 @@ import type { CommonCode, JobRuleBaseDetail, Page, Paged, SizeCode, Sort } from 
 import type { Category, ParentCategory, SubParentCategory } from './category';
 import type { Brand } from './brand';
 
+export interface KeywordItemSub {
+  brandId: number | null;
+  brandName: string | null;
+  categoryId: number | null;
+  categoryName: string | null;
+  categorySizeIds: number[] | null;
+  gender: 'male' | 'female' | null;
+  idFilterIds: number[];
+  keyword: string;
+  keywordDeco: string;
+  line: string | null;
+  lineIds: number[] | null;
+  maxPrice: number | null;
+  minPrice: number | null;
+  parentId: number | null;
+  subParentId: number | null;
+  type: number;
+}
+
 export interface SuggestKeyword {
   brandId: number;
   brandName: string;
@@ -16,7 +35,8 @@ export interface SuggestKeyword {
   line: string;
   parentId: number;
   subParentId: number;
-  type: number;
+  recommFilters: KeywordItemSub[] | null;
+  type: number; // 0: 2차카테고리, 2: 키워드, 5: 브랜드, 6: 브랜드의 라인, 7: 카테고리
 }
 
 export type ProductBrand = {

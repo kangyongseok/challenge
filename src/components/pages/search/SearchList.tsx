@@ -1,229 +1,367 @@
-import type { MouseEvent } from 'react';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import omitBy from 'lodash-es/omitBy';
+import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
 import type { SuggestKeyword } from '@dto/product';
+import { KeywordItemSub } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { filterGenders } from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
 import capitalize from '@utils/capitalize';
 
-import type { SelectItem, TotalSearchItem } from '@typings/search';
-import { showAppDownloadBannerState } from '@recoil/common';
-
-import SearchHelperBanner from './SearchHelperBanner';
+import type { TotalSearchItem } from '@typings/search';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 interface SearchListProps {
-  searchResult: SuggestKeyword[];
-  onClick: (parameter: TotalSearchItem) => void;
-  onClickCategory: (parameter: SelectItem) => void;
+  searchValue: string;
+  suggestKeywords: SuggestKeyword[];
+  onClickTotalSearch: (parameter: TotalSearchItem) => void;
 }
 
-function SearchList({ searchResult, onClick, onClickCategory }: SearchListProps) {
+function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: SearchListProps) {
+  const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const categoryKeywordList = searchResult.filter((result) => result.type === 0);
-  const brandKeywordList = searchResult.filter((item) => item.type === 2 && !!item.keywordBrand);
+  const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
+    useQueryUserInfo();
+  const categoryKeywordList = suggestKeywords.filter(({ type }) => type === 0);
+  const brandKeywordList = suggestKeywords.filter(
+    ({ type, keywordBrand }) => type === 2 && !!keywordBrand
+  );
 
-  const parserKeyword = (keyword: string) =>
-    keyword.split('>').map((word, i) => (
-      <Flexbox key={`keyword-${word}`} alignment="center">
-        {word.replace('(P)', '')}
-        {i + 1 < keyword.split('>').length && (
-          <Icon
-            name="CaretRightOutlined"
-            color={palette.common.grey['20']}
-            size="small"
-            customStyle={{ margin: '0 5px' }}
-          />
-        )}
-      </Flexbox>
-    ));
-
-  const handleClickBrand =
-    ({ keyword, item }: { keyword: string; item: SuggestKeyword }) =>
+  const handleClickCategoryLabel =
+    ({
+      index,
+      parentId,
+      subParentId,
+      keyword,
+      count
+    }: {
+      index: number;
+      parentId: number;
+      subParentId: number;
+      keyword: string;
+      count: number;
+    }) =>
     () => {
-      logEvent(attrKeys.search.CLICK_BANNERB, { name: 'SEARCH' });
-      onClick({
-        keyword,
-        title: 'BANNERB',
-        keywordItem: item
+      logEvent(attrKeys.search.CLICK_AUTO, {
+        name: 'SEARCH',
+        type: 'CATEGORY',
+        index,
+        keyword: keyword?.replace(/\(P\)/, ''),
+        count
       });
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.BANNERC,
+        type: attrProperty.productType.INPUT
+      });
+      router
+        .replace({
+          pathname: '/search',
+          query: { keyword: searchValue }
+        })
+        .then(() =>
+          router.push({
+            pathname: `/products/categories/${(keyword || '').split('>')[1].replace(/\(P\)/g, '')}`,
+            query: {
+              parentIds: [parentId],
+              subParentIds: [subParentId],
+              genders: [keyword.split('>')[0] === '남성' ? 'male' : 'female']
+            }
+          })
+        );
     };
 
-  const handleClickList = (e: MouseEvent<HTMLLIElement>) => {
-    const target = e.currentTarget;
+  const handleClickBrand = (item: SuggestKeyword) => () => {
+    logEvent(attrKeys.search.CLICK_BANNERB, { name: 'SEARCH' });
+    onClickTotalSearch({
+      keyword: item.keywordBrand,
+      title: 'BANNERB',
+      keywordItem: item
+    });
+  };
+
+  const handleClickRecomm =
+    ({
+      keyword,
+      keywordDeco,
+      brandId,
+      gender,
+      parentId,
+      subParentId,
+      idFilterIds = [],
+      categorySizeIds = [],
+      lineIds = [],
+      maxPrice
+    }: KeywordItemSub) =>
+    () => {
+      logEvent(attrKeys.search.CLICK_RECOMMFILTER, {
+        name: attrProperty.productName.SEARCHMODAL,
+        att: keyword
+      });
+      logEvent(attrKeys.search.SUBMIT_SEARCH, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.RECOMMFILTER,
+        type: 'INPUT',
+        keyword: searchValue,
+        keywordDeco,
+        brandId,
+        gender,
+        parentId,
+        subParentId,
+        idFilterIds,
+        categorySizeIds,
+        lineIds,
+        maxPrice
+      });
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.productName.SEARCH,
+        title: attrProperty.productTitle.RECOMMFILTER,
+        type: attrProperty.productType.INPUT,
+        keyword
+      });
+      router
+        .replace({
+          pathname: '/search',
+          query: { keyword: searchValue }
+        })
+        .then(() =>
+          router.push({
+            pathname: `/products/search/${keyword}`,
+            query: omitBy(
+              {
+                brandIds: brandId ? [brandId] : [],
+                genderIds: gender
+                  ? [
+                      filterGenders.common.id,
+                      filterGenders[gender as keyof typeof filterGenders].id
+                    ]
+                  : [],
+                parentIds: parentId ? [parentId] : [],
+                subParentIds: subParentId ? [subParentId] : [],
+                idFilterIds,
+                categorySizeIds,
+                lineIds,
+                minPrice: maxPrice ? String(0) : undefined,
+                maxPrice: maxPrice ? String(maxPrice) : undefined
+              },
+              isEmpty
+            )
+          })
+        );
+    };
+
+  const handleClickList = (item: SuggestKeyword, index: number) => () => {
+    const { keyword, count, brandId, categoryId } = item;
+
     logEvent(attrKeys.search.CLICK_AUTO, {
       name: 'SEARCH',
       type: 'KEYWORD',
-      index: target.dataset.index,
-      keyword: target.dataset.keyword,
-      count: target.dataset.count
+      index,
+      keyword,
+      count
     });
-
-    onClick({
-      keyword: target.dataset.keyword || '',
+    onClickTotalSearch({
+      keyword,
       title: 'AUTO',
-      keywordItem: JSON.parse(target.dataset.item as string),
-      count: Number(target.dataset.count),
-      brandId: Number(target.dataset.brandId),
-      categoryId: Number(target.dataset.categoryId),
+      keywordItem: item,
+      count,
+      brandId,
+      categoryId,
       type: 'auto'
     });
   };
 
-  const handleClickMap = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget as HTMLDivElement;
-    const genders = (target.dataset.keyword as string).split('>')[0] === '남성' ? 'male' : 'female';
+  useEffect(() => {
+    if (suggestKeywords.some(({ recommFilters }) => recommFilters?.length)) {
+      logEvent(attrKeys.search.VIEW_RECOMMFILTER, { name: attrProperty.productName.SEARCHMODAL });
+    }
+  }, [suggestKeywords]);
 
-    logEvent(attrKeys.search.CLICK_AUTO, {
-      name: 'SEARCH',
-      type: 'CATEGORY',
-      index: target.dataset.index,
-      keyword: target.dataset.keyword?.replace('(P)', ''),
-      count: target.dataset.count
-    });
-
-    onClickCategory({
-      keyword: '',
-      parentIds: String(target.dataset.parentId) || '',
-      subParentIds: String(target.dataset.subId) || '',
-      categoryKeyword: target.dataset.keyword,
-      genders
-    });
-  };
-
-  const searchHelperKeyword = ((categoryKeywordList.length > 0 && categoryKeywordList) ||
-    (brandKeywordList.length > 0 && brandKeywordList) ||
-    searchResult)[0];
+  // const searchHelperKeyword = ((categoryKeywordList.length > 0 && categoryKeywordList) ||
+  //   (brandKeywordList.length > 0 && brandKeywordList) ||
+  //   searchResult)[0];
 
   return (
     <>
-      {!!searchHelperKeyword && (
-        <SearchHelperBanner
-          keyword={searchHelperKeyword.keyword}
-          brandName={brandKeywordList.length > 0 ? searchHelperKeyword.brandName : undefined}
-          brandId={brandKeywordList.length > 0 ? searchHelperKeyword.brandId : undefined}
-          categoryName={
-            (categoryKeywordList.length > 0
-              ? searchHelperKeyword.keyword.substring(
-                  searchHelperKeyword.keyword.lastIndexOf('>') + 1
-                )
-              : searchHelperKeyword.categoryName) ?? undefined
-          }
-          parentId={searchHelperKeyword.parentId ?? undefined}
-          subParentId={searchHelperKeyword.subParentId ?? undefined}
-        />
-      )}
+      {/* {!!searchHelperKeyword && ( */}
+      {/*  <SearchHelperBanner */}
+      {/*    keyword={searchHelperKeyword.keyword} */}
+      {/*    brandName={brandKeywordList.length > 0 ? searchHelperKeyword.brandName : undefined} */}
+      {/*    brandId={brandKeywordList.length > 0 ? searchHelperKeyword.brandId : undefined} */}
+      {/*    categoryName={ */}
+      {/*      (categoryKeywordList.length > 0 */}
+      {/*        ? searchHelperKeyword.keyword.substring( */}
+      {/*            searchHelperKeyword.keyword.lastIndexOf('>') + 1 */}
+      {/*          ) */}
+      {/*        : searchHelperKeyword.categoryName) ?? undefined */}
+      {/*    } */}
+      {/*    parentId={searchHelperKeyword.parentId ?? undefined} */}
+      {/*    subParentId={searchHelperKeyword.subParentId ?? undefined} */}
+      {/*  /> */}
+      {/* )} */}
       <Flexbox component="section" direction="vertical" gap={8}>
         {categoryKeywordList.length > 0 ? (
           <Box>
-            {categoryKeywordList.map((item, i) => (
-              <CategoryLabel
-                index={i}
-                data-index={i}
-                data-parent-id={item.parentId}
-                data-sub-id={item.subParentId}
-                data-keyword={item.keyword}
-                data-count={item.count}
-                onClick={handleClickMap}
-                key={`item-map-${item.keyword}`}
-                showAppDownloadBanner={showAppDownloadBanner}
-              >
-                {parserKeyword(item.keyword)}
-              </CategoryLabel>
-            ))}
+            {categoryKeywordList.map(
+              ({ parentId, subParentId, keyword, count, recommFilters }, index) => (
+                <Box
+                  key={`item-map-${keyword}`}
+                  customStyle={{
+                    borderBottom: `1px solid ${palette.common.grey['80']}`,
+                    padding: (recommFilters || []).length > 0 ? '8px 0' : 0,
+                    backgroundColor: palette.common.grey['95']
+                  }}
+                >
+                  <Flexbox
+                    customStyle={{ padding: '12px 20px' }}
+                    onClick={handleClickCategoryLabel({
+                      index,
+                      parentId,
+                      subParentId,
+                      keyword,
+                      count
+                    })}
+                  >
+                    <Flexbox gap={4} customStyle={{ flex: 1 }}>
+                      {keyword.split('>').map((word, secondIndex) => (
+                        <Fragment key={`category-label-${word}`}>
+                          {secondIndex !== 0 && (
+                            <Icon
+                              name="CaretRightOutlined"
+                              size="small"
+                              customStyle={{ color: palette.common.grey['80'] }}
+                            />
+                          )}
+                          <Typography
+                            variant="body2"
+                            weight={
+                              secondIndex + 1 === keyword.split('>').length ? 'bold' : 'medium'
+                            }
+                            customStyle={{ lineHeight: '16px' }}
+                          >
+                            {word.replace(/\(P\)/, '')}
+                          </Typography>
+                        </Fragment>
+                      ))}
+                    </Flexbox>
+                    <Icon name="CaretRightOutlined" size="small" />
+                  </Flexbox>
+                  {(recommFilters || []).map((recommFilter) => (
+                    <Flexbox
+                      gap={8}
+                      alignment="center"
+                      key={`category-recommend-filter-keyword-${recommFilter.keywordDeco}`}
+                      customStyle={{ padding: '10px 20px', color: palette.primary.main }}
+                      onClick={handleClickRecomm({
+                        ...recommFilter,
+                        parentId,
+                        gender:
+                          recommFilter.gender ??
+                          ((userGender === 'F' && 'female') ||
+                            (userGender === 'M' && 'male') ||
+                            null)
+                      })}
+                    >
+                      <FilterFilled />
+                      <Typography brandColor="primary" customStyle={{ flex: 1 }}>
+                        {recommFilter.keywordDeco}
+                      </Typography>
+                      <Icon
+                        name="CaretRightOutlined"
+                        size="small"
+                        customStyle={{ color: palette.primary.main }}
+                      />
+                    </Flexbox>
+                  ))}
+                </Box>
+              )
+            )}
           </Box>
         ) : (
           brandKeywordList.map((item) => (
-            <BrandLabel
+            <Box
               key={`alert-${item.keyword}`}
-              onClick={handleClickBrand({ keyword: item.keywordBrand, item })}
-              showAppDownloadBanner={showAppDownloadBanner}
+              customStyle={{
+                borderBottom: `1px solid ${palette.common.grey['80']}`,
+                padding: (item.recommFilters || []).length > 0 ? '8px 0' : 0,
+                backgroundColor: palette.common.grey['95']
+              }}
             >
-              <Flexbox gap={5} alignment="center">
-                <Typography variant="body2" weight="bold">
-                  {capitalize(item.keywordEng)}
-                </Typography>
-                <Typography variant="body2">{item.keywordBrand}</Typography>
-              </Flexbox>
-              <Flexbox gap={4} alignment="center" customStyle={{ marginLeft: 'auto' }}>
-                <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
-                  {commaNumber(item.count)}
-                </Typography>
-                <Icon name="CaretRightOutlined" color={palette.common.grey['20']} size="small" />
-              </Flexbox>
-            </BrandLabel>
-          ))
-        )}
-        <Box component="ul">
-          {searchResult.map((item: SuggestKeyword, i) => (
-            <Fragment key={`list-${item.keyword}`}>
-              <ItemLi
-                data-keyword={item.keyword}
-                data-brand-id={item.brandId}
-                data-category-id={item.categoryId}
-                data-count={item.count}
-                data-item={JSON.stringify(item)}
-                data-index={i}
-                onClick={handleClickList}
-                isType={item.type === 0}
-              >
-                <Typography
-                  variant="body1"
-                  dangerouslySetInnerHTML={{ __html: item.keywordDeco }}
-                />
-                {item.count > 0 && (
+              <Flexbox onClick={handleClickBrand(item)} customStyle={{ padding: '12px 20px' }}>
+                <Flexbox gap={5} alignment="center">
+                  <Typography variant="body2" weight="bold">
+                    {capitalize(item.keywordEng)}
+                  </Typography>
+                  <Typography variant="body2">{item.keywordBrand}</Typography>
+                </Flexbox>
+                <Flexbox gap={4} alignment="center" customStyle={{ marginLeft: 'auto' }}>
                   <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
                     {commaNumber(item.count)}
                   </Typography>
-                )}
-              </ItemLi>
-            </Fragment>
+                  <Icon name="CaretRightOutlined" color={palette.common.grey['20']} size="small" />
+                </Flexbox>
+              </Flexbox>
+              {(item.recommFilters || []).map((recommFilter) => (
+                <Flexbox
+                  gap={8}
+                  alignment="center"
+                  key={`brand-recommend-filter-keyword-${recommFilter.keywordDeco}`}
+                  customStyle={{ padding: '10px 20px', color: palette.primary.main }}
+                  onClick={handleClickRecomm({
+                    ...recommFilter,
+                    gender:
+                      recommFilter.gender ??
+                      ((userGender === 'F' && 'female') || (userGender === 'M' && 'male') || null)
+                  })}
+                >
+                  <FilterFilled />
+                  <Typography brandColor="primary" customStyle={{ flex: 1 }}>
+                    {recommFilter.keywordDeco}
+                  </Typography>
+                  <Icon
+                    name="CaretRightOutlined"
+                    size="small"
+                    customStyle={{ color: palette.primary.main }}
+                  />
+                </Flexbox>
+              ))}
+            </Box>
+          ))
+        )}
+        <Box component="ul">
+          {suggestKeywords.map((item, index) => (
+            <ItemLi
+              key={`search-keyword-suggest-${item.keyword}`}
+              onClick={handleClickList(item, index)}
+              isType={item.type === 0}
+            >
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.keywordDeco }} />
+              {item.count > 0 && (
+                <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
+                  {commaNumber(item.count)}
+                </Typography>
+              )}
+            </ItemLi>
           ))}
         </Box>
       </Flexbox>
     </>
   );
 }
-
-const CategoryLabel = styled.div<{ index: number; showAppDownloadBanner: boolean }>`
-  display: flex;
-  align-items: center;
-  font-size: ${({ theme: { typography } }) => typography.small1.size};
-  height: 50px;
-  background: ${({ theme }) => theme.palette.common.grey['95']};
-  width: 100%;
-  left: 0;
-  top: ${({ index, showAppDownloadBanner }) =>
-    showAppDownloadBanner ? `${index === 1 ? 160 : 115}px` : `${index === 1 ? 100 : 55}px`};
-  padding: 16px 20px;
-  cursor: pointer;
-`;
-
-const BrandLabel = styled.div<{ showAppDownloadBanner: boolean }>`
-  display: flex;
-  align-items: center;
-  font-size: ${({ theme: { typography } }) => typography.small1.size};
-  height: 50px;
-  background: ${({ theme }) => theme.palette.common.grey['95']};
-  width: 100%;
-  left: 0;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 55 + APP_DOWNLOAD_BANNER_HEIGHT : 55}px;
-  padding: 16px 20px;
-  cursor: pointer;
-  color: ${({ theme: { palette } }) => palette.common.grey['20']};
-`;
 
 const ItemLi = styled.li<{ isType: boolean }>`
   display: ${({ isType }) => (isType ? 'none' : 'flex')};
@@ -232,5 +370,16 @@ const ItemLi = styled.li<{ isType: boolean }>`
   padding: 10px 20px;
   gap: 8px;
 `;
+
+function FilterFilled() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M20 4H4V6.41421L10 12.4142V22.4142L14 18.4142V12.4142L20 6.41421V4Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
 
 export default SearchList;

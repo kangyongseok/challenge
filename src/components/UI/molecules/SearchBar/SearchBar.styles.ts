@@ -102,7 +102,7 @@ export const Wrapper = styled.div<
       borderTop: 'none',
       borderRight: 'none',
       borderLeft: 'none',
-      height: 58,
+      height: 56,
       position: 'fixed',
       zIndex: zIndex.header
     }};
@@ -111,11 +111,10 @@ export const Wrapper = styled.div<
 export const Input = styled.input<Pick<SearchBarProps, 'brandColor'>>`
   width: 100%;
   outline: 0;
-  cursor: pointer;
 
   ${({ theme: { typography } }) => ({
     fontSize: typography.body1.size,
-    fontWeight: typography.body1.weight.regular,
+    fontWeight: typography.body1.weight.medium,
     lineHeight: typography.body1.lineHeight,
     letterSpacing: typography.body1.letterSpacing
   })};

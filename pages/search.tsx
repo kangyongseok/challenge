@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import type { BaseSyntheticEvent, FormEvent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CtaButton, Dialog, Icon, Typography } from 'mrcamel-ui';
 import find from 'lodash-es/find';
-import { debounce, isEmpty } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';
-import { TouchIcon } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   SearchBrandList,
@@ -35,24 +33,23 @@ import attrKeys from '@constants/attrKeys';
 
 import calculateExpectCountPerHour from '@utils/calculateExpectCountPerHour';
 
-import type { RecentItems, SelectItem, TotalSearchItem } from '@typings/search';
+import type { RecentItems, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
+import useDebounce from '@hooks/useDebounce';
 
 function Search() {
   const router = useRouter();
-  const {
-    theme: { palette }
-  } = useTheme();
   const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
     searchRecentSearchListState
   );
 
   const [searchValue, setSearchValue] = useState('');
-  const { data = [], refetch } = useQuery(
-    queryKeys.products.keywordsSuggest(searchValue),
-    () => fetchKeywordsSuggest(searchValue),
+  const debouncedSearchKeyword = useDebounce<string>(searchValue, 300);
+  const { data: suggestKeywords = [] } = useQuery(
+    queryKeys.products.keywordsSuggest(debouncedSearchKeyword),
+    () => fetchKeywordsSuggest(debouncedSearchKeyword),
     {
-      enabled: false,
+      enabled: !!debouncedSearchKeyword,
       onSuccess: (response) => {
         logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
           name: 'SEARCH',
@@ -65,49 +62,7 @@ function Search() {
 
   const [recentSearchList, setRecentSearchList] = useState<RecentItems[]>([]);
   const [isSearchEmpty, setIsSearchEmpty] = useState(false);
-  const [focusedSearchBar, setFocusedSearchBar] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const hasKeywordsSuggestData = searchValue.trim().length > 0 && data.length > 0;
-
-  const handleClearValue = () => {
-    if (inputRef.current) {
-      (inputRef.current.querySelector('input') as HTMLInputElement).value = '';
-    }
-    setSearchValue('');
-  };
-
-  const handleSearchItem = (item: SelectItem) => {
-    const newItem = { ...item };
-    delete newItem.keyword;
-
-    router.push({
-      pathname: `/products/search/${item.keyword}`,
-      query: newItem
-    });
-  };
-
-  const handleClickCategoryBanner = (item: SelectItem) => {
-    const newItem = { ...item };
-    delete newItem.categoryKeyword;
-    delete newItem.keyword;
-
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.productName.SEARCH,
-      title: attrProperty.productTitle.BANNERC,
-      type: attrProperty.productType.INPUT
-    });
-
-    router.push({
-      pathname: `/products/categories/${(item.categoryKeyword || '')
-        .split('>')[1]
-        .replace(/\(P\)/g, '')}`,
-      query: newItem
-    });
-  };
-
-  const handleChange = debounce((e: BaseSyntheticEvent) => {
-    setSearchValue(e.target.value);
-  }, 300);
+  const hasKeywordsSuggestData = searchValue.trim().length > 0 && suggestKeywords.length > 0;
 
   const handleTotalSearch = ({
     keyword,
@@ -118,8 +73,6 @@ function Search() {
     count = 0,
     type
   }: TotalSearchItem) => {
-    const logType = skipLogging ? 'GUIDED' : 'INPUT';
-
     if (!find(savedRecentSearchList, { keyword })) {
       setSavedRecentSearchList((currVal) => [
         { keyword, count, expectCount: expectCount || calculateExpectCountPerHour(count) },
@@ -131,7 +84,7 @@ function Search() {
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
         name: 'SEARCH',
         title,
-        type: logType,
+        type: skipLogging ? 'GUIDED' : 'INPUT',
         keyword,
         brandId: keywordItem?.brandId,
         categoryId: keywordItem?.categoryId,
@@ -176,30 +129,29 @@ function Search() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const inputEl = inputRef.current?.querySelector('input') as HTMLInputElement;
 
-    logEvent(attrKeys.search.CLICK_SCOPE, {
-      name: 'SEARCH'
-    });
+    logEvent(attrKeys.search.CLICK_SCOPE, { name: 'SEARCH' });
 
-    if (isEmpty(searchValue.trim() || inputEl.value.trim())) {
-      logEvent(attrKeys.search.NOT_KEYWORD, {
-        att: 'NO'
-      });
-
+    if (searchValue.trim().length === 0) {
+      logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
       setIsSearchEmpty(true);
       return;
     }
 
     handleTotalSearch({
-      keyword: inputEl.value,
+      keyword: searchValue,
       title: 'SCOPE',
-      count: (data[0] || {}).count || 0,
+      count: (suggestKeywords[0] || {}).count || 0,
       type: 'submit'
     });
   };
 
-  const handleFocusedSearchBar = () => setFocusedSearchBar(!focusedSearchBar);
+  const handleClickBack = useCallback(() => {
+    logEvent(attrKeys.search.CLICK_BACK, {
+      name: attrProperty.productName.SEARCHMODAL
+    });
+    router.back();
+  }, [router]);
 
   useEffect(() => {
     logEvent(attrKeys.search.VIEW_SEARCH_MODAL);
@@ -209,77 +161,38 @@ function Search() {
   }, []);
 
   useEffect(() => {
-    if (searchValue.trim()) {
-      refetch();
-    }
-  }, [refetch, searchValue]);
-
-  useEffect(() => {
     const { keyword } = router.query;
 
-    if (keyword) {
-      if (inputRef.current) {
-        const inputEl = inputRef.current.querySelector('input') as HTMLInputElement;
-
-        if (inputEl) {
-          inputEl.value = String(keyword);
-          setSearchValue(String(keyword));
-        }
-      }
-    }
+    if (keyword) setSearchValue(String(keyword));
   }, [router.query]);
 
   return (
     <>
-      <GeneralTemplate
-        header={
-          <form onSubmit={handleSubmit}>
+      <GeneralTemplate disablePadding>
+        <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
+          <SearchBox onSubmit={handleSubmit}>
             <SearchBar
+              type="search"
+              autoCapitalize="none"
+              autoComplete="off"
+              spellCheck="false"
               fullWidth
               autoFocus
               isBottomBorderFixed
               placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
-              ref={inputRef}
-              onFocus={handleFocusedSearchBar}
-              onBlur={handleFocusedSearchBar}
-              onChange={handleChange}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
               startIcon={
-                <TouchIcon
-                  size="medium"
-                  direction="left"
-                  name="ArrowLeftOutlined"
-                  onClick={() => {
-                    logEvent(attrKeys.search.CLICK_BACK, {
-                      name: attrProperty.productName.SEARCHMODAL
-                    });
-                    router.back();
-                  }}
-                  customStyle={{ minWidth: 20, minHeight: 20 }}
-                />
+                <Box customStyle={{ padding: '16.5px 8px 16.5px 20px' }}>
+                  <Icon name="ArrowLeftOutlined" width={23} height={23} onClick={handleClickBack} />
+                </Box>
               }
-              endIcon={
-                <ClearIcon
-                  name="CloseOutlined"
-                  size="small"
-                  direction="right"
-                  color={palette.common.white}
-                  onClick={handleClearValue}
-                  customStyle={{
-                    display: searchValue.trim() ? 'block' : 'none',
-                    cursor: 'pointer'
-                  }}
-                />
-              }
-              onClick={() => {
-                logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' });
-              }}
-              disabled={isSearchEmpty}
+              customStyle={{ '& > div:first-of-type': { padding: '0 20px 0 0', gap: 0 } }}
             />
-          </form>
-        }
-        disablePadding
-      >
-        <Box customStyle={{ padding: `58px 0 ${hasKeywordsSuggestData ? 0 : '64px'}` }}>
+          </SearchBox>
+        </Box>
+        <Box customStyle={{ padding: `0 0 ${hasKeywordsSuggestData ? 0 : '64px'}` }}>
           {!hasKeywordsSuggestData ? (
             <>
               <SearchHelperBanner showText={!hasKeywordsSuggestData} />
@@ -287,10 +200,10 @@ function Search() {
                 <SearchRecentList
                   refresh={setRecentSearchList}
                   recentSearchList={recentSearchList}
-                  onClick={handleTotalSearch}
+                  onClickTotalSearch={handleTotalSearch}
                 />
               ) : (
-                <SearchKeyword onClick={handleSearchItem} />
+                <SearchKeyword />
               )}
               <SearchProductsKeywordList />
               <SearchBrandList />
@@ -298,9 +211,9 @@ function Search() {
             </>
           ) : (
             <SearchList
-              onClick={handleTotalSearch}
-              onClickCategory={handleClickCategoryBanner}
-              searchResult={data}
+              searchValue={searchValue}
+              suggestKeywords={suggestKeywords}
+              onClickTotalSearch={handleTotalSearch}
             />
           )}
         </Box>
@@ -339,12 +252,9 @@ export async function getStaticProps() {
   };
 }
 
-const ClearIcon = styled(Icon)`
-  background: ${({ theme: { palette } }) => palette.common.grey['80']};
-  min-width: 16px;
-  height: 16px;
-  border-radius: 16px;
-  padding: 2px;
+const SearchBox = styled.form`
+  position: fixed;
+  width: 100%;
 `;
 
 export default Search;

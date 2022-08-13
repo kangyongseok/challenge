@@ -75,7 +75,8 @@ const productTitle = {
   PRE_CONFIRM: 'PRE_CONFIRM',
   MYLIST: 'MYLIST',
   MYLIST_DELETE: 'MYLIST_DELETE',
-  MONEY: 'MONEY'
+  MONEY: 'MONEY',
+  RECOMMFILTER: 'RECOMMFILTER'
 };
 
 const productSource = {

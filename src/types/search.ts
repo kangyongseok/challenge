@@ -1,13 +1,5 @@
 import type { SuggestKeyword } from '@dto/product';
 
-export interface SelectItem {
-  keyword?: string;
-  parentIds?: string;
-  subParentIds?: string;
-  genders?: string;
-  categoryKeyword?: string;
-}
-
 export interface RecentItems {
   keyword: string;
   count?: number;

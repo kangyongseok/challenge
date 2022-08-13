@@ -18,11 +18,11 @@ import { searchRecentSearchListState } from '@recoil/search';
 
 interface SearchListProps {
   recentSearchList: RecentItems[];
-  onClick: (parameter: TotalSearchItem) => void;
+  onClickTotalSearch: (parameter: TotalSearchItem) => void;
   refresh: (parameter: RecentItems[]) => void;
 }
 
-function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProps) {
+function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: SearchListProps) {
   const {
     theme: { palette }
   } = useTheme();
@@ -47,11 +47,7 @@ function SearchRecentList({ onClick, refresh, recentSearchList }: SearchListProp
         type: attrProperty.productType.INPUT
       });
 
-      onClick({
-        keyword,
-        title: 'RECENT',
-        expectCount
-      });
+      onClickTotalSearch({ keyword, title: 'RECENT', expectCount });
     };
 
   const handleRecentListClear = () => {
