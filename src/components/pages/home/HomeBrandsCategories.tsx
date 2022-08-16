@@ -49,8 +49,9 @@ function HomeBrandsCategories({ isViewSearchHelperOnboarding }: HomeBrandsCatego
     name: string;
     callback: () => void;
   }) => {
-    logEvent(attrKeys.home.CLICK_MAIN, {
-      title: 'BRAND',
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.BRAND,
       att: name
     });
 
@@ -100,8 +101,9 @@ function HomeBrandsCategories({ isViewSearchHelperOnboarding }: HomeBrandsCatego
     subParentCategoryName: string;
     callback: () => void;
   }) => {
-    logEvent(attrKeys.home.CLICK_MAIN, {
-      title: 'CATEGORY',
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.CATEGORY,
       att: subParentCategoryName
     });
 
