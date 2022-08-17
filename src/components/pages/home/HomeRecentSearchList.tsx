@@ -15,10 +15,12 @@ import { Skeleton } from '@components/UI/atoms';
 
 import type { Product, SearchParams } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchSearch } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -120,6 +122,21 @@ function HomeRecentSearchList() {
     };
   };
 
+  const handleProductAtt = (product: Product, i: number) => {
+    return {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.RECENT,
+      index: i + 1,
+      id: product.id,
+      brand: product.brand.name,
+      category: product.category.name,
+      parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+      site: product.site.name,
+      price: product.price,
+      source: attrProperty.productSource.MAIN_RECENT_LIST
+    };
+  };
+
   const handleClickProductKeywordProduct = useCallback(
     (product: Product, index: number) => () => {
       logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
@@ -133,6 +150,9 @@ function HomeRecentSearchList() {
         site: product.site.name,
         price: product.price
       });
+      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
+        source: attrProperty.productSource.MAIN_RECENT
+      });
       router.push(`/products/${product.id}`);
     },
     [router]
@@ -141,9 +161,14 @@ function HomeRecentSearchList() {
   const handleClickAll = useCallback(() => {
     if (isLoading || !searchParams?.keyword?.length) return;
 
-    logEvent(attrKeys.home.CLICK_RECENT_BUTTON, {
+    logEvent(attrKeys.home.CLICK_RECENT, {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.RECENT
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.RECENT,
+      type: attrProperty.productType.INPUT
     });
     router.push(`/products/search/${searchParams.keyword}`);
   }, [isLoading, router, searchParams.keyword]);
@@ -217,6 +242,7 @@ function HomeRecentSearchList() {
                     hideAreaWithDateInfo
                     hideLegitStatusLabel
                     wishAtt={handleWishAtt(product, i)}
+                    productAtt={handleProductAtt(product, i)}
                     name={attrProperty.productName.MAIN}
                     source={attrProperty.productSource.MAIN_RECENT_LIST}
                     compact

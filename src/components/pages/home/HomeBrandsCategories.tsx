@@ -138,6 +138,12 @@ function HomeBrandsCategories({ isViewSearchHelperOnboarding }: HomeBrandsCatego
       return;
     }
 
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.CATEGORY,
+      type: attrProperty.productType.INPUT
+    });
+
     callback();
   };
 

@@ -6,8 +6,10 @@ import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { BrandList } from '@components/UI/organisms';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -32,6 +34,11 @@ function CategoryBrandList() {
     logEvent(attrKeys.category.CLICK_BRAND_NAME, {
       name: attrProperty.productName.CATEGORY,
       title: attrProperty.productTitle.RECOMMEND
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.CATEGORY,
+      title: attrProperty.productTitle.BRAND,
+      type: attrProperty.productType.GUIDED
     });
     callback();
   };

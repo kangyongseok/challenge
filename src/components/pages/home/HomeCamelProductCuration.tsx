@@ -12,10 +12,12 @@ import { ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchCamelProducts } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -51,6 +53,11 @@ function HomeCamelProductCuration() {
     logEvent(attrKeys.home.CLICK_PRODUCT_LIST, {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.CAMEL
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.CAMEL,
+      type: attrProperty.productType.GUIDED
     });
 
     router.push('/products/camel?siteUrlIds=161');

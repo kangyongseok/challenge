@@ -16,6 +16,7 @@ import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult, SearchParams } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import {
@@ -24,6 +25,7 @@ import {
   putProductKeywordView
 } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -179,6 +181,9 @@ function HomeProductsKeywordList() {
         name: attrProperty.productName.MAIN,
         title: attrProperty.productTitle.MYLIST
       });
+      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
+        source: attrProperty.productSource.MAIN_MYLIST
+      });
 
       if (selectedProductKeyword) {
         productKeywordViewMutate(selectedProductKeyword.id, {
@@ -209,6 +214,11 @@ function HomeProductsKeywordList() {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.MYLIST,
       att: selectedProductKeyword.isNew ? 'NEW' : 'GENERAL'
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.MYLIST,
+      type: attrProperty.productType.INPUT
     });
 
     const searchParams: SearchParams = JSON.parse(selectedProductKeyword.keywordFilterJson);
