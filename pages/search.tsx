@@ -52,10 +52,17 @@ function Search() {
       enabled: !!debouncedSearchKeyword,
       onSuccess: (response) => {
         logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
-          name: 'SEARCH',
+          name: attrProperty.productName.SEARCH,
           keyword: searchValue,
           count: response.length
         });
+
+        if (response.some(({ recommFilters }) => recommFilters && recommFilters.length > 0)) {
+          logEvent(attrKeys.search.VIEW_RECOMMFILTER, {
+            name: attrProperty.productName.SEARCHMODAL,
+            keyword: searchValue
+          });
+        }
       }
     }
   );

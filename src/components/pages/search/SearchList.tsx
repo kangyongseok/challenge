@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
@@ -184,12 +184,6 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
       type: 'auto'
     });
   };
-
-  useEffect(() => {
-    if (suggestKeywords.some(({ recommFilters }) => recommFilters?.length)) {
-      logEvent(attrKeys.search.VIEW_RECOMMFILTER, { name: attrProperty.productName.SEARCHMODAL });
-    }
-  }, [suggestKeywords]);
 
   // const searchHelperKeyword = ((categoryKeywordList.length > 0 && categoryKeywordList) ||
   //   (brandKeywordList.length > 0 && brandKeywordList) ||
