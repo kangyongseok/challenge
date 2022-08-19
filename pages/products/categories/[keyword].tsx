@@ -9,9 +9,10 @@ import {
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
   ProductsKeywordSaveFloatingButton,
+  ProductsLegitFilterBottomSheet,
   ProductsMapFilterBottomSheet,
+  ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -46,9 +47,10 @@ function CategoryProducts() {
       <ProductsKeywordSaveFloatingButton variant="categories" />
       <ProductsFilterBottomSheet variant="categories" />
       <ProductsMapFilterBottomSheet />
-      <ProductsSortFilterBottomSheet />
+      <ProductsOrderFilterBottomSheet />
       <ProductsKeywordBottomSheet variant="categories" />
       <ProductsKeywordDialog />
+      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

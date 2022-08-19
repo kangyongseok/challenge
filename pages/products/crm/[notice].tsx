@@ -8,9 +8,10 @@ import {
   ProductsFilterBottomSheet,
   ProductsInfiniteGrid,
   ProductsKeywordDialog,
+  ProductsLegitFilterBottomSheet,
   ProductsMapFilterBottomSheet,
+  ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -76,8 +77,9 @@ function CrmProducts() {
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
       <ProductsMapFilterBottomSheet />
-      <ProductsSortFilterBottomSheet />
+      <ProductsOrderFilterBottomSheet />
       <ProductsKeywordDialog />
+      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

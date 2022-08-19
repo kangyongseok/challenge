@@ -1,8 +1,12 @@
+import { findChannelTalkButtonElement } from '@utils/common';
+
 import type {
   ChannelTalkBootOption,
   ChannelTalkUpdateUser,
   ChannelTalkUser
 } from '@typings/common';
+
+let channelTalkCoreElement: HTMLDivElement;
 
 const ChannelTalk = {
   boot(option: ChannelTalkBootOption, callback?: (error: boolean, user: ChannelTalkUser) => void) {
@@ -25,6 +29,41 @@ const ChannelTalk = {
   },
   hideChannelButton() {
     if (window.ChannelIO) window.ChannelIO('hideChannelButton');
+  },
+  moveChannelButtonPosition(moveTo: number) {
+    if (!channelTalkCoreElement) {
+      findChannelTalkButtonElement().then((element) => {
+        if (element) {
+          channelTalkCoreElement = element;
+          element.setAttribute(
+            'style',
+            `
+          transition: transform .1s ease-in;
+          transform: translate(0, ${moveTo}px);
+        `
+          );
+        }
+      });
+    } else {
+      channelTalkCoreElement.setAttribute(
+        'style',
+        `
+          transition: transform .1s ease-in;
+          transform: translate(0, ${moveTo}px);
+        `
+      );
+    }
+  },
+  resetChannelButtonPosition() {
+    if (!channelTalkCoreElement) {
+      findChannelTalkButtonElement().then((element) => {
+        if (element) {
+          element.setAttribute('style', 'transition: transform .1s ease-in');
+        }
+      });
+    } else {
+      channelTalkCoreElement.setAttribute('style', 'transition: transform .1s ease-in');
+    }
   }
 };
 

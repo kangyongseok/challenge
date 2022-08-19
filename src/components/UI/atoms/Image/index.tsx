@@ -23,7 +23,13 @@ function Image({
 }: ImageProps) {
   if (variant === 'backgroundImage') {
     return (
-      <BackgroundImage ratio={ratio} dataSrc={props.src} isRound={isRound} css={customStyle}>
+      <BackgroundImage
+        ratio={ratio}
+        dataSrc={props.src}
+        isRound={isRound}
+        {...props}
+        css={customStyle}
+      >
         {children}
       </BackgroundImage>
     );

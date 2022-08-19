@@ -131,7 +131,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
             });
             atomLegitBottomSheet(false);
             postProductLegitMutate(
-              { id: Number(router.query.id), deviceId },
+              { productId: Number(router.query.id), deviceId },
               {
                 // 사진감정신청 테스트는 알렉스와 협의 후 진행
                 onSuccess: () => {

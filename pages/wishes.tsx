@@ -8,8 +8,9 @@ import styled from '@emotion/styled';
 
 import { BottomNavigation, Header, Tabs, TopButton } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { HistoryPanel, WishesPanel } from '@components/pages/wishes';
+import { HistoryPanel, WishesBottomCtaButton, WishesPanel } from '@components/pages/wishes';
 
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
@@ -32,10 +33,12 @@ function WishesPage() {
   const router = useRouter();
   const {
     tab = 'wish',
+    hiddenTab,
     order,
     selectedCategoryIds
   }: {
     tab?: 'wish' | 'history';
+    hiddenTab?: 'legit';
     order?: string;
     selectedCategoryIds?: string | string[];
   } = router.query;
@@ -52,7 +55,7 @@ function WishesPage() {
     false,
     null
   ]);
-  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement>, newValue: string) => {
+  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
     if (newValue === 'wish') {
       logEvent(attrKeys.wishes.VIEW_WISH_LIST);
     }
@@ -85,15 +88,31 @@ function WishesPage() {
     logEvent(attrKeys.wishes.VIEW_WISH_LIST);
   }, []);
 
+  useEffect(() => {
+    if (hiddenTab === 'legit') {
+      logEvent(attrKeys.wishes.VIEW_WISHLEGIT);
+      ChannelTalk.moveChannelButtonPosition(-30);
+    }
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, [hiddenTab]);
+
   return (
-    <GeneralTemplate header={<Header />} footer={<BottomNavigation />}>
-      <WishesPanelsWrapper showAppDownloadBanner={showAppDownloadBanner}>
-        <Tabs value={tab} changeValue={changeSelectedValue} labels={labels} />
-      </WishesPanelsWrapper>
-      <Box customStyle={{ marginTop: 41 }}>
-        {tab === 'wish' && <WishesPanel />}
-        {tab === 'history' && <HistoryPanel />}
-      </Box>
+    <>
+      <GeneralTemplate
+        header={<Header type={hiddenTab === 'legit' ? 'isSearch' : undefined} />}
+        footer={hiddenTab === 'legit' ? <WishesBottomCtaButton /> : <BottomNavigation />}
+      >
+        <WishesPanelsWrapper showAppDownloadBanner={showAppDownloadBanner}>
+          <Tabs value={tab} changeValue={changeSelectedValue} labels={labels} />
+        </WishesPanelsWrapper>
+        <Box customStyle={{ marginTop: 41 }}>
+          {tab === 'wish' && <WishesPanel />}
+          {tab === 'history' && <HistoryPanel />}
+        </Box>
+      </GeneralTemplate>
       <Toast
         open={toastMessage !== null && showToast}
         bottom="74px"
@@ -108,8 +127,12 @@ function WishesPage() {
           {toastMessage}
         </Typography>
       </Toast>
-      <TopButton show name="WISH_LIST" />
-    </GeneralTemplate>
+      <TopButton
+        show
+        name="WISH_LIST"
+        customStyle={{ bottom: hiddenTab === 'legit' ? 167 : undefined }}
+      />
+    </>
   );
 }
 

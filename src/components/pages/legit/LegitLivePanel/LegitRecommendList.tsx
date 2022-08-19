@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
@@ -57,7 +58,7 @@ function LegitRecommendList() {
 
     const mutates = products.map(({ id }) =>
       mutateAsync(
-        { id, deviceId },
+        { productId: id, deviceId },
         {
           onSettled: () => setOpen(false)
         }
@@ -65,6 +66,15 @@ function LegitRecommendList() {
     );
 
     await Promise.all(mutates);
+  };
+
+  const handleClickCard = (e: MouseEvent<HTMLDivElement>) => {
+    logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
+      name: attrProperty.legitName.LEGIT_MAIN,
+      title: attrProperty.legitTitle.WISHRECENT_LEGIT
+    });
+    const dataProductId = e.currentTarget.getAttribute('data-product-id');
+    router.push(`/products/${dataProductId}`);
   };
 
   useEffect(() => {
@@ -120,6 +130,8 @@ function LegitRecommendList() {
               productLegit={{
                 productResult: product
               }}
+              data-product-id={product.id}
+              onClick={handleClickCard}
               hidePlatformLogo
               hideProductLegitLabelWithDate
             />

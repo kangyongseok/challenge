@@ -6,9 +6,10 @@ import {
   ProductsInfiniteGrid,
   ProductsKeywordDialog,
   ProductsLandingInfo,
+  ProductsLegitFilterBottomSheet,
   ProductsMapFilterBottomSheet,
+  ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -40,8 +41,9 @@ function Products() {
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
       <ProductsMapFilterBottomSheet />
-      <ProductsSortFilterBottomSheet />
+      <ProductsOrderFilterBottomSheet />
       <ProductsKeywordDialog />
+      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

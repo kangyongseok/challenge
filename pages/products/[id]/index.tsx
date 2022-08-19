@@ -39,6 +39,7 @@ import {
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -61,7 +62,6 @@ import attrKeys from '@constants/attrKeys';
 import { productDetailAtt } from '@utils/products';
 import getMetaDescription from '@utils/getMetaDescription';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { findChannelTalkButtonElement } from '@utils/findChannelTalkButtonElement';
 import { commaNumber, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
@@ -95,7 +95,6 @@ function ProductDetail() {
     isOpenDuplicatedToast: false
   });
   const contentRef = useRef<HTMLHRElement | null>(null);
-  const channelTalkRef = useRef<HTMLDivElement | null>(null);
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
@@ -244,25 +243,11 @@ function ProductDetail() {
 
   useEffect(() => {
     if (!isRedirectPage) {
-      findChannelTalkButtonElement().then((element) => {
-        if (element) {
-          channelTalkRef.current = element;
-
-          channelTalkRef.current.setAttribute(
-            'style',
-            `
-          transition: transform .1s ease-in;
-          transform: translate(0, -30px);
-        `
-          );
-        }
-      });
+      ChannelTalk.moveChannelButtonPosition(-30);
     }
 
     return () => {
-      if (channelTalkRef.current) {
-        channelTalkRef.current.setAttribute('style', 'transition: transform .1s ease-in');
-      }
+      ChannelTalk.resetChannelButtonPosition();
     };
   }, [isRedirectPage]);
 

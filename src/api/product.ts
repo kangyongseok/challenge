@@ -117,8 +117,27 @@ export async function fetchProductLegit(productId: number) {
   return data;
 }
 
-export async function postProductLegit({ id, deviceId }: { id: number; deviceId?: string }) {
-  await Axios.getInstance().post(`${BASE_PATH}/${id}/legit`, {
+export async function postProductLegit({
+  productId,
+  deviceId
+}: {
+  productId: number;
+  deviceId?: string;
+}) {
+  await Axios.getInstance().post(`${BASE_PATH}/${productId}/legit`, {
+    deviceId
+  });
+}
+
+export async function postProductLegits({
+  productIds,
+  deviceId
+}: {
+  productIds: number[];
+  deviceId?: string;
+}) {
+  await Axios.getInstance().post(`${BASE_PATH}/legits`, {
+    productIds,
     deviceId
   });
 }

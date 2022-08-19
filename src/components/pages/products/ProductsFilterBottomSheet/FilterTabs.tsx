@@ -58,6 +58,10 @@ function FilterTabs({ variant }: FilterTabsProps) {
               }
               return codeId === selectedCodeId;
             })}
+            customStyle={{
+              top: -2,
+              right: -8
+            }}
           >
             <FilterTab
               isActive={activeTabCodeId === codeId}

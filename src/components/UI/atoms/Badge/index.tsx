@@ -1,20 +1,52 @@
-import { HTMLAttributes, PropsWithChildren } from 'react';
+import type { HTMLAttributes, PropsWithChildren } from 'react';
 
 import { Flexbox } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import type { BrandColor, CSSValue, CustomStyle } from 'mrcamel-ui';
 
 import { StyledBadge } from './Badge.styles';
 
-interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
+export interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
+  brandColor?: Extract<BrandColor, 'primary' | 'red'>;
+  position?: 'relative' | 'absolute';
   open: boolean;
+  width?: CSSValue;
+  height?: CSSValue;
   customStyle?: CustomStyle;
 }
 
-function Badge({ children, open, customStyle, ...props }: PropsWithChildren<BadgeProps>) {
+function Badge({
+  children,
+  position = 'relative',
+  brandColor = 'primary',
+  open,
+  width = 6,
+  height = 6,
+  customStyle,
+  ...props
+}: PropsWithChildren<BadgeProps>) {
+  if (position === 'absolute') {
+    return open ? (
+      <StyledBadge
+        dataWidth={width}
+        dataHeight={height}
+        brandColor={brandColor}
+        {...props}
+        css={customStyle}
+      />
+    ) : null;
+  }
+
   return (
-    <Flexbox customStyle={{ position: 'relative' }} {...props}>
+    <Flexbox customStyle={{ position }} {...props}>
       {children}
-      {open && <StyledBadge css={customStyle} />}
+      {open && (
+        <StyledBadge
+          dataWidth={width}
+          dataHeight={height}
+          brandColor={brandColor}
+          css={customStyle}
+        />
+      )}
     </Flexbox>
   );
 }

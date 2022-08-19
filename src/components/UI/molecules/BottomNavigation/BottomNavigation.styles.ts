@@ -2,6 +2,8 @@ import { Label } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
+import Badge from '@components/UI/atoms/Badge';
+
 export const StyledBottomNavigation = styled.nav<{
   display?: 'block' | 'none';
 }>`
@@ -12,7 +14,7 @@ export const StyledBottomNavigation = styled.nav<{
 
 export const List = styled.ul<{ triggered: boolean }>`
   position: fixed;
-  z-index: 10;
+  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav + 3};
   opacity: 1;
   bottom: 0;
   border-top: ${({ theme: { palette } }) => `1px solid ${palette.common.grey['90']}`};
@@ -69,4 +71,17 @@ export const NewLabel = styled(Label)`
   }) => secondary.red.main};
   border-radius: 10px;
   font-weight: 700;
+  z-index: ${({ theme: { zIndex } }) => zIndex.tooltip};
+`;
+
+export const NewBadge = styled(Badge)`
+  top: -1px;
+  left: 135%;
+  transform: translate(-135%, -1px);
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.white};
 `;

@@ -60,7 +60,7 @@ function SellerInfoPage() {
   const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
   const reviewsLastPage = useMemo(() => reviewPages[reviewPages.length - 1], [reviewPages]);
 
-  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement>, newValue: string) => {
+  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
     if (tab === 'products') {
       logEvent(attrKeys.sellerInfo.CLICK_SELLER_REVIEW, {
         name: 'SELLER_REVIEW',

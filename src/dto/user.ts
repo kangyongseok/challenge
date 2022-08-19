@@ -113,6 +113,10 @@ export interface UserInfo {
   priceNotiProducts: ProductResult[];
   profileStep: ProfileStep;
   size: Size;
+  recommLegitInfo: {
+    images: string[];
+    legitTargetCount: number;
+  };
 }
 
 export type UserWish = {
@@ -163,6 +167,7 @@ export interface CategoryWishesParams {
   page?: number;
   size?: number;
   sort?: string[];
+  isLegitProduct?: boolean;
   status?: number;
 }
 

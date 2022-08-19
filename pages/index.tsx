@@ -6,6 +6,7 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'nex
 import { Box, Flexbox } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
+import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
@@ -126,6 +127,11 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
         </Flexbox>
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
+      <LegitInduceFloatingBanner
+        edgeSpacing={20}
+        channelTalkPosition={-60}
+        name={attrProperty.productName.MAIN}
+      />
     </>
   );
 }

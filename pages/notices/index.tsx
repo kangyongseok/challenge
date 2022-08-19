@@ -26,7 +26,7 @@ const labels = [
 
 function Notices() {
   const [tab, setTab] = useState(labels[0].value);
-  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement>, newValue: string) => {
+  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
     setTab(newValue);
   };
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);

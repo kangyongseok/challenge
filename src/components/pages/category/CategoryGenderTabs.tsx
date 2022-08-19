@@ -24,7 +24,7 @@ function CategoryGenderTabs({ resetSelectedParentCategory }: CategoryGenderTabsP
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const changeSelectedValue = useCallback(
-    (_: MouseEvent<HTMLButtonElement>, newValue: string) => {
+    (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
       logEvent(attrKeys.category.CLICK_CATEGORY_GENDER, {
         name: 'CATEGORY',
         gender: newValue === 'male' ? 'M' : 'F'

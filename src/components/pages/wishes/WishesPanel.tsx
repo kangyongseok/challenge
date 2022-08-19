@@ -32,7 +32,8 @@ import WishesCategories from './WishesCategories';
 
 function WishesPanel() {
   const router = useRouter();
-  const { order = 'updatedDesc' }: { order?: OrderOptionKeys } = router.query;
+  const { order = 'updatedDesc', hiddenTab }: { order?: OrderOptionKeys; hiddenTab?: string } =
+    router.query;
   const deviceId = useRecoilValue(deviceIdState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
@@ -43,6 +44,7 @@ function WishesPanel() {
   const categoryWishesParam = {
     size: 200,
     sort: [order],
+    isLegitProduct: hiddenTab === 'legit',
     deviceId
   };
 
@@ -258,11 +260,16 @@ function WishesPanel() {
 
   return (
     <>
-      <WishesCategories categories={initialCategories} selectedCategoryIds={selectedCategoryIds} />
+      {!hiddenTab && (
+        <WishesCategories
+          categories={initialCategories}
+          selectedCategoryIds={selectedCategoryIds}
+        />
+      )}
       {data && (
         <Box
           customStyle={{
-            margin: '67px 0 12px 0'
+            margin: hiddenTab ? '20px 0 12px 0' : '67px 0 12px 0'
           }}
         >
           <WishesFilter order={order} userWishCount={userWishCount} />

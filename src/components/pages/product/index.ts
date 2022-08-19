@@ -19,3 +19,4 @@ export { default as ProductLegitProcessCTAButton } from './ProductLegitProcessCT
 export { default as ProductLegitProcessFailContents } from './ProductLegitProcessFailContents';
 export { default as ProductLegitProcessBottomSheet } from './ProductLegitProcessBottomSheet';
 export { default as ProductLegitSummaryCard } from './ProductLegitSummaryCard';
+export { default as ProductLegitAlarmGuideDialog } from './ProductLegitAlarmGuideDialog';

@@ -17,7 +17,10 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { firstUserAnimationState } from '@recoil/productLegitProcess';
+import {
+  firstUserAnimationState,
+  processBottomSheetOpenTriggerState
+} from '@recoil/productLegitProcess';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const notWorkingDay = [0, 6];
@@ -31,6 +34,7 @@ function ProductLegitProcessBottomSheet() {
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
   const { data: accessUser } = useQueryAccessUser();
   const isAnimation = useRecoilValue(firstUserAnimationState);
+  const openTrigger = useRecoilValue(processBottomSheetOpenTriggerState);
   const productId = Number(router.query.id);
   const { data } = useQuery(
     queryKeys.products.productLegit({ productId }),
@@ -47,15 +51,15 @@ function ProductLegitProcessBottomSheet() {
   }, []);
 
   useEffect(() => {
-    if (router.query.firstLegit === 'true') {
+    if (openTrigger && router.query.firstLegit === 'true') {
       if (isAnimation && data?.status === 10) {
         bottomSheetOpenCount();
       }
-    } else if (data?.status === 10) {
+    } else if (openTrigger && data?.status === 10) {
       bottomSheetOpenCount();
     }
     return () => clearTimeout(setTimeoutRef.current);
-  }, [isAnimation, data, router]);
+  }, [isAnimation, data, router, openTrigger]);
 
   const bottomSheetOpenCount = () => {
     setTimeoutRef.current = setTimeout(() => {
@@ -93,7 +97,7 @@ function ProductLegitProcessBottomSheet() {
       disableSwipeable
       open={openBottomSheet}
       onClose={() => setOpenBottomSheet(false)}
-      customStyle={{ padding: 20, textAlign: 'center', position: 'reltive' }}
+      customStyle={{ padding: 20, textAlign: 'center', position: 'relative' }}
     >
       <Flexbox alignment="center" justifyContent="center">
         <Typography variant="h2" customStyle={{ textAlign: 'center', width: '100%' }}>

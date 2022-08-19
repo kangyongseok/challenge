@@ -5,6 +5,7 @@ import { QueryClient, dehydrate, useQuery } from 'react-query';
 import type { GetServerSidePropsContext } from 'next';
 import styled from '@emotion/styled';
 
+import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -25,6 +26,7 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -54,18 +56,28 @@ function MyPage() {
   }
 
   return (
-    <GeneralTemplate
-      header={<Header type="isSearch" isFixed={false} />}
-      footer={<BottomNavigation />}
-    >
-      <MypageWelcome />
-      <Line top={showAppDownloadBanner ? 284 : 226} />
-      <MypageNotice data={userInfo?.announces} />
-      <MypageUserInfo />
-      <MypageSetting data={userInfo?.alarm} />
-      <MypageQnA />
-      <MypageEtc />
-    </GeneralTemplate>
+    <>
+      <GeneralTemplate
+        header={<Header type="isSearch" isFixed={false} />}
+        footer={<BottomNavigation />}
+      >
+        <MypageWelcome />
+        <Line top={showAppDownloadBanner ? 284 : 226} />
+        <MypageNotice data={userInfo?.announces} />
+        <MypageUserInfo />
+        <MypageSetting data={userInfo?.alarm} />
+        <MypageQnA />
+        <MypageEtc />
+      </GeneralTemplate>
+      <LegitInduceFloatingBanner
+        themeType="light"
+        halfRound
+        bottom={62}
+        edgeSpacing={-1}
+        channelTalkPosition={-50}
+        name={attrProperty.productName.MY}
+      />
+    </>
   );
 }
 

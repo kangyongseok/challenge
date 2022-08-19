@@ -14,6 +14,7 @@ interface WishesNoticeProps {
 
 function WishesNotice({ icon, message, moveTo, buttonLabel, onClickLog }: WishesNoticeProps) {
   const router = useRouter();
+  const { hiddenTab } = router.query;
 
   const handleClick = () => {
     if (onClickLog) onClickLog();
@@ -32,7 +33,7 @@ function WishesNotice({ icon, message, moveTo, buttonLabel, onClickLog }: Wishes
       justifyContent="center"
       gap={24}
       customStyle={{
-        height: 'calc(100vh - 161px)'
+        height: `calc(100vh - ${hiddenTab === 'legit' ? '188px' : '161px'})`
       }}
     >
       <Icon>{icon}</Icon>

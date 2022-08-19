@@ -20,3 +20,8 @@ export const animationKeyframesState = atom({
   }
 `
 });
+
+export const processBottomSheetOpenTriggerState = atom({
+  key: 'legitProcess/processBottomSheetOpenTriggerState',
+  default: false
+});

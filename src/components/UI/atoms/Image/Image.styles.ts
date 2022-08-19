@@ -49,7 +49,7 @@ export const ImageInner = styled.div`
 `;
 
 export const BackgroundImage = styled.div<
-  Pick<ImageProps, 'ratio'> & {
+  Pick<ImageProps, 'ratio' | 'disableAspectRatio'> & {
     dataSrc?: string;
     isRound?: boolean;
   }

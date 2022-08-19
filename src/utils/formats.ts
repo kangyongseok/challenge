@@ -1,4 +1,5 @@
 /* eslint-disable import/no-duplicates */
+import { CSSValue } from 'mrcamel-ui';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
 
@@ -59,4 +60,11 @@ export function getProductArea(area: string) {
 
 export function commaNumber(value: number | string) {
   return Number(value).toLocaleString();
+}
+
+export function convertNumberToCSSValue(value: CSSValue, unit?: string) {
+  if (typeof value === 'number') {
+    return `${value}${unit || 'px'}`;
+  }
+  return value;
 }

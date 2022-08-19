@@ -22,7 +22,7 @@ import {
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
+import { Badge, Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -61,6 +61,7 @@ interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   hideAreaWithDateInfo?: boolean;
   hideMetaSocialInfo?: boolean;
   hideAlert?: boolean;
+  hideNewLegitBadge?: boolean;
   productAtt?: object;
   wishAtt?: WishAtt;
   index?: number;
@@ -78,6 +79,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     hideAreaWithDateInfo,
     hideMetaSocialInfo = true,
     hideAlert = true,
+    hideNewLegitBadge = true,
     productAtt,
     index,
     onWishAfterChangeCallback,
@@ -314,7 +316,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
 
   return (
     <>
-      <Box customStyle={customStyle}>
+      <Box customStyle={{ ...customStyle, position: 'relative' }}>
         <Flexbox
           ref={ref}
           gap={12}
@@ -322,6 +324,14 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           {...props}
           customStyle={{ cursor: 'pointer' }}
         >
+          <Badge
+            brandColor="red"
+            position="absolute"
+            width={8}
+            height={8}
+            open={!hideNewLegitBadge}
+            customStyle={{ top: 12, left: -12 }}
+          />
           <Content isRound={isRound}>
             <Image
               variant="backgroundImage"

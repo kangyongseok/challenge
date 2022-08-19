@@ -41,6 +41,7 @@ const WISH_LIST_EVENT_ORDER_PARAMETER: WishListOrderType = {
 
 function WishesFilter({ order, userWishCount }: WishesFilterProps) {
   const router = useRouter();
+  const { hiddenTab } = router.query;
 
   const selectedOrderOption = orderOptions.find(([optionKey]) => order === optionKey);
   const [open, setOpen] = useState(false);
@@ -54,23 +55,25 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
       <Typography variant="body2" weight="medium">
         찜한 매물 {userWishCount}개
       </Typography>
-      <Flexbox>
-        <Typography
-          variant="body2"
-          weight="medium"
-          onClick={() => {
-            logEvent(attrKeys.wishes.CLICK_SORT, {
-              name: 'WISH_LIST'
-            });
+      {!hiddenTab && (
+        <Flexbox>
+          <Typography
+            variant="body2"
+            weight="medium"
+            onClick={() => {
+              logEvent(attrKeys.wishes.CLICK_SORT, {
+                name: 'WISH_LIST'
+              });
 
-            setOpen(true);
-          }}
-          customStyle={{ cursor: 'pointer' }}
-        >
-          {selectedOrderOption?.[1]}
-        </Typography>
-        <Icon name="CaretDownOutlined" size="small" />
-      </Flexbox>
+              setOpen(true);
+            }}
+            customStyle={{ cursor: 'pointer' }}
+          >
+            {selectedOrderOption?.[1]}
+          </Typography>
+          <Icon name="CaretDownOutlined" size="small" />
+        </Flexbox>
+      )}
       <BottomSheet
         open={open}
         onClose={() => {

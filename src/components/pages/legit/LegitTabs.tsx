@@ -41,6 +41,7 @@ function LegitTabs() {
         <Typography variant="h4" weight="bold">
           내 사진감정
         </Typography>
+        <NewCounterBadge>5</NewCounterBadge>
       </AuthTab>
     </StyledAuthTabs>
   );
@@ -85,6 +86,34 @@ const AuthTab = styled.button<{ isActive?: boolean }>`
             color: common.grey['80']
           }
         }};
+`;
+
+const NewCounterBadge = styled.div`
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  border-radius: 10px;
+  background-color: ${({
+    theme: {
+      palette: { secondary }
+    }
+  }) => secondary.red.main};
+
+  ${({
+    theme: {
+      typography: { small2 },
+      palette: { common }
+    }
+  }): CSSObject => ({
+    fontSize: small2.size,
+    fontWeight: small2.weight.bold,
+    lineHeight: small2.lineHeight,
+    letterSpacing: small2.letterSpacing,
+    color: common.white
+  })};
 `;
 
 export default LegitTabs;

@@ -2,19 +2,16 @@ import { useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
-import { Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import { AppDownloadDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
@@ -24,11 +21,19 @@ import {
   productsKeywordDialogState,
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
+import { legitCompleteGridParamsState } from '@recoil/legitCompleteGrid';
 import { homeSelectedTabStateFamily } from '@recoil/home';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
-import { List, ListItem, NewLabel, StyledBottomNavigation } from './BottomNavigation.styles';
+import {
+  List,
+  ListItem,
+  NewBadge,
+  NewLabel,
+  StyledBottomNavigation
+} from './BottomNavigation.styles';
 
 const data: {
   title: string;
@@ -96,14 +101,12 @@ function BottomNavigation({
   const resetCategory = useResetRecoilState(categoryState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
+  const resetLegitCompleteGridParamsState = useResetRecoilState(legitCompleteGridParamsState);
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
   const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
 
-  const { data: { priceNotiProducts = [] } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo
-  );
+  const { data: { priceNotiProducts = [] } = {} } = useQueryUserInfo();
 
   const triggered = useReverseScrollTrigger(!disableHideOnScroll);
 
@@ -147,16 +150,19 @@ function BottomNavigation({
       }
 
       // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
-      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 것 수 있다고 판단 됨/
+      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
       // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
       if (href === '/legit') {
-        queryClient.resetQueries(
-          queryKeys.products.legitProducts({
-            page: 0,
-            size: 8,
-            isOnlyResult: true
-          })
-        );
+        resetLegitCompleteGridParamsState();
+
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .forEach(({ queryKey }) => {
+            if (queryKey.includes('legitProducts') && queryKey.length >= 3) {
+              queryClient.resetQueries(queryKey);
+            }
+          });
       }
     };
 
@@ -196,14 +202,24 @@ function BottomNavigation({
                     onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
                     aria-hidden="true"
                   >
-                    <Icon
-                      name={isActive ? navData.activeIcon : navData.defaultIcon}
-                      color={isActive ? common.grey['20'] : common.grey['80']}
-                    />
+                    <Box customStyle={{ position: 'relative' }}>
+                      <Icon
+                        name={isActive ? navData.activeIcon : navData.defaultIcon}
+                        color={isActive ? common.grey['20'] : common.grey['80']}
+                      />
+                      <NewBadge
+                        brandColor="red"
+                        position="absolute"
+                        open={false}
+                        width={10}
+                        height={10}
+                      />
+                    </Box>
                     <Typography
                       variant="small2"
                       weight={isActive ? 'bold' : 'regular'}
                       customStyle={{
+                        position: 'relative',
                         marginTop: 4,
                         color: isActive ? common.grey['20'] : common.grey['80']
                       }}

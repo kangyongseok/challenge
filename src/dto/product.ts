@@ -487,9 +487,10 @@ export interface ProductParams {
 }
 
 export interface LegitProductsParams {
-  page: number;
-  size: number;
-  isOnlyResult: boolean;
+  page?: number;
+  size?: number;
+  results?: number[];
+  isOnlyResult?: boolean;
 }
 
 export interface ReviewInfoParams {

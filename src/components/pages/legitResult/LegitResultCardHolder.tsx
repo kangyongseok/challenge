@@ -8,11 +8,16 @@ import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
+import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import { Image, ProductLegitLabel } from '@components/UI/atoms';
+
+import { logEvent } from '@library/amplitude';
 
 import { fetchProductLegit } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
@@ -25,9 +30,12 @@ function LegitResultCardHolder() {
       palette: { common }
     }
   } = useTheme();
+  const [open, setOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
   const [hideCardSwipeGuideIcon, setHideCardSwipeGuideIcon] = useState(true);
 
+  const swiperRef = useRef<SwiperClass | null>();
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const {
@@ -90,6 +98,14 @@ function LegitResultCardHolder() {
   }, [legitOpinions]);
 
   const handleSlideChange = ({ realIndex, slides }: SwiperClass) => {
+    if (swiperRef.current) {
+      logEvent(attrKeys.legitResult.SWIPE_X_THUMBPIC, {
+        name: attrProperty.legitName.LEGIT_INFO,
+        index: realIndex + 1
+      });
+    }
+    setCurrentIndex(realIndex);
+
     const currentSlides = slides.filter((slide: HTMLDivElement) => {
       return realIndex === Number(slide.getAttribute('data-swiper-slide-index'));
     });
@@ -99,6 +115,20 @@ function LegitResultCardHolder() {
 
       if (img[0]) setBackgroundImageSrc(img[0].src);
     }
+  };
+
+  const handleClickSlide = () => {
+    logEvent(attrKeys.legitResult.CLICK_THUMBPIC, {
+      name: attrProperty.legitName.LEGIT_INFO
+    });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideToLoop(currentIndex);
+    }
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -124,203 +154,217 @@ function LegitResultCardHolder() {
   }, []);
 
   return (
-    <StyledLegitResultCardHolder>
-      <Flexbox
-        alignment="center"
-        justifyContent="space-between"
-        customStyle={{ padding: '16px 16px 20px 20px' }}
-      >
-        <div>
-          <Typography variant="h3" customStyle={{ color: common.white }}>
-            사진감정 결과,
-          </Typography>
-          <ResultTitleTypography
-            variant="h3"
-            result={result}
-            dangerouslySetInnerHTML={{ __html: resultText }}
-          />
-        </div>
-        <Image
-          width={80}
-          height={80}
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
-            .toLocaleLowerCase()
-            .split(' ')
-            .join('')}.png`}
-          alt="Brand Logo Img"
-          disableAspectRatio
-        />
-      </Flexbox>
-      <BackgroundImage src={backgroundImageSrc}>
-        {result === 1 && (
-          <ProductLegitLabel
-            text="정품의견"
-            customStyle={{
-              position: 'absolute',
-              top: -13,
-              left: 20
-            }}
-          />
-        )}
-        {result === 2 && (
-          <ProductLegitLabel
-            variant="fake"
-            text="가품의심"
-            customStyle={{
-              position: 'absolute',
-              top: -13,
-              left: 20
-            }}
-          />
-        )}
-        {result !== 1 && result !== 2 && (
-          <ProductLegitLabel
-            variant="impossible"
-            text="감정불가"
-            customStyle={{
-              position: 'absolute',
-              top: -13,
-              left: 20
-            }}
-          />
-        )}
+    <>
+      <StyledLegitResultCardHolder>
         <Flexbox
-          direction="vertical"
           alignment="center"
-          justifyContent="center"
-          customStyle={{
-            width: '100%',
-            height: '100%',
-            padding: '0 20px',
-            '& .swiper-slide-visible > .product-legit-result-image': { opacity: 1 },
-            '& .swiper-slide-visible > .waiting-behind-card': { opacity: 0 }
-          }}
+          justifyContent="space-between"
+          customStyle={{ padding: '16px 16px 20px 20px' }}
         >
-          <Box customStyle={{ position: 'relative', width: '100%' }}>
-            <SwipeGuideIcon
-              name="CaretLeftOutlined"
-              color="white"
-              placement="left"
-              hide={hideCardSwipeGuideIcon}
-            />
-            <SwipeGuideIcon
-              name="CaretRightOutlined"
-              color="white"
-              placement="right"
-              hide={hideCardSwipeGuideIcon}
-            />
-            <Swiper
-              effect="cards"
-              cardsEffect={{
-                rotate: false,
-                slideShadows: false
-              }}
-              loop
-              modules={[EffectCards]}
-              grabCursor
-              onSlideChange={handleSlideChange}
-              style={{ width: 160 }}
-            >
-              {images.map((image, index) => (
-                <SwiperSlide
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`product-legit-result-image-${index}`}
-                  style={{
-                    position: 'relative'
-                  }}
-                >
-                  <Image
-                    className="product-legit-result-image"
-                    width={160}
-                    height={160}
-                    src={image}
-                    disableAspectRatio
-                    alt="Product Legit Result Img"
-                    customStyle={{
-                      borderRadius: 8,
-                      opacity: 0,
-                      transition: 'opacity .2s ease-in'
-                    }}
-                  />
-                  <WaitingBehindCard className="waiting-behind-card" />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </Box>
-          <Typography
-            variant="body2"
-            customStyle={{ marginTop: 8, textAlign: 'center', color: common.white }}
-          >
-            {title}
-          </Typography>
-          <Flexbox gap={3} alignment="center" customStyle={{ marginTop: 3 }}>
-            {hasImage && (
-              <Avatar
-                width={15}
-                height={15}
-                src={`https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/platforms/${siteUrlId}.png`}
-                alt="Platform Logo Img"
-                customStyle={{ maxWidth: 15, maxHeight: 15 }}
-              />
-            )}
-            <Typography weight="bold" customStyle={{ color: common.white }}>
-              {commaNumber(getTenThousandUnitPrice(price))}만원
+          <div>
+            <Typography variant="h3" customStyle={{ color: common.white }}>
+              사진감정 결과,
             </Typography>
-          </Flexbox>
-          <Flexbox gap={32} customStyle={{ marginTop: 20 }}>
-            <Flexbox direction="vertical" alignment="center">
-              <Flexbox gap={4} alignment="center">
-                <Icon
-                  width={15}
-                  height={15}
-                  name="OpinionAuthenticFilled"
-                  customStyle={{ color: common.white }}
-                />
-                <Typography variant="small2" customStyle={{ color: common.white }}>
-                  정품의견
-                </Typography>
-              </Flexbox>
-              <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
-                {resultCount.authentic}
-              </Typography>
-            </Flexbox>
-            <Flexbox direction="vertical" alignment="center">
-              <Flexbox gap={4} alignment="center">
-                <Icon
-                  width={15}
-                  height={15}
-                  name="OpinionFakeFilled"
-                  customStyle={{ color: common.white }}
-                />
-                <Typography variant="small2" customStyle={{ color: common.white }}>
-                  가품의견
-                </Typography>
-              </Flexbox>
-              <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
-                {resultCount.fake}
-              </Typography>
-            </Flexbox>
-            <Flexbox direction="vertical" alignment="center">
-              <Flexbox gap={4} alignment="center">
-                <Icon
-                  width={15}
-                  height={15}
-                  name="OpinionImpossibleFilled"
-                  customStyle={{ color: common.white }}
-                />
-                <Typography variant="small2" customStyle={{ color: common.white }}>
-                  감정불가
-                </Typography>
-              </Flexbox>
-              <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
-                {resultCount.impossible}
-              </Typography>
-            </Flexbox>
-          </Flexbox>
+            <ResultTitleTypography
+              variant="h3"
+              result={result}
+              dangerouslySetInnerHTML={{ __html: resultText }}
+            />
+          </div>
+          <Image
+            width={80}
+            height={80}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
+              .toLocaleLowerCase()
+              .split(' ')
+              .join('')}.png`}
+            alt="Brand Logo Img"
+            disableAspectRatio
+          />
         </Flexbox>
-        <BackgroundImageBlur className="background-image-blur" />
-      </BackgroundImage>
-    </StyledLegitResultCardHolder>
+        <BackgroundImage src={backgroundImageSrc}>
+          {result === 1 && (
+            <ProductLegitLabel
+              text="정품의견"
+              customStyle={{
+                position: 'absolute',
+                top: -13,
+                left: 20
+              }}
+            />
+          )}
+          {result === 2 && (
+            <ProductLegitLabel
+              variant="fake"
+              text="가품의심"
+              customStyle={{
+                position: 'absolute',
+                top: -13,
+                left: 20
+              }}
+            />
+          )}
+          {result !== 1 && result !== 2 && (
+            <ProductLegitLabel
+              variant="impossible"
+              text="감정불가"
+              customStyle={{
+                position: 'absolute',
+                top: -13,
+                left: 20
+              }}
+            />
+          )}
+          <Flexbox
+            direction="vertical"
+            alignment="center"
+            justifyContent="center"
+            customStyle={{
+              width: '100%',
+              height: '100%',
+              padding: '0 20px',
+              '& .swiper-slide-visible > .product-legit-result-image': { opacity: 1 },
+              '& .swiper-slide-visible > .waiting-behind-card': { opacity: 0 }
+            }}
+          >
+            <Box customStyle={{ position: 'relative', width: '100%' }}>
+              <SwipeGuideIcon
+                name="CaretLeftOutlined"
+                color="white"
+                placement="left"
+                hideIcon={hideCardSwipeGuideIcon}
+              />
+              <SwipeGuideIcon
+                name="CaretRightOutlined"
+                color="white"
+                placement="right"
+                hideIcon={hideCardSwipeGuideIcon}
+              />
+              <Swiper
+                onInit={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
+                effect="cards"
+                cardsEffect={{
+                  rotate: false,
+                  slideShadows: false
+                }}
+                loop
+                modules={[EffectCards]}
+                grabCursor
+                onSlideChange={handleSlideChange}
+                style={{ width: 160 }}
+              >
+                {images.map((image, index) => (
+                  <SwiperSlide
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`product-legit-result-image-${index}`}
+                    style={{
+                      position: 'relative'
+                    }}
+                    onClick={handleClickSlide}
+                  >
+                    <Image
+                      className="product-legit-result-image"
+                      width={160}
+                      height={160}
+                      src={image}
+                      alt="Product Legit Result Img"
+                      disableAspectRatio
+                      customStyle={{
+                        borderRadius: 8,
+                        opacity: 0,
+                        transition: 'opacity .2s ease-in'
+                      }}
+                    />
+                    <WaitingBehindCard className="waiting-behind-card" />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </Box>
+            <Typography
+              variant="body2"
+              customStyle={{ marginTop: 8, textAlign: 'center', color: common.white }}
+            >
+              {title}
+            </Typography>
+            <Flexbox gap={3} alignment="center" customStyle={{ marginTop: 3 }}>
+              {hasImage && (
+                <Avatar
+                  width={15}
+                  height={15}
+                  src={`https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/platforms/${siteUrlId}.png`}
+                  alt="Platform Logo Img"
+                  customStyle={{ maxWidth: 15, maxHeight: 15 }}
+                />
+              )}
+              <Typography weight="bold" customStyle={{ color: common.white }}>
+                {commaNumber(getTenThousandUnitPrice(price))}만원
+              </Typography>
+            </Flexbox>
+            <Flexbox gap={32} customStyle={{ marginTop: 20 }}>
+              <Flexbox direction="vertical" alignment="center">
+                <Flexbox gap={4} alignment="center">
+                  <Icon
+                    width={15}
+                    height={15}
+                    name="OpinionAuthenticFilled"
+                    customStyle={{ color: common.white }}
+                  />
+                  <Typography variant="small2" customStyle={{ color: common.white }}>
+                    정품의견
+                  </Typography>
+                </Flexbox>
+                <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
+                  {resultCount.authentic}
+                </Typography>
+              </Flexbox>
+              <Flexbox direction="vertical" alignment="center">
+                <Flexbox gap={4} alignment="center">
+                  <Icon
+                    width={15}
+                    height={15}
+                    name="OpinionFakeFilled"
+                    customStyle={{ color: common.white }}
+                  />
+                  <Typography variant="small2" customStyle={{ color: common.white }}>
+                    가품의견
+                  </Typography>
+                </Flexbox>
+                <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
+                  {resultCount.fake}
+                </Typography>
+              </Flexbox>
+              <Flexbox direction="vertical" alignment="center">
+                <Flexbox gap={4} alignment="center">
+                  <Icon
+                    width={15}
+                    height={15}
+                    name="OpinionImpossibleFilled"
+                    customStyle={{ color: common.white }}
+                  />
+                  <Typography variant="small2" customStyle={{ color: common.white }}>
+                    감정불가
+                  </Typography>
+                </Flexbox>
+                <Typography variant="h2" weight="bold" customStyle={{ color: common.white }}>
+                  {resultCount.impossible}
+                </Typography>
+              </Flexbox>
+            </Flexbox>
+          </Flexbox>
+          <BackgroundImageBlur className="background-image-blur" />
+        </BackgroundImage>
+      </StyledLegitResultCardHolder>
+      <ImageDetailDialog
+        open={open}
+        onChange={handleSlideChange}
+        onClose={handleClose}
+        images={images}
+        legitResult={result}
+        syncIndex={currentIndex}
+      />
+    </>
   );
 }
 
@@ -393,7 +437,7 @@ const BackgroundImageBlur = styled.div`
 `;
 
 const SwipeGuideIcon = styled(Icon)<{
-  hide?: boolean;
+  hideIcon?: boolean;
   placement: 'left' | 'right';
 }>`
   position: absolute;
@@ -411,7 +455,7 @@ const SwipeGuideIcon = styled(Icon)<{
     }
   }}
   transform: translateY(-50%);
-  opacity: ${({ hide }) => (hide ? 0 : 0.5)};
+  opacity: ${({ hideIcon }) => (hideIcon ? 0 : 0.5)};
 `;
 
 const WaitingBehindCard = styled.div`

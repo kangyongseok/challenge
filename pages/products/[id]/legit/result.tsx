@@ -1,60 +1,44 @@
+import { useEffect } from 'react';
+
 import { QueryClient, dehydrate } from 'react-query';
 import type { DehydratedState } from 'react-query';
-import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Alert, Box, CtaButton, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Typography, useTheme } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  LegitResultBottomCtaButton,
   LegitResultCardHolder,
   LegitResultDetailAlert,
   LegitResultLoginBottomSheet,
   LegitResultOpinionList
 } from '@components/pages/legitResult';
 
+import ChannelTalk from '@library/channelTalk';
+
 import { fetchProductLegit } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 
 function LegitResult() {
-  const router = useRouter();
-  const { id } = router.query;
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(-30);
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, []);
+
   return (
     <>
-      <GeneralTemplate
-        header={<Header />}
-        footer={
-          <Box customStyle={{ minHeight: 89 }}>
-            <Box
-              customStyle={{
-                position: 'fixed',
-                bottom: 0,
-                width: '100%',
-                padding: 20,
-                borderTop: `1px solid ${common.grey['90']}`,
-                backgroundColor: common.white
-              }}
-            >
-              <CtaButton
-                fullWidth
-                variant="contained"
-                brandColor="black"
-                size="large"
-                onClick={() => router.push(`/products/${id}`)}
-              >
-                해당 매물로 돌아가기
-              </CtaButton>
-            </Box>
-          </Box>
-        }
-      >
+      <GeneralTemplate header={<Header />} footer={<LegitResultBottomCtaButton />}>
         <LegitResultCardHolder />
         <LegitResultDetailAlert />
         <LegitResultOpinionList />

@@ -4,3 +4,4 @@ export { default as WishesCategories } from './WishesCategories';
 export { default as WishesFilter } from './WishesFilter';
 export { default as WishesNotice } from './WishesNotice';
 export { default as WishesPanel } from './WishesPanel';
+export { default as WishesBottomCtaButton } from './WishesBottomCtaButton';

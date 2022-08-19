@@ -95,7 +95,7 @@ const StyledReviewList = styled.section`
   & > div {
     margin-right: 8px;
 
-    &:nth-child(6) {
+    &:nth-of-type(6) {
       margin-right: 0;
     }
   }

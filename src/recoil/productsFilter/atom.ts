@@ -11,10 +11,10 @@ import type { SelectedSearchOption } from '@typings/products';
 
 export const productsFilterStateFamily = atomFamily<
   {
-    type: `general-${string}` | `map-${string}` | `order-${string}`;
+    type: `general-${string}` | `map-${string}` | `order-${string}` | `legit-${string}`;
     open: boolean;
   },
-  `general-${string}` | `map-${string}` | `order-${string}`
+  `general-${string}` | `map-${string}` | `order-${string}` | `legit-${string}`
 >({
   key: 'productsFilterStateFamily',
   default: (type) => ({

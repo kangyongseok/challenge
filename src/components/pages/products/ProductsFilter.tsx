@@ -34,6 +34,7 @@ import {
   filterCodes,
   filterGenders,
   idFilterOptions,
+  legitIdFilterOptionIds,
   mapFilterOptions,
   myFilterRelatedParentCategoryIds
 } from '@constants/productsFilter';
@@ -129,6 +130,9 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   const setProductsMapFilterState = useSetRecoilState(
     productsFilterStateFamily(`map-${atomParam}`)
   );
+  const setProductsLegitFilterState = useSetRecoilState(
+    productsFilterStateFamily(`legit-${atomParam}`)
+  );
   const setProductsKeywordState = useSetRecoilState(productsKeywordState);
   const setActiveTabCodeIdState = useSetRecoilState(activeTabCodeIdState);
   const setMyFilterIntersectionCategorySizesState = useSetRecoilState(
@@ -173,7 +177,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
   const filterButtonsRef = useRef<HTMLDivElement | null>(null);
   const productKeywordSaveChipRef = useRef<HTMLButtonElement | null>(null);
   const mapFilterChipRef = useRef<HTMLButtonElement | null>(null);
-  const legitChipRef = useRef<HTMLButtonElement | null>(null);
+  const legitFilterButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const productsFilterRef = useRef<HTMLDivElement | null>(null);
   const prevReverseTriggeredRef = useRef(true);
@@ -281,6 +285,13 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
         (mapFilterOption) => mapFilterOption.distance === searchParams.distance
       ),
     [searchParams.distance]
+  );
+  const selectedLegitFilterOption = useMemo(
+    () =>
+      idFilterOptions
+        .filter(({ id }) => legitIdFilterOptionIds.includes(id))
+        .find(({ id }) => (searchParams.idFilterIds || []).includes(id)),
+    [searchParams.idFilterIds]
   );
   const showProductKeywordSaveChip = useMemo(() => {
     const allowPathNames = [
@@ -481,13 +492,6 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
       });
     }
 
-    if (dataId === 100) {
-      logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
-        name: attrProperty.productName.PRODUCT_LIST,
-        att: selectedIdFilterOptionIndex > -1 ? 'OFF' : 'ON'
-      });
-    }
-
     if (selectedIdFilterIndex > -1) {
       newSearchParams = {
         ...searchParams,
@@ -512,6 +516,74 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
       type,
       searchParams: newSearchParams
     }));
+  };
+
+  const handleClickLegitIdFilterOption = () => {
+    const hasSelectedLegitIdFilterOptions = !!(searchParams.idFilterIds || []).filter((id) =>
+      legitIdFilterOptionIds.includes(id)
+    ).length;
+
+    logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
+      name: attrProperty.productName.PRODUCT_LIST,
+      att: hasSelectedLegitIdFilterOptions ? 'OFF' : 'ON'
+    });
+
+    if (hasSelectedLegitIdFilterOptions) {
+      setSelectedSearchOptionsState(
+        ({ type, selectedSearchOptions: prevSelectedSearchOptions }) => ({
+          type,
+          selectedSearchOptions: prevSelectedSearchOptions.filter(
+            ({ codeId, id = 0 }) =>
+              codeId !== filterCodeIds.id ||
+              (codeId === filterCodeIds.id && !legitIdFilterOptionIds.includes(id))
+          )
+        })
+      );
+      setSearchParamsState(({ type, searchParams: prevSearchParams }) => ({
+        type,
+        searchParams: {
+          ...prevSearchParams,
+          idFilterIds: (prevSearchParams.idFilterIds || []).filter(
+            (id) => !legitIdFilterOptionIds.includes(id)
+          )
+        }
+      }));
+      setSearchOptionsParamsState(({ type, searchParams: prevSearchOptionsParams }) => ({
+        type,
+        searchParams: {
+          ...prevSearchOptionsParams,
+          idFilterIds: (prevSearchOptionsParams.idFilterIds || []).filter(
+            (id) => !legitIdFilterOptionIds.includes(id)
+          )
+        }
+      }));
+    } else {
+      setSelectedSearchOptionsState(
+        ({ type, selectedSearchOptions: prevSelectedSearchOptions }) => ({
+          type,
+          selectedSearchOptions: prevSelectedSearchOptions.concat([
+            {
+              id: 100,
+              codeId: filterCodeIds.id
+            }
+          ])
+        })
+      );
+      setSearchParamsState(({ type, searchParams: prevSearchParams }) => ({
+        type,
+        searchParams: {
+          ...prevSearchParams,
+          idFilterIds: (prevSearchParams.idFilterIds || []).concat([100])
+        }
+      }));
+      setSearchOptionsParamsState(({ type, searchParams: prevSearchOptionsParams }) => ({
+        type,
+        searchParams: {
+          ...prevSearchOptionsParams,
+          idFilterIds: (prevSearchOptionsParams.idFilterIds || []).concat([100])
+        }
+      }));
+    }
   };
 
   const handleClickDeleteProductKeyword = () => {
@@ -917,14 +989,14 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
         height: 'fit-content'
       });
     }
-    if (legitChipRef.current) {
-      const { clientHeight } = legitChipRef.current;
-      const { top } = legitChipRef.current.getBoundingClientRect();
+    if (legitFilterButtonRef.current) {
+      const { clientHeight } = legitFilterButtonRef.current;
+      const { top } = legitFilterButtonRef.current.getBoundingClientRect();
 
       setStep4TooltipCustomStyle({
         position: 'fixed',
         top: top + clientHeight + 20,
-        left: ((mapFilterChipRef.current || {}).clientWidth || 0) + 26,
+        left: ((mapFilterChipRef.current || {}).clientWidth || 0) + 21,
         transform: 'none',
         height: 'fit-content'
       });
@@ -959,6 +1031,21 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
     prevReverseTriggeredRef.current = reverseTriggered;
   }, [reverseTriggered]);
 
+  useEffect(() => {
+    return () => {
+      setSavedProductKeywordToastState({
+        type: 'saved',
+        open: false
+      });
+      setDeletedProductKeywordToastState({ type: 'deleted', open: false });
+      setRestoredProductKeywordToastState({ type: 'restored', open: false });
+    };
+  }, [
+    setDeletedProductKeywordToastState,
+    setRestoredProductKeywordToastState,
+    setSavedProductKeywordToastState
+  ]);
+
   return (
     <>
       <Box component="section" customStyle={{ height: 85 }}>
@@ -972,7 +1059,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
         >
           <FilterButtons ref={filterButtonsRef}>
             {idFilterOptions
-              .filter(({ id }) => id !== 100)
+              .filter(({ id }) => !legitIdFilterOptionIds.includes(id))
               .map(({ id, name }) => (
                 <Chip
                   key={`id-filter-option-button-${id}`}
@@ -1019,7 +1106,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
               padding: '8px 20px'
             }}
           >
-            <Flexbox gap={6}>
+            <Flexbox gap={12}>
               <Chip
                 ref={mapFilterChipRef}
                 variant={selectedMapFilterOption ? 'outlinedGhost' : 'ghost'}
@@ -1039,18 +1126,27 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                 {selectedMapFilterOption && selectedMapFilterOption.viewName}
                 {!selectedMapFilterOption && '내 주변 위치'}
               </Chip>
-              <LegitChip
-                ref={legitChipRef}
-                variant={(searchParams.idFilterIds || []).includes(100) ? 'outlinedGhost' : 'ghost'}
-                brandColor={(searchParams.idFilterIds || []).includes(100) ? 'primary' : 'black'}
-                data-id={100}
-                size="small"
-                weight="medium"
-                onClick={handleClickIdFilterOption}
-              >
-                <span>🔎&nbsp;</span>사진감정
-                <span>&nbsp;{(searchParams.idFilterIds || []).includes(100) ? 'ON' : 'OFF'}</span>
-              </LegitChip>
+              <LegitFilterButton ref={legitFilterButtonRef}>
+                <Flexbox onClick={handleClickLegitIdFilterOption}>
+                  <CheckboxIcon brandColor={selectedLegitFilterOption ? 'primary' : 'gray'} />
+                </Flexbox>
+                <Typography
+                  variant="body2"
+                  weight={selectedLegitFilterOption ? 'bold' : 'regular'}
+                  onClick={() => setProductsLegitFilterState(({ type }) => ({ type, open: true }))}
+                  customStyle={{
+                    margin: '0 4px',
+                    color: selectedLegitFilterOption ? primary.main : undefined
+                  }}
+                >
+                  {(selectedLegitFilterOption || {}).name || '사진감정'}
+                </Typography>
+                <Icon
+                  name="CaretDownOutlined"
+                  size="small"
+                  onClick={() => setProductsLegitFilterState(({ type }) => ({ type, open: true }))}
+                />
+              </LegitFilterButton>
             </Flexbox>
             {showProductKeywordSaveChip && (
               <Tooltip
@@ -1075,7 +1171,8 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                   startIcon={<Icon name="BookmarkFilled" size="small" />}
                   onClick={handleClickProductsKeywordSave}
                   customStyle={{
-                    minWidth: 'fit-content'
+                    minWidth: 'fit-content',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   이 검색 저장
@@ -1091,7 +1188,8 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
                 startIcon={<Icon name="BookmarkFilled" size="small" />}
                 customStyle={{
                   minWidth: 'fit-content',
-                  visibility: !complete && step === 1 ? 'visible' : 'hidden'
+                  visibility: !complete && step === 1 ? 'visible' : 'hidden',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 이 검색 저장
@@ -1128,7 +1226,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
           }))
         }
         targetRef={filterButtonsRef}
-        customStyle={{ height: 46 }}
+        customStyle={{ height: 44 }}
       >
         <Tooltip
           open={!complete && step === 0}
@@ -1236,8 +1334,11 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
             }
           }))
         }
-        targetRef={legitChipRef}
-        customStyle={{ borderRadius: 36 }}
+        targetRef={legitFilterButtonRef}
+        customSpotlightPosition={{
+          width: 10,
+          left: -5
+        }}
       >
         <Tooltip
           open={!complete && step === 4}
@@ -1395,13 +1496,49 @@ const NewButton = styled(Button)`
   font-size: 10px;
 `;
 
-const LegitChip = styled(Chip)`
-  min-width: fit-content;
-  @media (max-width: 355px) {
-    & > span {
-      display: none;
-    }
-  }
+const LegitFilterButton = styled.button`
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 `;
+
+// TODO 추후 UI 라이브러리 업데이트 시 UI 라이브러리의 Checkbox 사용
+function CheckboxIcon({ brandColor }: { brandColor?: 'gray' | 'primary' }) {
+  if (brandColor === 'primary') {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M2.5 4.16667C2.5 3.24619 3.24619 2.5 4.16667 2.5H15.8333C16.7538 2.5 17.5 3.24619 17.5 4.16667V15.8333C17.5 16.7538 16.7538 17.5 15.8333 17.5H4.16667C3.24619 17.5 2.5 16.7538 2.5 15.8333V4.16667ZM5.24409 9.33932L6.4226 8.16081L9.16668 10.9049L13.5774 6.49414L14.7559 7.67265L9.16668 13.2619L5.24409 9.33932Z"
+          fill="#1833FF"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.16667 2.5C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5H4.16667ZM4.16667 4.16667L15.8333 4.16667V15.8333H4.16667V4.16667Z"
+        fill="#CCCCCC"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14.7559 7.67265L9.16668 13.2619L5.24409 9.33932L6.4226 8.16081L9.16668 10.9049L13.5774 6.49414L14.7559 7.67265Z"
+        fill="#CCCCCC"
+      />
+    </svg>
+  );
+}
 
 export default ProductsFilter;

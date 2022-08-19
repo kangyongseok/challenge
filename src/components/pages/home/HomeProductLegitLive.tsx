@@ -28,7 +28,7 @@ function HomeProductLegitLive() {
   });
 
   const { data: { content: legitProducts = [] } = {}, isLoading } = useQuery(
-    queryKeys.products.legitProducts(),
+    queryKeys.products.legitProducts(params),
     () => fetchLegitProducts(params),
     {
       refetchOnMount: true

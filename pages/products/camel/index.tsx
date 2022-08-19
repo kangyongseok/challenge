@@ -8,9 +8,10 @@ import {
   ProductsInfiniteGrid,
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
+  ProductsLegitFilterBottomSheet,
   ProductsMapFilterBottomSheet,
+  ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  ProductsSortFilterBottomSheet,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -44,9 +45,10 @@ function CamelProducts() {
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="camel" />
       <ProductsMapFilterBottomSheet />
-      <ProductsSortFilterBottomSheet />
+      <ProductsOrderFilterBottomSheet />
       <ProductsKeywordBottomSheet variant="camel" />
       <ProductsKeywordDialog />
+      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

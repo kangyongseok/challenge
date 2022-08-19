@@ -43,18 +43,24 @@ function LegitIntro() {
     refetchOnMount: true
   });
 
-  const [params] = useState({
+  const [{ page, size, results, isOnlyResult }] = useState({
     page: 0,
     size: 8,
+    results: [],
     isOnlyResult: true
   });
   const { data: { pages = [] } = {} } = useInfiniteQuery(
-    queryKeys.products.legitProducts(params),
+    queryKeys.products.legitProducts({ page, size, results, isOnlyResult }),
     ({ pageParam = 0 }) =>
       fetchLegitProducts({
-        ...params,
-        page: pageParam
-      })
+        page: pageParam,
+        size,
+        results,
+        isOnlyResult
+      }),
+    {
+      staleTime: 5 * 60 * 1000
+    }
   );
 
   const legitProducts = useMemo(() => pages.map(({ content }) => content).flat(), [pages]);
