@@ -1,86 +1,36 @@
-import { useState } from 'react';
-
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
-
-const tabData = [
-  { tab: '비싸게 팔린', img: 'tab_img01', num: 1 },
-  { tab: '빨리 팔린', img: 'tab_img02', num: 2 },
-  { tab: '최고 인기', img: 'tab_img03', num: 3 }
-];
 
 function MyPortfolioLanding06() {
   const {
     theme: { palette }
   } = useTheme();
-  const [activeTab, setActiveTab] = useState(1);
-  const [imgName, setImgName] = useState('tab_img01');
   return (
-    <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
+    <Flexbox
+      direction="vertical"
+      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%' }}
+    >
       <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
-        테마 별 실거래가
+        판매하기
       </Typography>
       <Typography variant="h2" weight="bold">
-        제일 비싸게 팔린 건 얼마지?
+        가장 빨리 팔 수 있는 가격은?
       </Typography>
       <Typography customStyle={{ marginTop: 12 }}>
-        제일 비싸게, 빨리 팔린 매물 정보를 알려드려요
+        내 명품의 적정가부터 판매속도까지 똑똑하게 계산해요.
       </Typography>
-      <Box customStyle={{ marginTop: 52, padding: '0 32px' }}>
-        <TabArea alignment="center" justifyContent="space-between">
-          {tabData.map(({ tab, img, num }) => (
-            <Tab
-              key={`tab-${tab}-${num}`}
-              onClick={() => {
-                setActiveTab(num);
-                setImgName(img);
-              }}
-              active={num === activeTab}
-            >
-              <Typography customStyle={{ color: palette.common.grey['60'] }}>#{tab}</Typography>
-            </Tab>
-          ))}
-        </TabArea>
-        <TabContents>
-          <Image
-            width="100%"
-            height="auto"
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/${imgName}.jpg`}
-            alt={imgName}
-            disableAspectRatio
-          />
-        </TabContents>
+      <Box customStyle={{ marginTop: 52 }}>
+        <Image
+          width="100%"
+          height="auto"
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/new_frame_06.png`}
+          alt="판매하기"
+          disableAspectRatio
+        />
       </Box>
-    </Box>
+    </Flexbox>
   );
 }
-
-const TabArea = styled(Flexbox)`
-  width: 100%;
-  height: 41px;
-  background: ${({ theme: { palette } }) => palette.common.grey['90']};
-  border-radius: 50px;
-  padding: 4px;
-`;
-
-const Tab = styled.div<{ active?: boolean }>`
-  text-align: center;
-  background: ${({ theme: { palette }, active }) => (active ? palette.common.white : 'none')};
-  padding: 6px 13px;
-  border-radius: 36px;
-  div {
-    color: ${({ theme: { palette }, active }) =>
-      active ? palette.primary.main : palette.common.grey['60']};
-  }
-`;
-
-const TabContents = styled.div`
-  margin-top: 12px;
-  border-radius: 20px;
-  overflow: hidden;
-  filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08));
-`;
 
 export default MyPortfolioLanding06;

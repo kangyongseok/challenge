@@ -1,87 +1,86 @@
+import { useState } from 'react';
+
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-import styled, { CSSObject } from '@emotion/styled';
+import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
 
-const cardData = [
-  { img: 'Icon01', title: '무료 정품검수', description: '사전예약자 한정 1회 무료' },
-  { img: 'Icon02', title: '상세 보고서', description: '누구보다 빨리 받는 내 명품의 보고서' },
-  { img: 'Icon03', title: '판매자 권한 부여', description: '카멜에서 상품을 판매해보세요!' }
+const tabData = [
+  { tab: '비싸게 팔린', img: 'new_tab_img01', num: 1 },
+  { tab: '빨리 팔린', img: 'new_tab_img02', num: 2 },
+  { tab: '최고 인기', img: 'new_tab_img03', num: 3 }
 ];
 
-function MyPortfolioLanding04({ isAnimation }: { isAnimation: boolean }) {
+function MyPortfolioLanding04() {
   const {
     theme: { palette }
   } = useTheme();
+  const [activeTab, setActiveTab] = useState(1);
+  const [imgName, setImgName] = useState('tab_img01');
   return (
-    <Flexbox customStyle={{ padding: '0 32px', height: '100%' }} direction="vertical">
-      <Box customStyle={{ height: 52 }} />
-      <AnimationText isAnimation={isAnimation}>
-        <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
-          궁금했던 내 명품의 가치를
-        </Typography>
-        <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
-          가장 먼저 알아보세요.
-        </Typography>
-      </AnimationText>
-      <Typography weight="bold" customStyle={{ color: palette.primary.main, marginTop: 12 }}>
-        사전예약 혜택을 확인해보세요!
+    <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
+      <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
+        테마 별 실거래가
       </Typography>
-      <Flexbox
-        gap={12}
-        direction="vertical"
-        customStyle={{ flex: 1 }}
-        alignment="center"
-        justifyContent="center"
-      >
-        {cardData.map(({ img, title, description }) => (
-          <Card key={`card-${title}`} alignment="center">
-            <Image
-              width={58}
-              height={58}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/icon/${img}.png`}
-              alt="product_card"
-              disableAspectRatio
-            />
-            <Box>
-              <Typography variant="h4" weight="bold">
-                {title}
-              </Typography>
-              <Typography variant="small1">{description}</Typography>
-            </Box>
-          </Card>
-        ))}
-      </Flexbox>
-    </Flexbox>
+      <Typography variant="h2" weight="bold">
+        제일 비싸게 팔린 건 얼마지?
+      </Typography>
+      <Typography customStyle={{ marginTop: 12 }}>
+        제일 비싸게, 빨리 팔린 매물 정보를 알려드려요
+      </Typography>
+      <Box customStyle={{ marginTop: 52, padding: '0 32px' }}>
+        <TabArea alignment="center" justifyContent="space-between">
+          {tabData.map(({ tab, img, num }) => (
+            <Tab
+              key={`tab-${tab}-${num}`}
+              onClick={() => {
+                setActiveTab(num);
+                setImgName(img);
+              }}
+              active={num === activeTab}
+            >
+              <Typography customStyle={{ color: palette.common.grey['60'] }}>#{tab}</Typography>
+            </Tab>
+          ))}
+        </TabArea>
+        <TabContents>
+          <Image
+            width="100%"
+            height="auto"
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/${imgName}.jpg`}
+            alt={imgName}
+            disableAspectRatio
+          />
+        </TabContents>
+      </Box>
+    </Box>
   );
 }
 
-const Card = styled(Flexbox)`
-  background: ${({ theme: { palette } }) => palette.common.white};
-  border-radius: 12px;
+const TabArea = styled(Flexbox)`
   width: 100%;
-  height: 80px;
-  padding: 0 10px;
+  height: 41px;
+  background: ${({ theme: { palette } }) => palette.common.grey['90']};
+  border-radius: 50px;
+  padding: 4px;
 `;
 
-const AnimationText = styled.div<{ isAnimation: boolean }>`
-  ${({ isAnimation }): CSSObject =>
-    isAnimation
-      ? {
-          animation: 'fadeIn 2s forwards'
-        }
-      : { display: 'none' }}
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    90% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+const Tab = styled.div<{ active?: boolean }>`
+  text-align: center;
+  background: ${({ theme: { palette }, active }) => (active ? palette.common.white : 'none')};
+  padding: 6px 13px;
+  border-radius: 36px;
+  div {
+    color: ${({ theme: { palette }, active }) =>
+      active ? palette.primary.main : palette.common.grey['60']};
   }
+`;
+
+const TabContents = styled.div`
+  margin-top: 12px;
+  border-radius: 20px;
+  overflow: hidden;
+  filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08));
 `;
 
 export default MyPortfolioLanding04;

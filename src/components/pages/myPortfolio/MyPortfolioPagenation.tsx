@@ -1,7 +1,13 @@
 import { Flexbox, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-function MyPortfolioPagenation({ currentSection }: { currentSection: number }) {
+function MyPortfolioPagenation({
+  currentSection,
+  totalPageNum
+}: {
+  currentSection: number;
+  totalPageNum: number;
+}) {
   const {
     theme: { palette }
   } = useTheme();
@@ -10,7 +16,7 @@ function MyPortfolioPagenation({ currentSection }: { currentSection: number }) {
     if (currentSection === i + 1) {
       return palette.common.grey['60'];
     }
-    if (currentSection > 1) {
+    if (currentSection > 0) {
       return palette.common.grey['90'];
     }
     return palette.common.grey['20'];
@@ -18,7 +24,7 @@ function MyPortfolioPagenation({ currentSection }: { currentSection: number }) {
 
   return (
     <StyledPagenationWrap direction="vertical" gap={8}>
-      {Array.from({ length: 8 }, (_, i) => i + 1).map((value, i) => (
+      {Array.from({ length: totalPageNum - 1 }, (_, i) => i + 1).map((value, i) => (
         <Pagenation key={`pagenation-${value}`} bg={pagenationBg(i)} />
       ))}
     </StyledPagenationWrap>

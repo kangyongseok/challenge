@@ -9,11 +9,16 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
+import { setCookie } from '@utils/common';
+
 import { SuccessDialogState } from '@recoil/myPortfolio';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MyPotyfolioDialog() {
   const router = useRouter();
   const isOpen = useRecoilValue(SuccessDialogState);
+  const { data: accessUser } = useQueryAccessUser();
+
   useEffect(() => {
     if (isOpen) {
       logEvent(attrKeys.myPortfolio.VIEW_RESERVATION_COMPLETE_DIALOG);
@@ -31,7 +36,9 @@ function MyPotyfolioDialog() {
         <Icon name="LogoText_96_20" height={10} customStyle={{ marginBottom: 10 }} />
         <GradationText />
         <Box customStyle={{ marginTop: 12, textAlign: 'center' }}>
-          <Typography>사전예약이 완료되었어요!</Typography>
+          <Typography>
+            {accessUser && `${accessUser.userName}님, `}사전예약이 완료되었어요!
+          </Typography>
           <Typography>오픈되면 카카오톡으로 알려드릴게요.</Typography>
         </Box>
         <CtaButton
@@ -40,6 +47,7 @@ function MyPotyfolioDialog() {
           variant="contained"
           customStyle={{ marginTop: 32 }}
           onClick={() => {
+            setCookie('myPortfolioReserve', 'done', 1);
             LocalStorage.remove('preReserve');
             router.replace('/');
           }}

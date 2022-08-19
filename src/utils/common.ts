@@ -499,3 +499,37 @@ export function getUtmParams() {
 }
 
 export const commaNumber = (value: number | string) => Number(value).toLocaleString();
+
+/**
+ * @name setCookie
+ * @example setCookie('cookie-name', 'cookie-value', 1)
+ */
+export const setCookie = (name: string, value: string, day: number) => {
+  const expire = new Date();
+  expire.setDate(expire.getDate() + day);
+  let cookies = `${name}=${escape(value)}; path=/ `; // 한글 깨짐을 막기위해
+  if (typeof day !== 'undefined') cookies += `;expires=${expire.toUTCString()};`;
+  document.cookie = cookies;
+};
+
+/**
+ * @name getCookie
+ * @return cookie-value: string
+ * @example getCookie('cookie-name')
+ */
+export const getCookie = (name: string) => {
+  let x;
+  let y;
+  const val = document.cookie.split(';');
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < val.length; i++) {
+    x = val[i].substr(0, val[i].indexOf('='));
+    y = val[i].substr(val[i].indexOf('=') + 1);
+    x = x.replace(/^\s+|\s+$/g, ''); // 앞과 뒤의 공백 제거하기
+    if (x === name) {
+      return unescape(y);
+      // unescape로 디코딩 후 값 리턴
+    }
+  }
+  return '';
+};

@@ -9,7 +9,10 @@ import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
+import {
+  MyPortfolioCommonBanner,
+  MyPortfolioReserveBottomSheet
+} from '@components/pages/myPortfolio';
 import {
   HomeBrandsCategories,
   HomeCamelProductCuration,
@@ -127,6 +130,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
         </Flexbox>
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
+      <MyPortfolioReserveBottomSheet />
       <LegitInduceFloatingBanner
         edgeSpacing={20}
         channelTalkPosition={-60}

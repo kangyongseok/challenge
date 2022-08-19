@@ -1,12 +1,13 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
+import { useSetRecoilState } from 'recoil';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CtaButton, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { TouchIcon } from '@components/UI/atoms';
 import {
-  MyPortfolioBottomSheet,
   MyPortfolioLanding01,
   MyPortfolioLanding02,
   MyPortfolioLanding03,
@@ -14,8 +15,7 @@ import {
   MyPortfolioLanding05,
   MyPortfolioLanding06,
   MyPortfolioLanding07,
-  MyPortfolioLanding08,
-  MyPortfolioLanding09,
+  MyPortfolioNoneMemberReservationDialog,
   MyPortfolioPagenation,
   MyPotyfolioDialog
 } from '@components/pages/myPortfolio';
@@ -23,27 +23,36 @@ import {
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
+import { postPreReserve } from '@api/user';
+
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import checkAgent from '@utils/checkAgent';
 
+import { SuccessDialogState } from '@recoil/myPortfolio';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 let globalCurrentSection = 0;
-const SECTION_PAGE_NUM = 9;
+const SECTION_PAGE_NUM = 7;
 
 function MyPortfolio() {
   const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
+  const { data: accessUser } = useQueryAccessUser();
   const [innerHeight, setInnerHeight] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
   const [openReservation, setOpenReservation] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState('down');
+  const { mutate: mutatePostManage } = useMutation(postPreReserve);
+  const successDialog = useSetRecoilState(SuccessDialogState);
+
   const wheelRef = useRef(false);
   const touchRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
   const startTargetRef = useRef<number>();
+
   const isSmallHeight = innerHeight < 630;
 
   const windowAddEvent = useCallback(() => {
@@ -124,19 +133,17 @@ function MyPortfolio() {
         globalCurrentSection < SECTION_PAGE_NUM - 1
       ) {
         globalCurrentSection += 1;
-        setScrollDirection('down');
         setCurrentSection((section) => {
           return section + 1;
         });
       }
       if (startTargetRef.current - e.targetTouches[0].clientY < -5 && globalCurrentSection > 0) {
         globalCurrentSection -= 1;
-        setScrollDirection('up');
         setCurrentSection((section) => section - 1);
       }
       setTimeout(() => {
         touchRef.current = false;
-      }, 800);
+      }, 500);
     }
   };
 
@@ -145,24 +152,22 @@ function MyPortfolio() {
       wheelRef.current = true;
       if (e.deltaY > 0 && globalCurrentSection < SECTION_PAGE_NUM - 1) {
         globalCurrentSection += 1;
-        setScrollDirection('down');
         setCurrentSection((section) => {
           return section + 1;
         });
       }
       if (e.deltaY < 0 && globalCurrentSection > 0) {
         globalCurrentSection -= 1;
-        setScrollDirection('up');
         setCurrentSection((section) => section - 1);
       }
       setTimeout(() => {
         wheelRef.current = false;
-      }, 1400);
+      }, 1000);
     }
   };
 
   const handleClickReservation = () => {
-    if (currentSection !== 0 && currentSection !== 8) {
+    if (currentSection !== 0 && currentSection !== 6) {
       logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
         name: attrProperty.productName.MYPORTFOLIO,
         title: attrProperty.productTitle.HEADER
@@ -174,7 +179,23 @@ function MyPortfolio() {
       });
     }
 
-    setOpenReservation(true);
+    if (!accessUser || (accessUser && !accessUser.phone)) {
+      setOpenReservation(true);
+      return;
+    }
+    if (accessUser && accessUser.phone) {
+      mutatePostManage(
+        { phone: accessUser.phone },
+        {
+          onSuccess() {
+            logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
+              name: attrProperty.productName.MYPORTFOLIO
+            });
+            successDialog(true);
+          }
+        }
+      );
+    }
   };
   const handleClose = () => {
     setOpenReservation(false);
@@ -183,9 +204,8 @@ function MyPortfolio() {
   const getBackgroundColor = () => {
     switch (currentSection) {
       case 0:
-      case 1:
         return palette.common.black;
-      case 2:
+      case 1:
       case 3:
       case 5:
       case 7:
@@ -214,37 +234,24 @@ function MyPortfolio() {
       )
     },
     {
-      key: 'mapcount',
-      Component: (
-        <MyPortfolioLanding02 isSmallHeight={isSmallHeight} isAnimation={currentSection === 1} />
-      )
-    },
-    {
       key: 'myproduct1',
-      Component: (
-        <MyPortfolioLanding03
-          currentSection={currentSection}
-          isSmallHeight={isSmallHeight}
-          isHidden={currentSection === 3 || scrollDirection === 'up'}
-        />
-      )
+      Component: <MyPortfolioLanding02 isSmallHeight={isSmallHeight} />
     },
-    {
-      key: 'myproduct2',
-      Component: <MyPortfolioLanding04 isAnimation={currentSection >= 3} />
-    },
-    { key: 'price', Component: <MyPortfolioLanding05 /> },
-    { key: 'maxprice', Component: <MyPortfolioLanding06 /> },
+    { key: 'price', Component: <MyPortfolioLanding03 /> },
+    { key: 'maxprice', Component: <MyPortfolioLanding04 /> },
     {
       key: 'favorit',
-      Component: <MyPortfolioLanding07 />,
+      Component: <MyPortfolioLanding05 />,
       width: 100
     },
-    { key: 'sellprice', Component: <MyPortfolioLanding08 /> },
+    { key: 'sellprice', Component: <MyPortfolioLanding06 /> },
     {
       key: 'reservation',
       Component: (
-        <MyPortfolioLanding09 onClick={handleClickReservation} isAnimation={currentSection === 8} />
+        <MyPortfolioLanding07
+          onClick={handleClickReservation}
+          isAnimation={currentSection === SECTION_PAGE_NUM - 1}
+        />
       )
     }
   ];
@@ -253,10 +260,10 @@ function MyPortfolio() {
     <>
       <LandingHeader
         isBorder={currentSection > 0}
-        borderColor={currentSection === 1 ? palette.common.grey['20'] : palette.common.grey['90']}
+        borderColor={currentSection === 0 ? palette.common.grey['20'] : palette.common.grey['90']}
         alignment="center"
         direction="horizontal"
-        isHidden={SECTION_PAGE_NUM - 1 === currentSection}
+        isHidden={SECTION_PAGE_NUM - 1 === currentSection || currentSection === 0}
         bgColor={getBackgroundColor()}
       >
         <Flexbox alignment="center">
@@ -284,47 +291,42 @@ function MyPortfolio() {
                   logEvent(attrKeys.myPortfolio.CLICK_LOGO, {
                     name: attrProperty.productName.MYPORTFOLIO
                   });
-                  router.push('/');
+                  router.replace('/');
                 }}
               />
             </LogoAnimationWrap>
             <Box customStyle={{ marginLeft: 3 }}>
-              {currentSection === 1 ? <GradationText /> : currentSection > 1 && <GradationText2 />}
+              {currentSection === 0 ? <GradationText /> : currentSection > 0 && <GradationText2 />}
             </Box>
           </Flexbox>
         </Flexbox>
         {currentSection > 0 && (
           <ReservationButton onClick={handleClickReservation} variant="contained">
-            사전예약
+            <Icon name="AlarmFilled" />
+            오픈 알림받기
           </ReservationButton>
         )}
       </LandingHeader>
-      {(currentSection === 2 || currentSection === 3) &&
-        (scrollDirection === 'down' || currentSection === 2 || scrollDirection === 'up') && (
-          <FixedTitle isSmallHeight={isSmallHeight} currentSection={currentSection}>
-            <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
-              궁금했던 내 명품의 가치를
-            </Typography>
-            <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
-              가장 먼저 알아보세요.
-            </Typography>
-          </FixedTitle>
-        )}
       <StyledWrap innerHeight={innerHeight * currentSection} bgColor={getBackgroundColor()}>
         {myPortfolioSectionData.map(({ key, Component, width }) => (
-          <Section contentsHeight={innerHeight} key={`section-landing-${key}`} sectionWidth={width}>
+          <Section
+            contentsHeight={innerHeight}
+            key={`section-landing-${key}`}
+            sectionWidth={width}
+            currentSection={currentSection}
+          >
             {Component}
           </Section>
         ))}
       </StyledWrap>
-      <MyPortfolioBottomSheet
+      <MyPortfolioNoneMemberReservationDialog
         innerHeight={innerHeight}
         onClick={handleClose}
         openReservation={openReservation}
       />
       <MyPotyfolioDialog />
-      {currentSection > 0 && currentSection !== 8 && (
-        <MyPortfolioPagenation currentSection={currentSection} />
+      {currentSection > 0 && currentSection !== SECTION_PAGE_NUM - 1 && (
+        <MyPortfolioPagenation currentSection={currentSection} totalPageNum={SECTION_PAGE_NUM} />
       )}
     </>
   );
@@ -350,32 +352,11 @@ const LandingHeader = styled(Flexbox)<{
   transition: all 0.3s;
 `;
 
-const FixedTitle = styled.div<{ isSmallHeight: boolean; currentSection: number }>`
-  position: fixed;
-  top: ${({ isSmallHeight }) => (isSmallHeight ? 80 : 117)}px;
-  left: 0;
-  width: 100%;
-  z-index: 5;
-  padding: 0 32px;
-  animation: fadeIn 0.8s forwards;
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    90% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-`;
-
 const LogoAnimationWrap = styled.div<{ currentSection: number }>`
   svg {
-    color: ${({ currentSection }) => (currentSection > 1 ? 'black' : 'white')};
-    ${({ currentSection }): CSSObject =>
-      currentSection === 2 ? { animation: 'colorChange 2s forwards' } : {}};
+    color: ${({ currentSection }) => (currentSection > 0 ? 'black' : 'white')};
+    /* ${({ currentSection }): CSSObject =>
+      currentSection === 2 ? { animation: 'colorChange 2s forwards' } : {}}; */
   }
   @keyframes colorChange {
     0% {
@@ -408,12 +389,13 @@ const Section = styled.section<{
   contentsHeight: number;
   bgColor?: string;
   sectionWidth?: number;
+  currentSection: number;
 }>`
   max-width: ${({ sectionWidth }) => (sectionWidth ? `${sectionWidth}vw` : '440px')};
   margin: 0 auto;
   height: ${({ contentsHeight }) => `${contentsHeight}px` || '100vh'};
   overflow: hidden;
-  padding-top: 65px;
+  padding-top: ${({ currentSection }) => (currentSection === 0 ? 55 : 65)}px;
   position: relative;
 `;
 

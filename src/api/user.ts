@@ -178,7 +178,7 @@ export async function fetchSizeMapping() {
   return data;
 }
 
-export async function postPreReserve(params: { model?: string; phone?: string }) {
+export async function postPreReserve(params: { phone?: string }) {
   await Axios.getInstance().post(`${BASE_PATH}/model${convertQueryStringByObject(params)}`);
 }
 

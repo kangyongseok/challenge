@@ -1,4 +1,8 @@
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { useEffect, useState } from 'react';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectCoverflow } from 'swiper';
+import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 
 import Image from '@components/UI/atoms/Image';
 
@@ -6,27 +10,122 @@ function MyPortfolioLanding05() {
   const {
     theme: { palette }
   } = useTheme();
+  const [imageWidth, setImagewidth] = useState(0);
+
+  useEffect(() => {
+    const width = document.body.clientWidth - 150 > 450 ? 450 : document.body.clientWidth - 150;
+    setImagewidth(width);
+  }, []);
+
   return (
-    <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
+    <Flexbox
+      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%', position: 'relative' }}
+      direction="vertical"
+    >
       <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
-        실거래가
+        내 명품 분석
       </Typography>
       <Typography variant="h2" weight="bold">
-        내 명품 지금 실거래가는?
+        얼마나 인기가 많을까?
       </Typography>
       <Typography customStyle={{ marginTop: 12 }}>
-        카멜만의 Ai기술로 측정된 실거래가를 알려드려요.
+        거래량, 인기도를 실시간으로 볼 수 있어요.
       </Typography>
-      <Box customStyle={{ marginTop: 52 }}>
-        <Image
-          width="100%"
-          height="auto"
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_05.png`}
-          alt="포인트 맵"
-          disableAspectRatio
-        />
-      </Box>
-    </Box>
+      <Flexbox
+        direction="vertical"
+        customStyle={{ flex: 1, marginBottom: 100 }}
+        alignment="center"
+        justifyContent="center"
+      >
+        <Box customStyle={{ marginTop: 12 }}>
+          <Label
+            variant="contained"
+            text="#샤넬 클래식 미디움 플립백"
+            customStyle={{
+              background: palette.primary.highlight,
+              color: palette.primary.main,
+              borderRadius: 36,
+              marginBottom: 20
+            }}
+          />
+          <Swiper
+            loop
+            effect="coverflow"
+            grabCursor
+            centeredSlides
+            slidesPerView="auto"
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false
+            }}
+            speed={800}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true
+            }}
+            pagination
+            modules={[EffectCoverflow, Autoplay]}
+            className="mySwiper"
+            style={{ overflow: 'initial' }}
+          >
+            <SwiperSlide
+              style={{
+                width: imageWidth,
+                border: `1px solid ${palette.common.grey['90']}`,
+                borderRadius: 20,
+                overflow: 'hidden',
+                filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
+              }}
+            >
+              <Image
+                width={imageWidth}
+                height="auto"
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img01.png`}
+                alt="graph_img01"
+                disableAspectRatio
+              />
+            </SwiperSlide>
+            <SwiperSlide
+              style={{
+                width: imageWidth,
+                border: `1px solid ${palette.common.grey['90']}`,
+                borderRadius: 20,
+                overflow: 'hidden',
+                filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
+              }}
+            >
+              <Image
+                width={imageWidth}
+                height="auto"
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img02.png`}
+                alt="graph_img02"
+                disableAspectRatio
+              />
+            </SwiperSlide>
+            <SwiperSlide
+              style={{
+                width: imageWidth,
+                border: `1px solid ${palette.common.grey['90']}`,
+                borderRadius: 20,
+                overflow: 'hidden',
+                filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
+              }}
+            >
+              <Image
+                width={imageWidth}
+                height="auto"
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img03.png`}
+                alt="graph_img03"
+                disableAspectRatio
+              />
+            </SwiperSlide>
+          </Swiper>
+        </Box>
+      </Flexbox>
+    </Flexbox>
   );
 }
 
