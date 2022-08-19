@@ -545,8 +545,6 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       }
 
       logEvent(attrKeys.products.VIEW_PRODUCT_LIST, eventProperties);
-
-      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
   }, [
     router.pathname,
@@ -563,15 +561,25 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       loggedLoadProductListLogEventRef.current = true;
 
       const { productTotal, sellerTotal } = lastPage || {};
-      const { eventName, eventType, eventTitle } = router.query;
+      const {
+        name: nameProperty,
+        type,
+        title
+      }: ProductsEventProperties = SessionStorage.get<ProductsEventProperties>(
+        sessionStorageKeys.productsEventProperties
+      ) || {
+        name: 'NONE',
+        title: 'NONE',
+        type: 'ETC'
+      };
 
       logEvent(attrKeys.products.LOAD_PRODUCT_LIST, {
         ...convertSearchParamsByQuery(router.query, {
           variant
         }),
-        name: eventName,
-        type: eventType,
-        title: eventTitle,
+        name: nameProperty,
+        type,
+        title,
         productTotal,
         sellerTotal
       });
@@ -602,6 +610,12 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       }));
     }
   }, [setPrevScrollTopState, progressDone, prevScrollTop]);
+
+  useEffect(() => {
+    return () => {
+      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
+    };
+  }, []);
 
   if (!progressDone)
     return (
