@@ -19,6 +19,7 @@ function LegitResultBottomCtaButton() {
           size="large"
           iconOnly
           customStyle={{
+            display: 'none',
             borderColor: common.grey['95']
           }}
         />
