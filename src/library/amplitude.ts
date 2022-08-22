@@ -308,7 +308,9 @@ const Amplitude = {
         try {
           logEvent('INIT_CONFIG');
           initAmplitude();
-          logEvent('INIT_CONFIG_SUCCESS');
+          logEvent('INIT_CONFIG_SUCCESS', {
+            userAgent: window.navigator.userAgent
+          });
         } catch (error) {
           logEvent('INIT_CONFIG_FAIL', {
             message: String(error)
