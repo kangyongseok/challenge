@@ -43,6 +43,11 @@ function LegitResultBottomCtaButton() {
   const handleClick = () => {
     if (!productResult) return;
 
+    logEvent(attrKeys.legitResult.CLICK_SHARE, {
+      name: attrProperty.legitName.LEGIT_INFO,
+      title: attrProperty.legitTitle.LEGIT_SHARE
+    });
+
     const url = window.location.href;
     let text = '카멜 사진감정 결과, 실물감정을 추천해요';
 

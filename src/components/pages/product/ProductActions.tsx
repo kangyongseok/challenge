@@ -122,6 +122,12 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
     const url = window.location.href;
 
+    productDetailAtt({
+      key: attrKeys.products.CLICK_SHARE,
+      product,
+      source: attrProperty.productSource.PRODUCT_LIST
+    });
+
     if (checkAgent.isAndroidApp() && window.AndroidShareHandler) {
       window.AndroidShareHandler.share(url);
       return;
