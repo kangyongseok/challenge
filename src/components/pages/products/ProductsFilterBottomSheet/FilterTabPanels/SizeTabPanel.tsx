@@ -161,6 +161,7 @@ function SizeTabPanel() {
           }) => (
             <FilterAccordion
               key={`pc-filter-option-${parentCategoryId}`}
+              expanded={parentCategories.length === 1}
               summary={parentCategoryName.replace(/\(P\)/g, '')}
               customButton={
                 checkedAll ? (

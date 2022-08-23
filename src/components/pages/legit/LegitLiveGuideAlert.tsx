@@ -1,4 +1,3 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Alert, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -7,14 +6,9 @@ import styled from '@emotion/styled';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserLegitTargets } from '@api/user';
-
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitLiveGuideAlertProps {
   message?: string;
@@ -28,12 +22,6 @@ function LegitLiveGuideAlert({
   customStyle
 }: LegitLiveGuideAlertProps) {
   const router = useRouter();
-  const { data: accessUser } = useQueryAccessUser();
-
-  const { data: products = [] } = useQuery(queryKeys.users.legitTargets(), fetchUserLegitTargets, {
-    enabled: !!accessUser,
-    refetchOnMount: true
-  });
 
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
@@ -45,8 +33,6 @@ function LegitLiveGuideAlert({
     });
     router.push('/legit/guide');
   };
-
-  if (accessUser && products.length) return null;
 
   return (
     <StyledAuthLiveGuideAlert brandColor="grey" round="8" css={customStyle} onClick={handleClick}>

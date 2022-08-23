@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
 
 import styled from '@emotion/styled';
@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import Accordion, { AccordionProps } from '@components/UI/molecules/Accordion';
 
 interface FilterAccordionProps
-  extends Pick<AccordionProps, 'summary' | 'expandIcon' | 'button' | 'onClickButton'> {
+  extends Pick<AccordionProps, 'summary' | 'expanded' | 'expandIcon' | 'button' | 'onClickButton'> {
   customButton?: ReactElement;
   changeInterceptor?: (e: MouseEvent<HTMLDivElement>) => void;
 }
@@ -15,16 +15,19 @@ function FilterAccordion({
   children,
   changeInterceptor,
   onClickButton,
+  expanded,
   ...props
 }: PropsWithChildren<FilterAccordionProps>) {
-  const [expanded, setExpanded] = useState(false);
+  const [newExpanded, setNewExpanded] = useState(false);
+
+  useEffect(() => setNewExpanded(expanded), [expanded]);
 
   return (
     <Accordion
       variant="outlined"
       summaryVariant="body1"
-      expanded={expanded}
-      changeExpandedStatus={changeInterceptor || (() => setExpanded(!expanded))}
+      expanded={newExpanded}
+      changeExpandedStatus={changeInterceptor || (() => setNewExpanded(!newExpanded))}
       expandIconGreyColorKey="20"
       onClickButton={onClickButton}
       {...props}

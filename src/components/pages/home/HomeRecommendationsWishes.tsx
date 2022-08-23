@@ -133,6 +133,7 @@ function HomeRecommendationsWishes() {
                           ].map(({ iconName, value }) => (
                             <Flexbox
                               gap={2}
+                              alignment="center"
                               key={`recommendations-wishes-icon-${iconName.toLowerCase()}`}
                             >
                               <Icon

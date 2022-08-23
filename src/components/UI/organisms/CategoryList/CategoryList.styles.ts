@@ -21,6 +21,7 @@ export const StyledCategoryList = styled.div<{ variant: 'contained' | 'outlined'
 export const CategoryItem = styled.div<{ variant: 'contained' | 'outlined' }>`
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   border-radius: ${({ theme }) => theme.box.round['8']};
   min-height: 49px;
   height: fit-content;

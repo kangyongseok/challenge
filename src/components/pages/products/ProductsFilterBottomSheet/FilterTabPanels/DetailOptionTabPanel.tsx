@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useMemo } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -38,6 +38,16 @@ function DetailOptionTabPanel() {
       palette: { common }
     }
   } = useTheme();
+
+  const expanded = useMemo(() => {
+    return (
+      [
+        season.filterOptions.length,
+        material.filterOptions.length,
+        color.filterOptions.length
+      ].filter((length) => length).length === 1
+    );
+  }, [season.filterOptions.length, material.filterOptions.length, color.filterOptions.length]);
 
   const handleClickSelectedAll = (e: MouseEvent<HTMLButtonElement>, codeId: number) => {
     e.stopPropagation();
@@ -189,6 +199,7 @@ function DetailOptionTabPanel() {
         {season.filterOptions.length > 0 && (
           <FilterAccordion
             summary="연식"
+            expanded={expanded}
             customButton={
               season.checkedAll ? (
                 <Chip
@@ -240,6 +251,7 @@ function DetailOptionTabPanel() {
         {color.filterOptions.length > 0 && (
           <FilterAccordion
             summary="색상"
+            expanded={expanded}
             customButton={
               color.checkedAll ? (
                 <Chip
@@ -295,6 +307,7 @@ function DetailOptionTabPanel() {
         {material.filterOptions.length > 0 && (
           <FilterAccordion
             summary="소재"
+            expanded={expanded}
             customButton={
               material.checkedAll ? (
                 <Chip

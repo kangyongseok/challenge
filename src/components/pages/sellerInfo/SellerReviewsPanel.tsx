@@ -6,6 +6,8 @@ import { useInView } from 'react-intersection-observer';
 import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 
+import { Skeleton } from '@components/UI/atoms';
+
 import { logEvent } from '@library/amplitude';
 
 import { fetchReviewInfo } from '@api/product';
@@ -37,7 +39,7 @@ function SellerReviewsPanel() {
   };
   const { ref, inView } = useInView();
   const productsPage = useRef(0);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
     queryKeys.products.reviewInfo(reviewInfoParams),
     async ({ pageParam = 0 }) => fetchReviewInfo({ ...reviewInfoParams, page: pageParam }),
     {
@@ -101,7 +103,7 @@ function SellerReviewsPanel() {
           <Typography variant="h4" weight="bold">
             {(firstReviewInfo.siteUrl.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
           </Typography>
-          <Flexbox gap={12}>
+          <Flexbox gap={12} alignment="center">
             {isCamelProduct && (
               <Flexbox alignment="center">
                 <Typography variant="h4" weight="bold">
@@ -137,26 +139,47 @@ function SellerReviewsPanel() {
           </Typography>
         </Alert>
       )}
-      {data?.pages?.map((reviewInfo) =>
-        reviewInfo?.sellerReviews?.content?.map((sellerReview) => (
-          <ReviewCard
-            key={`seller-review-card-${sellerReview.id}`}
-            sellerReview={sellerReview}
-            site={reviewInfo.site || {}}
-            curnScore={reviewInfo.curnScore}
-            maxScore={reviewInfo.maxScore}
-            productId={Number(productId)}
-            onReport={() => {
-              handleClickCard();
-              setToastState(() => ({ type: 'report', open: true }));
-            }}
-            onBlock={() => {
-              handleClickCard();
-              setToastState(() => ({ type: 'block', open: true }));
-            }}
-          />
-        ))
+      {isLoading && (
+        <Flexbox gap={8} justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
+          <Skeleton width="100%" maxWidth="80px" height="24px" disableAspectRatio />
+          <Skeleton width="100%" maxWidth="120px" height="24px" disableAspectRatio />
+        </Flexbox>
       )}
+      {isLoading && (
+        <Flexbox direction="vertical" gap={8}>
+          {Array.from({ length: 10 }).map((_, index) => (
+            <Skeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`seller-review-card-${index}`}
+              width="100%"
+              height="62px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 8 }}
+            />
+          ))}
+        </Flexbox>
+      )}
+      {!isLoading &&
+        data?.pages?.map((reviewInfo) =>
+          reviewInfo?.sellerReviews?.content?.map((sellerReview) => (
+            <ReviewCard
+              key={`seller-review-card-${sellerReview.id}`}
+              sellerReview={sellerReview}
+              site={reviewInfo.site || {}}
+              curnScore={reviewInfo.curnScore}
+              maxScore={reviewInfo.maxScore}
+              productId={Number(productId)}
+              onReport={() => {
+                handleClickCard();
+                setToastState(() => ({ type: 'report', open: true }));
+              }}
+              onBlock={() => {
+                handleClickCard();
+                setToastState(() => ({ type: 'block', open: true }));
+              }}
+            />
+          ))
+        )}
       {!isFetchingNextPage && hasNextPage && (
         <Box
           ref={ref}

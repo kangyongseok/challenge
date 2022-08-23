@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import ProductListCard from '@components/UI/molecules/ProductListCard';
+import { ProductListCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -30,7 +31,7 @@ function SellerProductsPanel() {
   };
 
   const { ref, inView } = useInView();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
     queryKeys.products.sellerProducts(sellerProductsParams),
     async ({ pageParam = 0 }) => fetchSellerProducts({ ...sellerProductsParams, page: pageParam }),
     {
@@ -79,21 +80,27 @@ function SellerProductsPanel() {
         </Typography>
       </Box>
       <Flexbox direction="vertical" gap={20}>
-        {data?.pages?.map((sellerProducts) =>
-          sellerProducts?.content?.map((product) => (
-            <Box key={`sellerInfo-seller-product-${product.id}`}>
-              <ProductListCard
-                product={product}
-                productAtt={{
-                  name: attrKeys.products.SELLER_PRODUCT,
-                  ...product
-                }}
-                isRound
-                source={attrProperty.productSource.SELLER_PRODUCT}
-              />
-            </Box>
-          ))
-        )}
+        {isLoading &&
+          Array.from({ length: 10 }).map((_, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <ProductListCardSkeleton key={`sellerInfo-seller-product-skeleton-${index}`} isRound />
+          ))}
+        {!isLoading &&
+          data?.pages?.map((sellerProducts) =>
+            sellerProducts?.content?.map((product) => (
+              <Box key={`sellerInfo-seller-product-${product.id}`}>
+                <ProductListCard
+                  product={product}
+                  productAtt={{
+                    name: attrKeys.products.SELLER_PRODUCT,
+                    ...product
+                  }}
+                  isRound
+                  source={attrProperty.productSource.SELLER_PRODUCT}
+                />
+              </Box>
+            ))
+          )}
       </Flexbox>
       {!isFetchingNextPage && hasNextPage && (
         <Box

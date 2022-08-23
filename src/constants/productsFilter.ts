@@ -247,7 +247,7 @@ export const idFilterOptions = [
   },
   {
     id: 103,
-    name: '가품의견',
+    name: '가품의심',
     viewName: '감정완료-가품의심'
   }
 ];

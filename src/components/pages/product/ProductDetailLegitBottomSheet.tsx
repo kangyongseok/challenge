@@ -40,6 +40,12 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
     }
   }, [legitBottomSheet]);
 
+  useEffect(() => {
+    return () => {
+      atomLegitBottomSheet(false);
+    };
+  }, [atomLegitBottomSheet]);
+
   return (
     // eslint-disable-next-line no-console
     <BottomSheet

@@ -111,6 +111,16 @@ function BrandTabPanel() {
     if (scrollElementRef.current) scrollElementRef.current?.scrollTo(0, 0);
   }, [sortValue]);
 
+  useEffect(() => {
+    return () => {
+      setProductsFilterActionStateFamily(({ type }) => ({
+        type,
+        sortValue,
+        filterValue: ''
+      }));
+    };
+  }, [setProductsFilterActionStateFamily, sortValue]);
+
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
       <BrandSearchBar hasFilterValue={!!filterValue}>

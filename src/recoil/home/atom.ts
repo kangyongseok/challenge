@@ -23,3 +23,8 @@ export const homeSelectedTabStateFamily = atomFamily<
     prevScroll: 0
   }
 });
+
+export const homeLegitResultTooltipCloseState = atom({
+  key: 'homeLegitResultTooltipCloseState',
+  default: false
+});

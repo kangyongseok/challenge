@@ -17,12 +17,15 @@ import {
 import styled from '@emotion/styled';
 
 import { ProductLegitCard } from '@components/UI/molecules';
+import LegitLiveGuideAlert from '@components/pages/legit/LegitLiveGuideAlert';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserLegitTargets } from '@api/user';
 import { postProductLegit } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -72,6 +75,9 @@ function LegitRecommendList() {
     logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.legitName.LEGIT_MAIN,
       title: attrProperty.legitTitle.WISHRECENT_LEGIT
+    });
+    SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
+      source: attrProperty.legitSource.LEGIT_TARGET
     });
     const dataProductId = e.currentTarget.getAttribute('data-product-id');
     router.push(`/products/${dataProductId}`);
@@ -152,6 +158,7 @@ function LegitRecommendList() {
           모두 실시간 사진감정 해보기
         </Button>
       </StyledLegitRecommendGrid>
+      <LegitLiveGuideAlert customStyle={{ marginTop: 16, backgroundColor: common.white }} />
       <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>
         <Box customStyle={{ padding: '24px 20px 20px' }}>
           <Typography variant="h4">

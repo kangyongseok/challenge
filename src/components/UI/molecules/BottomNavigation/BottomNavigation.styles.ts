@@ -1,4 +1,4 @@
-import { Label } from 'mrcamel-ui';
+import { Label, Tooltip } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
@@ -84,4 +84,16 @@ export const NewBadge = styled(Badge)`
         palette: { common }
       }
     }) => common.white};
+`;
+
+export const LegitResultTooltip = styled(Tooltip)`
+  & > div {
+    position: fixed;
+    width: calc(100% - 40px);
+    height: fit-content;
+    top: auto;
+    bottom: -30px;
+    text-align: center;
+  }
+  z-index: ${({ theme: { zIndex } }) => zIndex.sheet - 1};
 `;

@@ -271,6 +271,7 @@ function CategoryTabPanel() {
             <FilterAccordion
               key={`gender-filter-option-${genderId}`}
               summary={genderName}
+              expanded={false}
               expandIcon={<Icon name="CaretRightOutlined" size="small" />}
               changeInterceptor={() => {
                 setCurrentGenderId(genderId);
@@ -324,6 +325,7 @@ function CategoryTabPanel() {
                 }) => (
                   <FilterAccordion
                     key={`pc-filter-option-${genderId}-${parentCategoryId}`}
+                    expanded={parentCategories.length === 1}
                     summary={parentCategoryName.replace(/\(P\)/g, '')}
                     customButton={
                       checkedAll ? (

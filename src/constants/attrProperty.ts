@@ -109,6 +109,7 @@ const productType = {
 };
 
 const legitName = {
+  LEGIT: 'LEGIT',
   LEGIT_MAIN: 'LEGIT_MAIN',
   LEGIT_MY: 'LEGIT_MY',
   LEGIT_POPUP: 'LEGIT_POPUP',
@@ -122,6 +123,24 @@ const legitTitle = {
   LEGIT_PUSHALERT: 'LEGIT_PUSHALERT',
   WISH_TO_LEGIT: 'WISH_TO_LEGIT',
   WISHRECENT_LEGIT: 'WISHRECENT_LEGIT',
+  LEGIT_CASE_FILTER: 'LEGIT_CASE_FILTER',
+  LEGITRESULT_TOOLTIP: 'LEGITRESULT_TOOLTIP',
+  LEGIT_SHARE: 'LEGIT_SHARE',
+  LEGIT_VIDEO: 'LEGIT_VIDEO',
+  BRAND: 'BRAND',
+  MYLEGIT: 'MYLEGIT'
+};
+
+const legitSource = {
+  LEGIT_TARGET: 'LEGIT_TARGET'
+};
+
+const legitType = {
+  GUIDED: 'GUIDED',
+  HOWTO: 'HOWTO',
+  LEGIT_PUSHALERT: 'LEGIT_PUSHALERT',
+  WISH_TO_LEGIT: 'WISH_TO_LEGIT',
+  WISHRECENT_LEGIT: 'WISHRECENT_LEGIT',
   LEGIT_CASE_FILTER: 'LEGIT_CASE_FILTER'
 };
 
@@ -131,7 +150,9 @@ const attrProperty = {
   productSource,
   productType,
   legitName,
-  legitTitle
+  legitTitle,
+  legitSource,
+  legitType
 };
 
 export default attrProperty;

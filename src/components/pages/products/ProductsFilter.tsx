@@ -1048,7 +1048,7 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
 
   return (
     <>
-      <Box component="section" customStyle={{ height: 85 }}>
+      <Box component="section" customStyle={{ height: 81 }}>
         <StyledProductsFilter
           ref={productsFilterRef}
           variant={variant}

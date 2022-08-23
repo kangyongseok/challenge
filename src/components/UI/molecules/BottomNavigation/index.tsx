@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -6,15 +6,17 @@ import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
-import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import { AppDownloadDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
+import { commaNumber } from '@utils/common';
 
 import {
   productsKeywordAutoSaveTriggerState,
@@ -22,12 +24,13 @@ import {
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
 import { legitCompleteGridParamsState } from '@recoil/legitCompleteGrid';
-import { homeSelectedTabStateFamily } from '@recoil/home';
+import { homeLegitResultTooltipCloseState, homeSelectedTabStateFamily } from '@recoil/home';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import {
+  LegitResultTooltip,
   List,
   ListItem,
   NewBadge,
@@ -103,16 +106,20 @@ function BottomNavigation({
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
   const resetLegitCompleteGridParamsState = useResetRecoilState(legitCompleteGridParamsState);
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
+  const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
   const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
 
-  const { data: { priceNotiProducts = [] } = {} } = useQueryUserInfo();
+  const { data: { priceNotiProducts = [], notViewedLegitCount = 0 } = {}, isLoading } =
+    useQueryUserInfo();
 
   const triggered = useReverseScrollTrigger(!disableHideOnScroll);
 
   const [isAppDownModal, setIsAppDownModal] = useState(false);
   const [logAtt] = useState('');
-  const wishNavRef = useRef<HTMLLIElement | null>(null);
+  const legitNavRef = useRef<HTMLLIElement | null>(null);
+  const [openTooltip, setOpenTooltip] = useState(false);
+  const [triangleLeft, setTriangleLeft] = useState(0);
 
   const confirmPriceNotiProducts = useMemo(() => {
     return priceNotiProducts.filter(({ priceBefore, price }) => {
@@ -125,7 +132,12 @@ function BottomNavigation({
 
   const handleClickInterceptor =
     (title: string, logName: string, href: string) => (e: MouseEvent<HTMLAnchorElement>) => {
-      logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`);
+      logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
+        title:
+          !isLoading && notViewedLegitCount && logName === 'LEGIT'
+            ? attrProperty.legitTitle.LEGITRESULT_TOOLTIP
+            : undefined
+      });
 
       if (title === '홈') {
         resetProductKeyword();
@@ -166,6 +178,75 @@ function BottomNavigation({
       }
     };
 
+  const handleClose = (e: MouseEvent<HTMLOrSVGElement>) => {
+    logEvent(attrKeys.home.CLICK_CLOSE, {
+      title: attrProperty.legitTitle.LEGITRESULT_TOOLTIP
+    });
+
+    e.stopPropagation();
+
+    setOpenTooltip(false);
+    setLegitResultTooltipCloseState(true);
+  };
+
+  const handleResize = useCallback(() => {
+    if (legitNavRef.current && openTooltip) {
+      setTriangleLeft(legitNavRef.current.offsetLeft + legitNavRef.current.clientWidth / 2 - 32);
+    }
+  }, [openTooltip]);
+
+  const handleClickTooltip = () => {
+    logEvent(attrKeys.home.CLICK_CLOSE, {
+      title: attrProperty.legitTitle.LEGITRESULT_TOOLTIP
+    });
+    setOpenTooltip(false);
+    setLegitResultTooltipCloseState(true);
+    router.push({
+      pathname: '/legit',
+      query: {
+        tab: 'my'
+      }
+    });
+  };
+
+  const getQuery = (href: string) => {
+    if (href === '/wishes' && confirmPriceNotiProducts.length) {
+      return { scrollToProductId: confirmPriceNotiProducts[0].id };
+    }
+    if (href === '/legit' && notViewedLegitCount) {
+      return { tab: 'my' };
+    }
+    return undefined;
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [handleResize]);
+
+  useEffect(() => {
+    if (legitNavRef.current && openTooltip) {
+      setTriangleLeft(
+        legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 32
+      );
+    }
+  }, [openTooltip]);
+
+  useEffect(() => {
+    if (router.pathname === '/' && !isLoading && notViewedLegitCount) {
+      logEvent(attrKeys.home.VIEW_LEGITRESULT_TOOLTIP, {
+        name: attrProperty.productName.MAIN
+      });
+      setOpenTooltip(true);
+    } else if (router.pathname === '/' && !isLoading && !notViewedLegitCount) {
+      setOpenTooltip(false);
+      setLegitResultTooltipCloseState(true);
+    }
+  }, [router.pathname, isLoading, notViewedLegitCount, setLegitResultTooltipCloseState]);
+
   return (
     <>
       <StyledBottomNavigation display={display}>
@@ -176,25 +257,19 @@ function BottomNavigation({
             return (
               <ListItem
                 key={`bottom-navigation-${navData.title}`}
-                ref={navData.href === '/wishes' ? wishNavRef : undefined}
+                ref={navData.href === '/legit' ? legitNavRef : undefined}
               >
-                {navData.href === '/legit' && (
+                {navData.href === '/legit' && !isLoading && !notViewedLegitCount && (
                   <NewLabel variant="contained" text="NEW" size="xsmall" />
                 )}
                 <Link
                   href={{
                     pathname: navData.href,
-                    query:
-                      navData.href === '/wishes' && confirmPriceNotiProducts.length
-                        ? { scrollToProductId: confirmPriceNotiProducts[0].id }
-                        : undefined
+                    query: getQuery(navData.href)
                   }}
                   as={{
                     pathname: navData.href,
-                    query:
-                      navData.href === '/wishes' && confirmPriceNotiProducts.length
-                        ? { scrollToProductId: confirmPriceNotiProducts[0].id }
-                        : undefined
+                    query: getQuery(navData.href)
                   }}
                   passHref
                 >
@@ -210,7 +285,7 @@ function BottomNavigation({
                       <NewBadge
                         brandColor="red"
                         position="absolute"
-                        open={false}
+                        open={navData.href === '/legit' && !isLoading && !!notViewedLegitCount}
                         width={10}
                         height={10}
                       />
@@ -238,6 +313,41 @@ function BottomNavigation({
         onClose={() => setIsAppDownModal(false)}
         att={logAtt}
         name="FOOTER"
+      />
+      <LegitResultTooltip
+        open={openTooltip}
+        round="8"
+        message={
+          <Flexbox direction="vertical" gap={11}>
+            <Box
+              customStyle={{
+                display: 'grid',
+                alignItems: 'center',
+                gridTemplateColumns: '1fr 1fr 1fr'
+              }}
+            >
+              <div />
+              <Typography
+                variant="small1"
+                weight="bold"
+                customStyle={{
+                  textAlign: 'center',
+                  color: common.grey['60']
+                }}
+              >
+                🔔 감정결과 알림
+              </Typography>
+              <Flexbox customStyle={{ justifyContent: 'flex-end' }}>
+                <Icon name="CloseOutlined" onClick={handleClose} color={common.grey['60']} />
+              </Flexbox>
+            </Box>
+            <Typography weight="medium" customStyle={{ color: common.white }}>
+              미확인 감정결과가 {commaNumber(notViewedLegitCount)}건 있습니다!{' '}
+            </Typography>
+          </Flexbox>
+        }
+        triangleLeft={triangleLeft}
+        onClick={handleClickTooltip}
       />
     </>
   );

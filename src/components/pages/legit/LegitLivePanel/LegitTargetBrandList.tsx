@@ -7,10 +7,12 @@ import styled from '@emotion/styled';
 
 import Skeleton from '@components/UI/atoms/Skeleton';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchLegitDashboard } from '@api/dashboard';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -23,12 +25,17 @@ function LegitTargetBrandList() {
   );
 
   const handleClick = (e: MouseEvent<HTMLImageElement>) => {
-    const dataName = e.currentTarget.getAttribute('data-name');
-
     logEvent(attrKeys.legit.CLICK_LEGIT_BRAND, {
       name: attrProperty.legitName.LEGIT_MAIN,
       att: 'BRAND'
     });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.legitName.LEGIT,
+      title: attrProperty.legitTitle.BRAND,
+      type: attrProperty.legitType.GUIDED
+    });
+
+    const dataName = e.currentTarget.getAttribute('data-name');
 
     router.push({
       pathname: `/products/brands/${dataName}`,

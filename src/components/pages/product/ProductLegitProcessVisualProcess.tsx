@@ -20,6 +20,7 @@ import authInfoIcon from '@constants/authInfoIcon';
 import attrKeys from '@constants/attrKeys';
 
 import { animationKeyframesState, firstUserAnimationState } from '@recoil/productLegitProcess';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 interface ProcessInfo {
   label: string;
@@ -51,11 +52,13 @@ function ProductLegitProcessVisualProcess() {
       palette: { common, primary, secondary }
     }
   } = useTheme();
+  const { refetch } = useQueryUserInfo();
   const { data } = useQuery(
     queryKeys.products.productLegit({ productId }),
     () => fetchProductLegit(productId),
     {
       enabled: !!router.query.id,
+      onSuccess: () => refetch(),
       refetchOnMount: (result) => {
         return isEmpty(result) ? 'always' : true;
       }

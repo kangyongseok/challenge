@@ -94,7 +94,7 @@ function ProductsOrderFilterBottomSheet() {
         justifyContent="space-between"
         customStyle={{ margin: '16px 20px 0 20px', textAlign: 'right' }}
       >
-        <Typography variant="h4" weight="bold">
+        <Typography variant="h3" weight="bold">
           정렬 필터
         </Typography>
         <Icon

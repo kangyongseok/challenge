@@ -181,7 +181,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
         }}
       >
         <Flexbox alignment="center" justifyContent="space-between">
-          <Typography variant="h4" weight="bold">
+          <Typography variant="h3" weight="bold">
             이 검색 저장하기
           </Typography>
           <Icon name="CloseOutlined" onClick={handleClose} />

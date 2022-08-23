@@ -1,7 +1,9 @@
 import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image } from '@components/UI/atoms';
+import Image from '@components/UI/atoms/Image';
+
+import LegitIntro from '../legit/LegitLivePanel/LegitIntro';
 
 function LegitGuideDescription() {
   const {
@@ -11,7 +13,10 @@ function LegitGuideDescription() {
   } = useTheme();
   return (
     <StyledLegitGuideDescription>
-      <Box customStyle={{ fontSize: 36 }}>☝️</Box>
+      <Box customStyle={{ padding: '0 20px' }}>
+        <LegitIntro forceRender />
+      </Box>
+      <Box customStyle={{ marginTop: 58, fontSize: 36 }}>☝️</Box>
       <Typography variant="h2" weight="bold" customStyle={{ marginTop: 8 }}>
         사진 올릴 필요 없어요!
       </Typography>
@@ -77,6 +82,7 @@ const StyledLegitGuideDescription = styled.section`
   }) => common.white};
   box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.05);
   border-radius: 24px 24px 0 0;
+  overflow: hidden;
 `;
 
 export default LegitGuideDescription;

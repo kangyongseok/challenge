@@ -68,6 +68,7 @@ interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   onWishAfterChangeCallback?: () => void;
   customStyle?: CustomStyle;
   isRound?: boolean;
+  isLegitViewed?: boolean;
   name?: string;
   source?: string;
 }
@@ -88,6 +89,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     wishAtt,
     source,
     isRound = false,
+    isLegitViewed = true,
     ...props
   },
   ref
@@ -329,7 +331,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             position="absolute"
             width={8}
             height={8}
-            open={!hideNewLegitBadge}
+            open={!hideNewLegitBadge && !isLegitViewed}
             customStyle={{ top: 12, left: -12 }}
           />
           <Content isRound={isRound}>

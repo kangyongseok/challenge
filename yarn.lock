@@ -4179,10 +4179,10 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
-mrcamel-ui@^0.1.20:
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.20.tgz#60833038e3571e99db192643d6b97f1f40b7d473"
-  integrity sha512-m0BPkpisFFFGBnPWi7bGDGYx2gL/JebJII8hg7sHSX8p9BA1fZUS9agvo4QtZVqOIU2xEuy8iYBSYXEFNr3h3w==
+mrcamel-ui@^0.1.25:
+  version "0.1.25"
+  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.25.tgz#4038ccb675294d7ffaf77d0fc3d18f3b6cc7128b"
+  integrity sha512-4hc37WbkyMy+Hp5TSAiTtrxZpEm0EkuzPC5Wn7B4uMdX9tnOfN9wWNHhPNjAksvmGH18W+h+l/0UL1mz16IWvw==
 
 ms@2.0.0:
   version "2.0.0"

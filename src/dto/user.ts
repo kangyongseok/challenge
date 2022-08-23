@@ -117,6 +117,7 @@ export interface UserInfo {
     images: string[];
     legitTargetCount: number;
   };
+  notViewedLegitCount?: number;
 }
 
 export type UserWish = {

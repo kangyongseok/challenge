@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -14,6 +15,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/formats';
 
+import { homeLegitResultTooltipCloseState } from '@recoil/home';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import {
@@ -41,6 +43,9 @@ function LegitInduceFloatingBanner({
   customStyle
 }: LegitInduceFloatingBannerProps) {
   const router = useRouter();
+
+  const closeLegitResultTooltip = useRecoilValue(homeLegitResultTooltipCloseState);
+
   const {
     theme: {
       palette: { secondary, common }
@@ -64,14 +69,14 @@ function LegitInduceFloatingBanner({
   };
 
   useEffect(() => {
-    if (legitTargetCount && channelTalkPosition) {
+    if (legitTargetCount && channelTalkPosition && closeLegitResultTooltip) {
       ChannelTalk.moveChannelButtonPosition(channelTalkPosition);
     }
 
     return () => {
       ChannelTalk.resetChannelButtonPosition();
     };
-  }, [legitTargetCount, channelTalkPosition]);
+  }, [legitTargetCount, channelTalkPosition, closeLegitResultTooltip]);
 
   useEffect(() => {
     if (legitTargetCount) {
@@ -82,7 +87,7 @@ function LegitInduceFloatingBanner({
     }
   }, [legitTargetCount, name]);
 
-  if (!legitTargetCount) return null;
+  if (!legitTargetCount || !closeLegitResultTooltip) return null;
 
   return (
     <StyledLegitInduceFloatingBanner
@@ -134,7 +139,7 @@ function LegitInduceFloatingBanner({
         <Icon
           name="CaretRightOutlined"
           size="small"
-          color={themeType === 'dark' ? 'white' : undefined}
+          color={themeType === 'dark' ? common.white : undefined}
           customStyle={{ minWidth: 16, cursor: 'pointer' }}
         />
       </Flexbox>

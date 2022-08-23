@@ -243,7 +243,7 @@ function ProductsMapFilterBottomSheet() {
         justifyContent="space-between"
         customStyle={{ margin: '16px 20px 0 20px', textAlign: 'right' }}
       >
-        <Typography variant="h4" weight="bold">
+        <Typography variant="h3" weight="bold">
           거리 설정
         </Typography>
         <Icon name="CloseOutlined" size="large" onClick={handleClose} />

@@ -11,7 +11,6 @@ import LegitParticipantsIntro from './LegitParticipantsIntro';
 import LegitIntro from './LegitIntro';
 import LegitContactBanner from './LegitContactBanner';
 import LegitCompleteGrid from './LegitCompleteGrid';
-import LegitLiveGuideAlert from '../LegitLiveGuideAlert';
 
 function LegitLivePanel() {
   useEffect(() => {
@@ -20,7 +19,6 @@ function LegitLivePanel() {
   return (
     <>
       <LegitIntro />
-      <LegitLiveGuideAlert />
       <LegitRecommendList />
       <LegitTargetBrandList />
       <LegitCompleteGrid />

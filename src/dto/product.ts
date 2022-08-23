@@ -432,6 +432,7 @@ export interface ProductLegit {
   dateUpdated: number;
   isWish: boolean;
   isFollow: boolean;
+  isViewed: boolean;
   productId: number;
   productResult: Product;
   result: 0 | 1 | 2 | 3;

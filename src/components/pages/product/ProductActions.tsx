@@ -184,7 +184,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   const handleClickShareIcon = (platform: SocialPlatform) => () => {
     if (!product) return;
 
-    const url = `${window.location.origin}/product/${product.id}`;
+    const url = `${window.location.origin}/products/${product.id}`;
     let viewPrice = product.price / 10000;
 
     const title = () => {

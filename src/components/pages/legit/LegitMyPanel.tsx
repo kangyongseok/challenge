@@ -9,10 +9,12 @@ import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecul
 import { Image } from '@components/UI/atoms';
 import LegitLiveGuideAlert from '@components/pages/legit/LegitLiveGuideAlert';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserLegitProducts } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -51,6 +53,25 @@ function LegitMyPanel() {
     const dataProductId = e.currentTarget.getAttribute('data-product-id');
 
     router.push(`/products/${dataProductId}/legit`);
+  };
+
+  const handleClickButton = () => {
+    logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
+      name: attrProperty.legitName.LEGIT_MY
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.legitName.LEGIT,
+      title: attrProperty.legitTitle.MYLEGIT,
+      type: attrProperty.legitType.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/brands/구찌',
+      query: {
+        parentIds: 98,
+        idFilterIds: 100
+      }
+    });
   };
 
   useEffect(() => {
@@ -120,22 +141,7 @@ function LegitMyPanel() {
           </Typography>
         </Flexbox>
         <Box customStyle={{ marginTop: 20, textAlign: 'center' }}>
-          <CtaButton
-            variant="contained"
-            brandColor="primary"
-            onClick={() => {
-              logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
-                name: attrProperty.legitName.LEGIT_MY
-              });
-              router.push({
-                pathname: '/products/brands/구찌',
-                query: {
-                  parentIds: 98,
-                  idFilterIds: 100
-                }
-              });
-            }}
-          >
+          <CtaButton variant="contained" brandColor="primary" onClick={handleClickButton}>
             감정가능한 매물 보러가기
           </CtaButton>
         </Box>
@@ -160,7 +166,7 @@ function LegitMyPanel() {
                 // eslint-disable-next-line react/no-array-index-key
                 <ProductListCardSkeleton key={`legit-my-product-${index}`} isRound />
               ))
-            : legitProducts.map(({ productId, productResult, status }) => (
+            : legitProducts.map(({ productId, productResult, status, isViewed }) => (
                 <ProductListCard
                   key={`legit-my-product-${productId}`}
                   product={{
@@ -171,7 +177,9 @@ function LegitMyPanel() {
                   data-product-id={productId}
                   onClick={handleClick}
                   hideProductLabel={false}
+                  hideNewLegitBadge={false}
                   isRound
+                  isLegitViewed={isViewed}
                 />
               ))}
         </Flexbox>

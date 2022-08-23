@@ -10,9 +10,13 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
+
 function LegitTabs() {
   const router = useRouter();
   const { tab = 'live' } = router.query;
+
+  const { data: { notViewedLegitCount = 0 } = {}, isLoading } = useQueryUserInfo();
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const dataTab = e.currentTarget.getAttribute('data-tab');
@@ -41,7 +45,11 @@ function LegitTabs() {
         <Typography variant="h4" weight="bold">
           내 사진감정
         </Typography>
-        <NewCounterBadge>5</NewCounterBadge>
+        {!isLoading && notViewedLegitCount > 0 && (
+          <NewCounterBadge>
+            {notViewedLegitCount > 99 ? '99+' : notViewedLegitCount}
+          </NewCounterBadge>
+        )}
       </AuthTab>
     </StyledAuthTabs>
   );
@@ -89,12 +97,18 @@ const AuthTab = styled.button<{ isActive?: boolean }>`
 `;
 
 const NewCounterBadge = styled.div`
-  display: none;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  padding: 1px 5px;
   margin-left: 2px;
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.white};
   border-radius: 10px;
   background-color: ${({
     theme: {
