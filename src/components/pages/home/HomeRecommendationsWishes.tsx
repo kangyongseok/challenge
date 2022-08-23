@@ -10,10 +10,12 @@ import styled from '@emotion/styled';
 
 import { Image, Skeleton } from '@components/UI/atoms';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchRecommWishes } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -37,6 +39,18 @@ function HomeRecommendationsWishes() {
     enabled: !!accessUser,
     refetchOnMount: true
   });
+
+  const handleClick = (id: number, isPriceLow: boolean) => () => {
+    logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
+      name: attrProperty.productName.MAIN,
+      title: attrProperty.productTitle.WISHPRODUCT,
+      att: isPriceLow ? 'PRICELOW' : 'HOT'
+    });
+    SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
+      source: attrProperty.productSource.MAIN_WISH
+    });
+    router.push(`/products/${id}`);
+  };
 
   const onLoadSwiperSlide = useCallback(
     (index: number, priceBefore: number | null) => () => {
@@ -90,7 +104,7 @@ function HomeRecommendationsWishes() {
                   key={`recommendations-wishes-card-${id}`}
                   onLoad={onLoadSwiperSlide(index, priceBefore)}
                 >
-                  <Card onClick={() => router.push(`/products/${id}`)}>
+                  <Card onClick={handleClick(id, !!priceBefore)}>
                     <Flexbox gap={8} direction="vertical" customStyle={{ overflow: 'hidden' }}>
                       <Flexbox gap={2} direction="vertical">
                         <Title variant={priceBefore ? 'body2' : 'body1'}>찜한 {title}</Title>

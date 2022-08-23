@@ -139,7 +139,7 @@ function HomeRecentSearchList() {
 
   const handleClickProductKeywordProduct = useCallback(
     (product: Product, index: number) => () => {
-      logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
+      logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
         name: attrProperty.productName.MAIN,
         title: attrProperty.productTitle.RECENT,
         index: index + 1,

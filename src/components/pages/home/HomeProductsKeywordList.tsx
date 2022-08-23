@@ -56,6 +56,7 @@ function HomeProductsKeywordList() {
 
       if (firstProduct && selectedIndex === 0) {
         setSelectedTabState((currVal) => ({ ...currVal, selectedId: firstProduct.id }));
+        logEvent(attrKeys.home.VIEW_MYLIST, { name: attrProperty.productName.MAIN });
         logEvent(attrKeys.home.LOAD_MYLIST, {
           name: attrProperty.productName.MAIN,
           title: attrProperty.productTitle.MYLIST,
@@ -250,10 +251,6 @@ function HomeProductsKeywordList() {
       });
     }
   }, [isLoading, productKeywordViewMutate, router, selectedProductKeyword]);
-
-  useEffect(() => {
-    logEvent(attrKeys.home.VIEW_MYLIST, { name: attrProperty.productName.MAIN });
-  }, []);
 
   useEffect(() => {
     if (productKeywordTabRef.current && prevScroll) {

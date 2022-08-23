@@ -86,7 +86,7 @@ function Searching() {
       isUndefined
     );
 
-    const onSuccessPostPorductKeyword = () => {
+    const moveToProducts = () => {
       queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
       setTimeout(
         () => router.replace({ pathname: `/products/brands/${brand.name}`, query: productSearch }),
@@ -98,48 +98,61 @@ function Searching() {
       logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, { name: attrProperty.productName.AUTO });
 
       if (categorySizeIds?.length) {
-        fetchSizeMapping().then((sizeMapping) => {
-          const { outer, top, bottom, shoe } = sizeMapping[gender.name as keyof typeof sizeMapping];
-          const sizesData = [
-            ...outer.filter(
-              ({ size: { parentCategoryId, categorySizeId } }) =>
-                parentCategoryId === parentCategory.id &&
-                categorySizeIds.some((id) => id === categorySizeId)
-            ),
-            ...top.filter(
-              ({ size: { parentCategoryId, categorySizeId } }) =>
-                parentCategoryId === parentCategory.id &&
-                categorySizeIds.some((id) => id === categorySizeId)
-            ),
-            ...bottom.filter(
-              ({ size: { parentCategoryId, categorySizeId } }) =>
-                parentCategoryId === parentCategory.id &&
-                categorySizeIds.some((id) => id === categorySizeId)
-            ),
-            ...shoe.filter(
-              ({ size: { parentCategoryId, categorySizeId } }) =>
-                parentCategoryId === parentCategory.id &&
-                categorySizeIds.some((id) => id === categorySizeId)
-            )
-          ];
-
-          if (sizesData.length) {
-            productSearch.categorySizeIds = categorySizeIds.concat(
-              sizesData.flatMap(({ subSize }) =>
-                subSize.map(({ categorySizeId }) => categorySizeId)
+        fetchSizeMapping()
+          .then((sizeMapping) => {
+            const { outer, top, bottom, shoe } =
+              sizeMapping[gender.name as keyof typeof sizeMapping];
+            const sizesData = [
+              ...outer.filter(
+                ({ size: { parentCategoryId, categorySizeId } }) =>
+                  parentCategoryId === parentCategory.id &&
+                  categorySizeIds.some((id) => id === categorySizeId)
+              ),
+              ...top.filter(
+                ({ size: { parentCategoryId, categorySizeId } }) =>
+                  parentCategoryId === parentCategory.id &&
+                  categorySizeIds.some((id) => id === categorySizeId)
+              ),
+              ...bottom.filter(
+                ({ size: { parentCategoryId, categorySizeId } }) =>
+                  parentCategoryId === parentCategory.id &&
+                  categorySizeIds.some((id) => id === categorySizeId)
+              ),
+              ...shoe.filter(
+                ({ size: { parentCategoryId, categorySizeId } }) =>
+                  parentCategoryId === parentCategory.id &&
+                  categorySizeIds.some((id) => id === categorySizeId)
               )
-            );
-          }
+            ];
 
-          mutate(
-            { productSearch: { ...productSearch, deviceId }, sourceType: 1 },
-            { onSuccess: onSuccessPostPorductKeyword }
-          );
-        });
+            if (sizesData.length) {
+              productSearch.categorySizeIds = categorySizeIds.concat(
+                sizesData.flatMap(({ subSize }) =>
+                  subSize.map(({ categorySizeId }) => categorySizeId)
+                )
+              );
+            }
+
+            mutate(
+              { productSearch: { ...productSearch, deviceId }, sourceType: 1 },
+              {
+                onSettled: () => {
+                  moveToProducts();
+                }
+              }
+            );
+          })
+          .catch(() => {
+            moveToProducts();
+          });
       } else {
         mutate(
           { productSearch: { ...productSearch, deviceId }, sourceType: 1 },
-          { onSuccess: onSuccessPostPorductKeyword }
+          {
+            onSettled: () => {
+              moveToProducts();
+            }
+          }
         );
       }
     } else {
