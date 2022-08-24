@@ -7,7 +7,12 @@ import Initializer from '@library/initializer';
 
 import { postLog } from '@api/log';
 
-import { ACCESS_USER, DEVICE_ID } from '@constants/localStorage';
+import {
+  ACCESS_USER,
+  DEVICE_ID,
+  IS_NOT_FIRST_VISIT,
+  PREV_LAST_ACCESS
+} from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import checkAgent from '@utils/checkAgent';
@@ -301,12 +306,26 @@ const Amplitude = {
       },
       (client) => {
         LocalStorage.set(DEVICE_ID, client.getDeviceId());
+
+        const prevLastAccess = LocalStorage.get<boolean>(PREV_LAST_ACCESS);
+        const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
+
+        let visitType: number | undefined;
+        if (!prevLastAccess && !isNotFirstVisit) {
+          visitType = 0;
+        } else if (prevLastAccess) {
+          visitType = 1;
+        } else if (isNotFirstVisit) {
+          visitType = 2;
+        }
+
         logEvent('LOAD_AMPLITUDE');
         try {
           logEvent('INIT_CONFIG');
           initAmplitude();
           logEvent('INIT_CONFIG_SUCCESS', {
-            userAgent: window.navigator.userAgent
+            userAgent: window.navigator.userAgent,
+            visitType
           });
         } catch (error) {
           logEvent('INIT_CONFIG_FAIL', {

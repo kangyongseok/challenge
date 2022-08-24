@@ -19,3 +19,4 @@ export const LAST_LOGIN_TYPE = 'lastLoginType';
 export const IS_NOT_FIRST_VISIT = 'isFirstVisit';
 export const SAVE_SEARCH_BOOSTING_DONE_USERS = 'saveSearchBoostingDoneUsers';
 export const VIEW_PRODUDCT_DETAIL_ATT_SOURCE = 'viewProductDetailAttSource';
+export const PREV_LAST_ACCESS = 'lastAccess';
