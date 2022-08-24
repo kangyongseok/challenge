@@ -13,11 +13,12 @@ import {
   useTheme
 } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
-import Amplitude, { logEvent } from '@library/amplitude';
+import { logEvent } from '@library/amplitude';
 
 import { postSellerReport } from '@api/product';
 
@@ -95,7 +96,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
             if (
               report.userId === accessUser?.userId ||
-              report.deviceId === Amplitude.getClient()?.getDeviceId()
+              report.deviceId === amplitude.getInstance().getDeviceId()
             ) {
               initReportOptions[reportType].reported = true;
             }
@@ -303,7 +304,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
         {
           reportType,
           productId: product.id,
-          deviceId: Amplitude.getClient()?.getDeviceId()
+          deviceId: amplitude.getInstance().getDeviceId()
         },
         {
           onSuccess: () => {

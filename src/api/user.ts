@@ -23,7 +23,6 @@ import type {
 import type { PageProductLegit, Product, ProductResult } from '@dto/product';
 
 import Axios from '@library/axios';
-import Amplitude from '@library/amplitude';
 
 import { convertQueryStringByObject } from '@utils/common';
 
@@ -114,13 +113,6 @@ export async function fetchUserHoneyNoti() {
   );
 
   return data;
-}
-
-export async function postWishProduct(parameter: { type: 'add' | 'remove'; productId: number }) {
-  const deviceId = Amplitude.getClient()?.getDeviceId() ?? '';
-  await Axios.getInstance().post<void>(
-    `${BASE_PATH}/products/${parameter.productId}/${parameter.type}?deviceId=${deviceId}`
-  );
 }
 
 export async function fetchUserNoti(type: number) {

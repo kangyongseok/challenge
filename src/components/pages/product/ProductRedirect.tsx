@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';
@@ -11,7 +12,6 @@ import Image from '@components/UI/atoms/Image';
 import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
-import Amplitude from '@library/amplitude';
 
 import { PRODUCT_SITE, PRODUCT_SITE_NAVER } from '@constants/product';
 import { ACCESS_USER, APP_BANNER } from '@constants/localStorage';
@@ -53,7 +53,7 @@ function ProductRedirect({
   const windowCloseTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    const sessionId = Amplitude.getClient()?.getSessionId();
+    const sessionId = amplitude.getInstance().getSessionId();
     const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
       sessionId,
       counts: {},

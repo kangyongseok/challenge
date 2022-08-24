@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useRouter } from 'next/router';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
+import amplitude from 'amplitude-js';
 import { animated, useTransition } from '@react-spring/web';
 import styled from '@emotion/styled';
 
@@ -19,7 +20,7 @@ import type { AppleAccount, FacebookAccount, KakaoAppAccount } from '@dto/userAu
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import Axios from '@library/axios';
-import Amplitude, { logEvent } from '@library/amplitude';
+import { logEvent } from '@library/amplitude';
 
 import { fetchKakaoAccount, postKakaoAccessToken } from '@api/userAuth';
 import { fetchArea, fetchUserInfo, postAlarm, postArea } from '@api/user';
@@ -140,7 +141,7 @@ function Login() {
         Axios.clearAccessToken();
 
         const userSnsLoginResult = await postAuthLogin({
-          deviceId: Amplitude.getClient().getDeviceId(),
+          deviceId: amplitude.getInstance().getDeviceId(),
           userSnsLoginInfo: convertUserSnsLoginInfo(userSnsLoginInfo)
         });
 
@@ -153,8 +154,8 @@ function Login() {
         LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
         LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
         Axios.setAccessToken(userSnsLoginResult.jwtToken);
-        Amplitude.getClient().setUserId(String(userSnsLoginResult.accessUser.userId));
-        Initializer.initAccessUserInAmplitude(Amplitude.getClient());
+        amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
+        Initializer.initAccessUserInAmplitude(amplitude.getInstance());
         Initializer.initAccessUserInBraze();
 
         fetchUserInfo().then((userInfo) => {

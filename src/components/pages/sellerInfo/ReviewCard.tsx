@@ -1,11 +1,10 @@
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Rating, Typography, useTheme } from 'mrcamel-ui';
+import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import type { ProductSellerReview, Site } from '@dto/product';
-
-import Amplitude from '@library/amplitude';
 
 import { postSellerReport } from '@api/product';
 
@@ -59,7 +58,7 @@ function ReviewCard({
     }
     block({
       creator,
-      deviceId: Amplitude.getClient().getDeviceId(),
+      deviceId: amplitude.getInstance().getDeviceId(),
       productId,
       reportType: 0,
       userId: accessUser.userId
@@ -76,7 +75,7 @@ function ReviewCard({
       return;
     }
     report({
-      deviceId: Amplitude.getClient().getDeviceId(),
+      deviceId: amplitude.getInstance().getDeviceId(),
       productId,
       reportType: 0,
       reviewId: id,

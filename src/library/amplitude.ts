@@ -1,6 +1,5 @@
 import qs from 'qs';
 import amplitude from 'amplitude-js';
-import type { AmplitudeClient } from 'amplitude-js';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -15,7 +14,6 @@ import checkAgent from '@utils/checkAgent';
 
 import LocalStorage from './localStorage';
 
-let amplitudeClient: AmplitudeClient;
 const isProduction = process.env.NODE_ENV === 'production';
 const channelTalkLogging = process.env.CHANNEL_TALK_LOGGING;
 
@@ -303,7 +301,6 @@ const Amplitude = {
       },
       (client) => {
         LocalStorage.set(DEVICE_ID, client.getDeviceId());
-        amplitudeClient = client;
         logEvent('LOAD_AMPLITUDE');
         try {
           logEvent('INIT_CONFIG');
@@ -318,9 +315,6 @@ const Amplitude = {
         }
       }
     );
-  },
-  getClient() {
-    return amplitudeClient;
   }
 };
 

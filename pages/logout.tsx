@@ -4,12 +4,12 @@ import { useRecoilValue } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
+import amplitude from 'amplitude-js';
 
 import type { FacebookLoginResponse } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
-import Amplitude from '@library/amplitude';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
@@ -24,7 +24,7 @@ function Logout() {
   const { data: accessUser } = useQueryAccessUser();
 
   useEffect(() => {
-    Amplitude.getClient().setUserId(null);
+    amplitude.getInstance().setUserId(null);
 
     if (accessUser?.snsType === 'facebook' && window.FB) {
       window.FB.getLoginStatus((response: FacebookLoginResponse) => {

@@ -1,6 +1,6 @@
 import type { QueryClient } from 'react-query';
 import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
-import { AmplitudeClient } from 'amplitude-js';
+import type { AmplitudeClient } from 'amplitude-js';
 
 import type { AccessUser } from '@dto/userAuth';
 

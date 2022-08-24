@@ -20,6 +20,7 @@ import {
 } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
+import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
@@ -28,7 +29,7 @@ import type { Product, ProductDetail } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
-import Amplitude, { logEvent } from '@library/amplitude';
+import { logEvent } from '@library/amplitude';
 
 import { fetchRelatedProducts } from '@api/product';
 
@@ -160,7 +161,7 @@ function ProductCTAButton({
     return `${siteName}에서 거래하기`;
   }, [hasTarget, isCamelProduct, isCamelSeller, isDup, isReserving, isSoldOut, product]);
 
-  const sessionId = Amplitude.getClient()?.getSessionId();
+  const sessionId = amplitude.getInstance().getSessionId();
   const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
     sessionId,
     counts: {},
