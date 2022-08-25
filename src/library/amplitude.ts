@@ -258,14 +258,26 @@ const returnPlatform = () => {
 
 const initAmplitude = () => {
   const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
+  const prevLastAccess = LocalStorage.get<boolean>(PREV_LAST_ACCESS);
+  const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
   const userId = accessUser?.mrcamelId || accessUser?.userId;
 
   if (userId) {
     amplitude.getInstance().setUserId(String(userId));
   }
 
+  let visitType: number | undefined;
+  if (!prevLastAccess && !isNotFirstVisit) {
+    visitType = 0;
+  } else if (prevLastAccess) {
+    visitType = 1;
+  } else if (isNotFirstVisit) {
+    visitType = 2;
+  }
+
   amplitude.getInstance().setUserProperties({
-    platform_agent: returnPlatform()
+    platform_agent: returnPlatform(),
+    visitType
   });
   Initializer.initAccessUserInAmplitude(amplitude.getInstance());
 };
@@ -307,25 +319,12 @@ const Amplitude = {
       (client) => {
         LocalStorage.set(DEVICE_ID, client.getDeviceId());
 
-        const prevLastAccess = LocalStorage.get<boolean>(PREV_LAST_ACCESS);
-        const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
-
-        let visitType: number | undefined;
-        if (!prevLastAccess && !isNotFirstVisit) {
-          visitType = 0;
-        } else if (prevLastAccess) {
-          visitType = 1;
-        } else if (isNotFirstVisit) {
-          visitType = 2;
-        }
-
         logEvent('LOAD_AMPLITUDE');
         try {
           logEvent('INIT_CONFIG');
           initAmplitude();
           logEvent('INIT_CONFIG_SUCCESS', {
-            userAgent: window.navigator.userAgent,
-            visitType
+            userAgent: window.navigator.userAgent
           });
         } catch (error) {
           logEvent('INIT_CONFIG_FAIL', {
