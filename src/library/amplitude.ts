@@ -11,6 +11,7 @@ import {
   ACCESS_USER,
   DEVICE_ID,
   IS_NOT_FIRST_VISIT,
+  PREV_DEVICE_ID,
   PREV_LAST_ACCESS
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
@@ -315,7 +316,10 @@ const Amplitude = {
         includeReferrer: true,
         includeUtm: true,
         includeGclid: true,
-        deviceId: LocalStorage.get<string>(DEVICE_ID) || undefined
+        deviceId:
+          LocalStorage.get<string>(DEVICE_ID) ||
+          LocalStorage.get<string>(PREV_DEVICE_ID) ||
+          undefined
       },
       () => {
         LocalStorage.set(DEVICE_ID, amplitude.getInstance().getDeviceId());
