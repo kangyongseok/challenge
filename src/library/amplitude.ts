@@ -314,10 +314,11 @@ const Amplitude = {
       {
         includeReferrer: true,
         includeUtm: true,
-        includeGclid: true
+        includeGclid: true,
+        deviceId: LocalStorage.get<string>(DEVICE_ID) || undefined
       },
-      (client) => {
-        LocalStorage.set(DEVICE_ID, client.getDeviceId());
+      () => {
+        LocalStorage.set(DEVICE_ID, amplitude.getInstance().getDeviceId());
 
         logEvent('LOAD_AMPLITUDE');
         try {
