@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, CtaButton, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, CtaButton, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { OrderOptionKeys } from '@components/pages/wishes/WishesFilter';
@@ -105,7 +105,8 @@ function WishesBottomCtaButton() {
             size="large"
             onClick={handleClick}
           >
-            모두 실시간 사진감정 해보기
+            <NewLabel variant="contained" text="무료" />
+            모두 사진감정 해보기
           </CtaButton>
         </CtaButtonWrapper>
       </Box>
@@ -161,6 +162,33 @@ const CtaButtonWrapper = styled.div`
     }
   }) => common.white};
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
+`;
+
+export const NewLabel = styled(Label)`
+  width: 26px;
+  height: 19px;
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.black};
+  border-radius: 10px;
+  ${({
+    theme: {
+      typography: { small2 }
+    }
+  }) => ({
+    fontSize: small2.size,
+    fontWeight: small2.weight.bold,
+    lineHeight: small2.lineHeight,
+    letterSpacing: small2.letterSpacing
+  })}
 `;
 
 export default WishesBottomCtaButton;
