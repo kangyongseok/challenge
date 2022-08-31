@@ -115,11 +115,11 @@ function BrandTabPanel() {
     return () => {
       setProductsFilterActionStateFamily(({ type }) => ({
         type,
-        sortValue,
+        sortValue: 'default',
         filterValue: ''
       }));
     };
-  }, [setProductsFilterActionStateFamily, sortValue]);
+  }, [setProductsFilterActionStateFamily]);
 
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
