@@ -1,4 +1,31 @@
+User-agent: NaverBot
+Disallow: /wishes
+Disallow: /mypage
+Disallow: /user*
+Disallow: /onboarding*
+Disallow: /searchHelper*
+Disallow: /login
+Disallow: /logout
+Allow: /
+
+User-agent: Yeti
+Disallow: /wishes
+Disallow: /mypage
+Disallow: /user*
+Disallow: /onboarding*
+Disallow: /searchHelper*
+Disallow: /login
+Disallow: /logout
+Allow: /
+
 User-agent: *
+Disallow: /wishes
+Disallow: /mypage
+Disallow: /user*
+Disallow: /onboarding*
+Disallow: /searchHelper*
+Disallow: /login
+Disallow: /logout
 Allow: /
 
 Sitemap: https://mrcamel.co.kr/sitemap.xml
