@@ -60,14 +60,15 @@ export default function useProductCardState({
   }, [priceBefore, price]);
 
   const productLegitStatusText = useMemo(() => {
-    if (!(props as Product)?.isProductLegit) return '';
-
     const { status: productLegitStatus } = (props as Product).productLegit || {};
 
     if (productLegitStatus === 30) return '감정완료';
     if (productLegitStatus === 11) return '감정불가';
     if (productLegitStatus === 10 || productLegitStatus === 20 || productLegitStatus === 1)
       return '감정중';
+
+    if (!(props as Product)?.isProductLegit) return '';
+
     return '감정가능';
   }, [props]);
 

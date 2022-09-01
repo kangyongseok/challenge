@@ -38,13 +38,14 @@ interface ProductImagesProps {
     status: number;
     variant?: TypographyVariant;
   }) => EmotionJSX.Element | null;
+  openLegit?: boolean;
 }
 
 function ProductImages({
   isLoading,
   product,
   getProductImageOverlay,
-  isProductLegit
+  openLegit
 }: ProductImagesProps) {
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -220,7 +221,7 @@ function ProductImages({
             {currentSlide + 1}/{detailImages.length + 1}
           </Pagination>
         </Swiper>
-        {isProductLegit && (
+        {openLegit && (
           <ProductDetailLegitImageBottomBanner
             product={product as Product}
             data={product?.productLegit}

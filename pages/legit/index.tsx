@@ -7,7 +7,12 @@ import { useTheme } from 'mrcamel-ui';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { LegitLivePanel, LegitMyPanel, LegitTabs } from '@components/pages/legit';
+import {
+  LegitLivePanel,
+  LegitMyPanel,
+  LegitNoticeBanner,
+  LegitTabs
+} from '@components/pages/legit';
 
 import Initializer from '@library/initializer';
 
@@ -33,9 +38,11 @@ function Legit() {
         customStyle={{
           height: 'auto',
           minHeight: '100%',
-          backgroundColor: common.grey['95']
+          backgroundColor: common.grey['95'],
+          overflowX: 'hidden'
         }}
       >
+        <LegitNoticeBanner />
         <LegitTabs />
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}

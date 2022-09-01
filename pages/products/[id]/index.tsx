@@ -95,7 +95,7 @@ function ProductDetail() {
     isOpenDuplicatedToast: false
   });
   const contentRef = useRef<HTMLHRElement | null>(null);
-  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
+  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice, openLegit } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
     let newIsPriceDown = newTargetProductPrice < newPrice;
@@ -115,12 +115,16 @@ function ProductDetail() {
       newIsPriceDown = false;
     }
 
+    const { product: { productLegit = undefined } = {} } = data || {};
+    const { result = 99 } = productLegit || {};
+
     return {
       isPriceDown: newIsPriceDown,
       isPriceCrm: newSalePrice >= 1,
       isDup: newIsDup,
       hasTarget: newHasTarget,
-      salePrice: newSalePrice
+      salePrice: newSalePrice,
+      openLegit: result >= 0 && result <= 3
     };
   }, [chainPrice, data]);
   const isSafe = useMemo(() => {
@@ -408,10 +412,11 @@ function ProductDetail() {
               product={data?.product}
               getProductImageOverlay={getProductImageOverlay}
               isProductLegit={data?.productLegit}
+              openLegit={openLegit}
             />
             <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
             <ProductActions product={product} onClickSMS={handleClickSMS} />
-            {data?.productLegit && (
+            {data && data.product.productLegit && openLegit && (
               <ProductDetailLegitBanner data={data.product.productLegit} product={data.product} />
             )}
             <ProductSellerReviews product={product} />

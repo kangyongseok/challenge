@@ -64,7 +64,7 @@ const Content = styled.section`
   background-repeat: no-repeat;
   background-image: url('https://${process.env
     .IMAGE_DOMAIN}/assets/images/legit/legit-guide-hands-up.png');
-  z-index: -1;
+  z-index: auto;
 `;
 
 export default LegitGuideHandsUp;

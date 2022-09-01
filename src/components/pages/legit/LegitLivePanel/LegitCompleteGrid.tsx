@@ -101,7 +101,7 @@ function LegitCompleteGrid() {
   };
 
   return (
-    <Flexbox component="section" direction="vertical" customStyle={{ marginTop: 20 }}>
+    <Flexbox component="section" direction="vertical" customStyle={{ marginTop: 62 }}>
       <Typography variant="h3" weight="bold">
         감정완료 사례
       </Typography>

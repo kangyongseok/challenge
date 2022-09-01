@@ -3,18 +3,14 @@ import type { MouseEvent } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
-import LegitLiveGuideAlert from '@components/pages/legit/LegitLiveGuideAlert';
 
-import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserLegitProducts } from '@api/user';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -28,7 +24,7 @@ function LegitMyPanel() {
   const { openCompleteToast = false } = router.query;
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
   const [openToast, setOpenToast] = useState(false);
@@ -55,24 +51,24 @@ function LegitMyPanel() {
     router.push(`/products/${dataProductId}/legit`);
   };
 
-  const handleClickButton = () => {
-    logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
-      name: attrProperty.legitName.LEGIT_MY
-    });
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.legitName.LEGIT,
-      title: attrProperty.legitTitle.MYLEGIT,
-      type: attrProperty.legitType.GUIDED
-    });
-
-    router.push({
-      pathname: '/products/brands/구찌',
-      query: {
-        parentIds: 98,
-        idFilterIds: 100
-      }
-    });
-  };
+  // const handleClickButton = () => {
+  //   logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
+  //     name: attrProperty.legitName.LEGIT_MY
+  //   });
+  //   SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+  //     name: attrProperty.legitName.LEGIT,
+  //     title: attrProperty.legitTitle.MYLEGIT,
+  //     type: attrProperty.legitType.GUIDED
+  //   });
+  //
+  //   router.push({
+  //     pathname: '/products/brands/구찌',
+  //     query: {
+  //       parentIds: 98,
+  //       idFilterIds: 100
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_MY);
@@ -101,55 +97,15 @@ function LegitMyPanel() {
 
   if ((!isFetching && !legitProducts.length) || !accessUser) {
     return (
-      <Box component="section" customStyle={{ marginTop: 40 }}>
+      <Box component="section" customStyle={{ marginTop: 100 }}>
+        <Box customStyle={{ textAlign: 'center', fontSize: 52 }}>🕵️‍♀️</Box>
         <Typography variant="h4" weight="bold" customStyle={{ textAlign: 'center' }}>
           아직 신청 내역이 없어요 😥
         </Typography>
-        <Box customStyle={{ position: 'relative', maxWidth: 285, margin: '10px auto 0' }}>
-          <Image
-            variant="backgroundImage"
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide.png`}
-            alt="Legit Guide Img"
-            customStyle={{
-              position: 'relative',
-              paddingTop: '125%'
-            }}
-          >
-            <Box
-              customStyle={{
-                position: 'absolute',
-                left: '50%',
-                bottom: -3,
-                fontSize: 40,
-                transform: 'translateX(-50%) rotate(40deg)'
-              }}
-            >
-              👈
-            </Box>
-          </Image>
-        </Box>
-        <Flexbox direction="vertical" customStyle={{ marginTop: 10, textAlign: 'center' }}>
-          <Typography customStyle={{ '& > strong': { color: primary.main } }}>
-            궁금한 매물의 상세화면에서
-            <br />
-            <strong>실시간 사진감정</strong>을 바로 신청할 수 있어요!
-          </Typography>
-          <br />
-          <Typography>
-            그럼 가장 신청이 많은 <strong>구찌 지갑</strong>
-            <br /> 구경 한번 가 볼까요?
-          </Typography>
-        </Flexbox>
-        <Box customStyle={{ marginTop: 20, textAlign: 'center' }}>
-          <CtaButton variant="contained" brandColor="primary" onClick={handleClickButton}>
-            감정가능한 매물 보러가기
-          </CtaButton>
-        </Box>
-        <LegitLiveGuideAlert
-          message="실시간 사진감정, 어떻게 진행되는건가요?"
-          name={attrProperty.legitName.LEGIT_MY}
-          customStyle={{ margin: '52px 0', backgroundColor: common.white }}
-        />
+        <Typography variant="h4" customStyle={{ marginTop: 8, textAlign: 'center' }}>
+          9월 중에 다시 감정이 시작될 예정이니
+          <br /> 조금만 기다려주세요!
+        </Typography>
       </Box>
     );
   }

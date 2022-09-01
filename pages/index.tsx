@@ -146,6 +146,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initABTestIdentifierByCookie(req.cookies);
 
   if (req.cookies.accessToken) {
     queryClientList.concat([

@@ -36,10 +36,6 @@ export const Spotlight = styled.div<{
   width: ${({ targetWidth }) => targetWidth}px;
   height: ${({ targetHeight }) => targetHeight}px;
   opacity: 1;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.grey['60']};
+  background-color: #999999;
   z-index: ${({ theme: { zIndex } }) => zIndex.dialog};
 `;

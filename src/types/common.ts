@@ -69,3 +69,14 @@ export type ProductDealInfo = {
   time: number;
   timeUnit: string;
 };
+
+export type ABTestTask = {
+  name: string;
+  slot: string;
+  postfix: Record<Exclude<ABTestBelong, null>, string | number | null>;
+  ratio: Record<Exclude<ABTestBelong, null>, number>;
+  running: boolean;
+  defaultBelong: Exclude<ABTestBelong, null>;
+};
+
+export type ABTestBelong = 'A' | 'B' | null;

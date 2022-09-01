@@ -232,8 +232,8 @@ export const idFilterOptions = [
   },
   {
     id: 100,
-    name: '사진감정',
-    viewName: '사진감정 전체'
+    name: '감정완료',
+    viewName: '감정완료-전체'
   },
   {
     id: 101,
@@ -252,7 +252,7 @@ export const idFilterOptions = [
   }
 ];
 
-export const legitIdFilterOptionIds = [100, 101, 102, 103];
+export const legitIdFilterOptionIds = [100, 102, 103];
 
 export const mapFilterOptions = [
   {

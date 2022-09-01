@@ -4,9 +4,7 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import LegitTargetBrandList from './LegitTargetBrandList';
 import LegitReviewList from './LegitReviewList';
-import LegitRecommendList from './LegitRecommendList';
 import LegitParticipantsIntro from './LegitParticipantsIntro';
 import LegitIntro from './LegitIntro';
 import LegitContactBanner from './LegitContactBanner';
@@ -18,9 +16,7 @@ function LegitLivePanel() {
   }, []);
   return (
     <>
-      <LegitIntro />
-      <LegitRecommendList />
-      <LegitTargetBrandList />
+      <LegitIntro forceRender />
       <LegitCompleteGrid />
       <LegitParticipantsIntro />
       <LegitReviewList />

@@ -83,6 +83,7 @@ const StyledLegitGuideDescription = styled.section`
   box-shadow: 0px -8px 20px rgba(0, 0, 0, 0.05);
   border-radius: 24px 24px 0 0;
   overflow: hidden;
+  z-index: 1;
 `;
 
 export default LegitGuideDescription;

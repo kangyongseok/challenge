@@ -34,17 +34,16 @@ function LegitGuide() {
     });
   }, []);
 
-  useEffect(() => {
-    document.body.style.backgroundColor = common.grey['95'];
-    return () => {
-      document.body.removeAttribute('style');
-    };
-  }, [common.grey]);
-
   return (
     <GeneralTemplate
       header={<Header customStyle={{ backgroundColor: common.grey['95'] }} />}
       disablePadding
+      customStyle={{
+        height: 'auto',
+        minHeight: '100%',
+        backgroundColor: common.grey['95'],
+        overflowX: 'hidden'
+      }}
     >
       <LegitGuideTitle />
       <LegitGuideHandsUp />

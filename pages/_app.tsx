@@ -24,6 +24,7 @@ import { PortalProvider } from '@provider/PortalProvider';
 import GoogleAnalyticsProvider from '@provider/GoogleAnalyticsProvider';
 import FacebookPixelProvider from '@provider/FacebookPixelProvider';
 import ChannelTalkProvider from '@provider/ChannelTalkProvider';
+import ABTestProvider from '@provider/ABTestProvider';
 
 import '@styles/base.css';
 import 'swiper/css';
@@ -104,14 +105,16 @@ function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme="light">
           <RecoilRoot>
             <Hydrate state={pageProps.dehydratedState}>
-              <PortalProvider>
-                <ErrorBoundary>
-                  <Component {...pageProps} />
-                </ErrorBoundary>
+              <ErrorBoundary>
+                <ABTestProvider identifier={pageProps.abTestIdentifier}>
+                  <PortalProvider>
+                    <Component {...pageProps} />
+                  </PortalProvider>
+                </ABTestProvider>
                 <SearchHelperPopup type="break" />
                 <ProductsKeywordAutoSavedToast />
                 <LegitResultSurveyTypeform />
-              </PortalProvider>
+              </ErrorBoundary>
             </Hydrate>
           </RecoilRoot>
           <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>

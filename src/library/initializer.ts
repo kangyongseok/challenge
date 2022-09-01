@@ -6,6 +6,7 @@ import type { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
+import ABTest from '@library/abTest';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER, UTM_PARAMS } from '@constants/localStorage';
@@ -74,6 +75,19 @@ const Initializer = {
       window.webkit.messageHandlers.callSetLoginUser
     ) {
       window.webkit.messageHandlers.callSetLoginUser.postMessage(JSON.stringify(accessUser));
+    }
+  },
+  initABTestIdentifierByCookie({ abTestIdentifier }: NextApiRequestCookies) {
+    if (abTestIdentifier) {
+      const taskNames = ABTest.getTasks().map(({ name }) => name);
+      const parsedAbTestIdentifier = JSON.parse(abTestIdentifier);
+      Object.keys(parsedAbTestIdentifier).forEach((key) => {
+        if (!taskNames.includes(key)) {
+          delete parsedAbTestIdentifier[key];
+        }
+      });
+
+      ABTest.setIdentifier(parsedAbTestIdentifier);
     }
   },
   initUtmParams() {

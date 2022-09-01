@@ -134,7 +134,7 @@ function LegitParticipantsIntro() {
       </Flexbox>
       <Box customStyle={{ '& > div': { width: '100% !important' } }}>
         <Tooltip
-          open
+          open={false}
           message={
             <>
               <Typography variant="body2" weight="bold" customStyle={{ color: common.white }}>

@@ -272,8 +272,7 @@ function HomeRecentSearchList() {
 }
 
 const TabList = styled.div`
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
   column-gap: 8px;
   padding: 0 20px;
   overflow-x: auto;

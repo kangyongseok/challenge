@@ -34,7 +34,6 @@ import {
   List,
   ListItem,
   NewBadge,
-  NewLabel,
   StyledBottomNavigation
 } from './BottomNavigation.styles';
 
@@ -259,9 +258,6 @@ function BottomNavigation({
                 key={`bottom-navigation-${navData.title}`}
                 ref={navData.href === '/legit' ? legitNavRef : undefined}
               >
-                {navData.href === '/legit' && !isLoading && !notViewedLegitCount && (
-                  <NewLabel variant="contained" text="NEW" size="xsmall" />
-                )}
                 <Link
                   href={{
                     pathname: navData.href,

@@ -4,6 +4,7 @@ import amplitude from 'amplitude-js';
 import type { AccessUser } from '@dto/userAuth';
 
 import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
 
 import { postLog } from '@api/log';
 
@@ -280,6 +281,8 @@ const initAmplitude = () => {
     platform_agent: returnPlatform(),
     visitType
   });
+
+  ABTest.init(amplitude.getInstance());
   Initializer.initAccessUserInAmplitude(amplitude.getInstance());
 };
 
