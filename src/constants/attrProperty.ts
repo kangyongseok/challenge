@@ -18,6 +18,7 @@ const productName = {
   ADDRESS: 'ADDRESS',
   ANNOUNCE_DETAIL: 'ANNOUNCE_DETAIL',
   SEARCHMODAL: 'SEARCHMODAL',
+  BRAND: 'BRAND',
   BRAND_LIST: 'BRAND_LIST',
   BRAND_SEARCH: 'BRAND_SEARCH',
   CATEGORY: 'CATEGORY',
@@ -35,7 +36,8 @@ const productName = {
   LEGIT_PRODUCT: 'LEGIT_PRODUCT',
   AUTO: 'AUTO',
   MANUAL: 'MANUAL',
-  WISH_LEGIT: 'WISH_LEGIT'
+  WISH_LEGIT: 'WISH_LEGIT',
+  NOTICES: 'NOTICES'
 };
 
 const productTitle = {
@@ -150,6 +152,40 @@ const legitType = {
   MYLEGIT: 'MYLEGIT'
 };
 
+const name = {
+  crazyWeek: 'CRAZY_WEEK',
+  swipeXTag: 'SWIPE_X_TAG',
+  popup: 'POPUP',
+  list: 'LIST',
+  main: 'MAIN',
+  productList: 'PRODUCT_LIST'
+};
+
+const title = {
+  katalk: 'KATALK',
+  fb: 'FB',
+  twitter: 'TWITTER',
+  url: 'URL',
+  quick: 'QUICK',
+  rare: 'RARE',
+  lowPrice: 'LOWPRICE',
+  priceDefense: 'PRICE_DEFENSE',
+  padding: 'PADDING',
+  bottom: 'BOTTOM',
+  curationCard: 'CURATION_CARD',
+  popup: 'POPUP',
+  banner: 'BANNER',
+  modal: 'MODAL'
+};
+
+const source = {
+  crazycuration: 'CRAZY_WEEK'
+};
+
+const type = {
+  guide: 'GUIDED'
+};
+
 const attrProperty = {
   productName,
   productTitle,
@@ -158,7 +194,11 @@ const attrProperty = {
   legitName,
   legitTitle,
   legitSource,
-  legitType
+  legitType,
+  name,
+  title,
+  source,
+  type
 };
 
 export default attrProperty;

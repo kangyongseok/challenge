@@ -9,4 +9,3 @@ export { default as MyPortfolioNoneMemberReservationDialog } from './MyPortfolio
 export { default as MyPortfolioCommonBanner } from './MyPortfolioCommonBanner';
 export { default as MyPotyfolioDialog } from './MyPotyfolioDialog';
 export { default as MyPortfolioPagenation } from './MyPortfolioPagenation';
-export { default as MyPortfolioReserveBottomSheet } from './MyPortfolioReserveBottomSheet';

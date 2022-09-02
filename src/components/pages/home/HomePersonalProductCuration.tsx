@@ -22,11 +22,16 @@ import { ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
+import { logEvent } from '@library/amplitude';
+
 import { fetchRecommProducts } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { homePersonalProductCurationPrevScrollState } from '@recoil/home';
 
@@ -109,6 +114,20 @@ function HomePersonalProductCuration() {
     cache.clearAll();
   }, []);
 
+  const handleClickProduct = useCallback(
+    (id: number) => () => {
+      logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
+        name: attrProperty.productName.MAIN,
+        title: attrProperty.productTitle.PERSONAL
+      });
+      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
+        source: attrProperty.productSource.MAIN_PERSONAL
+      });
+      router.push(`/products/${id}`);
+    },
+    [router]
+  );
+
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
       const groupedProduct = groupedProducts[index] || [];
@@ -136,6 +155,7 @@ function HomePersonalProductCuration() {
                   source={attrProperty.productSource.MAIN_PERSONAL}
                   compact
                   isRound
+                  onClick={handleClickProduct(firstProduct.id)}
                 />
               )}
               {secondProduct && (
@@ -149,6 +169,7 @@ function HomePersonalProductCuration() {
                   source={attrProperty.productSource.MAIN_PERSONAL}
                   compact
                   isRound
+                  onClick={handleClickProduct(secondProduct.id)}
                 />
               )}
             </ProductGridCardBox>
@@ -156,7 +177,7 @@ function HomePersonalProductCuration() {
         </CellMeasurer>
       ) : null;
     },
-    [groupedProducts]
+    [groupedProducts, handleClickProduct]
   );
 
   useEffect(() => {

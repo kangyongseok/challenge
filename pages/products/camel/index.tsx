@@ -2,6 +2,7 @@ import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
+  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsHeader,
@@ -49,6 +50,7 @@ function CamelProducts() {
       <ProductsKeywordBottomSheet variant="camel" />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
+      <ProductsEventBottomBanner />
     </>
   );
 }

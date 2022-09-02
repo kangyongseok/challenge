@@ -24,7 +24,8 @@ function ChannelTalkProvider() {
       'user',
       'search',
       'onboarding',
-      'searchHelper'
+      'searchHelper',
+      'crazycuration'
     ];
 
     if (disallowPrefixPathNames.includes(router.pathname.split('/')[1])) {

@@ -1,6 +1,7 @@
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsHeader,
@@ -50,6 +51,7 @@ function SearchProducts() {
       <ProductsKeywordBottomSheet variant="search" />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
+      <ProductsEventBottomBanner />
     </>
   );
 }

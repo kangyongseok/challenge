@@ -21,10 +21,14 @@ import Amplitude, { logEvent } from '@library/amplitude';
 import attrKeys from '@constants/attrKeys';
 
 import { PortalProvider } from '@provider/PortalProvider';
-import GoogleAnalyticsProvider from '@provider/GoogleAnalyticsProvider';
-import FacebookPixelProvider from '@provider/FacebookPixelProvider';
-import ChannelTalkProvider from '@provider/ChannelTalkProvider';
-import ABTestProvider from '@provider/ABTestProvider';
+import {
+  ABTestProvider,
+  ChannelTalkProvider,
+  DialogProdiver,
+  FacebookPixelProvider,
+  GoogleAnalyticsProvider,
+  ToastProvider
+} from '@provider';
 
 import '@styles/base.css';
 import 'swiper/css';
@@ -59,14 +63,26 @@ function App({ Component, pageProps }: AppProps) {
     })
   );
   const themeColor = useMemo(() => {
-    if (router.asPath === '/') return '#0D0D0D';
+    if (router.asPath.split('?')[0] === '/') return '#0D0D0D';
 
-    if (router.asPath.includes('/myPortfolio')) return palette.common.black;
+    if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
+      return palette.common.black;
+    }
 
-    if (router.asPath === '/legit') return palette.common.grey['95'];
+    if (router.asPath.includes('/legit')) return palette.common.grey['95'];
 
     return palette.common.white;
-  }, [palette, router.asPath]);
+  }, [
+    palette.common.black,
+    palette.common.grey,
+    palette.common.white,
+    router.asPath,
+    router.pathname
+  ]);
+
+  useEffect(() => {
+    document.body.style.backgroundColor = themeColor;
+  }, [themeColor, router.asPath]);
 
   useEffect(() => {
     Initializer.initAccessUserInQueryClient(queryClient.current);
@@ -113,6 +129,8 @@ function App({ Component, pageProps }: AppProps) {
                 </ABTestProvider>
                 <SearchHelperPopup type="break" />
                 <ProductsKeywordAutoSavedToast />
+                <ToastProvider />
+                <DialogProdiver />
                 <LegitResultSurveyTypeform />
               </ErrorBoundary>
             </Hydrate>

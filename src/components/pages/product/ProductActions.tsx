@@ -1,17 +1,8 @@
 import { memo, useEffect, useState } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
-import {
-  Box,
-  Button,
-  CtaButton,
-  Dialog,
-  Flexbox,
-  Icon,
-  Toast,
-  Typography,
-  useTheme
-} from 'mrcamel-ui';
+import { Box, Button, CtaButton, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
@@ -29,18 +20,16 @@ import type {
   REPORT_TYPE_PRICE,
   REPORT_TYPE_SWINDLER
 } from '@constants/product';
-import { FACEBOOK_SHARE_URL, TWITTER_SHARE_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
-import { commaNumber, copyToClipboard, getRandomNumber } from '@utils/common';
+import { getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
+import { dialogState, toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-type SocialPlatform = 'kakao' | 'facebook' | 'twitter' | 'linkCopy';
 type ReportType =
   | typeof REPORT_TYPE_FAKE_PRODUCT
   | typeof REPORT_TYPE_COUNTERFEITER
@@ -67,56 +56,16 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
     theme: { palette }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
-  const [{ isOpenSuccessCopyToast, isOpenSuccessReportToast }, setIsOpenToast] = useState({
-    isOpenSuccessCopyToast: false,
-    isOpenSuccessReportToast: false
-  });
+  const setToastState = useSetRecoilState(toastState);
+  const setDialogState = useSetRecoilState(dialogState);
   const [isOpenReportTooltip, setIsOpenReportTooltip] = useState(false);
   const { mutate: postSellerReportMutate } = useMutation(postSellerReport);
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
-  const [isOpenSNSSharePopup, setIsOpenSNSSharePopup] = useState(false);
   const sellerPhoneNumber =
     (checkAgent.isIOSApp() || checkAgent.isAndroidApp() || !checkAgent.isMobileApp()) && product
       ? product.productSeller.phone
       : null;
   const hasCheckedReportOption = Object.values(reportOptions).some(({ checked }) => checked);
-
-  useEffect(() => {
-    if (product) {
-      const { id, productSeller } = product;
-
-      const initReportOptions = reportOptions;
-
-      productSeller?.productSellerReports
-        .filter((report) => report.sellerId === productSeller.id && report.productId === id)
-        .forEach((report) => {
-          if (report.type) {
-            const reportType = report.type as keyof typeof INITIAL_REPORT_OPTIONS;
-            initReportOptions[reportType].count += 1;
-
-            if (
-              report.userId === accessUser?.userId ||
-              report.deviceId === amplitude.getInstance().getDeviceId()
-            ) {
-              initReportOptions[reportType].reported = true;
-            }
-          }
-        });
-
-      setReportOptions(initReportOptions);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessUser?.userId, product]);
-
-  useEffect(() => {
-    if (isOpenSNSSharePopup) {
-      scrollDisable();
-    } else {
-      scrollEnable();
-    }
-
-    return () => scrollEnable();
-  }, [isOpenSNSSharePopup]);
 
   const handleClickShare = () => {
     if (!product) return;
@@ -162,7 +111,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
       }
     }
 
-    setIsOpenSNSSharePopup(true);
+    setDialogState({ type: 'SNSShare', product });
   };
 
   const handleClickReport = () => {
@@ -185,83 +134,6 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
         return newReportOptions;
       });
-    }
-  };
-
-  const handleClickShareIcon = (platform: SocialPlatform) => () => {
-    if (!product) return;
-
-    const url = `${window.location.origin}/products/${product.id}`;
-    let viewPrice = product.price / 10000;
-
-    const title = () => {
-      switch (platform) {
-        case 'kakao':
-          return 'KATALK';
-        case 'facebook':
-          return 'FB';
-        case 'twitter':
-          return 'TWITTER';
-        default:
-          return 'URL';
-      }
-    };
-
-    productDetailAtt({
-      key: attrKeys.products.CLICK_SHARE,
-      product,
-      rest: { title: title() },
-      source: attrProperty.productSource.PRODUCT_LIST
-    });
-
-    switch (platform) {
-      case 'kakao':
-        if (window.Kakao === undefined) {
-          return;
-        }
-
-        if (!window.Kakao.isInitialized()) {
-          window.Kakao.init(process.env.KAKAO_JS_KEY);
-        }
-
-        if (Number.isNaN(viewPrice)) {
-          viewPrice = 0;
-        }
-
-        if (viewPrice - Math.floor(viewPrice) > 0) {
-          viewPrice = Number(viewPrice.toFixed(1));
-        } else {
-          viewPrice = Math.floor(viewPrice);
-        }
-
-        window.Kakao.Link.sendDefault({
-          objectType: 'feed',
-          content: {
-            title: product.title,
-            description: `${product.site.name} ${commaNumber(viewPrice)}만원\r\nAi추천지수 ${
-              product.scoreTotal
-            }/10`,
-            imageUrl: product.imageMain,
-            link: {
-              mobileWebUrl: url,
-              webUrl: url
-            }
-          }
-        });
-
-        break;
-      case 'facebook':
-        window.open(`${FACEBOOK_SHARE_URL}?u=${encodeURIComponent(url)}`);
-        break;
-      case 'twitter':
-        window.open(`${TWITTER_SHARE_URL}?text=${product.title}&url=${encodeURIComponent(url)}`);
-        break;
-      case 'linkCopy':
-      default:
-        copyToClipboard(`${product.title} ${url}`);
-        setIsOpenToast((prevState) => ({ ...prevState, isOpenSuccessCopyToast: true }));
-        setIsOpenSNSSharePopup(false);
-        break;
     }
   };
 
@@ -315,178 +187,148 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
               return newState;
             });
-            setIsOpenToast((prevState) => ({ ...prevState, isOpenSuccessReportToast: true }));
+            setToastState({
+              type: 'product',
+              status: 'successReport',
+              hideDuration: 1500
+            });
           }
         }
       );
     }
   };
 
-  return (
-    <>
-      <Box customStyle={{ position: 'relative' }}>
-        <ActionButtons>
-          <Button
-            variant="ghost"
-            brandColor="black"
-            size="small"
-            disabled={!product || !sellerPhoneNumber}
-            onClick={
-              product
-                ? () => {
-                    const conversionId = Number(
-                      `${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`
-                    );
-                    productDetailAtt({
-                      key: 'CLICK_SEND_MESSAGE',
-                      product,
-                      rest: { att: 'SMS', conversionId }
-                    });
-                    onClickSMS({
-                      siteId: product.site?.id,
-                      sellerType: product.productSeller?.type,
-                      id: product.id,
-                      sellerPhoneNumber
-                    });
-                  }
-                : undefined
+  useEffect(() => {
+    if (product) {
+      const { id, productSeller } = product;
+
+      const initReportOptions = reportOptions;
+
+      productSeller?.productSellerReports
+        .filter((report) => report.sellerId === productSeller.id && report.productId === id)
+        .forEach((report) => {
+          if (report.type) {
+            const reportType = report.type as keyof typeof INITIAL_REPORT_OPTIONS;
+            initReportOptions[reportType].count += 1;
+
+            if (
+              report.userId === accessUser?.userId ||
+              report.deviceId === amplitude.getInstance().getDeviceId()
+            ) {
+              initReportOptions[reportType].reported = true;
             }
+          }
+        });
+
+      setReportOptions(initReportOptions);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessUser?.userId, product]);
+
+  return (
+    <Box customStyle={{ position: 'relative' }}>
+      <ActionButtons>
+        <Button
+          variant="ghost"
+          brandColor="black"
+          size="small"
+          disabled={!product || !sellerPhoneNumber}
+          onClick={
+            product
+              ? () => {
+                  const conversionId = Number(
+                    `${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`
+                  );
+                  productDetailAtt({
+                    key: 'CLICK_SEND_MESSAGE',
+                    product,
+                    rest: { att: 'SMS', conversionId }
+                  });
+                  onClickSMS({
+                    siteId: product.site?.id,
+                    sellerType: product.productSeller?.type,
+                    id: product.id,
+                    sellerPhoneNumber
+                  });
+                }
+              : undefined
+          }
+        >
+          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
+            문자보내기
+          </Typography>
+        </Button>
+        <Button
+          variant="ghost"
+          brandColor="black"
+          size="small"
+          disabled={!product}
+          onClick={handleClickShare}
+        >
+          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
+            공유하기
+          </Typography>
+        </Button>
+        <Button
+          variant="ghost"
+          brandColor="black"
+          size="small"
+          disabled={!product}
+          onClick={handleClickReport}
+        >
+          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
+            신고하기
+          </Typography>
+        </Button>
+      </ActionButtons>
+      <ReportTooltip open={isOpenReportTooltip}>
+        {Object.values(reportOptions).map(({ type, label, count, checked, reported }) => (
+          <ReportOption
+            key={`report-option-${type}`}
+            variant="body1"
+            weight={reported || checked ? 'bold' : 'medium'}
+            onClick={handleClickReportOption({ reported, checked, type })}
           >
-            <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              문자보내기
-            </Typography>
-          </Button>
-          <Button
-            variant="ghost"
-            brandColor="black"
-            size="small"
-            disabled={!product}
-            onClick={handleClickShare}
-          >
-            <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              공유하기
-            </Typography>
-          </Button>
-          <Button
-            variant="ghost"
-            brandColor="black"
-            size="small"
-            disabled={!product}
-            onClick={handleClickReport}
-          >
-            <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              신고하기
-            </Typography>
-          </Button>
-        </ActionButtons>
-        <ReportTooltip open={isOpenReportTooltip}>
-          {Object.values(reportOptions).map(({ type, label, count, checked, reported }) => (
-            <ReportOption
-              key={`report-option-${type}`}
-              variant="body1"
-              weight={reported || checked ? 'bold' : 'medium'}
-              onClick={handleClickReportOption({ reported, checked, type })}
+            <Flexbox
+              alignment="center"
+              customStyle={{ color: reported || checked ? palette.primary.main : 'inherit' }}
             >
-              <Flexbox
-                alignment="center"
-                customStyle={{ color: reported || checked ? palette.primary.main : 'inherit' }}
-              >
-                {(reported || checked) && (
-                  <Icon
-                    name="CheckOutlined"
-                    size="small"
-                    customStyle={{ marginRight: 6, color: palette.primary.main }}
-                  />
-                )}
-                <Typography
-                  variant="body1"
-                  weight={reported || checked ? 'bold' : 'medium'}
-                  brandColor={reported || checked ? 'primary' : 'black'}
-                >
-                  {label}
-                </Typography>
-              </Flexbox>
+              {(reported || checked) && (
+                <Icon
+                  name="CheckOutlined"
+                  size="small"
+                  customStyle={{ marginRight: 6, color: palette.primary.main }}
+                />
+              )}
               <Typography
-                variant="small1"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['60'] }}
+                variant="body1"
+                weight={reported || checked ? 'bold' : 'medium'}
+                brandColor={reported || checked ? 'primary' : 'black'}
               >
-                {count}
+                {label}
               </Typography>
-            </ReportOption>
-          ))}
-          <CtaButton
-            fullWidth
-            brandColor="black"
-            variant="contained"
-            customStyle={{ marginTop: 20 }}
-            disabled={!hasCheckedReportOption}
-            onClick={handleSubmitReport}
-          >
-            제출하기
-          </CtaButton>
-        </ReportTooltip>
-      </Box>
-      <Dialog open={isOpenSNSSharePopup} onClose={() => setIsOpenSNSSharePopup(false)}>
-        <Box customStyle={{ float: 'right', marginRight: -4 }}>
-          <Icon name="CloseOutlined" onClick={() => setIsOpenSNSSharePopup(false)} />
-        </Box>
-        <Typography
-          variant="body1"
-          weight="medium"
-          customStyle={{ textAlign: 'center', marginTop: 16 }}
-        >
-          공유하기
-        </Typography>
-        {/* TODO: 아이콘 파일 확인 */}
-        <Flexbox
-          justifyContent="center"
-          gap={16}
-          customStyle={{ margin: '16px 20px 16px', flexWrap: 'wrap' }}
-        >
-          {[
-            { platform: 'kakao', backgroundPosition: '-297px -66px' },
-            { platform: 'facebook', backgroundPosition: '-240px -122px' },
-            { platform: 'twitter', backgroundPosition: '-356px -122px' },
-            { platform: 'linkCopy', backgroundPosition: '-297px -122px' }
-          ].map(({ platform, backgroundPosition }) => (
-            <Box
-              key={`share-platform-${platform}`}
-              onClick={handleClickShareIcon(platform as SocialPlatform)}
+            </Flexbox>
+            <Typography
+              variant="small1"
+              weight="medium"
+              customStyle={{ color: palette.common.grey['60'] }}
             >
-              <SNSIcon
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/fullpage_ico.png`}
-                backgroundPosition={backgroundPosition}
-              />
-            </Box>
-          ))}
-        </Flexbox>
-      </Dialog>
-      <Toast
-        open={isOpenSuccessCopyToast}
-        onClose={() =>
-          setIsOpenToast((prevState) => ({ ...prevState, isOpenSuccessCopyToast: false }))
-        }
-        bottom="50%"
-        autoHideDuration={1500}
-      >
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
-          URL이 복사 되었어요.
-        </Typography>
-      </Toast>
-      <Toast
-        open={isOpenSuccessReportToast}
-        onClose={() =>
-          setIsOpenToast((prevState) => ({ ...prevState, isOpenSuccessReportToast: false }))
-        }
-        bottom="50%"
-        autoHideDuration={1500}
-      >
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
-          감사합니다! 신고 접수 완료되었습니다 😇
-        </Typography>
-      </Toast>
-    </>
+              {count}
+            </Typography>
+          </ReportOption>
+        ))}
+        <CtaButton
+          fullWidth
+          brandColor="black"
+          variant="contained"
+          customStyle={{ marginTop: 20 }}
+          disabled={!hasCheckedReportOption}
+          onClick={handleSubmitReport}
+        >
+          제출하기
+        </CtaButton>
+      </ReportTooltip>
+    </Box>
   );
 }
 
@@ -498,16 +340,6 @@ const ActionButtons = styled.div`
   button {
     width: 100%;
   }
-`;
-
-const SNSIcon = styled.span<{ src: string; backgroundPosition: string }>`
-  display: inline-block;
-  width: 33px;
-  height: 33px;
-  background-image: url(${({ src }) => src});
-  background-repeat: no-repeat;
-  background-size: 432px;
-  background-position: ${({ backgroundPosition }) => backgroundPosition};
 `;
 
 const ReportTooltip = styled.div<{ open: boolean }>`

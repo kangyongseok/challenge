@@ -1,8 +1,15 @@
+import type { ReactElement } from 'react';
+
 import { atom } from 'recoil';
+import { CustomStyle } from 'mrcamel-ui';
+
+import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
 import { DEVICE_ID, USER_ON_BOARDING_TRIGGER } from '@constants/localStorage';
+
+import type { DialogType, ToastStatus, ToastType } from '@typings/common';
 
 export const userOnBoardingTriggerState = atom({
   key: 'common/userOnBoardingTriggerState',
@@ -61,4 +68,32 @@ export const deviceIdState = atom<string | undefined>({
 export const showAppDownloadBannerState = atom<boolean>({
   key: 'common/showAppDownloadBannerState',
   default: false
+});
+
+export const toastState = atom<{
+  type: ToastType | undefined;
+  status: ToastStatus | undefined;
+  hideDuration?: number;
+  action?: () => void;
+}>({
+  key: 'common/toastState',
+  default: {
+    type: undefined,
+    status: undefined
+  }
+});
+
+export const dialogState = atom<{
+  type: DialogType | undefined;
+  firstButtonAction?: () => void;
+  secondButtonAction?: () => void;
+  content?: string | number | ReactElement;
+  product?: Product | undefined;
+  customStyleTitle?: CustomStyle;
+  disabledOnClose?: boolean;
+}>({
+  key: 'common/dialogState',
+  default: {
+    type: undefined
+  }
 });

@@ -1,10 +1,9 @@
 import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import {
   Alert,
   Avatar,
@@ -15,7 +14,6 @@ import {
   Flexbox,
   Icon,
   Label,
-  Toast,
   Typography,
   useTheme
 } from 'mrcamel-ui';
@@ -41,7 +39,7 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
-import { deviceIdState } from '@recoil/common';
+import { deviceIdState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
@@ -94,8 +92,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
   },
   ref
 ) {
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const {
     id,
     title,
@@ -116,14 +112,40 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     datePosted,
     dateFirstPosted
   } = product;
+
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const {
+    theme: {
+      palette: { secondary, common }
+    }
+  } = useTheme();
+
   const deviceId = useRecoilValue(deviceIdState);
-  const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
-    useQueryCategoryWishes({
-      deviceId
-    });
+  const setToastState = useSetRecoilState(toastState);
+
   const { data: accessUser } = useQueryAccessUser();
-  const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd);
+  const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
+    useQueryCategoryWishes({ deviceId });
+  const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
+    async onSuccess() {
+      await queryClient.removeQueries(queryKeys.products.product({ productId: id }), {
+        exact: true
+      });
+      await refetchCategoryWishes();
+
+      setToastState({
+        type: 'product',
+        status: 'successAddWish',
+        action: () => {
+          logEvent(attrKeys.products.CLICK_WISH_LIST, { name, type: 'TOAST' });
+          router.push('/wishes');
+        }
+      });
+    }
+  });
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove);
+
   const {
     imageUrl,
     isSafe,
@@ -137,18 +159,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     productLegitStatusText
   } = useProductCardState(product);
 
-  const {
-    theme: {
-      palette: { secondary, common }
-    }
-  } = useTheme();
-
   const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
-  const [{ openRemoveWishToast, openAddWishToast }, setOpenToast] = useState({
-    openRemoveWishToast: false,
-    openAddWishToast: false
-  });
   const [openRemoveWishDialog, setOpenRemoveWishDialog] = useState(false);
   const loggedEventRef = useRef(false);
   const isDup = useMemo(() => !product.targetProductStatus, [product.targetProductStatus]);
@@ -206,44 +218,19 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
 
     if (isWish) {
       mutatePostProductsRemove(
-        {
-          productId: id,
-          deviceId
-        },
+        { productId: id, deviceId },
         {
           async onSuccess() {
             await queryClient.removeQueries(queryKeys.products.product({ productId: id }), {
               exact: true
             });
             await refetchCategoryWishes();
-            setOpenToast((prevState) => ({
-              ...prevState,
-              openAddWishToast: false,
-              openRemoveWishToast: true
-            }));
+            setToastState({ type: 'product', status: 'successRemoveWish' });
           }
         }
       );
     } else {
-      mutatePostProductsAdd(
-        {
-          productId: id,
-          deviceId
-        },
-        {
-          async onSuccess() {
-            await queryClient.removeQueries(queryKeys.products.product({ productId: id }), {
-              exact: true
-            });
-            await refetchCategoryWishes();
-            setOpenToast((prevState) => ({
-              ...prevState,
-              openAddWishToast: true,
-              openRemoveWishToast: false
-            }));
-          }
-        }
-      );
+      mutatePostProductsAdd({ productId: id, deviceId });
     }
   };
 
@@ -288,10 +275,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
         async onSuccess() {
           await queryClient.refetchQueries(queryKeys.products.product({ productId: id }));
           await refetchCategoryWishes();
-          setOpenToast((prevState) => ({
-            ...prevState,
-            openRemoveWishToast: true
-          }));
+          setToastState({ type: 'product', status: 'successRemoveWish' });
+
           if (onWishAfterChangeCallback && typeof onWishAfterChangeCallback === 'function') {
             onWishAfterChangeCallback();
           }
@@ -497,43 +482,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           </>
         )}
       </Box>
-      <Toast
-        open={openRemoveWishToast}
-        onClose={() => setOpenToast((prevState) => ({ ...prevState, openRemoveWishToast: false }))}
-      >
-        <Typography variant="body1" weight="medium" customStyle={{ color: common.white }}>
-          찜목록에서 삭제했어요.
-        </Typography>
-      </Toast>
-      <Toast
-        open={openAddWishToast}
-        onClose={() => setOpenToast((prevState) => ({ ...prevState, openAddWishToast: false }))}
-      >
-        <Flexbox gap={8} alignment="center" justifyContent="space-between">
-          <Typography variant="body1" weight="medium" customStyle={{ color: common.white }}>
-            찜목록에 추가했어요!
-          </Typography>
-          <Typography
-            variant="body1"
-            weight="medium"
-            customStyle={{
-              color: common.white,
-              textDecoration: 'underline',
-              whiteSpace: 'nowrap'
-            }}
-            onClick={() => {
-              logEvent(attrKeys.products.CLICK_WISH_LIST, {
-                name,
-                type: 'TOAST'
-              });
-            }}
-          >
-            <Link href="/wishes">
-              <a>찜목록 보기</a>
-            </Link>
-          </Typography>
-        </Flexbox>
-      </Toast>
       <Dialog open={openRemoveWishDialog} onClose={() => setOpenRemoveWishDialog(false)}>
         <Box
           customStyle={{

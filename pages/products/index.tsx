@@ -1,6 +1,7 @@
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsInfiniteGrid,
@@ -44,6 +45,7 @@ function Products() {
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
+      <ProductsEventBottomBanner />
     </>
   );
 }

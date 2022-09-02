@@ -14,4 +14,6 @@ export interface WishAtt {
   scoreTotal?: number;
   cluster: number;
   source: string;
+  att?: string;
+  att2?: string;
 }

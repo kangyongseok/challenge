@@ -57,7 +57,7 @@ function WishesPage() {
   return (
     <>
       <GeneralTemplate
-        header={<Header type={hiddenTab === 'legit' ? 'isSearch' : undefined} />}
+        header={<Header />}
         footer={hiddenTab === 'legit' ? <WishesBottomCtaButton /> : <BottomNavigation />}
       >
         <WishesTabs />

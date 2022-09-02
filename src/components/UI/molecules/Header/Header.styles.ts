@@ -1,25 +1,49 @@
 import styled from '@emotion/styled';
 
-export const StyledHeader = styled.header`
-  width: 100%;
-  min-height: 56px;
-`;
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
-export const VirtualIcon = styled.div<{ isType?: boolean }>`
-  width: 20px;
-  display: ${({ isType }) => (isType ? 'block' : 'none')};
-`;
-
-export const Wrapper = styled.div<{ isFixed: boolean | undefined; showAppDownloadBanner: boolean }>`
+export const StyledHeader = styled.header<{
+  isFixed: boolean | undefined;
+  showAppDownloadBanner: boolean;
+}>`
   width: 100%;
-  height: 56px;
-  position: ${({ isFixed }) => (isFixed !== false ? 'fixed' : 'initial')};
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 60 : 0)}px;
-  left: 0;
-  padding: 0 20px;
   background-color: ${({ theme: { palette } }) => palette.common.white};
-  z-index: ${({ theme: { zIndex } }) => zIndex.header + 1};
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  z-index: ${({ theme: { zIndex } }) => zIndex.header};
+
+  ${({ isFixed, showAppDownloadBanner }) =>
+    isFixed
+      ? {
+          position: 'fixed',
+          top: -60 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0),
+          padding: `${60 + (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)}px 0 0`
+        }
+      : {
+          position: 'initial',
+          padding: 0
+        }};
+`;
+
+export const Wrapper = styled.div<{ customHeight?: number }>`
+  width: 100%;
+  display: flex;
   align-items: center;
+  min-height: ${({ customHeight }) => customHeight || 56}px;
+`;
+
+export const Title = styled.div<{ show: boolean; customHeight?: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: ${({ customHeight }) => customHeight || 56}px;
+  visibility: ${({ show }) => !show && 'hidden'};
+`;
+
+export const IconBox = styled.div<{ show: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: ${({ show }) => !show && 'hidden'};
+  padding: 16px;
+  cursor: pointer;
 `;

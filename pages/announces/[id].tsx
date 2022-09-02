@@ -1,32 +1,62 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import AnnounceDetail from '@components/pages/announces/AnnounceDetail';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 function AnnouncePage() {
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
-  const { query } = useRouter();
-
   const {
     theme: { palette }
   } = useTheme();
+  const { query, back } = useRouter();
+  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
 
   const announce = userInfo?.announces.find((announceData) => String(announceData.id) === query.id);
+
+  const handleClickClose = () => {
+    logEvent(attrKeys.header.CLICK_CLOSE, {
+      name: attrProperty.productName.ANNOUNCE_DETAIL
+    });
+    back();
+  };
 
   if (!announce) {
     return null;
   }
 
   return (
-    <GeneralTemplate disablePadding header={<Header closeIcon="CloseOutlined" />}>
+    <GeneralTemplate
+      disablePadding
+      header={
+        <Header
+          rightIcon={
+            <Flexbox
+              justifyContent="center"
+              alignment="center"
+              onClick={handleClickClose}
+              customStyle={{
+                padding: 16,
+                maxHeight: 56,
+                cursor: 'pointer'
+              }}
+            >
+              <Icon name="CloseOutlined" />
+            </Flexbox>
+          }
+        />
+      }
+    >
       <Box component="section">
         <Alert
           round="16"

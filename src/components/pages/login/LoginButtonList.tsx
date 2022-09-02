@@ -26,7 +26,6 @@ interface LoginButtonListProps {
   setErrorPopup: Dispatch<SetStateAction<{ open: boolean; provider: string | null }>>;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  loadedKakaoSDK: boolean;
 }
 
 function LoginButtonList({
@@ -34,8 +33,7 @@ function LoginButtonList({
   returnUrl,
   setErrorPopup,
   setShow,
-  setLoading,
-  loadedKakaoSDK
+  setLoading
 }: LoginButtonListProps) {
   const router = useRouter();
   const {
@@ -147,10 +145,10 @@ function LoginButtonList({
   }, []);
 
   useEffect(() => {
-    if (openLogin === 'kakao' && loadedKakaoSDK) {
-      if (kakaoLoginButtonRef.current) kakaoLoginButtonRef.current?.click();
+    if (openLogin === 'kakao' && window.Kakao?.isInitialized()) {
+      kakaoLoginButtonRef.current?.click();
     }
-  }, [openLogin, loadedKakaoSDK]);
+  }, [openLogin]);
 
   return (
     <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>

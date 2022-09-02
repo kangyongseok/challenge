@@ -1,13 +1,13 @@
-import { MouseEvent, PropsWithChildren } from 'react';
+import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
+import { useCallback } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CustomStyle, Typography } from 'mrcamel-ui';
-
-import { TouchIcon } from '@components/UI/atoms';
+import { Box, CustomStyle, Icon, Typography } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
+import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -18,102 +18,152 @@ import {
 import { homeSelectedTabStateFamily } from '@recoil/home';
 import { showAppDownloadBannerState } from '@recoil/common';
 
-import { StyledHeader, VirtualIcon, Wrapper } from './Header.styles';
+import { IconBox, StyledHeader, Title, Wrapper } from './Header.styles';
 
 interface HeaderProps {
-  type?: 'isBack' | 'isSearch' | 'onlyBack' | 'isCrm';
   isFixed?: boolean;
-  closeIcon?: 'CloseOutlined';
-  onClickCrm?: () => void;
-  onClickBack?: () => void;
+  showLeft?: boolean;
+  hideTitle?: boolean;
+  showRight?: boolean;
+  leftIcon?: ReactElement;
+  rightIcon?: ReactElement;
+  onClickLeft?: (e?: MouseEvent<HTMLDivElement>) => void;
+  onClickTitle?: (e?: MouseEvent) => void;
+  onClickRight?: (e?: MouseEvent<HTMLDivElement>) => void;
   disableProductsKeywordClickInterceptor?: boolean;
   disableAppDownloadBannerVariableTop?: boolean;
+  leftIconCustomStyle?: CustomStyle;
+  titleCustomStyle?: CustomStyle;
+  rightIconCustomStyle?: CustomStyle;
   customStyle?: CustomStyle;
+  customHeight?: number;
 }
 
 function Header({
   children,
-  type,
-  isFixed,
-  closeIcon,
-  onClickCrm,
-  onClickBack,
+  isFixed = true,
+  showLeft = true,
+  hideTitle = false,
+  showRight = true,
+  leftIcon,
+  rightIcon,
+  onClickLeft,
+  onClickTitle,
+  onClickRight,
   disableProductsKeywordClickInterceptor = true,
   disableAppDownloadBannerVariableTop = false,
-  customStyle
+  leftIconCustomStyle,
+  titleCustomStyle,
+  rightIconCustomStyle,
+  customStyle,
+  customHeight
 }: PropsWithChildren<HeaderProps>) {
   const router = useRouter();
+  const { isCrm } = router.query;
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
 
-  const parserEventParameterName = () => {
-    switch (router.pathname) {
-      case '/mypage':
-        return 'MY';
-      case '/brands':
-        return 'BRANDS';
-      case '/products/[id]':
-        return 'PRODUCT_DETAIL';
-      case '/announces/[id]':
-        return 'ANNOUNCE_DETAIL';
-      case '/wishes':
-        return 'WISH_LIST';
-      case '/notices':
-        return 'NOTICES';
-      case '/category':
-        return 'CATEGORY';
-      case '/products':
-        return attrProperty.productName.PRODUCT_LIST;
-      case '/products/crm':
-        return attrProperty.productName.PRODUCT_LIST;
-      case '/products/search/[keyword]':
-        return attrProperty.productName.PRODUCT_LIST;
-      case '/products/categories/[keyword]':
-        return attrProperty.productName.PRODUCT_LIST;
-      case '/products/brands/[keyword]':
-        return attrProperty.productName.PRODUCT_LIST;
-      case '/products/camel':
-        return attrProperty.productName.PRODUCT_LIST;
-      default:
-        return '';
-    }
-  };
+  const handleLogEvent = useCallback(
+    (eventName: string) => {
+      let name: string;
+
+      switch (router.pathname) {
+        case '/mypage': {
+          name = attrProperty.productName.MY;
+          break;
+        }
+        case '/brand': {
+          name = attrProperty.productName.BRAND;
+          break;
+        }
+        case '/products/[id]': {
+          name = attrProperty.productName.PRODUCT_DETAIL;
+          break;
+        }
+        case '/announces/[id]': {
+          name = attrProperty.productName.ANNOUNCE_DETAIL;
+          break;
+        }
+        case '/wishes': {
+          name = attrProperty.productName.WISH_LIST;
+          break;
+        }
+        case '/notices': {
+          name = attrProperty.productName.NOTICES;
+          break;
+        }
+        case '/category': {
+          name = attrProperty.productName.CATEGORY;
+          break;
+        }
+        case '/products': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        case '/products/crm': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        case '/products/search/[keyword]': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        case '/products/categories/[keyword]': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        case '/products/brands/[keyword]': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        case '/products/camel': {
+          name = attrProperty.productName.PRODUCT_LIST;
+          break;
+        }
+        default:
+          name = '';
+      }
+
+      logEvent(eventName, { name });
+    },
+    [router.pathname]
+  );
 
   const handleClickLogo = () => {
-    logEvent(attrKeys.header.CLICK_LOGO, {
-      name: parserEventParameterName()
-    });
-
+    handleLogEvent(attrKeys.header.CLICK_LOGO);
     resetProductKeyword();
     resetRecentSearch();
     router.push('/');
   };
 
-  const handleClickBack = (e: MouseEvent) => {
+  const handleClickBack = (e: MouseEvent<HTMLDivElement>) => {
     const splitPathNames = router.pathname.split('/');
     const lastPathName = splitPathNames[splitPathNames.length - 1] || '';
+
+    const callBack = () => (window.history.length > 2 ? router.back() : router.push('/'));
+
     if (lastPathName === 'personalInput') {
       logEvent(attrKeys.header.CLICK_CLOSE, {
         name: attrProperty.productName.INFO
       });
-      router.back();
+      callBack();
       return;
     }
     if (lastPathName === 'budgetInput') {
       logEvent(attrKeys.header.CLICK_CLOSE, {
         name: attrProperty.productName.BUDGET
       });
-      router.back();
+      callBack();
       return;
     }
     if (lastPathName === 'addressInput') {
       logEvent(attrKeys.header.CLICK_CLOSE, {
         name: attrProperty.productName.ADDRESS
       });
-      router.back();
+      callBack();
       return;
     }
 
@@ -124,7 +174,7 @@ function Header({
             ? attrProperty.productName.PRODUCT_DETAIL
             : attrProperty.productName.PRODUCT_LIST
       });
-      router.back();
+      callBack();
       return;
     }
 
@@ -132,26 +182,16 @@ function Header({
       e.preventDefault();
       setProductsKeywordDialogState({ open: true, pathname: '' });
     } else {
-      logEvent(attrKeys.header.CLICK_BACK, {
-        name: parserEventParameterName()
-      });
-
-      router.back();
+      handleLogEvent(attrKeys.header.CLICK_BACK);
+      callBack();
     }
   };
 
-  const handleSearch = (e: MouseEvent) => {
+  const handleClickSearch = (e: MouseEvent<HTMLDivElement>) => {
     if (dialog && !disableProductsKeywordClickInterceptor) {
       e.preventDefault();
       setProductsKeywordDialogState({ open: true, pathname: '/search' });
     } else {
-      if (closeIcon && router.pathname.split('/')[1] === 'announces') {
-        logEvent(attrKeys.header.CLICK_CLOSE, {
-          name: attrProperty.productName.ANNOUNCE_DETAIL
-        });
-        router.back();
-        return;
-      }
       if (router.pathname.split('/')[1] === 'wishes') {
         logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
           name: attrProperty.productName.WISH_LIST,
@@ -177,9 +217,7 @@ function Header({
           att: 'HEADER'
         });
       } else {
-        logEvent(attrKeys.header.CLICK_SCOPE, {
-          name: parserEventParameterName()
-        });
+        handleLogEvent(attrKeys.header.CLICK_SCOPE);
       }
 
       router.push('/search');
@@ -187,48 +225,51 @@ function Header({
   };
 
   return (
-    <StyledHeader>
-      <Wrapper
+    <>
+      <Box customStyle={{ minHeight: isFixed ? customHeight || HEADER_HEIGHT : 0 }} />
+      <StyledHeader
         isFixed={isFixed}
         showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
         css={customStyle}
       >
-        {type === 'isCrm' ? (
-          <Typography variant="small2" weight="medium" onClick={onClickCrm}>
-            ◀︎ 모델 전체보기
-          </Typography>
-        ) : (
-          <TouchIcon
-            onClick={(e) => (onClickBack ? onClickBack() : handleClickBack(e))}
-            name="ArrowLeftOutlined"
-            wrapCustomStyle={{ display: type === 'isSearch' ? 'none' : 'flex', cursor: 'pointer' }}
-            size="medium"
-            direction="left"
-          />
-        )}
-        <VirtualIcon isType={type === 'isSearch'} />
-        {type !== 'onlyBack' && (
-          <>
-            {children || (
-              <TouchIcon
-                name="LogoText_96_20"
-                customStyle={{ margin: '0 auto' }}
-                onClick={handleClickLogo}
-                wrapCustomStyle={{ width: '100%', height: '100%' }}
-              />
-            )}
-            <TouchIcon
-              onClick={handleSearch}
-              name={closeIcon || 'SearchOutlined'}
-              wrapCustomStyle={type === 'isBack' ? { display: 'none' } : { display: 'flex' }}
-              size="medium"
-              direction="right"
-            />
-            <VirtualIcon isType={type === 'isBack'} />
-          </>
-        )}
-      </Wrapper>
-    </StyledHeader>
+        <Wrapper customHeight={customHeight}>
+          {isCrm ? (
+            <Typography variant="small2" weight="medium" onClick={onClickLeft}>
+              ◀︎ 모델 전체보기
+            </Typography>
+          ) : (
+            leftIcon || (
+              <IconBox
+                show={showLeft}
+                css={leftIconCustomStyle}
+                onClick={onClickLeft || handleClickBack}
+              >
+                {showLeft && <Icon name="ArrowLeftOutlined" />}
+              </IconBox>
+            )
+          )}
+          <Title show={!hideTitle} customHeight={customHeight} css={titleCustomStyle}>
+            {children ||
+              (!hideTitle && (
+                <Icon
+                  name="LogoText_96_20"
+                  onClick={onClickTitle || handleClickLogo}
+                  customStyle={{ cursor: 'pointer' }}
+                />
+              ))}
+          </Title>
+          {rightIcon || (
+            <IconBox
+              show={showRight}
+              css={rightIconCustomStyle}
+              onClick={onClickRight || handleClickSearch}
+            >
+              {showRight && <Icon name="SearchOutlined" />}
+            </IconBox>
+          )}
+        </Wrapper>
+      </StyledHeader>
+    </>
   );
 }
 

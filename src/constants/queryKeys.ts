@@ -114,6 +114,11 @@ const model = {
   keyword: (value: string) => [...model.all, value] as const
 };
 
+const common = {
+  all: ['common'],
+  contentsProducts: (contentsId: number) => [...common.all, 'contentsProducts', contentsId] as const
+};
+
 const queryKeys = {
   brands,
   categories,
@@ -126,7 +131,8 @@ const queryKeys = {
   dashboard,
   nextJs,
   client,
-  model
+  model,
+  common
 };
 
 export default queryKeys;

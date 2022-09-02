@@ -61,7 +61,7 @@ function AddressInput() {
 
   return (
     <GeneralTemplate
-      header={<Header type="onlyBack" />}
+      header={<Header showRight={false} hideTitle />}
       footer={
         <Footer isSearchMode={searchMode}>
           <CtaButton

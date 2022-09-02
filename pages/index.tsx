@@ -3,21 +3,19 @@ import { useEffect } from 'react';
 import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Box, Flexbox } from 'mrcamel-ui';
+import { Box, Flexbox, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
 import {
-  MyPortfolioCommonBanner,
-  MyPortfolioReserveBottomSheet
-} from '@components/pages/myPortfolio';
-import {
+  // HomePersonalProductCuration,
   HomeBrandsCategories,
   HomeCamelProductCuration,
+  HomeEventBannerBottomSheet,
   HomeFooter,
-  // HomePersonalProductCuration,
   HomeProductLegitLive,
   HomeProductsKeywordList,
   HomeRecentSearchList,
@@ -45,6 +43,9 @@ import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const {
+    theme: { palette }
+  } = useTheme();
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data: userHistoryManage, refetch } = useQueryUserHistoryManages();
@@ -100,13 +101,9 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
   return (
     <>
       <GeneralTemplate
-        footer={
-          <>
-            <HomeFooter />
-            <BottomNavigation />
-          </>
-        }
+        footer={<BottomNavigation />}
         disablePadding
+        customStyle={{ '& > main': { backgroundColor: palette.common.white } }}
       >
         <Flexbox direction="vertical" gap={12} customStyle={{ userSelect: 'none' }}>
           <HomeWelcome
@@ -127,10 +124,11 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
           <HomeCamelProductCuration />
           {/* <Box customStyle={{ height: 8 }} /> */}
           {/* <HomePersonalProductCuration /> */}
+          <HomeFooter />
         </Flexbox>
       </GeneralTemplate>
+      <HomeEventBannerBottomSheet />
       <SearchHelperPopup type="continue" />
-      <MyPortfolioReserveBottomSheet />
       <LegitInduceFloatingBanner
         edgeSpacing={20}
         channelTalkPosition={-60}

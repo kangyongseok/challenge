@@ -159,6 +159,107 @@ function ProductDetail() {
     delay: 300
   });
 
+  const handleClickWish = useCallback(
+    (isWish: boolean) => {
+      if (!data?.product) return false;
+
+      if (!accessUser) {
+        push({ pathname: '/login', query: { returnUrl: asPath } });
+        return false;
+      }
+
+      if (isWish) {
+        mutatePostProductsRemove();
+      } else {
+        mutatePostProductsAdd();
+      }
+
+      return true;
+    },
+    [accessUser, asPath, data?.product, mutatePostProductsAdd, mutatePostProductsRemove, push]
+  );
+
+  const handleClickSMS = useCallback(
+    ({
+      siteId,
+      sellerType,
+      id,
+      sellerPhoneNumber
+    }: {
+      siteId?: number;
+      sellerType?: number;
+      id?: number;
+      sellerPhoneNumber: string | null;
+    }) => {
+      if (!sellerPhoneNumber || !data) return;
+
+      mutateMetaInfo({ isAddPurchaseCount: true });
+
+      let message = '';
+
+      if (
+        siteId === PRODUCT_SITE.CAMEL.id ||
+        (sellerType &&
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'])
+      ) {
+        const { protocol, host } = window.location;
+        const conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
+        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${conversionId}`;
+      }
+
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {
+        window.webview.callSendMessage(sellerPhoneNumber, message);
+        return;
+      }
+
+      if (
+        checkAgent.isIOSApp() &&
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.callSendMessage
+      ) {
+        window.webkit.messageHandlers.callSendMessage.postMessage(
+          JSON.stringify({ sellerPhoneNumber, content: message })
+        );
+        return;
+      }
+
+      window.location.href = `sms:${sellerPhoneNumber}${
+        checkAgent.isAndroid() ? '?' : '&'
+      }body=${message}`;
+    },
+    [data, mutateMetaInfo]
+  );
+
+  const getProductImageOverlay = useCallback(
+    ({ status, variant }: { status: number; variant?: TypographyVariant }) => {
+      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['0']) {
+        return null;
+      }
+
+      if (isDup && hasTarget) {
+        return isPriceDown ? (
+          <PriceDownOverlay variant={variant} />
+        ) : (
+          <DuplicatedOverlay variant={variant} />
+        );
+      }
+
+      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']) {
+        return <ReservingOverlay variant={variant} />;
+      }
+
+      return <SoldOutOverlay variant={variant} />;
+    },
+    [hasTarget, isDup, isPriceDown]
+  );
+
+  useEffect(() => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.KAKAO_JS_KEY);
+    }
+  }, []);
+
   useEffect(() => {
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {
@@ -255,101 +356,6 @@ function ProductDetail() {
     };
   }, [isRedirectPage]);
 
-  const handleClickWish = useCallback(
-    (isWish: boolean) => {
-      if (!data?.product) return false;
-
-      if (!accessUser) {
-        push({ pathname: '/login', query: { returnUrl: asPath } });
-        return false;
-      }
-
-      if (isWish) {
-        mutatePostProductsRemove();
-      } else {
-        mutatePostProductsAdd();
-      }
-
-      return true;
-    },
-    [accessUser, asPath, data?.product, mutatePostProductsAdd, mutatePostProductsRemove, push]
-  );
-
-  const handleClickSMS = useCallback(
-    ({
-      siteId,
-      sellerType,
-      id,
-      sellerPhoneNumber
-    }: {
-      siteId?: number;
-      sellerType?: number;
-      id?: number;
-      sellerPhoneNumber: string | null;
-    }) => {
-      if (!sellerPhoneNumber || !data) return;
-
-      mutateMetaInfo({ isAddPurchaseCount: true });
-
-      let message = '';
-
-      if (
-        siteId === PRODUCT_SITE.CAMEL.id ||
-        (sellerType &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'])
-      ) {
-        const { protocol, host } = window.location;
-        const conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
-        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${conversionId}`;
-      }
-
-      if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {
-        window.webview.callSendMessage(sellerPhoneNumber, message);
-        return;
-      }
-
-      if (
-        checkAgent.isIOSApp() &&
-        window.webkit &&
-        window.webkit.messageHandlers &&
-        window.webkit.messageHandlers.callSendMessage
-      ) {
-        window.webkit.messageHandlers.callSendMessage.postMessage(
-          JSON.stringify({ sellerPhoneNumber, content: message })
-        );
-        return;
-      }
-
-      window.location.href = `sms:${sellerPhoneNumber}${
-        checkAgent.isAndroid() ? '?' : '&'
-      }body=${message}`;
-    },
-    [data, mutateMetaInfo]
-  );
-
-  const getProductImageOverlay = useCallback(
-    ({ status, variant }: { status: number; variant?: TypographyVariant }) => {
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['0']) {
-        return null;
-      }
-
-      if (isDup && hasTarget) {
-        return isPriceDown ? (
-          <PriceDownOverlay variant={variant} />
-        ) : (
-          <DuplicatedOverlay variant={variant} />
-        );
-      }
-
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']) {
-        return <ReservingOverlay variant={variant} />;
-      }
-
-      return <SoldOutOverlay variant={variant} />;
-    },
-    [hasTarget, isDup, isPriceDown]
-  );
-
   return (
     <>
       <PageHead
@@ -364,7 +370,10 @@ function ProductDetail() {
       <GeneralTemplate
         header={
           <Header
-            type={(isRedirectPage && 'isBack') || (Boolean(isCrm) && 'isCrm') || undefined}
+            showRight={!isRedirectPage}
+            onClickLeft={
+              isCrm ? () => push(`/products/search/${data?.product.quoteTitle || ''}`) : undefined
+            }
             disableAppDownloadBannerVariableTop={isRedirectPage}
           />
         }

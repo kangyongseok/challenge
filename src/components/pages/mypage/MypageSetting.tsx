@@ -96,6 +96,7 @@ function MypageSetting({ data }: SettingProps) {
       }}
     >
       <Typography
+        id="mypage-setting"
         variant="h4"
         weight="bold"
         customStyle={{ color: palette.common.grey['20'], marginBottom: 16 }}

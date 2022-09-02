@@ -1,4 +1,5 @@
 import type { CommonCode, JobRuleBaseDetail, Page, Paged, SizeCode, Sort } from './common';
+import { Contents } from './common';
 import type { Category, ParentCategory, SubParentCategory } from './category';
 import type { Brand } from './brand';
 
@@ -353,6 +354,11 @@ export type ProductResult = {
   targetProductPrice: number | null;
   targetProductId?: number | null;
   targetProductStatus?: number | null;
+  isWish: boolean;
+  todayViewCount: number;
+  todayWishCount: number;
+  priceDownCount: number;
+  updatedCount: number;
 };
 
 export type PageProduct = Paged<Product>;
@@ -476,6 +482,11 @@ export interface PageProductResult {
   sort: Sort;
   totalElements: number;
   totalPages: number;
+}
+
+export interface ProductContent {
+  contents: Contents;
+  products: ProductResult[][];
 }
 
 /* ---------- Request Parameters ---------- */

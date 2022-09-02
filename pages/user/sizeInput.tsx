@@ -129,7 +129,7 @@ function SizeInput() {
 
   return (
     <GeneralTemplate
-      header={<Header type="onlyBack" onClickBack={handleBack} />}
+      header={<Header hideTitle showRight={false} onClickLeft={handleBack} />}
       footer={
         <Box customStyle={{ minHeight: 120 }}>
           <FooterFixed alignment="center" justifyContent="center">

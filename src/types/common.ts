@@ -80,3 +80,20 @@ export type ABTestTask = {
 };
 
 export type ABTestBelong = 'A' | 'B' | null;
+
+export type ToastType = 'productsKeyword' | 'mapFilter' | 'product';
+
+export type ToastStatus =
+  | 'saved'
+  | 'deleted'
+  | 'restored'
+  | 'limited'
+  | 'autoSaved'
+  | 'locationInfo'
+  | 'signIn'
+  | 'successCopy'
+  | 'successReport'
+  | 'successRemoveWish'
+  | 'successAddWish';
+
+export type DialogType = 'SNSShare' | 'closedCrazyCuration';

@@ -77,20 +77,12 @@ function Login() {
     open: false,
     provider: null
   });
-  const [loadedKakaoSDK, setLoadedKakaoSDK] = useState(false);
   const transitions = useTransition(show, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 }
   });
   const { code = '', state = '', returnUrl = '/' } = router.query || {};
-
-  const handleOnLoadKakao = () => {
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init(process.env.KAKAO_JS_KEY);
-      setLoadedKakaoSDK(true);
-    }
-  };
 
   const updateUserArea = useCallback(() => {
     navigator.geolocation.getCurrentPosition(
@@ -400,14 +392,13 @@ function Login() {
   useEffect(() => {
     logEvent(attrKeys.login.VIEW_LOGIN);
 
-    if (window.Kakao && window.Kakao.isInitialized()) {
-      setLoadedKakaoSDK(true);
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.KAKAO_JS_KEY);
     }
   }, []);
 
   return (
     <>
-      <Script src="https://developers.kakao.com/sdk/js/kakao.min.js" onLoad={handleOnLoadKakao} />
       <Script
         id="facebook"
         dangerouslySetInnerHTML={{
@@ -429,7 +420,6 @@ function Login() {
                     setErrorPopup={setErrorPopup}
                     setShow={setShow}
                     setLoading={setLoading}
-                    loadedKakaoSDK={loadedKakaoSDK}
                   />
                   <LoginUserAgreement />
                 </GeneralTemplate>

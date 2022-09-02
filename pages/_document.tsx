@@ -95,6 +95,7 @@ class MyDocument extends Document {
             name="msapplication-TileImage"
             content={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/ms-icon-144x144.png`}
           />
+          <script defer src="https://developers.kakao.com/sdk/js/kakao.min.js" />
           <noscript>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

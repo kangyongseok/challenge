@@ -4,6 +4,7 @@ const productsEventProperties = 'productsEventProperties';
 const productDetailEventProperties = 'productDetailEventProperties';
 const legitGuideEventProperties = 'legitGuideEventProperties';
 const hideMyPortfolioReservationAd = 'hideMyPortfolioReservationAd';
+const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -11,7 +12,8 @@ const sessionStorageKeys = {
   productsEventProperties,
   productDetailEventProperties,
   legitGuideEventProperties,
-  hideMyPortfolioReservationAd
+  hideMyPortfolioReservationAd,
+  hideCrazyCurationEventBannerIds
 };
 
 export default sessionStorageKeys;

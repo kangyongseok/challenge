@@ -403,6 +403,24 @@ const legitGuide = {
   CLICK_LEGIT_BRAND: 'CLICK_LEGIT_BRAND'
 };
 
+const crazycuration = {
+  view_crazyWeek: 'VIEW_CRAZYWEEK',
+  clickShare: 'CLICK_SHARE',
+  clickTag: 'CLICK_TAG',
+  swipeXTag: 'SWIPE_X_TAG',
+  clickProductDetail: 'CLICK_PRODUCT_DETAIL',
+  clickWishList: 'CLICK_WISH_LIST',
+  swipeXCard: 'SWIPE_X_CARD',
+  clickCurationCard: 'CLICK_CURATION_CARD',
+  clickPushNoti: 'CLICK_PUSHNOTI',
+  clickProductList: 'CLICK_PRODUCT_LIST',
+  viewCrazyWeekPopup: 'VIEW_CRAZYWEEK_POPUP',
+  clickCrazyWeek: 'CLICK_CRAZYWEEK',
+  clickClose: 'CLICK_CLOSE',
+  viewMainModal: 'VIEW_MAIN_MODAL',
+  clickNotToday: 'CLICK_NOTTODAY'
+};
+
 const attrKeys = {
   sendLogApiEvent,
   appsFlyerEvent,
@@ -426,7 +444,8 @@ const attrKeys = {
   myPortfolio,
   legit,
   legitResult,
-  legitGuide
+  legitGuide,
+  crazycuration
 };
 
 export default attrKeys;

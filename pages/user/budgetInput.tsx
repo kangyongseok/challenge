@@ -40,7 +40,7 @@ function BudgetInput() {
 
   return (
     <GeneralTemplate
-      header={<Header type="onlyBack" />}
+      header={<Header hideTitle showRight={false} />}
       footer={
         <Footer>
           <Flexbox gap={8} direction="vertical" alignment="center" justifyContent="center">

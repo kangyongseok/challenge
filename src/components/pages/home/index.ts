@@ -7,3 +7,4 @@ export { default as HomeRecentSearchList } from './HomeRecentSearchList';
 export { default as HomeRecommendationsWishes } from './HomeRecommendationsWishes';
 export { default as HomeWelcome } from './HomeWelcome';
 export { default as HomeProductLegitLive } from './HomeProductLegitLive';
+export { default as HomeEventBannerBottomSheet } from './HomeEventBannerBottomSheet';

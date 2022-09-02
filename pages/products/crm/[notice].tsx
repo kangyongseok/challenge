@@ -4,6 +4,7 @@ import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsInfiniteGrid,
@@ -80,6 +81,7 @@ function CrmProducts() {
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
+      <ProductsEventBottomBanner />
     </>
   );
 }

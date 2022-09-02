@@ -14,3 +14,4 @@ export { default as ProductsCategoryTags } from './ProductsCategoryTags';
 export { default as ProductsTopButton } from './ProductsTopButton';
 export { default as ProductsKeywordSaveFloatingButton } from './ProductsKeywordSaveFloatingButton';
 export { default as ProductsLegitFilterBottomSheet } from './ProductsLegitFilterBottomSheet';
+export { default as ProductsEventBottomBanner } from './ProductsEventBottomBanner';

@@ -154,7 +154,7 @@ function BrandInput() {
 
   return (
     <GeneralTemplate
-      header={<Header type="onlyBack" onClickBack={handleBack} />}
+      header={<Header hideTitle showRight={false} onClickLeft={handleBack} />}
       footer={
         <BrandInputFooter
           searchValue={searchValue}

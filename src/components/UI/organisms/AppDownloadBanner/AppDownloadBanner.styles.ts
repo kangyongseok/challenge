@@ -9,7 +9,7 @@ export const StyledAppDownloadBanner = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header};
+  z-index: ${({ theme: { zIndex } }) => zIndex.header + 1};
   cursor: pointer;
 `;
 

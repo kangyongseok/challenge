@@ -98,7 +98,7 @@ function CategoryInput() {
 
   return (
     <GeneralTemplate
-      header={<Header type="onlyBack" />}
+      header={<Header hideTitle showRight={false} />}
       footer={
         <Footer>
           <CtaButton

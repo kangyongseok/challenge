@@ -57,10 +57,7 @@ function MyPage() {
 
   return (
     <>
-      <GeneralTemplate
-        header={<Header type="isSearch" isFixed={false} />}
-        footer={<BottomNavigation />}
-      >
+      <GeneralTemplate header={<Header isFixed={false} />} footer={<BottomNavigation />}>
         <MypageWelcome />
         <Line top={showAppDownloadBanner ? 284 : 226} />
         <MypageNotice data={userInfo?.announces} />

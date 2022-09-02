@@ -91,11 +91,7 @@ function Brand() {
     <GeneralTemplate
       disablePadding
       header={
-        <Header
-          customStyle={{
-            borderBottom: `${palette.common.grey['90']} 1px solid`
-          }}
-        >
+        <Header customStyle={{ borderBottom: `${palette.common.grey['90']} 1px solid` }}>
           <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
             브랜드
           </Typography>
