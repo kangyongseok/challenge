@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { DehydratedState, QueryClient, dehydrate } from 'react-query';
+import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
@@ -546,23 +546,17 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     const productId = Number(id || 0);
 
-    const data = await queryClient.fetchQuery(
-      queryKeys.products.product({ productId }),
-      async () => {
-        const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
+    await queryClient.prefetchQuery(queryKeys.products.product({ productId }), async () => {
+      const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
 
-        resultProduct.product.viewCount += 1;
+      resultProduct.product.viewCount += 1;
 
-        return resultProduct;
-      }
-    );
-    queryClient.setQueryData(queryKeys.products.product({ productId }), data);
-
-    const dehydratedState: DehydratedState = dehydrate(queryClient);
+      return resultProduct;
+    });
 
     return {
       props: {
-        dehydratedState
+        dehydratedState: dehydrate(queryClient)
       }
     };
   } catch {

@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent, SyntheticEvent } from 'react';
 
 import type { Swiper as SwiperClass } from 'swiper/types';
@@ -47,6 +47,7 @@ function ProductImages({
   getProductImageOverlay,
   openLegit
 }: ProductImagesProps) {
+  const [loadedImageMain, setLoadedImageMain] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
@@ -82,6 +83,51 @@ function ProductImages({
     return detailImages;
   }, [detailImages, product?.imageMain, product?.imageMainLarge]);
 
+  const handleClickCloseIcon = (e: SyntheticEvent<SVGElement>) => {
+    e.stopPropagation();
+    logEvent(attrKeys.products.CLICK_PICGALLERY_CLOSE);
+    setOpenModal(false);
+  };
+
+  const handleSlideChange = useCallback(
+    ({ activeIndex }: SwiperClass) => {
+      if (!isLoggedSwipeXPic) {
+        setIsLoggedSwipeXPic(true);
+        logEvent(attrKeys.products.SWIPE_X_PIC, {
+          name: attrProperty.productName.PICGALLERY,
+          index: activeIndex
+        });
+      }
+      setCurrentSlide(activeIndex);
+      imageSwiper?.slideTo(activeIndex, 0);
+      imageModalSwiper?.slideTo(activeIndex, 0);
+    },
+    [imageModalSwiper, imageSwiper, isLoggedSwipeXPic]
+  );
+
+  const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
+    setCurrentScale(scale);
+  };
+
+  const handleImageLoad = (index: number) => () => {
+    const currentTransformRef = transformsRef.current[index];
+
+    if (currentTransformRef) {
+      currentTransformRef.centerView();
+      currentTransformRef.resetTransform();
+    }
+  };
+
+  const handleImageModal = (e: MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    if (target.dataset) {
+      logEvent(attrKeys.products.CLICK_PIC, {
+        att: target.dataset.index
+      });
+    }
+    setOpenModal(true);
+  };
+
   useEffect(() => {
     const newWrapperRef = wrapperRef.current;
     const disabledSafariSwipeBack = (e: TouchEvent) => {
@@ -94,11 +140,14 @@ function ProductImages({
       newWrapperRef.addEventListener('touchstart', disabledSafariSwipeBack);
     }
 
+    if (product) setLoadedImageMain(true);
+
     return () => {
       if (newWrapperRef) {
         newWrapperRef.removeEventListener('touchstart', disabledSafariSwipeBack);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -126,48 +175,6 @@ function ProductImages({
 
     return () => scrollEnable();
   }, [openModal]);
-
-  const handleClickCloseIcon = (e: SyntheticEvent<SVGElement>) => {
-    e.stopPropagation();
-    logEvent(attrKeys.products.CLICK_PICGALLERY_CLOSE);
-    setOpenModal(false);
-  };
-
-  const handleSlideChange = ({ activeIndex }: SwiperClass) => {
-    if (!isLoggedSwipeXPic) {
-      setIsLoggedSwipeXPic(true);
-      logEvent(attrKeys.products.SWIPE_X_PIC, {
-        name: attrProperty.productName.PICGALLERY,
-        index: activeIndex
-      });
-    }
-    setCurrentSlide(activeIndex);
-    imageSwiper?.slideTo(activeIndex, 0);
-    imageModalSwiper?.slideTo(activeIndex, 0);
-  };
-
-  const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
-    setCurrentScale(scale);
-  };
-
-  const handleImageLoad = (index: number) => () => {
-    const currentTransformRef = transformsRef.current[index];
-
-    if (currentTransformRef) {
-      currentTransformRef.centerView();
-      currentTransformRef.resetTransform();
-    }
-  };
-
-  const handleImageModal = (e: MouseEvent<HTMLElement>) => {
-    const target = e.currentTarget;
-    if (target.dataset) {
-      logEvent(attrKeys.products.CLICK_PIC, {
-        att: target.dataset.index
-      });
-    }
-    setOpenModal(true);
-  };
 
   return (
     <>
@@ -201,7 +208,14 @@ function ProductImages({
             </>
           )}
           <SwiperSlide>
-            {isLoading || !product ? (
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={product?.imageMain || ''}
+              alt="product imageMain"
+              onLoad={() => setLoadedImageMain(true)}
+              style={{ width: 0, height: 0, display: 'none' }}
+            />
+            {isLoading || !product || !loadedImageMain ? (
               <ImageSkeleton />
             ) : (
               <Image

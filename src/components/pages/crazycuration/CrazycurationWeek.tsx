@@ -1,7 +1,6 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
@@ -9,9 +8,6 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -39,10 +35,6 @@ function CrazycurationWeek({ weekData, isMobileWeb, logEventTitle }: Crazycurati
   const {
     theme: { palette }
   } = useTheme();
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo
-  );
 
   const setDialogState = useSetRecoilState(dialogState);
   const [activeCardIndex, setActiveCardIndex] = useState(weekData[0]);
@@ -60,10 +52,11 @@ function CrazycurationWeek({ weekData, isMobileWeb, logEventTitle }: Crazycurati
         att: curationTitle[id as keyof typeof curationTitle]
       });
       setActiveCardIndex(id);
-      curationCardList.current?.scrollTo(
-        (index > 0 ? 20 : 0) + CARD_WIDTH * index + CARD_GAP * (index - 1),
-        0
-      );
+      curationCardList.current?.scrollTo({
+        left: (index > 0 ? 20 : 0) + CARD_WIDTH * index + CARD_GAP * (index - 1),
+        top: 0,
+        behavior: 'smooth'
+      });
     },
     [logEventTitle]
   );
@@ -111,37 +104,35 @@ function CrazycurationWeek({ weekData, isMobileWeb, logEventTitle }: Crazycurati
         gap={CARD_GAP}
         customStyle={{ overflow: 'auto' }}
       >
-        {weekData
-          .filter((id) => (gender === 'F' ? id !== 3 : id !== 2))
-          .map((id, index) =>
-            activeCardIndex === id ? (
-              <ActiveCurationCard
-                key={`week-curation-card-on-${id}`}
-                index={index}
-                imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOn${id}.png`}
-              >
-                {index === 0 && (
-                  <Typography
-                    variant="h4"
-                    weight="bold"
-                    customStyle={{ position: 'absolute', top: 28, left: 20 }}
-                  >
-                    내일은?
-                  </Typography>
-                )}
-                <CurationCardButton variant="contained" fullWidth onClick={handleClickNoti(false)}>
-                  {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
-                </CurationCardButton>
-              </ActiveCurationCard>
-            ) : (
-              <CurationCard
-                key={`week-curation-card-off-${id}`}
-                index={index}
-                imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOff${id}.png`}
-                onClick={handleClickCuration(id, index)}
-              />
-            )
-          )}
+        {weekData.map((id, index) =>
+          activeCardIndex === id ? (
+            <ActiveCurationCard
+              key={`week-curation-card-on-${id}`}
+              index={index}
+              imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOn${id}.png`}
+            >
+              {index === 0 && (
+                <Typography
+                  variant="h4"
+                  weight="bold"
+                  customStyle={{ position: 'absolute', top: 28, left: 20 }}
+                >
+                  내일은?
+                </Typography>
+              )}
+              <CurationCardButton variant="contained" fullWidth onClick={handleClickNoti(false)}>
+                {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
+              </CurationCardButton>
+            </ActiveCurationCard>
+          ) : (
+            <CurationCard
+              key={`week-curation-card-off-${id}`}
+              index={index}
+              imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOff${id}.png`}
+              onClick={handleClickCuration(id, index)}
+            />
+          )
+        )}
       </Flexbox>
       <Flexbox
         direction="vertical"

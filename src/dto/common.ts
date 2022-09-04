@@ -82,5 +82,5 @@ export type Contents = {
   title: string;
   url: string;
   imageMain: string;
-  imageBanner: string;
+  imageListBanner: string;
 };

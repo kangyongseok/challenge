@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import type { ParsedUrlQueryInput } from 'node:querystring';
 
 import { useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate } from 'react-query';
+import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Flexbox, Typography } from 'mrcamel-ui';
@@ -87,7 +87,8 @@ const curationData: Record<
       brandName: '에어조던',
       parentIds: [14],
       subParentIds: [383],
-      lineIds: [618, 137]
+      lineIds: [618, 137],
+      requiredLineIds: [4705, 4458]
     },
     weekData: [4, 5, 6],
     logEventTitle: attrProperty.title.rare
@@ -120,13 +121,28 @@ function Crazycuration({
   const router = useRouter();
   const { title = '' } = router.query;
 
+  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQuery(
+    queryKeys.users.userInfo(),
+    fetchUserInfo
+  );
   const setDialogState = useSetRecoilState(dialogState);
 
-  const curationTitle = String(title)
-    .replace(/[0-9-]/gim, '')
-    .trim();
-  const currentCuration =
-    curationTitle.length > 0 ? curationData[curationTitle as keyof typeof curationData] : undefined;
+  const currentCuration = useMemo(() => {
+    const curationTitle = String(title)
+      .replace(/[0-9-]/gim, '')
+      .trim();
+
+    if (curationTitle.length > 0) {
+      const data = curationData[curationTitle as keyof typeof curationData];
+
+      return {
+        ...data,
+        weekData: data.weekData.filter((id) => (gender === 'F' ? id !== 2 : id !== 3))
+      };
+    }
+
+    return undefined;
+  }, [gender, title]);
 
   const handleClickWishButtonEvent = useCallback(
     (
@@ -308,7 +324,7 @@ function Crazycuration({
         <Flexbox component="section" justifyContent="center">
           <CurationImg
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/main${currentCuration.contentsId}.png`}
-            alt={`${curationTitle}.png`}
+            alt={`${title}.png`}
           />
         </Flexbox>
         <Flexbox
@@ -321,7 +337,7 @@ function Crazycuration({
           <Flexbox justifyContent="center" customStyle={{ padding: '0 20px' }}>
             <CurationImg
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/description${currentCuration.contentsId}.png`}
-              alt={`${curationTitle} Description`}
+              alt={`${title} Description`}
             />
           </Flexbox>
           {currentCuration.listType === 'a' && (

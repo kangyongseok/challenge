@@ -31,7 +31,14 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import { Area, MetaSocial, SkeletonWrapper, Title, WishButton } from './ProductGridCard.styles';
+import {
+  Area,
+  MetaSocial,
+  SkeletonWrapper,
+  Title,
+  TodayWishViewLabel,
+  WishButton
+} from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
@@ -42,12 +49,10 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   showNewLabel?: boolean;
   hideLegitStatusLabel?: boolean;
   showTodayWishViewLabel?: boolean;
-  todayWishViewLabelColor?: {
-    color: string;
-    backgroundColor: string;
-  };
+
   showCountLabel?: boolean;
   hideWishButton?: boolean;
+  hidePlatformLogo?: boolean;
   productAtt?: object;
   customStyle?: CustomStyle;
   wishAtt?: WishAtt;
@@ -58,6 +63,9 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   isRound?: boolean;
   isDark?: boolean;
   gap?: number;
+  areaWithDateInfoCustomStyle?: CustomStyle;
+  metaCamelInfoCustomStyle?: CustomStyle;
+  todayWishViewLabelCustomStyle?: CustomStyle;
 }
 
 const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(function ProductGridCard(
@@ -70,9 +78,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     showNewLabel = false,
     hideLegitStatusLabel = false,
     showTodayWishViewLabel = false,
-    todayWishViewLabelColor = {},
     showCountLabel = false,
     hideWishButton = false,
+    hidePlatformLogo = false,
     productAtt,
     customStyle,
     wishAtt,
@@ -83,6 +91,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     isRound = false,
     gap,
     isDark = false,
+    areaWithDateInfoCustomStyle,
+    metaCamelInfoCustomStyle,
+    todayWishViewLabelCustomStyle,
     ...props
   },
   ref
@@ -241,7 +252,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           </Flexbox>
         )}
         {showTodayWishViewLabel && (todayViewCount > 0 || todayWishCount > 0) && (
-          <Label
+          <TodayWishViewLabel
             size="xsmall"
             variant="ghost"
             brandColor="black"
@@ -250,13 +261,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               (todayViewCount > 0 && `오늘 ${todayViewCount}명이 봤어요!`) ||
               ''
             }
-            customStyle={{
-              position: 'absolute',
-              left: compact ? 0 : 12,
-              bottom: -4,
-              color: todayWishViewLabelColor.color,
-              backgroundColor: todayWishViewLabelColor.backgroundColor
-            }}
+            compact={compact}
+            customStyle={todayWishViewLabelCustomStyle}
           />
         )}
         {!hideWishButton && (
@@ -268,15 +274,17 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             )}
           </WishButton>
         )}
-        <Avatar
-          width={20}
-          height={20}
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-            (hasImage && siteUrlId) || (hasImage && siteId) || ''
-          }.png`}
-          alt="Platform Img"
-          customStyle={{ position: 'absolute', top: 10, left: 10 }}
-        />
+        {!hidePlatformLogo && (
+          <Avatar
+            width={20}
+            height={20}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+              (hasImage && siteUrlId) || (hasImage && siteId) || ''
+            }.png`}
+            alt="Platform Img"
+            customStyle={{ position: 'absolute', top: 10, left: 10 }}
+          />
+        )}
         {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
           (status === 4 ? <ReservingOverlay variant="h4" /> : <SoldOutOverlay variant="h4" />)}
       </Box>
@@ -326,7 +334,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         </Flexbox>
         {!hideAreaWithDateInfo && (
           <Area variant="small2" weight="medium">
-            <Box component="span">
+            <Box component="span" customStyle={areaWithDateInfoCustomStyle}>
               {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
                 new Date(datePosted)
               )}${area ? ` · ${getProductArea(area)}` : ''}`}
@@ -336,7 +344,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0) && (
           <MetaSocial>
             {wishCount > 0 && (
-              <Flexbox alignment="center" gap={2}>
+              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
                 <Typography variant="small2" weight="medium" color={common.grey['60']}>
                   {wishCount}
@@ -344,7 +352,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               </Flexbox>
             )}
             {purchaseCount > 0 && (
-              <Flexbox alignment="center" gap={2}>
+              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="MessageOutlined" width={14} height={14} color={common.grey['60']} />
                 <Typography variant="small2" weight="medium" color={common.grey['60']}>
                   {purchaseCount}

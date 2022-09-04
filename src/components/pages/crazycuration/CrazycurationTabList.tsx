@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import type { UIEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Chip, Flexbox, Typography } from 'mrcamel-ui';
+import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
@@ -37,6 +37,9 @@ function CrazycurationTabList({
   onClickProduct,
   handleClickWishButtonEvent
 }: CrazycurationTabListProps) {
+  const {
+    theme: { palette }
+  } = useTheme();
   const [{ selectedIndex, prevScroll }, setSelectedTabState] = useRecoilState(
     creazycurationSelectedTabState
   );
@@ -140,6 +143,7 @@ function CrazycurationTabList({
                       showTodayWishViewLabel
                       showCountLabel
                       hideWishButton
+                      hidePlatformLogo
                       name={attrProperty.productName.MAIN}
                       source={attrProperty.productSource.MAIN_MYLIST}
                       productAtt={onProductAtt(product, index + 1)}
@@ -148,6 +152,10 @@ function CrazycurationTabList({
                       isRound
                       isDark
                       customStyle={{ marginBottom: 'auto' }}
+                      areaWithDateInfoCustomStyle={{ color: palette.common.white, opacity: 0.6 }}
+                      metaCamelInfoCustomStyle={{
+                        '& > svg,div': { color: `${palette.common.white} !important`, opacity: 0.6 }
+                      }}
                     />
                     <CrazycurationWishButton
                       listType="a"

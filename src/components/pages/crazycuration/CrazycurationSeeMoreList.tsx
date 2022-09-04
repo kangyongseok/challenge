@@ -89,6 +89,7 @@ function CrazycurationSeeMoreList({
                     hideLegitStatusLabel
                     showTodayWishViewLabel
                     hideWishButton
+                    hidePlatformLogo
                     name={attrProperty.productName.MAIN}
                     source={attrProperty.productSource.MAIN_MYLIST}
                     productAtt={onProductAtt(product, index + 1)}
@@ -96,9 +97,13 @@ function CrazycurationSeeMoreList({
                     compact
                     isRound
                     customStyle={{ marginBottom: 'auto' }}
-                    todayWishViewLabelColor={{
+                    todayWishViewLabelCustomStyle={{
                       color: palette.common.white,
                       backgroundColor: '#507C44'
+                    }}
+                    areaWithDateInfoCustomStyle={{ color: palette.common.black, opacity: 0.5 }}
+                    metaCamelInfoCustomStyle={{
+                      '& > svg,div': { color: `${palette.common.black} !important`, opacity: 0.5 }
                     }}
                   />
                   <CrazycurationWishButton

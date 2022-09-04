@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
@@ -114,7 +114,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
     setDialogState({ type: 'SNSShare', product });
   };
 
-  const handleClickReport = () => {
+  const handleClickReport = useCallback(() => {
     setIsOpenReportTooltip(!isOpenReportTooltip);
     if (!isOpenReportTooltip && product) {
       logEvent(attrKeys.products.CLICK_REPORT, {
@@ -135,7 +135,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
         return newReportOptions;
       });
     }
-  };
+  }, [isOpenReportTooltip, product]);
 
   const handleClickReportOption =
     ({ reported, checked, type }: { reported: boolean; checked: boolean; type: number }) =>

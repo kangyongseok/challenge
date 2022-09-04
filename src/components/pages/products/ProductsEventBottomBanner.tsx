@@ -30,7 +30,7 @@ function ProductsEventBottomBanner() {
   const [open, setOpen] = useRecoilState(creazycurationProductsEventBottomBannerOpenState);
   const openTriggerTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: { contents: { id = 0, imageBanner = '', url = '/' } = {} } = {} } = useQuery(
+  const { data: { contents: { id = 0, imageListBanner = '', url = '/' } = {} } = {} } = useQuery(
     queryKeys.common.contentsProducts(0),
     () => fetchContentsProducts(0)
   );
@@ -85,7 +85,7 @@ function ProductsEventBottomBanner() {
   return (
     <StyledProductsEventBottomBanner triggered={triggered}>
       <Box customStyle={{ position: 'relative' }}>
-        <Image width="100%" src={imageBanner} alt="Ad Banner Img" disableAspectRatio />
+        <Image width="100%" src={imageListBanner} alt="Ad Banner Img" disableAspectRatio />
         <Flexbox
           customStyle={{
             position: 'absolute',

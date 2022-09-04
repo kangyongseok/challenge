@@ -1,4 +1,4 @@
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Label, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 export const SkeletonWrapper = styled.div`
@@ -54,4 +54,11 @@ export const Area = styled(Typography)`
 
 export const MetaSocial = styled(Flexbox)`
   gap: 6px;
+`;
+
+export const TodayWishViewLabel = styled(Label)<{ compact?: boolean }>`
+  position: absolute;
+  left: ${({ compact }) => (compact ? 0 : '12px')};
+  bottom: -4px;
+  z-index: 2;
 `;
