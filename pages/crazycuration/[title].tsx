@@ -63,12 +63,15 @@ const curationData: Record<
     brandData: [
       { id: 0, name: '전체브랜드' },
       { id: 6, name: '구찌' },
+      { id: 34, name: '디올' },
+      { id: 11, name: '루이비통' },
+      { id: 14, name: '메종키츠네' },
+      { id: 17, name: '무스너클' },
       { id: 23, name: '보테가베네타' },
       { id: 25, name: '스톤아일랜드' },
-      { id: 34, name: '디올' },
-      { id: 44, name: '샤넬' },
-      { id: 284, name: '에어팟' },
-      { id: 125, name: '프라이탁' }
+      { id: 53, name: '아미' },
+      { id: 27, name: '알렉산더맥퀸' },
+      { id: 32, name: '톰브라운' }
     ],
     query: {
       brandName: '',
