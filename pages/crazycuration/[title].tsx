@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import type { ParsedUrlQueryInput } from 'node:querystring';
 
 import { useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   CrazycurationFloatingButton,
@@ -36,6 +37,7 @@ import attrKeys from '@constants/attrKeys';
 import checkAgent from '@utils/checkAgent';
 
 import { dialogState } from '@recoil/common';
+import useContentsProducts from '@hooks/useContentsProducts';
 
 const eventStatus = {
   default: 0,
@@ -114,38 +116,23 @@ const curationData: Record<
 };
 
 function Crazycuration({
+  curationTitle,
+  currentCuration,
   isClosedEvent,
   nextEventUrl,
   nextEventTitle,
   isMobile
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const isMobileWeb = isMobile && !checkAgent.isMobileApp();
-
   const router = useRouter();
-  const { title = '' } = router.query;
 
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo
-  );
   const setDialogState = useSetRecoilState(dialogState);
 
-  const currentCuration = useMemo(() => {
-    const curationTitle = String(title)
-      .replace(/[0-9-]/gim, '')
-      .trim();
-
-    if (curationTitle.length > 0) {
-      const data = curationData[curationTitle as keyof typeof curationData];
-
-      return {
-        ...data,
-        weekData: data.weekData.filter((id) => (gender === 'F' ? id !== 2 : id !== 3))
-      };
+  const {
+    data: {
+      contents: { title: ogTitle, description: ogDescription, imageThumbnail: ogImage, url: ogUrl }
     }
-
-    return undefined;
-  }, [gender, title]);
+  } = useContentsProducts(currentCuration?.contentsId || 0);
 
   const handleClickWishButtonEvent = useCallback(
     (
@@ -319,6 +306,16 @@ function Crazycuration({
 
   return currentCuration ? (
     <>
+      <PageHead
+        title={ogTitle}
+        description={ogDescription}
+        ogTitle={ogTitle}
+        ogDescription={ogDescription}
+        ogImage={ogImage}
+        ogUrl={`${(typeof window !== 'undefined' && window.location.protocol) || 'https:'}//${
+          (typeof window !== 'undefined' && window.location.host) || 'mrcamel.co.kr'
+        }${ogUrl}`}
+      />
       <GeneralTemplate
         header={<CrazycurationHeader />}
         customStyle={{ '& > main': { backgroundColor: currentCuration.backgroundColor } }}
@@ -327,7 +324,7 @@ function Crazycuration({
         <Flexbox component="section" justifyContent="center">
           <CurationImg
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/main${currentCuration.contentsId}.png`}
-            alt={`${title}.png`}
+            alt={`${curationTitle}.png`}
           />
         </Flexbox>
         <Flexbox
@@ -340,7 +337,7 @@ function Crazycuration({
           <Flexbox justifyContent="center" customStyle={{ padding: '0 20px' }}>
             <CurationImg
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/description${currentCuration.contentsId}.png`}
-              alt={`${title} Description`}
+              alt={`${curationTitle} Description`}
             />
           </Flexbox>
           {currentCuration.listType === 'a' && (
@@ -381,32 +378,30 @@ export async function getServerSideProps({
   req,
   query: { title = '' } = {}
 }: GetServerSidePropsContext) {
-  const userAgent = req.headers['user-agent'];
   const queryClient = new QueryClient();
-  let isClosedEvent = false;
-  let nextEventUrl = '';
-  let nextEventTitle = '';
-
+  const userAgent = req.headers['user-agent'];
   const curationTitle = String(title)
     .replace(/[0-9-]/gim, '')
     .trim();
   const currentCuration =
     curationTitle.length > 0 ? curationData[curationTitle as keyof typeof curationData] : undefined;
+  let isClosedEvent = false;
+  let nextEventUrl = '';
+  let nextEventTitle = '';
+  let gender = 'M';
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
   if (currentCuration?.contentsId) {
-    const { contents: { status: currentEventStatus } = {} } = await queryClient.fetchQuery(
-      queryKeys.common.contentsProducts(currentCuration.contentsId),
-      () => fetchContentsProducts(currentCuration.contentsId)
-    );
+    const { contents: { status: currentEventStatus, targetContents } = {} } =
+      await queryClient.fetchQuery(
+        queryKeys.common.contentsProducts(currentCuration.contentsId),
+        () => fetchContentsProducts(currentCuration.contentsId)
+      );
+    const { url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
 
     if (currentEventStatus === eventStatus.closed) {
-      const { contents: { url: eventUrl = '', title: eventTitle = '' } = {} } =
-        await queryClient.fetchQuery(queryKeys.common.contentsProducts(0), () =>
-          fetchContentsProducts(0)
-        );
       isClosedEvent = true;
       nextEventUrl = eventUrl;
       nextEventTitle = eventTitle;
@@ -414,11 +409,25 @@ export async function getServerSideProps({
   }
 
   if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    const { info: { value: { gender: userGender = '' } = {} } = {} } = await queryClient.fetchQuery(
+      queryKeys.users.userInfo(),
+      fetchUserInfo
+    );
+
+    if (userGender.length > 0) gender = userGender;
   }
 
   return {
     props: {
+      curationTitle,
+      currentCuration: currentCuration
+        ? {
+            ...currentCuration,
+            weekData: currentCuration.weekData.filter((id) =>
+              gender === 'F' ? id !== 2 : id !== 3
+            )
+          }
+        : currentCuration,
       isClosedEvent,
       nextEventUrl,
       nextEventTitle,

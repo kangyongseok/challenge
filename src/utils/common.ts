@@ -122,25 +122,17 @@ export function copyToClipboard(text: string) {
   }
 
   const textArea = document.createElement('textarea');
-  const selection = window.getSelection();
-  const range = window.document.createRange();
   textArea.value = text;
-  textArea.contentEditable = 'true';
-  textArea.readOnly = false;
-  textArea.style.whiteSpace = 'pre';
   textArea.style.position = 'absolute';
   textArea.style.left = '-1000px';
   textArea.style.top = '-1000px';
 
   document.body.appendChild(textArea);
-
-  selection?.removeAllRanges();
-  range.selectNode(textArea);
-  selection?.addRange(range);
+  textArea.select();
+  textArea.setSelectionRange(0, 9999);
 
   const success = window.document.execCommand('copy');
 
-  selection?.removeAllRanges();
   window.document.body.removeChild(textArea);
 
   return success;

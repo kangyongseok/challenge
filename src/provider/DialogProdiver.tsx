@@ -222,12 +222,13 @@ function SNSShareDialolgContent({ product }: SNSShareDialolgContentProps) {
       }
       case 'linkCopy':
       default:
-        copyToClipboard(`${shareTitle} ${url}`);
-        setToastState({
-          type: 'product',
-          status: 'successCopy',
-          hideDuration: 1500
-        });
+        if (copyToClipboard(`${shareTitle} ${url}`)) {
+          setToastState({
+            type: 'product',
+            status: 'successCopy',
+            hideDuration: 1500
+          });
+        }
         break;
     }
 

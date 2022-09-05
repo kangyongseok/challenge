@@ -72,16 +72,30 @@ export interface Paged<T> {
   totalPages: number;
 }
 
-export type Contents = {
-  dateCreated: string;
-  dateEnd: string;
-  dateStart: string;
+export type ContentsDetail = {
   dateUpdated: string;
+  dateCreated: string;
+  id: number;
+  contentsId: number;
+  title: string;
+  contentIds: string;
+  sort: number;
+};
+
+export type Contents = {
+  dateUpdated: string;
+  dateCreated: string;
   id: number;
   status: number;
   title: string;
   url: string;
+  dateStart: string;
+  dateEnd: string;
+  description: string;
   imageMain: string;
   imageMainBanner: string;
   imageListBanner: string;
+  imageThumbnail: string;
+  contentsDetails: ContentsDetail[];
+  targetContents: Contents | null;
 };

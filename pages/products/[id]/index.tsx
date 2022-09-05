@@ -207,7 +207,7 @@ function ProductDetail() {
         const { protocol, host } = window.location;
         const newConversionId =
           conversionId || Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
-        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${newConversionId}`;
+        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/products/${id}?conversionId=${newConversionId}`;
       }
 
       if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {
