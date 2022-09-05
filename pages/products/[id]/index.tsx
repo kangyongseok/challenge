@@ -184,12 +184,14 @@ function ProductDetail() {
       siteId,
       sellerType,
       id,
-      sellerPhoneNumber
+      sellerPhoneNumber,
+      conversionId
     }: {
       siteId?: number;
       sellerType?: number;
       id?: number;
       sellerPhoneNumber: string | null;
+      conversionId?: number;
     }) => {
       if (!sellerPhoneNumber || !data) return;
 
@@ -203,8 +205,9 @@ function ProductDetail() {
           SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'])
       ) {
         const { protocol, host } = window.location;
-        const conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
-        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${conversionId}`;
+        const newConversionId =
+          conversionId || Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
+        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/product/${id}/${newConversionId}`;
       }
 
       if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {

@@ -6,8 +6,13 @@ const routers = [
     permanent: true
   },
   {
-    source: '/product/:id',
-    destination: '/products/:id',
+    source: '/product/:id/:conversionId',
+    destination: '/products/:id?conversionId=:conversionId',
+    permanent: true
+  },
+  {
+    source: '/product/:id*',
+    destination: '/products/:id*',
     permanent: true
   },
   {

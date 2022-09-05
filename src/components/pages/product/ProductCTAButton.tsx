@@ -66,12 +66,14 @@ interface ProductCTAButtonProps {
     siteId,
     sellerType,
     id,
-    sellerPhoneNumber
+    sellerPhoneNumber,
+    conversionId
   }: {
     siteId?: number;
     sellerType?: number;
     id?: number;
     sellerPhoneNumber: string | null;
+    conversionId?: number;
   }) => void;
   mutateMetaInfo: UseMutateFunction<
     ProductDetail | undefined,

@@ -42,12 +42,14 @@ interface ProductActionsProps {
     siteId,
     sellerType,
     id,
-    sellerPhoneNumber
+    sellerPhoneNumber,
+    conversionId
   }: {
     siteId?: number;
     sellerType?: number;
     id?: number;
     sellerPhoneNumber: string | null;
+    conversionId?: number;
   }) => void;
 }
 
@@ -113,6 +115,25 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
 
     setDialogState({ type: 'SNSShare', product });
   };
+
+  const handleClickSendSMS = useCallback(() => {
+    if (!product) return;
+
+    const conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
+
+    productDetailAtt({
+      key: attrKeys.products.CLICK_SEND_MESSAGE,
+      product,
+      rest: { att: 'SMS', conversionId }
+    });
+    onClickSMS({
+      siteId: product.site?.id,
+      sellerType: product.productSeller?.type,
+      id: product.id,
+      sellerPhoneNumber,
+      conversionId
+    });
+  }, [onClickSMS, product, sellerPhoneNumber]);
 
   const handleClickReport = useCallback(() => {
     setIsOpenReportTooltip(!isOpenReportTooltip);
@@ -233,26 +254,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
           brandColor="black"
           size="small"
           disabled={!product || !sellerPhoneNumber}
-          onClick={
-            product
-              ? () => {
-                  const conversionId = Number(
-                    `${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`
-                  );
-                  productDetailAtt({
-                    key: 'CLICK_SEND_MESSAGE',
-                    product,
-                    rest: { att: 'SMS', conversionId }
-                  });
-                  onClickSMS({
-                    siteId: product.site?.id,
-                    sellerType: product.productSeller?.type,
-                    id: product.id,
-                    sellerPhoneNumber
-                  });
-                }
-              : undefined
-          }
+          onClick={handleClickSendSMS}
         >
           <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
             문자보내기

@@ -1058,30 +1058,28 @@ function ProductsFilter({ variant, customStyle }: ProductsFilterProps) {
           css={filterCustomStyle}
         >
           <FilterButtons ref={filterButtonsRef}>
-            {idFilterOptions
-              .filter(({ id }) => !legitIdFilterOptionIds.includes(id))
-              .map(({ id, name }) => (
-                <Chip
-                  key={`id-filter-option-button-${id}`}
-                  variant={
-                    (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
-                      ? 'outlinedGhost'
-                      : 'outlined'
-                  }
-                  brandColor={
-                    (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
-                      ? 'primary'
-                      : 'grey'
-                  }
-                  data-id={id}
-                  size="small"
-                  weight="medium"
-                  isRound={false}
-                  onClick={handleClickIdFilterOption}
-                >
-                  {name}
-                </Chip>
-              ))}
+            {idFilterOptions.slice(0, 3).map(({ id, name }) => (
+              <Chip
+                key={`id-filter-option-button-${id}`}
+                variant={
+                  (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
+                    ? 'outlinedGhost'
+                    : 'outlined'
+                }
+                brandColor={
+                  (searchParams.idFilterIds || []).includes(id) || (!complete && step === 0)
+                    ? 'primary'
+                    : 'grey'
+                }
+                data-id={id}
+                size="small"
+                weight="medium"
+                isRound={false}
+                onClick={handleClickIdFilterOption}
+              >
+                {name}
+              </Chip>
+            ))}
             {extendsFilterCodes.map(({ codeId, name, count }) => (
               <Chip
                 key={`filter-option-button-${codeId}`}
