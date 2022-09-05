@@ -185,7 +185,7 @@ const sendLogApi = async (
 };
 
 const commonEventBraze = (eventName: string, eventParams: object) => {
-  if (Object.keys(attrKeys.commonEvent).includes(eventName)) {
+  if (Object.values(attrKeys.commonEvent).includes(eventName)) {
     try {
       if (MobileApp.isAndroidApp()) {
         if (window.webview.callLoggingBraze) {

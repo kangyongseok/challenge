@@ -137,6 +137,7 @@ function Crazycuration({
   const handleClickWishButtonEvent = useCallback(
     (
         {
+          isWish,
           todayWishCount = 0,
           todayViewCount = 0,
           updatedCount = 0,
@@ -159,7 +160,10 @@ function Crazycuration({
           eventParmas.att2 = updatedCount > 0 ? 'UPDATE' : 'PRICE_LOW';
         }
 
-        logEvent(attrKeys.crazycuration.clickWishList, eventParmas);
+        logEvent(
+          isWish ? attrKeys.crazycuration.clickWishCancel : attrKeys.crazycuration.clickWish,
+          eventParmas
+        );
       },
     [currentCuration?.listType, currentCuration?.logEventTitle]
   );
@@ -246,7 +250,7 @@ function Crazycuration({
     }
 
     if (currentCuration) {
-      logEvent(attrKeys.crazycuration.view_crazyWeek, { att: currentCuration.logEventTitle });
+      logEvent(attrKeys.crazycuration.viewCrazyWeek, { att: currentCuration.logEventTitle });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -307,9 +311,9 @@ function Crazycuration({
   return currentCuration ? (
     <>
       <PageHead
-        title={ogTitle}
+        title={`${ogTitle} | 카멜 최저가 가격비교`}
         description={ogDescription}
-        ogTitle={ogTitle}
+        ogTitle={`${ogTitle} | 카멜 최저가 가격비교`}
         ogDescription={ogDescription}
         ogImage={ogImage}
         ogUrl={`${(typeof window !== 'undefined' && window.location.protocol) || 'https:'}//${

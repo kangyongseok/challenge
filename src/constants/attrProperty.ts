@@ -170,7 +170,7 @@ const title = {
   rare: 'RARE',
   lowPrice: 'LOWPRICE',
   priceDefense: 'PRICE_DEFENSE',
-  padding: 'PADDING',
+  camping: 'CAMPING',
   bottom: 'BOTTOM',
   curationCard: 'CURATION_CARD',
   popup: 'POPUP',

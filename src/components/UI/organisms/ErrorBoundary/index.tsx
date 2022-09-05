@@ -25,7 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    logEvent(attrKeys.commonEvent.SCRIPT_ERROR, {
+    logEvent(attrKeys.commonEvent.scriptError, {
       title: 'client-500',
       userAgent: window.navigator.userAgent,
       url: window.location.href,

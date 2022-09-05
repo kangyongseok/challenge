@@ -21,7 +21,7 @@ const curationTitle = {
   3: attrProperty.title.rare,
   4: attrProperty.title.lowPrice,
   5: attrProperty.title.priceDefense,
-  6: attrProperty.title.padding
+  6: attrProperty.title.camping
 };
 
 interface CrazycurationWeekProps {
