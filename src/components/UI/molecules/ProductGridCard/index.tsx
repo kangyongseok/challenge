@@ -251,14 +251,14 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             ))}
           </Flexbox>
         )}
-        {showTodayWishViewLabel && (todayViewCount > 0 || todayWishCount > 0) && (
+        {showTodayWishViewLabel && (todayWishCount >= 2 || todayViewCount >= 10) && (
           <TodayWishViewLabel
             size="xsmall"
             variant="ghost"
             brandColor="black"
             text={
-              (todayWishCount > 0 && `오늘 ${todayWishCount}명이 찜했어요!`) ||
-              (todayViewCount > 0 && `오늘 ${todayViewCount}명이 봤어요!`) ||
+              (todayWishCount >= 2 && `오늘 ${todayWishCount}명이 찜했어요!`) ||
+              (todayViewCount >= 10 && `오늘 ${todayViewCount}명이 봤어요!`) ||
               ''
             }
             compact={compact}
@@ -313,14 +313,14 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               text={productLegitStatusText}
             />
           )}
-          {showCountLabel && (priceDownCount > 0 || updatedCount > 0) && (
+          {showCountLabel && (priceDownCount >= 1 || updatedCount >= 3) && (
             <Label
               variant="contained"
               size="xsmall"
               brandColor="black"
               text={
-                (priceDownCount > 0 && `가격 ${priceDownCount}번 내림`) ||
-                (updatedCount > 0 && `끌올 ${updatedCount}회`) ||
+                (priceDownCount >= 1 && `가격 ${priceDownCount}번 내림`) ||
+                (updatedCount >= 3 && `끌올 ${updatedCount}회`) ||
                 ''
               }
               customStyle={{ color: '#ACFF25' }}
