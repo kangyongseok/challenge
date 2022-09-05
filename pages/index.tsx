@@ -9,11 +9,11 @@ import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { MyPortfolioCommonBanner } from '@components/pages/myPortfolio';
 import {
   // HomePersonalProductCuration,
   HomeBrandsCategories,
   HomeCamelProductCuration,
+  HomeEventBanner,
   HomeEventBannerBottomSheet,
   HomeFooter,
   HomeProductLegitLive,
@@ -120,7 +120,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
           <HomeProductLegitLive />
           <HomeBrandsCategories isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
           <Box customStyle={{ height: 8 }} />
-          <MyPortfolioCommonBanner name={attrProperty.productName.MAIN} />
+          <HomeEventBanner />
           <HomeCamelProductCuration />
           {/* <Box customStyle={{ height: 8 }} /> */}
           {/* <HomePersonalProductCuration /> */}

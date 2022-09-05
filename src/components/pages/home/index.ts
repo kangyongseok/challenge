@@ -8,3 +8,4 @@ export { default as HomeRecommendationsWishes } from './HomeRecommendationsWishe
 export { default as HomeWelcome } from './HomeWelcome';
 export { default as HomeProductLegitLive } from './HomeProductLegitLive';
 export { default as HomeEventBannerBottomSheet } from './HomeEventBannerBottomSheet';
+export { default as HomeEventBanner } from './HomeEventBanner';

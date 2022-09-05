@@ -45,7 +45,7 @@ function HomeEventBannerBottomSheet() {
       (isSuccess && isSuccessContentsProducts) ||
       (!isSuccess && !accessUser && isSuccessContentsProducts)
     ) {
-      let newType = 'crazyCuration';
+      let newType = Math.random() < 0.5 ? 'myPortfolio' : 'crazyCuration';
       const hideMyPortfolioReservationAd = SessionStorage.get(
         sessionStorageKeys.hideMyPortfolioReservationAd
       );
@@ -69,8 +69,6 @@ function HomeEventBannerBottomSheet() {
     if (!type) return;
 
     if (id && type === 'crazyCuration') {
-      logEvent(attrKeys.crazycuration.viewMainModal, { att: 'CRAZY_WEEK' });
-
       const hideCrazyCurationEventBannerIds =
         SessionStorage.get<number[]>(sessionStorageKeys.hideCrazyCurationEventBannerIds) || [];
 
@@ -79,6 +77,8 @@ function HomeEventBannerBottomSheet() {
         hideCrazyCurationEventBannerIds.includes(id)
       )
         return;
+
+      logEvent(attrKeys.crazycuration.viewMainModal, { att: 'CRAZY_WEEK' });
 
       setSrc(imageMain);
       setOpen(true);
