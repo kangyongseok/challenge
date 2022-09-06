@@ -1,8 +1,9 @@
 @font-face {
+  font-family: Camel Product Sans;
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url('./fonts/CamelProductSans-Bold.woff2') format('woff2')
+  src: url('./fonts/CamelProductSans-Black.woff2') format('woff2')
 }
 @font-face {
   font-family: Camel Product Sans;

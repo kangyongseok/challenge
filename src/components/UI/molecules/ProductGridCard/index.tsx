@@ -4,7 +4,8 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, CustomStyle, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
@@ -49,7 +50,6 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   showNewLabel?: boolean;
   hideLegitStatusLabel?: boolean;
   showTodayWishViewLabel?: boolean;
-
   showCountLabel?: boolean;
   hideWishButton?: boolean;
   hidePlatformLogo?: boolean;
@@ -61,8 +61,8 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   measure?: () => void;
   onWishAfterChangeCallback?: (product: Product | ProductResult, isWish: boolean) => void;
   isRound?: boolean;
-  isDark?: boolean;
   gap?: number;
+  titlePriceStyle?: CustomStyle;
   areaWithDateInfoCustomStyle?: CustomStyle;
   metaCamelInfoCustomStyle?: CustomStyle;
   todayWishViewLabelCustomStyle?: CustomStyle;
@@ -90,7 +90,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     onWishAfterChangeCallback,
     isRound = false,
     gap,
-    isDark = false,
+    titlePriceStyle,
     areaWithDateInfoCustomStyle,
     metaCamelInfoCustomStyle,
     todayWishViewLabelCustomStyle,
@@ -286,23 +286,19 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           />
         )}
         {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-          (status === 4 ? <ReservingOverlay variant="h4" /> : <SoldOutOverlay variant="h4" />)}
+          (status === 4 ? (
+            <ReservingOverlay variant="h4" isRound={isRound} />
+          ) : (
+            <SoldOutOverlay variant="h4" isRound={isRound} />
+          ))}
       </Box>
       <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
-        <Title
-          variant="body2"
-          weight="medium"
-          customStyle={{ color: isDark ? common.white : 'inherit' }}
-        >
+        <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
           {isSafe && <span>안전결제 </span>}
           {title}
         </Title>
         <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4, flexWrap: 'wrap' }}>
-          <Typography
-            variant="h4"
-            weight="bold"
-            customStyle={{ color: isDark ? common.white : 'inherit' }}
-          >
+          <Typography variant="h4" weight="bold" customStyle={titlePriceStyle}>
             {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
           </Typography>
           {!hideLegitStatusLabel && productLegitStatusText && (

@@ -6,11 +6,12 @@ import { useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { CustomStyle, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import CrazycurationMultiList from '@components/pages/crazycuration/CrazycurationMultiList';
 import {
   CrazycurationFloatingButton,
   CrazycurationHeader,
@@ -46,22 +47,216 @@ const eventStatus = {
   closed: 3
 };
 
+const colorData = {
+  1: {
+    backgroundColor: '#000000',
+    // tabStyle: {
+    //   // color: '#313438',
+    //   // backgroundColor: '#7B7D85',
+    //   // activeColor: '#000000',
+    //   // activeBackgroundColor: '#ACFF25'
+    // },
+    productCardStyle: {
+      areaWithDateInfoCustomStyle: {
+        color: '#FFFFFF',
+        opacity: 0.6
+      },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: '#FFFFFF !important', opacity: 0.6 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#FFFFFF',
+        backgroundColor: '#313438'
+      },
+      selectedButton: {
+        color: '#ACFF25',
+        backgroundColor: '#000000',
+        border: '1px solid rgba(255, 255, 255, 0.2)'
+      }
+    },
+    floatingButtonStyle: { color: '#000000', backgroundColor: '#ACFF25' }
+  },
+  2: {
+    backgroundColor: '#FDF6E3',
+    buttonColor: '#507C44',
+    productCardStyle: {
+      todayWishViewLabelCustomStyle: {
+        color: '#FFFFFF',
+        backgroundColor: '#507C44'
+      },
+      areaWithDateInfoCustomStyle: { color: '#000000', opacity: 0.5 },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: '#000000 !important', opacity: 0.5 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#313438',
+        backgroundColor: '#FFFFFF',
+        boxShadow:
+          '0px 1px 2px rgba(194, 102, 53, 0.3), inset 0px -1px 2px rgba(0, 0, 0, 0.08), inset 0px 1px 2px rgba(255, 255, 255, 0.5)'
+      },
+      selectedButton: {
+        color: '#313438',
+        backgroundColor: '#EFE3C9',
+        border: 'none'
+      }
+    },
+    floatingButtonStyle: { color: '#FFFFFF', backgroundColor: '#507C44' }
+  },
+  3: {
+    backgroundColor: '#00AD7F',
+    buttonColor: '#507C44',
+    tabStyle: {
+      color: '#FFFFFF',
+      backgroundColor: '#05936D',
+      activeColor: '#00533D',
+      activeBackgroundColor: '#FFE344'
+    },
+    productCardStyle: {
+      todayWishViewLabelCustomStyle: {
+        color: '#00533D',
+        backgroundColor: '#FFE344'
+      },
+      areaWithDateInfoCustomStyle: { color: '#FFFFFF', opacity: 0.6 },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: '#FFFFFF !important', opacity: 0.6 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#313438',
+        backgroundColor: '#FFFFFF'
+      },
+      selectedButton: {
+        color: '#FFE344',
+        backgroundColor: '#05936D',
+        border: 'none'
+      }
+    },
+    floatingButtonStyle: { color: '#00AD7F', backgroundColor: '#FFFFFF' }
+  },
+  4: {
+    backgroundColor: '#FFFFFF',
+    buttonColor: '#007AF7',
+    infoStyle: {
+      titleStyle: { color: '#BEAB78', fontWeight: 700 },
+      highlightColor: '#007AF7'
+    },
+    productCardStyle: {
+      todayWishViewLabelCustomStyle: {
+        color: '#FFFFFF',
+        backgroundColor: '#007AF7'
+      },
+      areaWithDateInfoCustomStyle: { color: '#000000', opacity: 0.5 },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: '#000000 !important', opacity: 0.5 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#313438',
+        backgroundColor: '#EFF0F2'
+      },
+      selectedButton: {
+        color: '#007AF7',
+        backgroundColor: '#FFFFFF',
+        border: '2px solid #EFF0F2'
+      }
+    },
+    floatingButtonStyle: {
+      color: '#FFFFFF',
+      backgroundColor: '#007AF7',
+      borderColor: '#000000'
+    }
+  },
+  5: {
+    backgroundColor: '#A2C163',
+    buttonColor: '#4A603B',
+    infoStyle: {
+      titleStyle: { color: '#000000', fontWeight: 500 },
+      highlightColor: '#4A603B'
+    },
+    productCardStyle: {
+      todayWishViewLabelCustomStyle: {
+        color: '#FFFFFF',
+        backgroundColor: '#1D2915'
+      },
+      areaWithDateInfoCustomStyle: { color: '#000000', opacity: 0.5 },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: '#000000 !important', opacity: 0.5 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#313438',
+        backgroundColor: '#FFFFFF',
+        border: '2px solid #1D2915',
+        boxShadow: '1px 2px 0px #1D2915'
+      },
+      selectedButton: {
+        color: '#FFFFFF',
+        backgroundColor: '#8EAC50',
+        border: 'none'
+      }
+    },
+    floatingButtonStyle: {
+      color: '#4A603B',
+      backgroundColor: '#FDEB14',
+      badgeColor: '#4A603B',
+      badgeBackgroundColor: '#FFFFFF',
+      borderColor: '#000000',
+      boxShadow: '1px 2px 0px #000000'
+    }
+  }
+};
+
 const curationData: Record<
-  '미친매력의급처매물' | '스캇프라그먼트자랑' | '샤넬클미자랑',
+  string,
   {
-    contentsId: 1 | 2 | 3;
-    listType: 'a' | 'b';
+    contentsId: 1 | 2 | 3 | 4 | 5 | 6;
+    listType: 'a' | 'b' | 'c' | 'c-1';
     backgroundColor: string;
+    buttonColor?: string;
     brandData: { id: number; name: string }[];
     query: ParsedUrlQueryInput;
     weekData: number[];
+    showCountLabel?: boolean;
     logEventTitle: string;
+    infoStyle?: {
+      titleStyle: CustomStyle;
+      highlightColor: string;
+    };
+    tabStyle?: {
+      color: string;
+      backgroundColor: string;
+      activeColor: string;
+      activeBackgroundColor: string;
+    };
+    productCardStyle: {
+      todayWishViewLabelCustomStyle?: CustomStyle;
+      areaWithDateInfoCustomStyle?: CustomStyle;
+      metaCamelInfoCustomStyle?: CustomStyle;
+    };
+    wishButtonStyle: {
+      button: CustomStyle;
+      selectedButton: CustomStyle;
+    };
+    floatingButtonStyle: {
+      color: string;
+      backgroundColor: string;
+      badgeColor?: string;
+      badgeBackgroundColor?: string;
+      borderColor?: string;
+      boxShadow?: string;
+    };
   }
 > = {
   미친매력의급처매물: {
     contentsId: 1,
     listType: 'a',
-    backgroundColor: '#000000',
     brandData: [
       { id: 0, name: '전체브랜드' },
       { id: 6, name: '구찌' },
@@ -75,18 +270,15 @@ const curationData: Record<
       { id: 27, name: '알렉산더맥퀸' },
       { id: 32, name: '톰브라운' }
     ],
-    query: {
-      brandName: '',
-      parentIds: [],
-      lineIds: []
-    },
+    query: {},
     weekData: [2, 3, 4, 5, 6],
-    logEventTitle: attrProperty.title.quick
+    showCountLabel: true,
+    logEventTitle: attrProperty.title.quick,
+    ...colorData['1']
   },
   스캇프라그먼트자랑: {
     contentsId: 2,
     listType: 'b',
-    backgroundColor: '#FDF6E3',
     brandData: [],
     query: {
       brandName: '에어조던',
@@ -96,12 +288,12 @@ const curationData: Record<
       requiredLineIds: [4705, 4458]
     },
     weekData: [4, 5, 6],
-    logEventTitle: attrProperty.title.rare
+    logEventTitle: attrProperty.title.rare,
+    ...colorData['2']
   },
   샤넬클미자랑: {
     contentsId: 3,
     listType: 'b',
-    backgroundColor: '#FDF6E3',
     brandData: [],
     query: {
       brandName: '샤넬',
@@ -111,7 +303,48 @@ const curationData: Record<
       requiredLineIds: [3415, 4465, 3437]
     },
     weekData: [4, 5, 6],
-    logEventTitle: attrProperty.title.rare
+    logEventTitle: attrProperty.title.rare,
+    ...colorData['2']
+  },
+  명품이이가격에: {
+    contentsId: 4,
+    listType: 'a',
+    brandData: [
+      { id: 0, name: '전체브랜드' },
+      { id: 6, name: '구찌' },
+      { id: 34, name: '디올' },
+      { id: 11, name: '루이비통' },
+      { id: 14, name: '메종키츠네' },
+      { id: 17, name: '무스너클' },
+      { id: 23, name: '보테가베네타' },
+      { id: 44, name: '샤넬' },
+      { id: 25, name: '스톤아일랜드' },
+      { id: 53, name: '아미' },
+      { id: 27, name: '알렉산더맥퀸' },
+      { id: 32, name: '톰브라운' }
+    ],
+    query: {},
+    weekData: [5, 6],
+    logEventTitle: attrProperty.title.lowPrice,
+    ...colorData['3']
+  },
+  최강시세방어: {
+    contentsId: 5,
+    listType: 'c',
+    brandData: [],
+    query: {},
+    weekData: [6],
+    logEventTitle: attrProperty.title.priceDefense,
+    ...colorData['4']
+  },
+  캠프사랑산악회대모집: {
+    contentsId: 6,
+    listType: 'c-1',
+    brandData: [],
+    query: {},
+    weekData: [],
+    logEventTitle: attrProperty.title.camping,
+    ...colorData['5']
   }
 };
 
@@ -338,16 +571,22 @@ function Crazycuration({
           gap={32}
           customStyle={{ padding: '52px 0 84px' }}
         >
-          <Flexbox justifyContent="center" customStyle={{ padding: '0 20px' }}>
-            <CurationImg
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/description${currentCuration.contentsId}.png`}
-              alt={`${curationTitle} Description`}
-            />
-          </Flexbox>
+          {[1, 2, 3].includes(currentCuration.contentsId) && (
+            <Flexbox justifyContent="center" customStyle={{ padding: '0 20px' }}>
+              <CurationImg
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/description${currentCuration.contentsId}.png`}
+                alt={`${curationTitle} Description`}
+              />
+            </Flexbox>
+          )}
           {currentCuration.listType === 'a' && (
             <CrazycurationTabList
               contentsId={currentCuration.contentsId}
               brandData={currentCuration.brandData}
+              tabStyle={currentCuration.tabStyle}
+              productCardStyle={currentCuration.productCardStyle}
+              wishButtonStyle={currentCuration.wishButtonStyle}
+              showCountLabel={currentCuration.showCountLabel}
               onProductAtt={handleProductAtt}
               onClickProduct={handleClickProduct}
               handleClickWishButtonEvent={handleClickWishButtonEvent}
@@ -357,22 +596,41 @@ function Crazycuration({
             <CrazycurationSeeMoreList
               contentsId={currentCuration.contentsId}
               urlQuery={currentCuration.query}
+              logEventTitle={currentCuration.logEventTitle}
+              buttonColor={currentCuration.buttonColor}
+              productCardStyle={currentCuration.productCardStyle}
+              wishButtonStyle={currentCuration.wishButtonStyle}
               onProductAtt={handleProductAtt}
               onClickProduct={handleClickProduct}
               handleClickWishButtonEvent={handleClickWishButtonEvent}
+            />
+          )}
+          {['c', 'c-1'].includes(currentCuration.listType) && (
+            <CrazycurationMultiList
+              contentsId={currentCuration.contentsId}
+              showSectionImage={currentCuration.listType === 'c-1'}
               logEventTitle={currentCuration.logEventTitle}
+              buttonColor={currentCuration.buttonColor}
+              infoStyle={currentCuration.infoStyle}
+              productCardStyle={currentCuration.productCardStyle}
+              wishButtonStyle={currentCuration.wishButtonStyle}
+              onProductAtt={handleProductAtt}
+              onClickProduct={handleClickProduct}
+              handleClickWishButtonEvent={handleClickWishButtonEvent}
             />
           )}
         </Flexbox>
-        <CrazycurationWeek
-          weekData={currentCuration.weekData}
-          isMobileWeb={isMobileWeb}
-          logEventTitle={currentCuration.logEventTitle}
-        />
+        {currentCuration.weekData.length > 0 && (
+          <CrazycurationWeek
+            weekData={currentCuration.weekData}
+            isMobileWeb={isMobileWeb}
+            logEventTitle={currentCuration.logEventTitle}
+          />
+        )}
       </GeneralTemplate>
       <CrazycurationFloatingButton
         contentsId={currentCuration.contentsId}
-        listType={currentCuration.listType}
+        buttonStyle={currentCuration.floatingButtonStyle}
       />
     </>
   ) : null;
@@ -388,7 +646,7 @@ export async function getServerSideProps({
     .replace(/[0-9-]/gim, '')
     .trim();
   const currentCuration =
-    curationTitle.length > 0 ? curationData[curationTitle as keyof typeof curationData] : undefined;
+    curationTitle.length > 0 ? curationData[curationTitle as keyof typeof curationData] : null;
   let isClosedEvent = false;
   let nextEventUrl = '';
   let nextEventTitle = '';
@@ -441,6 +699,8 @@ export async function getServerSideProps({
   };
 }
 
-const CurationImg = styled.img``;
+const CurationImg = styled.img`
+  min-width: 100%;
+`;
 
 export default Crazycuration;

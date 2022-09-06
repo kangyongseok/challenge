@@ -24,7 +24,7 @@ function useContentsProducts(contentsId: number) {
         imageListBanner: '',
         imageThumbnail: ''
       },
-      products: [products = []] = []
+      products = []
     } = {},
     ...useQueryResult
   } = useQuery(
@@ -38,7 +38,7 @@ function useContentsProducts(contentsId: number) {
   );
 
   const wishTotalCount = useMemo(
-    () => products.filter(({ isWish }) => !!isWish).length,
+    () => products.flatMap((product) => product).filter(({ isWish }) => !!isWish).length,
     [products]
   );
 

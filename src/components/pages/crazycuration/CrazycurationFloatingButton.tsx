@@ -11,23 +11,22 @@ import attrKeys from '@constants/attrKeys';
 
 import useContentsProducts from '@hooks/useContentsProducts';
 
-const colorData = {
-  a: {
-    color: '#000000',
-    backgroundColor: '#ACFF25'
-  },
-  b: {
-    color: '#FFFFFF',
-    backgroundColor: '#507C44'
-  }
-};
-
 interface CrazycurationFloatingButtonProps {
   contentsId: number;
-  listType: 'a' | 'b';
+  buttonStyle: {
+    color: string;
+    backgroundColor: string;
+    badgeColor?: string;
+    badgeBackgroundColor?: string;
+    borderColor?: string;
+    boxShadow?: string;
+  };
 }
 
-function CrazycurationFloatingButton({ contentsId, listType }: CrazycurationFloatingButtonProps) {
+function CrazycurationFloatingButton({
+  contentsId,
+  buttonStyle: { color, backgroundColor, badgeColor, badgeBackgroundColor, borderColor, boxShadow }
+}: CrazycurationFloatingButtonProps) {
   const router = useRouter();
   const {
     isFetched,
@@ -45,21 +44,24 @@ function CrazycurationFloatingButton({ contentsId, listType }: CrazycurationFloa
   return isFetched ? (
     <Wrapper
       show={wishTotalCount > 0}
-      backgroundColor={colorData[listType].backgroundColor}
+      backgroundColor={backgroundColor}
+      borderColor={borderColor}
+      boxShadow={boxShadow}
       onClick={handleClick}
     >
-      <Icon name="HeartFilled" color={colorData[listType].color} />
-      <Typography variant="h4" weight="bold" customStyle={{ color: colorData[listType].color }}>
+      <Icon name="HeartFilled" color={color} />
+      <Typography variant="h4" weight="bold" customStyle={{ color }}>
         담은 매물
       </Typography>
       <NumberBadge
-        color={colorData[listType].backgroundColor}
-        backgroundColor={colorData[listType].color}
+        color={backgroundColor}
+        backgroundColor={badgeBackgroundColor || color}
+        borderColor={borderColor}
       >
         <Typography
           variant="body1"
           weight="bold"
-          customStyle={{ color: colorData[listType].backgroundColor }}
+          customStyle={{ color: badgeColor || backgroundColor }}
         >
           {wishTotalCount}
         </Typography>
@@ -68,7 +70,12 @@ function CrazycurationFloatingButton({ contentsId, listType }: CrazycurationFloa
   ) : null;
 }
 
-const Wrapper = styled.div<{ show: boolean; backgroundColor: string }>`
+const Wrapper = styled.div<{
+  show: boolean;
+  backgroundColor: string;
+  borderColor?: string;
+  boxShadow?: string;
+}>`
   white-space: nowrap;
   width: 118px;
   height: 52px;
@@ -81,14 +88,17 @@ const Wrapper = styled.div<{ show: boolean; backgroundColor: string }>`
   gap: 4px;
   border-radius: 50px;
   padding: 16px 20px 16px 16px;
+  border: ${({ borderColor }) => borderColor && `2px solid ${borderColor}`};
   background-color: ${({ backgroundColor }) => backgroundColor};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
-  transition: visibility 0.1s ease-in;
+  opacity: ${({ show }) => Number(show)};
+  transition: opacity 0.1s ease-in;
   z-index: 3;
   cursor: pointer;
+  box-shadow: ${({ boxShadow }) => boxShadow};
 `;
 
-const NumberBadge = styled.div<{ color: string; backgroundColor: string }>`
+const NumberBadge = styled.div<{ color: string; backgroundColor: string; borderColor?: string }>`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -98,7 +108,7 @@ const NumberBadge = styled.div<{ color: string; backgroundColor: string }>`
   border-radius: 50%;
   top: -5px;
   right: -4px;
-  border: 2px solid ${({ color }) => color};
+  border: 2px solid ${({ color, borderColor }) => borderColor || color};
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 

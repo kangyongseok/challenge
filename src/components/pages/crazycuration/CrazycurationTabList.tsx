@@ -3,6 +3,7 @@ import type { UIEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
@@ -25,6 +26,22 @@ import CrazycurationWishButton from './CrazycurationWishButton';
 interface CrazycurationTabListProps {
   contentsId: number;
   brandData: { id: number; name: string }[];
+  tabStyle?: {
+    color: string;
+    backgroundColor: string;
+    activeColor: string;
+    activeBackgroundColor: string;
+  };
+  productCardStyle: {
+    todayWishViewLabelCustomStyle?: CustomStyle;
+    areaWithDateInfoCustomStyle?: CustomStyle;
+    metaCamelInfoCustomStyle?: CustomStyle;
+  };
+  wishButtonStyle: {
+    button: CustomStyle;
+    selectedButton: CustomStyle;
+  };
+  showCountLabel?: boolean;
   onProductAtt: (product: ProductResult, index: number) => Record<string, string | number>;
   onClickProduct: (product: ProductResult, index: number) => () => void;
   handleClickWishButtonEvent: (product: ProductResult, index: number) => () => void;
@@ -33,6 +50,14 @@ interface CrazycurationTabListProps {
 function CrazycurationTabList({
   contentsId,
   brandData,
+  tabStyle,
+  productCardStyle: {
+    todayWishViewLabelCustomStyle,
+    areaWithDateInfoCustomStyle,
+    metaCamelInfoCustomStyle
+  },
+  wishButtonStyle,
+  showCountLabel = false,
   onProductAtt,
   onClickProduct,
   handleClickWishButtonEvent
@@ -40,13 +65,16 @@ function CrazycurationTabList({
   const {
     theme: { palette }
   } = useTheme();
+
   const [{ selectedIndex, prevScroll }, setSelectedTabState] = useRecoilState(
     creazycurationSelectedTabState
   );
 
   const {
     isLoading,
-    data: { products },
+    data: {
+      products: [products = []]
+    },
     refetch
   } = useContentsProducts(contentsId);
 
@@ -106,6 +134,10 @@ function CrazycurationTabList({
             isActive={selectedIndex === index}
             variant="contained"
             onClick={handleClickTab(index, name)}
+            color={tabStyle?.color}
+            backgroundColor={tabStyle?.backgroundColor}
+            activeColor={tabStyle?.activeColor}
+            activeBackgroundColor={tabStyle?.activeBackgroundColor}
           >
             <Typography variant="h4" weight={selectedIndex === index ? 'bold' : 'regular'}>
               {name}
@@ -129,44 +161,37 @@ function CrazycurationTabList({
               .filter(
                 (product) => selectedIndex === 0 || brandData[selectedIndex].id === product.brand.id
               )
-              .map((product, index) => {
-                return (
-                  <Flexbox
-                    key={`crazycuration-product-${product.id}`}
-                    direction="vertical"
-                    gap={20}
-                  >
-                    <ProductGridCard
-                      product={product}
-                      hideProductLabel
-                      hideLegitStatusLabel
-                      showTodayWishViewLabel
-                      showCountLabel
-                      hideWishButton
-                      hidePlatformLogo
-                      name={attrProperty.productName.MAIN}
-                      source={attrProperty.productSource.MAIN_MYLIST}
-                      productAtt={onProductAtt(product, index + 1)}
-                      onClick={onClickProduct(product, index + 1)}
-                      compact
-                      isRound
-                      isDark
-                      customStyle={{ marginBottom: 'auto' }}
-                      areaWithDateInfoCustomStyle={{ color: palette.common.white, opacity: 0.6 }}
-                      metaCamelInfoCustomStyle={{
-                        '& > svg,div': { color: `${palette.common.white} !important`, opacity: 0.6 }
-                      }}
-                    />
-                    <CrazycurationWishButton
-                      listType="a"
-                      productId={product.id}
-                      isWish={product.isWish}
-                      refetch={refetch}
-                      handleClickWishButtonEvent={handleClickWishButtonEvent(product, index + 1)}
-                    />
-                  </Flexbox>
-                );
-              })}
+              .map((product, index) => (
+                <Flexbox key={`crazycuration-product-${product.id}`} direction="vertical" gap={20}>
+                  <ProductGridCard
+                    product={product}
+                    hideProductLabel
+                    hideLegitStatusLabel
+                    showTodayWishViewLabel
+                    showCountLabel={showCountLabel}
+                    hideWishButton
+                    hidePlatformLogo
+                    name={attrProperty.productName.MAIN}
+                    source={attrProperty.productSource.MAIN_MYLIST}
+                    productAtt={onProductAtt(product, index + 1)}
+                    onClick={onClickProduct(product, index + 1)}
+                    compact
+                    isRound
+                    customStyle={{ marginBottom: 'auto' }}
+                    titlePriceStyle={{ color: palette.common.white }}
+                    todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
+                    areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
+                    metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
+                  />
+                  <CrazycurationWishButton
+                    productId={product.id}
+                    isWish={product.isWish}
+                    refetch={refetch}
+                    handleClickWishButtonEvent={handleClickWishButtonEvent(product, index + 1)}
+                    buttonStyle={wishButtonStyle}
+                  />
+                </Flexbox>
+              ))}
       </ProductList>
     </Flexbox>
   );
@@ -179,12 +204,26 @@ const TabList = styled.div`
   overflow-x: auto;
 `;
 
-const Tab = styled(Chip)<{ isActive: boolean }>`
-  color: ${({ theme, isActive }) =>
-    isActive ? theme.palette.common.black : theme.palette.common.grey['20']};
-  background-color: ${({ theme, isActive }) =>
-    isActive ? '#ACFF25' : theme.palette.common.grey['60']};
+const Tab = styled(Chip)<{
+  isActive: boolean;
+  color?: string;
+  backgroundColor?: string;
+  activeColor?: string;
+  activeBackgroundColor?: string;
+}>`
+  color: ${({ theme, isActive, color, activeColor }) =>
+    isActive
+      ? activeColor || theme.palette.common.black
+      : color || theme.palette.common.grey['20']};
+  background-color: ${({ theme, isActive, backgroundColor, activeBackgroundColor }) =>
+    isActive
+      ? activeBackgroundColor || '#ACFF25'
+      : backgroundColor || theme.palette.common.grey['60']};
   white-space: nowrap;
+
+  & > * {
+    color: inherit;
+  }
 `;
 
 const ProductList = styled.div`

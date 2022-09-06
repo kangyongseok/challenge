@@ -2,7 +2,7 @@ import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
-export const BaseOverlay = styled.div<{ variant?: TypographyVariant }>`
+export const BaseOverlay = styled.div<{ variant?: TypographyVariant; isRound?: boolean }>`
   position: absolute;
   top: 0;
   bottom: 0;
@@ -12,6 +12,7 @@ export const BaseOverlay = styled.div<{ variant?: TypographyVariant }>`
   pointer-events: none;
   // TODO UI 라이브러리 zIndex 값 추가 또는 조정 후 적용 필요
   z-index: 1;
+  border-radius: ${({ isRound }) => isRound && '8px'};
 
   ${({ theme: { typography }, variant }): CSSObject => ({
     fontSize: typography[variant || 'h2'].size,
