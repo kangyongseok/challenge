@@ -486,7 +486,6 @@ export interface PageProductResult {
 
 export interface ProductContent {
   contents: Contents;
-  products: ProductResult[][];
 }
 
 /* ---------- Request Parameters ---------- */

@@ -158,7 +158,8 @@ const name = {
   popup: 'POPUP',
   list: 'LIST',
   main: 'MAIN',
-  productList: 'PRODUCT_LIST'
+  productList: 'PRODUCT_LIST',
+  crazyWeekPopup: 'CRAZYWEEK_POPUP'
 };
 
 const title = {
@@ -171,11 +172,14 @@ const title = {
   lowPrice: 'LOWPRICE',
   priceDefense: 'PRICE_DEFENSE',
   camping: 'CAMPING',
+  padding: 'PADDING',
   bottom: 'BOTTOM',
   curationCard: 'CURATION_CARD',
   popup: 'POPUP',
   banner: 'BANNER',
-  modal: 'MODAL'
+  modal: 'MODAL',
+  none: 'NONE',
+  end: 'END'
 };
 
 const source = {

@@ -422,7 +422,9 @@ const crazycuration = {
   viewMainModal: 'VIEW_MAIN_MODAL',
   clickNotToday: 'CLICK_NOTTODAY',
   clickWish: 'CLICK_WISH',
-  clickWishCancel: 'CLICK_WISH_CANCEL'
+  clickWishCancel: 'CLICK_WISH_CANCEL',
+  clickMain: 'CLICK_MAIN',
+  clickSearchModal: 'CLICK_SEARCHMODAL'
 };
 
 const attrKeys = {

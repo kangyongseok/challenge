@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
 
-import type { ParsedUrlQueryInput } from 'node:querystring';
-
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -25,7 +23,6 @@ import CrazycurationWishButton from './CrazycurationWishButton';
 
 interface CrazycurationSeeMoreListProps {
   contentsId: number;
-  urlQuery: ParsedUrlQueryInput;
   logEventTitle: string;
   buttonColor?: string;
   productCardStyle: {
@@ -44,7 +41,6 @@ interface CrazycurationSeeMoreListProps {
 
 function CrazycurationSeeMoreList({
   contentsId,
-  urlQuery,
   logEventTitle,
   buttonColor,
   productCardStyle: {
@@ -64,9 +60,7 @@ function CrazycurationSeeMoreList({
 
   const {
     isLoading,
-    data: {
-      products: [products = []]
-    },
+    data: { contents: { contentsDetails: [{ url = '', products = [] }] = [{}] } = {} },
     refetch
   } = useContentsProducts(contentsId);
 
@@ -76,15 +70,13 @@ function CrazycurationSeeMoreList({
       title: logEventTitle
     });
 
-    const { brandName, ...query } = urlQuery;
-
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.name.crazyWeek,
       title: attrProperty.name.list,
       type: attrProperty.type.guide
     });
-    router.push({ pathname: `/products/brands/${brandName}`, query });
-  }, [logEventTitle, router, urlQuery]);
+    router.push(url);
+  }, [logEventTitle, router, url]);
 
   return (
     <Flexbox direction="vertical" gap={32}>
@@ -101,7 +93,12 @@ function CrazycurationSeeMoreList({
               </Flexbox>
             ))
           : products.map((product, index) => (
-              <Flexbox key={`crazycuration-product-${product.id}`} direction="vertical" gap={20}>
+              <Flexbox
+                // eslint-disable-next-line react/no-array-index-key
+                key={`crazycuration-product-${product.id}-${index}`}
+                direction="vertical"
+                gap={20}
+              >
                 <ProductGridCard
                   product={product}
                   hideProductLabel

@@ -22,17 +22,11 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
     () => fetchContentsProducts(0)
   );
 
-  if (url) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: encodeURI(url)
-      }
-    };
-  }
-
   return {
-    props: {}
+    redirect: {
+      permanent: false,
+      destination: encodeURI(url || '/crazycuration/미친-매력의-급처-매물')
+    }
   };
 }
 

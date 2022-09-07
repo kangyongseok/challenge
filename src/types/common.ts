@@ -96,4 +96,8 @@ export type ToastStatus =
   | 'successRemoveWish'
   | 'successAddWish';
 
-export type DialogType = 'SNSShare' | 'closedCrazyCuration';
+export type DialogType =
+  | 'SNSShare'
+  | 'readyNextCrazyCuration'
+  | 'closedCrazyCuration'
+  | 'endCrazyCuration';

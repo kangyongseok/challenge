@@ -126,7 +126,7 @@ function HomeProductsKeywordList() {
       logEvent(attrKeys.home.CLICK_MYLIST_BUTTON, {
         name: attrProperty.productName.MAIN,
         att: productKeywords[index].isNew ? 'NEW' : 'GENERAL',
-        index
+        index: index + 1
       });
 
       productKeywordListRef.current?.scrollTo(0, 0);

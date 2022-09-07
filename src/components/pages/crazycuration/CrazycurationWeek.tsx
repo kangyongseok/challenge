@@ -21,16 +21,28 @@ const curationTitle = {
   3: attrProperty.title.rare,
   4: attrProperty.title.lowPrice,
   5: attrProperty.title.priceDefense,
-  6: attrProperty.title.camping
+  6: attrProperty.title.camping,
+  7: attrProperty.title.quick,
+  8: attrProperty.title.rare,
+  9: attrProperty.title.rare,
+  10: attrProperty.title.lowPrice,
+  11: attrProperty.title.priceDefense,
+  12: attrProperty.title.padding
 };
 
 interface CrazycurationWeekProps {
   weekData: number[];
+  nextEventDateLabel?: string;
   isMobileWeb: boolean;
   logEventTitle: string;
 }
 
-function CrazycurationWeek({ weekData, isMobileWeb, logEventTitle }: CrazycurationWeekProps) {
+function CrazycurationWeek({
+  weekData,
+  nextEventDateLabel,
+  isMobileWeb,
+  logEventTitle
+}: CrazycurationWeekProps) {
   const router = useRouter();
   const {
     theme: { palette }
@@ -89,66 +101,78 @@ function CrazycurationWeek({ weekData, isMobileWeb, logEventTitle }: Crazycurati
     <Flexbox
       component="section"
       direction="vertical"
-      gap={52}
+      gap={weekData.length > 0 ? 52 : 32}
       customStyle={{ padding: '52px 0 84px', backgroundColor: '#1A1A1A' }}
     >
       <Flexbox direction="vertical" alignment="center" gap={12}>
         <Logo />
         <Typography variant="h3" customStyle={{ color: palette.common.white, textAlign: 'center' }}>
-          약한 매물은 가! 약빤 매물만 모아왔어요.
+          {weekData.length > 0 ? (
+            '약한 매물은 가! 약빤 매물만 모아왔어요.'
+          ) : (
+            <>
+              아래 &lsquo;소식받기&rsquo; 누르고
+              <br />
+              꿀매물과 혜택 알림 놓치지 마세요!
+            </>
+          )}
         </Typography>
       </Flexbox>
-      <Flexbox
-        ref={curationCardList}
-        onScroll={handleCardListScroll}
-        gap={CARD_GAP}
-        customStyle={{ overflow: 'auto' }}
-      >
-        {weekData.map((id, index) =>
-          activeCardIndex === id ? (
-            <ActiveCurationCard
-              key={`week-curation-card-on-${id}`}
-              index={index}
-              imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOn${id}.png`}
-            >
-              {index === 0 && (
-                <Typography
-                  variant="h4"
-                  weight="bold"
-                  customStyle={{ position: 'absolute', top: 28, left: 20 }}
-                >
-                  내일은?
-                </Typography>
-              )}
-              <CurationCardButton variant="contained" fullWidth onClick={handleClickNoti(false)}>
-                {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
-              </CurationCardButton>
-            </ActiveCurationCard>
-          ) : (
-            <CurationCard
-              key={`week-curation-card-off-${id}`}
-              index={index}
-              imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOff${id}.png`}
-              onClick={handleClickCuration(id, index)}
-            />
-          )
-        )}
-      </Flexbox>
+      {weekData.length > 0 && (
+        <Flexbox
+          ref={curationCardList}
+          onScroll={handleCardListScroll}
+          gap={CARD_GAP}
+          customStyle={{ overflow: 'auto' }}
+        >
+          {weekData.map((id, index) =>
+            activeCardIndex === id ? (
+              <ActiveCurationCard
+                key={`week-curation-card-on-${id}`}
+                index={index}
+                imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOn${id}.png`}
+              >
+                {index === 0 && (
+                  <Typography
+                    variant="h4"
+                    weight="bold"
+                    customStyle={{ position: 'absolute', top: 28, left: 20 }}
+                  >
+                    {id === 7 ? nextEventDateLabel : '내일은?'}
+                  </Typography>
+                )}
+                <CurationCardButton variant="contained" fullWidth onClick={handleClickNoti(false)}>
+                  {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
+                </CurationCardButton>
+              </ActiveCurationCard>
+            ) : (
+              <CurationCard
+                key={`week-curation-card-off-${id}`}
+                index={index}
+                imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/weekOff${id}.png`}
+                onClick={handleClickCuration(id, index)}
+              />
+            )
+          )}
+        </Flexbox>
+      )}
       <Flexbox
         direction="vertical"
         alignment="center"
         gap={32}
-        customStyle={{ padding: '32px 12px' }}
+        customStyle={{ padding: weekData.length > 0 ? '32px 12px' : '0 12px 32px' }}
       >
-        <Typography
-          variant="h3"
-          weight="bold"
-          customStyle={{ color: palette.common.white, textAlign: 'center' }}
-        >
-          평일을 즐겁게 해줄 미친 매물들,
-          <br />
-          오픈할 때 알림받고 꿀매물 놓치지 마세요!
-        </Typography>
+        {weekData.length > 0 && (
+          <Typography
+            variant="h3"
+            weight="bold"
+            customStyle={{ color: palette.common.white, textAlign: 'center' }}
+          >
+            평일을 즐겁게 해줄 미친 매물들,
+            <br />
+            오픈할 때 알림받고 꿀매물 놓치지 마세요!
+          </Typography>
+        )}
         <Flexbox direction="vertical" gap={12} customStyle={{ width: '100%' }}>
           <NotiOnButton
             variant="ghost"
@@ -243,6 +267,7 @@ const CurationCardButton = styled(Button)`
   left: 12px;
   bottom: 20px;
   color: ${({ theme }) => theme.palette.common.black};
+  background-color: ${({ theme }) => theme.palette.common.white};
 `;
 
 const NotiOnButton = styled(Button)`
@@ -251,6 +276,7 @@ const NotiOnButton = styled(Button)`
   display: flex;
   align-items: center;
   column-gap: 4px;
+  background-color: ${({ theme }) => theme.palette.common.white};
 `;
 
 const ShareButton = styled(Button)`

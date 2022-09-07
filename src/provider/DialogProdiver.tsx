@@ -40,7 +40,9 @@ function DialogProdiver() {
     switch (type) {
       case 'SNSShare':
         return 'textWithCloseButton';
+      case 'readyNextCrazyCuration':
       case 'closedCrazyCuration':
+      case 'endCrazyCuration':
         return 'textWithTwoButton';
       default:
         return 'text';

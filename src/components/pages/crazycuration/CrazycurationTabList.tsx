@@ -72,9 +72,7 @@ function CrazycurationTabList({
 
   const {
     isLoading,
-    data: {
-      products: [products = []]
-    },
+    data: { contents: { contentsDetails: [{ products = [] }] = [{}] } = {} },
     refetch
   } = useContentsProducts(contentsId);
 

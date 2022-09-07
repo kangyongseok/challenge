@@ -6,9 +6,8 @@ import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { Skeleton } from '@components/UI/atoms';
-import CrazycurationWishButton from '@components/pages/crazycuration/CrazycurationWishButton';
 
-import { ProductResult } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -19,15 +18,18 @@ import attrKeys from '@constants/attrKeys';
 
 import useContentsProducts from '@hooks/useContentsProducts';
 
+import CrazycurationWishButton from './CrazycurationWishButton';
+
 interface CrazycurationMultiListProps {
   contentsId: number;
-  showSectionImage: boolean;
+  showMainImage: boolean;
   logEventTitle: string;
   buttonColor?: string;
   infoStyle?: {
     titleStyle: CustomStyle;
     highlightColor: string;
   };
+  imageCardStyle?: CustomStyle;
   productCardStyle: {
     todayWishViewLabelCustomStyle?: CustomStyle;
     areaWithDateInfoCustomStyle?: CustomStyle;
@@ -44,10 +46,11 @@ interface CrazycurationMultiListProps {
 
 function CrazycurationMultiList({
   contentsId,
-  showSectionImage,
+  showMainImage,
   logEventTitle,
   buttonColor,
   infoStyle,
+  imageCardStyle,
   productCardStyle: {
     todayWishViewLabelCustomStyle,
     areaWithDateInfoCustomStyle,
@@ -65,23 +68,25 @@ function CrazycurationMultiList({
 
   const {
     isLoading,
-    data: { products },
+    data: { contents: { contentsDetails = [] } = {} },
     refetch
   } = useContentsProducts(contentsId);
 
-  const handleClickSeeMore = useCallback(() => {
-    logEvent(attrKeys.crazycuration.clickProductList, {
-      name: attrProperty.name.crazyWeek,
-      title: logEventTitle
-    });
-
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.crazyWeek,
-      title: attrProperty.name.list,
-      type: attrProperty.type.guide
-    });
-    router.push({ pathname: '/products/brands/' });
-  }, [logEventTitle, router]);
+  const handleClickSeeMore = useCallback(
+    (url: string) => () => {
+      logEvent(attrKeys.crazycuration.clickProductList, {
+        name: attrProperty.name.crazyWeek,
+        title: logEventTitle
+      });
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.name.crazyWeek,
+        title: attrProperty.name.list,
+        type: attrProperty.type.guide
+      });
+      router.push(url);
+    },
+    [logEventTitle, router]
+  );
 
   return (
     <Flexbox direction="vertical" gap={84}>
@@ -92,7 +97,7 @@ function CrazycurationMultiList({
             <Skeleton disableAspectRatio isRound height="42px" width="335px" />
           </Flexbox>
           <ProductList>
-            {showSectionImage && <Skeleton disableAspectRatio isRound />}
+            {showMainImage && <Skeleton disableAspectRatio isRound />}
             {Array.from({ length: 8 }, (_, index) => (
               <Flexbox key={`crazycuration-card-skeleton-${index}`} direction="vertical" gap={20}>
                 <ProductGridCardSkeleton
@@ -106,62 +111,73 @@ function CrazycurationMultiList({
           </ProductList>
         </Flexbox>
       ) : (
-        products.map((groupedProduct, index) => (
+        contentsDetails.map(({ title, subTitle, imageTitle, imageMain, products, url }, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Flexbox key={`crazycuration-grouped-product-${index}`} direction="vertical" gap={32}>
             <Flexbox direction="vertical" alignment="center" gap={8}>
-              <Typography variant="h3" customStyle={infoStyle?.titleStyle}>
-                에어팟 프로 새거 30만원
-              </Typography>
-              <Description
+              <Typography
+                variant="h3"
+                customStyle={{ textAlign: 'center', ...infoStyle?.titleStyle }}
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
+              <SubTitle
                 highlightColor={infoStyle?.highlightColor}
-                dangerouslySetInnerHTML={{ __html: '새것같은 중고<br/>최저가 <b>15만원</b>' }}
+                dangerouslySetInnerHTML={{ __html: subTitle }}
               />
             </Flexbox>
             <ProductList>
-              {showSectionImage && (
-                <SectionImage
-                  imageUrl={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/.png`}
-                />
-              )}
-              {groupedProduct.map((product, innerIndex) => (
-                <Flexbox key={`crazycuration-product-${product.id}`} direction="vertical" gap={20}>
-                  <ProductGridCard
-                    product={product}
-                    hideProductLabel
-                    hideLegitStatusLabel
-                    showTodayWishViewLabel
-                    hideWishButton
-                    hidePlatformLogo
-                    name={attrProperty.productName.MAIN}
-                    source={attrProperty.productSource.MAIN_MYLIST}
-                    productAtt={onProductAtt(
-                      product,
-                      innerIndex * products[index].length + index + 1
-                    )}
-                    onClick={onClickProduct(
-                      product,
-                      innerIndex * products[index].length + index + 1
-                    )}
-                    compact
-                    isRound
-                    customStyle={{ marginBottom: 'auto' }}
-                    titlePriceStyle={{ color: palette.common.black, opacity: 0.8 }}
-                    todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
-                    areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
-                    metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
-                  />
-                  <CrazycurationWishButton
-                    productId={product.id}
-                    isWish={product.isWish}
-                    refetch={refetch}
-                    handleClickWishButtonEvent={handleClickWishButtonEvent(product, index + 1)}
-                    buttonStyle={wishButtonStyle}
-                  />
+              {showMainImage && (
+                <Flexbox customStyle={{ position: 'relative' }}>
+                  <MainTitle variant="h2" dangerouslySetInnerHTML={{ __html: imageTitle }} />
+                  <MainImage imageUrl={imageMain} customStyle={imageCardStyle} />
                 </Flexbox>
-              ))}
+              )}
+              {products.map((product, innerIndex) => {
+                const productIndex =
+                  contentsDetails
+                    .slice(0, index)
+                    .map((contentsDetail) => contentsDetail.products.length)
+                    .reduce((a, b) => a + b, 0) +
+                  innerIndex +
+                  1;
+
+                return (
+                  <Flexbox
+                    key={`crazycuration-product-${product.id}`}
+                    direction="vertical"
+                    gap={20}
+                  >
+                    <ProductGridCard
+                      product={product}
+                      hideProductLabel
+                      hideLegitStatusLabel
+                      showTodayWishViewLabel
+                      hideWishButton
+                      hidePlatformLogo
+                      name={attrProperty.productName.MAIN}
+                      source={attrProperty.productSource.MAIN_MYLIST}
+                      productAtt={onProductAtt(product, productIndex)}
+                      onClick={onClickProduct(product, productIndex)}
+                      compact
+                      isRound
+                      customStyle={{ marginBottom: 'auto' }}
+                      titlePriceStyle={{ color: palette.common.black, opacity: 0.8 }}
+                      todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
+                      areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
+                      metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
+                    />
+                    <CrazycurationWishButton
+                      productId={product.id}
+                      isWish={product.isWish}
+                      refetch={refetch}
+                      handleClickWishButtonEvent={handleClickWishButtonEvent(product, index + 1)}
+                      buttonStyle={wishButtonStyle}
+                    />
+                  </Flexbox>
+                );
+              })}
             </ProductList>
-            <Box customStyle={{ margin: '20px 20px 0' }} onClick={handleClickSeeMore}>
+            <Box customStyle={{ margin: '20px 20px 0' }} onClick={handleClickSeeMore(url)}>
               <CustomButton variant="contained" fullWidth buttonColor={buttonColor}>
                 매물 더 찾아보기
               </CustomButton>
@@ -173,7 +189,8 @@ function CrazycurationMultiList({
   );
 }
 
-const Description = styled(Typography)<{ highlightColor?: string }>`
+const SubTitle = styled(Typography)<{ highlightColor?: string }>`
+  text-align: center;
   font-style: normal;
   font-weight: 900;
   font-size: 32px;
@@ -193,16 +210,25 @@ const ProductList = styled.div`
   grid-template-columns: repeat(2, minmax(0, 1fr));
 `;
 
-const SectionImage = styled.div<{ imageUrl: string }>`
-  background-color: #4a603b;
+const MainTitle = styled(Typography)`
+  position: absolute;
+  top: 24px;
+  left: 16px;
+  z-index: 1;
+  font-weight: 900;
+  color: ${({ theme }) => theme.palette.common.black};
+`;
+
+const MainImage = styled.div<{ imageUrl: string; customStyle?: CustomStyle }>`
+  width: 100%;
   box-sizing: border-box;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  border: 2px solid #1d2915;
-  filter: drop-shadow(4px 6px 0px #1d2915);
   border-radius: 8px;
   background-image: url(${({ imageUrl }) => imageUrl});
+
+  ${({ customStyle }) => customStyle};
 `;
 
 const CustomButton = styled(Button)<{ buttonColor?: string }>`

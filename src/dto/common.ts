@@ -1,3 +1,5 @@
+import { ProductResult } from '@dto/product';
+
 export type JobRuleBaseDetail = {
   id: number;
   rulebaseId: number;
@@ -78,7 +80,12 @@ export type ContentsDetail = {
   id: number;
   contentsId: number;
   title: string;
-  contentIds: string;
+  subTitle: string;
+  url: string;
+  imageMain: string;
+  imageTitle: string;
+  contentIds: number;
+  products: ProductResult[];
   sort: number;
 };
 

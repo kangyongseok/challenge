@@ -1,7 +1,5 @@
 import { useCallback, useEffect } from 'react';
 
-import type { ParsedUrlQueryInput } from 'node:querystring';
-
 import { useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
@@ -175,6 +173,11 @@ const colorData = {
   5: {
     backgroundColor: '#A2C163',
     buttonColor: '#4A603B',
+    imageCardStyle: {
+      background: '#D7BE7D',
+      border: '2px solid #1D2915',
+      boxShadow: '4px 6px 0px #1D2915'
+    },
     infoStyle: {
       titleStyle: { color: '#000000', fontWeight: 500 },
       highlightColor: '#4A603B'
@@ -210,20 +213,61 @@ const colorData = {
       borderColor: '#000000',
       boxShadow: '1px 2px 0px #000000'
     }
+  },
+  6: {
+    backgroundColor: '#C6AB8E',
+    buttonColor: '#2C455E',
+    imageCardStyle: {
+      backgroundColor: '#2C455E',
+      border: '3px solid #2C455E',
+      borderRadius: '8px 8px 100px 100px'
+    },
+    infoStyle: {
+      titleStyle: { color: '#000000', fontWeight: 500 },
+      highlightColor: '#FFFFFF'
+    },
+    productCardStyle: {
+      todayWishViewLabelCustomStyle: {
+        color: '#FFFFFF',
+        backgroundColor: '#2C455E'
+      },
+      areaWithDateInfoCustomStyle: { color: '#000000', opacity: 0.5 },
+      metaCamelInfoCustomStyle: {
+        '& > svg,div': { color: ' !important #000000', opacity: 0.5 }
+      }
+    },
+    wishButtonStyle: {
+      button: {
+        color: '#2C455E',
+        backgroundColor: '#FFFFFF'
+      },
+      selectedButton: {
+        color: '#2C455E',
+        backgroundColor: '#B1977A',
+        border: 'none'
+      }
+    },
+    floatingButtonStyle: {
+      color: '#2C455E',
+      backgroundColor: '#FFD12D',
+      badgeColor: '#FFD12D',
+      badgeBackgroundColor: '#2C455E'
+    }
   }
 };
 
 const curationData: Record<
   string,
   {
-    contentsId: 1 | 2 | 3 | 4 | 5 | 6;
+    contentsId: number;
     listType: 'a' | 'b' | 'c' | 'c-1';
     backgroundColor: string;
     buttonColor?: string;
     brandData: { id: number; name: string }[];
-    query: ParsedUrlQueryInput;
     weekData: number[];
+    showDescription?: boolean;
     showCountLabel?: boolean;
+    nextEventDateLabel?: string;
     logEventTitle: string;
     infoStyle?: {
       titleStyle: CustomStyle;
@@ -235,6 +279,7 @@ const curationData: Record<
       activeColor: string;
       activeBackgroundColor: string;
     };
+    imageCardStyle?: CustomStyle;
     productCardStyle: {
       todayWishViewLabelCustomStyle?: CustomStyle;
       areaWithDateInfoCustomStyle?: CustomStyle;
@@ -270,8 +315,8 @@ const curationData: Record<
       { id: 27, name: '알렉산더맥퀸' },
       { id: 32, name: '톰브라운' }
     ],
-    query: {},
     weekData: [2, 3, 4, 5, 6],
+    showDescription: true,
     showCountLabel: true,
     logEventTitle: attrProperty.title.quick,
     ...colorData['1']
@@ -280,14 +325,8 @@ const curationData: Record<
     contentsId: 2,
     listType: 'b',
     brandData: [],
-    query: {
-      brandName: '에어조던',
-      parentIds: [14],
-      subParentIds: [383],
-      lineIds: [618, 137],
-      requiredLineIds: [4705, 4458]
-    },
     weekData: [4, 5, 6],
+    showDescription: true,
     logEventTitle: attrProperty.title.rare,
     ...colorData['2']
   },
@@ -295,13 +334,7 @@ const curationData: Record<
     contentsId: 3,
     listType: 'b',
     brandData: [],
-    query: {
-      brandName: '샤넬',
-      parentIds: [45],
-      subParentIds: [327],
-      lineIds: [579, 545, 1825],
-      requiredLineIds: [3415, 4465, 3437]
-    },
+    showDescription: true,
     weekData: [4, 5, 6],
     logEventTitle: attrProperty.title.rare,
     ...colorData['2']
@@ -323,7 +356,6 @@ const curationData: Record<
       { id: 27, name: '알렉산더맥퀸' },
       { id: 32, name: '톰브라운' }
     ],
-    query: {},
     weekData: [5, 6],
     logEventTitle: attrProperty.title.lowPrice,
     ...colorData['3']
@@ -332,8 +364,7 @@ const curationData: Record<
     contentsId: 5,
     listType: 'c',
     brandData: [],
-    query: {},
-    weekData: [6],
+    weekData: [6, 7, 8, 9, 10, 11, 12],
     logEventTitle: attrProperty.title.priceDefense,
     ...colorData['4']
   },
@@ -341,10 +372,88 @@ const curationData: Record<
     contentsId: 6,
     listType: 'c-1',
     brandData: [],
-    query: {},
-    weekData: [],
+    nextEventDateLabel: '9/12 월',
+    weekData: [7, 8, 9, 10, 11, 12],
     logEventTitle: attrProperty.title.camping,
     ...colorData['5']
+  },
+  7: {
+    contentsId: 7,
+    listType: 'a',
+    brandData: [
+      { id: 0, name: '전체브랜드' },
+      { id: 6, name: '구찌' },
+      { id: 34, name: '디올' },
+      { id: 11, name: '루이비통' },
+      { id: 14, name: '메종키츠네' },
+      { id: 17, name: '무스너클' },
+      { id: 23, name: '보테가베네타' },
+      { id: 25, name: '스톤아일랜드' },
+      { id: 53, name: '아미' },
+      { id: 27, name: '알렉산더맥퀸' },
+      { id: 32, name: '톰브라운' }
+    ],
+    showDescription: true,
+    weekData: [8, 9, 10, 11, 12],
+    showCountLabel: true,
+    logEventTitle: attrProperty.title.quick,
+    ...colorData['1']
+  },
+  8: {
+    contentsId: 8,
+    listType: 'b',
+    brandData: [],
+
+    showDescription: true,
+    weekData: [10, 11, 12],
+    logEventTitle: attrProperty.title.rare,
+    ...colorData['2']
+  },
+  9: {
+    contentsId: 9,
+    listType: 'b',
+    brandData: [],
+    showDescription: true,
+    weekData: [10, 11, 12],
+    logEventTitle: attrProperty.title.rare,
+    ...colorData['2']
+  },
+  10: {
+    contentsId: 10,
+    listType: 'a',
+    brandData: [
+      { id: 0, name: '전체브랜드' },
+      { id: 6, name: '구찌' },
+      { id: 34, name: '디올' },
+      { id: 11, name: '루이비통' },
+      { id: 14, name: '메종키츠네' },
+      { id: 17, name: '무스너클' },
+      { id: 23, name: '보테가베네타' },
+      { id: 44, name: '샤넬' },
+      { id: 25, name: '스톤아일랜드' },
+      { id: 53, name: '아미' },
+      { id: 27, name: '알렉산더맥퀸' },
+      { id: 32, name: '톰브라운' }
+    ],
+    weekData: [11, 12],
+    logEventTitle: attrProperty.title.lowPrice,
+    ...colorData['3']
+  },
+  11: {
+    contentsId: 11,
+    listType: 'c',
+    brandData: [],
+    weekData: [12],
+    logEventTitle: attrProperty.title.priceDefense,
+    ...colorData['4']
+  },
+  12: {
+    contentsId: 12,
+    listType: 'c-1',
+    brandData: [],
+    weekData: [],
+    logEventTitle: attrProperty.title.padding,
+    ...colorData['6']
   }
 };
 
@@ -352,6 +461,7 @@ function Crazycuration({
   curationTitle,
   currentCuration,
   isClosedEvent,
+  hasNextEvent,
   nextEventUrl,
   nextEventTitle,
   isMobile
@@ -363,7 +473,12 @@ function Crazycuration({
 
   const {
     data: {
-      contents: { title: ogTitle, description: ogDescription, imageThumbnail: ogImage, url: ogUrl }
+      contents: {
+        title: ogTitle,
+        description: ogDescription,
+        imageThumbnail: ogImage,
+        url: ogUrl
+      } = {}
     }
   } = useContentsProducts(currentCuration?.contentsId || 0);
 
@@ -491,49 +606,95 @@ function Crazycuration({
   useEffect(() => {
     if (!isClosedEvent) return;
 
-    logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, { title: currentCuration?.logEventTitle });
+    // // 진입한 이벤트 마감, 진행중 이벤트 있음
+    if (hasNextEvent && nextEventUrl.length > 0 && nextEventTitle.length > 0) {
+      logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, {
+        title: currentCuration?.logEventTitle
+      });
+      setDialogState({
+        type: 'closedCrazyCuration',
+        customStyleTitle: { marginTop: 12 },
+        content: (
+          <Typography variant="h4" customStyle={{ marginBottom: 12, textAlign: 'center' }}>
+            오늘은 &lsquo;{nextEventTitle}&rsquo;이
+            <br />
+            준비되어 있는데 구경해보실래요?
+          </Typography>
+        ),
+        firstButtonAction() {
+          logEvent(attrKeys.crazycuration.clickClose, {
+            name: attrProperty.name.crazyWeek,
+            title: attrProperty.title.popup
+          });
 
-    let content;
-    let secondButtonUrl = '/search';
-
-    if (nextEventUrl.length > 0 && nextEventTitle.length > 0) {
-      content = (
-        <Typography variant="h4" customStyle={{ marginBottom: 12 }}>
-          오늘은 &lsquo;{nextEventTitle}&rsquo;이
-          <br />
-          준비되어 있는데 구경해보실래요?
-        </Typography>
-      );
-      secondButtonUrl = nextEventUrl;
-    }
-
-    setDialogState({
-      type: 'closedCrazyCuration',
-      customStyleTitle: { marginTop: 12 },
-      content,
-      firstButtonAction() {
-        logEvent(attrKeys.crazycuration.clickClose, {
-          name: attrProperty.name.crazyWeek,
-          title: attrProperty.title.popup
-        });
-
-        if (window.history.length > 2) {
-          router.back();
-        } else {
+          if (window.history.length > 2) {
+            router.back();
+          } else {
+            router.push('/');
+          }
+        },
+        secondButtonAction() {
+          logEvent(attrKeys.crazycuration.clickCrazyWeek, {
+            name: attrProperty.name.crazyWeekPopup,
+            title: currentCuration?.logEventTitle
+          });
+          router.push(nextEventUrl);
+        },
+        disabledOnClose: true
+      });
+      // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
+    } else if (hasNextEvent) {
+      logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, { title: attrProperty.title.none });
+      setDialogState({
+        type: 'readyNextCrazyCuration',
+        customStyleTitle: { marginTop: 12 },
+        firstButtonAction() {
+          logEvent(attrKeys.crazycuration.clickMain, {
+            name: attrProperty.name.crazyWeekPopup,
+            title: attrProperty.title.none
+          });
           router.push('/');
-        }
-      },
-      secondButtonAction() {
-        logEvent(attrKeys.crazycuration.clickCrazyWeek, {
-          name: attrProperty.name.popup,
-          title: currentCuration?.logEventTitle
-        });
-        router.push(secondButtonUrl);
-      },
-      disabledOnClose: true
-    });
+        },
+        secondButtonAction() {
+          logEvent(attrKeys.crazycuration.clickSearchModal, {
+            name: attrProperty.name.crazyWeekPopup,
+            title: attrProperty.title.none
+          });
+          router.push('/search');
+        },
+        disabledOnClose: true
+      });
+      // 모든 이벤트 종료
+    } else {
+      logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, { title: attrProperty.title.end });
+      setDialogState({
+        type: 'endCrazyCuration',
+        customStyleTitle: { marginTop: 12 },
+        firstButtonAction() {
+          logEvent(attrKeys.crazycuration.clickMain, {
+            name: attrProperty.name.crazyWeekPopup,
+            title: attrProperty.title.end
+          });
+
+          if (window.history.length > 2) {
+            router.back();
+          } else {
+            router.push('/');
+          }
+        },
+        secondButtonAction() {
+          logEvent(attrKeys.crazycuration.clickSearchModal, {
+            name: attrProperty.name.crazyWeekPopup,
+            title: attrProperty.title.end
+          });
+          router.push('/search');
+        },
+        disabledOnClose: true
+      });
+    }
   }, [
     currentCuration?.logEventTitle,
+    hasNextEvent,
     isClosedEvent,
     nextEventTitle,
     nextEventUrl,
@@ -571,7 +732,7 @@ function Crazycuration({
           gap={32}
           customStyle={{ padding: '52px 0 84px' }}
         >
-          {[1, 2, 3].includes(currentCuration.contentsId) && (
+          {!!currentCuration.showDescription && (
             <Flexbox justifyContent="center" customStyle={{ padding: '0 20px' }}>
               <CurationImg
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/crazycuration/description${currentCuration.contentsId}.png`}
@@ -595,7 +756,6 @@ function Crazycuration({
           {currentCuration.listType === 'b' && (
             <CrazycurationSeeMoreList
               contentsId={currentCuration.contentsId}
-              urlQuery={currentCuration.query}
               logEventTitle={currentCuration.logEventTitle}
               buttonColor={currentCuration.buttonColor}
               productCardStyle={currentCuration.productCardStyle}
@@ -608,10 +768,11 @@ function Crazycuration({
           {['c', 'c-1'].includes(currentCuration.listType) && (
             <CrazycurationMultiList
               contentsId={currentCuration.contentsId}
-              showSectionImage={currentCuration.listType === 'c-1'}
+              showMainImage={currentCuration.listType === 'c-1'}
               logEventTitle={currentCuration.logEventTitle}
               buttonColor={currentCuration.buttonColor}
               infoStyle={currentCuration.infoStyle}
+              imageCardStyle={currentCuration.imageCardStyle}
               productCardStyle={currentCuration.productCardStyle}
               wishButtonStyle={currentCuration.wishButtonStyle}
               onProductAtt={handleProductAtt}
@@ -620,13 +781,12 @@ function Crazycuration({
             />
           )}
         </Flexbox>
-        {currentCuration.weekData.length > 0 && (
-          <CrazycurationWeek
-            weekData={currentCuration.weekData}
-            isMobileWeb={isMobileWeb}
-            logEventTitle={currentCuration.logEventTitle}
-          />
-        )}
+        <CrazycurationWeek
+          weekData={currentCuration.weekData}
+          nextEventDateLabel={currentCuration.nextEventDateLabel}
+          isMobileWeb={isMobileWeb}
+          logEventTitle={currentCuration.logEventTitle}
+        />
       </GeneralTemplate>
       <CrazycurationFloatingButton
         contentsId={currentCuration.contentsId}
@@ -642,12 +802,19 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
   const userAgent = req.headers['user-agent'];
-  const curationTitle = String(title)
-    .replace(/[0-9-]/gim, '')
-    .trim();
+  const curationTitle =
+    title.slice(title.lastIndexOf('-') + 1).length === 6
+      ? String(Number(title.slice(title.lastIndexOf('-') + 1).slice(-2)))
+      : String(title)
+          .replace(/[0-9-]/gim, '')
+          .trim();
+
   const currentCuration =
-    curationTitle.length > 0 ? curationData[curationTitle as keyof typeof curationData] : null;
+    curationTitle.length > 0 && Object.keys(curationData).includes(curationTitle)
+      ? curationData[curationTitle as keyof typeof curationData]
+      : null;
   let isClosedEvent = false;
+  let hasNextEvent = false;
   let nextEventUrl = '';
   let nextEventTitle = '';
   let gender = 'M';
@@ -661,12 +828,27 @@ export async function getServerSideProps({
         queryKeys.common.contentsProducts(currentCuration.contentsId),
         () => fetchContentsProducts(currentCuration.contentsId)
       );
-    const { url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
+    const { status = 0, url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
 
     if (currentEventStatus === eventStatus.closed) {
       isClosedEvent = true;
-      nextEventUrl = eventUrl;
-      nextEventTitle = eventTitle;
+      switch (status) {
+        // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
+        case eventStatus.ready: {
+          hasNextEvent = true;
+          break;
+        }
+        // 진입한 이벤트 마감, 진행중 이벤트가 있음
+        case eventStatus.progress: {
+          hasNextEvent = true;
+          nextEventUrl = eventUrl;
+          nextEventTitle = eventTitle;
+          break;
+        }
+        // 모든 이벤트 종료
+        default:
+          break;
+      }
     }
   }
 
@@ -679,22 +861,30 @@ export async function getServerSideProps({
     if (userGender.length > 0) gender = userGender;
   }
 
+  if (currentCuration) {
+    return {
+      props: {
+        curationTitle,
+        currentCuration: {
+          ...currentCuration,
+          weekData: currentCuration.weekData.filter((id) =>
+            gender === 'F' ? ![2, 8].includes(id) : ![3, 9].includes(id)
+          )
+        },
+        isClosedEvent,
+        hasNextEvent,
+        nextEventUrl,
+        nextEventTitle,
+        isMobile: checkAgent.isAllMobileWeb(userAgent),
+        dehydratedState: dehydrate(queryClient)
+      }
+    };
+  }
+
   return {
-    props: {
-      curationTitle,
-      currentCuration: currentCuration
-        ? {
-            ...currentCuration,
-            weekData: currentCuration.weekData.filter((id) =>
-              gender === 'F' ? id !== 2 : id !== 3
-            )
-          }
-        : currentCuration,
-      isClosedEvent,
-      nextEventUrl,
-      nextEventTitle,
-      isMobile: checkAgent.isAllMobileWeb(userAgent),
-      dehydratedState: dehydrate(queryClient)
+    redirect: {
+      permanent: false,
+      destination: '/crazycuration'
     }
   };
 }
