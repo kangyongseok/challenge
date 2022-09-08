@@ -60,7 +60,7 @@ function HomeCamelProductCuration() {
       type: attrProperty.productType.GUIDED
     });
 
-    router.push('/products/camel?siteUrlIds=161');
+    router.push('/products/camel?idFilterIds=5');
   };
 
   const handleWishAtt = (product: ProductResult, i: number) => {

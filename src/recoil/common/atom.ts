@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 
 import { atom } from 'recoil';
-import { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 import type { Product } from '@dto/product';
 
@@ -9,7 +9,7 @@ import LocalStorage from '@library/localStorage';
 
 import { DEVICE_ID, USER_ON_BOARDING_TRIGGER } from '@constants/localStorage';
 
-import type { DialogType, ToastStatus, ToastType } from '@typings/common';
+import type { DialogType, ShareData, ToastStatus, ToastType } from '@typings/common';
 
 export const userOnBoardingTriggerState = atom({
   key: 'common/userOnBoardingTriggerState',
@@ -89,6 +89,7 @@ export const dialogState = atom<{
   secondButtonAction?: () => void;
   content?: string | number | ReactElement;
   product?: Product | undefined;
+  shareData?: ShareData;
   customStyleTitle?: CustomStyle;
   disabledOnClose?: boolean;
 }>({

@@ -24,7 +24,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
-import { getRandomNumber } from '@utils/common';
+import { commaNumber, executedShareURl, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import { dialogState, toastState } from '@recoil/common';
@@ -72,48 +72,32 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   const handleClickShare = () => {
     if (!product) return;
 
-    const url = window.location.href;
-
     productDetailAtt({
       key: attrKeys.products.CLICK_SHARE,
       product,
       source: attrProperty.productSource.PRODUCT_LIST
     });
 
-    if (checkAgent.isAndroidApp() && window.AndroidShareHandler) {
-      window.AndroidShareHandler.share(url);
-      return;
+    let viewPrice = product ? product.price / 10000 : 0;
+
+    if (Number.isNaN(viewPrice)) {
+      viewPrice = 0;
     }
 
     if (
-      ['android', 'iphone', 'ipad', 'ipod'].some((platfrom) =>
-        navigator.userAgent.toLowerCase().indexOf(platfrom)
-      )
+      !executedShareURl({
+        title: product.title,
+        text: `${product.site.name} ${commaNumber(
+          viewPrice - Math.floor(viewPrice) > 0
+            ? Number(viewPrice.toFixed(1))
+            : Math.floor(viewPrice)
+        )}만원\r\nAi추천지수 ${product.scoreTotal}/10`,
+        url: window.location.href,
+        product
+      })
     ) {
-      if (navigator.share) {
-        navigator.share({ text: product.title, url });
-        return;
-      }
-
-      if (checkAgent.isAndroidApp() && window.webview && window.webview.callShareProduct) {
-        window.webview.callShareProduct(url, JSON.stringify(product));
-        return;
-      }
-
-      if (
-        checkAgent.isIOSApp() &&
-        window.webkit &&
-        window.webkit.messageHandlers &&
-        window.webkit.messageHandlers.callShareProduct
-      ) {
-        window.webkit.messageHandlers.callShareProduct.postMessage(
-          JSON.stringify({ url, product })
-        );
-        return;
-      }
+      setDialogState({ type: 'SNSShare', product });
     }
-
-    setDialogState({ type: 'SNSShare', product });
   };
 
   const handleClickSendSMS = useCallback(() => {

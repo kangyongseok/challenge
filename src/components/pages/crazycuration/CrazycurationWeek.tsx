@@ -1,6 +1,5 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
@@ -10,8 +9,6 @@ import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { dialogState } from '@recoil/common';
 
 const CARD_WIDTH = 136;
 const CARD_GAP = 12;
@@ -35,20 +32,21 @@ interface CrazycurationWeekProps {
   nextEventDateLabel?: string;
   isMobileWeb: boolean;
   logEventTitle: string;
+  onClickShare: () => void;
 }
 
 function CrazycurationWeek({
   weekData,
   nextEventDateLabel,
   isMobileWeb,
-  logEventTitle
+  logEventTitle,
+  onClickShare
 }: CrazycurationWeekProps) {
   const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
 
-  const setDialogState = useSetRecoilState(dialogState);
   const [activeCardIndex, setActiveCardIndex] = useState(weekData[0]);
   const curationCardList = useRef<HTMLDivElement | null>(null);
 
@@ -94,8 +92,8 @@ function CrazycurationWeek({
       name: attrProperty.name.crazyWeek,
       title: attrProperty.title.bottom
     });
-    setDialogState({ type: 'SNSShare' });
-  }, [setDialogState]);
+    onClickShare();
+  }, [onClickShare]);
 
   return (
     <Flexbox

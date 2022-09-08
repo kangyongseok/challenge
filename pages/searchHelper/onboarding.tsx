@@ -67,7 +67,7 @@ function Onboarding() {
       return;
     }
 
-    window.location.replace('/search');
+    router.replace('/search');
   };
 
   useEffect(() => {

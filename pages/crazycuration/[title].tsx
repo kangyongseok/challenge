@@ -33,6 +33,7 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { executedShareURl } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import { dialogState } from '@recoil/common';
@@ -174,7 +175,7 @@ const colorData = {
     backgroundColor: '#A2C163',
     buttonColor: '#4A603B',
     imageCardStyle: {
-      background: '#D7BE7D',
+      backgroundColor: '#D7BE7D',
       border: '2px solid #1D2915',
       boxShadow: '4px 6px 0px #1D2915'
     },
@@ -482,6 +483,27 @@ function Crazycuration({
     }
   } = useContentsProducts(currentCuration?.contentsId || 0);
 
+  const handleClickShare = useCallback(() => {
+    const shareData = {
+      title: ogTitle ? `${ogTitle} | 카멜 최저가 가격비교` : '카멜 최저가 가격비교',
+      description: ogDescription || '',
+      image: (ogImage || '').replace('thumbnail', 'weekOn'),
+      url: `${
+        typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
+      }${ogUrl}`
+    };
+
+    if (
+      !executedShareURl({
+        url: shareData.url,
+        title: shareData.title,
+        text: shareData.description
+      })
+    ) {
+      setDialogState({ type: 'SNSShare', shareData });
+    }
+  }, [ogDescription, ogImage, ogTitle, ogUrl, setDialogState]);
+
   const handleClickWishButtonEvent = useCallback(
     (
         {
@@ -710,12 +732,12 @@ function Crazycuration({
         ogTitle={`${ogTitle} | 카멜 최저가 가격비교`}
         ogDescription={ogDescription}
         ogImage={ogImage}
-        ogUrl={`${(typeof window !== 'undefined' && window.location.protocol) || 'https:'}//${
-          (typeof window !== 'undefined' && window.location.host) || 'mrcamel.co.kr'
+        ogUrl={`${
+          typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
         }${ogUrl}`}
       />
       <GeneralTemplate
-        header={<CrazycurationHeader />}
+        header={<CrazycurationHeader onClickShare={handleClickShare} />}
         customStyle={{ '& > main': { backgroundColor: currentCuration.backgroundColor } }}
         disablePadding
       >
@@ -786,6 +808,7 @@ function Crazycuration({
           nextEventDateLabel={currentCuration.nextEventDateLabel}
           isMobileWeb={isMobileWeb}
           logEventTitle={currentCuration.logEventTitle}
+          onClickShare={handleClickShare}
         />
       </GeneralTemplate>
       <CrazycurationFloatingButton
@@ -822,7 +845,16 @@ export async function getServerSideProps({
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-  if (currentCuration?.contentsId) {
+  if (req.cookies.accessToken) {
+    const { info: { value: { gender: userGender = '' } = {} } = {} } = await queryClient.fetchQuery(
+      queryKeys.users.userInfo(),
+      fetchUserInfo
+    );
+
+    if (userGender.length > 0) gender = userGender;
+  }
+
+  if (currentCuration) {
     const { contents: { status: currentEventStatus, targetContents } = {} } =
       await queryClient.fetchQuery(
         queryKeys.common.contentsProducts(currentCuration.contentsId),
@@ -832,6 +864,7 @@ export async function getServerSideProps({
 
     if (currentEventStatus === eventStatus.closed) {
       isClosedEvent = true;
+
       switch (status) {
         // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
         case eventStatus.ready: {
@@ -850,18 +883,7 @@ export async function getServerSideProps({
           break;
       }
     }
-  }
 
-  if (req.cookies.accessToken) {
-    const { info: { value: { gender: userGender = '' } = {} } = {} } = await queryClient.fetchQuery(
-      queryKeys.users.userInfo(),
-      fetchUserInfo
-    );
-
-    if (userGender.length > 0) gender = userGender;
-  }
-
-  if (currentCuration) {
     return {
       props: {
         curationTitle,

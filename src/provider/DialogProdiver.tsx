@@ -19,6 +19,7 @@ import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
 import { commaNumber, copyToClipboard } from '@utils/common';
 
+import { ShareData } from '@typings/common';
 import { dialogState, toastState } from '@recoil/common';
 
 const noop = (): void => {
@@ -33,7 +34,8 @@ function DialogProdiver() {
     content,
     product,
     customStyleTitle,
-    disabledOnClose = false
+    disabledOnClose = false,
+    shareData
   } = useRecoilValue(dialogState);
   const resetDialogState = useResetRecoilState(dialogState);
   const dialogDisplayType = useMemo(() => {
@@ -98,13 +100,13 @@ function DialogProdiver() {
               ))}
           </Flexbox>
           {['textWithTwoButton', 'textWithOneButton'].includes(dialogDisplayType) && (
-            <Flexbox gap={7}>
+            <Flexbox gap={8}>
               {dialogDisplayType === 'textWithTwoButton' && (
                 <Button
                   variant="ghost"
                   brandColor="black"
-                  size="medium"
-                  customStyle={{ width: 128 }}
+                  size="large"
+                  customStyle={{ width: '100%' }}
                   onClick={handleClickFirst}
                 >
                   {firstButtonText[type as keyof typeof firstButtonText]}
@@ -113,8 +115,8 @@ function DialogProdiver() {
               <Button
                 variant="contained"
                 brandColor="primary"
-                size="medium"
-                customStyle={{ width: 128 }}
+                size="large"
+                customStyle={{ width: '100%' }}
                 onClick={handleClickSecond}
               >
                 {secondButtonText[type as keyof typeof secondButtonText]}
@@ -123,7 +125,7 @@ function DialogProdiver() {
           )}
         </Flexbox>
       )}
-      {type === 'SNSShare' && <SNSShareDialolgContent product={product} />}
+      {type === 'SNSShare' && <SNSShareDialolgContent product={product} shareData={shareData} />}
     </Dialog>
   );
 }
@@ -143,15 +145,26 @@ const socialPlatformInfo: {
 
 interface SNSShareDialolgContentProps {
   product?: Product;
+  shareData?: ShareData;
 }
 
-function SNSShareDialolgContent({ product }: SNSShareDialolgContentProps) {
+function SNSShareDialolgContent({ product, shareData }: SNSShareDialolgContentProps) {
   const { asPath, query, pathname } = useRouter();
 
   const setToastState = useSetRecoilState(toastState);
   const resetDialogState = useResetRecoilState(dialogState);
 
   const handleClickShareIcon = (platform: ShareSocialPlatform, title: string) => () => {
+    let shareUrl = `${window.location.origin}${decodeURI(asPath.split('?')[0])}`;
+    let shareTitle = String(query?.title || '')
+      .replace(/[0-9]/gim, '')
+      .replace(/-/gim, ' ')
+      .trim();
+    let shareDescription =
+      '대한민국 모든 중고명품, 한번에 검색&비교하고 득템하세요. 상태 좋고 가격도 저렴한 중고명품을 빠르게 찾도록 도와드릴게요!';
+    let shareImage = `https://${process.env.IMAGE_DOMAIN}/assets/favicon/android-icon-192x192.png`;
+    let viewPrice = 0;
+
     if (product) {
       productDetailAtt({
         key: attrKeys.products.CLICK_SHARE,
@@ -159,6 +172,22 @@ function SNSShareDialolgContent({ product }: SNSShareDialolgContentProps) {
         rest: { title },
         source: attrProperty.productSource.PRODUCT_LIST
       });
+
+      shareUrl = `${window.location.origin}/products/${product.id}`;
+      shareTitle = product.title;
+      viewPrice = Number.isNaN(product.price / 10000) ? 0 : product.price / 10000;
+      shareDescription = `${product.site.name} ${commaNumber(
+        viewPrice - Math.floor(viewPrice) > 0 ? Number(viewPrice.toFixed(1)) : Math.floor(viewPrice)
+      )}만원\r\nAi추천지수 ${product.scoreTotal}/10`;
+      shareImage = product.imageMain;
+    }
+
+    if (shareData) {
+      shareUrl = shareData.url;
+      shareTitle = shareData.title;
+      shareDescription = shareData.description;
+
+      if (shareData.image) shareImage = shareData.image;
     }
 
     if (pathname.includes('/crazycuration')) {
@@ -169,45 +198,21 @@ function SNSShareDialolgContent({ product }: SNSShareDialolgContentProps) {
       });
     }
 
-    const url = `${window.location.origin}${
-      product ? `/products/${product.id}` : decodeURI(asPath.split('?')[0])
-    }`;
-    const shareTitle = product
-      ? product.title
-      : String(query?.title || '')
-          .replace(/[0-9]/gim, '')
-          .replace(/-/gim, ' ')
-          .trim();
-
     switch (platform) {
       case 'kakao': {
-        let viewPrice = product ? product.price / 10000 : 0;
-
         if (window.Kakao === undefined) return;
 
         if (!window.Kakao.isInitialized()) window.Kakao.init(process.env.KAKAO_JS_KEY);
-
-        if (Number.isNaN(viewPrice)) {
-          viewPrice = 0;
-        }
 
         window.Kakao.Link.sendDefault({
           objectType: 'feed',
           content: {
             title: shareTitle,
-            description: product
-              ? `${product.site.name} ${commaNumber(
-                  viewPrice - Math.floor(viewPrice) > 0
-                    ? Number(viewPrice.toFixed(1))
-                    : Math.floor(viewPrice)
-                )}만원\r\nAi추천지수 ${product.scoreTotal}/10`
-              : '대한민국 모든 중고명품, 한번에 검색&비교하고 득템하세요. 상태 좋고 가격도 저렴한 중고명품을 빠르게 찾도록 도와드릴게요!',
-            imageUrl: product
-              ? product.imageMain
-              : `https://${process.env.IMAGE_DOMAIN}/assets/favicon/android-icon-192x192.png`,
+            description: shareDescription,
+            imageUrl: shareImage,
             link: {
-              mobileWebUrl: url,
-              webUrl: url
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl
             }
           }
         });
@@ -215,16 +220,16 @@ function SNSShareDialolgContent({ product }: SNSShareDialolgContentProps) {
         break;
       }
       case 'facebook': {
-        window.open(`${FACEBOOK_SHARE_URL}?u=${encodeURIComponent(url)}`);
+        window.open(`${FACEBOOK_SHARE_URL}?u=${encodeURIComponent(shareUrl)}`);
         break;
       }
       case 'twitter': {
-        window.open(`${TWITTER_SHARE_URL}?text=${shareTitle}&url=${encodeURIComponent(url)}`);
+        window.open(`${TWITTER_SHARE_URL}?text=${shareTitle}&url=${encodeURIComponent(shareUrl)}`);
         break;
       }
       case 'linkCopy':
       default:
-        if (copyToClipboard(`${shareTitle} ${url}`)) {
+        if (copyToClipboard(`${shareTitle} ${shareUrl}`)) {
           setToastState({
             type: 'product',
             status: 'successCopy',

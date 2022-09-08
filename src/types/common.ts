@@ -101,3 +101,10 @@ export type DialogType =
   | 'readyNextCrazyCuration'
   | 'closedCrazyCuration'
   | 'endCrazyCuration';
+
+export type ShareData = {
+  title: string;
+  description: string;
+  image?: string;
+  url: string;
+};

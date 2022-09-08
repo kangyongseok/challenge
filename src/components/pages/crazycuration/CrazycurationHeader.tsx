@@ -1,20 +1,19 @@
 import { useCallback } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 
-import { dialogState } from '@recoil/common';
+interface CrazycurationHeaderProps {
+  onClickShare: () => void;
+}
 
-function CrazycurationHeader() {
+function CrazycurationHeader({ onClickShare }: CrazycurationHeaderProps) {
   const {
     theme: { palette }
   } = useTheme();
   const router = useRouter();
-
-  const setDialogState = useSetRecoilState(dialogState);
 
   const handleClickBack = useCallback(() => {
     if (window.history.length > 2) {
@@ -23,10 +22,6 @@ function CrazycurationHeader() {
       router.push('/');
     }
   }, [router]);
-
-  const handleClickShare = useCallback(() => {
-    setDialogState({ type: 'SNSShare' });
-  }, [setDialogState]);
 
   return (
     <Header
@@ -39,7 +34,7 @@ function CrazycurationHeader() {
           variant="h4"
           weight="medium"
           customStyle={{ padding: '26px 16px', color: palette.common.white, cursor: 'pointer' }}
-          onClick={handleClickShare}
+          onClick={onClickShare}
         >
           공유하기
         </Typography>
