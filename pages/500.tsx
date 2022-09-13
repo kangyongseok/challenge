@@ -25,7 +25,7 @@ function Error500({ logging = true }: Error500Props) {
       name: 'ERROR',
       title: 500
     });
-    router.back();
+    router.push('/');
   };
 
   useEffect(() => {

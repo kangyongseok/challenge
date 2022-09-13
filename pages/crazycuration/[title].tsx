@@ -831,7 +831,6 @@ export async function getServerSideProps({
       : String(title)
           .replace(/[0-9-]/gim, '')
           .trim();
-
   const currentCuration =
     curationTitle.length > 0 && Object.keys(curationData).includes(curationTitle)
       ? curationData[curationTitle as keyof typeof curationData]
@@ -855,52 +854,61 @@ export async function getServerSideProps({
   }
 
   if (currentCuration) {
-    const { contents: { status: currentEventStatus, targetContents } = {} } =
-      await queryClient.fetchQuery(
-        queryKeys.common.contentsProducts(currentCuration.contentsId),
-        () => fetchContentsProducts(currentCuration.contentsId)
-      );
-    const { status = 0, url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
+    try {
+      const { contents: { status: currentEventStatus, targetContents } = {} } =
+        await queryClient.fetchQuery(
+          queryKeys.common.contentsProducts(currentCuration.contentsId),
+          () => fetchContentsProducts(currentCuration.contentsId)
+        );
+      const { status = 0, url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
 
-    if (currentEventStatus === eventStatus.closed) {
-      isClosedEvent = true;
+      if (currentEventStatus === eventStatus.closed) {
+        isClosedEvent = true;
 
-      switch (status) {
-        // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
-        case eventStatus.ready: {
-          hasNextEvent = true;
-          break;
+        switch (status) {
+          // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
+          case eventStatus.ready: {
+            hasNextEvent = true;
+            break;
+          }
+          // 진입한 이벤트 마감, 진행중 이벤트가 있음
+          case eventStatus.progress: {
+            hasNextEvent = true;
+            nextEventUrl = encodeURI(eventUrl);
+            nextEventTitle = eventTitle;
+            break;
+          }
+          // 모든 이벤트 종료
+          default:
+            break;
         }
-        // 진입한 이벤트 마감, 진행중 이벤트가 있음
-        case eventStatus.progress: {
-          hasNextEvent = true;
-          nextEventUrl = eventUrl;
-          nextEventTitle = eventTitle;
-          break;
-        }
-        // 모든 이벤트 종료
-        default:
-          break;
       }
+
+      return {
+        props: {
+          curationTitle,
+          currentCuration: {
+            ...currentCuration,
+            weekData: currentCuration.weekData.filter((id) =>
+              gender === 'F' ? ![2, 8].includes(id) : ![3, 9].includes(id)
+            )
+          },
+          isClosedEvent,
+          hasNextEvent,
+          nextEventUrl,
+          nextEventTitle,
+          isMobile: checkAgent.isAllMobileWeb(userAgent),
+          dehydratedState: dehydrate(queryClient)
+        }
+      };
+    } catch {
+      return {
+        redirect: {
+          permanent: false,
+          destination: encodeURI('/')
+        }
+      };
     }
-
-    return {
-      props: {
-        curationTitle,
-        currentCuration: {
-          ...currentCuration,
-          weekData: currentCuration.weekData.filter((id) =>
-            gender === 'F' ? ![2, 8].includes(id) : ![3, 9].includes(id)
-          )
-        },
-        isClosedEvent,
-        hasNextEvent,
-        nextEventUrl,
-        nextEventTitle,
-        isMobile: checkAgent.isAllMobileWeb(userAgent),
-        dehydratedState: dehydrate(queryClient)
-      }
-    };
   }
 
   return {
@@ -913,6 +921,7 @@ export async function getServerSideProps({
 
 const CurationImg = styled.img`
   min-width: 100%;
+  image-orientation: from-image;
 `;
 
 export default Crazycuration;

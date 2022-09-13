@@ -17,17 +17,26 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-  const { contents: { url } = {} } = await queryClient.fetchQuery(
-    queryKeys.common.contentsProducts(0),
-    () => fetchContentsProducts(0)
-  );
+  try {
+    const { contents: { url } = {} } = await queryClient.fetchQuery(
+      queryKeys.common.contentsProducts(0),
+      () => fetchContentsProducts(0)
+    );
 
-  return {
-    redirect: {
-      permanent: false,
-      destination: encodeURI(url || '/crazycuration/미친-매력의-급처-매물')
-    }
-  };
+    return {
+      redirect: {
+        permanent: false,
+        destination: encodeURI(url || '/crazycuration/미친-매력의-급처-매물-2209')
+      }
+    };
+  } catch {
+    return {
+      redirect: {
+        permanent: false,
+        destination: encodeURI('/crazycuration/미친-매력의-급처-매물-2209')
+      }
+    };
+  }
 }
 
 export default Crazycuration;

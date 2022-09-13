@@ -72,7 +72,7 @@ function CrazycurationTabList({
 
   const {
     isLoading,
-    data: { contents: { contentsDetails: [{ products = [] }] = [{}] } = {} },
+    data: { contents: { contentsDetails: [contentsDetail] = [] } = {} },
     refetch
   } = useContentsProducts(contentsId);
 
@@ -155,8 +155,8 @@ function CrazycurationTabList({
                 <Skeleton disableAspectRatio isRound height="32px" />
               </Flexbox>
             ))
-          : products
-              .filter(
+          : contentsDetail?.products
+              ?.filter(
                 (product) => selectedIndex === 0 || brandData[selectedIndex].id === product.brand.id
               )
               .map((product, index) => (

@@ -60,11 +60,13 @@ function CrazycurationSeeMoreList({
 
   const {
     isLoading,
-    data: { contents: { contentsDetails: [{ url = '', products = [] }] = [{}] } = {} },
+    data: { contents: { contentsDetails: [contentsDetail] = [] } = {} },
     refetch
   } = useContentsProducts(contentsId);
 
   const handleClickSeeMore = useCallback(() => {
+    if (!contentsDetail) return;
+
     logEvent(attrKeys.crazycuration.clickProductList, {
       name: attrProperty.name.crazyWeek,
       title: logEventTitle
@@ -75,8 +77,8 @@ function CrazycurationSeeMoreList({
       title: attrProperty.name.list,
       type: attrProperty.type.guide
     });
-    router.push(url);
-  }, [logEventTitle, router, url]);
+    router.push(contentsDetail.url);
+  }, [contentsDetail, logEventTitle, router]);
 
   return (
     <Flexbox direction="vertical" gap={32}>
@@ -92,7 +94,7 @@ function CrazycurationSeeMoreList({
                 <Skeleton disableAspectRatio isRound height="32px" />
               </Flexbox>
             ))
-          : products.map((product, index) => (
+          : contentsDetail?.products?.map((product, index) => (
               <Flexbox
                 // eslint-disable-next-line react/no-array-index-key
                 key={`crazycuration-product-${product.id}-${index}`}
