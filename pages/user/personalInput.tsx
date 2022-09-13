@@ -9,8 +9,10 @@ import styled from '@emotion/styled';
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import type { AccessUser } from '@dto/userAuth';
 import type { Gender } from '@dto/user';
 
+import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo, postUserAgeAndGender } from '@api/user';
@@ -69,6 +71,21 @@ function PersonalInput() {
     }
   }, [userInfo]);
 
+  const save = () => {
+    logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
+      name: 'INFO',
+      gender: genderValue === 'M' ? 'MALE' : 'FEMALE',
+      yearOfBirth: yearOfBirthValue
+    });
+
+    updateAccessUserOnBraze({
+      ...(accessUser as AccessUser),
+      gender: genderValue
+    });
+
+    mutate({ birthday: Number(yearOfBirthValue), gender: genderValue });
+  };
+
   return (
     <GeneralTemplate
       header={<Header hideTitle showRight={false} />}
@@ -82,15 +99,7 @@ function PersonalInput() {
               isLoading || !(genderValue === 'M' || genderValue === 'F') || isShowYearOfBirthError
             }
             brandColor="primary"
-            onClick={() => {
-              logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
-                name: 'INFO',
-                gender: genderValue === 'M' ? 'MALE' : 'FEMALE',
-                yearOfBirth: yearOfBirthValue
-              });
-
-              mutate({ birthday: Number(yearOfBirthValue), gender: genderValue });
-            }}
+            onClick={save}
           >
             저장
           </CtaButton>

@@ -17,6 +17,7 @@ export declare global {
     getExecuteApp: any;
     fbq: any;
     gtag: any;
+    callSetLoginUser: any;
   }
 
   namespace NodeJS {

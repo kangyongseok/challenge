@@ -102,7 +102,8 @@ const commonEvent = {
   submitLegitSurvey: 'SUBMIT_LEGIT_SURVEY',
   clickMylistFloating: 'CLICK_MYLIST_FLOATING',
   clickMylistAuto: 'CLICK_MYLIST_AUTO',
-  viewCrazyWeek: 'VIEW_CRAZYWEEK'
+  viewCrazyWeek: 'VIEW_CRAZYWEEK',
+  minorScriptError: 'MINOR_SCRIPT_ERROR'
 };
 
 const login = {

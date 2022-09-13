@@ -10,7 +10,7 @@ import { CtaButton, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import AppDownloadDialog from '@components/UI/organisms/AppDownloadDialog';
+import { AppDownloadDialog, ErrorBoundary } from '@components/UI/organisms';
 import {
   DuplicatedOverlay,
   Header,
@@ -433,7 +433,9 @@ function ProductDetail() {
             )}
             <ProductSellerReviews product={product} />
             <ProductSellerProductList product={product} />
-            <ProductAveragePriceChart product={product} />
+            <ErrorBoundary disableFallback>
+              <ProductAveragePriceChart product={product} />
+            </ErrorBoundary>
             {isCrm ? (
               <CtaButton
                 variant="contained"
@@ -549,6 +551,15 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     const productId = Number(id || 0);
 
+    if (query.id === 'undefined') {
+      return {
+        redirect: {
+          destination: '/',
+          statusCode: 301
+        }
+      };
+    }
+
     await queryClient.prefetchQuery(queryKeys.products.product({ productId }), async () => {
       const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
 
@@ -562,7 +573,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
         dehydratedState: dehydrate(queryClient)
       }
     };
-  } catch {
+  } catch (e) {
     return {
       notFound: true
     };

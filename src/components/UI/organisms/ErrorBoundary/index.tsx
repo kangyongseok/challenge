@@ -8,6 +8,7 @@ import Error500 from '@pages/500';
 
 interface Props {
   children?: ReactNode;
+  disableFallback?: boolean;
 }
 
 interface State {
@@ -25,20 +26,27 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    logEvent(attrKeys.commonEvent.scriptError, {
-      title: 'client-500',
-      userAgent: window.navigator.userAgent,
-      url: window.location.href,
-      message: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack
-    });
+    const { disableFallback } = this.props;
+
+    logEvent(
+      disableFallback ? attrKeys.commonEvent.minorScriptError : attrKeys.commonEvent.scriptError,
+      {
+        title: 'client-500',
+        userAgent: window.navigator.userAgent,
+        url: window.location.href,
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack
+      }
+    );
   }
 
   override render() {
-    const { children } = this.props;
+    const { children, disableFallback } = this.props;
     const { hasError } = this.state;
-
+    if (disableFallback && hasError) {
+      return null;
+    }
     if (hasError) {
       return <Error500 logging={false} />;
     }
