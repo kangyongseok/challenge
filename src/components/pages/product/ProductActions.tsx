@@ -233,17 +233,19 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   return (
     <Box customStyle={{ position: 'relative' }}>
       <ActionButtons>
-        <Button
-          variant="ghost"
-          brandColor="black"
-          size="small"
-          disabled={!product || !sellerPhoneNumber}
-          onClick={handleClickSendSMS}
-        >
-          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-            문자보내기
-          </Typography>
-        </Button>
+        {product && sellerPhoneNumber && (
+          <Button
+            variant="ghost"
+            brandColor="black"
+            size="small"
+            disabled={!product || !sellerPhoneNumber}
+            onClick={handleClickSendSMS}
+          >
+            <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
+              문자보내기
+            </Typography>
+          </Button>
+        )}
         <Button
           variant="ghost"
           brandColor="black"
