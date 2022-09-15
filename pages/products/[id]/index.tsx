@@ -36,6 +36,8 @@ import {
   ProductSellerReviews
 } from '@components/pages/product';
 
+import { Product } from '@dto/product';
+
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -374,7 +376,7 @@ function ProductDetail() {
         ogTitle={`${data?.product.title} | 카멜 최저가 가격비교`}
         ogDescription={`${getMetaDescription(data?.product.description || '')}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
-        ogUrl={`https://mrcamel.co.kr/products/${data?.product.id}`}
+        ogUrl={`https://mrcamel.co.kr${getProductDetailUrl({ product: data?.product as Product })}`}
         product={data?.product}
       />
       <GeneralTemplate
