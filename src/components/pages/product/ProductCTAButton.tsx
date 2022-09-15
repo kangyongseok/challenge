@@ -45,7 +45,7 @@ import attrKeys from '@constants/attrKeys';
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getRandomNumber } from '@utils/common';
+import { commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import type { AppBanner } from '@typings/common';
@@ -112,7 +112,6 @@ function ProductCTAButton({
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!product }
   );
   const [legitTooltip, setLegitTooltip] = useState(true);
-
   const [isDoneWishOnBoarding, setIsDoneWishOnBoarding] = useState(true);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
     useState(false);
@@ -311,9 +310,10 @@ function ProductCTAButton({
           att: isPriceDown ? 'CPPRICELOW' : 'CPSAME'
         }
       });
-      push(`/products/${product?.targetProductId}`);
+      if (product) push(getProductDetailUrl({ type: 'targetProduct', product }));
       return;
     }
+
     productDetailAtt({
       key: attrKeys.products.CLICK_PURCHASE,
       product: product as Product,
@@ -326,7 +326,11 @@ function ProductCTAButton({
     if (checkAgent.isIOSApp()) userAgent = 1;
     if (checkAgent.isAndroidApp()) userAgent = 2;
 
-    window.open(`/products/${product?.id}?redirect=1&userAgent=${userAgent}`, '_blank');
+    if (product)
+      window.open(
+        `${getProductDetailUrl({ product })}?redirect=1&userAgent=${userAgent}`,
+        '_blank'
+      );
   };
 
   const handleClickWishOnBoarding = () => {
@@ -464,6 +468,7 @@ function ProductCTAButton({
                     ? `https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/message-white.png`
                     : `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`
                 }
+                alt="Platform Logo Img"
                 customStyle={{ marginRight: 8 }}
               />
             )}

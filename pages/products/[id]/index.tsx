@@ -62,7 +62,7 @@ import attrKeys from '@constants/attrKeys';
 import { productDetailAtt } from '@utils/products';
 import getMetaDescription from '@utils/getMetaDescription';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getRandomNumber } from '@utils/common';
+import { commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 import checkAgent from '@utils/checkAgent';
 
 import type { User } from '@typings/user';
@@ -94,6 +94,7 @@ function ProductDetail() {
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
   });
+  const [targetProductUrl, setTargetProductUrl] = useState('');
   const contentRef = useRef<HTMLHRElement | null>(null);
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice, openLegit } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
@@ -350,6 +351,12 @@ function ProductDetail() {
   }, [productId]);
 
   useEffect(() => {
+    if (!data) return;
+
+    setTargetProductUrl(getProductDetailUrl({ type: 'targetProduct', product: data.product }));
+  }, [data]);
+
+  useEffect(() => {
     if (!isRedirectPage) {
       ChannelTalk.moveChannelButtonPosition(-30);
     }
@@ -503,7 +510,7 @@ function ProductDetail() {
               });
             }}
           >
-            <Link href={`/products/${data?.product.targetProductId}`}>
+            <Link href={targetProductUrl}>
               <a>확인하기</a>
             </Link>
           </Typography>
@@ -526,7 +533,7 @@ function ProductDetail() {
               color: palette.common.white
             }}
           >
-            <Link href={`/products/${data?.product.targetProductId}`}>
+            <Link href={targetProductUrl}>
               <a>확인하기</a>
             </Link>
           </Typography>
@@ -549,7 +556,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     const { id } = query;
 
-    const productId = Number(id || 0);
+    const splitIds = String(id).split('-');
+    const productId = Number(splitIds[splitIds.length - 1] || 0);
 
     if (query.id === 'undefined') {
       return {

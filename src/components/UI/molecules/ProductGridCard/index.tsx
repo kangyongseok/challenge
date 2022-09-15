@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef, memo, useEffect, useState } from 'react';
+import { HTMLAttributes, forwardRef, memo, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -9,7 +9,7 @@ import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
+import Image from '@components/UI/atoms/Image';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -24,7 +24,7 @@ import { PRODUCT_STATUS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { deviceIdState, toastState } from '@recoil/common';
@@ -32,14 +32,7 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import {
-  Area,
-  MetaSocial,
-  SkeletonWrapper,
-  Title,
-  TodayWishViewLabel,
-  WishButton
-} from './ProductGridCard.styles';
+import { Area, MetaSocial, Title, TodayWishViewLabel, WishButton } from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
@@ -110,7 +103,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     datePosted,
     dateFirstPosted,
     status
-  } = product;
+  } = product as Product;
   const {
     todayViewCount = 0,
     todayWishCount = 0,
@@ -173,8 +166,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
 
   const [cardCustomStyle] = useState({ ...customStyle, pointer: 'cursor' });
-  const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
+
+  const imageBoxRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
@@ -182,7 +176,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     if (source) {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
-    router.push(`/products/${id}`);
+
+    router.push(getProductDetailUrl({ product: product as Product }));
   };
 
   const handleClickWish = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -212,12 +207,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     }
   }, [measure]);
 
-  useEffect(() => {
-    const img = new window.Image();
-    img.src = imageUrl;
-    img.onload = () => setLoaded(true);
-  }, [imageUrl]);
-
   return (
     <Flexbox
       ref={ref}
@@ -227,18 +216,15 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       customStyle={cardCustomStyle}
       {...props}
     >
-      <Box customStyle={{ position: 'relative' }}>
+      <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
         <Image
           variant="backgroundImage"
           src={imageUrl}
           alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
           isRound={isRound}
+          disableLazyLoad={false}
+          disableSkeletonRender={false}
         />
-        {!loaded && (
-          <SkeletonWrapper>
-            <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
-          </SkeletonWrapper>
-        )}
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
             {productLabels.map(({ description }, index) => (

@@ -27,13 +27,16 @@ import atom from '@recoil/productReview';
 
 function ProductSellerReviews({ product }: { product?: Product }) {
   const {
-    query: { id: productId },
+    query: { id },
     push
   } = useRouter();
   const {
     theme: { palette }
   } = useTheme();
   const [reviewBlockState, atomReviewBlockState] = useRecoilState(atom.reviewBlockState);
+
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
 
   const [reviewInfoParams, setReviewInfoParams] = useState({
     productId: Number(productId || 0),
@@ -169,37 +172,39 @@ function ProductSellerReviews({ product }: { product?: Product }) {
         ? Array.from({ length: 3 }, (_, index) => (
             <ReviewCardSkeleton key={`review-loading-${index}`} />
           ))
-        : reviewInfo.sellerReviews.content.map(({ id, reportStatus, creator, content, score }) => (
-            <ReviewCard key={`review-${id}`}>
-              {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[0] && (
-                <>
-                  <Flexbox alignment="center" justifyContent="space-between">
-                    <Typography variant="body2" weight="medium">
-                      {creator}
-                    </Typography>
-                    {!Number.isNaN(Number(reviewInfo.curnScore)) &&
-                      Math.floor(Number(score) / 2) !== 0 && (
-                        <Rating
-                          count={5}
-                          value={
-                            reviewInfo.maxScore === '10'
-                              ? Math.floor(Number(score) / 2)
-                              : Number(score)
-                          }
-                        />
-                      )}
-                  </Flexbox>
-                  <ReviewContent variant="body2">{content}</ReviewContent>
-                </>
-              )}
-              {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[1] && (
-                <ReviewContent variant="body2">신고에 의해 숨김 처리된 리뷰입니다.</ReviewContent>
-              )}
-              {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[2] && (
-                <ReviewContent variant="body2">차단하신 사용자의 리뷰입니다.</ReviewContent>
-              )}
-            </ReviewCard>
-          ))}
+        : reviewInfo.sellerReviews.content.map(
+            ({ id: sellerReviewId, reportStatus, creator, content, score }) => (
+              <ReviewCard key={`review-${sellerReviewId}`}>
+                {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[0] && (
+                  <>
+                    <Flexbox alignment="center" justifyContent="space-between">
+                      <Typography variant="body2" weight="medium">
+                        {creator}
+                      </Typography>
+                      {!Number.isNaN(Number(reviewInfo.curnScore)) &&
+                        Math.floor(Number(score) / 2) !== 0 && (
+                          <Rating
+                            count={5}
+                            value={
+                              reviewInfo.maxScore === '10'
+                                ? Math.floor(Number(score) / 2)
+                                : Number(score)
+                            }
+                          />
+                        )}
+                    </Flexbox>
+                    <ReviewContent variant="body2">{content}</ReviewContent>
+                  </>
+                )}
+                {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[1] && (
+                  <ReviewContent variant="body2">신고에 의해 숨김 처리된 리뷰입니다.</ReviewContent>
+                )}
+                {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[2] && (
+                  <ReviewContent variant="body2">차단하신 사용자의 리뷰입니다.</ReviewContent>
+                )}
+              </ReviewCard>
+            )
+          )}
       <Divider />
     </Box>
   ) : null;

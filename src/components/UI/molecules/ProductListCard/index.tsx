@@ -20,7 +20,7 @@ import {
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Badge, Image, Skeleton } from '@components/UI/atoms';
+import { Badge, Image } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -36,7 +36,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { deviceIdState, toastState } from '@recoil/common';
@@ -44,14 +44,7 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import {
-  Area,
-  Content,
-  MetaSocial,
-  SkeletonWrapper,
-  Title,
-  WishButton
-} from './ProductListCard.styles';
+import { Area, Content, MetaSocial, Title, WishButton } from './ProductListCard.styles';
 
 interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product;
@@ -111,7 +104,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     status,
     datePosted,
     dateFirstPosted
-  } = product;
+  } = product as Product;
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -159,7 +152,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     productLegitStatusText
   } = useProductCardState(product);
 
-  const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
   const [openRemoveWishDialog, setOpenRemoveWishDialog] = useState(false);
   const loggedEventRef = useRef(false);
@@ -198,7 +190,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     if (source) {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
-    router.push(`/products/${id}`);
+
+    router.push(getProductDetailUrl({ product }));
   };
 
   const handleClickWish = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -257,7 +250,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
       });
     }
 
-    router.push(`/products/${targetProductId}`);
+    router.push(getProductDetailUrl({ type: 'targetProduct', product }));
   };
 
   const handleClickRemoveWishConfirm = () => {
@@ -295,12 +288,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     }
   }, [hideAlert, showDuplicateUploadAlert, showDuplicateWithPriceDownAlert]);
 
-  useEffect(() => {
-    const img = new window.Image();
-    img.src = imageUrl;
-    img.onload = () => setLoaded(true);
-  }, [imageUrl]);
-
   return (
     <>
       <Box customStyle={{ ...customStyle, position: 'relative' }}>
@@ -325,12 +312,9 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               src={imageUrl}
               alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
               isRound={isRound}
+              disableLazyLoad={false}
+              disableSkeletonRender={false}
             />
-            {!loaded && (
-              <SkeletonWrapper>
-                <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
-              </SkeletonWrapper>
-            )}
             <WishButton onClick={handleClickWish}>
               {isWish ? (
                 <Icon name="HeartFilled" color={secondary.red.main} size="large" />

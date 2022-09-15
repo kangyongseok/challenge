@@ -3,14 +3,17 @@ import type { MouseEvent, SyntheticEvent } from 'react';
 
 import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Lazy } from 'swiper';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import { useRouter } from 'next/router';
 import { Avatar, Box, Icon, Typography } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
 import Image from '@components/UI/atoms/Image';
+import { Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -20,8 +23,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
-
-import { pulse } from '@styles/transition';
 
 import { PortalConsumer } from '@provider/PortalProvider';
 
@@ -47,6 +48,8 @@ function ProductImages({
   getProductImageOverlay,
   openLegit
 }: ProductImagesProps) {
+  const router = useRouter();
+
   const [loadedImageMain, setLoadedImageMain] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -176,10 +179,18 @@ function ProductImages({
     return () => scrollEnable();
   }, [openModal]);
 
+  useEffect(() => {
+    if (imageSwiper) {
+      imageSwiper.slideTo(0);
+    }
+  }, [router.query.id, imageSwiper]);
+
   return (
     <>
       <Box ref={wrapperRef} customStyle={{ margin: '0 -20px' }}>
         <Swiper
+          lazy
+          modules={[Lazy]}
           onSwiper={setImageSwiper}
           initialSlide={currentSlide}
           onSlideChange={handleSlideChange}
@@ -210,13 +221,15 @@ function ProductImages({
           <SwiperSlide>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              className="swiper-lazy"
               src={product?.imageMain || ''}
+              data-src={product?.imageMain || ''}
               alt="product imageMain"
               onLoad={() => setLoadedImageMain(true)}
               style={{ width: 0, height: 0, display: 'none' }}
             />
             {isLoading || !product || !loadedImageMain ? (
-              <ImageSkeleton />
+              <Skeleton />
             ) : (
               <Image
                 src={product.imageMain}
@@ -227,8 +240,21 @@ function ProductImages({
             )}
           </SwiperSlide>
           {detailImages.map((image, i) => (
-            <SwiperSlide key={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}>
-              <Image src={image} alt="image" onClick={handleImageModal} data-index={i + 2} />
+            <SwiperSlide
+              key={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}
+              style={{ position: 'relative' }}
+            >
+              <Image
+                className="swiper-lazy"
+                data-src={image}
+                alt="image"
+                onClick={handleImageModal}
+                data-index={i + 2}
+                disableSkeletonRender
+              />
+              <SkeletonWrapper className="swiper-lazy-preloader">
+                <Skeleton />
+              </SkeletonWrapper>
             </SwiperSlide>
           ))}
           <Pagination>
@@ -294,13 +320,6 @@ function ProductImages({
   );
 }
 
-const ImageSkeleton = styled.div`
-  background-color: ${({ theme }) => theme.palette.common.grey['90']};
-  animation: ${pulse} 800ms linear 0s infinite alternate;
-  width: 100%;
-  height: 100vw;
-`;
-
 const Platform = styled.div`
   position: absolute;
   top: 20px;
@@ -357,5 +376,14 @@ const ModalPagination = styled(Pagination)`
 `;
 
 const ProductImg = styled.img``;
+
+const SkeletonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+`;
 
 export default memo(ProductImages);

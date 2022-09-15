@@ -23,12 +23,16 @@ import { pulse } from '@styles/transition';
 
 function ProductSellerProductList({ product }: { product?: Product }) {
   const {
-    query: { id: productId },
+    query: { id },
     push
   } = useRouter();
   const {
     theme: { palette }
   } = useTheme();
+
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
+
   const [sellerProductsParams, setSellerProductsParams] = useState({
     productId: Number(productId),
     page: 0,
@@ -116,13 +120,15 @@ function ProductSellerProductList({ product }: { product?: Product }) {
           ? Array.from({ length: 5 }, (_, index) => (
               <ImageSkeleton key={`seller-product-${index}`} />
             ))
-          : sellerProducts.content.map(({ id, imageThumbnail, imageMain }) => (
+          : sellerProducts.content.map(({ id: sellerProductId, imageThumbnail, imageMain }) => (
               <Image
-                key={`seller-product-${id}`}
+                key={`seller-product-${sellerProductId}`}
                 width={96}
                 height={96}
                 src={imageThumbnail || imageMain}
                 alt="Seller Product Img"
+                disableLazyLoad={false}
+                disableSkeletonRender={false}
                 disableAspectRatio
                 isRound
               />

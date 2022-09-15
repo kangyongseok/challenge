@@ -283,11 +283,13 @@ export type Product = {
   targetProductId: number | null;
   targetProductPrice: number | null;
   targetProductStatus: number | null;
+  targetProductUrl?: string;
   title: string;
   unit: string;
   url: string;
   urlApp: string | null;
   urlPrefix: string;
+  urlDetail?: string;
   viewCount: number;
   viewDescription: string | null;
   weekAvgPrices: number[] | null;
@@ -354,6 +356,7 @@ export type ProductResult = {
   targetProductPrice: number | null;
   targetProductId?: number | null;
   targetProductStatus?: number | null;
+  targetProductUrl?: string | null;
   isWish: boolean;
   todayViewCount: number;
   todayWishCount: number;

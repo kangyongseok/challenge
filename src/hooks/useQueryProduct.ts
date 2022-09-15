@@ -41,7 +41,8 @@ function useQueryProduct(): UseQueryProductResult {
   const { source } =
     SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) || {};
   const deviceId = useRecoilValue(deviceIdState);
-  const productId = Number(id);
+  const splitId = String(id).split('-');
+  const productId = Number(splitId[splitId.length - 1] || 0);
   const [params, setParams] = useState<ProductParams>({
     productId,
     deviceId,

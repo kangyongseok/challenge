@@ -578,3 +578,28 @@ export function executedShareURl({
 
   return false;
 }
+
+export function getProductDetailUrl({
+  type = 'product',
+  product
+}: {
+  type?: 'product' | 'targetProduct';
+  product: Product;
+}) {
+  const { id, urlDetail, targetProductId, targetProductUrl, quoteTitle } = product;
+  let productDetailUrl = `/products/${id}`;
+
+  if (type === 'targetProduct') {
+    if (targetProductUrl) {
+      productDetailUrl = `/products/${targetProductUrl}`;
+    } else if (quoteTitle) {
+      productDetailUrl = `/products/${quoteTitle.replace(/ /g, '-')}-${targetProductId}`;
+    }
+  } else if (urlDetail) {
+    productDetailUrl = `/products/${urlDetail}`;
+  } else if (quoteTitle) {
+    productDetailUrl = `/products/${quoteTitle.replace(/ /g, '-')}-${id}`;
+  }
+
+  return productDetailUrl;
+}

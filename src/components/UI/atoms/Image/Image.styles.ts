@@ -54,6 +54,7 @@ export const BackgroundImage = styled.div<
     isRound?: boolean;
   }
 >`
+  position: relative;
   width: 100%;
   ${({ ratio }): CSSObject => {
     let cssObject;
@@ -110,5 +111,13 @@ export const StyledImage = styled.img<
       : {
           width,
           height
-        }}
+        }};
+`;
+
+export const SkeletonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `;

@@ -26,6 +26,8 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductDetailUrl } from '@utils/common';
+
 import { RecentItems } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 import { homeSelectedTabStateFamily } from '@recoil/home';
@@ -153,7 +155,8 @@ function HomeRecentSearchList() {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_RECENT
       });
-      router.push(`/products/${product.id}`);
+
+      router.push(getProductDetailUrl({ product }));
     },
     [router]
   );
