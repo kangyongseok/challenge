@@ -223,8 +223,10 @@ function LegitResultCardHolder() {
               width: '100%',
               height: '100%',
               padding: '0 20px',
-              '& .swiper-slide-visible > .product-legit-result-image': { opacity: 1 },
-              '& .swiper-slide-visible > .waiting-behind-card': { opacity: 0 }
+              '& .swiper-slide-visible .product-legit-result-image': {
+                opacity: 1
+              },
+              '& .swiper-slide-visible .waiting-behind-card': { opacity: 0 }
             }}
           >
             <Box customStyle={{ position: 'relative', width: '100%' }}>

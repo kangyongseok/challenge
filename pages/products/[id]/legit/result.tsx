@@ -38,7 +38,11 @@ function LegitResult() {
 
   return (
     <>
-      <GeneralTemplate header={<Header />} footer={<LegitResultBottomCtaButton />}>
+      <GeneralTemplate
+        header={<Header />}
+        footer={<LegitResultBottomCtaButton />}
+        customStyle={{ height: 'auto', backgroundColor: common.white }}
+      >
         <LegitResultCardHolder />
         <LegitResultDetailAlert />
         <LegitResultOpinionList />
