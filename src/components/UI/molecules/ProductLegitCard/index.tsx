@@ -158,21 +158,21 @@ function ProductLegitCard({
       {result === 1 && (
         <ProductLegitLabel
           text="정품의견"
-          customStyle={{ position: 'absolute', top: 12, left: 12 }}
+          customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
       {result === 2 && (
         <ProductLegitLabel
           variant="fake"
           text="가품의심"
-          customStyle={{ position: 'absolute', top: 12, left: 12 }}
+          customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
       {result !== 1 && result !== 2 && (
         <ProductLegitLabel
           variant="impossible"
           text="감정불가"
-          customStyle={{ position: 'absolute', top: 12, left: 12 }}
+          customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
       <Image variant="backgroundImage" src={imageMain || imageThumbnail} alt="Product Legit Img" />
