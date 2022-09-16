@@ -450,7 +450,7 @@ const curationData: Record<
   },
   12: {
     contentsId: 12,
-    listType: 'c-1',
+    listType: 'c',
     brandData: [],
     weekData: [],
     logEventTitle: attrProperty.title.padding,
