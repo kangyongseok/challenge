@@ -103,7 +103,8 @@ const commonEvent = {
   clickMylistFloating: 'CLICK_MYLIST_FLOATING',
   clickMylistAuto: 'CLICK_MYLIST_AUTO',
   viewCrazyWeek: 'VIEW_CRAZYWEEK',
-  minorScriptError: 'MINOR_SCRIPT_ERROR'
+  minorScriptError: 'MINOR_SCRIPT_ERROR',
+  pageNotFound: 'PAGE_NOT_FOUND'
 };
 
 const login = {

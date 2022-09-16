@@ -46,7 +46,8 @@ const processInfo: ProcessInfo[] = [
 function ProductLegitProcessVisualProcess() {
   const router = useRouter();
   const setTimeoutRef = useRef<NodeJS.Timeout>();
-  const productId = Number(router.query.id);
+  const splitIds = String(router.query.id || '').split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
   const {
     theme: {
       palette: { common, primary, secondary }
@@ -105,9 +106,9 @@ function ProductLegitProcessVisualProcess() {
 
   useEffect(() => {
     if (data?.status === 30) {
-      router.replace(`/products/${productId}/legit/result`);
+      router.replace(`/products/${router.query.id}/legit/result`);
     }
-  }, [data, productId, router]);
+  }, [data, router]);
 
   useEffect(() => {
     if (router.query) {

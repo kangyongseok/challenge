@@ -23,7 +23,8 @@ function ProductLegitProcessCTAButton() {
   } = useTheme();
   const router = useRouter();
   const isAnimation = useRecoilValue(firstUserAnimationState);
-  const productId = Number(router.query.id);
+  const splitIds = String(router.query.id || '').split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
   const { data } = useQuery(
     queryKeys.products.productLegit({ productId }),
     () => fetchProductLegit(productId),

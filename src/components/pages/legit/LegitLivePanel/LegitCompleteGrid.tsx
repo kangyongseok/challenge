@@ -9,6 +9,8 @@ import styled from '@emotion/styled';
 
 import { ProductLegitCard, ProductLegitCardSkeleton } from '@components/UI/molecules';
 
+import type { Product } from '@dto/product';
+
 import { logEvent } from '@library/amplitude';
 
 import { fetchLegitProducts } from '@api/product';
@@ -16,6 +18,8 @@ import { fetchLegitProducts } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getProductDetailUrl } from '@utils/common';
 
 import { legitCompleteGridParamsState } from '@recoil/legitCompleteGrid';
 
@@ -53,15 +57,15 @@ function LegitCompleteGrid() {
     return legitProducts.length >= 80 || lastPage.last;
   }, [pages, legitProducts]);
 
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const dataId = e.currentTarget.getAttribute('data-id');
+  const handleClick =
+    ({ product }: { product: Product }) =>
+    () => {
+      logEvent(attrKeys.legit.CLICK_LEGIT_RESULT, {
+        name: attrProperty.legitName.LEGIT_MAIN
+      });
 
-    logEvent(attrKeys.legit.CLICK_LEGIT_RESULT, {
-      name: attrProperty.legitName.LEGIT_MAIN
-    });
-
-    router.push(`/products/${dataId}/legit/result`);
-  };
+      router.push(`${getProductDetailUrl({ product })}/legit/result`);
+    };
 
   const handleClickMoreButton = async () => {
     logEvent(attrKeys.legit.CLICK_LOADMORE, {
@@ -143,8 +147,7 @@ function LegitCompleteGrid() {
               <Grid key={`product-legit-${productLegit.productId}`} item xs={2}>
                 <ProductLegitCard
                   productLegit={productLegit}
-                  data-id={productLegit.productId}
-                  onClick={handleClick}
+                  onClick={handleClick({ product: productLegit.productResult })}
                 />
               </Grid>
             ))}

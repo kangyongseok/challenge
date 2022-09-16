@@ -9,6 +9,8 @@ import queryKeys from '@constants/queryKeys';
 function LegitResultDetailAlert() {
   const router = useRouter();
   const { id } = router.query;
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
 
   const {
     theme: {
@@ -17,8 +19,8 @@ function LegitResultDetailAlert() {
   } = useTheme();
 
   const { data: { result = 0 } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId: Number(id) }),
-    () => fetchProductLegit(Number(id)),
+    queryKeys.products.productLegit({ productId }),
+    () => fetchProductLegit(productId),
     {
       enabled: !!id
     }

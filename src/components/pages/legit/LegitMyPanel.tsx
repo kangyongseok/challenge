@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import type { MouseEvent } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
+
+import { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -15,7 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -41,15 +42,15 @@ function LegitMyPanel() {
     refetchOnMount: true
   });
 
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
-      name: attrProperty.legitName.LEGIT_MY
-    });
+  const handleClick =
+    ({ product }: { product: Product }) =>
+    () => {
+      logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
+        name: attrProperty.legitName.LEGIT_MY
+      });
 
-    const dataProductId = e.currentTarget.getAttribute('data-product-id');
-
-    router.push(`/products/${dataProductId}/legit`);
-  };
+      router.push(`${getProductDetailUrl({ product })}/legit`);
+    };
 
   // const handleClickButton = () => {
   //   logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
@@ -130,8 +131,7 @@ function LegitMyPanel() {
                     isProductLegit: true,
                     productLegit: { ...productResult.productLegit, status }
                   }}
-                  data-product-id={productId}
-                  onClick={handleClick}
+                  onClick={handleClick({ product: productResult })}
                   hideProductLabel={false}
                   hideNewLegitBadge={false}
                   isRound

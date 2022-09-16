@@ -30,6 +30,9 @@ function ProductLegitProcessContents() {
     }
   } = useTheme();
 
+  const splitIds = String(router.query.id || '').split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
+
   const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
   const boxFade = useRecoilValue(animationKeyframesState);
   const isAnimation = useRecoilValue(firstUserAnimationState);
@@ -37,8 +40,8 @@ function ProductLegitProcessContents() {
   const [openToast, setOpenToast] = useState(false);
   const { mutate: mutatePostProductsAdd } = useMutation(postLegitsFollow);
   const { data, isSuccess } = useQuery(
-    queryKeys.products.productLegit({ productId: Number(router.query.id) }),
-    () => fetchProductLegit(Number(router.query.id)),
+    queryKeys.products.productLegit({ productId }),
+    () => fetchProductLegit(productId),
     {
       enabled: !!router.query.id
     }

@@ -25,6 +25,8 @@ import { commaNumber } from '@utils/common';
 function LegitResultCardHolder() {
   const router = useRouter();
   const { id } = router.query;
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
   const {
     theme: {
       palette: { common }
@@ -53,13 +55,9 @@ function LegitResultCardHolder() {
         siteUrl: { id: siteUrlId = 0, hasImage = false } = {}
       } = {}
     } = {}
-  } = useQuery(
-    queryKeys.products.productLegit({ productId: Number(id) }),
-    () => fetchProductLegit(Number(id)),
-    {
-      enabled: !!id
-    }
-  );
+  } = useQuery(queryKeys.products.productLegit({ productId }), () => fetchProductLegit(productId), {
+    enabled: !!id
+  });
 
   const images = useMemo(() => {
     let newImages: string[] = [];

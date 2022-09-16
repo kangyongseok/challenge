@@ -29,7 +29,8 @@ function ProductLegitSummaryCard() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const deviceId = useRecoilValue(deviceIdState);
   const router = useRouter();
-  const productId = Number(router.query.id);
+  const splitIds = String(router.query.id || '').split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
   const { data } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId, deviceId }),

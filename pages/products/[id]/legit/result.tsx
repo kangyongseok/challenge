@@ -41,7 +41,7 @@ function LegitResult() {
       <GeneralTemplate
         header={<Header />}
         footer={<LegitResultBottomCtaButton />}
-        customStyle={{ height: 'auto', backgroundColor: common.white }}
+        customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.white }}
       >
         <LegitResultCardHolder />
         <LegitResultDetailAlert />
