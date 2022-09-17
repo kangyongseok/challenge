@@ -63,7 +63,8 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
     const queryClient = new QueryClient();
     const { id } = query;
 
-    const productId = Number(id);
+    const splitId = String(id).split('-');
+    const productId = Number(splitId[splitId.length - 1] || 0);
 
     const data = await queryClient.fetchQuery(queryKeys.products.productLegit({ productId }), () =>
       fetchProductLegit(productId)
