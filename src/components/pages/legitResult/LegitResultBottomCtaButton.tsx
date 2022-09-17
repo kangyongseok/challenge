@@ -19,10 +19,12 @@ import checkAgent from '@utils/checkAgent';
 
 type SocialPlatform = 'kakao' | 'facebook' | 'twitter' | 'linkCopy';
 
-// TODO 추후 공유하기 관련 기능 공용 컴포넌트화
 function LegitResultBottomCtaButton() {
   const router = useRouter();
   const { id } = router.query;
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
+
   const {
     theme: {
       palette: { common }
@@ -33,8 +35,8 @@ function LegitResultBottomCtaButton() {
   const [openToast, setOpenToast] = useState(false);
 
   const { data: { productResult, result } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId: Number(id) }),
-    () => fetchProductLegit(Number(id)),
+    queryKeys.products.productLegit({ productId }),
+    () => fetchProductLegit(productId),
     {
       enabled: !!id
     }

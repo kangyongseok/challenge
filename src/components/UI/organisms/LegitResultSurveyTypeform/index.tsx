@@ -20,13 +20,16 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function LegitResultSurveyTypeform() {
   const router = useRouter();
   const { id } = router.query;
+  const splitIds = String(id).split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
+
   const { data: accessUser } = useQueryAccessUser();
   const [loadSurveyTypeform, setLoadSurveyTypeform] = useState(false);
   const [open, setOpen] = useState<BehavioralType | undefined>(undefined);
 
   const { data: { userId, status } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId: Number(id) }),
-    () => fetchProductLegit(Number(id)),
+    queryKeys.products.productLegit({ productId }),
+    () => fetchProductLegit(productId),
     {
       enabled: router.pathname === '/products/[id]/legit/result' && !!id
     }
