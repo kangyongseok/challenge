@@ -248,6 +248,7 @@ const CtaButtonWrapper = styled(Flexbox)`
   bottom: 0;
   width: 100%;
   padding: 20px;
+  z-index: ${({ theme: { zIndex } }) => zIndex.button};
   border-top: 1px solid
     ${({
       theme: {
