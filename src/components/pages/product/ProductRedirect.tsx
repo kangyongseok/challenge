@@ -210,9 +210,9 @@ function ProductRedirect({
           width={48}
           height={48}
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-            (siteUrl.hasImage && siteUrl.id) || site.id
+            (siteUrl?.hasImage && siteUrl.id) || (site?.hasImage && site.id) || ''
           }.png`}
-          alt="Platform Logo Img"
+          alt={`${siteUrl?.name || 'Platform'} Logo Img`}
           disableAspectRatio
         />
       </Flexbox>

@@ -95,8 +95,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
   const {
     id,
     title,
-    site: { id: siteId } = {},
-    siteUrl,
+    site: { id: siteId = 0, hasImage: siteHasImage = false } = {},
+    siteUrl: { id: siteUrlId = 0, hasImage: siteUrlHasImage = false, name: siteUrlName = '' } = {},
     targetProductId,
     brand: { name: brandName } = {},
     category: { name: categoryName } = {},
@@ -345,9 +345,9 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               width={20}
               height={20}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                (siteUrl || {}).id || siteId
+                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
               }.png`}
-              alt="Platform Img"
+              alt={`${siteUrlName || 'Platform'} Logo Img`}
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&

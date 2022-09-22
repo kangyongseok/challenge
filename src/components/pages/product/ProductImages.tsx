@@ -202,11 +202,11 @@ function ProductImages({
               <Platform>
                 <Avatar
                   src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                    (product.siteUrl?.hasImage && product.siteUrl.id) ||
-                    (product.site.hasImage && product.site?.id) ||
+                    (product.siteUrl?.hasImage && product.siteUrl?.id) ||
+                    (product.site?.hasImage && product.site?.id) ||
                     ''
                   }.png`}
-                  alt="goods store icon"
+                  alt={`${product.siteUrl?.name || 'Platform'} Logo Img`}
                   customStyle={{
                     width: 20,
                     height: 20

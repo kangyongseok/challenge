@@ -101,8 +101,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const {
     id,
     title,
-    site: { id: siteId } = {},
-    siteUrl: { id: siteUrlId, hasImage = false } = {},
+    site: { id: siteId = 0, hasImage: siteHasImage = false } = {},
+    siteUrl: { id: siteUrlId = 0, hasImage: siteUrlHasImage = false, name: siteUrlName = '' } = {},
     price = 0,
     wishCount = 0,
     purchaseCount = 0,
@@ -284,9 +284,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             width={20}
             height={20}
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (hasImage && siteUrlId) || (hasImage && siteId) || ''
+              (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
             }.png`}
-            alt="Platform Img"
+            alt={`${siteUrlName || 'Platform'} Logo Img`}
             customStyle={{ position: 'absolute', top: 10, left: 10 }}
           />
         )}
