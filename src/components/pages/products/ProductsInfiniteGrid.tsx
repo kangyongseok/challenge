@@ -115,6 +115,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const windowInnerWidthRef = useRef(0);
   const loggedViewProductListLogEventRef = useRef(false);
   const loggedLoadProductListLogEventRef = useRef(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const thrHandleResize = useRef(
     throttle(() => {
@@ -295,11 +296,10 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   );
 
   const rowRenderer = useCallback(
-    ({ index, key, parent, style, isVisible }: ListRowProps) => {
+    ({ index, key, parent, style }: ListRowProps) => {
       const productsGroup = products[index] || [];
       const firstProduct = productsGroup[0];
       const secondProduct = productsGroup[1];
-
       const openAlert =
         alert &&
         index >= 30 &&
@@ -308,8 +308,19 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         allowProductsKeyword &&
         hasSelectedSearchOptions &&
         accessUser;
+      let isVisible = false;
 
       if (!firstProduct && !secondProduct) return null;
+
+      if (listRef.current) {
+        const listTop =
+          (listRef.current.getBoundingClientRect().top || 0) +
+          (typeof style?.height === 'string' ? 0 : style?.height || 0) +
+          (typeof style?.top === 'string' ? 0 : style?.top || 0);
+        const windowHeight = (typeof window !== 'undefined' && window.innerHeight) || 0;
+
+        isVisible = listTop > 0 && listTop < windowHeight * 2;
+      }
 
       if (!isVisible) {
         return (
@@ -708,20 +719,22 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
             // @ts-ignore
             <AutoSizer disableHeight>
               {({ width }) => (
-                // @ts-ignore
-                <List
-                  ref={registerChild}
-                  onRowsRendered={onRowsRendered}
-                  autoHeight
-                  width={width}
-                  height={height}
-                  isScrolling={isScrolling}
-                  scrollTop={listScrollTop}
-                  rowCount={products.length}
-                  rowHeight={cache.rowHeight}
-                  rowRenderer={rowRenderer}
-                  deferredMeasurementCache={cache}
-                />
+                <Box ref={listRef}>
+                  {/* @ts-ignore */}
+                  <List
+                    ref={registerChild}
+                    onRowsRendered={onRowsRendered}
+                    autoHeight
+                    width={width}
+                    height={height}
+                    isScrolling={isScrolling}
+                    scrollTop={listScrollTop}
+                    rowCount={products.length}
+                    rowHeight={cache.rowHeight}
+                    rowRenderer={rowRenderer}
+                    deferredMeasurementCache={cache}
+                  />
+                </Box>
               )}
             </AutoSizer>
           )}
