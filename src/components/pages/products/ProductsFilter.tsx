@@ -566,19 +566,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
     variant
   ]);
 
-  // 카테고리 클릭 따른 다이나믹 필터 업데이트
-  useEffect(() => {
-    if (
-      ['categories', 'brands'].includes(variant) &&
-      isFetched &&
-      newDynamicOptions.length > 0 &&
-      dynamicOptions.length === 0
-    ) {
-      setDynamicOptionsState(newDynamicOptions);
-    }
-  }, [dynamicOptions, isFetched, newDynamicOptions, setDynamicOptionsState, variant]);
-
-  // 최초의 baseSearchOptions state 업데이트, (!progressDone: 매몰 목록 새 진입 여부)
+  // 최초의 baseSearchOptions dynamicOptionsState state 업데이트, (!progressDone: 매몰 목록 새 진입 여부)
   useEffect(() => {
     const hasBaseSearchOptions = !!Object.keys(baseSearchOptions).length;
 
@@ -590,8 +578,16 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
         type,
         searchOptions: newBaseSearchOptions
       }));
+      setDynamicOptionsState(newDynamicOptions);
     }
-  }, [setBaseSearchOptionsState, newBaseSearchOptions, baseSearchOptions, progressDone]);
+  }, [
+    setBaseSearchOptionsState,
+    newBaseSearchOptions,
+    baseSearchOptions,
+    progressDone,
+    setDynamicOptionsState,
+    newDynamicOptions
+  ]);
 
   useEffect(() => {
     if (searchOptions) {

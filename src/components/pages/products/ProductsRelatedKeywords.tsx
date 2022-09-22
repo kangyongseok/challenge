@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Chip, useTheme } from 'mrcamel-ui';
@@ -33,9 +33,7 @@ function ProductsRelatedKeywords() {
   const { keyword = '', ...query } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const [progressDone, setProductsFilterProgressDoneState] = useRecoilState(
-    productsFilterProgressDoneState
-  );
+  const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const { searchParams: searchOptionsParams } = useRecoilValue(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
@@ -79,7 +77,6 @@ function ProductsRelatedKeywords() {
           title,
           att: relatedKeyword
         });
-        setProductsFilterProgressDoneState(false);
         router.push(
           {
             pathname: router.pathname.replace('[keyword]', `${keyword} ${relatedKeyword}`).trim(),
@@ -89,7 +86,7 @@ function ProductsRelatedKeywords() {
           { shallow: true }
         );
       },
-    [keyword, query, router, setProductsFilterProgressDoneState]
+    [keyword, query, router]
   );
 
   return !progressDone || relatedKeywords.length > 0 ? (
