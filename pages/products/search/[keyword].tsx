@@ -5,7 +5,6 @@ import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsHeader,
@@ -38,11 +37,11 @@ function SearchProducts() {
         header={
           <Box>
             <ProductsHeader variant="search" />
-            <ProductsRelatedKeywords />
             <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
               <ProductsFilter variant="search" />
             </ABTestGroup>
             <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
+              <ProductsRelatedKeywords />
               <ProductsFilter variant="search" showDynamicFilter />
             </ABTestGroup>
           </Box>
@@ -67,7 +66,6 @@ function SearchProducts() {
       <ProductsKeywordBottomSheet variant="search" />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
-      <ProductsEventBottomBanner />
     </>
   );
 }

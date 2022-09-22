@@ -12,7 +12,6 @@ export { default as ProductsRelated } from './ProductsRelated';
 export { default as ProductsCategoryTags } from './ProductsCategoryTags';
 export { default as ProductsTopButton } from './ProductsTopButton';
 export { default as ProductsLegitFilterBottomSheet } from './ProductsLegitFilterBottomSheet';
-export { default as ProductsEventBottomBanner } from './ProductsEventBottomBanner';
 export { default as ProductsRelatedKeywords } from './ProductsRelatedKeywords';
 export { default as ProductsGeneralFilter } from './ProductsGeneralFilter';
 export { default as ProductsDynamicFilter } from './ProductsDynamicFilter';

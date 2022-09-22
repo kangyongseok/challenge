@@ -7,7 +7,6 @@ import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
-  ProductsEventBottomBanner,
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsHeader,
@@ -71,7 +70,6 @@ function BrandProducts() {
       <ProductsKeywordDialog />
       <ProductsSaveSearchPopup />
       <ProductsLegitFilterBottomSheet />
-      <ProductsEventBottomBanner />
     </>
   );
 }

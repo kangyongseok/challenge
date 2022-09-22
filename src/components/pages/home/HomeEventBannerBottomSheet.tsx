@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography } from 'mrcamel-ui';
 
@@ -9,10 +8,7 @@ import Image from '@components/UI/atoms/Image';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchContentsProducts } from '@api/common';
-
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -31,127 +27,56 @@ function HomeEventBannerBottomSheet() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data: userInfo, isSuccess } = useQueryUserInfo();
-  const {
-    data: { contents: { id = 0, imageMain = '', url = '/' } = {} } = {},
-    isSuccess: isSuccessContentsProducts
-  } = useQuery(queryKeys.common.contentsProducts(0), () => fetchContentsProducts(0));
 
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [src, setSrc] = useState('');
 
   useEffect(() => {
-    if (
-      (isSuccess && isSuccessContentsProducts) ||
-      (!isSuccess && !accessUser && isSuccessContentsProducts)
-    ) {
-      let newType = Math.random() < 0.5 ? 'myPortfolio' : 'crazyCuration';
-      const hideMyPortfolioReservationAd = SessionStorage.get(
-        sessionStorageKeys.hideMyPortfolioReservationAd
-      );
-      const hideCrazyCurationEventBannerIds =
-        SessionStorage.get<number[]>(sessionStorageKeys.hideCrazyCurationEventBannerIds) || [];
-
-      if (getCookie('myPortfolioReserve') || hideMyPortfolioReservationAd) {
-        newType = 'crazyCuration';
-      } else if (
-        getCookie(`hideCrazyCurationEventBanner-${id}`) ||
-        hideCrazyCurationEventBannerIds.includes(id)
-      ) {
-        newType = 'myPortfolio';
-      }
-
-      setType(newType);
+    if (isSuccess || (!isSuccess && !accessUser)) {
+      setType('myPortfolio');
     }
-  }, [isSuccess, isSuccessContentsProducts, id, accessUser]);
+  }, [isSuccess, accessUser]);
 
   useEffect(() => {
     if (!type) return;
 
-    if (id && type === 'crazyCuration') {
-      const hideCrazyCurationEventBannerIds =
-        SessionStorage.get<number[]>(sessionStorageKeys.hideCrazyCurationEventBannerIds) || [];
+    const hideMyPortfolioReservationAd = SessionStorage.get(
+      sessionStorageKeys.hideMyPortfolioReservationAd
+    );
+    if (getCookie('myPortfolioReserve') || hideMyPortfolioReservationAd) return;
 
-      if (
-        getCookie(`hideCrazyCurationEventBanner-${id}`) ||
-        hideCrazyCurationEventBannerIds.includes(id)
-      )
+    if (userInfo && userInfo.info.value.gender) {
+      if (userInfo.info.value.gender === 'F') {
+        setSrc(feMaleAdImages[randomNum]);
+        setOpen(true);
         return;
-
-      logEvent(attrKeys.crazycuration.viewMainModal, { att: 'CRAZY_WEEK' });
-
-      setSrc(imageMain);
+      }
+      setSrc(maleAdImages[randomNum]);
       setOpen(true);
     } else {
-      const hideMyPortfolioReservationAd = SessionStorage.get(
-        sessionStorageKeys.hideMyPortfolioReservationAd
-      );
-      if (getCookie('myPortfolioReserve') || hideMyPortfolioReservationAd) return;
-
-      if (userInfo && userInfo.info.value.gender) {
-        if (userInfo.info.value.gender === 'F') {
-          setSrc(feMaleAdImages[randomNum]);
-          setOpen(true);
-          return;
-        }
-        setSrc(maleAdImages[randomNum]);
-        setOpen(true);
-      } else {
-        setSrc(maleAdImages[randomNum]);
-        setOpen(true);
-      }
+      setSrc(maleAdImages[randomNum]);
+      setOpen(true);
     }
-  }, [type, userInfo, id, imageMain]);
+  }, [type, userInfo]);
 
   const handleClickTodayHidden = () => {
-    if (type === 'myPortfolio') {
-      setCookie('myPortfolioReserve', 'done', 1);
-      setOpen(false);
-    } else {
-      logEvent(attrKeys.crazycuration.clickNotToday, {
-        name: attrProperty.name.main,
-        title: attrProperty.title.modal
-      });
-      setCookie(`hideCrazyCurationEventBanner-${id}`, 'done', 1);
-      setOpen(false);
-    }
+    setCookie('myPortfolioReserve', 'done', 1);
+    setOpen(false);
   };
 
   const handleClick = () => {
-    if (type === 'myPortfolio') {
-      logEvent(attrKeys.myPortfolio.CLICK_MYPORTFOLIO_BANNER, {
-        name: attrProperty.productName.MYPORTFOLIO,
-        value: randomNum === 0 ? 'A' : 'B',
-        gender: userInfo?.info?.value?.gender || 'none'
-      });
-      router.push('/myPortfolio');
-    } else {
-      logEvent(attrKeys.crazycuration.clickCrazyWeek, {
-        name: attrProperty.name.main,
-        title: attrProperty.title.modal
-      });
-      router.push(url);
-    }
+    logEvent(attrKeys.myPortfolio.CLICK_MYPORTFOLIO_BANNER, {
+      name: attrProperty.productName.MYPORTFOLIO,
+      value: randomNum === 0 ? 'A' : 'B',
+      gender: userInfo?.info?.value?.gender || 'none'
+    });
+    router.push('/myPortfolio');
   };
 
   const handleClose = () => {
-    if (type === 'myPortfolio') {
-      SessionStorage.set(sessionStorageKeys.hideMyPortfolioReservationAd, true);
-      setOpen(false);
-    } else {
-      logEvent(attrKeys.crazycuration.clickClose, {
-        name: attrProperty.name.main,
-        title: attrProperty.title.modal
-      });
-
-      const hideCrazyCurationEventBannerIds =
-        SessionStorage.get<number[]>(sessionStorageKeys.hideCrazyCurationEventBannerIds) || [];
-      SessionStorage.set(
-        sessionStorageKeys.hideCrazyCurationEventBannerIds,
-        hideCrazyCurationEventBannerIds.concat([id])
-      );
-      setOpen(false);
-    }
+    SessionStorage.set(sessionStorageKeys.hideMyPortfolioReservationAd, true);
+    setOpen(false);
   };
 
   return (
