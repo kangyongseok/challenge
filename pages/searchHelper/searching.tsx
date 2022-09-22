@@ -28,6 +28,7 @@ import {
   searchParamsState,
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
+import { homeSelectedTabStateFamily } from '@recoil/home';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Searching() {
@@ -62,6 +63,8 @@ function Searching() {
   } = useRecoilValue(allSelectedSearchOptionsSelector);
   const resetSearchParams = useResetRecoilState(searchParamsState);
   const resetSelectedSearchOptions = useResetRecoilState(selectedSearchOptionsState);
+  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
+
   const { data: accessUser } = useQueryAccessUser();
   const props = useSpring({ val: 0, from: { val: 235908 }, config: { duration: 2000 } });
   const { mutate } = useMutation(postProductKeyword);
@@ -87,6 +90,7 @@ function Searching() {
     );
 
     const moveToProducts = () => {
+      resetProductKeyword();
       queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
       setTimeout(
         () => router.replace({ pathname: `/products/brands/${brand.name}`, query: productSearch }),
@@ -95,7 +99,7 @@ function Searching() {
     };
 
     if (accessUser) {
-      logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, { name: attrProperty.productName.AUTO });
+      logEvent(attrKeys.searchHelper.loadMyListSave, { name: attrProperty.productName.AUTO });
 
       if (categorySizeIds?.length) {
         fetchSizeMapping()

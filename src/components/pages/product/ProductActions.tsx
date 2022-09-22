@@ -24,8 +24,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
-import { commaNumber, executedShareURl, getRandomNumber } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber, executedShareURl, getRandomNumber } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

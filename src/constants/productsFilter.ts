@@ -1,4 +1,6 @@
-import { ProductOrder } from '@dto/product';
+import { ProductDynamicOptionCodeType, ProductOrder } from '@dto/product';
+
+import attrProperty from '@constants/attrProperty';
 
 export const filterCodeIds = {
   price: 0,
@@ -15,117 +17,6 @@ export const filterCodeIds = {
   brand: 100,
   category: 101,
   detailOption: 102
-};
-
-export const filterCodes = {
-  brands: [
-    {
-      codeId: filterCodeIds.size,
-      name: '사이즈'
-    },
-    {
-      codeId: filterCodeIds.price,
-      name: '가격'
-    },
-    {
-      codeId: filterCodeIds.platform,
-      name: '플랫폼'
-    },
-    {
-      codeId: filterCodeIds.line,
-      name: '라인'
-    },
-    {
-      codeId: filterCodeIds.detailOption,
-      name: '상세옵션'
-    }
-  ],
-  categories: [
-    {
-      codeId: filterCodeIds.brand,
-      name: '브랜드'
-    },
-    {
-      codeId: filterCodeIds.size,
-      name: '사이즈'
-    },
-    {
-      codeId: filterCodeIds.price,
-      name: '가격'
-    },
-    {
-      codeId: filterCodeIds.platform,
-      name: '플랫폼'
-    },
-    {
-      codeId: filterCodeIds.line,
-      name: '라인'
-    },
-    {
-      codeId: filterCodeIds.detailOption,
-      name: '상세옵션'
-    }
-  ],
-  search: [
-    {
-      codeId: filterCodeIds.category,
-      name: '카테고리'
-    },
-    {
-      codeId: filterCodeIds.brand,
-      name: '브랜드'
-    },
-    {
-      codeId: filterCodeIds.size,
-      name: '사이즈'
-    },
-    {
-      codeId: filterCodeIds.price,
-      name: '가격'
-    },
-    {
-      codeId: filterCodeIds.platform,
-      name: '플랫폼'
-    },
-    {
-      codeId: filterCodeIds.line,
-      name: '라인'
-    },
-    {
-      codeId: filterCodeIds.detailOption,
-      name: '상세옵션'
-    }
-  ],
-  camel: [
-    {
-      codeId: filterCodeIds.category,
-      name: '카테고리'
-    },
-    {
-      codeId: filterCodeIds.brand,
-      name: '브랜드'
-    },
-    {
-      codeId: filterCodeIds.size,
-      name: '사이즈'
-    },
-    {
-      codeId: filterCodeIds.price,
-      name: '가격'
-    },
-    {
-      codeId: filterCodeIds.platform,
-      name: '플랫폼'
-    },
-    {
-      codeId: filterCodeIds.line,
-      name: '라인'
-    },
-    {
-      codeId: filterCodeIds.detailOption,
-      name: '상세옵션'
-    }
-  ]
 };
 
 export const filterGenders = {
@@ -217,21 +108,63 @@ export const filterColorImagesInfo = {
   }
 };
 
+export const filterColorImagesInfoLarge = {
+  white: {
+    size: 203,
+    position: [-15, -22]
+  },
+  gold: {
+    size: 203,
+    position: [-15, -67]
+  },
+  ivory: {
+    size: 203,
+    position: [-59, -22]
+  },
+  silver: {
+    size: 203,
+    position: [-58, -68]
+  },
+  metal: {
+    size: 203,
+    position: [-150, -22]
+  },
+  neon: {
+    size: 203,
+    position: [-106, -22]
+  },
+  'gold-deco': {
+    size: 203,
+    position: [-105, -67]
+  },
+  'silver-deco': {
+    size: 203,
+    position: [-150, -67]
+  }
+};
+
+export const idFilterIds = {
+  auth: 5,
+  new: 10,
+  lowPrice: 30,
+  legitAll: 100
+};
+
 export const idFilterOptions = [
   {
-    id: 5,
-    name: '카멜인증'
+    id: idFilterIds.auth,
+    name: '인증판매자'
   },
   {
-    id: 10,
+    id: idFilterIds.new,
     name: '새상품급'
   },
   {
-    id: 30,
+    id: idFilterIds.lowPrice,
     name: '시세이하'
   },
   {
-    id: 100,
+    id: idFilterIds.legitAll,
     name: '감정완료',
     viewName: '감정완료-전체'
   },
@@ -251,6 +184,8 @@ export const idFilterOptions = [
     viewName: '감정완료-가품의심'
   }
 ];
+
+export const defaultIdFilterOptionIds = [5, 10];
 
 export const legitIdFilterOptionIds = [100, 102, 103];
 
@@ -337,4 +272,106 @@ export const myFilterRelatedParentCategoryIds = {
       N: [14]
     }
   }
+};
+
+export const generalFilterOptions = {
+  brands: [
+    { codeId: filterCodeIds.map, name: '내주변' },
+    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
+    { codeId: filterCodeIds.gender, name: '성별' },
+    { codeId: filterCodeIds.size, name: '사이즈' },
+    { codeId: filterCodeIds.price, name: '가격' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
+    { codeId: filterCodeIds.line, name: '라인' },
+    { codeId: filterCodeIds.detailOption, name: '상세옵션' }
+  ],
+  categories: [
+    { codeId: filterCodeIds.map, name: '내주변' },
+    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
+    { codeId: filterCodeIds.size, name: '사이즈' },
+    { codeId: filterCodeIds.price, name: '가격' },
+    { codeId: filterCodeIds.brand, name: '브랜드' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
+    { codeId: filterCodeIds.line, name: '라인' },
+    { codeId: filterCodeIds.detailOption, name: '상세옵션' }
+  ],
+  search: [
+    { codeId: filterCodeIds.map, name: '내주변' },
+    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
+    { codeId: filterCodeIds.size, name: '사이즈' },
+    { codeId: filterCodeIds.price, name: '가격' },
+    { codeId: filterCodeIds.brand, name: '브랜드' },
+    { codeId: filterCodeIds.category, name: '카테고리' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
+    { codeId: filterCodeIds.line, name: '라인' },
+    { codeId: filterCodeIds.detailOption, name: '상세옵션' }
+  ],
+  camel: [
+    { codeId: filterCodeIds.map, name: '내주변' },
+    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
+    { codeId: filterCodeIds.size, name: '사이즈' },
+    { codeId: filterCodeIds.price, name: '가격' },
+    { codeId: filterCodeIds.brand, name: '브랜드' },
+    { codeId: filterCodeIds.category, name: '카테고리' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
+    { codeId: filterCodeIds.line, name: '라인' },
+    { codeId: filterCodeIds.detailOption, name: '상세옵션' }
+  ]
+};
+
+export const filterCodes = {
+  brands: generalFilterOptions.brands.filter(
+    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id].includes(codeId)
+  ),
+  categories: generalFilterOptions.categories.filter(
+    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id].includes(codeId)
+  ),
+  search: generalFilterOptions.search.filter(
+    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id].includes(codeId)
+  ),
+  camel: generalFilterOptions.camel.filter(
+    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id].includes(codeId)
+  )
+};
+
+export const productDynamicOptionCodeType: Record<
+  'line' | 'size' | 'price' | 'color' | 'brand' | 'category',
+  ProductDynamicOptionCodeType
+> = {
+  line: 0,
+  size: 1,
+  price: 2,
+  color: 3,
+  brand: 4,
+  category: 5
+};
+
+export const productFilterEventPropertyTitle = {
+  [filterCodeIds.category]: attrProperty.title.category,
+  [filterCodeIds.brand]: attrProperty.title.brand,
+  [filterCodeIds.size]: attrProperty.title.size,
+  [filterCodeIds.platform]: attrProperty.title.site,
+  [filterCodeIds.line]: attrProperty.title.line,
+  [filterCodeIds.season]: attrProperty.title.season,
+  [filterCodeIds.color]: attrProperty.title.colorMaterial,
+  [filterCodeIds.price]: attrProperty.title.price,
+  [filterCodeIds.detailOption]: attrProperty.title.colorMaterial,
+  [filterCodeIds.gender]: attrProperty.title.gender
+};
+
+export const productEventPropertyOrder = {
+  postedDesc: 'RECENT',
+  postedAllDesc: 'RECENT_ALL',
+  priceDesc: 'HIGHP',
+  priceAsc: 'LOWP',
+  recommDesc: 'RECOMM'
+};
+
+export const productDynamicFilterEventPropertyTitle = {
+  0: attrProperty.title.line,
+  1: attrProperty.title.size,
+  2: attrProperty.title.price,
+  3: attrProperty.title.color,
+  4: attrProperty.title.brand,
+  5: attrProperty.title.category
 };

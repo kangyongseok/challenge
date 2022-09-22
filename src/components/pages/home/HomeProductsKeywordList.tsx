@@ -259,76 +259,85 @@ function HomeProductsKeywordList() {
   }, [prevScroll]);
 
   return !!accessUser && (isLoading || (isFetchedProductKeywords && productKeywords.length > 0)) ? (
-    <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: '20px 0' }}>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      gap={20}
+      customStyle={{ padding: '20px 0', width: '100%' }}
+    >
       <Flexbox direction="vertical" gap={2} customStyle={{ padding: '0 20px' }}>
         <Typography variant="h3" weight="bold">
           {accessUser?.userName || '회원'}님의 매물목록
         </Typography>
         <Typography variant="body2">저장한 검색조건의 매물 확인하세요!</Typography>
       </Flexbox>
-      <TabList ref={productKeywordTabRef} onScroll={handleTabScroll}>
-        {isLoadingProductKeywords
-          ? Array.from({ length: 10 }, (_, index) => (
-              <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
-                <Flexbox direction="vertical" gap={4}>
-                  <Skeleton width="130px" height="19px" disableAspectRatio isRound />
-                  <Skeleton width="90px" height="15px" disableAspectRatio isRound />
-                </Flexbox>
-              </Tab>
-            ))
-          : productKeywords.map(({ id, keyword, isNew, filter }, index) => (
-              <Tab
-                key={`product-tab-${id}`}
-                isActive={selectedIndex === index}
-                onClick={handleClickTab(index)}
-              >
-                <Flexbox gap={4} alignment="flex-start">
-                  <Keyword weight="medium" isSelected={selectedIndex === index}>
-                    {keyword.replace('(P)', '')}
-                  </Keyword>
-                  {isNew && (
-                    <Typography variant="small1" weight="bold" brandColor="primary">
-                      NEW
-                    </Typography>
-                  )}
-                </Flexbox>
-                <Filter variant="small2" isSelected={selectedIndex === index}>
-                  {filter}
-                </Filter>
-              </Tab>
-            ))}
-      </TabList>
+      <ListWrapper ref={productKeywordTabRef} onScroll={handleTabScroll}>
+        <TabList>
+          {isLoadingProductKeywords
+            ? Array.from({ length: 10 }, (_, index) => (
+                <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
+                  <Flexbox direction="vertical" gap={4}>
+                    <Skeleton width="130px" height="19px" disableAspectRatio isRound />
+                    <Skeleton width="90px" height="15px" disableAspectRatio isRound />
+                  </Flexbox>
+                </Tab>
+              ))
+            : productKeywords.map(({ id, keyword, isNew, filter }, index) => (
+                <Tab
+                  key={`product-tab-${id}`}
+                  isActive={selectedIndex === index}
+                  onClick={handleClickTab(index)}
+                >
+                  <Flexbox gap={4} alignment="flex-start">
+                    <Keyword weight="medium" isSelected={selectedIndex === index}>
+                      {keyword.replace('(P)', '')}
+                    </Keyword>
+                    {isNew && (
+                      <Typography variant="small1" weight="bold" brandColor="primary">
+                        NEW
+                      </Typography>
+                    )}
+                  </Flexbox>
+                  <Filter variant="small2" isSelected={selectedIndex === index}>
+                    {filter}
+                  </Filter>
+                </Tab>
+              ))}
+        </TabList>
+      </ListWrapper>
       {isLoading || isFetchingProductKeywordProducts || productKeywordProducts.length > 0 ? (
         <>
-          <ProductList ref={productKeywordListRef} onScroll={handleCardScroll}>
-            {isLoading || isFetchingProductKeywordProducts
-              ? Array.from({ length: 8 }, (_, index) => (
-                  <ProductGridCardSkeleton
-                    key={`carmel-product-curation-card-skeleton-${index}`}
-                    isRound
-                    hasAreaWithDateInfo={false}
-                    customStyle={{ minWidth: 144, flex: 1 }}
-                  />
-                ))
-              : productKeywordProducts.map((product, index) => (
-                  <ProductGridCard
-                    key={`product-keyword-product-card-${product.id}`}
-                    product={product}
-                    hideProductLabel
-                    hideAreaWithDateInfo
-                    hideLegitStatusLabel
-                    showNewLabel={selectedProductKeyword?.isNew}
-                    name={attrProperty.productName.MAIN}
-                    source={attrProperty.productSource.MAIN_MYLIST}
-                    wishAtt={handleWishAtt(product, index)}
-                    productAtt={handleProductAtt(product, index)}
-                    compact
-                    isRound
-                    customStyle={{ minWidth: 144, maxWidth: 144, flex: 1 }}
-                    onClick={handleClickProductKeywordProduct(product.id)}
-                  />
-                ))}
-          </ProductList>
+          <ListWrapper ref={productKeywordListRef} onScroll={handleCardScroll}>
+            <CardList>
+              {isLoading || isFetchingProductKeywordProducts
+                ? Array.from({ length: 8 }, (_, index) => (
+                    <ProductGridCardSkeleton
+                      key={`carmel-product-curation-card-skeleton-${index}`}
+                      isRound
+                      hasAreaWithDateInfo={false}
+                      customStyle={{ minWidth: 144, flex: 1 }}
+                    />
+                  ))
+                : productKeywordProducts.map((product, index) => (
+                    <ProductGridCard
+                      key={`product-keyword-product-card-${product.id}`}
+                      product={product}
+                      hideProductLabel
+                      hideAreaWithDateInfo
+                      hideLegitStatusLabel
+                      showNewLabel={selectedProductKeyword?.isNew}
+                      name={attrProperty.productName.MAIN}
+                      source={attrProperty.productSource.MAIN_MYLIST}
+                      wishAtt={handleWishAtt(product, index)}
+                      productAtt={handleProductAtt(product, index)}
+                      compact
+                      isRound
+                      customStyle={{ minWidth: 144, maxWidth: 144, flex: 1 }}
+                      onClick={handleClickProductKeywordProduct(product.id)}
+                    />
+                  ))}
+            </CardList>
+          </ListWrapper>
           <Box customStyle={{ padding: '0 20px' }}>
             <Button
               fullWidth
@@ -353,11 +362,16 @@ function HomeProductsKeywordList() {
   ) : null;
 }
 
+const ListWrapper = styled.div`
+  overflow-x: auto;
+  width: 100%;
+`;
+
 const TabList = styled.div`
   display: flex;
   column-gap: 8px;
   padding: 0 20px;
-  overflow-x: auto;
+  width: fit-content;
 `;
 
 const Tab = styled.div<{ isActive: boolean }>`
@@ -383,12 +397,11 @@ const Filter = styled(Typography)<{ isSelected: boolean }>`
   text-overflow: ellipsis;
 `;
 
-const ProductList = styled.div`
+const CardList = styled.div`
   padding: 0 20px;
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
   column-gap: 12px;
-  overflow-x: auto;
+  width: fit-content;
 `;
 
 function DizzyFaceIcon() {

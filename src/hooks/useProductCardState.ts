@@ -6,7 +6,7 @@ import type { Product, ProductResult } from '@dto/product';
 
 import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
 
-import getProductLabelColor from '@utils/product/getProductLabelColor';
+import { getProductLabelColor } from '@utils/products';
 
 export default function useProductCardState({
   imageMain,

@@ -74,12 +74,12 @@ function ProductSellerReviews({ product }: { product?: Product }) {
     setReviewInfoParams((props) => ({ ...props, productId: Number(productId) }));
   }, [productId]);
 
-  const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller.site?.id;
+  const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
   const isCamelSeller =
     reviewInfo &&
     SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
-  return reviewInfo?.sellerReviews.totalElements ? (
+  return reviewInfo?.sellerReviews?.totalElements ? (
     <Box customStyle={{ marginTop: 32 }}>
       <Flexbox
         alignment="center"

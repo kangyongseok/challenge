@@ -9,7 +9,7 @@ import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import Image from '@components/UI/atoms/Image';
+import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -32,7 +32,14 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import { Area, MetaSocial, Title, TodayWishViewLabel, WishButton } from './ProductGridCard.styles';
+import {
+  Area,
+  MetaSocial,
+  SkeletonWrapper,
+  Title,
+  TodayWishViewLabel,
+  WishButton
+} from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
@@ -103,7 +110,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     datePosted,
     dateFirstPosted,
     status
-  } = product as Product;
+  } = product;
   const {
     todayViewCount = 0,
     todayWishCount = 0,
@@ -140,8 +147,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         type: 'product',
         status: 'successAddWish',
         action: () => {
-          logEvent(attrKeys.products.CLICK_WISH_LIST, {
-            name: name || 'NONE_PRODUCT_LIST_CARD',
+          logEvent(attrKeys.products.clickWishList, {
+            name: wishAtt?.name || name || 'NONE_PRODUCT_LIST_CARD',
             type: 'TOAST'
           });
           router.push('/wishes');
@@ -165,7 +172,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   });
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
 
-  const [cardCustomStyle] = useState({ ...customStyle, pointer: 'cursor' });
+  const [cardCustomStyle] = useState({ ...customStyle, cursor: 'pointer' });
+  const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
 
   const imageBoxRef = useRef<HTMLDivElement>(null);
@@ -188,7 +196,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       return;
     }
 
-    logEvent(isWish ? attrKeys.products.CLICK_WISH_CANCEL : attrKeys.products.CLICK_WISH, wishAtt);
+    logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, wishAtt);
 
     if (isWish) {
       mutatePostProductsRemove({ productId: id, deviceId });
@@ -200,6 +208,12 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   useEffect(() => {
     setIsWish(userWishIds.includes(id));
   }, [id, userWishIds]);
+
+  useEffect(() => {
+    const img = new window.Image();
+    img.src = imageUrl;
+    img.onload = () => setLoaded(true);
+  }, [imageUrl]);
 
   useEffect(() => {
     if (measure && typeof measure === 'function') {
@@ -225,6 +239,11 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           disableLazyLoad={false}
           disableSkeletonRender={false}
         />
+        {!loaded && (
+          <SkeletonWrapper>
+            <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
+          </SkeletonWrapper>
+        )}
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
             {productLabels.map(({ description }, index) => (

@@ -14,8 +14,7 @@ import { FACEBOOK_SHARE_URL, TWITTER_SHARE_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber, copyToClipboard } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber, copyToClipboard } from '@utils/common';
 
 type SocialPlatform = 'kakao' | 'facebook' | 'twitter' | 'linkCopy';
 

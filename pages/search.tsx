@@ -28,10 +28,11 @@ import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import calculateExpectCountPerHour from '@utils/calculateExpectCountPerHour';
+import { calculateExpectCountPerHour } from '@utils/formats';
 
 import type { RecentItems, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
@@ -177,27 +178,23 @@ function Search() {
     <>
       <GeneralTemplate disablePadding>
         <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
-          <SearchBox onSubmit={handleSubmit}>
+          <SearchForm onSubmit={handleSubmit}>
             <SearchBar
               type="search"
               autoCapitalize="none"
               autoComplete="off"
               spellCheck="false"
-              fullWidth
               autoFocus
-              isBottomBorderFixed
+              variant="innerOutlined"
+              fullWidth
+              isFixed
               placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
-              startIcon={
-                <Box customStyle={{ padding: '16.5px 8px 16.5px 20px' }}>
-                  <Icon name="ArrowLeftOutlined" width={23} height={23} onClick={handleClickBack} />
-                </Box>
-              }
-              customStyle={{ '& > div:first-of-type': { padding: '0 20px 0 0', gap: 0 } }}
+              startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
             />
-          </SearchBox>
+          </SearchForm>
         </Box>
         <Box customStyle={{ padding: `0 0 ${hasKeywordsSuggestData ? 0 : '64px'}` }}>
           {!hasKeywordsSuggestData ? (
@@ -259,9 +256,8 @@ export async function getStaticProps() {
   };
 }
 
-const SearchBox = styled.form`
-  position: fixed;
-  width: 100%;
+const SearchForm = styled.form`
+  min-height: ${SEARCH_BAR_HEIGHT}px;
 `;
 
 export default Search;

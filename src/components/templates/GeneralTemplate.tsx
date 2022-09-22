@@ -10,8 +10,9 @@ import { AppDownloadBanner } from '@components/UI/organisms';
 import SessionStorage from '@library/sessionStorage';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 
@@ -45,10 +46,9 @@ function GeneralTemplate({
   return (
     <Wrapper css={customStyle}>
       {!hideAppDownloadBanner && showAppDownloadBanner && (
-        <>
+        <Box customStyle={{ minHeight: APP_DOWNLOAD_BANNER_HEIGHT, position: 'relative' }}>
           <AppDownloadBanner />
-          <Box customStyle={{ minHeight: 60 }} />
-        </>
+        </Box>
       )}
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>

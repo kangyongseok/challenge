@@ -36,9 +36,9 @@ import {
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
-import type { ConvertUserSnsLoginInfoProps } from '@utils/login/convertLoginInfo';
-import convertUserSnsLoginInfo from '@utils/login/convertLoginInfo';
-import checkAgent from '@utils/checkAgent';
+import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
+import { convertUserSnsLoginInfo } from '@utils/login';
+import { checkAgent } from '@utils/common';
 
 import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';

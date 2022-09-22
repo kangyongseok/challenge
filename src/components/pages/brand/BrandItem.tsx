@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
 import { Flexbox, Typography } from 'mrcamel-ui';
-import { capitalize } from 'lodash-es';
+import capitalize from 'lodash-es/capitalize';
 
 import { Image } from '@components/UI/atoms';
 
@@ -40,12 +40,6 @@ function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: B
       });
     }
 
-    const query: { genders?: string[] } = {};
-
-    if (gender.length > 0 && gender !== 'N') {
-      query.genders = [gender === 'M' ? 'male' : 'female'];
-    }
-
     if (type === 'recommend') {
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
         name: attrProperty.productName.BRAND_LIST,
@@ -62,7 +56,12 @@ function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: B
 
     router.push({
       pathname: `/products/brands/${name.replace(/ x /g, '-')}`,
-      query
+      query:
+        gender.length > 0 && gender !== 'N'
+          ? {
+              genders: [gender === 'M' ? 'male' : 'female']
+            }
+          : {}
     });
   }, [gender, name, router, type]);
 

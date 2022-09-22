@@ -72,7 +72,7 @@ export type ProductDealInfo = {
 
 export type ABTestTask = {
   name: string;
-  slot: string;
+  slot: 'test_type_01' | 'test_type_02';
   postfix: Record<Exclude<ABTestBelong, null>, string | number | null>;
   ratio: Record<Exclude<ABTestBelong, null>, number>;
   running: boolean;

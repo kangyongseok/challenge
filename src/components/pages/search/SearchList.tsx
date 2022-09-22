@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
+import capitalize from 'lodash-es/capitalize';
 import styled from '@emotion/styled';
 
 import type { SuggestKeyword } from '@dto/product';
@@ -18,7 +19,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
-import capitalize from '@utils/capitalize';
 
 import type { TotalSearchItem } from '@typings/search';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -32,8 +32,11 @@ interface SearchListProps {
 function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: SearchListProps) {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
+
   const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
     useQueryUserInfo();
   const categoryKeywordList = suggestKeywords.filter(({ type }) => type === 0);
@@ -144,12 +147,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
             query: omitBy(
               {
                 brandIds: brandId ? [brandId] : [],
-                genderIds: gender
-                  ? [
-                      filterGenders.common.id,
-                      filterGenders[gender as keyof typeof filterGenders].id
-                    ]
-                  : [],
+                genderIds: gender ? [filterGenders[gender].id, filterGenders.common.id] : [],
                 parentIds: parentId ? [parentId] : [],
                 subParentIds: subParentId ? [subParentId] : [],
                 idFilterIds,
@@ -185,81 +183,70 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
     });
   };
 
-  // const searchHelperKeyword = ((categoryKeywordList.length > 0 && categoryKeywordList) ||
-  //   (brandKeywordList.length > 0 && brandKeywordList) ||
-  //   searchResult)[0];
-
   return (
-    <>
-      {/* {!!searchHelperKeyword && ( */}
-      {/*  <SearchHelperBanner */}
-      {/*    keyword={searchHelperKeyword.keyword} */}
-      {/*    brandName={brandKeywordList.length > 0 ? searchHelperKeyword.brandName : undefined} */}
-      {/*    brandId={brandKeywordList.length > 0 ? searchHelperKeyword.brandId : undefined} */}
-      {/*    categoryName={ */}
-      {/*      (categoryKeywordList.length > 0 */}
-      {/*        ? searchHelperKeyword.keyword.substring( */}
-      {/*            searchHelperKeyword.keyword.lastIndexOf('>') + 1 */}
-      {/*          ) */}
-      {/*        : searchHelperKeyword.categoryName) ?? undefined */}
-      {/*    } */}
-      {/*    parentId={searchHelperKeyword.parentId ?? undefined} */}
-      {/*    subParentId={searchHelperKeyword.subParentId ?? undefined} */}
-      {/*  /> */}
-      {/* )} */}
-      <Flexbox component="section" direction="vertical" gap={8}>
-        {categoryKeywordList.length > 0 ? (
-          <Box>
-            {categoryKeywordList.map(
+    <Flexbox component="section" direction="vertical" customStyle={{ padding: '0 20px' }}>
+      <Flexbox direction="vertical" gap={1} customStyle={{ backgroundColor: common.grey['95'] }}>
+        {categoryKeywordList.length > 0
+          ? categoryKeywordList.map(
               ({ parentId, subParentId, keyword, count, recommFilters }, index) => (
                 <Box
                   key={`item-map-${keyword}`}
                   customStyle={{
-                    borderBottom: `1px solid ${palette.common.grey['80']}`,
-                    padding: (recommFilters || []).length > 0 ? '8px 0' : 0,
-                    backgroundColor: palette.common.grey['95']
+                    padding: '8px 0',
+                    backgroundColor: common.white,
+                    cursor: 'pointer'
                   }}
                 >
-                  <Flexbox
-                    customStyle={{ padding: '12px 20px' }}
-                    onClick={handleClickCategoryLabel({
-                      index,
-                      parentId,
-                      subParentId,
-                      keyword,
-                      count
-                    })}
-                  >
-                    <Flexbox gap={4} customStyle={{ flex: 1 }}>
-                      {keyword.split('>').map((word, secondIndex) => (
-                        <Fragment key={`category-label-${word}`}>
-                          {secondIndex !== 0 && (
-                            <Icon
-                              name="CaretRightOutlined"
-                              size="small"
-                              customStyle={{ color: palette.common.grey['80'] }}
-                            />
-                          )}
-                          <Typography
-                            variant="body2"
-                            weight={
-                              secondIndex + 1 === keyword.split('>').length ? 'bold' : 'medium'
-                            }
-                            customStyle={{ lineHeight: '16px' }}
-                          >
-                            {word.replace(/\(P\)/, '')}
-                          </Typography>
-                        </Fragment>
-                      ))}
+                  <Flexbox gap={16} alignment="center" customStyle={{ padding: '8px 0' }}>
+                    <Icon
+                      name="MenuOutlined"
+                      width={28}
+                      height={28}
+                      customStyle={{
+                        padding: 4,
+                        backgroundColor: common.grey['95'],
+                        borderRadius: '50%'
+                      }}
+                    />
+                    <Flexbox gap={4} customStyle={{ alignItems: 'baseline', flex: 1 }}>
+                      <Flexbox
+                        alignment="center"
+                        onClick={handleClickCategoryLabel({
+                          index,
+                          parentId,
+                          subParentId,
+                          keyword,
+                          count
+                        })}
+                      >
+                        {keyword.split('>').map((word, secondIndex) => (
+                          <Fragment key={`category-label-${word}`}>
+                            {secondIndex !== 0 && (
+                              <Icon
+                                name="CaretRightOutlined"
+                                size="medium"
+                                customStyle={{ color: common.grey['80'] }}
+                              />
+                            )}
+                            <Typography
+                              variant="h4"
+                              weight={
+                                secondIndex + 1 === keyword.split('>').length ? 'bold' : 'medium'
+                              }
+                            >
+                              {word.replace(/\(P\)/, '')}
+                            </Typography>
+                          </Fragment>
+                        ))}
+                      </Flexbox>
                     </Flexbox>
-                    <Icon name="CaretRightOutlined" size="small" />
                   </Flexbox>
                   {(recommFilters || []).map((recommFilter) => (
                     <Flexbox
                       gap={8}
                       alignment="center"
                       key={`category-recommend-filter-keyword-${recommFilter.keywordDeco}`}
-                      customStyle={{ padding: '10px 20px', color: palette.primary.main }}
+                      customStyle={{ padding: '8px 0', color: primary.light }}
                       onClick={handleClickRecomm({
                         ...recommFilter,
                         parentId,
@@ -270,110 +257,133 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                             null)
                       })}
                     >
-                      <FilterFilled />
-                      <Typography brandColor="primary" customStyle={{ flex: 1 }}>
+                      <Icon
+                        name="FilterFilled"
+                        color={primary.light}
+                        width={28}
+                        height={28}
+                        customStyle={{ padding: 4 }}
+                      />
+                      <Typography customStyle={{ flex: 1, color: primary.light }}>
                         {recommFilter.keywordDeco}
                       </Typography>
                       <Icon
                         name="CaretRightOutlined"
-                        size="small"
-                        customStyle={{ color: palette.primary.main }}
+                        width={14}
+                        height={14}
+                        customStyle={{ color: primary.main }}
                       />
                     </Flexbox>
                   ))}
                 </Box>
               )
-            )}
-          </Box>
-        ) : (
-          brandKeywordList.map((item) => (
-            <Box
-              key={`alert-${item.keyword}`}
-              customStyle={{
-                borderBottom: `1px solid ${palette.common.grey['80']}`,
-                padding: (item.recommFilters || []).length > 0 ? '8px 0' : 0,
-                backgroundColor: palette.common.grey['95']
-              }}
-            >
-              <Flexbox onClick={handleClickBrand(item)} customStyle={{ padding: '12px 20px' }}>
-                <Flexbox gap={5} alignment="center">
-                  <Typography variant="body2" weight="bold">
-                    {capitalize(item.keywordEng)}
-                  </Typography>
-                  <Typography variant="body2">{item.keywordBrand}</Typography>
-                </Flexbox>
-                <Flexbox gap={4} alignment="center" customStyle={{ marginLeft: 'auto' }}>
-                  <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
-                    {commaNumber(item.count)}
-                  </Typography>
-                  <Icon name="CaretRightOutlined" color={palette.common.grey['20']} size="small" />
-                </Flexbox>
-              </Flexbox>
-              {(item.recommFilters || []).map((recommFilter) => (
+            )
+          : brandKeywordList.map((item) => (
+              <Flexbox
+                direction="vertical"
+                key={`alert-${item.keyword}`}
+                customStyle={{
+                  padding: '8px 0',
+                  backgroundColor: common.white,
+                  cursor: 'pointer'
+                }}
+              >
                 <Flexbox
-                  gap={8}
                   alignment="center"
-                  key={`brand-recommend-filter-keyword-${recommFilter.keywordDeco}`}
-                  customStyle={{ padding: '10px 20px', color: palette.primary.main }}
-                  onClick={handleClickRecomm({
-                    ...recommFilter,
-                    gender:
-                      recommFilter.gender ??
-                      ((userGender === 'F' && 'female') || (userGender === 'M' && 'male') || null)
-                  })}
+                  gap={16}
+                  onClick={handleClickBrand(item)}
+                  customStyle={{ padding: '8px 0' }}
                 >
-                  <FilterFilled />
-                  <Typography brandColor="primary" customStyle={{ flex: 1 }}>
-                    {recommFilter.keywordDeco}
-                  </Typography>
-                  <Icon
-                    name="CaretRightOutlined"
-                    size="small"
-                    customStyle={{ color: palette.primary.main }}
-                  />
+                  <BrandText>{item.keywordEng.charAt(0).toUpperCase()}</BrandText>
+                  <Flexbox gap={4} customStyle={{ alignItems: 'baseline' }}>
+                    <Typography variant="h4" weight="bold">
+                      {item.keywordBrand}
+                    </Typography>
+                    <Typography variant="body2" customStyle={{ color: common.grey['40'] }}>
+                      {capitalize(item.keywordEng)}
+                    </Typography>
+                  </Flexbox>
                 </Flexbox>
-              ))}
-            </Box>
-          ))
-        )}
-        <Box component="ul">
-          {suggestKeywords.map((item, index) => (
-            <ItemLi
-              key={`search-keyword-suggest-${item.keyword}`}
-              onClick={handleClickList(item, index)}
-              isType={item.type === 0}
-            >
-              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.keywordDeco }} />
+                {(item.recommFilters || []).map((recommFilter) => (
+                  <Flexbox
+                    gap={16}
+                    alignment="center"
+                    key={`brand-recommend-filter-keyword-${recommFilter.keywordDeco}`}
+                    customStyle={{ padding: '8px 0', color: primary.light }}
+                    onClick={handleClickRecomm({
+                      ...recommFilter,
+                      gender:
+                        recommFilter.gender ??
+                        ((userGender === 'F' && 'female') || (userGender === 'M' && 'male') || null)
+                    })}
+                  >
+                    <Icon
+                      name="FilterFilled"
+                      color={primary.light}
+                      width={28}
+                      height={28}
+                      customStyle={{ padding: 4 }}
+                    />
+                    <Typography customStyle={{ flex: 1, color: 'inherit' }}>
+                      {recommFilter.keywordDeco}
+                    </Typography>
+                    <Icon
+                      name="CaretRightOutlined"
+                      size="small"
+                      customStyle={{ color: 'inherit' }}
+                    />
+                  </Flexbox>
+                ))}
+              </Flexbox>
+            ))}
+        {suggestKeywords.map((item, index) => (
+          <Item
+            key={`search-keyword-suggest-${item.keyword}`}
+            onClick={handleClickList(item, index)}
+            isType={item.type === 0}
+          >
+            <Icon
+              name="SearchOutlined"
+              size="medium"
+              customStyle={{ color: common.grey['80'], minWidth: 20 }}
+            />
+            <Flexbox gap={4} customStyle={{ alignItems: 'baseline' }}>
+              <Typography variant="h4" dangerouslySetInnerHTML={{ __html: item.keywordDeco }} />
               {item.count > 0 && (
-                <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
+                <Typography variant="body2" customStyle={{ color: common.grey['60'] }}>
                   {commaNumber(item.count)}
                 </Typography>
               )}
-            </ItemLi>
-          ))}
-        </Box>
+            </Flexbox>
+          </Item>
+        ))}
       </Flexbox>
-    </>
+    </Flexbox>
   );
 }
 
-const ItemLi = styled.li<{ isType: boolean }>`
+const Item = styled.div<{ isType: boolean }>`
   display: ${({ isType }) => (isType ? 'none' : 'flex')};
   align-items: center;
   cursor: pointer;
-  padding: 10px 20px;
-  gap: 8px;
+  padding: 20px 4px;
+  gap: 20px;
+  background-color: ${({ theme }) => theme.palette.common.white};
 `;
 
-function FilterFilled() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M20 4H4V6.41421L10 12.4142V22.4142L14 18.4142V12.4142L20 6.41421V4Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
+const BrandText = styled(Typography)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 24px;
+  text-align: center;
+  letter-spacing: -0.01em;
+  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  border-radius: 50%;
+`;
 
 export default SearchList;

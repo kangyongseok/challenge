@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-// eslint-disable-next-line import/no-unresolved
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -11,7 +10,7 @@ import { logEvent } from '@library/amplitude';
 import { filterCodeIds, filterCodes } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
-import convertSearchParams from '@utils/products/convertSearchParams';
+import { convertSearchParams } from '@utils/products';
 
 import { ProductsVariant } from '@typings/products';
 import {
@@ -24,6 +23,7 @@ import SizeTabPanel from './SizeTabPanel';
 import PriceTabPanel from './PriceTabPanel';
 import PlatformTabPanel from './PlatformTabPanel';
 import LineTabPanel from './LineTabPanel';
+import GenderTabPanel from './GenderTabPanel';
 import DetailOptionTabPanel from './DetailOptionTabPanel';
 import CategoryTabPanel from './CategoryTabPanel';
 import BrandTabPanel from './BrandTabPanel';
@@ -32,7 +32,7 @@ interface FilterTabPanelsProps {
   variant: ProductsVariant;
 }
 
-const { category, size, brand, line, platform, price, detailOption } = filterCodeIds;
+const { gender, size, price, brand, category, line, platform, detailOption } = filterCodeIds;
 
 function FilterTabPanels({ variant }: FilterTabPanelsProps) {
   const router = useRouter();
@@ -68,28 +68,23 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
           excludeCodeId: dataCodeId
         })
       }));
+      setActiveTabCodeIdState(dataCodeId);
     }
   };
 
-  const handleSlideChangeTransitionEnd = (swiper: SwiperClass) => {
-    const { slides, activeIndex, touches } = swiper;
-
+  const handleSlideChangeTransitionEnd = ({ activeIndex, touches }: SwiperClass) => {
     if (touches.diff) {
       const { keyword } = router.query;
 
       const eventProperties = {
-        index: swiper.activeIndex,
+        index: activeIndex,
         keyword
       };
 
       if (variant !== 'search') delete eventProperties.keyword;
 
-      logEvent(attrKeys.products.SWIPE_X_FILTER, eventProperties);
+      logEvent(attrKeys.products.swipeXFilter, eventProperties);
     }
-
-    const dataCodeId = Number(slides[activeIndex].getAttribute('data-code-id') || -1);
-
-    setActiveTabCodeIdState(dataCodeId);
   };
 
   useEffect(() => {
@@ -110,18 +105,11 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
       onSlideChange={handleSlideChange}
       onSlideChangeTransitionEnd={handleSlideChangeTransitionEnd}
       initialSlide={activeSlide}
-      style={{
-        height: '100%'
-      }}
+      style={{ height: '100%' }}
     >
-      {(variant === 'search' || variant === 'camel') && (
-        <SwiperSlide data-code-id={category}>
-          <CategoryTabPanel />
-        </SwiperSlide>
-      )}
-      {variant !== 'brands' && (
-        <SwiperSlide data-code-id={brand}>
-          <BrandTabPanel />
+      {variant === 'brands' && (
+        <SwiperSlide data-code-id={gender}>
+          <GenderTabPanel />
         </SwiperSlide>
       )}
       <SwiperSlide data-code-id={size}>
@@ -130,6 +118,16 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
       <SwiperSlide data-code-id={price}>
         <PriceTabPanel />
       </SwiperSlide>
+      {variant !== 'brands' && (
+        <SwiperSlide data-code-id={brand}>
+          <BrandTabPanel />
+        </SwiperSlide>
+      )}
+      {(variant === 'search' || variant === 'camel') && (
+        <SwiperSlide data-code-id={category}>
+          <CategoryTabPanel />
+        </SwiperSlide>
+      )}
       <SwiperSlide data-code-id={platform}>
         <PlatformTabPanel />
       </SwiperSlide>

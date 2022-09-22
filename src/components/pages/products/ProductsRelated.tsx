@@ -3,10 +3,11 @@ import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography } from 'mrcamel-ui';
 
 import ProductListCard from '@components/UI/molecules/ProductListCard';
 import { ProductListCardSkeleton } from '@components/UI/molecules';
+import { Gap } from '@components/UI/atoms';
 
 import { fetchSearch, fetchSearchRelatedProducts } from '@api/product';
 
@@ -20,12 +21,6 @@ function ProductsRelated() {
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const [params] = useState({
     size: 10,
@@ -74,13 +69,13 @@ function ProductsRelated() {
   ) {
     return (
       <>
-        <Box customStyle={{ width: '100%', height: 8, backgroundColor: common.grey['90'] }} />
+        <Gap height={8} />
         <Box customStyle={{ padding: '24px 20px 0 20px' }}>
           <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>
             이런 매물은 어때요?
           </Typography>
           <Flexbox direction="vertical" gap={20}>
-            {Array.from({ length: 10 }).map((_, index) => (
+            {Array.from({ length: 10 }, (_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <ProductListCardSkeleton key={`search-related-product-${index}`} isRound />
             ))}
@@ -92,24 +87,21 @@ function ProductsRelated() {
 
   if (isFetched && !hasProducts) {
     return (
-      <>
-        <Box customStyle={{ width: '100%', height: 8, backgroundColor: common.grey['90'] }} />
-        <Box customStyle={{ padding: '24px 20px 0 20px' }}>
-          <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>
-            이런 매물은 어때요?
-          </Typography>
-          <Flexbox direction="vertical" gap={20}>
-            {content.map((product) => (
-              <ProductListCard
-                key={`search-related-product-${product.id}`}
-                product={product}
-                name={attrProperty.productName.PRODUCT_DETAIL}
-                isRound
-              />
-            ))}
-          </Flexbox>
-        </Box>
-      </>
+      <Box customStyle={{ padding: '24px 20px 0 20px' }}>
+        <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>
+          이런 매물은 어때요?
+        </Typography>
+        <Flexbox direction="vertical" gap={20}>
+          {content.map((product) => (
+            <ProductListCard
+              key={`search-related-product-${product.id}`}
+              product={product}
+              name={attrProperty.productName.PRODUCT_DETAIL}
+              isRound
+            />
+          ))}
+        </Flexbox>
+      </Box>
     );
   }
 

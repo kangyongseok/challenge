@@ -28,7 +28,7 @@ import { postPreReserve } from '@api/user';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import { SuccessDialogState } from '@recoil/myPortfolio';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

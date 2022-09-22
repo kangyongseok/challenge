@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -8,7 +8,7 @@ import { Header, SearchBar } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -17,29 +17,43 @@ import { convertSearchParamsByQuery } from '@utils/products';
 import type { ProductsVariant } from '@typings/products';
 import { productsKeywordAutoSaveTriggerState } from '@recoil/productsKeyword';
 import { searchOptionsStateFamily } from '@recoil/productsFilter';
-import { showAppDownloadBannerState } from '@recoil/common';
 
 interface ProductsHeaderProps {
   variant: ProductsVariant;
 }
 
 function ProductsHeader({ variant }: ProductsHeaderProps) {
+  const {
+    theme: { palette }
+  } = useTheme();
   const router = useRouter();
   const { keyword }: { keyword?: string } = router.query;
   const { parentIds = [] } = convertSearchParamsByQuery(router.query);
   const atomParam = router.asPath.split('?')[0];
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
-
-  const {
-    theme: { zIndex }
-  } = useTheme();
-
   const {
     searchOptions: { parentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
+  const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
 
   const [title, setTitle] = useState('');
+
+  const handleClickBack = useCallback(() => {
+    logEvent(attrKeys.products.clickBack, {
+      name: attrProperty.name.productList
+    });
+    router.back();
+  }, [router]);
+
+  const handleClickSearchIcon = useCallback(() => {
+    logEvent(attrKeys.products.CLICK_SEARCHMODAL, {
+      name: attrProperty.productName.PRODUCT_LIST,
+      att: 'HEADER'
+    });
+    router.push({
+      pathname: '/search',
+      query: { keyword }
+    });
+  }, [keyword, router]);
 
   useEffect(() => {
     const newKeyword = (keyword || '').split('-').join(' X ');
@@ -71,59 +85,25 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
 
   if (variant === 'search') {
     return (
-      <Box customStyle={{ minHeight: 58 }}>
+      <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT }}>
         <SearchBar
-          fullWidth
-          variant="standard"
-          startIcon={
-            <Icon
-              name="ArrowLeftOutlined"
-              onClick={() => {
-                logEvent(attrKeys.products.CLICK_BACK, {
-                  name: attrProperty.productName.PRODUCT_LIST
-                });
-                router.back();
-              }}
-              customStyle={{ cursor: 'pointer' }}
-            />
-          }
-          endIcon={
-            <Icon
-              name="SearchOutlined"
-              onClick={() => {
-                logEvent(attrKeys.products.CLICK_SEARCHMODAL, {
-                  name: attrProperty.productName.PRODUCT_LIST,
-                  att: 'HEADER'
-                });
-                router.push({
-                  pathname: '/search',
-                  query: {
-                    keyword
-                  }
-                });
-              }}
-              customStyle={{ cursor: 'pointer' }}
-            />
-          }
-          onClick={() =>
-            router.push({
-              pathname: '/search',
-              query: {
-                keyword
-              }
-            })
-          }
           readOnly
-          value={keyword || ''}
+          variant="innerOutlined"
+          fullWidth
+          isFixed
           placeholder="검색어를 입력해 주세요."
-          customStyle={{
-            position: 'fixed',
-            top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0,
-            width: '100%',
-            padding: 0,
-            zIndex: zIndex.header,
-            cursor: 'pointer'
-          }}
+          value={keyword || ''}
+          startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
+          endAdornment={
+            <Icon
+              name="DeleteCircleFilled"
+              width={20}
+              height={20}
+              customStyle={{ color: palette.common.grey['80'], minWidth: 20 }}
+              onClick={handleClickSearchIcon}
+            />
+          }
+          onClick={() => router.push({ pathname: '/search', query: { keyword } })}
         />
       </Box>
     );

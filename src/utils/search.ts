@@ -4,9 +4,9 @@ import LocalStorage from '@library/localStorage';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
-import type { RecentItems } from '@typings/search';
+import { calculateExpectCountPerHour } from '@utils/formats';
 
-import calculateExpectCountPerHour from './calculateExpectCountPerHour';
+import type { RecentItems } from '@typings/search';
 
 export function accumulateStorage(key: string, data: RecentItems) {
   const originData = (LocalStorage.get(key) as object[]) || [];

@@ -51,7 +51,6 @@ function CategoryGenderTabs({ resetSelectedParentCategory }: CategoryGenderTabsP
           top: showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT,
           width: '100%'
         }}
-        customTabStyle={{ padding: 12 }}
       />
     </Box>
   );

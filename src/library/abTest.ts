@@ -1,11 +1,29 @@
 import type { AmplitudeClient } from 'amplitude-js';
 
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
+
 import { convertHashCode, setCookie } from '@utils/common';
 
 import type { ABTestTask } from '@typings/common';
 
 let identifier: Record<string, number> = {};
-const tasks: ABTestTask[] = [];
+
+const tasks: ABTestTask[] = [
+  {
+    name: abTestTaskNameKeys.dynamicFilter2209,
+    slot: 'test_type_01',
+    postfix: {
+      A: '2209_Filter',
+      B: '2209_DynamicFilter'
+    },
+    ratio: {
+      A: 50,
+      B: 50
+    },
+    running: true,
+    defaultBelong: 'A'
+  }
+];
 
 const ABTest = {
   init(amplitudeClient: AmplitudeClient) {

@@ -230,7 +230,7 @@ function HomePersonalProductCuration() {
       </Flexbox>
       {isLoading ? (
         <ProductCuration>
-          {Array.from(new Array(6), (_, index) => (
+          {Array.from({ length: 6 }, (_, index) => (
             <ProductGridCardSkeleton
               key={`carmel-product-curation-card-skeleton-${index}`}
               isRound

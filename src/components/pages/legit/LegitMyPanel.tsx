@@ -71,6 +71,25 @@ function LegitMyPanel() {
   //   });
   // };
 
+  // const handleClickButton = () => {
+  //   logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
+  //     name: attrProperty.legitName.LEGIT_MY
+  //   });
+  //   SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+  //     name: attrProperty.legitName.LEGIT,
+  //     title: attrProperty.legitTitle.MYLEGIT,
+  //     type: attrProperty.legitType.GUIDED
+  //   });
+  //
+  //   router.push({
+  //     pathname: '/products/brands/구찌',
+  //     query: {
+  //       parentIds: 98,
+  //       idFilterIds: 100
+  //     }
+  //   });
+  // };
+
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_MY);
   }, []);

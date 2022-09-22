@@ -3,7 +3,7 @@ import type { FormEvent, MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
-import { Checkbox, Flexbox, Icon, useTheme } from 'mrcamel-ui';
+import { Checkbox, Flexbox, Icon } from 'mrcamel-ui';
 import { filter, find, isEmpty } from 'lodash-es';
 import styled from '@emotion/styled';
 
@@ -21,9 +21,6 @@ import atom from '@recoil/users';
 import { showAppDownloadBannerState } from '@recoil/common';
 
 function SizeInputSearch() {
-  const {
-    theme: { palette }
-  } = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState('');
   const [searchModeType] = useRecoilState(atom.searchModeTypeState);
@@ -93,12 +90,12 @@ function SizeInputSearch() {
     <Flexbox direction="vertical">
       <SearchBarArea showAppDownloadBanner={showAppDownloadBanner}>
         <SearchBar
+          ref={inputRef}
           fullWidth
           autoFocus
           placeholder="사이즈명"
-          startIcon={<Icon name="SearchOutlined" color={palette.primary.main} />}
-          ref={inputRef}
           onChange={handleChange}
+          startAdornment={<Icon name="SearchOutlined" color="black" size="medium" />}
         />
       </SearchBarArea>
       {searchValue && data && data.length > 0 && (

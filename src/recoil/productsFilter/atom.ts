@@ -1,6 +1,7 @@
 import { atom, atomFamily } from 'recoil';
 
 import type { ProductSearchOption, SearchParams } from '@dto/product';
+import { ProductDynamicOption } from '@dto/product';
 import type { SizeCode } from '@dto/common';
 
 import LocalStorage from '@library/localStorage';
@@ -11,10 +12,10 @@ import type { SelectedSearchOption } from '@typings/products';
 
 export const productsFilterStateFamily = atomFamily<
   {
-    type: `general-${string}` | `map-${string}` | `order-${string}` | `legit-${string}`;
+    type: `general-${string}` | `order-${string}` | `legit-${string}`;
     open: boolean;
   },
-  `general-${string}` | `map-${string}` | `order-${string}` | `legit-${string}`
+  `general-${string}` | `order-${string}` | `legit-${string}`
 >({
   key: 'productsFilterStateFamily',
   default: (type) => ({
@@ -86,6 +87,11 @@ export const searchOptionsStateFamily = atomFamily<
     type,
     searchOptions: {}
   })
+});
+
+export const dynamicOptionsStateFamily = atomFamily<ProductDynamicOption[], string>({
+  key: 'productsFilter/dynamicOptionsState',
+  default: []
 });
 
 export const selectedSearchOptionsStateFamily = atomFamily<

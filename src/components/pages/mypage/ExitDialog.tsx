@@ -10,7 +10,7 @@ import { postWithdraw } from '@api/userAuth';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 

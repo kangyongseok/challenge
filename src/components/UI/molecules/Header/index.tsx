@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CustomStyle, Icon, Typography } from 'mrcamel-ui';
+import { CustomStyle, Flexbox, Icon, Typography } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -225,14 +225,13 @@ function Header({
   };
 
   return (
-    <>
-      <Box customStyle={{ minHeight: isFixed ? customHeight || HEADER_HEIGHT : 0 }} />
-      <StyledHeader
+    <StyledHeader minHeight={customHeight || HEADER_HEIGHT}>
+      <Wrapper
         isFixed={isFixed}
         showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
         css={customStyle}
       >
-        <Wrapper customHeight={customHeight}>
+        <Flexbox alignment="center" customStyle={{ width: '100%', minHeight: customHeight || 56 }}>
           {isCrm ? (
             <Typography variant="small2" weight="medium" onClick={onClickLeft}>
               ◀︎ 모델 전체보기
@@ -267,9 +266,9 @@ function Header({
               {showRight && <Icon name="SearchOutlined" />}
             </IconBox>
           )}
-        </Wrapper>
-      </StyledHeader>
-    </>
+        </Flexbox>
+      </Wrapper>
+    </StyledHeader>
   );
 }
 

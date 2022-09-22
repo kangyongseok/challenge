@@ -84,7 +84,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
     reviewInfoIsFetching ||
     sellerProductsIsError ||
     reviewInfoIsError ||
-    (reviewInfo?.productSeller.count || 0) > 0 ? (
+    (reviewInfo?.productSeller?.count || 0) > 0 ? (
     <Box customStyle={{ marginTop: 32 }}>
       <Flexbox
         alignment="center"

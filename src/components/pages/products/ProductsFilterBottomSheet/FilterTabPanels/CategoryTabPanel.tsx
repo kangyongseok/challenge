@@ -9,7 +9,7 @@ import styled, { CSSObject } from '@emotion/styled';
 import { logEvent } from '@library/amplitude';
 
 import { filterGenders } from '@constants/productsFilter';
-import { PRODUCT_NAME } from '@constants/product';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -59,9 +59,9 @@ function CategoryTabPanel() {
 
     if (currentGender) {
       if (!currentGender.checkedAll) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'CATEGORY',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.category,
           index: currentGenderIndex,
           count: currentGender.count,
           value: currentGender.name
@@ -114,9 +114,9 @@ function CategoryTabPanel() {
 
       if (selectedParentCategory) {
         if (!selectedParentCategory.checkedAll) {
-          logEvent(attrKeys.products.SELECT_FILTER, {
-            name: PRODUCT_NAME.PRODUCT_LIST,
-            title: 'CATEGORY',
+          logEvent(attrKeys.products.selectFilter, {
+            name: attrProperty.name.productList,
+            title: attrProperty.title.category,
             index: selectedParentCategoryIndex,
             count: selectedParentCategory.count,
             value: `${currentGender.name}, ${selectedParentCategory.name}`
@@ -234,9 +234,9 @@ function CategoryTabPanel() {
           selectedParentCategory.subParentCategories[selectedSubParentCategoryIndex];
 
         if (selectedSubParentCategory) {
-          logEvent(attrKeys.products.SELECT_FILTER, {
-            name: PRODUCT_NAME.PRODUCT_LIST,
-            title: 'CATEGORY',
+          logEvent(attrKeys.products.selectFilter, {
+            name: attrProperty.name.productList,
+            title: attrProperty.title.category,
             index: selectedSubParentCategoryIndex,
             count: selectedSubParentCategory.count,
             value: `${currentGender.name}, ${selectedSubParentCategory.name}`

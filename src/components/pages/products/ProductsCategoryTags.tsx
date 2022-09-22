@@ -2,29 +2,31 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Typography } from 'mrcamel-ui';
+import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { Gap } from '@components/UI/atoms';
 
+import { CATEGORY_TAGS_HEIGHT } from '@constants/common';
+
+import { getCenterScrollLeft } from '@utils/scroll';
 import { convertSearchParamsByQuery } from '@utils/products';
-import getCenterScrollLeft from '@utils/getCenterScrollLeft';
-import convertStringToArray from '@utils/convertStringToArray';
+import { convertStringToArray } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import { searchOptionsStateFamily } from '@recoil/productsFilter';
-import { showAppDownloadBannerState } from '@recoil/common';
 
 interface ProductsCategoryTagListProps {
   variant: ProductsVariant;
 }
 
 function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
+  const {
+    theme: { zIndex }
+  } = useTheme();
   const router = useRouter();
   const { keyword = '', parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
-
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const categoryTagRef = useRef<HTMLDivElement | null>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
@@ -111,124 +113,131 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   }, [subParentIds, subParentCategories]);
 
   return (
-    <Box component="section" customStyle={{ height: 45 }}>
-      <StyledCategoryTags ref={categoryTagRef} showAppDownloadBanner={showAppDownloadBanner}>
-        <Typography
-          weight={
-            (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
-          }
-          customStyle={{ cursor: 'pointer' }}
-          onClick={() =>
-            router
-              .push({
-                pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
-                query: {
-                  ...excludedSearchParams,
-                  parentIds
-                }
-              })
-              .then(() => window.scrollTo(0, 0))
-          }
-        >
-          전체
-        </Typography>
-        {showParentCategories &&
-          parentCategories.map(({ id, name }, index) => (
-            <Typography
-              key={`parent-category-${id}`}
-              ref={(ref) => {
-                if (ref) parentCategoryTagRefs.current[index] = ref;
-              }}
-              weight={convertStringToArray(String(parentIds)).includes(id) ? 'bold' : 'regular'}
-              customStyle={{ cursor: 'pointer' }}
-              onClick={() =>
-                router
-                  .push({
-                    pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
-                    query: {
-                      ...excludedSearchParams,
-                      parentIds: id
-                    }
-                  })
-                  .then(() => window.scrollTo(0, 0))
-              }
-            >
-              {name.replace(/\(P\)/g, '')}
-            </Typography>
-          ))}
-        {!showParentCategories &&
-          subParentCategories
-            .filter(({ parentId: subParentCategoryParentId, name }) => {
-              if (parentIds)
-                return (
-                  convertStringToArray(String(parentIds)).includes(subParentCategoryParentId) &&
-                  name
-                );
-              if (parentCategory) return parentCategory.id === subParentCategoryParentId;
-
-              return name;
-            })
-            .map(({ id, name, parentId }, index) => (
-              <Typography
-                key={`sub-parent-category-${id}`}
+    <Box
+      component="section"
+      customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT + 8, position: 'relative' }}
+    >
+      <Wrapper>
+        <CategoryTags ref={categoryTagRef}>
+          <Text
+            weight={
+              (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
+            }
+            onClick={() =>
+              router
+                .push({
+                  pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+                  query: {
+                    ...excludedSearchParams,
+                    parentIds
+                  }
+                })
+                .then(() => window.scrollTo(0, 0))
+            }
+          >
+            전체
+          </Text>
+          {showParentCategories &&
+            parentCategories.map(({ id, name }, index) => (
+              <Text
+                key={`parent-category-${id}`}
                 ref={(ref) => {
-                  if (ref) subParentCategoryTagRefs.current[index] = ref;
+                  if (ref) parentCategoryTagRefs.current[index] = ref;
                 }}
-                data-id={id}
-                weight={
-                  convertStringToArray(String(subParentIds)).includes(id) ? 'bold' : 'regular'
-                }
-                customStyle={{ cursor: 'pointer' }}
+                weight={convertStringToArray(String(parentIds)).includes(id) ? 'bold' : 'regular'}
                 onClick={() =>
                   router
-                    .replace({
+                    .push({
                       pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
                       query: {
                         ...excludedSearchParams,
-                        parentIds: parentId,
-                        subParentIds: id
+                        parentIds: id
                       }
                     })
                     .then(() => window.scrollTo(0, 0))
                 }
               >
-                {name}
-              </Typography>
+                {name.replace(/\(P\)/g, '')}
+              </Text>
             ))}
-      </StyledCategoryTags>
+          {!showParentCategories &&
+            subParentCategories
+              .filter(({ parentId: subParentCategoryParentId, name }) => {
+                if (parentIds)
+                  return (
+                    convertStringToArray(String(parentIds)).includes(subParentCategoryParentId) &&
+                    name
+                  );
+                if (parentCategory) return parentCategory.id === subParentCategoryParentId;
+
+                return name;
+              })
+              .map(({ id, name, parentId }, index) => (
+                <Text
+                  key={`sub-parent-category-${id}`}
+                  ref={(ref) => {
+                    if (ref) subParentCategoryTagRefs.current[index] = ref;
+                  }}
+                  data-id={id}
+                  weight={
+                    convertStringToArray(String(subParentIds)).includes(id) ? 'bold' : 'regular'
+                  }
+                  onClick={() =>
+                    router
+                      .replace({
+                        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+                        query: {
+                          ...excludedSearchParams,
+                          parentIds: parentId,
+                          subParentIds: id
+                        }
+                      })
+                      .then(() => window.scrollTo(0, 0))
+                  }
+                >
+                  {name}
+                </Text>
+              ))}
+        </CategoryTags>
+      </Wrapper>
+      <Gap
+        height={8}
+        customStyle={{
+          position: 'fixed',
+          marginTop: CATEGORY_TAGS_HEIGHT,
+          zIndex: zIndex.header
+        }}
+      />
     </Box>
   );
 }
 
-const StyledCategoryTags = styled.div<{ showAppDownloadBanner: boolean }>`
+const Wrapper = styled.div`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
-  width: 100%;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.white};
-  height: 45px;
-  min-height: 45px;
-  padding: 0 20px;
-  white-space: nowrap;
-  overflow-x: auto;
+  background-color: ${({ theme: { palette } }) => palette.common.white};
+  height: ${CATEGORY_TAGS_HEIGHT}px;
+  min-height: ${CATEGORY_TAGS_HEIGHT}px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
+  width: 100%;
+  overflow-x: auto;
+`;
 
-  & > div {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-width: fit-content;
-    margin-right: 20px;
+const CategoryTags = styled.div`
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  width: fit-content;
+`;
 
-    &:last-child {
-      margin-right: 0;
-    }
-  }
+const Text = styled(Typography)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  height: 100%;
+  cursor: pointer;
 `;
 
 export default ProductsCategoryTags;

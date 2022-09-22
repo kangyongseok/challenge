@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Alert, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Button, Icon, Typography } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { productsKeywordInduceTriggerState, productsKeywordState } from '@recoil/productsKeyword';
 
@@ -15,13 +16,6 @@ function ProductsKeywordAlert({ index, measure }: ProductsKeywordAlertProps) {
     productsKeywordInduceTriggerState
   );
   const setProductsKeywordState = useSetRecoilState(productsKeywordState);
-
-  const {
-    theme: {
-      palette: { common },
-      box: { shadow }
-    }
-  } = useTheme();
 
   const [isIntersecting, setIntersecting] = useState(false);
 
@@ -57,35 +51,36 @@ function ProductsKeywordAlert({ index, measure }: ProductsKeywordAlertProps) {
   }, [measure]);
 
   return (
-    <Alert
-      ref={alertRef}
-      brandColor="primary-bgLight"
-      round="8"
-      customStyle={{
-        height: 56,
-        padding: '0px 16px',
-        border: `1px solid ${common.grey['90']}`,
-        boxShadow: shadow.category
-      }}
-    >
-      <Flexbox alignment="center" justifyContent="space-between" customStyle={{ height: '100%' }}>
-        <Typography variant="body2" weight="bold">
-          {index % 2 === 0
-            ? '같은 필터 또 적용하기 귀찮다면?'
-            : '이 매물목록 다음에도 편하게 보려면?'}
-        </Typography>
-        <Chip
-          brandColor="primary"
-          startIcon={<Icon name="BookmarkFilled" size="small" />}
-          size="small"
-          customStyle={{ gap: 2, whiteSpace: 'nowrap' }}
-          onClick={() => setProductsKeywordState(true)}
-        >
-          이 검색 저장
-        </Chip>
-      </Flexbox>
-    </Alert>
+    <CustomAlert ref={alertRef} brandColor="primary-bgLight">
+      <Typography variant="body2" weight="bold">
+        {index % 2 === 0
+          ? '같은 필터 또 적용하기 귀찮다면?'
+          : '이 매물목록 다음에도 편하게 보려면?'}
+      </Typography>
+      <Button
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        brandColor="primary-light"
+        variant="outlined"
+        startIcon={<Icon name="BookmarkFilled" size="small" />}
+        size="medium"
+        customStyle={{ whiteSpace: 'nowrap' }}
+        onClick={() => setProductsKeywordState(true)}
+      >
+        필터 저장하기
+      </Button>
+    </CustomAlert>
   );
 }
+
+const CustomAlert = styled(Alert)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  padding: 12px;
+  border-radius: 8px;
+  min-height: 60px;
+`;
 
 export default ProductsKeywordAlert;

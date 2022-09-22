@@ -26,8 +26,6 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getProductDetailUrl } from '@utils/common';
-
 import { RecentItems } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 import { homeSelectedTabStateFamily } from '@recoil/home';
@@ -155,8 +153,7 @@ function HomeRecentSearchList() {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_RECENT
       });
-
-      router.push(getProductDetailUrl({ product }));
+      router.push(`/products/${product.id}`);
     },
     [router]
   );
@@ -200,61 +197,70 @@ function HomeRecentSearchList() {
   }, [prevScroll]);
 
   return !has(searchParams, 'keyword') || recentSearchList.length > 0 ? (
-    <Box component="section" customStyle={{ display: 'grid', gap: 20, padding: '20px 0' }}>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      gap={20}
+      customStyle={{ padding: '20px 0', width: '100%' }}
+    >
       <Typography variant="h3" weight="bold" customStyle={{ padding: '0 20px' }}>
         {accessUser?.userName || '회원'}님의 검색목록
       </Typography>
-      <TabList ref={recentSearchTabRef} onScroll={handleTabScroll}>
-        {!has(searchParams, 'keyword')
-          ? Array.from({ length: 10 }, (_, index) => (
-              <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
-                <Skeleton width="130px" height="19px" disableAspectRatio isRound />
-              </Tab>
-            ))
-          : recentSearchList.map(({ keyword }, index) => (
-              <Tab
-                key={`recent-search-tab-${keyword}`}
-                isActive={selectedIndex === index}
-                onClick={handleClickTab(keyword, index)}
-              >
-                <Keyword
-                  weight="medium"
-                  isSelected={selectedIndex === index}
-                  dangerouslySetInnerHTML={{ __html: keyword || '' }}
-                />
-              </Tab>
-            ))}
-      </TabList>
+      <ListWrapper ref={recentSearchTabRef} onScroll={handleTabScroll}>
+        <TabList>
+          {!has(searchParams, 'keyword')
+            ? Array.from({ length: 10 }, (_, index) => (
+                <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
+                  <Skeleton width="130px" height="19px" disableAspectRatio isRound />
+                </Tab>
+              ))
+            : recentSearchList.map(({ keyword }, index) => (
+                <Tab
+                  key={`recent-search-tab-${keyword}`}
+                  isActive={selectedIndex === index}
+                  onClick={handleClickTab(keyword, index)}
+                >
+                  <Keyword
+                    weight="medium"
+                    isSelected={selectedIndex === index}
+                    dangerouslySetInnerHTML={{ __html: keyword || '' }}
+                  />
+                </Tab>
+              ))}
+        </TabList>
+      </ListWrapper>
       {isLoading || content.length > 0 ? (
         <>
-          <ProductList ref={recentSearchListRef} onScroll={handleCardScroll}>
-            {isLoading
-              ? Array.from({ length: 8 }, (_, index) => (
-                  <ProductGridCardSkeleton
-                    key={`carmel-product-curation-card-skeleton-${index}`}
-                    isRound
-                    hasAreaWithDateInfo={false}
-                    customStyle={{ minWidth: 144, flex: 1 }}
-                  />
-                ))
-              : content.map((product, i) => (
-                  <ProductGridCard
-                    key={`product-keyword-product-card-${product.id}`}
-                    product={product}
-                    hideProductLabel
-                    hideAreaWithDateInfo
-                    hideLegitStatusLabel
-                    wishAtt={handleWishAtt(product, i)}
-                    productAtt={handleProductAtt(product, i)}
-                    name={attrProperty.productName.MAIN}
-                    source={attrProperty.productSource.MAIN_RECENT_LIST}
-                    compact
-                    isRound
-                    customStyle={{ minWidth: 144, maxWidth: 144, flex: 1 }}
-                    onClick={handleClickProductKeywordProduct(product, i)}
-                  />
-                ))}
-          </ProductList>
+          <ListWrapper ref={recentSearchListRef} onScroll={handleCardScroll}>
+            <CardList>
+              {isLoading
+                ? Array.from({ length: 8 }, (_, index) => (
+                    <ProductGridCardSkeleton
+                      key={`carmel-product-curation-card-skeleton-${index}`}
+                      isRound
+                      hasAreaWithDateInfo={false}
+                      customStyle={{ minWidth: 144, flex: 1 }}
+                    />
+                  ))
+                : content.map((product, i) => (
+                    <ProductGridCard
+                      key={`product-keyword-product-card-${product.id}`}
+                      product={product}
+                      hideProductLabel
+                      hideAreaWithDateInfo
+                      hideLegitStatusLabel
+                      wishAtt={handleWishAtt(product, i)}
+                      productAtt={handleProductAtt(product, i)}
+                      name={attrProperty.productName.MAIN}
+                      source={attrProperty.productSource.MAIN_RECENT_LIST}
+                      compact
+                      isRound
+                      customStyle={{ minWidth: 144, maxWidth: 144, flex: 1 }}
+                      onClick={handleClickProductKeywordProduct(product, i)}
+                    />
+                  ))}
+            </CardList>
+          </ListWrapper>
           <Box customStyle={{ padding: '0 20px' }}>
             <Button fullWidth brandColor="grey" disabled={isLoading} onClick={handleClickAll}>
               이 검색 전체보기
@@ -270,15 +276,20 @@ function HomeRecentSearchList() {
           </Typography>
         </Flexbox>
       )}
-    </Box>
+    </Flexbox>
   ) : null;
 }
+
+const ListWrapper = styled.div`
+  overflow-x: auto;
+  width: 100%;
+`;
 
 const TabList = styled.div`
   display: flex;
   column-gap: 8px;
   padding: 0 20px;
-  overflow-x: auto;
+  width: fit-content;
 `;
 
 const Tab = styled.div<{ isActive: boolean }>`
@@ -297,12 +308,11 @@ const Keyword = styled(Typography)<{ isSelected: boolean }>`
   text-overflow: ellipsis;
 `;
 
-const ProductList = styled.div`
+const CardList = styled.div`
   padding: 0 20px;
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
   column-gap: 12px;
-  overflow-x: auto;
+  width: fit-content;
 `;
 
 function DizzyFaceIcon() {

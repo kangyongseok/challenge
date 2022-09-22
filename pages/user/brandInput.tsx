@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -19,15 +20,18 @@ import { fetchUserInfo } from '@api/user';
 import { fetchBrandsSuggestWithCollabo } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import type { SelectedHotBrand } from '@typings/brands';
+import { showAppDownloadBannerState } from '@recoil/common';
 
 function BrandInput() {
   const {
     theme: { palette }
   } = useTheme();
   const router = useRouter();
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [checkList, setCheckList] = useState<SelectedHotBrand[]>([]);
@@ -170,7 +174,7 @@ function BrandInput() {
       }
     >
       <Flexbox direction="vertical" customStyle={{ height: '100%', position: 'relative' }}>
-        <FixedArea>
+        <FixedArea showAppDownloadBanner={showAppDownloadBanner}>
           <Box customStyle={{ marginBottom: 40 }}>
             <Typography
               variant="h3"
@@ -195,12 +199,12 @@ function BrandInput() {
           </Box>
           <Box customStyle={{ position: 'relative', zIndex: 15 }}>
             <SearchBar
+              ref={inputRef}
               fullWidth
-              startIcon={<Icon name="SearchOutlined" color={palette.primary.main} />}
               placeholder="브랜드명"
               onChange={handleChange}
               onFocus={handleFocus}
-              ref={inputRef}
+              startAdornment={<Icon name="SearchOutlined" color="black" size="medium" />}
             />
           </Box>
           {searchValue && !isPreviousData && (
@@ -258,9 +262,10 @@ function BrandInput() {
   );
 }
 
-const FixedArea = styled.div`
+const FixedArea = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
-  top: 56px;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
   left: 0;
   width: 100%;
   padding: 0 20px 16px;

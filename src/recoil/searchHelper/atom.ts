@@ -96,7 +96,7 @@ export const searchParamsState = atom<SearchParams>({
           newSearchHelperSearchParams.subParentIds = [subParentCategory.id];
 
         if (gender.id > 0)
-          newSearchHelperSearchParams.genderIds = [filterGenders.common.id, gender.id];
+          newSearchHelperSearchParams.genderIds = [gender.id, filterGenders.common.id];
 
         newSearchHelperSearchParams.categorySizeIds = sizes.map(({ id }) => id);
         newSearchHelperSearchParams.lineIds = lines.map(({ id }) => id);

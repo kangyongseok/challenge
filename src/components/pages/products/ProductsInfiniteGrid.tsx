@@ -36,9 +36,11 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import getEventPropertyViewType from '@utils/products/getEventPropertyViewType';
-import getEventPropertySortValue from '@utils/products/getEventPropertySortValue';
-import { convertSearchParamsByQuery } from '@utils/products';
+import {
+  convertSearchParamsByQuery,
+  getEventPropertySortValue,
+  getEventPropertyViewType
+} from '@utils/products';
 import { getUtmParams } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
@@ -206,7 +208,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         page: { totalPages, number }
       } = lastPage;
 
-      logEvent(attrKeys.products.LOAD_MOREAUTO, {
+      logEvent(attrKeys.products.loadMoreAuto, {
         ...searchParams,
         page: number + 1,
         totalPages,
@@ -422,12 +424,12 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
 
   const handleClickRequestKeyword = () => {
     if (isNotUsedBrand) {
-      logEvent(attrKeys.products.CLICK_KEYWORD_REQUEST, {
+      logEvent(attrKeys.products.clickKeywordRequest, {
         keyword
       });
     } else {
       const { notUsedBrands = [] } = lastPage || {};
-      logEvent(attrKeys.products.CLICK_BRAND_REQUEST, {
+      logEvent(attrKeys.products.clickBrandRequest, {
         keyword,
         brand: notUsedBrands
       });
@@ -544,7 +546,9 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         };
       }
 
-      logEvent(attrKeys.products.VIEW_PRODUCT_LIST, eventProperties);
+      logEvent(attrKeys.products.viewProductList, eventProperties);
+
+      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
   }, [
     router.pathname,
@@ -573,7 +577,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         type: 'ETC'
       };
 
-      logEvent(attrKeys.products.LOAD_PRODUCT_LIST, {
+      logEvent(attrKeys.products.loadProductList, {
         ...convertSearchParamsByQuery(router.query, {
           variant
         }),
@@ -620,7 +624,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   if (!progressDone)
     return (
       <Grid container rowGap={32}>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
             <ProductGridCardSkeleton />

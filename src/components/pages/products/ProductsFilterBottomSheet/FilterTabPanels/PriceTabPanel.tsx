@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import { logEvent } from '@library/amplitude';
 
 import { filterCodeIds } from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
@@ -102,8 +103,8 @@ function PriceTabPanel() {
   }, [setSelectedSearchOptionsState, codeId, minPrice, maxPrice, minPriceValue, maxPriceValue]);
 
   const handleClickApply = () => {
-    logEvent(attrKeys.products.CLICK_RECOMMPRICE, {
-      name: 'FILTER'
+    logEvent(attrKeys.products.clickRecommPrice, {
+      name: attrProperty.name.filter
     });
     setOpenTooltip(false);
     setSelectedSearchOptionsState(({ type }) => ({
@@ -143,7 +144,7 @@ function PriceTabPanel() {
 
   useEffect(() => {
     if (openTooltip && activeTabCodeId === filterCodeIds.price) {
-      logEvent(attrKeys.products.VIEW_RECOMMPRICE, {
+      logEvent(attrKeys.products.viewRecommPrice, {
         name: 'FILTER'
       });
     }

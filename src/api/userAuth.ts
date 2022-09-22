@@ -7,7 +7,7 @@ import type {
 
 import Axios from '@library/axios';
 
-import convertQueryStringByObject from '@utils/convertQueryStringByObject';
+import { convertQueryStringByObject } from '@utils/common';
 
 const BASE_PATH = '/userauth';
 

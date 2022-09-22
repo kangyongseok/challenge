@@ -12,7 +12,7 @@ import {
   filterColorImagesInfo,
   filterColors
 } from '@constants/productsFilter';
-import { PRODUCT_NAME } from '@constants/product';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { SelectedSearchOption } from '@typings/products';
@@ -54,9 +54,9 @@ function DetailOptionTabPanel() {
 
     if (codeId === filterCodeIds.season) {
       if (!season.checkedAll) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'SEASON',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.season,
           index: 0,
           count: season.count,
           value: '연식, 전체'
@@ -77,9 +77,9 @@ function DetailOptionTabPanel() {
       }));
     } else if (codeId === filterCodeIds.color) {
       if (!color.checkedAll) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'COLOR+MATERIAL',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.colorMaterial,
           index: 1,
           count: color.count,
           value: '색상, 전체'
@@ -100,9 +100,9 @@ function DetailOptionTabPanel() {
       }));
     } else if (codeId === filterCodeIds.material) {
       if (!material.checkedAll) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'EMPTY',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.empty,
           index: 2,
           count: material.count,
           value: '소재, 전체'
@@ -176,8 +176,8 @@ function DetailOptionTabPanel() {
       let newSelectedSearchOptions = selectedSearchOptions;
 
       if (selectedFilterOption) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
           title,
           index: selectedFilterOptionIndex,
           count: selectedFilterOption.count,

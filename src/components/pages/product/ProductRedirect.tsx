@@ -17,8 +17,7 @@ import { PRODUCT_SITE, PRODUCT_SITE_NAVER } from '@constants/product';
 import { ACCESS_USER, APP_BANNER } from '@constants/localStorage';
 
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber } from '@utils/common';
 
 import { User } from '@typings/user';
 import type { AppBanner } from '@typings/common';

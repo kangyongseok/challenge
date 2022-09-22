@@ -1,15 +1,17 @@
 import { Button } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+
 export const StyledAppDownloadBanner = styled.div`
   width: 100%;
-  height: 60px;
+  height: ${APP_DOWNLOAD_BANNER_HEIGHT}px;
   background: ${({ theme }) => theme.palette.common.grey['95']};
   padding: 0 20px;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header + 1};
+  z-index: ${({ theme: { zIndex } }) => zIndex.header + 2};
   cursor: pointer;
 `;
 

@@ -13,6 +13,7 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
@@ -87,8 +88,8 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
       return;
     }
 
-    logEvent(attrKeys.products.CLICK_MYFILTER, {
-      name: 'FILTER_MODAL',
+    logEvent(attrKeys.products.clickMyFilter, {
+      name: attrProperty.name.filterModal,
       att: !activeMyFilter ? 'ON' : 'OFF'
     });
 
@@ -190,9 +191,9 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
     );
 
     if (activeMyFilter && hasUnSelectedMyFilterOption) {
-      logEvent(attrKeys.products.CLICK_MYFILTER, {
-        name: 'FILTER_MODAL',
-        title: 'AUTO',
+      logEvent(attrKeys.products.clickMyFilter, {
+        name: attrProperty.name.filterModal,
+        title: attrProperty.title.auto,
         att: 'OFF'
       });
       setActiveMyFilterState(false);
@@ -210,7 +211,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
 
   useEffect(() => {
     if (accessUser && (tops.length || bottoms.length || shoes.length)) {
-      logEvent(attrKeys.products.VIEW_MYFILTER);
+      logEvent(attrKeys.products.viewMyFilter);
     }
   }, [accessUser, bottoms, shoes, tops]);
 

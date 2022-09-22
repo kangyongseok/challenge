@@ -4,8 +4,7 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Box, Flexbox, Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { handleClickAppDownload } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, handleClickAppDownload } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 

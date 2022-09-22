@@ -14,7 +14,7 @@ import { fetchParentCategories } from '@api/category';
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import {
   searchParamsState,
@@ -68,7 +68,7 @@ function SearchHelperBanner({
 
   const handleClickStart = () => {
     const genderName = gender === 'F' ? 'female' : 'male';
-    const genderId = filterGenders[genderName as keyof typeof filterGenders].id;
+    const genderId = filterGenders[genderName].id;
     const newSelectedSearchOptions: SelectedSearchOptions = {
       ...selectedSearchOptionsDefault,
       pathname: router.pathname

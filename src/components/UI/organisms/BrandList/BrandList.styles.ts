@@ -6,6 +6,7 @@ import { BrandListProps } from './index';
 export const StyledBrandList = styled.div<Pick<BrandListProps, 'variant'>>`
   padding: 0 20px;
   display: grid;
+  user-select: none;
 
   ${({ variant }) =>
     variant === 'contained'
@@ -26,6 +27,7 @@ export const BrandItem = styled.div<Pick<BrandListProps, 'variant'>>`
   position: relative;
   overflow: hidden;
   height: fit-content;
+  cursor: pointer;
 
   ${({ variant }) =>
     variant === 'contained'
@@ -39,7 +41,8 @@ export const BrandItem = styled.div<Pick<BrandListProps, 'variant'>>`
           display: 'flex',
           flexDirection: 'column',
           flex: 'none',
-          width: 64
+          width: 64,
+          margin: '0 auto'
         }};
 `;
 

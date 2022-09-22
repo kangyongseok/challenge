@@ -2,7 +2,12 @@ import styled from '@emotion/styled';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
-export const StyledHeader = styled.header<{
+export const StyledHeader = styled.section<{ minHeight: number }>`
+  position: relative;
+  min-height: ${({ minHeight }) => minHeight}px;
+`;
+
+export const Wrapper = styled.div<{
   isFixed: boolean | undefined;
   showAppDownloadBanner: boolean;
 }>`
@@ -21,13 +26,6 @@ export const StyledHeader = styled.header<{
           position: 'initial',
           padding: 0
         }};
-`;
-
-export const Wrapper = styled.div<{ customHeight?: number }>`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  min-height: ${({ customHeight }) => customHeight || 56}px;
 `;
 
 export const Title = styled.div<{ show: boolean; customHeight?: number }>`

@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { fetchSearchOptions } from '@api/product';
 
@@ -16,7 +17,7 @@ function ProductsLandingInfo() {
 
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
   const { searchParams: searchOptionsParams } = useRecoilValue(
@@ -35,8 +36,8 @@ function ProductsLandingInfo() {
   );
 
   return (
-    <>
-      <Box customStyle={{ padding: '16px 20px' }}>
+    <Box customStyle={{ minHeight: 78, position: 'relative' }}>
+      <Wrapper>
         <Typography weight="medium" customStyle={{ color: common.grey['40'] }}>
           대한민국 모든 중고매물 한번에 비교중!
         </Typography>
@@ -48,12 +49,18 @@ function ProductsLandingInfo() {
             ? `전체 ${productTotal.toLocaleString()}개`
             : '매물 검색 중...'}
         </Typography>
-      </Box>
-      <Box
-        customStyle={{ width: '100%', height: 2, marginBottom: 8, backgroundColor: primary.main }}
-      />
-    </>
+      </Wrapper>
+    </Box>
   );
 }
+
+const Wrapper = styled.div`
+  padding: 16px 20px;
+  position: fixed;
+  background-color: ${({ theme }) => theme.palette.common.white};
+  z-index: ${({ theme }) => theme.zIndex.header};
+  width: 100%;
+  border-bottom: 2px solid ${({ theme }) => theme.palette.primary.main};
+`;
 
 export default ProductsLandingInfo;

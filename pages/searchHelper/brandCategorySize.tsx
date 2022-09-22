@@ -28,8 +28,7 @@ import queryKeys from '@constants/queryKeys';
 import { PARENT_CATEGORY_NEED_SIZE } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,

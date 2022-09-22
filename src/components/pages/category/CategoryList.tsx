@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image } from '@components/UI/atoms';
+import { Image, Skeleton } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -82,9 +82,10 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
         title: attrProperty.productTitle.PARENT,
         type: attrProperty.productType.GUIDED
       });
-      router.push(
-        `/products/categories/${selectedParentName.replace(/\(P\)/g, '')}?genders=${gender}`
-      );
+      router.push({
+        pathname: `/products/categories/${selectedParentName.replace(/\(P\)/g, '')}`,
+        query: { genders: [gender] }
+      });
     },
     [gender, router, setCategoryState]
   );
@@ -140,96 +141,116 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
       <Typography variant="h3" weight="bold" customStyle={{ padding: '0 20px' }}>
         카테고리
       </Typography>
-      {groupedCategories.map((groupedCategory, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Box key={`grouped-category-${index}`}>
-          <ParentCategoryList>
-            {groupedCategory.map(
-              ({
-                parentCategory: {
-                  id: parentCategoryId,
-                  name: parentCategoryName,
-                  nameEng: parentCategoryNameEng
-                }
-              }) => (
+      {groupedCategories.length === 0
+        ? Array.from({ length: 3 }, (_, index) => (
+            <ParentCategoryList key={`category-list-skeleton-${index}`}>
+              {Array.from({ length: 4 }, (__, innerIndex) => (
                 <Flexbox
-                  key={`parent-category-${parentCategoryId}`}
+                  key={`category-skeleton-${innerIndex}`}
                   direction="vertical"
                   gap={4}
-                  customStyle={{ margin: 'auto' }}
-                  onClick={handleClickParentCategory(parentCategoryId)}
+                  customStyle={{ margin: '0 auto' }}
                 >
-                  <ImageBox isSelected={selectedParentCategory === parentCategoryId}>
-                    <Image
-                      src={`https://${
-                        process.env.IMAGE_DOMAIN
-                      }/assets/images/category/ico_cate_${parentCategoryNameEng}_${gender.charAt(
-                        0
-                      )}.jpg`}
-                      width={48}
-                      height={48}
-                      disableAspectRatio
-                      customStyle={{ mixBlendMode: 'multiply' }}
-                    />
-                  </ImageBox>
-                  <Typography
-                    weight={selectedParentCategory === parentCategoryId ? 'bold' : 'regular'}
-                  >
-                    {parentCategoryName.replace(/\(P\)/g, '')}
-                  </Typography>
+                  <Skeleton width="64px" height="64px" isRound disableAspectRatio />
+                  <Skeleton width="64px" height="20px" isRound disableAspectRatio />
                 </Flexbox>
-              )
-            )}
-          </ParentCategoryList>
-          {groupedCategory.map(
-            ({
-              parentCategory: { id: parentCategoryId, name: parentCategoryName },
-              subParentCategories
-            }) => (
-              <SubParentCategoryList
-                key={`sub-parent-category-${parentCategoryId}`}
-                isSelected={selectedParentCategory === parentCategoryId}
-              >
-                <SubParentCategory
-                  variant="h4"
-                  weight={parentId === parentCategoryId && subParentId === 0 ? 'bold' : 'regular'}
-                  brandColor={
-                    parentId === parentCategoryId && subParentId === 0 ? 'primary' : 'black'
-                  }
-                  isSelected={selectedParentCategory === parentCategoryId}
-                  onClick={handleClickSubParentCategoryAll(parentCategoryId, parentCategoryName)}
-                >
-                  {parentCategoryName.replace(/\(P\)/g, '')} 전체보기
-                </SubParentCategory>
-                {subParentCategories
-                  .filter(
-                    ({ name: subParentCategoryName }) =>
-                      !(
-                        gender === 'male' ? ['스커트', '힐/펌프스', '버킷백', '그릇'] : ['그릇']
-                      ).includes(subParentCategoryName)
-                  )
-                  .map(({ id: subParentCategoryId, name: subParentCategoryName }) => (
-                    <SubParentCategory
-                      key={`sub-parent-category-${subParentCategoryId}`}
-                      variant="h4"
-                      weight={subParentId === subParentCategoryId ? 'bold' : 'regular'}
-                      brandColor={subParentId === subParentCategoryId ? 'primary' : 'black'}
-                      isSelected={selectedParentCategory === parentCategoryId}
-                      onClick={handleClickSubParentCategory({
-                        parentCategoryName,
-                        parentCategoryId,
-                        subParentCategoryId,
-                        subParentCategoryName
-                      })}
+              ))}
+            </ParentCategoryList>
+          ))
+        : groupedCategories.map((groupedCategory, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Box key={`grouped-category-${index}`}>
+              <ParentCategoryList>
+                {groupedCategory.map(
+                  ({
+                    parentCategory: {
+                      id: parentCategoryId,
+                      name: parentCategoryName,
+                      nameEng: parentCategoryNameEng
+                    }
+                  }) => (
+                    <Flexbox
+                      key={`parent-category-${parentCategoryId}`}
+                      direction="vertical"
+                      gap={4}
+                      customStyle={{ margin: 'auto' }}
+                      onClick={handleClickParentCategory(parentCategoryId)}
                     >
-                      {subParentCategoryName}
+                      <ImageBox isSelected={selectedParentCategory === parentCategoryId}>
+                        <Image
+                          src={`https://${
+                            process.env.IMAGE_DOMAIN
+                          }/assets/images/category/ico_cate_${parentCategoryNameEng}_${gender.charAt(
+                            0
+                          )}.png`}
+                          width={48}
+                          height={48}
+                          disableAspectRatio
+                        />
+                      </ImageBox>
+                      <Typography
+                        weight={selectedParentCategory === parentCategoryId ? 'bold' : 'regular'}
+                      >
+                        {parentCategoryName.replace(/\(P\)/g, '')}
+                      </Typography>
+                    </Flexbox>
+                  )
+                )}
+              </ParentCategoryList>
+              {groupedCategory.map(
+                ({
+                  parentCategory: { id: parentCategoryId, name: parentCategoryName },
+                  subParentCategories
+                }) => (
+                  <SubParentCategoryList
+                    key={`sub-parent-category-${parentCategoryId}`}
+                    isSelected={selectedParentCategory === parentCategoryId}
+                  >
+                    <SubParentCategory
+                      variant="h4"
+                      weight={
+                        parentId === parentCategoryId && subParentId === 0 ? 'bold' : 'regular'
+                      }
+                      brandColor={
+                        parentId === parentCategoryId && subParentId === 0 ? 'primary' : 'black'
+                      }
+                      isSelected={selectedParentCategory === parentCategoryId}
+                      onClick={handleClickSubParentCategoryAll(
+                        parentCategoryId,
+                        parentCategoryName
+                      )}
+                    >
+                      {parentCategoryName.replace(/\(P\)/g, '')} 전체보기
                     </SubParentCategory>
-                  ))}
-              </SubParentCategoryList>
-            )
-          )}
-        </Box>
-      ))}
+                    {subParentCategories
+                      .filter(
+                        ({ name: subParentCategoryName }) =>
+                          !(
+                            gender === 'male' ? ['스커트', '힐/펌프스', '버킷백', '그릇'] : ['그릇']
+                          ).includes(subParentCategoryName)
+                      )
+                      .map(({ id: subParentCategoryId, name: subParentCategoryName }) => (
+                        <SubParentCategory
+                          key={`sub-parent-category-${subParentCategoryId}`}
+                          variant="h4"
+                          weight={subParentId === subParentCategoryId ? 'bold' : 'regular'}
+                          brandColor={subParentId === subParentCategoryId ? 'primary' : 'black'}
+                          isSelected={selectedParentCategory === parentCategoryId}
+                          onClick={handleClickSubParentCategory({
+                            parentCategoryName,
+                            parentCategoryId,
+                            subParentCategoryId,
+                            subParentCategoryName
+                          })}
+                        >
+                          {subParentCategoryName}
+                        </SubParentCategory>
+                      ))}
+                  </SubParentCategoryList>
+                )
+              )}
+            </Box>
+          ))}
     </Flexbox>
   );
 }

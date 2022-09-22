@@ -8,8 +8,8 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { PRODUCT_NAME } from '@constants/product';
 import { doubleCon } from '@constants/consonant';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { parseWordToConsonant } from '@utils/brands';
@@ -66,9 +66,9 @@ function BrandTabPanel() {
       const selectedBrand = brands[selectedBrandIndex];
 
       if (selectedBrand) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'BRAND',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.brand,
           index: selectedBrandIndex,
           count: selectedBrand.count,
           value: selectedBrand.name
@@ -90,8 +90,9 @@ function BrandTabPanel() {
     }));
 
   const handleChangeFilterSorter = (value: string) => {
-    logEvent(attrKeys.products.SELECT_SORT, {
-      title: 'BRAND',
+    logEvent(attrKeys.products.selectSort, {
+      name: attrProperty.name.filter,
+      title: attrProperty.title.brand,
       order: value === 'default' ? 'POPULAR' : 'NAME'
     });
     setProductsFilterActionStateFamily(({ type }) => ({
@@ -226,15 +227,6 @@ const BrandSearchBar = styled.div<{ hasFilterValue: boolean }>`
   & > svg,
   input {
     margin-bottom: 8px;
-    &::placeholder {
-      ${({
-        theme: {
-          palette: { common }
-        }
-      }): CSSObject => ({
-        color: common.grey['60']
-      })};
-    }
   }
 `;
 

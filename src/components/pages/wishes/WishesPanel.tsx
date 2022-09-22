@@ -20,7 +20,7 @@ import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import convertStringToArray from '@utils/convertStringToArray';
+import { convertStringToArray } from '@utils/common';
 
 import { deviceIdState, showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

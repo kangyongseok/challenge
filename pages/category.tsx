@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Flexbox, useTheme } from 'mrcamel-ui';
+import { Flexbox } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { CategoryBrandList, CategoryGenderTabs, CategoryList } from '@components/pages/category';
 
@@ -21,9 +22,6 @@ import attrKeys from '@constants/attrKeys';
 import categoryState from '@recoil/category';
 
 function Category() {
-  const {
-    theme: { palette }
-  } = useTheme();
   const [{ initialized, parentId }, setCategoryState] = useRecoilState(categoryState);
   const [selectedParentCategory, setSelectedParentCategory] = useState(0);
   const { data: { info: { value: { gender: userInfoGender = '' } = {} } = {} } = {} } = useQuery(
@@ -60,7 +58,7 @@ function Category() {
           selectedParentCategory={selectedParentCategory}
           setSelectedParentCategory={setSelectedParentCategory}
         />
-        <Box customStyle={{ height: 8, backgroundColor: palette.common.grey['95'] }} />
+        <Gap height={8} />
         <CategoryBrandList />
       </Flexbox>
     </GeneralTemplate>

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
@@ -21,6 +21,7 @@ function CategoryBrandList() {
   } = useTheme();
   const router = useRouter();
   const { gender } = useRecoilValue(categoryState);
+  const resetCategory = useResetRecoilState(categoryState);
 
   const handleClickBrand = ({
     id: _id,
@@ -40,6 +41,7 @@ function CategoryBrandList() {
       title: attrProperty.productTitle.BRAND,
       type: attrProperty.productType.GUIDED
     });
+    resetCategory();
     callback();
   };
 
@@ -47,8 +49,9 @@ function CategoryBrandList() {
     logEvent(attrKeys.category.CLICK_BRAND_LIST, {
       name: attrProperty.productName.CATEGORY
     });
+    resetCategory();
     router.push('/brand');
-  }, [router]);
+  }, [resetCategory, router]);
 
   return (
     <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: '20px 0' }}>

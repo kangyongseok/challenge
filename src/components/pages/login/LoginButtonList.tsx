@@ -15,8 +15,8 @@ import { logEvent } from '@library/amplitude';
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
-import type { ConvertUserSnsLoginInfoProps } from '@utils/login/convertLoginInfo';
-import checkAgent from '@utils/checkAgent';
+import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
+import { checkAgent } from '@utils/common';
 
 import { LOGIN_TYPE } from 'pages/login';
 

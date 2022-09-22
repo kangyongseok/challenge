@@ -60,7 +60,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
   );
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const genderName = gender === 'F' ? 'female' : 'male';
-  const genderId = filterGenders[genderName as keyof typeof filterGenders].id;
+  const genderId = filterGenders[genderName].id;
 
   const triggered = useScrollTrigger({
     ref: searchBarRef,
@@ -147,17 +147,14 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
       </Box>
       <SearchBar
         ref={searchBarRef}
-        fullWidth
-        startIcon={<Icon name="SearchOutlined" color="black" size="medium" />}
-        placeholder="오늘은 어떤 명품을 득템해볼까요?"
-        isFixed={triggered}
         readOnly
-        brandColor="black"
-        isBorder={false}
-        customStyle={{ padding: triggered ? '12px 20px' : '0 20px' }}
+        fullWidth
+        isFixed={triggered}
+        variant={triggered ? 'outlined' : 'standard'}
+        placeholder="오늘은 어떤 명품을 득템해볼까요?"
         onClick={handleClickSearchBar}
+        startAdornment={<Icon name="SearchOutlined" color="black" size="medium" />}
       />
-      {triggered && <Box customStyle={{ height: 48, visibility: 'hidden' }} />}
       <Box component="section" customStyle={{ padding: '0 20px 40px' }}>
         {isLoading ? (
           <Flexbox alignment="center" gap={8}>

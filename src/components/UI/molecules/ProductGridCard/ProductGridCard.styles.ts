@@ -1,6 +1,15 @@
 import { Flexbox, Label, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+export const SkeletonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+`;
+
 export const WishButton = styled.button`
   position: absolute;
   top: 0;

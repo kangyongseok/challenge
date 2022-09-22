@@ -86,7 +86,7 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
         </Typography>
         <Typography
           variant="body2"
-          customStyle={{ color: palette.common.grey['60'] }}
+          customStyle={{ color: palette.common.grey['60'], cursor: 'pointer' }}
           onClick={handleRecentListClear}
         >
           전체삭제
@@ -105,8 +105,9 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
                 index: i + 1
               })}
             >
-              <Typography variant="body1">
-                <span dangerouslySetInnerHTML={{ __html: item.keyword as string }} />
+              <Typography variant="body1" customStyle={{ cursor: 'pointer' }}>
+                {/* eslint-disable-next-line react/no-danger */}
+                <span dangerouslySetInnerHTML={{ __html: item.keyword }} />
               </Typography>
               {(item.count as number) > 0 && (
                 <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>

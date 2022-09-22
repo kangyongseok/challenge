@@ -38,7 +38,7 @@ function HomeBrandsCategories({ isViewSearchHelperOnboarding }: HomeBrandsCatego
   const { data: accessUser } = useQueryAccessUser();
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
   const genderName = gender === 'F' ? 'female' : 'male';
-  const genderId = filterGenders[genderName as keyof typeof filterGenders].id;
+  const genderId = filterGenders[genderName].id;
 
   const handleClickBrand = ({
     id,

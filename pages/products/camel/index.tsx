@@ -1,4 +1,5 @@
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
@@ -10,7 +11,6 @@ import {
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
   ProductsLegitFilterBottomSheet,
-  ProductsMapFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
@@ -33,19 +33,15 @@ function CamelProducts() {
         disablePadding
       >
         <ProductsCategoryTags variant="camel" />
-        <ProductsFilter
-          variant="camel"
-          customStyle={{
-            top: 101
-          }}
-        />
+        <ProductsFilter variant="camel" />
+        <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="camel" name={attrProperty.productName.MAIN} />
+        <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="camel" />
-      <ProductsMapFilterBottomSheet />
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordBottomSheet variant="camel" />
       <ProductsKeywordDialog />

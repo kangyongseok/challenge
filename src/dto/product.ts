@@ -1,5 +1,14 @@
-import type { CommonCode, JobRuleBaseDetail, Page, Paged, SizeCode, Sort } from './common';
-import { Contents } from './common';
+import type {
+  CategoryCode,
+  CommonCode,
+  Contents,
+  JobRuleBaseDetail,
+  Page,
+  Paged,
+  PriceCode,
+  SizeCode,
+  Sort
+} from './common';
 import type { Category, ParentCategory, SubParentCategory } from './category';
 import type { Brand } from './brand';
 
@@ -366,16 +375,73 @@ export type ProductResult = {
 
 export type PageProduct = Paged<Product>;
 
+export type ProductDynamicOptionCodeType = 0 | 1 | 2 | 3 | 4 | 5;
+
+export type ProductDynamicOptionCodeDetail = CommonCode | SizeCode | PriceCode | CategoryCode;
+
+export type ProductDynamicLineOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 0>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, CommonCode>[];
+};
+
+export type ProductDynamicSizeOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 1>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, SizeCode>[];
+};
+
+export type ProductDynamicPriceOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 2>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, PriceCode>[];
+};
+
+export type ProductDynamicColorOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 3>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, CommonCode>[];
+};
+
+export type ProductDynamicBrandOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 4>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, CommonCode>[];
+};
+
+export type ProductDynamicCategoryOption = {
+  name: string;
+  codeType: Extract<ProductDynamicOptionCodeType, 5>;
+  codeDetails: Extract<ProductDynamicOptionCodeDetail, CommonCode>[];
+};
+
+export type ProductDynamicOption =
+  | ProductDynamicLineOption
+  | ProductDynamicSizeOption
+  | ProductDynamicPriceOption
+  | ProductDynamicColorOption
+  | ProductDynamicBrandOption
+  | ProductDynamicCategoryOption;
+
+export type RelatedKeyword = {
+  brandId: number;
+  categoryId: number;
+  lineId: number;
+  keyword: string;
+};
+
 export interface Search {
   aiProductTotal: number;
   notUsedBrands: string[];
   page: PageProduct;
   productCounts: number[];
   productTotal: number;
+  relatedKeywords: RelatedKeyword[];
   relatedCategoryIds: number[];
   relatedQuoteTitles?: string[];
   baseSearchOptions?: ProductSearchOption;
   searchOptions: ProductSearchOption;
+  dynamicOptions: ProductDynamicOption[];
   sellerTotal: number;
   userWishProductIds: number[];
   userProductKeyword?: ProductKeyword;

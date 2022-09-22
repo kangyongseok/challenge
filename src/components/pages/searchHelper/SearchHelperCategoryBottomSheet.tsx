@@ -258,7 +258,7 @@ function SearchHelperCategoryBottomSheet({
           )}
           <Box customStyle={{ flex: '1 1 0%', overflowY: 'auto' }}>
             {isLoading ? (
-              Array.from(new Array(10), (_, index) => (
+              Array.from({ length: 10 }, (_, index) => (
                 <SearchHelperBottomSheetSkeleton key={`search-helper-category-skeleton-${index}`} />
               ))
             ) : (

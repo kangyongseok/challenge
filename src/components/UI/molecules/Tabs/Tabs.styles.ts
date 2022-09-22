@@ -27,8 +27,8 @@ export const Tab = styled.button<{ selected: boolean; count: number }>`
   line-height: 21px;
   letter-spacing: -0.2px;
   text-align: center;
-  min-height: 41px;
-  padding: 10px 14px;
+  min-height: 45px;
+  padding: 12px 10px;
   overflow: hidden;
   white-space: normal;
   width: ${({ count }) => `calc(100% / ${count})`};

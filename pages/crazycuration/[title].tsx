@@ -33,8 +33,7 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { executedShareURl } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, executedShareURl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useContentsProducts from '@hooks/useContentsProducts';

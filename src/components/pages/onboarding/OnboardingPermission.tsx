@@ -20,7 +20,7 @@ import {
   SIGN_UP_STEP
 } from '@constants/localStorage';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';

@@ -9,11 +9,7 @@ import type { AppProps } from 'next/app';
 import { ThemeProvider, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
-import {
-  ErrorBoundary,
-  LegitResultSurveyTypeform,
-  ProductsKeywordAutoSavedToast
-} from '@components/UI/organisms';
+import { ErrorBoundary, LegitResultSurveyTypeform } from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
@@ -134,7 +130,6 @@ function App({ Component, pageProps }: AppProps) {
                   </PortalProvider>
                 </ABTestProvider>
                 <SearchHelperPopup type="break" />
-                <ProductsKeywordAutoSavedToast />
                 <ToastProvider />
                 <DialogProdiver />
                 <LegitResultSurveyTypeform />

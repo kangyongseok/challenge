@@ -115,7 +115,7 @@ function ProductRelatedProductList({
       </Typography>
       <Grid container rowGap={32} columnGap={7} customStyle={{ marginTop: 16 }}>
         {isLoading
-          ? Array.from(new Array(4), (_, index) => (
+          ? Array.from({ length: 4 }, (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>
                 <ProductGridCardSkeleton isRound />
               </Grid>

@@ -17,7 +17,7 @@ import {
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import LocalStorage from './localStorage';
 

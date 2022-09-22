@@ -28,12 +28,9 @@ function UserAddressDisplay({
     <Box key="SearchBar">
       <SearchBar
         fullWidth
-        startIcon={<Icon name="SearchOutlined" color="primary" />}
         placeholder="예) 카멜구 혹은 카멜동12-3"
-        customStyle={{
-          width: '100%'
-        }}
         onFocus={onFocusSearchBar}
+        startAdornment={<Icon name="SearchOutlined" color="black" size="medium" />}
       />
       <Flexbox
         justifyContent="center"

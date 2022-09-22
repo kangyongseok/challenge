@@ -45,8 +45,7 @@ import attrKeys from '@constants/attrKeys';
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
 import { productLegitToggleBottomSheetState } from '@recoil/productLegit';
@@ -213,7 +212,7 @@ function ProductCTAButton({
   const handleClickWish = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    logEvent(isWish ? attrKeys.products.CLICK_WISH_CANCEL : attrKeys.products.CLICK_WISH, {
+    logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, {
       name: attrProperty.productName.PRODUCT_DETAIL,
       title: attrProperty.productTitle.PRODUCT_DETAIL,
       id: product?.id,
@@ -304,7 +303,7 @@ function ProductCTAButton({
 
     if (isDup && hasTarget) {
       productDetailAtt({
-        key: attrKeys.products.CLICK_PRODUCT_DETAIL,
+        key: attrKeys.products.clickProductDetail,
         product: product as Product,
         rest: {
           att: isPriceDown ? 'CPPRICELOW' : 'CPSAME'

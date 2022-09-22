@@ -12,8 +12,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { handleClickAppDownload } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, handleClickAppDownload } from '@utils/common';
 
 function MyPortfolioLanding07({
   isAnimation,

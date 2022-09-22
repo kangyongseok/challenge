@@ -40,26 +40,6 @@ function HomeRecommendationsWishes() {
     refetchOnMount: true
   });
 
-  const getPopularText = useCallback(
-    ({
-      viewCount,
-      wishCount,
-      purchaseCount
-    }: {
-      viewCount: number;
-      wishCount: number;
-      purchaseCount: number;
-    }) => {
-      if (purchaseCount >= 6)
-        return `<span>${commaNumber(purchaseCount)}명</span>이나 사고 싶어 해요!`;
-
-      if (wishCount >= 5) return `<span>${commaNumber(wishCount)}명</span>이나 관심 있어 해요!`;
-
-      return `<span>${commaNumber(viewCount)}명</span>이나 봤어요!`;
-    },
-    []
-  );
-
   const handleClick = (id: number, isPriceLow: boolean) => () => {
     logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.productName.MAIN,
@@ -136,13 +116,9 @@ function HomeRecommendationsWishes() {
                             저렴해졌어요!
                           </PriceDownText>
                         ) : (
-                          <PopularText
-                            variant="h4"
-                            weight="bold"
-                            dangerouslySetInnerHTML={{
-                              __html: getPopularText({ viewCount, wishCount, purchaseCount })
-                            }}
-                          />
+                          <PopularText variant="h4" weight="bold">
+                            <span>{commaNumber(viewCount)}명</span>이나 봤어요!
+                          </PopularText>
                         )}
                       </Flexbox>
                       {priceBefore ? (

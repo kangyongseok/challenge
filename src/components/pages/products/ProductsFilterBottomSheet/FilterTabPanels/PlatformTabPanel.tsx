@@ -6,8 +6,8 @@ import { Box, Flexbox } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { PRODUCT_NAME } from '@constants/product';
 import { doubleCon } from '@constants/consonant';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { parseWordToConsonant } from '@utils/brands';
@@ -64,9 +64,9 @@ function PlatformTabPanel() {
       const selectedPlatform = siteUrls[selectedPlatformIndex];
 
       if (selectedPlatform) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'SITE',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.site,
           index: selectedPlatformIndex,
           count: selectedPlatform.count,
           value: selectedPlatform.name
@@ -81,9 +81,9 @@ function PlatformTabPanel() {
   };
 
   const handleChange = (value: string) => {
-    logEvent(attrKeys.products.SELECT_SORT, {
-      name: 'FILTER',
-      title: 'SITE',
+    logEvent(attrKeys.products.selectSort, {
+      name: attrProperty.name.filter,
+      title: attrProperty.title.site,
       order: value === 'default' ? 'MANY' : 'NAME'
     });
     setProductsFilterActionStateFamily(({ type }) => ({

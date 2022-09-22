@@ -106,3 +106,14 @@ export type Contents = {
   contentsDetails: ContentsDetail[];
   targetContents: Contents | null;
 };
+
+export interface PriceCode extends CommonCode {
+  minPrice: number;
+  maxPrice: number;
+}
+
+export interface CategoryCode extends CommonCode {
+  name: string;
+  parentId: number;
+  subParentId: number;
+}

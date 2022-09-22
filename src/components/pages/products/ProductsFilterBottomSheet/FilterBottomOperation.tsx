@@ -3,16 +3,21 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Chip, CtaButton, Icon } from 'mrcamel-ui';
+import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { filterCodeIds, filterGenders } from '@constants/productsFilter';
+import {
+  filterCodeIds,
+  filterGenders,
+  productFilterEventPropertyTitle
+} from '@constants/productsFilter';
 import { PRODUCT_NAME } from '@constants/product';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import getEventPropertyTitle from '@utils/products/getEventPropertyTitle';
-import convertSearchParams from '@utils/products/convertSearchParams';
+import { convertSearchParams } from '@utils/products';
 
 import {
   activeTabCodeIdState,
@@ -44,6 +49,12 @@ function FilterBottomOperation() {
   );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
 
+  const handleScroll = debounce(() => {
+    logEvent(attrKeys.products.swipeXFilterHistory, {
+      name: attrProperty.name.filterModal
+    });
+  }, 300);
+
   const handleClick = () => {
     setProductsFilterState(({ type }) => ({
       type,
@@ -71,7 +82,7 @@ function FilterBottomOperation() {
       delete eventProperties.keyword;
     }
 
-    logEvent(attrKeys.products.CLICK_APPLYFILTER, eventProperties);
+    logEvent(attrKeys.products.clickApplyFilter, eventProperties);
   };
 
   const handleClickRemove = (e: MouseEvent<HTMLButtonElement>) => {
@@ -79,6 +90,7 @@ function FilterBottomOperation() {
     const dataCodeId = Number(e.currentTarget.getAttribute('data-code-id') || 0);
     const dataParentId = Number(e.currentTarget.getAttribute('data-parent-id') || 0);
     const dataGenderId = Number(e.currentTarget.getAttribute('data-gender-id') || 0);
+    const dataGender = String(e.currentTarget.getAttribute('data-gender') || '');
     const dataParentCategoryId = Number(
       e.currentTarget.getAttribute('data-parent-category-id') || 0
     );
@@ -90,9 +102,9 @@ function FilterBottomOperation() {
     const selectedSearchOptionHistory = selectedSearchOptionsHistory[dataHistoryIndex];
 
     if (selectedSearchOptionHistory) {
-      logEvent(attrKeys.products.CLICK_FILTER_DELETE, {
-        name: PRODUCT_NAME.PRODUCT_LIST,
-        title: getEventPropertyTitle(dataCodeId),
+      logEvent(attrKeys.products.clickFilterDelete, {
+        name: attrProperty.name.productList,
+        title: productFilterEventPropertyTitle[dataCodeId],
         att: 'FILTER',
         index: dataHistoryIndex,
         count: selectedSearchOptionHistory.count,
@@ -181,7 +193,8 @@ function FilterBottomOperation() {
           genderIds = [],
           parentId = 0,
           parentCategoryId = 0,
-          categorySizeId = 0
+          categorySizeId = 0,
+          gender = ''
         }) => {
           const [genderId] = genderIds.filter(
             (selectedGenderId) => selectedGenderId !== filterGenders.common.id
@@ -192,6 +205,7 @@ function FilterBottomOperation() {
           if (parentCategoryId !== dataParentCategoryId) return true;
           if (categorySizeId !== dataCategorySizeId) return true;
           if ((genderId || 0) !== dataGenderId) return true;
+          if (gender !== dataGender) return true;
 
           return id !== dataId;
         }
@@ -241,8 +255,8 @@ function FilterBottomOperation() {
       })
     }));
 
-    logEvent(attrKeys.products.CLICK_RESETALL, {
-      name: PRODUCT_NAME.PRODUCT_LIST,
+    logEvent(attrKeys.products.clickResetAll, {
+      name: attrProperty.name.productList,
       att: 'LIST'
     });
   };
@@ -250,7 +264,7 @@ function FilterBottomOperation() {
   return (
     <StyledFilterBottomOperation>
       {selectedSearchOptionsHistory.length > 0 && (
-        <SelectedSearchOptionList>
+        <SelectedSearchOptionList onScroll={handleScroll}>
           {selectedSearchOptionsHistory.map(
             ({
               id,
@@ -259,6 +273,7 @@ function FilterBottomOperation() {
               parentCategoryId,
               categorySizeId,
               genderId,
+              gender,
               displayName,
               grouping,
               groupingDepth,
@@ -277,6 +292,7 @@ function FilterBottomOperation() {
                 data-parent-category-id={parentCategoryId}
                 data-category-size-id={categorySizeId}
                 data-gender-id={genderId}
+                data-gender={gender || ''}
                 data-grouping={grouping || ''}
                 data-grouping-depth={groupingDepth}
                 onClick={handleClickRemove}

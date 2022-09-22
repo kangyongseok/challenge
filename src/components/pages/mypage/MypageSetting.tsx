@@ -13,7 +13,7 @@ import { postAlarm, postNightAlarm } from '@api/user';
 
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 interface SettingProps {
   data?: Alarm;

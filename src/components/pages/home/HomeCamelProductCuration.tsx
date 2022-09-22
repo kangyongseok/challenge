@@ -3,7 +3,7 @@ import { UIEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import styled from '@emotion/styled';
 
@@ -133,45 +133,50 @@ function HomeCamelProductCuration() {
         </Flexbox>
         <Typography variant="body2">카멜이 따로 인증한 판매자들이에요. 믿고 거래하세요!</Typography>
       </Flexbox>
-      <ProductCuration ref={productCurationRef} onScroll={throttleScrollProductCuration.current}>
-        {isLoading || isFetching || !camelProducts
-          ? Array.from(new Array(8), (_, index) => (
-              <ProductGridCardSkeleton
-                key={`carmel-product-curation-card-skeleton-${index}`}
-                isRound
-                hasAreaWithDateInfo={false}
-                customStyle={{ minWidth: 144, flex: 1 }}
-              />
-            ))
-          : camelProducts?.content
-              .slice(0, 8)
-              .map((product, i) => (
-                <ProductGridCard
-                  key={`carmel-product-curation-card-${product.id}`}
-                  product={product}
-                  hideProductLabel
-                  hideAreaWithDateInfo
-                  hideLegitStatusLabel
-                  wishAtt={handleWishAtt(product, i)}
-                  productAtt={handleProductAtt(product, i)}
-                  name={attrProperty.productName.MAIN}
-                  source={attrProperty.productSource.MAIN_CAMEL}
-                  compact
+      <Box
+        ref={productCurationRef}
+        onScroll={throttleScrollProductCuration.current}
+        customStyle={{ overflowX: 'auto', width: '100%' }}
+      >
+        <ProductCurationCardList>
+          {isLoading || isFetching || !camelProducts
+            ? Array.from({ length: 8 }, (_, index) => (
+                <ProductGridCardSkeleton
+                  key={`carmel-product-curation-card-skeleton-${index}`}
                   isRound
+                  hasAreaWithDateInfo={false}
                   customStyle={{ minWidth: 144, flex: 1 }}
                 />
-              ))}
-      </ProductCuration>
+              ))
+            : camelProducts?.content
+                .slice(0, 8)
+                .map((product, i) => (
+                  <ProductGridCard
+                    key={`carmel-product-curation-card-${product.id}`}
+                    product={product}
+                    hideProductLabel
+                    hideAreaWithDateInfo
+                    hideLegitStatusLabel
+                    wishAtt={handleWishAtt(product, i)}
+                    productAtt={handleProductAtt(product, i)}
+                    name={attrProperty.productName.MAIN}
+                    source={attrProperty.productSource.MAIN_CAMEL}
+                    compact
+                    isRound
+                    customStyle={{ minWidth: 144, flex: 1 }}
+                  />
+                ))}
+        </ProductCurationCardList>
+      </Box>
     </Flexbox>
   );
 }
 
-const ProductCuration = styled.div`
+const ProductCurationCardList = styled.div`
   padding: 0 20px;
-  display: grid;
-  grid-auto-flow: column;
-  gap: 12px;
-  overflow-x: auto;
+  display: flex;
+  column-gap: 12px;
+  width: fit-content;
 `;
 
 export default HomeCamelProductCuration;

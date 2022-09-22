@@ -1,5 +1,7 @@
 import { ParsedUrlQuery } from 'querystring';
 
+import { MrCamelTheme } from 'mrcamel-ui/dist/types';
+
 import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
@@ -8,7 +10,7 @@ import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
-import convertStringToArray from '@utils/convertStringToArray';
+import { convertStringToArray } from '@utils/common';
 
 import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 
@@ -39,6 +41,7 @@ export function convertSearchParams(
       parentId,
       categorySizeId,
       genderIds: selectedSearchOptionGenderIds = [],
+      gender,
       minPrice,
       maxPrice,
       distance,
@@ -49,6 +52,7 @@ export function convertSearchParams(
         parentIds = [],
         subParentIds = [],
         genderIds = [],
+        genders = [],
         siteUrlIds = [],
         categorySizeIds = [],
         lineIds = [],
@@ -87,6 +91,16 @@ export function convertSearchParams(
         searchParams.distance = distance;
       } else if (productOrder && codeId === filterCodeIds.order) {
         searchParams.order = productOrder;
+      } else if (codeId === filterCodeIds.gender) {
+        if (gender) {
+          searchParams.genders = Array.from(
+            new Set(Array.isArray(genders) ? [...genders, gender] : [genders, gender])
+          );
+        }
+
+        if (id) {
+          searchParams.genderIds = Array.from(new Set([...genderIds, id, filterGenders.common.id]));
+        }
       }
     }
   );
@@ -277,6 +291,7 @@ export function convertSearchParamsByQuery(
 
     if (variant === 'categories') {
       delete baseSearchParams.keyword;
+
       return {
         ...baseSearchParams,
         [variant]: searchParams[variant]
@@ -284,6 +299,9 @@ export function convertSearchParamsByQuery(
     }
     if (variant === 'brands') {
       delete baseSearchParams.keyword;
+      // 브랜드형 매물 목록에 성별 필터 모달 추가로 인한 삭제
+      delete baseSearchParams.genders;
+
       return {
         ...baseSearchParams,
         requiredBrands: searchParams.requiredBrands
@@ -356,7 +374,8 @@ export function convertSearchParamsByQuery(
 
 export function convertSelectedSearchOptions(
   searchParams: SearchParams,
-  baseSearchOptions: Partial<ProductSearchOption>
+  baseSearchOptions: Partial<ProductSearchOption>,
+  options?: { variant?: ProductsVariant }
 ) {
   let selectedSearchOptions: SelectedSearchOption[] = [];
   const {
@@ -374,7 +393,8 @@ export function convertSelectedSearchOptions(
     maxPrice,
     idFilterIds = [],
     distance,
-    order
+    order,
+    genders = []
   } = searchParams;
   const {
     brands = [],
@@ -386,7 +406,6 @@ export function convertSelectedSearchOptions(
     siteUrls = [],
     subParentCategories = []
   } = baseSearchOptions;
-
   const searchParamKeys = Object.keys(searchParams) as Array<keyof typeof searchParams>;
 
   searchParamKeys.forEach((key) => {
@@ -480,6 +499,24 @@ export function convertSelectedSearchOptions(
           (genderId) => genderId !== filterGenders.common.id
         );
 
+        // 브랜드 매물 목록에만 성별 탭 존재하여 임시로 추가, 이후 다른 매물 목록에도 성별 탭이 추가될 경우 수정 필요
+        if (options?.variant === 'brands') {
+          convertedGenderIds.forEach((genderId) => {
+            Object.values(filterGenders)
+              .filter(({ id }) => genderId === id)
+              .forEach(({ id, name }) => {
+                selectedSearchOptions = [
+                  ...selectedSearchOptions,
+                  {
+                    id,
+                    codeId: filterCodeIds.gender,
+                    viewName: name
+                  }
+                ];
+              });
+          });
+        }
+
         convertedGenderIds.forEach((genderId) => {
           if (parentIds && !subParentIds) {
             const convertedParentIds = convertStringToArray(String(parentIds));
@@ -561,27 +598,25 @@ export function convertSelectedSearchOptions(
             productOrder: order
           }
         ];
+      } else if (key === 'genders') {
+        // 브랜드 매물 목록에만 성별 탭 존재하여 임시로 추가, 이후 다른 매물 목록에도 성별 탭이 추가될 경우 수정 필요
+        if (options?.variant === 'brands') {
+          (Array.isArray(genders) ? genders : [genders]).forEach((gender) => {
+            selectedSearchOptions = [
+              ...selectedSearchOptions,
+              {
+                codeId: filterCodeIds.gender,
+                gender,
+                viewName: filterGenders[gender as keyof typeof filterGenders].name
+              }
+            ];
+          });
+        }
       }
     }
   });
 
   return selectedSearchOptions;
-}
-
-export function getEventPropertyOrder(productOrder: ProductOrder) {
-  if (productOrder === 'postedDesc') {
-    return 'RECENT';
-  }
-  if (productOrder === 'postedAllDesc') {
-    return 'RECENT_ALL';
-  }
-  if (productOrder === 'priceDesc') {
-    return 'HIGHP';
-  }
-  if (productOrder === 'priceAsc') {
-    return 'LOWP';
-  }
-  return 'RECOMM';
 }
 
 export function getEventPropertySortValue(order?: ProductOrder) {
@@ -598,37 +633,6 @@ export function getEventPropertySortValue(order?: ProductOrder) {
     return 4;
   }
   return 7;
-}
-
-export default function getEventPropertyTitle(codeId: number) {
-  if (codeId === filterCodeIds.category) {
-    return 'CATEGORY';
-  }
-  if (codeId === filterCodeIds.brand) {
-    return 'BRAND';
-  }
-  if (codeId === filterCodeIds.size) {
-    return 'SIZE';
-  }
-  if (codeId === filterCodeIds.platform) {
-    return 'SITE';
-  }
-  if (codeId === filterCodeIds.line) {
-    return 'LINE';
-  }
-  if (codeId === filterCodeIds.season) {
-    return 'SEASON';
-  }
-  if (codeId === filterCodeIds.color) {
-    return 'COLOR+MATERIAL';
-  }
-  if (codeId === filterCodeIds.price) {
-    return 'PRICE';
-  }
-  if (codeId === filterCodeIds.detailOption) {
-    return 'COLOR+MATERIAL';
-  }
-  return 'EMPTY';
 }
 
 export function getEventPropertyViewType(variant: ProductsVariant, parentIds?: string | string[]) {
@@ -671,4 +675,42 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     imageCount: product.imageCount,
     isProductLegit: product.isProductLegit
   });
+}
+
+export function getMetaDescription(description: string) {
+  let byte = 0;
+  let result = '';
+  let overflow = false;
+
+  for (let i = 0; i < description.length; i += 1) {
+    if (byte > 92) {
+      overflow = true;
+      break;
+    }
+
+    if (description.charCodeAt(i) > 127) {
+      byte += 2;
+    } else {
+      byte += 1;
+    }
+
+    result += description[i];
+  }
+
+  if (!result) result = description;
+
+  return result.replace(/[\n|\r]/g, ' ') + (overflow ? '...' : '');
+}
+
+export function getProductLabelColor(name: string, theme: MrCamelTheme) {
+  const {
+    palette: { primary, common }
+  } = theme;
+  if (name === '시세이하' || name === '가품 시, 100%환불') {
+    return common.grey['20'];
+  }
+  if (name === '새상품급') {
+    return primary.dark;
+  }
+  return primary.main;
 }

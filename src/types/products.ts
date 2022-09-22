@@ -22,6 +22,7 @@ export type SelectedSearchOption = SelectedSearchOptionState<
         maxPrice: number;
         distance: number;
         productOrder: ProductOrder;
+        gender: string;
       }
   >
 >;
@@ -38,6 +39,7 @@ export type SelectedSearchOptionHistory = {
   groupingDepth?: number;
   index?: number;
   count?: number;
+  gender?: string;
 };
 
 export type ProductsEventProperties = {

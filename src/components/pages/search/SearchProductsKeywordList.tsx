@@ -11,6 +11,7 @@ import { Skeleton } from '@components/UI/atoms';
 import type { ProductKeywordsContent } from '@dto/user';
 import type { SearchParams } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import {
@@ -20,6 +21,7 @@ import {
   putProductKeywordView
 } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -126,7 +128,17 @@ function SearchProductsKeywordList() {
 
       const clickProductKeywords = productKeywords.find((item) => item.id === id);
 
-      if (clickProductKeywords && clickProductKeywords.isNew) {
+      if (clickProductKeywords) {
+        SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+          name: attrProperty.productName.SEARCH,
+          title: attrProperty.productTitle.MYLIST,
+          type: attrProperty.productType.INPUT,
+          keyword: clickProductKeywords.keyword,
+          filters: clickProductKeywords.keywordFilterJson
+        });
+      }
+
+      if (clickProductKeywords?.isNew) {
         productKeywordViewMutate(id, {
           onSettled: () =>
             router.push({
@@ -166,71 +178,73 @@ function SearchProductsKeywordList() {
         <Typography variant="h4" weight="bold" customStyle={{ padding: '0 20px' }}>
           저장한 검색목록
         </Typography>
-        <CardList>
-          {isLoading
-            ? Array.from({ length: 5 }, (_, index) => (
-                <Box key={`saved-products-skeleton-${index}`}>
-                  <Skeleton
-                    width="300px"
-                    height="78px"
-                    disableAspectRatio
-                    isRound
-                    customStyle={{ borderRadius: box.round['8'] }}
-                  />
-                </Box>
-              ))
-            : productKeywords.map((card) => (
-                <Card
-                  key={`saved-products-keyword-${card.id}`}
-                  hasImage={card.images.length > 0}
-                  onClick={handleClickFilterProduct(card.id)}
-                >
-                  <Flexbox gap={20} alignment="center">
-                    {card.isNew && (
-                      <Box
-                        customStyle={{
-                          position: 'relative',
-                          minWidth: 40 + card.images.slice(0, 3).length * 16,
-                          height: 56
-                        }}
-                      >
-                        {card.images.slice(0, 3).map((src, index) => (
-                          <ProductImage
-                            key={`saved-products-image-${src}`}
-                            src={src}
-                            alt={card.keyword}
-                            index={index}
-                          />
-                        ))}
-                        <NewLabel
-                          text="NEW"
-                          variant="contained"
-                          brandColor="primary"
-                          size="xsmall"
-                        />
-                      </Box>
-                    )}
-                    <Flexbox
-                      direction="vertical"
-                      gap={2}
-                      customStyle={{ width: card.images.length > 0 ? 152 : 160 }}
-                    >
-                      <Text weight="medium">{card.keyword.replace('(P)', '')}</Text>
-                      <Text variant="small1">{card.filter}</Text>
-                    </Flexbox>
-                  </Flexbox>
-                  <CloseIcon>
-                    <Icon
-                      name="CloseOutlined"
-                      width={15}
-                      height={15}
-                      customStyle={{ marginTop: -13, color: palette.common.grey['80'] }}
-                      onClick={handleClickDelete(card.id)}
+        <Box customStyle={{ overflowX: 'auto', width: '100%' }}>
+          <CardList>
+            {isLoading
+              ? Array.from({ length: 5 }, (_, index) => (
+                  <Box key={`saved-products-skeleton-${index}`}>
+                    <Skeleton
+                      width="300px"
+                      height="78px"
+                      disableAspectRatio
+                      isRound
+                      customStyle={{ borderRadius: box.round['8'] }}
                     />
-                  </CloseIcon>
-                </Card>
-              ))}
-        </CardList>
+                  </Box>
+                ))
+              : productKeywords.map((card) => (
+                  <Card
+                    key={`saved-products-keyword-${card.id}`}
+                    hasImage={card.images.length > 0}
+                    onClick={handleClickFilterProduct(card.id)}
+                  >
+                    <Flexbox gap={20} alignment="center">
+                      {card.isNew && (
+                        <Box
+                          customStyle={{
+                            position: 'relative',
+                            minWidth: 40 + card.images.slice(0, 3).length * 16,
+                            height: 56
+                          }}
+                        >
+                          {card.images.slice(0, 3).map((src, index) => (
+                            <ProductImage
+                              key={`saved-products-image-${src}`}
+                              src={src}
+                              alt={card.keyword}
+                              index={index}
+                            />
+                          ))}
+                          <NewLabel
+                            text="NEW"
+                            variant="contained"
+                            brandColor="primary"
+                            size="xsmall"
+                          />
+                        </Box>
+                      )}
+                      <Flexbox
+                        direction="vertical"
+                        gap={2}
+                        customStyle={{ width: card.images.length > 0 ? 152 : 160 }}
+                      >
+                        <Text weight="medium">{card.keyword.replace('(P)', '')}</Text>
+                        <Text variant="small1">{card.filter}</Text>
+                      </Flexbox>
+                    </Flexbox>
+                    <CloseIcon>
+                      <Icon
+                        name="CloseOutlined"
+                        width={15}
+                        height={15}
+                        customStyle={{ marginTop: -13, color: palette.common.grey['80'] }}
+                        onClick={handleClickDelete(card.id)}
+                      />
+                    </CloseIcon>
+                  </Card>
+                ))}
+          </CardList>
+        </Box>
       </Flexbox>
       <Toast open={deleteToast} onClose={() => setDeleteToast(false)} autoHideDuration={4000}>
         <Flexbox justifyContent="space-between" alignment="center" gap={8}>
@@ -255,11 +269,11 @@ function SearchProductsKeywordList() {
 }
 
 const CardList = styled.section`
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
   column-gap: 12px;
-  overflow-x: auto;
   padding: 0 20px;
+  user-select: none;
+  width: fit-content;
 `;
 
 const Card = styled.div<{ hasImage: boolean }>`
@@ -270,6 +284,7 @@ const Card = styled.div<{ hasImage: boolean }>`
   padding: ${({ hasImage }) => (hasImage ? '11px 20px' : '20px')};
   height: fit-content;
   max-width: 300px;
+  cursor: pointer;
 `;
 
 const ProductImage = styled.img<{ index: number }>`

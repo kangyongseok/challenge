@@ -1,4 +1,4 @@
-import { atom, atomFamily } from 'recoil';
+import { atom } from 'recoil';
 import dayjs from 'dayjs';
 
 import { AccessUser } from '@dto/userAuth';
@@ -29,11 +29,6 @@ export const productsSaveSearchPopupState = atom({
   default: false
 });
 
-export const productsKeywordAutoSavedToast = atom({
-  key: 'productsKeywordAutoSavedToast',
-  default: false
-});
-
 export const productsKeywordAutoSaveTriggerState = atom({
   key: 'productsKeywordAutoSaveTriggerState',
   default: true,
@@ -57,20 +52,6 @@ export const productsKeywordAutoSaveTriggerState = atom({
       });
     }
   ]
-});
-
-export const productsKeywordToastStateFamily = atomFamily<
-  {
-    type: 'saved' | 'deleted' | 'restored';
-    open: boolean;
-  },
-  'saved' | 'deleted' | 'restored'
->({
-  key: 'productsKeywordToastStateFamily',
-  default: (type) => ({
-    type,
-    open: false
-  })
 });
 
 export const productsKeywordInduceTriggerState = atom({

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { isMobileBrowser } from '@utils/common';
+import { checkAgent } from '@utils/common';
 
 const originalStyle = {
   html: typeof document !== 'undefined' ? { ...document.documentElement.style } : undefined,
@@ -21,7 +21,11 @@ export const scrollDisable = () => {
     originalStyle.html = { ...$html.style };
     originalStyle.top = scrollTop;
 
-    if (isMobileBrowser()) {
+    if (
+      checkAgent.isAllMobileWeb(
+        (typeof window !== 'undefined' && window.navigator.userAgent) || undefined
+      )
+    ) {
       $html.style.height = '100%';
       $html.style.overflow = 'hidden';
       $body.style.top = `-${scrollTop}px`;
@@ -51,7 +55,11 @@ export const scrollEnable = () => {
   const $html = document.documentElement;
   const $body = document.body;
 
-  if (isMobileBrowser()) {
+  if (
+    checkAgent.isAllMobileWeb(
+      (typeof window !== 'undefined' && window.navigator.userAgent) || undefined
+    )
+  ) {
     $html.style.height = originalStyle.html?.height || '';
     $html.style.overflow = originalStyle.html?.overflow || '';
 
@@ -71,3 +79,45 @@ export const scrollEnable = () => {
 
   window.scrollTo(0, originalStyle.top);
 };
+
+export function getCenterScrollLeft({
+  scrollWidth,
+  clientWidth,
+  targetOffsetLeft,
+  targetClientWidth
+}: {
+  scrollWidth: number;
+  clientWidth: number;
+  targetOffsetLeft: number;
+  targetClientWidth: number;
+}) {
+  const targetLeft = targetOffsetLeft + targetClientWidth / 2;
+  let scrollLeft = 0;
+
+  if (targetLeft <= clientWidth / 2) {
+    scrollLeft = 0;
+  } else if (scrollWidth - targetLeft <= clientWidth / 2) {
+    scrollLeft = scrollWidth - clientWidth;
+  } else {
+    scrollLeft = targetLeft - clientWidth / 2;
+  }
+
+  return scrollLeft;
+}
+
+export function scrollCenterIndex(scrollAreaEl: HTMLDivElement, target: HTMLButtonElement) {
+  let position = 0;
+  const el = scrollAreaEl;
+  const listHeight = el.scrollHeight;
+  const halfHeight = el.clientHeight / 2;
+  const targetTop = target.offsetTop;
+  const selectTargetPos = targetTop + 30 / 2;
+  if (selectTargetPos <= halfHeight) {
+    position = 0;
+  } else if (listHeight - selectTargetPos <= halfHeight) {
+    position = listHeight - el.clientHeight;
+  } else {
+    position = selectTargetPos - halfHeight;
+  }
+  el.scrollTo(0, position);
+}

@@ -37,7 +37,7 @@ import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

@@ -2,6 +2,7 @@ import sizeFilterOptionsSelector from './sizeFilterOptionsSelector';
 import priceFilterOptionsSelector from './priceFilterOptionsSelector';
 import platformFilterOptionsSelector from './platformFilterOptionsSelector';
 import lineFilterOptionsSelector from './lineFilterOptionsSelector';
+import genderFilterOptionsSelector from './genderFilterOptionsSelector';
 import filterOperationInfoSelector from './filterOperationInfoSelector';
 import detailFilterOptionsSelector from './detailFilterOptionsSelector';
 import categoryFilterOptionsSelector from './categoryFilterOptionsSelector';
@@ -15,5 +16,6 @@ export {
   filterOperationInfoSelector,
   detailFilterOptionsSelector,
   categoryFilterOptionsSelector,
-  brandFilterOptionsSelector
+  brandFilterOptionsSelector,
+  genderFilterOptionsSelector
 };

@@ -1,6 +1,6 @@
 import { selector } from 'recoil';
 
-import { filterCodeIds, filterGenders } from '@constants/productsFilter';
+import { filterCodeIds, filterGenders, idFilterOptions } from '@constants/productsFilter';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
@@ -10,6 +10,7 @@ import { SelectedSearchOptionHistory } from '@typings/products';
 import {
   activeTabCodeIdState,
   brandFilterOptionsSelector,
+  genderFilterOptionsSelector,
   lineFilterOptionsSelector,
   platformFilterOptionsSelector,
   productsFilterAtomParamState,
@@ -46,11 +47,10 @@ const filterOperationInfoSelector = selector({
       color: { checkedAll: colorCheckedAll, filterOptions: colorFilterOptions },
       material: { checkedAll: materialCheckedAll, filterOptions: materialFilterOptions }
     } = get(detailFilterOptionsSelector);
+    const genderFilterOptions = get(genderFilterOptionsSelector);
 
     let selectedSearchOptionsHistory: SelectedSearchOptionHistory[] = selectedSearchOptions
-      .filter(
-        ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.order].includes(codeId)
-      )
+      .filter(({ codeId }) => ![filterCodeIds.order].includes(codeId))
       .map(
         (
           {
@@ -64,15 +64,24 @@ const filterOperationInfoSelector = selector({
             genderIds = [],
             minPrice = 0,
             maxPrice = 0,
-            count
+            count,
+            gender
           },
           index
         ) => {
           let prefixDisplayName: string | undefined;
-          let displayName;
+          let displayName: string;
           let genderId = 0;
 
-          if (codeId === filterCodeIds.price) {
+          if (
+            codeId === filterCodeIds.id &&
+            idFilterOptions.some((idFilterOption) => idFilterOption.id === id)
+          ) {
+            displayName =
+              (idFilterOptions.find((idFilterOption) => idFilterOption.id === id) || {}).name || '';
+          } else if (codeId === filterCodeIds.map) {
+            displayName = '내 주변';
+          } else if (codeId === filterCodeIds.price) {
             displayName = `${commaNumber(getTenThousandUnitPrice(minPrice))}만원 ~ ${commaNumber(
               getTenThousandUnitPrice(maxPrice)
             )}만원`;
@@ -83,8 +92,7 @@ const filterOperationInfoSelector = selector({
                   (historyGenderId) => historyGenderId !== filterGenders.common.id
                 )[0] || 0;
 
-              if (genderId)
-                prefixDisplayName = (genders.find((gender) => gender.id === genderId) || {}).name;
+              if (genderId) prefixDisplayName = (genders.find((g) => g.id === genderId) || {}).name;
             } else if (codeId === filterCodeIds.size) {
               const selectedParentCategory = parentCategories.find(
                 (parentCategory) => parentCategory.id === parentCategoryId
@@ -109,7 +117,8 @@ const filterOperationInfoSelector = selector({
             displayName,
             grouping: false,
             count,
-            index
+            index,
+            gender
           };
         }
       );
@@ -301,6 +310,9 @@ const filterOperationInfoSelector = selector({
     }
 
     const selectedTotalCounts = [
+      genderFilterOptions
+        .filter(({ checked }) => checked)
+        .map(({ codeId, count }) => [codeId, count]),
       categoryFilterOptions
         .map(({ parentCategories: categoryParentCategories }) =>
           categoryParentCategories
@@ -368,6 +380,14 @@ const filterOperationInfoSelector = selector({
           ].filter((count) => count)
         );
       }
+    } else if (activeTabCodeId === filterCodeIds.gender) {
+      selectedTotalCount =
+        genderFilterOptions.filter(({ checked }) => checked).length > 1
+          ? totalCount
+          : selectedTotalCounts
+              .filter((counts) => counts[0] === activeTabCodeId)
+              .map((counts) => counts[1])
+              .reduce((a, b) => a + b, 0);
     } else {
       selectedTotalCount = selectedTotalCounts
         .filter((counts) => counts[0] === activeTabCodeId)

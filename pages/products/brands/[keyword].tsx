@@ -1,5 +1,9 @@
+import type { GetServerSidePropsContext } from 'next';
+import { Box } from 'mrcamel-ui';
+
 import { ProductsSaveSearchPopup } from '@components/UI/organisms';
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
@@ -10,22 +14,40 @@ import {
   ProductsInfiniteGrid,
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
-  ProductsKeywordSaveFloatingButton,
   ProductsLegitFilterBottomSheet,
-  ProductsMapFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
+
 import attrProperty from '@constants/attrProperty';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
+
+import { ABTestGroup } from '@provider/ABTestProvider';
+import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
 function BrandProducts() {
+  useProductKeywordAutoSave('brands');
+
   return (
     <>
       <GeneralTemplate
-        header={<ProductsHeader variant="brands" />}
+        header={
+          <Box>
+            <ProductsHeader variant="brands" />
+            <ProductsCategoryTags variant="brands" />
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
+              <ProductsFilter variant="brands" />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
+              <ProductsFilter variant="brands" showDynamicFilter />
+            </ABTestGroup>
+          </Box>
+        }
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -34,22 +56,16 @@ function BrandProducts() {
         }
         disablePadding
       >
-        <ProductsCategoryTags variant="brands" />
-        <ProductsFilter
-          variant="brands"
-          customStyle={{
-            top: 101
-          }}
-        />
-        <ProductsStatus />
-        <ProductsInfiniteGrid variant="brands" name={attrProperty.productName.BRAND_LIST} />
-        <ProductsRelated />
-        <ProductsTopButton />
+        <>
+          <Gap height={8} />
+          <ProductsStatus />
+          <ProductsInfiniteGrid variant="brands" name={attrProperty.productName.BRAND_LIST} />
+          <Gap height={8} />
+          <ProductsRelated />
+        </>
       </GeneralTemplate>
       <ProductsTopButton />
-      <ProductsKeywordSaveFloatingButton variant="brands" />
       <ProductsFilterBottomSheet variant="brands" />
-      <ProductsMapFilterBottomSheet />
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordBottomSheet variant="brands" />
       <ProductsKeywordDialog />
@@ -58,6 +74,16 @@ function BrandProducts() {
       <ProductsEventBottomBanner />
     </>
   );
+}
+
+export function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initABTestIdentifierByCookie(req.cookies);
+
+  return {
+    props: {
+      abTestIdentifier: ABTest.getIdentifier()
+    }
+  };
 }
 
 export default BrandProducts;

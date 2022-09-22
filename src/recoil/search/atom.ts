@@ -4,7 +4,7 @@ import LocalStorage from '@library/localStorage';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
-import calculateExpectCountPerHour from '@utils/calculateExpectCountPerHour';
+import { calculateExpectCountPerHour } from '@utils/formats';
 
 import { RecentItems } from '@typings/search';
 

@@ -6,6 +6,7 @@ import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -23,8 +24,8 @@ function ProductsKeywordDialog() {
   const setProductsKeywordInduceTriggerState = useSetRecoilState(productsKeywordInduceTriggerState);
 
   const handleClose = () => {
-    logEvent(attrKeys.products.CLICK_BACK, {
-      name: 'MYLIST_POPUP',
+    logEvent(attrKeys.products.clickBack, {
+      name: attrProperty.name.myListPopup,
       att: 'SAVE'
     });
     setProductsKeywordDialogState({
@@ -39,8 +40,8 @@ function ProductsKeywordDialog() {
   };
 
   const handleClick = () => {
-    logEvent(attrKeys.products.CLICK_MYLIST, {
-      name: 'MYLIST_POPUP',
+    logEvent(attrKeys.products.clickMyList, {
+      name: attrProperty.name.myListPopup,
       att: 'SAVE'
     });
     setProductsKeywordDialogState({ open: false, pathname: '/' });
@@ -49,7 +50,7 @@ function ProductsKeywordDialog() {
 
   useEffect(() => {
     if (open) {
-      logEvent(attrKeys.products.VIEW_MYLIST_POPUP);
+      logEvent(attrKeys.products.viewMyListPopup);
 
       setProductsKeywordInduceTriggerState((prevState) => ({
         ...prevState,

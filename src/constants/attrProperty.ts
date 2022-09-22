@@ -159,7 +159,13 @@ const name = {
   list: 'LIST',
   main: 'MAIN',
   productList: 'PRODUCT_LIST',
-  crazyWeekPopup: 'CRAZYWEEK_POPUP'
+  crazyWeekPopup: 'CRAZYWEEK_POPUP',
+  filterMapToast: 'FILTER_MAP_TOAST',
+  productDetail: 'PRODUCT_DETAIL',
+  filterModal: 'FILTER_MODAL',
+  filterMapModal: 'FILTER_MAP_MODAL',
+  myListPopup: 'MYLIST_POPUP',
+  filter: 'FILTER'
 };
 
 const title = {
@@ -179,7 +185,23 @@ const title = {
   banner: 'BANNER',
   modal: 'MODAL',
   none: 'NONE',
-  end: 'END'
+  end: 'END',
+  brand: 'BRAND',
+  line: 'LINE',
+  category: 'CATEGORY',
+  season: 'SEASON',
+  colorMaterial: 'COLOR+MATERIAL',
+  empty: 'EMPTY',
+  site: 'SITE',
+  size: 'SIZE',
+  gender: 'GENDER',
+  price: 'PRICE',
+  productList: 'PRODUCT_LIST',
+  auto: 'AUTO',
+  myListDelete: 'MYLIST_DELETE',
+  color: 'COLOR',
+  dynamicFilter: 'DYNAMIC_FILTER',
+  all: 'ALL'
 };
 
 const source = {

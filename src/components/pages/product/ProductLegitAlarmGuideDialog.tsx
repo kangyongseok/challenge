@@ -12,7 +12,7 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import checkAgent from '@utils/checkAgent';
+import { checkAgent } from '@utils/common';
 
 import { processBottomSheetOpenTriggerState } from '@recoil/productLegitProcess';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';

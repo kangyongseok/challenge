@@ -6,7 +6,10 @@ import styled from '@emotion/styled';
 import Accordion, { AccordionProps } from '@components/UI/molecules/Accordion';
 
 interface FilterAccordionProps
-  extends Pick<AccordionProps, 'summary' | 'expanded' | 'expandIcon' | 'button' | 'onClickButton'> {
+  extends Pick<
+    AccordionProps,
+    'summary' | 'expanded' | 'expandIcon' | 'button' | 'onClickButton' | 'showExpandIcon'
+  > {
   customButton?: ReactElement;
   changeInterceptor?: (e: MouseEvent<HTMLDivElement>) => void;
 }

@@ -54,6 +54,7 @@ export function convertUserSnsLoginInfo({
       const {
         profile: { nickname: nickName, profile_image_url: image },
         email,
+        phone_number: phone,
         gender,
         age_range: ageRang,
         birthday
@@ -66,6 +67,7 @@ export function convertUserSnsLoginInfo({
         socialId: String(loginData.id),
         email,
         gender,
+        phone,
         ageRang,
         birthday
       };
@@ -76,7 +78,7 @@ export function convertUserSnsLoginInfo({
       const {
         id,
         properties: { nickname: nickName, profile_image: image },
-        kakao_account: { email, gender } = {}
+        kakao_account: { email, gender, phoneNumber } = {}
       } = loginData;
 
       userSnsLoginInfo = {
@@ -86,7 +88,8 @@ export function convertUserSnsLoginInfo({
         image,
         socialId: String(id),
         email,
-        gender
+        gender,
+        phone: phoneNumber
       };
 
       break;

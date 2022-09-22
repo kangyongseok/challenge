@@ -84,13 +84,11 @@ export default function SearchBrandList({
 
 const SearchListArea = styled.ul<{ isDisplay: boolean }>`
   border: 1px solid #cccccc;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
   border-top: none;
-  border-radius: 8px;
+  border-radius: 0 0 8px 8px;
   padding: 28px 20px 0 20px;
   position: absolute;
-  top: 150px;
+  top: 145px;
   left: 20px;
   background: white;
   width: calc(100% - 40px);

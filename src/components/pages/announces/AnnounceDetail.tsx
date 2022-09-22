@@ -57,7 +57,7 @@ function AnnounceDetail({ announceDetail }: AnnounceDetailProps) {
           pathname: router.asPath,
           gender: gender
             ? {
-                id: filterGenders[genderName as keyof typeof filterGenders].id,
+                id: filterGenders[genderName].id,
                 name: genderName
               }
             : selectedSearchOptionsDefault.gender

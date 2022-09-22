@@ -9,11 +9,13 @@ import type { ProductOrder } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { filterCodeIds, orderFilterOptions } from '@constants/productsFilter';
-import { PRODUCT_NAME } from '@constants/product';
+import {
+  filterCodeIds,
+  orderFilterOptions,
+  productEventPropertyOrder
+} from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import getEventPropertyOrder from '@utils/products/getEventPropertyOrder';
 
 import {
   productsFilterStateFamily,
@@ -44,16 +46,16 @@ function ProductsOrderFilterBottomSheet() {
     const { keyword } = router.query;
 
     const eventProperties = {
-      title: PRODUCT_NAME.PRODUCT_LIST,
+      title: attrProperty.title.productList,
       keyword
     };
 
     if (router.pathname !== '/products/search/[keyword]') delete eventProperties.keyword;
 
-    logEvent(attrKeys.products.CLICK_SORT, eventProperties);
-    logEvent(attrKeys.products.SELECT_SORT, {
-      title: PRODUCT_NAME.PRODUCT_LIST,
-      order: getEventPropertyOrder(dataOrder)
+    logEvent(attrKeys.products.clickSort, eventProperties);
+    logEvent(attrKeys.products.selectSort, {
+      ...eventProperties,
+      order: productEventPropertyOrder[dataOrder]
     });
 
     setSelectedSearchOptionsState(({ type, selectedSearchOptions: prevSearchOptions }) => ({

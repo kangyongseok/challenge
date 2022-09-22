@@ -1,5 +1,3 @@
-import type { MouseEvent } from 'react';
-
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
@@ -8,11 +6,13 @@ import Badge from '@components/UI/atoms/Badge';
 
 import { logEvent } from '@library/amplitude';
 
-import { filterCodeIds, filterCodes } from '@constants/productsFilter';
-import { PRODUCT_NAME } from '@constants/product';
+import {
+  filterCodeIds,
+  filterCodes,
+  productFilterEventPropertyTitle
+} from '@constants/productsFilter';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import getEventPropertyTitle from '@utils/products/getEventPropertyTitle';
 
 import type { ProductsVariant } from '@typings/products';
 import { activeTabCodeIdState, selectedSearchOptionsStateFamily } from '@recoil/productsFilter';
@@ -28,23 +28,21 @@ function FilterTabs({ variant }: FilterTabsProps) {
     selectedSearchOptionsStateFamily(`active-${router.asPath.split('?')[0]}`)
   );
 
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const dataIndex = Number(e.currentTarget.getAttribute('data-index') || 0);
-    const dataCodeId = Number(e.currentTarget.getAttribute('data-code-id') || 0);
-    const { keyword } = router.query;
-    const eventProperties = {
-      keyword
+  const handleClick =
+    (index = 0, codeId = 0) =>
+    () => {
+      const { keyword } = router.query;
+      const eventProperties = { keyword };
+
+      if (variant !== 'search') delete eventProperties.keyword;
+
+      logEvent(attrKeys.products.selectFilterTab, {
+        name: attrProperty.name.productList,
+        title: productFilterEventPropertyTitle[codeId],
+        index
+      });
+      setActiveTabCodeIdState(codeId);
     };
-
-    if (variant !== 'search') delete eventProperties.keyword;
-
-    logEvent(attrKeys.products.SELECT_FILTERTAB, {
-      name: PRODUCT_NAME.PRODUCT_LIST,
-      title: getEventPropertyTitle(dataCodeId),
-      index: dataIndex
-    });
-    setActiveTabCodeIdState(dataCodeId);
-  };
 
   return (
     <StyledFilterTabs>
@@ -67,7 +65,7 @@ function FilterTabs({ variant }: FilterTabsProps) {
               isActive={activeTabCodeId === codeId}
               data-index={index}
               data-code-id={codeId}
-              onClick={handleClick}
+              onClick={handleClick(index, codeId)}
             >
               {name}
             </FilterTab>

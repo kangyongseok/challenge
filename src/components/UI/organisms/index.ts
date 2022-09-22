@@ -8,6 +8,5 @@ export { default as OnBoardingSpotlight } from './OnBoardingSpotlight';
 export * from './Popups';
 export { default as ProductLabel } from './ProductLabel';
 export { default as LegitResultSurveyTypeform } from './LegitResultSurveyTypeform';
-export * from './Toasts';
 export { default as LegitInduceFloatingBanner } from './LegitInduceFloatingBanner';
 export { default as ImageDetailDialog } from './ImageDetailDialog';

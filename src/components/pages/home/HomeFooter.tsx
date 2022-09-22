@@ -13,8 +13,7 @@ function HomeFooter() {
       customStyle={{
         padding: '24px 20px',
         backgroundColor: palette.common.grey['95'],
-        userSelect: 'none',
-        cursor: 'default'
+        userSelect: 'none'
       }}
     >
       <Typography variant="body2" weight="bold">

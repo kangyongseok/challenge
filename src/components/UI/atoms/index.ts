@@ -1,4 +1,5 @@
 export { default as Badge } from './Badge';
+export { default as Gap } from './Gap';
 export { default as Image } from './Image';
 export { default as Skeleton } from './Skeleton';
 export { default as PageHead } from './PageHead';

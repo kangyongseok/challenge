@@ -2,33 +2,32 @@ import { InputHTMLAttributes, ReactElement, forwardRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import type { CustomStyle } from 'mrcamel-ui';
+import { Box } from 'mrcamel-ui';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 
-import { Input, StyledSearchBar, Wrapper } from './SearchBar.styles';
+import { EndIcon, Input, InputBox, StartIcon, StyledSearchBar, Wrapper } from './SearchBar.styles';
 
 export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
-  variant?: 'outlined' | 'standard';
+  variant?: 'outlined' | 'standard' | 'innerOutlined';
   startIcon?: ReactElement;
   endIcon?: ReactElement;
+  startAdornment?: ReactElement;
+  endAdornment?: ReactElement;
   fullWidth?: boolean;
-  brandColor?: 'primary' | 'black';
   isFixed?: boolean;
-  isBottomBorderFixed?: boolean;
-  isBorder?: boolean;
   customStyle?: CustomStyle;
 }
 
 const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBar(
   {
-    variant,
+    variant = 'outlined',
     startIcon,
     endIcon,
+    startAdornment,
+    endAdornment,
     fullWidth = false,
-    brandColor = 'primary',
     isFixed = false,
-    isBottomBorderFixed = false,
-    isBorder = true,
     customStyle,
     ...props
   },
@@ -37,27 +36,35 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function SearchBa
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   return (
-    <StyledSearchBar
-      ref={ref}
-      isFixed={isFixed}
-      isBorder={isBorder}
-      brandColor={brandColor}
-      showAppDownloadBanner={showAppDownloadBanner}
-      css={customStyle}
-    >
-      <Wrapper
-        variant={variant}
-        fullWidth={fullWidth}
+    <>
+      <StyledSearchBar
+        ref={ref}
         isFixed={isFixed}
-        isBottomBorderFixed={isBottomBorderFixed}
-        brandColor={brandColor}
+        variant={variant}
         showAppDownloadBanner={showAppDownloadBanner}
+        css={customStyle}
       >
-        {startIcon}
-        <Input brandColor={brandColor} {...props} />
-        {endIcon}
-      </Wrapper>
-    </StyledSearchBar>
+        {startIcon && <StartIcon>{startIcon}</StartIcon>}
+        <InputBox
+          variant={variant}
+          fullWidth={fullWidth}
+          hasStartIcon={!!startIcon}
+          hasEndIcon={!!endIcon}
+        >
+          <Wrapper
+            variant={variant}
+            fullWidth={fullWidth}
+            showAppDownloadBanner={showAppDownloadBanner}
+          >
+            {startAdornment}
+            <Input {...props} />
+            {endAdornment}
+          </Wrapper>
+        </InputBox>
+        {endIcon && <EndIcon>{endIcon}</EndIcon>}
+      </StyledSearchBar>
+      {isFixed && <Box customStyle={{ height: 44, visibility: 'hidden' }} />}
+    </>
   );
 });
 

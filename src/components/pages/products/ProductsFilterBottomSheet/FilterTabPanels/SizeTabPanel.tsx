@@ -6,7 +6,7 @@ import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { PRODUCT_NAME } from '@constants/product';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -50,9 +50,9 @@ function SizeTabPanel() {
 
     if (selectedParenCategory) {
       if (!selectedParenCategory.checkedAll) {
-        logEvent(attrKeys.products.SELECT_FILTER, {
-          name: PRODUCT_NAME.PRODUCT_LIST,
-          title: 'SIZE',
+        logEvent(attrKeys.products.selectFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.size,
           index: selectedParenCategoryIndex,
           count: selectedParenCategory.count,
           value: `${selectedParenCategory.name}, 전체`
@@ -131,9 +131,9 @@ function SizeTabPanel() {
           selectedParentCategory.categorySizes[selectedCategorySizeIndex];
 
         if (selectedCategorySize) {
-          logEvent(attrKeys.products.SELECT_FILTER, {
-            name: PRODUCT_NAME.PRODUCT_LIST,
-            title: 'SIZE',
+          logEvent(attrKeys.products.selectFilter, {
+            name: attrProperty.name.productList,
+            title: attrProperty.title.size,
             index: selectedCategorySizeIndex,
             count: selectedCategorySize.count,
             value: selectedCategorySize.name

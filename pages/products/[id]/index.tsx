@@ -61,11 +61,9 @@ import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { productDetailAtt } from '@utils/products';
-import getMetaDescription from '@utils/getMetaDescription';
+import { getMetaDescription, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import type { User } from '@typings/user';
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -506,8 +504,8 @@ function ProductDetail() {
               color: palette.common.white
             }}
             onClick={() => {
-              logEvent(attrKeys.products.CLICK_PRODUCT_DETAIL, {
-                name: attrProperty.productName.PRODUCT_DETAIL,
+              logEvent(attrKeys.products.clickProductDetail, {
+                name: attrProperty.name.productDetail,
                 att: isPriceDown ? 'TOASTPRICELOW' : 'TOASTSAME'
               });
             }}

@@ -35,17 +35,14 @@ import attrKeys from '@constants/attrKeys';
 import { convertSearchParamsByQuery } from '@utils/products';
 
 import type { ProductsVariant } from '@typings/products';
-import {
-  productsKeywordInduceTriggerState,
-  productsKeywordState,
-  productsKeywordToastStateFamily
-} from '@recoil/productsKeyword';
+import { productsKeywordInduceTriggerState, productsKeywordState } from '@recoil/productsKeyword';
 import {
   filterOperationInfoSelector,
   searchOptionsStateFamily,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
 import { homeSelectedTabStateFamily } from '@recoil/home';
+import { toastState } from '@recoil/common';
 
 const { category, size, price, brand, platform, line, season, color, material } = filterCodeIds;
 
@@ -80,9 +77,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
     searchOptions: { parentCategories = [], subParentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
-  const setSavedProductKeywordToastState = useSetRecoilState(
-    productsKeywordToastStateFamily('saved')
-  );
+  const setToastState = useSetRecoilState(toastState);
   const setProductsKeywordInduceTriggerState = useSetRecoilState(productsKeywordInduceTriggerState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
@@ -98,10 +93,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
       setProductsKeywordState(false);
-      setSavedProductKeywordToastState({
-        type: 'saved',
-        open: true
-      });
+      setToastState({ type: 'productsKeyword', status: 'saved' });
       setProductsKeywordInduceTriggerState((prevState) => ({
         ...prevState,
         alert: false
@@ -109,6 +101,9 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
       window.scrollTo(0, 0);
       resetProductKeyword();
       queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
+    },
+    onError: () => {
+      setToastState({ type: 'productsKeyword', status: 'limited' });
     }
   });
 
@@ -124,7 +119,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
       name: PRODUCT_NAME.PRODUCT_LIST,
       att: 'SAVE'
     });
-    logEvent(attrKeys.searchHelper.LOAD_MYLIST_SAVE, { name: attrProperty.productName.MANUAL });
+    logEvent(attrKeys.products.loadMyListSave, { name: attrProperty.productName.MANUAL });
 
     mutate({
       productSearch,

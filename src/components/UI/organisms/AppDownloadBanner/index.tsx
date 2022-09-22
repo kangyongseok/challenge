@@ -8,7 +8,6 @@ import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 
-import { getPageNameByPathName } from '@utils/getPageNameByPathName';
 import { handleClickAppDownload } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -18,6 +17,28 @@ import {
   DownloadButtonBox,
   StyledAppDownloadBanner
 } from './AppDownloadBanner.styles';
+
+function getPageNameByPathName(pathname: string) {
+  let pageName = 'NONE';
+
+  if (pathname === '/') {
+    pageName = 'MAIN';
+  } else if (pathname === '/search') {
+    pageName = 'SEARCHMODAL';
+  } else if (pathname === '/category') {
+    pageName = 'CATEGORY';
+  } else if (pathname === '/ranking') {
+    pageName = 'HOT';
+  } else if (pathname === '/productList') {
+    pageName = 'PRODUCT_LIST';
+  } else if (pathname.indexOf('/product/') >= 0) {
+    pageName = 'PRODUCT_DETAIL';
+  } else if (pathname === '/brands') {
+    pageName = 'BRAND';
+  }
+
+  return pageName;
+}
 
 function AppDownloadBanner() {
   const setShowAppDownloadBannerState = useSetRecoilState(showAppDownloadBannerState);

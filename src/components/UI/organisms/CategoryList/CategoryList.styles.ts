@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 export const StyledCategoryList = styled.div<{ variant: 'contained' | 'outlined' }>`
   display: grid;
   padding: 0 20px;
+  user-select: none;
 
   ${({ variant }) =>
     variant === 'contained'
@@ -26,6 +27,7 @@ export const CategoryItem = styled.div<{ variant: 'contained' | 'outlined' }>`
   min-height: 49px;
   height: fit-content;
   white-space: nowrap;
+  cursor: pointer;
 
   ${({ theme: { palette }, variant }) =>
     variant === 'contained'

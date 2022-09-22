@@ -1,4 +1,8 @@
+import type { GetServerSidePropsContext } from 'next';
+import { Box } from 'mrcamel-ui';
+
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsEventBottomBanner,
@@ -8,23 +12,41 @@ import {
   ProductsInfiniteGrid,
   ProductsKeywordBottomSheet,
   ProductsKeywordDialog,
-  ProductsKeywordSaveFloatingButton,
   ProductsLegitFilterBottomSheet,
-  ProductsMapFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
+  ProductsRelatedKeywords,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
+
 import attrProperty from '@constants/attrProperty';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
+
+import { ABTestGroup } from '@provider/ABTestProvider';
+import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
 function SearchProducts() {
-  // TODO SearchBar isFixed Props 보완
+  useProductKeywordAutoSave('search');
+
   return (
     <>
       <GeneralTemplate
-        header={<ProductsHeader variant="search" />}
+        header={
+          <Box>
+            <ProductsHeader variant="search" />
+            <ProductsRelatedKeywords />
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
+              <ProductsFilter variant="search" />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
+              <ProductsFilter variant="search" showDynamicFilter />
+            </ABTestGroup>
+          </Box>
+        }
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -33,20 +55,14 @@ function SearchProducts() {
         }
         disablePadding
       >
-        <ProductsFilter
-          variant="search"
-          customStyle={{
-            top: 58
-          }}
-        />
+        <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" name={attrProperty.productName.SEARCH} />
+        <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />
-      <ProductsKeywordSaveFloatingButton variant="search" />
       <ProductsFilterBottomSheet variant="search" />
-      <ProductsMapFilterBottomSheet />
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordBottomSheet variant="search" />
       <ProductsKeywordDialog />
@@ -54,6 +70,16 @@ function SearchProducts() {
       <ProductsEventBottomBanner />
     </>
   );
+}
+
+export function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initABTestIdentifierByCookie(req.cookies);
+
+  return {
+    props: {
+      abTestIdentifier: ABTest.getIdentifier()
+    }
+  };
 }
 
 export default SearchProducts;

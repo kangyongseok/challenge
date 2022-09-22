@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { toastActionButtonText, toastText } from '@constants/toast';
 
@@ -34,22 +35,26 @@ function ToastProvider() {
       )}
       {type && status && toastDisplayType === 'textWithActionButton' && (
         <Flexbox alignment="center">
-          <Typography
-            weight="medium"
-            customStyle={{ flexGrow: 1, color: palette.common.white, textAlign: 'left' }}
-          >
-            {toastText[type][status]}
-          </Typography>
-          <Typography
-            onClick={action}
-            customStyle={{ textDecoration: 'underline', color: palette.common.grey['80'] }}
-          >
+          <Text weight="medium">{toastText[type][status]}</Text>
+          <ActionButton onClick={action}>
             {toastActionButtonText[type as keyof typeof toastActionButtonText][status]}
-          </Typography>
+          </ActionButton>
         </Flexbox>
       )}
     </Toast>
   );
 }
+
+const Text = styled(Typography)`
+  flex-grow: 1;
+  color: ${({ theme: { palette } }) => palette.common.white};
+  text-align: left;
+`;
+
+const ActionButton = styled(Typography)`
+  text-decoration: underline;
+  color: ${({ theme: { palette } }) => palette.common.grey['80']};
+  cursor: pointer;
+`;
 
 export default ToastProvider;

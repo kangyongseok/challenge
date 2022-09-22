@@ -50,7 +50,7 @@ function ProductsFilterBottomSheet({ variant }: ProductsFilterBottomSheetProps) 
 
   useEffect(() => {
     if (open) {
-      logEvent(attrKeys.products.VIEW_FILTER);
+      logEvent(attrKeys.products.viewFilter);
     }
   }, [open]);
 

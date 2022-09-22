@@ -1,4 +1,8 @@
+import type { GetServerSidePropsContext } from 'next';
+import { Box } from 'mrcamel-ui';
+
 import { BottomNavigation, Header } from '@components/UI/molecules';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsEventBottomBanner,
@@ -8,18 +12,35 @@ import {
   ProductsKeywordDialog,
   ProductsLandingInfo,
   ProductsLegitFilterBottomSheet,
-  ProductsMapFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
+
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
+
+import { ABTestGroup } from '@provider/ABTestProvider';
+
 function Products() {
   return (
     <>
       <GeneralTemplate
-        header={<Header isFixed disableProductsKeywordClickInterceptor={false} />}
+        header={
+          <Box>
+            <Header disableProductsKeywordClickInterceptor={false} />
+            <ProductsLandingInfo />
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
+              <ProductsFilter variant="search" />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
+              <ProductsFilter variant="search" showDynamicFilter />
+            </ABTestGroup>
+          </Box>
+        }
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -28,26 +49,30 @@ function Products() {
         }
         disablePadding
       >
-        <ProductsLandingInfo />
-        <ProductsFilter
-          variant="search"
-          customStyle={{
-            top: 56
-          }}
-        />
+        <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
+        <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
-      <ProductsMapFilterBottomSheet />
       <ProductsOrderFilterBottomSheet />
       <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
       <ProductsEventBottomBanner />
     </>
   );
+}
+
+export function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initABTestIdentifierByCookie(req.cookies);
+
+  return {
+    props: {
+      abTestIdentifier: ABTest.getIdentifier()
+    }
+  };
 }
 
 export default Products;

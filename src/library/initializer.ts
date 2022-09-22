@@ -11,8 +11,7 @@ import ABTest from '@library/abTest';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER, UTM_PARAMS } from '@constants/localStorage';
 
-import { getUtmParams } from '@utils/common';
-import checkAgent from '@utils/checkAgent';
+import { checkAgent, getUtmParams } from '@utils/common';
 
 const Initializer = {
   initAccessTokenByCookies({ accessToken }: NextApiRequestCookies) {

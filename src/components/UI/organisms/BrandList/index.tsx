@@ -90,7 +90,7 @@ function BrandList({
     <StyledBrandList variant={variant} css={customStyle}>
       {!!accessUser && !isFetched && personalBrands.length === 0
         ? Array.from({ length: 8 }, (_, index) => (
-            <BrandItem key={`brand-skeleton-${index}`}>
+            <BrandItem key={`brand-skeleton-${index}`} css={{ margin: '0 auto' }}>
               <Skeleton width="64px" height="64px" customStyle={{ borderRadius: '50%' }} />
               <Skeleton width="64px" height="18px" isRound disableAspectRatio />
             </BrandItem>

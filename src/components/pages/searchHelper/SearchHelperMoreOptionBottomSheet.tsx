@@ -269,7 +269,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Flexbox customStyle={{ flex: '1 1 0%', overflow: 'hidden' }}>
                     <Box customStyle={{ flex: '1 1 0%', overflowY: 'auto' }}>
                       {isLoading
-                        ? Array.from(new Array(10), (_, index) => (
+                        ? Array.from({ length: 10 }, (_, index) => (
                             <SearchHelperBottomSheetSkeleton
                               key={`search-helper-category-skeleton-${index}`}
                               isMulti
@@ -352,7 +352,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Flexbox customStyle={{ flex: '1 1 0%', overflow: 'hidden' }}>
                     <Box customStyle={{ flex: '1 1 0%', overflowY: 'auto' }}>
                       {isLoading
-                        ? Array.from(new Array(10), (_, index) => (
+                        ? Array.from({ length: 10 }, (_, index) => (
                             <SearchHelperBottomSheetSkeleton
                               key={`search-helper-category-skeleton-${index}`}
                               isMulti
@@ -434,7 +434,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Flexbox customStyle={{ flex: '1 1 0%', overflow: 'hidden' }}>
                     <Box customStyle={{ flex: '1 1 0%', overflowY: 'auto' }}>
                       {isLoading
-                        ? Array.from(new Array(10), (_, index) => (
+                        ? Array.from({ length: 10 }, (_, index) => (
                             <SearchHelperBottomSheetSkeleton
                               key={`search-helper-category-skeleton-${index}`}
                               isMulti
@@ -504,7 +504,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Flexbox customStyle={{ flex: '1 1 0%', overflow: 'hidden' }}>
                     <Box customStyle={{ flex: '1 1 0%', overflowY: 'auto' }}>
                       {isLoading
-                        ? Array.from(new Array(10), (_, index) => (
+                        ? Array.from({ length: 10 }, (_, index) => (
                             <SearchHelperBottomSheetSkeleton
                               key={`search-helper-category-skeleton-${index}`}
                               isMulti
