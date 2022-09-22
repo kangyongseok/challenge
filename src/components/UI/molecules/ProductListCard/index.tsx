@@ -20,7 +20,7 @@ import {
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Badge, Image, Skeleton } from '@components/UI/atoms';
+import { Badge, Image } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -44,14 +44,7 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import {
-  Area,
-  Content,
-  MetaSocial,
-  SkeletonWrapper,
-  Title,
-  WishButton
-} from './ProductListCard.styles';
+import { Area, Content, MetaSocial, Title, WishButton } from './ProductListCard.styles';
 
 interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product;
@@ -96,7 +89,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     id,
     title,
     site: { id: siteId = 0, hasImage: siteHasImage = false } = {},
-    siteUrl: { id: siteUrlId = 0, hasImage: siteUrlHasImage = false, name: siteUrlName = '' } = {},
+    siteUrl,
     targetProductId,
     brand: { name: brandName } = {},
     category: { name: categoryName } = {},
@@ -112,6 +105,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     datePosted,
     dateFirstPosted
   } = product;
+  const {
+    id: siteUrlId = 0,
+    hasImage: siteUrlHasImage = false,
+    name: siteUrlName = ''
+  } = siteUrl || {};
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -159,7 +157,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     productLegitStatusText
   } = useProductCardState(product);
 
-  const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
   const [openRemoveWishDialog, setOpenRemoveWishDialog] = useState(false);
   const loggedEventRef = useRef(false);
@@ -296,12 +293,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     }
   }, [hideAlert, showDuplicateUploadAlert, showDuplicateWithPriceDownAlert]);
 
-  useEffect(() => {
-    const img = new window.Image();
-    img.src = imageUrl;
-    img.onload = () => setLoaded(true);
-  }, [imageUrl]);
-
   return (
     <>
       <Box customStyle={{ ...customStyle, position: 'relative' }}>
@@ -329,11 +320,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               disableLazyLoad={false}
               disableSkeletonRender={false}
             />
-            {!loaded && (
-              <SkeletonWrapper>
-                <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
-              </SkeletonWrapper>
-            )}
             <WishButton onClick={handleClickWish}>
               {isWish ? (
                 <Icon name="HeartFilled" color={secondary.red.main} size="large" />

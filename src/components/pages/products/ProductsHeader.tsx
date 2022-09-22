@@ -119,10 +119,8 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
         ) || false
       }
     >
-      <Flexbox gap={6} justifyContent="center">
-        {variant === 'camel' && (
-          <Icon name="SafeFilled" color="primary" customStyle={{ minWidth: 'fit-content' }} />
-        )}
+      <Flexbox gap={6} alignment="center">
+        {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
         <Typography
           variant="h3"
           weight="bold"

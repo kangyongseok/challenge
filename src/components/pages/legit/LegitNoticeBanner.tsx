@@ -124,7 +124,7 @@ function LegitNoticeBanner() {
               <br /> 더 나은 서비스를 위해 잠시 정비 중입니다.
               <br />
               <br />
-              재오픈에 맞춰 알려드릴게요! (9월 중)
+              재오픈에 맞춰 알려드릴게요! (10월 중)
             </Typography>
           ) : (
             <Typography customStyle={{ marginTop: 8, textAlign: 'center' }}>

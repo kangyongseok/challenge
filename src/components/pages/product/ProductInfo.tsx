@@ -242,7 +242,7 @@ const Content = styled(Typography)<{ isClamped: boolean }>`
   margin-top: 24px;
   margin-bottom: ${({ isClamped }) => isClamped && '24px'};
   white-space: pre-wrap;
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 export default ProductInfo;

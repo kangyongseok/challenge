@@ -56,20 +56,18 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
   } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
     enabled: !!accessUser
   });
-  const { mutate: mutatePostManage } = useMutation(postManage);
+  const { mutate: mutatePostManage } = useMutation(postManage, {
+    onSettled() {
+      refetch().finally(() => {
+        router.push('/searchHelper/onboarding');
+      });
+    }
+  });
 
   const isViewSearchHelperOnboarding = () => {
     if (accessUser && userHistoryManage?.VIEW_SEARCH_HELPER) {
-      mutatePostManage(
-        { event: 'VIEW_SEARCH_HELPER', userId: accessUser.userId },
-        {
-          onSuccess() {
-            refetch();
-          }
-        }
-      );
+      mutatePostManage({ event: 'VIEW_SEARCH_HELPER', userId: accessUser.userId });
 
-      router.push('/searchHelper/onboarding');
       return true;
     }
 

@@ -9,7 +9,7 @@ import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
+import { Image } from '@components/UI/atoms';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -32,14 +32,7 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import {
-  Area,
-  MetaSocial,
-  SkeletonWrapper,
-  Title,
-  TodayWishViewLabel,
-  WishButton
-} from './ProductGridCard.styles';
+import { Area, MetaSocial, Title, TodayWishViewLabel, WishButton } from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
@@ -102,7 +95,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     id,
     title,
     site: { id: siteId = 0, hasImage: siteHasImage = false } = {},
-    siteUrl: { id: siteUrlId = 0, hasImage: siteUrlHasImage = false, name: siteUrlName = '' } = {},
+    siteUrl,
     price = 0,
     wishCount = 0,
     purchaseCount = 0,
@@ -111,6 +104,11 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     dateFirstPosted,
     status
   } = product;
+  const {
+    id: siteUrlId = 0,
+    hasImage: siteUrlHasImage = false,
+    name: siteUrlName = ''
+  } = siteUrl || {};
   const {
     todayViewCount = 0,
     todayWishCount = 0,
@@ -173,7 +171,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
 
   const [cardCustomStyle] = useState({ ...customStyle, cursor: 'pointer' });
-  const [loaded, setLoaded] = useState(false);
   const [isWish, setIsWish] = useState(false);
 
   const imageBoxRef = useRef<HTMLDivElement>(null);
@@ -210,12 +207,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   }, [id, userWishIds]);
 
   useEffect(() => {
-    const img = new window.Image();
-    img.src = imageUrl;
-    img.onload = () => setLoaded(true);
-  }, [imageUrl]);
-
-  useEffect(() => {
     if (measure && typeof measure === 'function') {
       measure();
     }
@@ -239,11 +230,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           disableLazyLoad={false}
           disableSkeletonRender={false}
         />
-        {!loaded && (
-          <SkeletonWrapper>
-            <Skeleton isRound={isRound} customStyle={{ height: '100%' }} />
-          </SkeletonWrapper>
-        )}
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
             {productLabels.map(({ description }, index) => (

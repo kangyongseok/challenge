@@ -123,7 +123,7 @@ function LegitMyPanel() {
           아직 신청 내역이 없어요 😥
         </Typography>
         <Typography variant="h4" customStyle={{ marginTop: 8, textAlign: 'center' }}>
-          9월 중에 다시 감정이 시작될 예정이니
+          10월 중에 다시 감정이 시작될 예정이니
           <br /> 조금만 기다려주세요!
         </Typography>
       </Box>

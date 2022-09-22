@@ -205,7 +205,9 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
             <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
               👟 신발
             </Typography>
-            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
+            <Flexbox
+              customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px', paddingBottom: 32 }}
+            >
               {defaultSize.shoes.map(({ categorySizeId, viewSize }) => (
                 <Chip
                   key={`shoes-${viewSize}-${categorySizeId}`}
