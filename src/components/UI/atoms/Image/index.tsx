@@ -45,14 +45,20 @@ function Image({
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([e]) => setIntersecting(e.isIntersecting));
+    let observer: IntersectionObserver;
 
-    if (imageRef.current) {
-      observer.observe(imageRef.current);
+    try {
+      observer = new IntersectionObserver(([e]) => setIntersecting(e.isIntersecting));
+
+      if (imageRef.current) {
+        observer.observe(imageRef.current);
+      }
+    } catch {
+      setIntersecting(true);
     }
 
     return () => {
-      observer.disconnect();
+      if (observer) observer.disconnect();
     };
   }, []);
 

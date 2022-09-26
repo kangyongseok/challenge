@@ -375,6 +375,9 @@ function ProductDetail() {
         ogDescription={`${getMetaDescription(data?.product.description || '')}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
         ogUrl={`https://mrcamel.co.kr${getProductDetailUrl({ product: data?.product as Product })}`}
+        canonical={`https://mrcamel.co.kr${getProductDetailUrl({
+          product: data?.product as Product
+        })}`}
         product={data?.product}
       />
       <GeneralTemplate
@@ -568,13 +571,18 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
       };
     }
 
-    await queryClient.prefetchQuery(queryKeys.products.product({ productId }), async () => {
-      const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
+    const product = await queryClient.fetchQuery(
+      queryKeys.products.product({ productId }),
+      async () => {
+        const resultProduct = await fetchProduct({ productId, source: PRODUCT_SOURCE.API });
 
-      resultProduct.product.viewCount += 1;
+        resultProduct.product.viewCount += 1;
 
-      return resultProduct;
-    });
+        return resultProduct;
+      }
+    );
+
+    queryClient.setQueryData(queryKeys.products.product({ productId }), product);
 
     return {
       props: {

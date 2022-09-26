@@ -11,6 +11,7 @@ interface PageHeadProps {
   ogDescription?: string;
   ogImage?: string;
   ogUrl?: string;
+  canonical?: string;
   product?: Product;
 }
 
@@ -21,6 +22,7 @@ function PageHead({
   ogDescription,
   ogImage,
   ogUrl,
+  canonical,
   product
 }: PageHeadProps) {
   const {
@@ -44,6 +46,7 @@ function PageHead({
       <meta name="twitter:image" content={ogImage} />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:url" content={ogUrl} />
+      {canonical && <link rel="canonical" href={canonical} />}
       {product && (
         <>
           <meta name="twitter:label1" content="가격" />

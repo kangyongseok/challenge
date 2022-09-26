@@ -60,9 +60,13 @@ function App({ Component, pageProps }: AppProps) {
   );
   const canonicalUrl = useMemo(() => {
     const originUrl = 'https://mrcamel.co.kr';
+
+    // 해당 페이지 내에서 렌더링하기 위함
+    if (router.pathname === '/products/[id]') return '';
+
     const asPath = (router.asPath === '/' ? '' : router.asPath.split('?')[0]).replace(/ /g, '-');
     return decodeURI(`${originUrl}${asPath}`);
-  }, [router.asPath]);
+  }, [router.asPath, router.pathname]);
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return '#0D0D0D';
 
@@ -114,7 +118,7 @@ function App({ Component, pageProps }: AppProps) {
         />
         <meta name="theme-color" content={themeColor} />
         <title>명품을 중고로 사는 가장 똑똑한 방법, 카멜</title>
-        <link rel="canonical" href={canonicalUrl} />
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       </Head>
       <ChannelTalkProvider />
       <FacebookPixelProvider />

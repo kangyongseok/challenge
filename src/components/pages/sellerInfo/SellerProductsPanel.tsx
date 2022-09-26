@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 
 import { useInfiniteQuery } from 'react-query';
-import { useInView } from 'react-intersection-observer';
 import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
@@ -30,7 +29,6 @@ function SellerProductsPanel() {
     size: 20
   };
 
-  const { ref, inView } = useInView();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
     queryKeys.products.sellerProducts(sellerProductsParams),
     async ({ pageParam = 0 }) => fetchSellerProducts({ ...sellerProductsParams, page: pageParam }),
@@ -45,17 +43,29 @@ function SellerProductsPanel() {
   );
 
   useEffect(() => {
-    if (inView) {
-      const requestProductsPage = productsPage.current + 1;
-      logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
-        title: 'SELLER_PRODUCT',
-        name: 'SELLER_PRODUCT',
-        page: requestProductsPage,
-        productId
-      });
-      fetchNextPage();
-    }
-  }, [fetchNextPage, inView, productId]);
+    const handleScroll = async () => {
+      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+
+      const isFloor = scrollTop + clientHeight >= scrollHeight;
+
+      if (hasNextPage && !isFetchingNextPage && isFloor) {
+        const requestProductsPage = productsPage.current + 1;
+        logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
+          title: 'SELLER_PRODUCT',
+          name: 'SELLER_PRODUCT',
+          page: requestProductsPage,
+          productId
+        });
+        await fetchNextPage();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, productId]);
 
   return (
     <Box customStyle={{ margin: '16px 0 20px' }}>
@@ -102,14 +112,6 @@ function SellerProductsPanel() {
             ))
           )}
       </Flexbox>
-      {!isFetchingNextPage && hasNextPage && (
-        <Box
-          ref={ref}
-          customStyle={{
-            height: 20
-          }}
-        />
-      )}
     </Box>
   );
 }

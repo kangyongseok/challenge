@@ -98,11 +98,11 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
           <Label text="가품 시, 100%환불" size="xsmall" variant="ghost" brandColor="black" />
         )}
       </Flexbox>
-      <Title variant="h4" weight="medium">
+      <Title component="h1" variant="h4" weight="medium">
         {isSafe && <strong>안전결제 </strong>}
         {product?.title}
       </Title>
-      <Typography variant="h3" weight="bold">
+      <Typography component="h2" variant="h3" weight="bold">
         {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
       </Typography>
       <Flexbox

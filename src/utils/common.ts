@@ -440,7 +440,7 @@ export function getProductDetailUrl({
   type?: 'product' | 'targetProduct';
   product: Product;
 }) {
-  const { id, urlDetail, targetProductId, targetProductUrl, quoteTitle } = product;
+  const { id, urlDetail, targetProductId, targetProductUrl, quoteTitle } = product || {};
   let productDetailUrl = `/products/${id}`;
 
   if (type === 'targetProduct') {

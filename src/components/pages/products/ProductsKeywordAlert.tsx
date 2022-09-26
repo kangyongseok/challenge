@@ -20,18 +20,25 @@ function ProductsKeywordAlert({ index, measure }: ProductsKeywordAlertProps) {
   const [isIntersecting, setIntersecting] = useState(false);
 
   const alertRef = useRef(null);
-  const observer = useMemo(
-    () => new IntersectionObserver(([e]) => setIntersecting(e.isIntersecting)),
-    []
-  );
+  const observer = useMemo(() => {
+    let newObserver: IntersectionObserver | null = null;
+
+    try {
+      newObserver = new IntersectionObserver(([e]) => setIntersecting(e.isIntersecting));
+    } catch {
+      setIntersecting(true);
+    }
+
+    return newObserver;
+  }, []);
 
   useEffect(() => {
-    if (alertRef.current) {
+    if (observer && alertRef.current) {
       observer.observe(alertRef.current);
     }
 
     return () => {
-      observer.disconnect();
+      if (observer) observer.disconnect();
     };
   }, [observer]);
 

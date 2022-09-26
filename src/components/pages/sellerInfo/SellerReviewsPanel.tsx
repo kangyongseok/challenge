@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
-import { useInView } from 'react-intersection-observer';
 import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 
@@ -37,7 +36,6 @@ function SellerReviewsPanel() {
     productId: Number(productId),
     size: 20
   };
-  const { ref, inView } = useInView();
   const productsPage = useRef(0);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
     queryKeys.products.reviewInfo(reviewInfoParams),
@@ -54,17 +52,29 @@ function SellerReviewsPanel() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (inView) {
-      const requestReviewsPage = productsPage.current + 1;
-      logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
-        title: 'SELLER_REVIEW',
-        name: 'SELLER_REVIEW',
-        page: requestReviewsPage,
-        productId
-      });
-      fetchNextPage();
-    }
-  }, [fetchNextPage, inView, productId]);
+    const handleScroll = async () => {
+      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+
+      const isFloor = scrollTop + clientHeight >= scrollHeight;
+
+      if (hasNextPage && !isFetchingNextPage && isFloor) {
+        const requestReviewsPage = productsPage.current + 1;
+        logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
+          title: 'SELLER_REVIEW',
+          name: 'SELLER_REVIEW',
+          page: requestReviewsPage,
+          productId
+        });
+        await fetchNextPage();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, productId]);
 
   const firstReviewInfo = data?.pages?.[0];
   const isEmpty = firstReviewInfo?.sellerReviews?.content?.length === 0;
@@ -180,14 +190,6 @@ function SellerReviewsPanel() {
             />
           ))
         )}
-      {!isFetchingNextPage && hasNextPage && (
-        <Box
-          ref={ref}
-          customStyle={{
-            height: 20
-          }}
-        />
-      )}
       <Toast
         open={toastState.open}
         onClose={() => setToastState(() => ({ type: null, open: false }))}
