@@ -20,6 +20,7 @@ import {
   SearchRecentList
 } from '@components/pages/search';
 
+import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -36,6 +37,7 @@ import { calculateExpectCountPerHour } from '@utils/formats';
 
 import type { RecentItems, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useDebounce from '@hooks/useDebounce';
 
 function Search() {
@@ -45,6 +47,9 @@ function Search() {
   );
 
   const [searchValue, setSearchValue] = useState('');
+
+  const { data: accessUser } = useQueryAccessUser();
+
   const debouncedSearchKeyword = useDebounce<string>(searchValue, 300);
   const { data: suggestKeywords = [] } = useQuery(
     queryKeys.products.keywordsSuggest(debouncedSearchKeyword),
@@ -81,6 +86,10 @@ function Search() {
     count = 0,
     type
   }: TotalSearchItem) => {
+    if (accessUser) {
+      updateAccessUserOnBraze({ ...accessUser, lastKeyword: keyword });
+    }
+
     if (!find(savedRecentSearchList, { keyword })) {
       setSavedRecentSearchList((currVal) => [
         { keyword, count, expectCount: expectCount || calculateExpectCountPerHour(count) },

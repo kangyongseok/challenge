@@ -19,6 +19,8 @@ export type User = {
   userAuthStatus: boolean;
   userId: number;
   userName: string;
+  lastProductModel?: string;
+  lastKeyword?: string;
 };
 
 export type Kind = 'bottoms' | 'shoes' | 'tops';

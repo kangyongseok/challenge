@@ -36,8 +36,10 @@ import {
   ProductSellerReviews
 } from '@components/pages/product';
 
-import { Product } from '@dto/product';
+import type { AccessUser } from '@dto/userAuth';
+import type { Product } from '@dto/product';
 
+import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -65,7 +67,6 @@ import { getMetaDescription, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
-import type { User } from '@typings/user';
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryProduct from '@hooks/useQueryProduct';
@@ -95,7 +96,8 @@ function ProductDetail() {
     isOpenDuplicatedToast: false
   });
   const [targetProductUrl, setTargetProductUrl] = useState('');
-  const contentRef = useRef<HTMLHRElement | null>(null);
+  const loggedBrazeRef = useRef(false);
+  const contentRef = useRef<HTMLHRElement>(null);
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice, openLegit } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
@@ -148,7 +150,7 @@ function ProductDetail() {
 
     return false;
   }, [data]);
-  const accessUser = LocalStorage.get<User | null>(ACCESS_USER);
+  const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading && !isFetching ? data?.product : undefined;
 
@@ -355,6 +357,48 @@ function ProductDetail() {
 
     setTargetProductUrl(getProductDetailUrl({ type: 'targetProduct', product: data.product }));
   }, [data]);
+
+  useEffect(() => {
+    loggedBrazeRef.current = false;
+  }, [asPath]);
+
+  useEffect(() => {
+    if (!data || !data.product || !accessUser || loggedBrazeRef.current) return;
+
+    loggedBrazeRef.current = true;
+
+    const categories = [];
+
+    const {
+      product: { category: productCategory, productCategories = [], quoteTitle: productQuoteTitle }
+    } = data;
+
+    let quoteTitle = productQuoteTitle || '';
+
+    if (productCategory) {
+      categories.push(productCategory.name);
+    }
+
+    if (productCategories && !!productCategories.length) {
+      productCategories.forEach(({ category: { name: categoryName } }) =>
+        categories.push(categoryName)
+      );
+    }
+
+    categories.forEach((c) => {
+      quoteTitle = quoteTitle.replace(c, '');
+    });
+
+    quoteTitle = quoteTitle.replace('  ', ' ').replace('  ', ' ');
+
+    if (categories && categories.length > 0) {
+      categories.forEach((category) => {
+        quoteTitle += ` ${category}`;
+      });
+    }
+
+    updateAccessUserOnBraze({ ...accessUser, lastProductModel: quoteTitle });
+  }, [data, accessUser]);
 
   useEffect(() => {
     if (!isRedirectPage) {

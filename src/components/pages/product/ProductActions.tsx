@@ -340,6 +340,7 @@ const ReportTooltip = styled.div<{ open: boolean }>`
   visibility: ${({ open }) => (open ? 'visible' : 'hidden')};
   opacity: ${({ open }) => Number(open)};
   transition: all 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  z-index: ${({ theme: { zIndex } }) => zIndex.button};
 
   :before {
     content: '';

@@ -80,6 +80,8 @@ export interface AccessUser {
   userAuthStatus: boolean;
   userId: number;
   userName: string;
+  lastProductModel?: string;
+  lastKeyword?: string;
 }
 
 export interface UserSnsLoginResult {
