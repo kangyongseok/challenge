@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Flexbox, Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Flexbox, Icon, Tooltip, Typography, light, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
@@ -56,7 +56,7 @@ function LegitResultLoginBottomSheet() {
         <Tooltip
           open
           message={
-            <Typography variant="body2" weight="bold" customStyle={{ color: common.white }}>
+            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
               ⚡ 3초만에 빠른 로그인
             </Typography>
           }
@@ -79,13 +79,17 @@ function LegitResultLoginBottomSheet() {
               src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
               alt="Kakao Logo Img"
             />
-            <Typography variant="h4" weight="medium">
+            <Typography
+              variant="h4"
+              weight="medium"
+              customStyle={{ color: light.palette.common.ui20 }}
+            >
               카카오톡으로 계속하기
             </Typography>
           </KakaoLoginButton>
         </Tooltip>
       </Box>
-      <Box customStyle={{ padding: 20, backgroundColor: common.grey['95'] }}>
+      <Box customStyle={{ padding: 20, backgroundColor: common.ui95 }}>
         <Flexbox
           gap={4}
           alignment="center"

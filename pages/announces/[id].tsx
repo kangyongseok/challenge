@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import { Header } from '@components/UI/molecules';
@@ -16,9 +16,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function AnnouncePage() {
-  const {
-    theme: { palette }
-  } = useTheme();
   const { query, back } = useRouter();
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
 
@@ -65,12 +62,11 @@ function AnnouncePage() {
             margin: '8px 20px 24px'
           }}
         >
-          <Typography variant="h3" weight="medium" color={palette.common.grey[20]}>
+          <Typography variant="h3" weight="medium">
             {announce.title}
           </Typography>
           <Typography
             variant="body2"
-            color={palette.common.grey[20]}
             customStyle={{
               textAlign: 'right'
             }}

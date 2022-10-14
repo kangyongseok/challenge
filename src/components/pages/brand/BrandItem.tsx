@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import capitalize from 'lodash-es/capitalize';
 
 import { Image } from '@components/UI/atoms';
@@ -24,6 +24,9 @@ interface BrandItemProps {
 
 function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: BrandItemProps) {
   const router = useRouter();
+  const {
+    theme: { mode }
+  } = useTheme();
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
 
   const handleClick = useCallback(() => {
@@ -66,11 +69,11 @@ function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: B
   }, [gender, name, router, type]);
 
   return (
-    <Flexbox gap={20} alignment="center" onClick={handleClick}>
+    <Flexbox gap={20} alignment="center" onClick={handleClick} customStyle={{ cursor: 'pointer' }}>
       <Image
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/${nameLogo
-          .toLowerCase()
-          .replace(/\s/g, '')}.jpg`}
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
+          mode === 'light' ? 'white' : 'black'
+        }/${nameLogo.toLowerCase().replace(/\s/g, '')}.jpg`}
         width={48}
         height={48}
         disableAspectRatio

@@ -13,13 +13,15 @@ const tabData = [
 
 function MyPortfolioLanding04() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [activeTab, setActiveTab] = useState(1);
   const [imgName, setImgName] = useState('tab_img01');
   return (
     <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
-      <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
+      <Typography weight="bold" customStyle={{ color: primary.main }}>
         테마 별 실거래가
       </Typography>
       <Typography variant="h2" weight="bold">
@@ -39,7 +41,7 @@ function MyPortfolioLanding04() {
               }}
               active={num === activeTab}
             >
-              <Typography customStyle={{ color: palette.common.grey['60'] }}>#{tab}</Typography>
+              <Typography customStyle={{ color: common.ui60 }}>#{tab}</Typography>
             </Tab>
           ))}
         </TabArea>
@@ -60,19 +62,32 @@ function MyPortfolioLanding04() {
 const TabArea = styled(Flexbox)`
   width: 100%;
   height: 41px;
-  background: ${({ theme: { palette } }) => palette.common.grey['90']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   border-radius: 50px;
   padding: 4px;
 `;
 
 const Tab = styled.div<{ active?: boolean }>`
   text-align: center;
-  background: ${({ theme: { palette }, active }) => (active ? palette.common.white : 'none')};
+  background: ${({
+    theme: {
+      palette: { common }
+    },
+    active
+  }) => (active ? common.uiWhite : 'none')};
   padding: 6px 13px;
   border-radius: 36px;
   div {
-    color: ${({ theme: { palette }, active }) =>
-      active ? palette.primary.main : palette.common.grey['60']};
+    color: ${({
+      theme: {
+        palette: { primary, common }
+      },
+      active
+    }) => (active ? primary.main : common.ui60)};
   }
 `;
 

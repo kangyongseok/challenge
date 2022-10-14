@@ -4,7 +4,7 @@ import type { FormEvent } from 'react';
 import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Icon, Typography } from 'mrcamel-ui';
+import { Box, Button, Dialog, Icon, Typography } from 'mrcamel-ui';
 import find from 'lodash-es/find';
 import styled from '@emotion/styled';
 
@@ -239,7 +239,7 @@ function Search() {
         <Typography weight="medium">
           <strong>앗!</strong> <br /> 검색 키워드를 입력해주세요 😭
         </Typography>
-        <CtaButton
+        <Button
           fullWidth
           variant="contained"
           brandColor="primary"
@@ -247,7 +247,7 @@ function Search() {
           onClick={() => setIsSearchEmpty(false)}
         >
           확인
-        </CtaButton>
+        </Button>
       </Dialog>
     </>
   );

@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -18,13 +17,8 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
 import attrProperty from '@constants/attrProperty';
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
-import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function CrmProducts() {
@@ -63,12 +57,7 @@ function CrmProducts() {
                 />
               </Box>
             )}
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
-              <ProductsFilter variant="search" />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
-              <ProductsFilter variant="search" showDynamicFilter />
-            </ABTestGroup>
+            <ProductsFilter variant="search" showDynamicFilter />
           </Box>
         }
         footer={
@@ -94,16 +83,6 @@ function CrmProducts() {
   );
 }
 
-export function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(req.cookies);
-
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
-}
-
 const NoticeWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -111,7 +90,7 @@ const NoticeWrapper = styled.div`
   padding: 8px 20px 16px 20px;
   width: 100%;
   z-index: ${({ theme }) => theme.zIndex.header};
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({ theme }) => theme.palette.common.uiWhite};
 `;
 
 export default CrmProducts;

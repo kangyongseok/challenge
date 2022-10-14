@@ -47,10 +47,10 @@ function HomeEventBanner() {
       {type === 'myPortfolio' && (
         <MyPortfolioBanner onClick={handleClick} alignment="center" justifyContent="center">
           <Flexbox gap={1} direction="vertical">
-            <Typography variant="h4" customStyle={{ color: common.white }}>
+            <Typography variant="h4" customStyle={{ color: common.uiWhite }}>
               내가 쓰던 명품, 얼마에 팔릴까?
             </Typography>
-            <Typography weight="bold" customStyle={{ color: common.white, opacity: 0.7 }}>
+            <Typography weight="bold" customStyle={{ color: common.uiWhite, opacity: 0.7 }}>
               MY PORTFOLIO 사전예약
             </Typography>
           </Flexbox>

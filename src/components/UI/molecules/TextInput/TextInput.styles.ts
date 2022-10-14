@@ -19,42 +19,53 @@ export const Wrapper = styled.div<TextInputProps>`
   padding: 16px 20px;
   margin: 0;
   border: 0;
-  color: ${({ theme }) => theme.palette.common.grey['20']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
   height: 60px;
 
-  ${({ theme, variant, borderWidth, isSelected, focused }): CSSObject => {
+  ${({
+    theme: {
+      box,
+      palette: { primary, common }
+    },
+    variant,
+    borderWidth,
+    isSelected,
+    focused
+  }): CSSObject => {
     switch (variant) {
       case 'outlined':
         return {
-          backgroundColor: isSelected
-            ? theme.palette.primary.highlight
-            : theme.palette.common.white,
-          border: `${borderWidth}px solid ${
-            isSelected || focused ? theme.palette.primary.main : theme.palette.common.grey['90']
-          }`,
-          borderRadius: theme.box.round['8']
+          backgroundColor: isSelected ? primary.highlight : common.uiWhite,
+          border: `${borderWidth}px solid ${isSelected || focused ? primary.main : common.ui90}`,
+          borderRadius: box.round['8']
         };
       case 'contained':
         return {
-          backgroundColor: isSelected
-            ? theme.palette.primary.highlight
-            : theme.palette.common.grey['95'],
-          borderRadius: theme.box.round['8']
+          backgroundColor: isSelected ? primary.highlight : common.ui95,
+          borderRadius: box.round['8']
         };
       case 'underlined':
         return {
-          backgroundColor: theme.palette.common.white
+          backgroundColor: common.uiWhite
         };
       default:
         return {
-          backgroundColor: theme.palette.common.white
+          backgroundColor: common.uiWhite
         };
     }
   }};
 `;
 
 export const Label = styled.label`
-  color: ${({ theme }) => theme.palette.common.grey['80']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
   max-width: calc(100% - 40px);
   padding: 0;
   display: block;
@@ -80,25 +91,41 @@ export const Label = styled.label`
 `;
 
 export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
-  color: ${({ theme, isSelected }) => (isSelected ? theme.palette.primary.main : 'currentColor')};
+  color: ${({
+    theme: {
+      palette: { primary }
+    },
+    isSelected
+  }) => (isSelected ? primary.main : 'currentColor')};
   box-sizing: content-box;
   background: none;
   margin: 0;
   display: block;
   min-width: 0;
-  border-bottom: ${({ theme, borderWidth, variant, isSelected }) =>
+  border-bottom: ${({
+    theme: {
+      palette: { primary, common }
+    },
+    borderWidth,
+    variant,
+    isSelected
+  }) =>
     variant === 'underlined' &&
-    `${borderWidth}px solid ${
-      isSelected ? theme.palette.primary.main : theme.palette.common.grey['90']
-    }`};
+    `${borderWidth}px solid ${isSelected ? primary.main : common.ui90}`};
   transition-duration: 0.2s;
 
   :focus {
-    ${({ theme, variant, borderWidth }): CSSObject =>
+    ${({
+      theme: {
+        palette: { primary }
+      },
+      variant,
+      borderWidth
+    }): CSSObject =>
       variant === 'underlined'
         ? {
             outline: 0,
-            borderBottom: `${borderWidth}px solid ${theme.palette.primary.main}`
+            borderBottom: `${borderWidth}px solid ${primary.main}`
           }
         : {
             outline: 0

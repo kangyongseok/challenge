@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -73,7 +73,7 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
         그래도 회원탈퇴 하시겠어요?
       </Typography>
       <ButtonArea alignment="center" gap={10}>
-        <CtaButton
+        <Button
           fullWidth
           variant="ghost"
           brandColor="primary"
@@ -81,8 +81,8 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
           onClick={handleWithdraw}
         >
           회원탈퇴
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           fullWidth
           variant="contained"
           brandColor="primary"
@@ -90,7 +90,7 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
           onClick={handleMaintainWithdraw}
         >
           회원정보 유지
-        </CtaButton>
+        </Button>
       </ButtonArea>
     </Dialog>
   );

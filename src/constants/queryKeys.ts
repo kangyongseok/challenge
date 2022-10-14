@@ -1,10 +1,14 @@
 import compact from 'lodash-es/compact';
 
 import type { ManageParams } from '@dto/userHistory';
-import type { CategoryWishesParams } from '@dto/user';
+import type { CategoryWishesParams, UserProductsParams } from '@dto/user';
+import type {
+  OpinionLegitsParams,
+  ProductLegitCommentsParams,
+  ProductLegitsParams
+} from '@dto/productLegit';
 import type {
   CamelProductsParams,
-  LegitProductsParams,
   ProductParams,
   RecommProductsParams,
   ReviewInfoParams,
@@ -13,6 +17,13 @@ import type {
   SearchRelatedProductsParams,
   SellerProductsParams
 } from '@dto/product';
+import type {
+  LegitsBrandsParams,
+  LegitsCategoriesParams,
+  LegitsModelsParams,
+  ModelSuggestParams
+} from '@dto/model';
+import type { PhotoGuideParams } from '@dto/common';
 import type { SuggestParams } from '@dto/brand';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
@@ -27,7 +38,10 @@ const brands = {
 
 const categories = {
   all: ['categories'] as const,
-  parentCategories: () => [...categories.all, 'parentCategories'] as const
+  parentCategories: () => [...categories.all, 'parentCategories'] as const,
+  imageGroups: () => [...categories.all, 'imageGroups'] as const,
+  categorySizes: (params: { brandId: number; categoryId: number }) =>
+    [...categories.all, 'categorySizes', params] as const
 };
 
 const personals = {
@@ -49,14 +63,31 @@ const products = {
     compact([...products.all, 'searchAiProduct', params]),
   searchRelatedProducts: (params?: SearchRelatedProductsParams) =>
     compact([...products.all, 'searchRelatedProducts', params]),
-  productLegit: (params: ProductParams) => [...products.all, 'productLegit', params] as const,
-  legitProducts: (params?: LegitProductsParams) =>
-    [...products.all, 'legitProducts', params] as const,
   keywordsSuggest: (keyword: string) => [...products.all, 'keywordsSuggest', keyword] as const,
   recommProducts: (params?: RecommProductsParams) =>
     compact([...products.all, 'recommProducts', params]),
   camelProducts: (params?: CamelProductsParams) =>
-    compact([...products.all, 'camelProducts', params])
+    compact([...products.all, 'camelProducts', params]),
+  userInfo: () => [...products.all, 'userInfo'] as const,
+  searchHistory: (params?: SearchParams) =>
+    params
+      ? ([...products.all, 'searchHistory', params] as const)
+      : ([...products.all, 'searchHistory'] as const),
+  searchHistoryTopFive: (params?: SearchParams) =>
+    [...products.all, 'searchHistoryFive', params] as const,
+  sellerModifyProducs: (params: ProductParams) =>
+    [...products.all, 'sellerModifyProducs', params] as const
+};
+
+const productLegits = {
+  all: ['productLegits'] as const,
+  legits: (params?: ProductLegitsParams) => [...products.all, 'legits', params] as const,
+  legit: (productId: number) => [...products.all, 'legit', productId] as const,
+  requestLegits: (params?: ProductLegitsParams) =>
+    [...products.all, 'requestLegits', params] as const,
+  comments: (params: ProductLegitCommentsParams) => [...products.all, 'comments', params] as const,
+  opinionLegits: (params: OpinionLegitsParams) =>
+    [...productLegits.all, 'opinionLegits', params] as const
 };
 
 const users = {
@@ -71,10 +102,12 @@ const users = {
   userHistoryManages: (event: string) => [...users.all, 'userHistoryManages', event] as const,
   sizeMapping: () => [...users.all, 'sizeMapping'] as const,
   userProductKeywords: () => [...users.all, 'userProductKeywords'] as const,
-  legitTargets: () => [...users.all, 'legitTargets'] as const,
-  legitProducts: () => [...users.all, 'legitProducts'] as const,
+  userLegitTargets: () => [...users.all, 'userLegitTargets'] as const,
+  myProductLegits: () => [...users.all, 'myProductLegits'] as const,
   recommWishes: () => [...users.all, 'recommWishes'] as const,
-  productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const
+  productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const,
+  products: (params?: UserProductsParams) => [...users.all, 'products', params] as const,
+  legitProfile: (userId: number) => [...users.all, 'legitProfile', userId] as const
 };
 
 const userAuth = {
@@ -82,6 +115,23 @@ const userAuth = {
   accessUser: () => [...userAuth.all, 'accessUser'] as const,
   logout: () => [...userAuth.all, 'logout'] as const,
   withdraw: () => [...userAuth.all, 'withdraw'] as const
+};
+
+const models = {
+  all: ['models'] as const,
+  suggest: (params?: ModelSuggestParams) => [...models.all, 'suggest', params] as const,
+  legitsBrands: (params?: LegitsBrandsParams) => compact([...models.all, 'legitsBrands', params]),
+  legitsCategories: (params?: LegitsCategoriesParams) =>
+    compact([...models.all, 'legitsCategories', params]),
+  legitsModels: (params?: LegitsModelsParams) => compact([...models.all, 'legitsModels', params])
+};
+
+const commons = {
+  all: ['commons'] as const,
+  codeDetails: (id: number) => [...commons.all, 'codeDetails', id] as const,
+  photoGuide: (params: PhotoGuideParams) => [...commons.all, 'photoGuide', params] as const,
+  contentsProducts: (contentsId: number) =>
+    [...commons.all, 'contentsProducts', contentsId] as const
 };
 
 const userHistory = {
@@ -103,20 +153,9 @@ const client = {
   recentSearchList: () => [...client.all, RECENT_SEARCH_LIST] as const
 };
 
-const dashboard = {
-  all: ['dashboard'] as const,
-  legitDashboard: () => [...dashboard.all, 'legitDashboard'] as const
-};
-
-const model = {
-  all: ['model'] as const,
-  suggest: () => [...model.all, 'suggest'] as const,
-  keyword: (value: string) => [...model.all, value] as const
-};
-
-const common = {
-  all: ['common'],
-  contentsProducts: (contentsId: number) => [...common.all, 'contentsProducts', contentsId] as const
+const dashboards = {
+  all: ['dashboards'] as const,
+  legit: () => [...dashboards.all, 'legit'] as const
 };
 
 const queryKeys = {
@@ -124,15 +163,16 @@ const queryKeys = {
   categories,
   personals,
   products,
+  productLegits,
   users,
   userAuth,
   userHistory,
   logs,
-  dashboard,
+  dashboards,
+  models,
+  commons,
   nextJs,
-  client,
-  model,
-  common
+  client
 };
 
 export default queryKeys;

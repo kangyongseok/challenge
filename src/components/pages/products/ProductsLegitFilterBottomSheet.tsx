@@ -154,7 +154,7 @@ const LegitFilterOption = styled.li<{
     fontSize: size,
     fontWeight: weight.medium,
     letterSpacing,
-    color: isActive ? primary.main : common.grey['20']
+    color: isActive ? primary.main : common.ui20
   })};
 
   cursor: pointer;

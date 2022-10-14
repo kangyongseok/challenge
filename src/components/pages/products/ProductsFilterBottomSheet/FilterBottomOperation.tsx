@@ -2,8 +2,8 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Chip, CtaButton, Icon } from 'mrcamel-ui';
-import { debounce } from 'lodash-es';
+import { Button, Chip, Icon } from 'mrcamel-ui';
+import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -304,14 +304,14 @@ function FilterBottomOperation() {
         </SelectedSearchOptionList>
       )}
       <FilterButtons>
-        <CtaButton
+        <Button
           size="large"
           customStyle={{ minWidth: 112, whiteSpace: 'nowrap' }}
           onClick={handleClickReset}
         >
           전체 초기화
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           variant="contained"
           fullWidth
           size="large"
@@ -319,7 +319,7 @@ function FilterBottomOperation() {
           onClick={handleClick}
         >
           필터 적용 ({selectedTotalCount.toLocaleString()}개)
-        </CtaButton>
+        </Button>
       </FilterButtons>
     </StyledFilterBottomOperation>
   );
@@ -340,7 +340,11 @@ const FilterButtons = styled.div`
 const SelectedSearchOptionList = styled.div`
   width: 100%;
   padding: 16px 20px 0 20px;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   white-space: nowrap;
   overflow-x: auto;
 

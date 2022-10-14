@@ -2,8 +2,9 @@ import { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import type { ButtonProps } from 'mrcamel-ui/dist/components/Button';
+import type { ChipProps } from 'mrcamel-ui/dist/components/Chip';
 import { Chip } from 'mrcamel-ui';
+import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import type { CategoryValue } from '@dto/category';
@@ -11,6 +12,7 @@ import type { CategoryValue } from '@dto/category';
 import { logEvent } from '@library/amplitude';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -27,6 +29,7 @@ function WishesCategories({ categories, selectedCategoryIds }: WishesCategoriesP
     const target = e.currentTarget;
     const isActive = selectedCategoryIds.includes(Number(target.dataset.id));
     logEvent(attrKeys.wishes.CLICK_CATEGORY, {
+      name: attrProperty.name.wishList,
       idx: target.dataset.index,
       id: target.dataset.id,
       category: target.dataset.name,
@@ -61,14 +64,23 @@ function WishesCategories({ categories, selectedCategoryIds }: WishesCategoriesP
     });
   };
 
+  const handleScrollCategory = debounce(() => {
+    logEvent(attrKeys.wishes.SWIPE_X_TAG, {
+      name: attrProperty.name.wishList
+    });
+  }, 500);
+
   return (
-    <CategoriesWrapper showAppDownloadBanner={showAppDownloadBanner}>
+    <CategoriesWrapper
+      showAppDownloadBanner={showAppDownloadBanner}
+      onScroll={handleScrollCategory}
+    >
       {categories.map((category, i) => {
         const isActive = selectedCategoryIds.includes(Number(category.id));
-        const labelProps: ButtonProps = isActive
+        const chipProps: ChipProps = isActive
           ? {
-              brandColor: 'primary',
-              variant: 'outlinedGhost'
+              brandColor: 'black',
+              variant: 'contained'
             }
           : {
               variant: 'outlined'
@@ -82,9 +94,14 @@ function WishesCategories({ categories, selectedCategoryIds }: WishesCategoriesP
             data-index={i + 1}
             data-name={category.name}
             isRound={false}
-            {...labelProps}
+            {...chipProps}
             onClick={handleSetIds}
-            customStyle={{ whiteSpace: 'nowrap' }}
+            customStyle={{
+              whiteSpace: 'nowrap',
+              height: 33,
+              borderRadius: 36,
+              padding: '6px 12px'
+            }}
           >
             {category.name.replace('(P)', '') || '없음'} {category.count}
           </Chip>
@@ -102,13 +119,13 @@ const CategoriesWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
     showAppDownloadBanner ? 97 + APP_DOWNLOAD_BANNER_HEIGHT : 97}px;
   width: 100%;
   margin: 0 -20px;
-  padding: 16px 20px 8px 20px;
+  padding: 20px 20px 8px 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   background-color: ${({
     theme: {
       palette: { common }
     }
-  }) => common.white};
+  }) => common.uiWhite};
 
   & > button {
     margin-right: 6px;

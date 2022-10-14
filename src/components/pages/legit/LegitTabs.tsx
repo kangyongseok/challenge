@@ -5,6 +5,8 @@ import { Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/react';
 
+import Badge from '@components/UI/atoms/Badge';
+
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
@@ -46,9 +48,9 @@ function LegitTabs() {
           내 사진감정
         </Typography>
         {!isLoading && notViewedLegitCount > 0 && (
-          <NewCounterBadge>
-            {notViewedLegitCount > 99 ? '99+' : notViewedLegitCount}
-          </NewCounterBadge>
+          <Badge variant="two-tone" brandColor="red" type="alone" open width={20} height={20}>
+            N
+          </Badge>
         )}
       </AuthTab>
     </StyledAuthTabs>
@@ -59,14 +61,14 @@ const StyledAuthTabs = styled(Flexbox)`
   width: 100%;
   max-width: 268px;
   white-space: nowrap;
-  margin: 20px auto 0 auto;
+  margin: 20px auto 20px;
   padding: 4px;
   border-radius: ${({ theme: { box } }) => box.round['8']};
   background-color: ${({
     theme: {
       palette: { common }
     }
-  }) => common.grey['90']};
+  }) => common.bg02};
   overflow: hidden;
 `;
 
@@ -75,6 +77,7 @@ const AuthTab = styled.button<{ isActive?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   padding: 8px 12px;
   border-radius: ${({ theme: { box } }) => box.round['8']};
 
@@ -86,48 +89,14 @@ const AuthTab = styled.button<{ isActive?: boolean }>`
   }): CSSObject =>
     isActive
       ? {
-          backgroundColor: common.white,
+          backgroundColor: common.uiWhite,
           boxShadow: '0 4px 4px rgba(0, 0, 0, 0.04)'
         }
       : {
           '& > h4': {
-            color: common.grey['80']
+            color: common.ui80
           }
         }};
-`;
-
-const NewCounterBadge = styled.div`
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  min-height: 16px;
-  padding: 1px 5px;
-  margin-left: 2px;
-  border: 2px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.white};
-  border-radius: 10px;
-  background-color: ${({
-    theme: {
-      palette: { secondary }
-    }
-  }) => secondary.red.main};
-
-  ${({
-    theme: {
-      typography: { small2 },
-      palette: { common }
-    }
-  }): CSSObject => ({
-    fontSize: small2.size,
-    fontWeight: small2.weight.bold,
-    lineHeight: small2.lineHeight,
-    letterSpacing: small2.letterSpacing,
-    color: common.white
-  })};
 `;
 
 export default LegitTabs;

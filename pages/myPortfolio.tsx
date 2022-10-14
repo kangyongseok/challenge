@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Icon, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { TouchIcon } from '@components/UI/atoms';
@@ -39,7 +39,9 @@ const SECTION_PAGE_NUM = 7;
 function MyPortfolio() {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
   const [innerHeight, setInnerHeight] = useState(0);
@@ -204,14 +206,14 @@ function MyPortfolio() {
   const getBackgroundColor = () => {
     switch (currentSection) {
       case 0:
-        return palette.common.black;
+        return common.uiBlack;
       case 1:
       case 3:
       case 5:
       case 7:
-        return palette.common.grey['95'];
+        return common.ui95;
       default:
-        return palette.common.white;
+        return common.uiWhite;
     }
   };
 
@@ -260,7 +262,7 @@ function MyPortfolio() {
     <>
       <LandingHeader
         isBorder={currentSection > 0}
-        borderColor={currentSection === 0 ? palette.common.grey['20'] : palette.common.grey['90']}
+        borderColor={currentSection === 0 ? common.ui20 : common.ui90}
         alignment="center"
         direction="horizontal"
         isHidden={SECTION_PAGE_NUM - 1 === currentSection || currentSection === 0}
@@ -368,7 +370,7 @@ const LogoAnimationWrap = styled.div<{ currentSection: number }>`
   }
 `;
 
-const ReservationButton = styled(CtaButton)`
+const ReservationButton = styled(Button)`
   min-width: 78px;
   height: 41px;
   margin-left: auto;

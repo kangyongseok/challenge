@@ -43,7 +43,9 @@ function ReviewCard({
     isSuccess: isReported
   } = useMutation(postSellerReport);
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const router = useRouter();
@@ -110,7 +112,7 @@ function ReviewCard({
                   variant="body2"
                   customStyle={{
                     marginLeft: 6,
-                    color: palette.common.grey['60']
+                    color: common.ui60
                   }}
                 >
                   차단
@@ -130,7 +132,7 @@ function ReviewCard({
                     variant="body2"
                     weight="medium"
                     customStyle={{
-                      color: palette.common.grey['60']
+                      color: common.ui60
                     }}
                   >
                     신고
@@ -163,7 +165,11 @@ function ReviewCard({
 const ReviewCardWrapper = styled.div`
   margin-top: 8px;
   padding: 12px 16px;
-  background-color: ${({ theme }) => theme.palette.common.grey['98']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui98};
   border-radius: ${({ theme }) => theme.box.round['8']};
 
   svg {

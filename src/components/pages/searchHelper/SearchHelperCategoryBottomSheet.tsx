@@ -38,7 +38,9 @@ function SearchHelperCategoryBottomSheet({
   getUserSize
 }: SearchHelperCategoryBottomSheetProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [searchParams, setSearchParams] = useRecoilState(searchParamsState);
   const [selectedSearchOptions, setSelectedSearchOptions] = useRecoilState(
@@ -242,16 +244,8 @@ function SearchHelperCategoryBottomSheet({
               customStyle={{ padding: '2px 20px 6px' }}
               onClick={handleClickBack}
             >
-              <Icon
-                name="ArrowLeftOutlined"
-                size="small"
-                customStyle={{ color: palette.common.grey['60'] }}
-              />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['40'] }}
-              >
+              <Icon name="ArrowLeftOutlined" size="small" customStyle={{ color: common.ui60 }} />
+              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                 돌아가기
               </Typography>
             </Flexbox>
@@ -275,10 +269,7 @@ function SearchHelperCategoryBottomSheet({
                       <Typography variant="body1" weight="medium">
                         {name}
                       </Typography>
-                      <Typography
-                        variant="small2"
-                        customStyle={{ color: palette.common.grey['60'] }}
-                      >
+                      <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                         {commaNumber(count)}
                       </Typography>
                     </Flexbox>
@@ -298,17 +289,12 @@ function SearchHelperCategoryBottomSheet({
                           weight={selectedOptions.subParentCategory.id === id ? 'bold' : 'medium'}
                           customStyle={{
                             color:
-                              selectedOptions.subParentCategory.id === id
-                                ? palette.primary.main
-                                : undefined
+                              selectedOptions.subParentCategory.id === id ? primary.main : undefined
                           }}
                         >
                           {name.replace('(P)', '')}
                         </Typography>
-                        <Typography
-                          variant="small2"
-                          customStyle={{ color: palette.common.grey['60'] }}
-                        >
+                        <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                           {commaNumber(count)}
                         </Typography>
                       </Flexbox>

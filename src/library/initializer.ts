@@ -24,13 +24,16 @@ const Initializer = {
   initAccessUserInQueryClientByCookies(
     { accessUser }: NextApiRequestCookies,
     queryClient: QueryClient
-  ) {
+  ): AccessUser | null {
     if (accessUser) {
-      queryClient.setQueryData(
-        queryKeys.userAuth.accessUser(),
-        JSON.parse(decodeURIComponent(accessUser))
-      );
+      const parseAccessUser = JSON.parse(decodeURIComponent(accessUser));
+
+      queryClient.setQueryData(queryKeys.userAuth.accessUser(), parseAccessUser);
+
+      return parseAccessUser;
     }
+
+    return null;
   },
   initAccessUserInQueryClient(queryClient: QueryClient) {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);

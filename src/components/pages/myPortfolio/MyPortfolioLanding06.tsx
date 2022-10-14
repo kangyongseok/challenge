@@ -4,14 +4,16 @@ import Image from '@components/UI/atoms/Image';
 
 function MyPortfolioLanding06() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary }
+    }
   } = useTheme();
   return (
     <Flexbox
       direction="vertical"
       customStyle={{ textAlign: 'center', marginTop: 52, height: '100%' }}
     >
-      <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
+      <Typography weight="bold" customStyle={{ color: primary.main }}>
         판매하기
       </Typography>
       <Typography variant="h2" weight="bold">

@@ -112,7 +112,7 @@ function LegitInduceFloatingBanner({
                 position: 'absolute',
                 top: 0,
                 left: index * 4,
-                border: `1px solid ${common.grey['90']}`,
+                border: `1px solid ${common.ui90}`,
                 borderRadius: 4,
                 zIndex: 3 - index
               }}
@@ -139,7 +139,7 @@ function LegitInduceFloatingBanner({
         <Icon
           name="CaretRightOutlined"
           size="small"
-          color={themeType === 'dark' ? common.white : undefined}
+          color={themeType === 'dark' ? common.uiWhite : undefined}
           customStyle={{ minWidth: 16, cursor: 'pointer' }}
         />
       </Flexbox>

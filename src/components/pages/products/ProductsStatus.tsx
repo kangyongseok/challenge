@@ -212,7 +212,7 @@ function ProductsStatus() {
           <Typography variant="body2" weight="medium">
             {(selectedOrderFilterOption || {}).viewName}
           </Typography>
-          <Icon name="CaretDownOutlined" width={12} height={12} color={common.grey['40']} />
+          <Icon name="CaretDownOutlined" width={12} height={12} color={common.ui60} />
         </Flexbox>
       )}
     </Flexbox>

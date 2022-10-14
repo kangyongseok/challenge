@@ -1,6 +1,11 @@
+import type { ProductLegit } from '@dto/productLegit';
+
+import type { PhotoGuideImages } from '@typings/camelSeller';
+
 import type {
   CategoryCode,
   CommonCode,
+  CommonPhotoGuideDetail,
   Contents,
   JobRuleBaseDetail,
   Page,
@@ -227,17 +232,21 @@ export type SiteUrl = {
   url: string;
 };
 
+export type PostType = 0 | 1 | 2; // 0: 크롤링, 1: 판매등록, 2: 감정등록
+
 export type Product = {
   area: string;
   brand: Brand;
   brandId: number;
   category: Category;
   categoryId: number;
+  categorySizes: { id: number; name: string }[];
   cluster: number;
   color: string | null;
+  colors: { id: number; name: string }[];
   comments: string | null;
-  dateChanged: number | null;
-  dateCreated: number;
+  dateChanged: string | null;
+  dateCreated: string;
   dateFirstPosted: number;
   datePosted: number;
   datePostedDay: string;
@@ -252,6 +261,7 @@ export type Product = {
   imageMain: string;
   imageMainLarge: string | null;
   imageThumbnail: string;
+  imageModel: string | null;
   isConvertedImage: boolean | null;
   isDeleted: boolean | null;
   isSafeTrade: boolean;
@@ -269,7 +279,12 @@ export type Product = {
   productSearchOptions: ProductSearchOption[] | null;
   productSeller: ProductSeller;
   productLegit: ProductLegit;
+  photoGuideImages: PhotoGuideImages[];
   purchaseCount: number;
+  photoGuideDetails: Array<{
+    commonPhotoGuideDetail: CommonPhotoGuideDetail;
+  }> | null;
+  postType: PostType;
   quoteTitle: string;
   quoteTitleCount: number | null;
   scorePopular: number;
@@ -342,11 +357,15 @@ export type ProductResult = {
   imageDetails: string;
   imageMain: string;
   imageThumbnail: string;
+  imageMainLarge: string;
+  imageDetailsLarge: string;
+  imageModel: string | null;
   labels: CommonCode[];
   price: number;
   priceBefore: number | null;
   productSeller: ProductSeller;
   purchaseCount: number;
+  postType: PostType;
   site: {
     code: string;
     dateCreated: string;
@@ -359,6 +378,7 @@ export type ProductResult = {
   };
   siteUrl: SiteUrl;
   status: number;
+  scoreTotal: number;
   title: string;
   viewCount: number;
   wishCount: number;
@@ -371,6 +391,18 @@ export type ProductResult = {
   todayWishCount: number;
   priceDownCount: number;
   updatedCount: number;
+  photoGuideDetails: {
+    commonPhotoGuideDetail: CommonPhotoGuideDetail;
+    dateCreated: string;
+    dateUpdated: string;
+    id: number;
+    imageSize: number;
+    imageUrl: string;
+    isEdit: boolean;
+    productId: number;
+  }[];
+  quoteTitle: string;
+  description: string;
 };
 
 export type PageProduct = Paged<Product>;
@@ -501,44 +533,6 @@ export interface SellerReview {
 
 export type ProductOrder = 'postedDesc' | 'postedAllDesc' | 'recommDesc' | 'priceAsc' | 'priceDesc';
 
-export interface ProductLegit {
-  legitOpinions: LegitOpinion[];
-  dateCreated: number;
-  dateUpdated: number;
-  isWish: boolean;
-  isFollow: boolean;
-  isViewed: boolean;
-  productId: number;
-  productResult: Product;
-  result: 0 | 1 | 2 | 3;
-  status: 1 | 10 | 11 | 20 | 30;
-  userId: number;
-}
-
-export type PageProductLegit = Paged<ProductLegit>;
-
-export interface LegitOpinion {
-  dateCreated: string;
-  dateUpdated: string;
-  description: string;
-  id: number;
-  productId: number;
-  result: 0 | 1 | 2 | 3;
-  roleLegit: RoleLegit;
-}
-
-export interface RoleLegit {
-  dateCreated: string;
-  dateUpdated: string;
-  description: string;
-  image: string;
-  ip: number;
-  name: string;
-  subTitle: string;
-  title: string;
-  userId: number;
-}
-
 export interface PageProductResult {
   content: ProductResult[];
   empty: boolean;
@@ -566,16 +560,9 @@ export interface ProductParams {
   source?: string;
 }
 
-export interface LegitProductsParams {
-  page?: number;
-  size?: number;
-  results?: number[];
-  isOnlyResult?: boolean;
-}
-
 export interface ReviewInfoParams {
   page?: number;
-  productId: number;
+  sellerId: number;
   size?: number;
   sort?: string[];
 }
@@ -623,9 +610,11 @@ export interface SearchParams {
   siteUrlIds?: number[];
   size?: number;
   sizes?: string[];
+  sizeIds?: number[];
   store?: number;
   subParentIds?: number[];
   unit?: number;
+  conditionIds?: number[];
 }
 
 export interface SearchAiProductParams {

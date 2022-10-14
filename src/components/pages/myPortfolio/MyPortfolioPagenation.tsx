@@ -9,17 +9,19 @@ function MyPortfolioPagenation({
   totalPageNum: number;
 }) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const pagenationBg = (i: number) => {
     if (currentSection === i + 1) {
-      return palette.common.grey['60'];
+      return common.ui60;
     }
     if (currentSection > 0) {
-      return palette.common.grey['90'];
+      return common.ui90;
     }
-    return palette.common.grey['20'];
+    return common.ui20;
   };
 
   return (

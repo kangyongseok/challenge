@@ -11,7 +11,9 @@ interface CrazycurationHeaderProps {
 
 function CrazycurationHeader({ onClickShare }: CrazycurationHeaderProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
 
@@ -22,18 +24,17 @@ function CrazycurationHeader({ onClickShare }: CrazycurationHeaderProps) {
       router.push('/');
     }
   }, [router]);
-
   return (
     <Header
       customHeight={72}
       customStyle={{ background: '#191919' }}
       onClickLeft={handleClickBack}
-      leftIconCustomStyle={{ padding: '24px 16px', '& > svg': { color: palette.common.white } }}
+      leftIconCustomStyle={{ padding: '24px 16px', '& > svg': { color: common.cmnW } }}
       rightIcon={
         <Typography
           variant="h4"
           weight="medium"
-          customStyle={{ padding: '26px 16px', color: palette.common.white, cursor: 'pointer' }}
+          customStyle={{ padding: '26px 16px', color: common.cmnW, cursor: 'pointer' }}
           onClick={onClickShare}
         >
           공유하기

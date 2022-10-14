@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Toast, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Toast, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -101,7 +101,7 @@ function CategoryInput() {
       header={<Header hideTitle showRight={false} />}
       footer={
         <Footer>
-          <CtaButton
+          <Button
             fullWidth
             variant="contained"
             size="large"
@@ -110,7 +110,7 @@ function CategoryInput() {
             onClick={handleSave}
           >
             저장
-          </CtaButton>
+          </Button>
         </Footer>
       }
     >
@@ -152,13 +152,7 @@ function CategoryInput() {
         </Flexbox>
       </Box>
       <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
-        <Typography
-          customStyle={{
-            color: 'white'
-          }}
-        >
-          최대 9개만 선택할 수 있어요.
-        </Typography>
+        최대 9개만 선택할 수 있어요.
       </Toast>
     </GeneralTemplate>
   );

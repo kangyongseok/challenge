@@ -2,7 +2,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Typography } from 'mrcamel-ui';
+import { Box, Button, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -40,6 +40,9 @@ function NonMemberContents() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const handleClickLogin = () => {
+    // router.push('/camelSeller/registerConfirm?id=32945602');
+    // router.push('/camelSeller');
+    // return;
     logEvent(attrKeys.mypage.CLICK_LOGIN, { name: 'MY' });
     router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
   };
@@ -110,14 +113,14 @@ function NonMemberContents() {
         <Typography weight="bold" variant="h4" customStyle={{ marginTop: 8, marginBottom: 16 }}>
           취향저격 매물만 골라보고 싶다면
         </Typography>
-        <CtaButton
+        <Button
           variant="contained"
           brandColor="primary"
           customStyle={{ width: 200, height: 41 }}
           onClick={handleClickLogin}
         >
           로그인/가입하기
-        </CtaButton>
+        </Button>
       </Box>
     </Box>
   );
@@ -158,7 +161,11 @@ const SlideContents = styled.div<{ showAppDownloadBanner: boolean }>`
 const ImageArea = styled.div`
   width: 40px;
   height: 40px;
-  background: ${({ theme: { palette } }) => palette.common.grey['80']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
   overflow: hidden;
   border-radius: 50%;
   margin-top: 20px;
@@ -169,7 +176,11 @@ const SlideText = styled(Typography)`
   bottom: 8px;
   text-align: center;
   width: 100%;
-  color: ${({ theme: { palette } }) => palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   z-index: 1;
 `;
 

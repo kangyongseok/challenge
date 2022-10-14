@@ -9,15 +9,6 @@ export const Content = styled.div<{ isRound: boolean }>`
   overflow: hidden;
 `;
 
-export const SkeletonWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-`;
-
 export const WishButton = styled.button`
   position: absolute;
   top: 0;
@@ -26,7 +17,11 @@ export const WishButton = styled.button`
   z-index: ${({ theme: { zIndex } }) => zIndex.button - 1};
 
   svg {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.overlay20};
     border-radius: 50%;
     padding: 4px;
     margin-top: -4px;
@@ -54,7 +49,7 @@ export const Area = styled(Typography)`
     theme: {
       palette: { common }
     }
-  }) => common.grey['60']};
+  }) => common.ui60};
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;

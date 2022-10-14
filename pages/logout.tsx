@@ -50,7 +50,7 @@ export async function getServerSideProps({ res }: GetServerSidePropsContext) {
       process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
     }`,
     `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
-      process.env.NODE_ENV !== 'development' ? 'domain=domain=.mrcamel.co.kr;' : ''
+      process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
     }`
   ]);
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Toast } from 'mrcamel-ui';
 
 import { BottomNavigation, Header, TopButton } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -27,12 +27,6 @@ function WishesPage() {
     tab?: 'wish' | 'history';
     hiddenTab?: 'legit';
   } = router.query;
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const [[showToast, toastMessage], setToast] = useState<[boolean, ReactElement | null]>([
     false,
@@ -61,7 +55,7 @@ function WishesPage() {
         footer={hiddenTab === 'legit' ? <WishesBottomCtaButton /> : <BottomNavigation />}
       >
         <WishesTabs />
-        <Box customStyle={{ marginTop: 41 }}>
+        <Box customStyle={{ marginTop: 45 }}>
           {tab === 'wish' && <WishesPanel />}
           {tab === 'history' && <HistoryPanel />}
         </Box>
@@ -72,13 +66,7 @@ function WishesPage() {
         onClose={() => setToast([false, toastMessage])}
         autoHideDuration={1000}
       >
-        <Typography
-          customStyle={{
-            color: common.white
-          }}
-        >
-          {toastMessage}
-        </Typography>
+        {toastMessage}
       </Toast>
       <TopButton
         show

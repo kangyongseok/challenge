@@ -1,31 +1,33 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react';
 
-import { CtaButton, useTheme } from 'mrcamel-ui';
+import { Button, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 const SearchHelperBottomSheetButton = forwardRef<
   HTMLButtonElement,
-  ComponentPropsWithoutRef<typeof CtaButton>
+  ComponentPropsWithoutRef<typeof Button>
 >(function FixedBottomCTA({ children, ...props }, forwardedRef) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
 
   return (
     <ButtonBox>
-      <CtaButton
+      <Button
         ref={forwardedRef}
         fullWidth
         variant="contained"
         brandColor="primary"
         size="large"
         customStyle={{
-          color: props.variant === 'outlined' ? palette.primary.main : palette.common.white
+          color: props.variant === 'outlined' ? primary.main : common.cmnW
         }}
         {...props}
       >
         {children}
-      </CtaButton>
+      </Button>
     </ButtonBox>
   );
 });
@@ -33,8 +35,16 @@ const SearchHelperBottomSheetButton = forwardRef<
 const ButtonBox = styled.div`
   width: 100%;
   padding: 20px;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
-  border-top: ${({ theme }) => `1px solid ${theme.palette.common.grey['90']}`};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
+  border-top: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => `1px solid ${common.ui90}`};
   z-index: 1;
 `;
 

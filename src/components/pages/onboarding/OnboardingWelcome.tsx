@@ -18,7 +18,9 @@ interface OnboardingWelcomeProps {
 
 function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
 
@@ -42,15 +44,11 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
         <Typography
           variant="h2"
           weight="bold"
-          customStyle={{ '& > span': { color: palette.primary.main } }}
+          customStyle={{ '& > span': { color: primary.main } }}
         >
           <span>카멜</span>에 오신 것을 <span>환영</span>합니다 🎉
         </Typography>
-        <Typography
-          variant="h4"
-          weight="medium"
-          customStyle={{ color: palette.common.grey['60'], marginTop: 4 }}
-        >
+        <Typography variant="h4" weight="medium" customStyle={{ color: common.ui60, marginTop: 4 }}>
           {accessUser?.userName || '회원'}님에 대해서 알려주시면,
           <br />더 편하게 매물 찾도록 도와드릴게요
         </Typography>

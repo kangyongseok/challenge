@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, CtaButton, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
 import filter from 'lodash-es/filter';
 import styled from '@emotion/styled';
 
@@ -25,9 +25,6 @@ import atom from '@recoil/users';
 import { showAppDownloadBannerState } from '@recoil/common';
 
 function SizeInput() {
-  const {
-    theme: { palette }
-  } = useTheme();
   const router = useRouter();
   const { mutateAsync } = useMutation(postUserSize);
   const [searchModeType, atomSearchModeType] = useRecoilState(atom.searchModeTypeState);
@@ -133,7 +130,7 @@ function SizeInput() {
       footer={
         <Box customStyle={{ minHeight: 120 }}>
           <FooterFixed alignment="center" justifyContent="center">
-            <CtaButton
+            <Button
               fullWidth
               variant="contained"
               brandColor="primary"
@@ -142,7 +139,7 @@ function SizeInput() {
               disabled={buttonDisabled()}
             >
               {searchModeType.kind ? '선택완료' : '저장'}
-            </CtaButton>
+            </Button>
           </FooterFixed>
         </Box>
       }
@@ -151,9 +148,7 @@ function SizeInput() {
         <Typography variant="h3" weight="bold" brandColor="black">
           사이즈가 어떻게 되세요?
         </Typography>
-        <Typography variant="body1" customStyle={{ color: palette.common.grey['20'] }}>
-          저장한 사이즈 매물만 모아볼 수 있어요.
-        </Typography>
+        <Typography variant="body1">저장한 사이즈 매물만 모아볼 수 있어요.</Typography>
       </PageHaederFlex>
       {!searchModeType.kind && <SizeInputType />}
       {searchModeType.kind && <SizeInputSearch />}
@@ -164,7 +159,11 @@ function SizeInput() {
 const PageHaederFlex = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
   width: 100%;
   height: 90px;
-  background: ${({ theme: { palette } }) => palette.common.white};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   position: fixed;
   top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 116 : 56)}px;
   left: 0;
@@ -180,7 +179,11 @@ const FooterFixed = styled(Flexbox)`
   position: fixed;
   bottom: 0;
   left: 0;
-  background: ${({ theme: { palette } }) => palette.common.white};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {

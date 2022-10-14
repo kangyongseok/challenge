@@ -22,13 +22,18 @@ export const Summary = styled.div<{ variant: Variant }>`
   border-radius: 8px;
   cursor: pointer;
 
-  ${({ theme: { palette }, variant }): CSSObject => {
+  ${({
+    theme: {
+      palette: { common }
+    },
+    variant
+  }): CSSObject => {
     let cssObject: CSSObject;
 
     switch (variant) {
       case 'outlined': {
         cssObject = {
-          backgroundColor: palette.common.white,
+          backgroundColor: common.uiWhite,
           '&:after': {
             content: '""',
             position: 'absolute',

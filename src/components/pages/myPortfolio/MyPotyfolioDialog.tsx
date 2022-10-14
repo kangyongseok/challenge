@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Typography } from 'mrcamel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -41,7 +41,7 @@ function MyPotyfolioDialog() {
           </Typography>
           <Typography>오픈되면 카카오톡으로 알려드릴게요.</Typography>
         </Box>
-        <CtaButton
+        <Button
           fullWidth
           brandColor="primary"
           variant="contained"
@@ -53,7 +53,7 @@ function MyPotyfolioDialog() {
           }}
         >
           홈으로 이동
-        </CtaButton>
+        </Button>
       </Flexbox>
     </Dialog>
   );

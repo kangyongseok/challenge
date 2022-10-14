@@ -18,8 +18,12 @@ export const StyledLegitInduceFloatingBanner = styled.div<
       : {
           width: '100%'
         }};
-  background-color: ${({ theme: { palette }, themeType }) =>
-    themeType === 'dark' ? palette.common.black : palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    },
+    themeType
+  }) => (themeType === 'dark' ? common.uiBlack : common.uiWhite)};
   ${({
     theme: {
       palette: { common }
@@ -28,7 +32,7 @@ export const StyledLegitInduceFloatingBanner = styled.div<
   }) =>
     themeType === 'light'
       ? {
-          border: `1px solid ${common.grey['90']}`
+          border: `1px solid ${common.ui90}`
         }
       : {}}
   border-radius: ${({ halfRound }) => (!halfRound ? '32px' : '16px 16px 0px 0px')};
@@ -56,7 +60,7 @@ export const MessageTypography = styled(Typography)<
       palette: { common }
     },
     themeType
-  }) => (themeType === 'dark' ? common.white : common.black)};
+  }) => (themeType === 'dark' ? common.uiWhite : common.uiBlack)};
   & > strong {
     color: ${({
       theme: {

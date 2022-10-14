@@ -3,7 +3,8 @@ import { useCallback } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CustomStyle, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -22,6 +23,8 @@ import { IconBox, StyledHeader, Title, Wrapper } from './Header.styles';
 
 interface HeaderProps {
   isFixed?: boolean;
+  isTransparent?: boolean;
+  isDark?: boolean;
   showLeft?: boolean;
   hideTitle?: boolean;
   showRight?: boolean;
@@ -31,6 +34,7 @@ interface HeaderProps {
   onClickTitle?: (e?: MouseEvent) => void;
   onClickRight?: (e?: MouseEvent<HTMLDivElement>) => void;
   disableProductsKeywordClickInterceptor?: boolean;
+  customHeader?: JSX.Element;
   disableAppDownloadBannerVariableTop?: boolean;
   leftIconCustomStyle?: CustomStyle;
   titleCustomStyle?: CustomStyle;
@@ -42,6 +46,7 @@ interface HeaderProps {
 function Header({
   children,
   isFixed = true,
+  isTransparent = false,
   showLeft = true,
   hideTitle = false,
   showRight = true,
@@ -56,7 +61,8 @@ function Header({
   titleCustomStyle,
   rightIconCustomStyle,
   customStyle,
-  customHeight
+  customHeight,
+  customHeader
 }: PropsWithChildren<HeaderProps>) {
   const router = useRouter();
   const { isCrm } = router.query;
@@ -145,6 +151,10 @@ function Header({
 
     const callBack = () => (window.history.length > 2 ? router.back() : router.push('/'));
 
+    if (router.query.success) {
+      router.replace('/user/shop');
+      return;
+    }
     if (lastPathName === 'personalInput') {
       logEvent(attrKeys.header.CLICK_CLOSE, {
         name: attrProperty.productName.INFO
@@ -223,51 +233,72 @@ function Header({
       router.push('/search');
     }
   };
+  // const handleClickWish = () => {
+  //   handleLogEvent(attrKeys.header.CLICK_TAB_WISH);
+  //   router.push('/wishes');
+  // };
+
+  if (customHeader) {
+    return (
+      <StyledHeader minHeight={customHeight || HEADER_HEIGHT} isTransparent={isTransparent}>
+        {customHeader}
+      </StyledHeader>
+    );
+  }
 
   return (
-    <StyledHeader minHeight={customHeight || HEADER_HEIGHT}>
-      <Wrapper
-        isFixed={isFixed}
-        showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
-        css={customStyle}
-      >
-        <Flexbox alignment="center" customStyle={{ width: '100%', minHeight: customHeight || 56 }}>
-          {isCrm ? (
-            <Typography variant="small2" weight="medium" onClick={onClickLeft}>
-              ◀︎ 모델 전체보기
-            </Typography>
-          ) : (
-            leftIcon || (
+    <StyledHeader minHeight={customHeight || HEADER_HEIGHT} isTransparent={isTransparent}>
+      {customHeader || (
+        <Wrapper
+          isFixed={isFixed}
+          showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
+          css={customStyle}
+        >
+          <Flexbox
+            alignment="center"
+            customStyle={{
+              width: '100%',
+              minHeight: customHeight || 56,
+              backgroundColor: 'inherit'
+            }}
+          >
+            {isCrm ? (
+              <Typography variant="small2" weight="medium" onClick={onClickLeft}>
+                ◀︎ 모델 전체보기
+              </Typography>
+            ) : (
+              leftIcon || (
+                <IconBox
+                  show={showLeft}
+                  css={leftIconCustomStyle}
+                  onClick={onClickLeft || handleClickBack}
+                >
+                  {showLeft && <Icon name="ArrowLeftOutlined" />}
+                </IconBox>
+              )
+            )}
+            <Title show={!hideTitle} customHeight={customHeight} css={titleCustomStyle}>
+              {children ||
+                (!hideTitle && (
+                  <Icon
+                    name="LogoText_96_20"
+                    onClick={onClickTitle || handleClickLogo}
+                    customStyle={{ cursor: 'pointer' }}
+                  />
+                ))}
+            </Title>
+            {rightIcon || (
               <IconBox
-                show={showLeft}
-                css={leftIconCustomStyle}
-                onClick={onClickLeft || handleClickBack}
+                show={showRight}
+                css={rightIconCustomStyle}
+                onClick={onClickRight || handleClickSearch}
               >
-                {showLeft && <Icon name="ArrowLeftOutlined" />}
+                {showRight && <Icon name="SearchOutlined" />}
               </IconBox>
-            )
-          )}
-          <Title show={!hideTitle} customHeight={customHeight} css={titleCustomStyle}>
-            {children ||
-              (!hideTitle && (
-                <Icon
-                  name="LogoText_96_20"
-                  onClick={onClickTitle || handleClickLogo}
-                  customStyle={{ cursor: 'pointer' }}
-                />
-              ))}
-          </Title>
-          {rightIcon || (
-            <IconBox
-              show={showRight}
-              css={rightIconCustomStyle}
-              onClick={onClickRight || handleClickSearch}
-            >
-              {showRight && <Icon name="SearchOutlined" />}
-            </IconBox>
-          )}
-        </Flexbox>
-      </Wrapper>
+            )}
+          </Flexbox>
+        </Wrapper>
+      )}
     </StyledHeader>
   );
 }

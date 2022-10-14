@@ -24,21 +24,21 @@ import { showAppDownloadBannerState } from '@recoil/common';
 
 function SellerInfoPage() {
   const {
-    query: { id: productId, tab },
+    query: { id: sellerId, tab },
     replace
   } = useRouter();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useEffect(() => {
     if (tab === 'products') {
-      logEvent(attrKeys.sellerInfo.VIEW_SELLER_PRODUCT, { name: 'SELLER_PRODUCT', productId });
+      logEvent(attrKeys.sellerInfo.VIEW_SELLER_PRODUCT, { name: 'SELLER_PRODUCT', sellerId });
     } else {
-      logEvent(attrKeys.sellerInfo.VIEW_SELLER_REVIEW, { name: 'SELLER_REVIEW', productId });
+      logEvent(attrKeys.sellerInfo.VIEW_SELLER_REVIEW, { name: 'SELLER_REVIEW', sellerId });
     }
-  }, [tab, productId]);
+  }, [tab, sellerId]);
 
   const params = {
-    productId: Number(productId || 0),
+    sellerId: Number(sellerId || 0),
     size: 20
   };
 
@@ -46,14 +46,14 @@ function SellerInfoPage() {
     queryKeys.products.sellerProducts(params),
     async ({ pageParam = 0 }) => fetchSellerProducts({ ...params, page: pageParam }),
     {
-      enabled: !!params.productId
+      enabled: !!params.sellerId
     }
   );
   const { data: { pages: reviewPages = [] } = {} } = useInfiniteQuery(
     queryKeys.products.reviewInfo(params),
     async ({ pageParam = 0 }) => fetchReviewInfo({ ...params, page: pageParam }),
     {
-      enabled: !!params.productId
+      enabled: !!params.sellerId
     }
   );
 
@@ -65,17 +65,17 @@ function SellerInfoPage() {
       logEvent(attrKeys.sellerInfo.CLICK_SELLER_REVIEW, {
         name: 'SELLER_REVIEW',
         att: 'TAB',
-        productId
+        sellerId
       });
     } else {
       logEvent(attrKeys.sellerInfo.CLICK_SELLER_PRODUCT, {
         name: 'SELLER_PRODUCT',
         att: 'TAB',
-        productId
+        sellerId
       });
     }
 
-    replace(`/products/${productId}/sellerInfo?tab=${newValue}`);
+    replace(`/products/${sellerId}/sellerInfo?tab=${newValue}`);
     window.scrollTo(0, 0);
   };
 

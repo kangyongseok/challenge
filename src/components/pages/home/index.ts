@@ -6,6 +6,6 @@ export { default as HomeProductsKeywordList } from './HomeProductsKeywordList';
 export { default as HomeRecentSearchList } from './HomeRecentSearchList';
 export { default as HomeRecommendationsWishes } from './HomeRecommendationsWishes';
 export { default as HomeWelcome } from './HomeWelcome';
-export { default as HomeProductLegitLive } from './HomeProductLegitLive';
+export { default as HomeLegitLive } from './HomeLegitLive';
 export { default as HomeEventBannerBottomSheet } from './HomeEventBannerBottomSheet';
 export { default as HomeEventBanner } from './HomeEventBanner';

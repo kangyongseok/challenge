@@ -1,20 +1,31 @@
-import type { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { CtaButton, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
+
+import { Image } from '@components/UI/atoms';
+
+import { showAppDownloadBannerState } from '@recoil/common';
 
 interface WishesNoticeProps {
   message: string | ReactElement;
   moveTo: string;
   buttonLabel: string | ReactElement;
-  icon: string | ReactElement;
+  imgName: string;
   onClickLog?: () => void;
 }
 
-function WishesNotice({ icon, message, moveTo, buttonLabel, onClickLog }: WishesNoticeProps) {
+function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: WishesNoticeProps) {
   const router = useRouter();
   const { hiddenTab } = router.query;
+  const [isHeightSmall, setIsHeightSmall] = useState(false);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+
+  useEffect(() => {
+    setIsHeightSmall((showAppDownloadBanner ? window.innerHeight - 60 : window.innerHeight) <= 667);
+  }, [showAppDownloadBanner]);
 
   const handleClick = () => {
     if (onClickLog) onClickLog();
@@ -31,38 +42,33 @@ function WishesNotice({ icon, message, moveTo, buttonLabel, onClickLog }: Wishes
       direction="vertical"
       alignment="center"
       justifyContent="center"
-      gap={24}
       customStyle={{
-        height: `calc(100vh - ${hiddenTab === 'legit' ? '188px' : '161px'})`
+        height: hiddenTab === 'legit' ? 'calc(100vh - 188px)' : 'calc(100vh) - 220px',
+        paddingBottom: 0,
+        marginTop: showAppDownloadBanner ? 30 : 50
       }}
     >
-      <Icon>{icon}</Icon>
-      <Typography variant="h4" weight="bold" customStyle={{ textAlign: 'center' }}>
-        {message}
-      </Typography>
-      <CtaButton
-        variant="contained"
-        brandColor="primary"
-        onClick={handleClick}
-        customStyle={{
-          width: 200
-        }}
-      >
+      <Image
+        disableAspectRatio
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/wishes/${imgName}.png`}
+        width={isHeightSmall ? 200 : 240}
+        // height={isHeightSmall ? 250 : 288}
+        alt={imgName}
+      />
+      <Box customStyle={{ textAlign: 'center' }}>{message}</Box>
+      <PositionButton fullWidth variant="contained" brandColor="primary" onClick={handleClick}>
         {buttonLabel}
-      </CtaButton>
+      </PositionButton>
     </Flexbox>
   );
 }
 
-const Icon = styled(Flexbox)`
-  justify-content: center;
-  align-items: center;
-  width: 52px;
-  height: 52px;
-  padding: 8px;
-  border-radius: 20px;
-  font-size: ${({ theme: { typography } }) => typography.h2.size};
-  background-color: ${({ theme: { palette } }) => palette.primary.highlight};
+const PositionButton = styled(Button)`
+  position: absolute;
+  bottom: 83px;
+  height: 48px;
+  left: 20px;
+  width: calc(100vw - 40px);
 `;
 
 export default WishesNotice;

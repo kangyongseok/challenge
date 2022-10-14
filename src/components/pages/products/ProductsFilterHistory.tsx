@@ -384,10 +384,7 @@ function ProductsFilterHistory({
               (!isLoadingProductKeyword &&
                 !isLoadingDeleteProductKeyword &&
                 (userProductKeyword ? (
-                  <Icon
-                    name="CloseOutlined"
-                    customStyle={{ color: `${common.grey['60']} !important` }}
-                  />
+                  <Icon name="CloseOutlined" customStyle={{ color: `${common.ui60} !important` }} />
                 ) : (
                   <Icon
                     name="BookmarkFilled"
@@ -408,7 +405,7 @@ function ProductsFilterHistory({
               weight="medium"
               customStyle={{
                 padding: '0 2px',
-                color: userProductKeyword ? common.grey['60'] : primary.light,
+                color: userProductKeyword ? common.ui60 : primary.light,
                 borderColor: userProductKeyword ? 'inherit' : primary.light
               }}
             >
@@ -428,10 +425,12 @@ function ProductsFilterHistory({
           >
             <Icon
               name="RotateOutlined"
-              customStyle={{ color: common.grey[!isLoading || isFetched ? '60' : '80'] }}
+              customStyle={{ color: !isLoading || isFetched ? common.ui60 : common.ui80 }}
               size="medium"
             />
-            <Typography customStyle={{ color: common.grey[!isLoading || isFetched ? '60' : '80'] }}>
+            <Typography
+              customStyle={{ color: !isLoading || isFetched ? common.ui60 : common.ui80 }}
+            >
               초기화
             </Typography>
           </Flexbox>
@@ -441,7 +440,7 @@ function ProductsFilterHistory({
         <Tooltip
           open={tooltip}
           message={
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.white }}>
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
               나중에 같은 필터로 또 볼거죠? 그럼 저장하세요!
             </Typography>
           }
@@ -464,7 +463,7 @@ const Wrapper = styled.section<{ show: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px 6px;
-  border-top: ${({ theme: { palette }, show }) => show && `2px solid ${palette.common.grey['95']}`};
+  border-top: ${({ theme: { palette }, show }) => show && `2px solid ${palette.common.ui95}`};
   background-color: #f5f6f7;
   opacity: ${({ show }) => Number(show)};
   padding: ${({ show }) => (show ? '12px 0' : 0)};
@@ -474,7 +473,7 @@ const Wrapper = styled.section<{ show: boolean }>`
 `;
 
 const FilterChip = styled(Chip)`
-  border-color: ${({ theme }) => theme.palette.common.grey['90']};
+  border-color: ${({ theme }) => theme.palette.common.ui90};
   gap: 2px;
   font-weight: ${({ theme }) => theme.typography.body1.weight.regular};
   white-space: nowrap;
@@ -482,7 +481,7 @@ const FilterChip = styled(Chip)`
   & > svg {
     width: 14px;
     height: 14px;
-    color: ${({ theme: { palette } }) => palette.common.grey['80']};
+    color: ${({ theme: { palette } }) => palette.common.ui80};
   }
 `;
 

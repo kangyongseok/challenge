@@ -185,7 +185,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
 
   return (
     <Flexbox component="section" direction="vertical" customStyle={{ padding: '0 20px' }}>
-      <Flexbox direction="vertical" gap={1} customStyle={{ backgroundColor: common.grey['95'] }}>
+      <Flexbox direction="vertical" gap={1} customStyle={{ backgroundColor: common.ui95 }}>
         {categoryKeywordList.length > 0
           ? categoryKeywordList.map(
               ({ parentId, subParentId, keyword, count, recommFilters }, index) => (
@@ -193,7 +193,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                   key={`item-map-${keyword}`}
                   customStyle={{
                     padding: '8px 0',
-                    backgroundColor: common.white,
+                    backgroundColor: common.uiWhite,
                     cursor: 'pointer'
                   }}
                 >
@@ -204,7 +204,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                       height={28}
                       customStyle={{
                         padding: 4,
-                        backgroundColor: common.grey['95'],
+                        backgroundColor: common.ui95,
                         borderRadius: '50%'
                       }}
                     />
@@ -225,7 +225,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                               <Icon
                                 name="CaretRightOutlined"
                                 size="medium"
-                                customStyle={{ color: common.grey['80'] }}
+                                customStyle={{ color: common.ui80 }}
                               />
                             )}
                             <Typography
@@ -284,7 +284,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                 key={`alert-${item.keyword}`}
                 customStyle={{
                   padding: '8px 0',
-                  backgroundColor: common.white,
+                  backgroundColor: common.uiWhite,
                   cursor: 'pointer'
                 }}
               >
@@ -299,7 +299,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                     <Typography variant="h4" weight="bold">
                       {item.keywordBrand}
                     </Typography>
-                    <Typography variant="body2" customStyle={{ color: common.grey['40'] }}>
+                    <Typography variant="body2" brandColor="gray">
                       {capitalize(item.keywordEng)}
                     </Typography>
                   </Flexbox>
@@ -345,12 +345,12 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
             <Icon
               name="SearchOutlined"
               size="medium"
-              customStyle={{ color: common.grey['80'], minWidth: 20 }}
+              customStyle={{ color: common.ui80, minWidth: 20 }}
             />
             <Flexbox gap={4} customStyle={{ alignItems: 'baseline' }}>
               <Typography variant="h4" dangerouslySetInnerHTML={{ __html: item.keywordDeco }} />
               {item.count > 0 && (
-                <Typography variant="body2" customStyle={{ color: common.grey['60'] }}>
+                <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                   {commaNumber(item.count)}
                 </Typography>
               )}
@@ -368,7 +368,7 @@ const Item = styled.div<{ isType: boolean }>`
   cursor: pointer;
   padding: 20px 4px;
   gap: 20px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({ theme }) => theme.palette.common.uiWhite};
 `;
 
 const BrandText = styled(Typography)`
@@ -382,7 +382,7 @@ const BrandText = styled(Typography)`
   line-height: 24px;
   text-align: center;
   letter-spacing: -0.01em;
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  background-color: ${({ theme }) => theme.palette.common.ui95};
   border-radius: 50%;
 `;
 

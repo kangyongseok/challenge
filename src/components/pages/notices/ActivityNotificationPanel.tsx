@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useQuery } from 'react-query';
-import { Alert, Box, CtaButton, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -18,7 +18,7 @@ import UserNotificationItem from './UserNotificationItem';
 
 function ActivityNotificationPanel() {
   const { data } = useQuery(queryKeys.users.userNoti(0), () => fetchUserNoti(0));
-  const { data: dashboard } = useQuery(queryKeys.dashboard.all, () => fetchDashboard());
+  const { data: dashboard } = useQuery(queryKeys.dashboards.all, () => fetchDashboard());
   const [showDialog, setShowDialog] = useState(false);
   const { data: accessUser } = useQueryAccessUser();
 
@@ -31,7 +31,9 @@ function ActivityNotificationPanel() {
   );
 
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function ActivityNotificationPanel() {
         <Flexbox justifyContent="space-between">
           <Flexbox direction="vertical">
             <Flexbox justifyContent="space-between" alignment="center">
-              <Typography weight="bold" variant="h4" color={palette.common.grey['20']}>
+              <Typography weight="bold" variant="h4">
                 {dashboard?.theme.personalCount.toLocaleString() ?? 0}명
               </Typography>
               <DialogToggle
@@ -69,24 +71,20 @@ function ActivityNotificationPanel() {
                 ?
               </DialogToggle>
             </Flexbox>
-            <Typography variant="body2" color={palette.common.grey['20']}>
-              명품 취향을 알려줬어요!
-            </Typography>
+            <Typography variant="body2">명품 취향을 알려줬어요!</Typography>
           </Flexbox>
           <Box
             customStyle={{
               height: 40,
               width: 1,
-              backgroundColor: palette.common.grey['80']
+              backgroundColor: common.ui80
             }}
           />
           <Flexbox direction="vertical">
-            <Typography weight="bold" variant="h4" color={palette.common.grey['20']}>
+            <Typography weight="bold" variant="h4">
               {dashboard?.theme.productCount.toLocaleString() ?? 0}번
             </Typography>
-            <Typography variant="body2" color={palette.common.grey['20']}>
-              꿀매물 득템하러 갔어요!
-            </Typography>
+            <Typography variant="body2">꿀매물 득템하러 갔어요!</Typography>
           </Flexbox>
         </Flexbox>
       </Alert>
@@ -107,7 +105,7 @@ function ActivityNotificationPanel() {
             {idx !== data.content.length - 1 && (
               <Box
                 customStyle={{
-                  borderTop: `1px solid ${palette.common.grey['90']}`
+                  borderTop: `1px solid ${common.ui90}`
                 }}
               />
             )}
@@ -151,14 +149,14 @@ function ActivityNotificationPanel() {
           >
             •카멜을 더 많이 사용하실수록 더 정확한 추천을 해드릴 수 있어요!
           </Typography>
-          <CtaButton
+          <Button
             fullWidth
             onClick={() => {
               setShowDialog(false);
             }}
           >
             확인했어요
-          </CtaButton>
+          </Button>
         </Box>
       </Dialog>
     </Box>
@@ -175,7 +173,11 @@ const DialogToggle = styled.button`
   padding: 0;
   border-radius: 100%;
   font-size: 12px;
-  background-color: ${({ theme }) => theme.palette.common.grey[80]};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
 `;
 
 export default ActivityNotificationPanel;

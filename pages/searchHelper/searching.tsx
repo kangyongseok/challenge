@@ -230,14 +230,27 @@ const Round = styled(Typography)`
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.palette.primary.main};
-  color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.main};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.cmnW};
 
   animation: roundPulse 1.2s infinite;
 
   @keyframes roundPulse {
     0% {
-      box-shadow: 0 0 0 0 ${({ theme }) => theme.palette.primary.main};
+      box-shadow: 0 0 0 0
+        ${({
+          theme: {
+            palette: { primary }
+          }
+        }) => primary.main};
     }
     100% {
       box-shadow: 0 0 0 60px rgba(0, 0, 0, 0);

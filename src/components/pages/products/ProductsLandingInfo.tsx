@@ -36,9 +36,9 @@ function ProductsLandingInfo() {
   );
 
   return (
-    <Box customStyle={{ minHeight: 78, position: 'relative' }}>
+    <Box customStyle={{ minHeight: 102, position: 'relative' }}>
       <Wrapper>
-        <Typography weight="medium" customStyle={{ color: common.grey['40'] }}>
+        <Typography weight="medium" customStyle={{ color: common.ui60 }}>
           대한민국 모든 중고매물 한번에 비교중!
         </Typography>
         <Typography variant="h3" weight="bold" brandColor="primary">
@@ -57,7 +57,7 @@ function ProductsLandingInfo() {
 const Wrapper = styled.div`
   padding: 16px 20px;
   position: fixed;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
   border-bottom: 2px solid ${({ theme }) => theme.palette.primary.main};

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -64,7 +64,7 @@ function AddressInput() {
       header={<Header showRight={false} hideTitle />}
       footer={
         <Footer isSearchMode={searchMode}>
-          <CtaButton
+          <Button
             fullWidth
             variant="contained"
             size="large"
@@ -73,7 +73,7 @@ function AddressInput() {
             onClick={handleClickSave}
           >
             {!isSubmittable || isLoading ? '저장' : '저장할게요!'}
-          </CtaButton>
+          </Button>
         </Footer>
       }
     >
@@ -114,7 +114,11 @@ const Footer = styled.footer<{ isSearchMode: boolean }>`
   bottom: 0;
   width: 100%;
   padding: 20px 20px 24px;
-  background-color: white;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   display: ${({ isSearchMode }) => (isSearchMode ? 'none' : 'block')};
 `;
 

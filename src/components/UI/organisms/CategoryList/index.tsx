@@ -35,7 +35,9 @@ interface CategoryListProps {
 
 function CategoryList({ variant = 'contained', onClickCategory }: CategoryListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
 
@@ -140,11 +142,7 @@ function CategoryList({ variant = 'contained', onClickCategory }: CategoryListPr
                 subParentCategoryName: name
               })}
             >
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['60'] }}
-              >
+              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                 {parentCategoryName}
               </Typography>
               <CategoryName variant={variant === 'contained' ? 'body2' : 'body1'} weight="medium">

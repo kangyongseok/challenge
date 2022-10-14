@@ -2,17 +2,21 @@ import styled from '@emotion/styled';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
-export const StyledHeader = styled.section<{ minHeight: number }>`
+export const StyledHeader = styled.header<{ minHeight: number; isTransparent: boolean }>`
   position: relative;
   min-height: ${({ minHeight }) => minHeight}px;
+  background-color: ${({ isTransparent, theme: { palette } }) =>
+    isTransparent ? 'transparent' : palette.common.uiWhite};
+  transition: all 0.2s;
 `;
 
 export const Wrapper = styled.div<{
-  isFixed: boolean | undefined;
-  showAppDownloadBanner: boolean;
+  isFixed?: boolean | undefined;
+  showAppDownloadBanner?: boolean;
 }>`
   width: 100%;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  height: 56px;
+  background-color: inherit;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
 
   ${({ isFixed, showAppDownloadBanner }) =>
@@ -37,11 +41,15 @@ export const Title = styled.div<{ show: boolean; customHeight?: number }>`
   visibility: ${({ show }) => !show && 'hidden'};
 `;
 
-export const IconBox = styled.div<{ show: boolean }>`
+export const IconBox = styled.div<{
+  show: boolean;
+  disablePadding?: 'top' | 'bottom' | 'left' | 'right';
+}>`
   display: flex;
   justify-content: center;
   align-items: center;
   visibility: ${({ show }) => !show && 'hidden'};
   padding: 16px;
+  ${({ disablePadding }) => disablePadding && `padding-${disablePadding}: 0`};
   cursor: pointer;
 `;

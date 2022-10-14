@@ -12,7 +12,9 @@ import ExitModal from './ExitDialog';
 
 function MypageEtc() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const [logoutToggle, setLogoutToggle] = useState(false);
@@ -31,7 +33,7 @@ function MypageEtc() {
   };
 
   return (
-    <Wrap gap={12} alignment="center" customStyle={{ color: palette.common.grey['60'] }}>
+    <Wrap gap={12} alignment="center" customStyle={{ color: common.ui60 }}>
       <EtcButton onClick={handleLogout}>로그아웃</EtcButton>
       <span>|</span>
       <EtcButton onClick={handleWithdraw}>회원탈퇴</EtcButton>
@@ -47,7 +49,11 @@ const Wrap = styled(Flexbox)`
 `;
 
 const EtcButton = styled(Button)`
-  color: ${({ theme: { palette } }) => palette.common.grey['60']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
   font-size: ${({ theme: { typography } }) => typography.small1.size};
   border: none;
   padding: 0;

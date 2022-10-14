@@ -237,7 +237,7 @@ function SearchProductsKeywordList() {
                         name="CloseOutlined"
                         width={15}
                         height={15}
-                        customStyle={{ marginTop: -13, color: palette.common.grey['80'] }}
+                        customStyle={{ marginTop: -13, color: palette.common.ui80 }}
                         onClick={handleClickDelete(card.id)}
                       />
                     </CloseIcon>
@@ -250,7 +250,7 @@ function SearchProductsKeywordList() {
         <Flexbox justifyContent="space-between" alignment="center" gap={8}>
           <Typography
             weight="medium"
-            customStyle={{ flexGrow: 1, color: palette.common.white, textAlign: 'left' }}
+            customStyle={{ flexGrow: 1, color: palette.common.uiWhite, textAlign: 'left' }}
           >
             저장한 매물목록이 삭제되었습니다.
           </Typography>
@@ -260,7 +260,7 @@ function SearchProductsKeywordList() {
         </Flexbox>
       </Toast>
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
-        <Typography weight="medium" customStyle={{ color: palette.common.white }}>
+        <Typography weight="medium" customStyle={{ color: palette.common.uiWhite }}>
           삭제한 매물목록을 다시 저장했어요.
         </Typography>
       </Toast>
@@ -279,7 +279,7 @@ const CardList = styled.section`
 const Card = styled.div<{ hasImage: boolean }>`
   display: inline-block;
   position: relative;
-  background-color: ${({ theme: { palette } }) => palette.common.grey['95']};
+  background-color: ${({ theme: { palette } }) => palette.common.ui95};
   border-radius: 8px;
   padding: ${({ hasImage }) => (hasImage ? '11px 20px' : '20px')};
   height: fit-content;
@@ -292,7 +292,7 @@ const ProductImage = styled.img<{ index: number }>`
   display: block;
   width: 56px;
   height: 56px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['95']};
+  border: 1px solid ${({ theme: { palette } }) => palette.common.ui95};
   border-radius: 50%;
   left: ${({ index }) => index * 16}px;
   order: ${({ index }) => index + 1};
@@ -336,7 +336,7 @@ const RollbackButton = styled(Button)`
     theme: {
       palette: { common }
     }
-  }) => common.white};
+  }) => common.uiWhite};
 `;
 
 export default SearchProductsKeywordList;

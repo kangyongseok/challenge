@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, light } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -53,9 +53,6 @@ function CrazycurationSeeMoreList({
   onClickProduct,
   handleClickWishButtonEvent
 }: CrazycurationSeeMoreListProps) {
-  const {
-    theme: { palette }
-  } = useTheme();
   const router = useRouter();
 
   const {
@@ -115,7 +112,7 @@ function CrazycurationSeeMoreList({
                   compact
                   isRound
                   customStyle={{ marginBottom: 'auto' }}
-                  titlePriceStyle={{ color: palette.common.black, opacity: 0.8 }}
+                  titlePriceStyle={{ color: light.palette.common.uiBlack, opacity: 0.8 }}
                   todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
                   areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
                   metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
@@ -147,9 +144,13 @@ const ProductList = styled.div`
 `;
 
 const CustomButton = styled(Button)<{ buttonColor?: string }>`
-  color: ${({ theme }) => theme.palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   background-color: ${({ buttonColor }) => buttonColor};
-  box-shadow: 0px 2px 8px rgba(175, 160, 118, 0.5), inset 0px -1px 4px rgba(0, 0, 0, 0.08),
+  box-shadow: 0 2px 8px rgba(175, 160, 118, 0.5), inset 0px -1px 4px rgba(0, 0, 0, 0.08),
     inset 0px 1px 4px rgba(255, 255, 255, 0.5);
   padding: 14px 0;
   border: none;

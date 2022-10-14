@@ -7,6 +7,7 @@ import { Box, Flexbox, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
+import CamelSellerFloatingButton from '@components/UI/molecules/CamelSellerFloatingButton';
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -16,7 +17,7 @@ import {
   HomeEventBanner,
   HomeEventBannerBottomSheet,
   HomeFooter,
-  HomeProductLegitLive,
+  HomeLegitLive,
   HomeProductsKeywordList,
   HomeRecentSearchList,
   HomeRecommendationsWishes,
@@ -44,7 +45,9 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
@@ -101,7 +104,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
       <GeneralTemplate
         footer={<BottomNavigation />}
         disablePadding
-        customStyle={{ '& > main': { backgroundColor: palette.common.white } }}
+        customStyle={{ '& > main': { backgroundColor: common.uiWhite } }}
       >
         <Flexbox direction="vertical" gap={12} customStyle={{ userSelect: 'none' }}>
           <HomeWelcome
@@ -115,7 +118,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
           ) : (
             <HomeRecentSearchList />
           )}
-          <HomeProductLegitLive />
+          <HomeLegitLive />
           <HomeBrandsCategories isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
           <Box customStyle={{ height: 8 }} />
           <HomeEventBanner />
@@ -132,6 +135,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
         channelTalkPosition={-60}
         name={attrProperty.productName.MAIN}
       />
+      <CamelSellerFloatingButton />
     </>
   );
 }

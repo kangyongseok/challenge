@@ -138,7 +138,7 @@ const Wrapper = styled.section<{ show: boolean }>`
 
 const KeywordWrapper = styled.div`
   position: fixed;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({ theme }) => theme.palette.common.uiWhite};
   height: ${RELATED_KEYWORDS_HEIGHT}px;
   min-height: ${RELATED_KEYWORDS_HEIGHT}px;
   z-index: ${({ theme }) => theme.zIndex.header};

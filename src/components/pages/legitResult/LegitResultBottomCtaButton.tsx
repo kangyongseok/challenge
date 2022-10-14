@@ -1,40 +1,38 @@
-import { useState } from 'react';
-
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchProductLegit } from '@api/product';
+import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import { FACEBOOK_SHARE_URL, TWITTER_SHARE_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber, copyToClipboard } from '@utils/common';
+import { checkAgent, getProductDetailUrl } from '@utils/common';
 
-type SocialPlatform = 'kakao' | 'facebook' | 'twitter' | 'linkCopy';
+import { legitResultCommentFocusedState } from '@recoil/legitResultComment/atom';
+import { dialogState } from '@recoil/common';
 
 function LegitResultBottomCtaButton() {
   const router = useRouter();
   const { id } = router.query;
   const splitIds = String(id).split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
-
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
-  const [open, setOpen] = useState(false);
-  const [openToast, setOpenToast] = useState(false);
+  const commentWriterFocused = useRecoilValue(legitResultCommentFocusedState);
+  const setDialogState = useSetRecoilState(dialogState);
 
-  const { data: { productResult, result } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId }),
+  const { data: { status, productResult, result } = {} } = useQuery(
+    queryKeys.productLegits.legit(productId),
     () => fetchProductLegit(productId),
     {
       enabled: !!id
@@ -42,18 +40,21 @@ function LegitResultBottomCtaButton() {
   );
 
   const handleClick = () => {
-    if (!productResult) return;
-
-    logEvent(attrKeys.legitResult.CLICK_SHARE, {
+    logEvent(attrKeys.legit.CLICK_SHARE, {
       name: attrProperty.legitName.LEGIT_INFO,
-      title: attrProperty.legitTitle.LEGIT_SHARE
+      title:
+        (status === 20 && attrProperty.legitTitle.AUTHENTICATING) ||
+        (status === 30 && attrProperty.legitTitle.AUTHORIZED)
     });
+
+    if (!productResult) return;
 
     const url = window.location.href;
     let text = '카멜 사진감정 결과, 실물감정을 추천해요';
 
     if (result === 1) text = '카멜 사진감정 결과, 정품의견이 더 우세해요!';
     if (result === 2) text = '카멜 사진감정 결과, 가품의심의견이 있어요!';
+    if (status === 20) text = '카멜의 감정 전문가들이 사진감정중입니다.';
 
     if (checkAgent.isAndroidApp() && window.AndroidShareHandler) {
       window.AndroidShareHandler.share(url);
@@ -88,187 +89,68 @@ function LegitResultBottomCtaButton() {
       }
     }
 
-    setOpen(true);
-  };
-
-  const handleClickShareIcon = (platform: SocialPlatform) => () => {
-    if (!productResult) return;
-
-    const url = `${window.location.origin}/products/${productResult.id}`;
-    let viewPrice = productResult.price / 10000;
-
-    const title = () => {
-      switch (platform) {
-        case 'kakao':
-          return 'KATALK';
-        case 'facebook':
-          return 'FB';
-        case 'twitter':
-          return 'TWITTER';
-        default:
-          return 'URL';
+    setDialogState({
+      type: 'SNSShare',
+      shareData: {
+        title: productResult.quoteTitle,
+        description: text,
+        image: productResult.imageMain || productResult.imageThumbnail,
+        url: `${window.location.origin}/legit${getProductDetailUrl({
+          type: 'productResult',
+          product: productResult
+        }).replace('/products', '')}/result`
       }
-    };
-
-    logEvent(attrKeys.legitResult.CLICK_SHARE, {
-      name: attrProperty.legitName.LEGIT_INFO,
-      title: attrProperty.legitTitle.LEGIT_SHARE,
-      rest: { title: title() }
     });
-
-    switch (platform) {
-      case 'kakao':
-        if (window.Kakao === undefined) {
-          return;
-        }
-
-        if (!window.Kakao.isInitialized()) {
-          window.Kakao.init(process.env.KAKAO_JS_KEY);
-        }
-
-        if (Number.isNaN(viewPrice)) {
-          viewPrice = 0;
-        }
-
-        if (viewPrice - Math.floor(viewPrice) > 0) {
-          viewPrice = Number(viewPrice.toFixed(1));
-        } else {
-          viewPrice = Math.floor(viewPrice);
-        }
-
-        window.Kakao.Link.sendDefault({
-          objectType: 'feed',
-          content: {
-            title: productResult.title,
-            description: `${productResult.site.name} ${commaNumber(viewPrice)}만원\r\nAi추천지수 ${
-              productResult.scoreTotal
-            }/10`,
-            imageUrl: productResult.imageMain,
-            link: {
-              mobileWebUrl: url,
-              webUrl: url
-            }
-          }
-        });
-
-        break;
-      case 'facebook':
-        window.open(`${FACEBOOK_SHARE_URL}?u=${encodeURIComponent(url)}`);
-        break;
-      case 'twitter':
-        window.open(
-          `${TWITTER_SHARE_URL}?text=${productResult.title}&url=${encodeURIComponent(url)}`
-        );
-        break;
-      case 'linkCopy':
-      default:
-        copyToClipboard(`${productResult.title} ${url}`);
-        setOpenToast(false);
-        setOpen(false);
-        break;
-    }
   };
+
+  if (commentWriterFocused || (productResult || {}).postType === 2) return null;
 
   return (
-    <>
-      <Box customStyle={{ minHeight: 89 }}>
-        <CtaButtonWrapper gap={8}>
-          <CtaButton
-            startIcon={<Icon name="ShareOutlined" />}
-            size="large"
-            iconOnly
-            onClick={handleClick}
-            customStyle={{
-              borderColor: common.grey['95']
-            }}
-          />
-          <CtaButton
-            fullWidth
-            variant="contained"
-            brandColor="black"
-            size="large"
-            onClick={() => router.push(`/products/${id}`)}
-          >
-            해당 매물로 돌아가기
-          </CtaButton>
-        </CtaButtonWrapper>
-      </Box>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Box customStyle={{ float: 'right', marginRight: -4 }}>
-          <Icon name="CloseOutlined" onClick={() => setOpen(false)} />
-        </Box>
-        <Typography
-          variant="body1"
-          weight="medium"
-          customStyle={{ textAlign: 'center', marginTop: 16 }}
+    <Box component="nav" customStyle={{ minHeight: 89 }}>
+      <CtaButtonWrapper gap={8} status={status}>
+        <Button
+          startIcon={<Icon name="ShareOutlined" />}
+          size="large"
+          iconOnly
+          onClick={handleClick}
+          customStyle={{
+            backgroundColor: status === 20 ? 'transparent' : common.uiWhite,
+            borderColor: common.ui95
+          }}
+        />
+        <Button
+          fullWidth
+          variant="contained"
+          brandColor={status === 20 ? 'primary' : 'black'}
+          size="large"
+          onClick={() => router.push(`/products/${id}`)}
         >
-          공유하기
-        </Typography>
-        {/* TODO: 아이콘 파일 확인 */}
-        <Flexbox
-          justifyContent="center"
-          gap={16}
-          customStyle={{ margin: '16px 20px 16px', flexWrap: 'wrap' }}
-        >
-          {[
-            { platform: 'kakao', backgroundPosition: '-297px -66px' },
-            { platform: 'facebook', backgroundPosition: '-240px -122px' },
-            { platform: 'twitter', backgroundPosition: '-356px -122px' },
-            { platform: 'linkCopy', backgroundPosition: '-297px -122px' }
-          ].map(({ platform, backgroundPosition }) => (
-            <Box
-              key={`share-platform-${platform}`}
-              onClick={handleClickShareIcon(platform as SocialPlatform)}
-            >
-              <SNSIcon
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/fullpage_ico.png`}
-                backgroundPosition={backgroundPosition}
-              />
-            </Box>
-          ))}
-        </Flexbox>
-      </Dialog>
-      <Toast
-        open={openToast}
-        onClose={() => setOpenToast(false)}
-        bottom="50%"
-        autoHideDuration={1500}
-      >
-        <Typography variant="body1" weight="medium" customStyle={{ color: common.white }}>
-          URL이 복사 되었어요.
-        </Typography>
-      </Toast>
-    </>
+          해당 매물로 돌아가기
+        </Button>
+      </CtaButtonWrapper>
+    </Box>
   );
 }
 
-const CtaButtonWrapper = styled(Flexbox)`
+const CtaButtonWrapper = styled(Flexbox)<{ status?: number }>`
   position: fixed;
   bottom: 0;
   width: 100%;
   padding: 20px;
-  z-index: ${({ theme: { zIndex } }) => zIndex.button};
   border-top: 1px solid
     ${({
       theme: {
         palette: { common }
-      }
-    }) => common.grey['90']};
+      },
+      status
+    }) => (status === 20 ? 'transparent' : common.ui90)};
   background-color: ${({
     theme: {
       palette: { common }
-    }
-  }) => common.white};
-`;
-
-const SNSIcon = styled.span<{ src: string; backgroundPosition: string }>`
-  display: inline-block;
-  width: 33px;
-  height: 33px;
-  background-image: url(${({ src }) => src});
-  background-repeat: no-repeat;
-  background-size: 432px;
-  background-position: ${({ backgroundPosition }) => backgroundPosition};
+    },
+    status
+  }) => (status === 20 ? common.bg03 : common.uiWhite)};
+  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
 `;
 
 export default LegitResultBottomCtaButton;

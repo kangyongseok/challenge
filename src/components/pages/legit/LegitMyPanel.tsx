@@ -1,170 +1,205 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
 
-import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
+import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
+import { Image, Skeleton } from '@components/UI/atoms';
 
-import { Product } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserLegitProducts } from '@api/user';
+import { fetchMyProductLegits } from '@api/productLegit';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { postType } from '@constants/productlegits';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
+import { productLegitEditParamsState } from '@recoil/legitRequest';
+import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitMyPanel() {
   const router = useRouter();
-  const { openCompleteToast = false } = router.query;
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-  const [openToast, setOpenToast] = useState(false);
 
   const { data: accessUser } = useQueryAccessUser();
 
+  const setDialogState = useSetRecoilState(dialogState);
+
   const {
-    data: { content: legitProducts = [], totalElements = 0 } = {},
+    data: { content: productLegits = [], totalElements = 0 } = {},
     isLoading,
     isFetching
-  } = useQuery(queryKeys.users.legitProducts(), fetchUserLegitProducts, {
+  } = useQuery(queryKeys.users.myProductLegits(), fetchMyProductLegits, {
     enabled: !!accessUser,
     keepPreviousData: true,
-    refetchOnMount: true
+    refetchOnMount: true,
+    onSuccess(data) {
+      if (data && data.content.length > 0) {
+        logEvent(attrKeys.legit.VIEW_LEGIT_MY);
+      }
+    }
   });
+  const resetProductLegitEditParamsState = useResetRecoilState(productLegitEditParamsState);
+
+  const getLogEventTitle = (status: number) => {
+    switch (status) {
+      case 30:
+        return attrProperty.legitTitle.AUTHORIZED; // 감정완료
+      case 20:
+        return attrProperty.legitTitle.AUTHENTICATING; // 감정중
+      case 10:
+        return attrProperty.legitTitle.PRE_CONFIRM; // 감정신청
+      case 11:
+        return attrProperty.legitTitle.PRE_CONFIRM_FAIL; // 감정불가
+      case 12:
+        return attrProperty.legitTitle.PRE_CONFIRM_EDIT; // 감정불가 수정하기
+      default:
+        return attrProperty.legitTitle.PRE_CONFIRM_EDIT_DONE; // 보완완료
+    }
+  };
 
   const handleClick =
-    ({ product }: { product: Product }) =>
+    ({ product, status }: { product: ProductResult; status: number }) =>
     () => {
-      logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
-        name: attrProperty.legitName.LEGIT_MY
+      logEvent(attrKeys.legit.CLICK_LEGIT_INFO, {
+        name: attrProperty.legitName.LEGIT_MY,
+        title: getLogEventTitle(status),
+        att: product.postType === 0 ? '크롤링' : product.postType === 2 && '사진올려감정신청'
       });
 
-      router.push(`${getProductDetailUrl({ product })}/legit`);
+      if (status >= 20) {
+        router.push(
+          `/legit${getProductDetailUrl({ product, type: 'productResult' }).replace(
+            '/products',
+            ''
+          )}/result`
+        );
+      } else if (status === 12 && postType[product.postType] === postType[2]) {
+        resetProductLegitEditParamsState();
+        router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
+      } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
+        router.push({
+          pathname: '/legit/request',
+          query: {
+            id: product.id
+          }
+        });
+      } else {
+        router.push(
+          `/legit${getProductDetailUrl({ product, type: 'productResult' }).replace(
+            '/products',
+            ''
+          )}`
+        );
+      }
     };
 
-  // const handleClickButton = () => {
-  //   logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
-  //     name: attrProperty.legitName.LEGIT_MY
-  //   });
-  //   SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-  //     name: attrProperty.legitName.LEGIT,
-  //     title: attrProperty.legitTitle.MYLEGIT,
-  //     type: attrProperty.legitType.GUIDED
-  //   });
-  //
-  //   router.push({
-  //     pathname: '/products/brands/구찌',
-  //     query: {
-  //       parentIds: 98,
-  //       idFilterIds: 100
-  //     }
-  //   });
-  // };
+  const handleClickButton = () => {
+    logEvent(attrKeys.legit.CLICK_LEGIT_HOWITWORKS, {
+      name: attrProperty.legitName.LEGIT_MY
+    });
 
-  // const handleClickButton = () => {
-  //   logEvent(attrKeys.legit.CLICK_LEGIT_LIST, {
-  //     name: attrProperty.legitName.LEGIT_MY
-  //   });
-  //   SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-  //     name: attrProperty.legitName.LEGIT,
-  //     title: attrProperty.legitTitle.MYLEGIT,
-  //     type: attrProperty.legitType.GUIDED
-  //   });
-  //
-  //   router.push({
-  //     pathname: '/products/brands/구찌',
-  //     query: {
-  //       parentIds: 98,
-  //       idFilterIds: 100
-  //     }
-  //   });
-  // };
+    setDialogState({
+      type: 'legitServiceNotice',
+      customStyleTitle: { minWidth: 269 }
+    });
+
+    return;
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.legitName.LEGIT,
+      title: attrProperty.legitTitle.MYLEGIT,
+      type: attrProperty.legitType.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/brands/구찌',
+      query: {
+        parentIds: 98,
+        idFilterIds: 100
+      }
+    });
+  };
 
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_MY);
   }, []);
 
-  useEffect(() => {
-    if (openCompleteToast === 'true') {
-      setOpenToast(true);
-    }
-  }, [openCompleteToast, router]);
-
-  useEffect(() => {
-    if (!openToast && openCompleteToast === 'true') {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: {
-            tab: 'my'
-          }
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [openCompleteToast, openToast, router]);
-
-  if ((!isFetching && !legitProducts.length) || !accessUser) {
+  if ((!isFetching && !productLegits.length) || !accessUser) {
     return (
-      <Box component="section" customStyle={{ marginTop: 100 }}>
-        <Box customStyle={{ textAlign: 'center', fontSize: 52 }}>🕵️‍♀️</Box>
-        <Typography variant="h4" weight="bold" customStyle={{ textAlign: 'center' }}>
-          아직 신청 내역이 없어요 😥
-        </Typography>
-        <Typography variant="h4" customStyle={{ marginTop: 8, textAlign: 'center' }}>
-          10월 중에 다시 감정이 시작될 예정이니
-          <br /> 조금만 기다려주세요!
-        </Typography>
+      <Box component="section" customStyle={{ marginTop: 20 }}>
+        <Box customStyle={{ position: 'relative', maxWidth: 288, margin: '0 auto' }}>
+          <Image
+            variant="backgroundImage"
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v2.png`}
+            alt="Legit Guide Img"
+            customStyle={{
+              position: 'relative',
+              paddingTop: '125%'
+            }}
+          />
+        </Box>
+        <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
+          <Typography variant="h2" weight="bold">
+            사진으로 감정하세요!
+          </Typography>
+          <Typography>
+            정품, 가품 궁금하다면
+            <br />
+            지금 바로 무료사진감정 신청해보세요 🕵️‍
+          </Typography>
+        </Flexbox>
+        <Box customStyle={{ margin: '74px 0 20px', padding: '0 20px' }}>
+          <Button
+            variant="contained"
+            brandColor="primary"
+            size="large"
+            fullWidth
+            onClick={handleClickButton}
+          >
+            카멜의 사진감정 더 알아보기
+          </Button>
+        </Box>
       </Box>
     );
   }
 
   return (
-    <>
-      <Box component="section" customStyle={{ marginTop: 40 }}>
+    <Box component="section" customStyle={{ padding: '0 20px' }}>
+      {isLoading ? (
+        <Skeleton width="70px" height="16px" disableAspectRatio isRound />
+      ) : (
         <Typography variant="body2" weight="bold">
           전체 {commaNumber(totalElements)}개
         </Typography>
-        <Flexbox direction="vertical" gap={20} customStyle={{ margin: '12px 0 20px' }}>
-          {isLoading
-            ? Array.from({ length: 10 }).map((_, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <ProductListCardSkeleton key={`legit-my-product-${index}`} isRound />
-              ))
-            : legitProducts.map(({ productId, productResult, status, isViewed }) => (
-                <ProductListCard
-                  key={`legit-my-product-${productId}`}
-                  product={{
-                    ...productResult,
-                    isProductLegit: true,
-                    productLegit: { ...productResult.productLegit, status }
-                  }}
-                  onClick={handleClick({ product: productResult })}
-                  hideProductLabel={false}
-                  hideNewLegitBadge={false}
-                  isRound
-                  isLegitViewed={isViewed}
-                />
-              ))}
-        </Flexbox>
-      </Box>
-      <Toast open={openToast} onClose={() => setOpenToast(false)}>
-        <Typography weight="medium" customStyle={{ color: common.white }}>
-          감정신청이 완료되었습니다!
-        </Typography>
-      </Toast>
-    </>
+      )}
+      <Flexbox direction="vertical" gap={20} customStyle={{ margin: '20px 0 20px' }}>
+        {isLoading
+          ? Array.from({ length: 10 }).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <LegitStatusCardSkeleton key={`my-legit-${index}`} />
+            ))
+          : productLegits.map((productLegit) => (
+              <LegitStatusCard
+                key={`my-product-legit-${productLegit.productId}`}
+                productLegit={productLegit}
+                onClick={handleClick({
+                  product: productLegit.productResult,
+                  status: productLegit.status
+                })}
+              />
+            ))}
+      </Flexbox>
+    </Box>
   );
 }
 

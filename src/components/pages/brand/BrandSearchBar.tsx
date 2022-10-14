@@ -45,7 +45,11 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
 const SearchBarBox = styled.div`
   position: fixed;
   width: 100%;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   padding: 20px 20px 0;
 
   input {
@@ -56,7 +60,11 @@ const SearchBarBox = styled.div`
     line-height: 20px;
 
     ::placeholder {
-      color: ${({ theme: { palette } }) => palette.common.grey['80']};
+      color: ${({
+        theme: {
+          palette: { common }
+        }
+      }) => common.ui80};
     }
   }
 `;

@@ -24,7 +24,9 @@ interface SearchListProps {
 
 function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: SearchListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
     searchRecentSearchListState
@@ -86,7 +88,7 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
         </Typography>
         <Typography
           variant="body2"
-          customStyle={{ color: palette.common.grey['60'], cursor: 'pointer' }}
+          customStyle={{ color: common.ui60, cursor: 'pointer' }}
           onClick={handleRecentListClear}
         >
           전체삭제
@@ -110,7 +112,7 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
                 <span dangerouslySetInnerHTML={{ __html: item.keyword }} />
               </Typography>
               {(item.count as number) > 0 && (
-                <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
+                <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                   {commaNumber(Number(item.count))}
                 </Typography>
               )}
@@ -142,7 +144,11 @@ const DeleteChip = styled(Chip)`
   width: 16px;
   height: 16px;
   padding: 1px;
-  background: ${({ theme: { palette } }) => palette.common.grey['80']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
 `;
 
 export default SearchRecentList;

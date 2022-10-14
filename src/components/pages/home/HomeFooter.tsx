@@ -3,7 +3,9 @@ import { Box, Typography, useTheme } from 'mrcamel-ui';
 
 function HomeFooter() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   return (
@@ -12,7 +14,7 @@ function HomeFooter() {
       draggable={false}
       customStyle={{
         padding: '24px 20px',
-        backgroundColor: palette.common.grey['95'],
+        backgroundColor: common.ui95,
         userSelect: 'none'
       }}
     >
@@ -29,7 +31,7 @@ function HomeFooter() {
           <Typography
             variant="body2"
             customStyle={{
-              color: palette.common.grey['40'],
+              color: common.ui60,
               marginTop: 16,
               textDecoration: 'underline'
             }}
@@ -38,7 +40,7 @@ function HomeFooter() {
           </Typography>
         </a>
       </Link>
-      <Typography variant="body2" customStyle={{ color: palette.common.grey['60'], marginTop: 16 }}>
+      <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 16 }}>
         ⓒ2020 Mr.Camel All rights reserved
       </Typography>
     </Box>

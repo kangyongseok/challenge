@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, CtaButton, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Label, Typography, light, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { OrderOptionKeys } from '@components/pages/wishes/WishesFilter';
+import type { OrderOptionKeys } from '@components/pages/wishes/WishesFilter';
 
 import { logEvent } from '@library/amplitude';
 
-import { postProductLegits } from '@api/product';
+import { postRequestProductLegits } from '@api/productLegit';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { deviceIdState } from '@recoil/common';
+import { deviceIdState, toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -25,6 +25,7 @@ function WishesBottomCtaButton() {
   const { order = 'updatedDesc', hiddenTab }: { order?: OrderOptionKeys; hiddenTab?: string } =
     router.query;
   const deviceId = useRecoilValue(deviceIdState);
+  const setToastState = useSetRecoilState(toastState);
 
   const {
     theme: {
@@ -43,7 +44,7 @@ function WishesBottomCtaButton() {
     deviceId
   });
 
-  const { mutate, isSuccess } = useMutation(postProductLegits);
+  const { mutate, isSuccess } = useMutation(postRequestProductLegits);
 
   const handleClose = () => {
     logEvent(attrKeys.legit.CLICK_LEGIT_MODAL, {
@@ -76,15 +77,21 @@ function WishesBottomCtaButton() {
 
   useEffect(() => {
     if (isSuccess && !open) {
-      router.push({
-        pathname: '/legit',
-        query: {
-          tab: 'my',
-          openCompleteToast: true
-        }
-      });
+      router
+        .push({
+          pathname: '/legit',
+          query: {
+            tab: 'my'
+          }
+        })
+        .then(() =>
+          setToastState({
+            type: 'legit',
+            status: 'saved'
+          })
+        );
     }
-  }, [router, isSuccess, open]);
+  }, [router, isSuccess, open, setToastState]);
 
   useEffect(() => {
     if (open) {
@@ -98,7 +105,7 @@ function WishesBottomCtaButton() {
     <>
       <Box customStyle={{ minHeight: 89 }}>
         <CtaButtonWrapper>
-          <CtaButton
+          <Button
             fullWidth
             variant="contained"
             brandColor="primary"
@@ -107,7 +114,7 @@ function WishesBottomCtaButton() {
           >
             <NewLabel variant="contained" text="무료" />
             모두 사진감정 해보기
-          </CtaButton>
+          </Button>
         </CtaButtonWrapper>
       </Box>
       <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>
@@ -116,11 +123,11 @@ function WishesBottomCtaButton() {
             {(accessUser || {}).userName || '회원'}님이 찜한 상품 중 사진감정 가능한{' '}
             {userWishes.length}건 모두 <strong>실시간 정가품 의견</strong> 받아보시겠어요?
           </Typography>
-          <Typography weight="medium" customStyle={{ marginTop: 16, color: common.grey['40'] }}>
+          <Typography weight="medium" customStyle={{ marginTop: 16, color: common.ui60 }}>
             🤑 베타기간 내 감정비용은 무료입니다!
           </Typography>
           <Flexbox gap={8} customStyle={{ marginTop: 32 }}>
-            <CtaButton
+            <Button
               fullWidth
               variant="ghost"
               size="large"
@@ -128,8 +135,8 @@ function WishesBottomCtaButton() {
               customStyle={{ minWidth: 108, maxWidth: 108 }}
             >
               다음에
-            </CtaButton>
-            <CtaButton
+            </Button>
+            <Button
               fullWidth
               variant="contained"
               brandColor="primary"
@@ -137,7 +144,7 @@ function WishesBottomCtaButton() {
               onClick={handleClickConfirm}
             >
               네 좋아요
-            </CtaButton>
+            </Button>
           </Flexbox>
         </Box>
       </BottomSheet>
@@ -155,29 +162,20 @@ const CtaButtonWrapper = styled.div`
       theme: {
         palette: { common }
       }
-    }) => common.grey['90']};
+    }) => common.ui90};
   background-color: ${({
     theme: {
       palette: { common }
     }
-  }) => common.white};
+  }) => common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
 `;
 
 export const NewLabel = styled(Label)`
   width: 26px;
   height: 19px;
-  border: 2px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.white};
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.black};
+  border: 2px solid ${light.palette.common.uiWhite};
+  background-color: ${light.palette.common.uiBlack};
   border-radius: 10px;
   ${({
     theme: {

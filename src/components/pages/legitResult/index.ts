@@ -1,5 +1,10 @@
-export { default as LegitResultCardHolder } from './LegitResultCardHolder';
 export { default as LegitResultOpinionList } from './LegitResultOpinionList';
 export { default as LegitResultDetailAlert } from './LegitResultDetailAlert';
 export { default as LegitResultLoginBottomSheet } from './LegitResultLoginBottomSheet';
 export { default as LegitResultBottomCtaButton } from './LegitResultBottomCtaButton';
+export { default as LegitResultCommentList } from './LegitResultCommentList';
+export { default as LegitResultCommentWriter } from './LegitResultCommentWriter';
+export { default as LegitResultTimer } from './LegitResultTimer';
+export { default as LegitResultIntro } from './LegitResultIntro';
+export { default as LegitResultRequestInfo } from './LegitResultRequestInfo';
+export { default as LegitResultHeader } from './LegitResultHeader';

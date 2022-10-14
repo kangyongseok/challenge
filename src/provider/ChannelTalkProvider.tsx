@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import Script from 'next/script';
 import { useRouter } from 'next/router';
+import { isEmpty, isEqual } from 'lodash-es';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -27,8 +28,51 @@ function ChannelTalkProvider() {
       'searchHelper',
       'crazycuration'
     ];
+    const disallowUrlInfos = [
+      {
+        pathname: '/legit',
+        disallowThisPageAll: false
+      },
+      {
+        pathname: '/legit',
+        disallowThisPageAll: false,
+        query: {
+          tab: 'live'
+        }
+      },
+      {
+        pathname: '/legit/[id]',
+        disallowThisPageAll: true
+      },
+      {
+        pathname: '/legit/[id]/result',
+        disallowThisPageAll: true
+      },
+      {
+        pathname: '/legit/admin',
+        disallowThisPageAll: false
+      },
+      {
+        pathname: '/legit/admin',
+        disallowThisPageAll: false,
+        query: {
+          tab: 'home'
+        }
+      }
+    ];
 
-    if (disallowPrefixPathNames.includes(router.pathname.split('/')[1])) {
+    if (
+      disallowPrefixPathNames.includes(router.pathname.split('/')[1]) ||
+      disallowUrlInfos.some(({ pathname, query, disallowThisPageAll }) => {
+        if (query && isEqual(query, router.query)) {
+          return true;
+        }
+        if (!query && isEmpty(router.query) && pathname === router.pathname) {
+          return true;
+        }
+        return disallowThisPageAll && pathname === router.pathname;
+      })
+    ) {
       ChannelTalk.hideChannelButton();
     } else {
       ChannelTalk.showChannelButton();

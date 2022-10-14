@@ -16,7 +16,9 @@ import { showAppDownloadBannerState } from '@recoil/common';
 
 function MypageWelcome() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const [userData, setUserData] = useState<AccessUser>();
   useEffect(() => {
@@ -52,14 +54,10 @@ function MypageWelcome() {
           )}
         </AvatarArea>
         <Box customStyle={{ marginLeft: 24 }}>
-          <Typography
-            customStyle={{ color: palette.common.grey['20'] }}
-            variant="body1"
-            weight="medium"
-          >
+          <Typography customStyle={{ color: common.ui20 }} variant="body1" weight="medium">
             {userData?.userName || '회원'}님 안녕하세요
           </Typography>
-          <Typography customStyle={{ color: palette.common.grey['60'] }} variant="small1">
+          <Typography customStyle={{ color: common.ui60 }} variant="small1">
             ID: {userData?.userId}
           </Typography>
         </Box>

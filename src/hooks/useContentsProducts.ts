@@ -8,7 +8,7 @@ import queryKeys from '@constants/queryKeys';
 
 function useContentsProducts(contentsId: number) {
   const { data: { contents } = {}, ...useQueryResult } = useQuery(
-    queryKeys.common.contentsProducts(contentsId),
+    queryKeys.commons.contentsProducts(contentsId),
     () => fetchContentsProducts(contentsId),
     {
       enabled: !!contentsId,

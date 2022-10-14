@@ -17,7 +17,9 @@ import categoryState from '@recoil/category';
 
 function CategoryBrandList() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const { gender } = useRecoilValue(categoryState);
@@ -69,7 +71,7 @@ function CategoryBrandList() {
           fullWidth
           variant="ghost"
           onClick={handleClickBrandAll}
-          customStyle={{ color: palette.common.grey['20'] }}
+          customStyle={{ color: common.ui20 }}
         >
           브랜드 전체보기
         </Button>

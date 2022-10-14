@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Typography } from 'mrcamel-ui';
 
 import ProductListCard from '@components/UI/molecules/ProductListCard';
 import { ProductListCardSkeleton } from '@components/UI/molecules';
@@ -17,15 +17,13 @@ import attrKeys from '@constants/attrKeys';
 
 function SellerProductsPanel() {
   const {
-    query: { id: productId }
+    query: { id: sellerId }
   } = useRouter();
-  const {
-    theme: { palette }
-  } = useTheme();
+
   const productsPage = useRef(0);
 
   const sellerProductsParams = {
-    productId: Number(productId),
+    sellerId: Number(sellerId),
     size: 20
   };
 
@@ -33,7 +31,7 @@ function SellerProductsPanel() {
     queryKeys.products.sellerProducts(sellerProductsParams),
     async ({ pageParam = 0 }) => fetchSellerProducts({ ...sellerProductsParams, page: pageParam }),
     {
-      enabled: !!sellerProductsParams.productId,
+      enabled: !!sellerProductsParams.sellerId,
       getNextPageParam: (nextData) => {
         const { number = 0, totalPages = 0 } = nextData || {};
 
@@ -54,7 +52,7 @@ function SellerProductsPanel() {
           title: 'SELLER_PRODUCT',
           name: 'SELLER_PRODUCT',
           page: requestProductsPage,
-          productId
+          sellerId
         });
         await fetchNextPage();
       }
@@ -65,8 +63,22 @@ function SellerProductsPanel() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, productId]);
-
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, sellerId]);
+  if (!isLoading && !data?.pages.map((sellerProducts) => sellerProducts.content)[0].length) {
+    return (
+      <Flexbox
+        customStyle={{ margin: '16px 0 20px', height: 150 }}
+        alignment="center"
+        justifyContent="center"
+        direction="vertical"
+      >
+        <Typography variant="h0">😮</Typography>
+        <Typography weight="bold" variant="h3">
+          판매중인 매물이 없어요
+        </Typography>
+      </Flexbox>
+    );
+  }
   return (
     <Box customStyle={{ margin: '16px 0 20px' }}>
       <Alert
@@ -75,9 +87,7 @@ function SellerProductsPanel() {
           padding: '12px 24px'
         }}
       >
-        <Typography variant="body2" color={palette.common.grey['20']}>
-          카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)
-        </Typography>
+        <Typography variant="body2">카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)</Typography>
       </Alert>
       <Box
         customStyle={{

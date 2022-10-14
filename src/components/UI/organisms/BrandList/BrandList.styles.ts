@@ -1,5 +1,5 @@
 import { Typography } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { BrandListProps } from './index';
 
@@ -41,8 +41,7 @@ export const BrandItem = styled.div<Pick<BrandListProps, 'variant'>>`
           display: 'flex',
           flexDirection: 'column',
           flex: 'none',
-          width: 64,
-          margin: '0 auto'
+          width: 64
         }};
 `;
 
@@ -50,15 +49,21 @@ export const BrandImageBox = styled.div<Pick<BrandListProps, 'variant' | 'color'
   border-radius: 50%;
   padding: 8px;
 
-  ${({ variant, color, theme: { palette } }) =>
+  ${({
+    variant,
+    color,
+    theme: {
+      palette: { common }
+    }
+  }) =>
     variant === 'contained'
       ? {
-          backgroundColor: color === 'grey' ? palette.common.grey['95'] : 'white',
+          backgroundColor: color === 'grey' ? common.ui95 : common.uiWhite,
           height: 'fit-content'
         }
       : {
-          backgroundColor: palette.common.white,
-          border: `1px solid ${palette.common.grey['90']}`,
+          backgroundColor: common.uiWhite,
+          border: `1px solid ${common.ui90}`,
           height: 64
         }};
 `;
@@ -75,7 +80,20 @@ export const BrandImage = styled.div<
   background-size: cover;
   background-position: center;
   border-radius: 50%;
-  mix-blend-mode: ${({ variant }) => variant === 'contained' && 'multiply'};
+
+  ${({ theme: { mode }, variant }): CSSObject => {
+    switch (mode) {
+      case 'dark':
+        return {
+          mixBlendMode: 'screen'
+        };
+      default: {
+        return {
+          mixBlendMode: variant === 'contained' ? 'multiply' : undefined
+        };
+      }
+    }
+  }}
 `;
 
 export const BrandName = styled(Typography)`

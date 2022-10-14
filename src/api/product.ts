@@ -1,11 +1,8 @@
 import type {
   CamelProductsParams,
-  LegitProductsParams,
   PageProduct,
-  PageProductLegit,
   PageProductResult,
   ProductDetail,
-  ProductLegit,
   ProductParams,
   RecommProductsParams,
   ReviewInfoParams,
@@ -20,6 +17,10 @@ import type {
 } from '@dto/product';
 
 import Axios from '@library/axios';
+
+import type { SubmitType } from '@typings/camelSeller';
+
+// import convertQueryStringByObject from '@utils/convertQueryStringByObject';
 
 const BASE_PATH = '/products';
 
@@ -39,9 +40,9 @@ export async function fetchRelatedProducts(productId: number) {
   return data;
 }
 
-export async function fetchReviewInfo({ productId, ...params }: ReviewInfoParams) {
+export async function fetchReviewInfo({ sellerId, ...params }: ReviewInfoParams) {
   const { data } = await Axios.getInstance().get<SellerReview>(
-    `${BASE_PATH}/${productId}/reviewInfo`,
+    `${BASE_PATH}/${sellerId}/reviewInfo`,
     {
       params
     }
@@ -50,9 +51,9 @@ export async function fetchReviewInfo({ productId, ...params }: ReviewInfoParams
   return data;
 }
 
-export async function fetchSellerProducts({ productId, ...params }: SellerProductsParams) {
+export async function fetchSellerProducts({ sellerId, ...params }: SellerProductsParams) {
   const { data } = await Axios.getInstance().get<PageProduct>(
-    `${BASE_PATH}/${productId}/sellerProducts`,
+    `${BASE_PATH}/${sellerId}/sellerProducts`,
     {
       params
     }
@@ -111,45 +112,6 @@ export async function postSellerReport(params: SellerReportParams) {
   await Axios.getInstance().post(`${BASE_PATH}/sellerReport`, params);
 }
 
-export async function fetchProductLegit(productId: number) {
-  const { data } = await Axios.getInstance().get<ProductLegit>(`${BASE_PATH}/${productId}/legit`);
-
-  return data;
-}
-
-export async function postProductLegit({
-  productId,
-  deviceId
-}: {
-  productId: number;
-  deviceId?: string;
-}) {
-  await Axios.getInstance().post(`${BASE_PATH}/${productId}/legit`, {
-    deviceId
-  });
-}
-
-export async function postProductLegits({
-  productIds,
-  deviceId
-}: {
-  productIds: number[];
-  deviceId?: string;
-}) {
-  await Axios.getInstance().post(`${BASE_PATH}/legits`, {
-    productIds,
-    deviceId
-  });
-}
-
-export async function fetchLegitProducts(params: LegitProductsParams) {
-  const { data } = await Axios.getInstance().get<PageProductLegit>(`${BASE_PATH}/legitProducts`, {
-    params
-  });
-
-  return data;
-}
-
 export async function fetchRecommProducts(params?: RecommProductsParams) {
   const { data } = await Axios.getInstance().get<PageProductResult>(`${BASE_PATH}/recommProducts`, {
     params
@@ -163,5 +125,46 @@ export async function fetchCamelProducts(params: CamelProductsParams) {
     params
   });
 
+  return data;
+}
+
+export async function fetchSearchHistory(params?: SearchParams) {
+  const { data } = await Axios.getInstance().get<Search>(`${BASE_PATH}/searchHistory`, {
+    params
+  });
+  return data;
+}
+
+export async function putProductEdit({
+  productId,
+  parameter
+}: {
+  productId: number;
+  parameter: SubmitType;
+}) {
+  await Axios.getInstance().put(`${BASE_PATH}/${productId}`, { ...parameter });
+}
+
+export async function putProductHoisting({ productId }: { productId: number }) {
+  await Axios.getInstance().put(`${BASE_PATH}/${productId}/updatePosted`);
+}
+
+export async function putProductUpdateStatus({
+  productId,
+  status
+}: {
+  productId: number;
+  status: number;
+}) {
+  await Axios.getInstance().put(`${BASE_PATH}/${productId}/updateStatus?status=${status}`);
+}
+
+export async function deleteProduct({ productId }: { productId: number }) {
+  // ssesion 에 유저 아이디로 구분
+  await Axios.getInstance().delete(`${BASE_PATH}/${productId}`);
+}
+
+export async function postProducts(parameter: SubmitType) {
+  const { data } = await Axios.getInstance().post(`${BASE_PATH}`, { ...parameter });
   return data;
 }

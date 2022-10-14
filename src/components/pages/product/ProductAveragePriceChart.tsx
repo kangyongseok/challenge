@@ -33,7 +33,8 @@ const createRoundRect = ({
   width,
   height,
   radius,
-  isIntAndLess10
+  isIntAndLess10,
+  fillStyle
 }: {
   ctx: CanvasRenderingContext2D;
   x: number;
@@ -42,6 +43,7 @@ const createRoundRect = ({
   height: number;
   radius: number;
   isIntAndLess10: boolean;
+  fillStyle: string;
 }) => {
   let $radius = radius;
 
@@ -61,7 +63,7 @@ const createRoundRect = ({
     ctx.arcTo(x, y, x + width, y, $radius);
   }
   ctx.closePath();
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = fillStyle;
   ctx.fill();
 };
 
@@ -71,7 +73,9 @@ interface ProductAveragePriceChartProps {
 
 function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [data, setData] = useState<ChartData<'line'> | null>(null);
   const [options, setOptions] = useState<ChartOptions<'line'> | null>(null);
@@ -133,18 +137,8 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
           {
             data: slicedValues,
             pointRadius: [4, 4, 4, 7],
-            borderColor: [
-              palette.common.grey['90'],
-              palette.common.grey['90'],
-              palette.common.grey['90'],
-              palette.primary.highlight
-            ],
-            pointBackgroundColor: [
-              palette.common.grey['60'],
-              palette.common.grey['60'],
-              palette.common.grey['60'],
-              palette.primary.main
-            ],
+            borderColor: [common.ui90, common.ui90, common.ui90, primary.highlight],
+            pointBackgroundColor: [common.ui60, common.ui60, common.ui60, primary.main],
             pointBorderWidth: [0, 0, 0, 5]
           }
         ]
@@ -170,12 +164,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
                 // @ts-ignore
                 weight: ['400', '400', '400', '500']
               },
-              color: [
-                palette.common.grey['40'],
-                palette.common.grey['40'],
-                palette.common.grey['40'],
-                palette.common.grey['20']
-              ]
+              color: [common.ui60, common.ui60, common.ui60, common.ui20]
             },
             grid: {
               display: false
@@ -194,7 +183,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             },
             grid: {
               lineWidth: 1,
-              color: palette.common.grey['90'],
+              color: common.ui90,
               drawBorder: false,
               borderDash: [5, 5],
               display: true
@@ -216,11 +205,12 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
                 width: String(slicedValues[index]).length * 8,
                 height: 20,
                 radius: 20,
-                isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10
+                isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
+                fillStyle: common.uiWhite
               });
               // eslint-disable-next-line quotes
               ctx.font = "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-              ctx.fillStyle = '#555555';
+              ctx.fillStyle = common.uiBlack;
               ctx.textAlign = 'center';
               ctx.textBaseline = 'bottom';
               ctx.fillText(String(slicedValues[index]), chartElement.x, chartElement.y - 18);
@@ -231,20 +221,24 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
           tooltip: {
             enabled: false,
             position: 'nearest',
-            borderColor: palette.common.grey['90'],
+            borderColor: common.ui90,
             borderWidth: 1,
-            backgroundColor: palette.common.white,
-            bodyColor: palette.common.grey['40']
+            backgroundColor: common.uiWhite,
+            bodyColor: common.ui60
           }
         }
       });
     }
   }, [
     chartValues,
-    palette.common.grey,
-    palette.common.white,
-    palette.primary.highlight,
-    palette.primary.main
+    common.ui20,
+    common.ui60,
+    common.ui80,
+    common.ui90,
+    common.uiBlack,
+    common.uiWhite,
+    primary.highlight,
+    primary.main
   ]);
 
   if (!isShowChart) {
@@ -285,7 +279,11 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
 }
 
 const LabelSkeleton = styled.div`
-  background-color: ${({ theme }) => theme.palette.common.grey['90']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   animation: ${pulse} 800ms linear 0s infinite alternate;
   margin-top: 16px;
   height: 128px;
@@ -299,13 +297,21 @@ const Label = styled.div<{ isShowChart: boolean }>`
   grid-gap: 8px;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.palette.primary.bgLight};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.bgLight};
   border-radius: ${({ theme }) => theme.box.round['8']};
 `;
 
 const Divider = styled.hr`
   margin-top: 32px;
-  border-color: ${({ theme }) => theme.palette.common.grey['90']};
+  border-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
 `;
 
 export default memo(ProductAveragePriceChart);

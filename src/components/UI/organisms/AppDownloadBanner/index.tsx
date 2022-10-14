@@ -103,7 +103,7 @@ function AppDownloadBanner() {
           endIcon={<Icon name="DownloadFilled" size="small" />}
           onClick={handleClickDownload}
         >
-          <Typography weight="bold" variant="small2" customStyle={{ color: common.white }}>
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.cmnW }}>
             다운로드
           </Typography>
         </DownloadButtonBox>

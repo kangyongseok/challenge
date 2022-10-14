@@ -26,7 +26,9 @@ interface OnboardingGenderAndYearOfBirthProps {
 
 function OnboardingGenderAndYearOfBirth({ onClick }: OnboardingGenderAndYearOfBirthProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, secondary }
+    }
   } = useTheme();
   const { isLoading: isLoadingAccessUser, data: accessUser } = useQueryAccessUser();
   const {
@@ -103,7 +105,7 @@ function OnboardingGenderAndYearOfBirth({ onClick }: OnboardingGenderAndYearOfBi
         <Typography
           variant="h2"
           weight="bold"
-          customStyle={{ padding: '48px 20px 80px', '& > span': { color: palette.primary.main } }}
+          customStyle={{ padding: '48px 20px 80px', '& > span': { color: primary.main } }}
         >
           <span>카멜을 100% 활용</span>할 수 있게
           <br />
@@ -158,7 +160,7 @@ function OnboardingGenderAndYearOfBirth({ onClick }: OnboardingGenderAndYearOfBi
               <Typography
                 variant="body2"
                 weight="medium"
-                customStyle={{ marginTop: 8, color: palette.secondary.red.main }}
+                customStyle={{ marginTop: 8, color: secondary.red.main }}
               >
                 올바른 출생연도를 입력해주세요.
               </Typography>

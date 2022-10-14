@@ -14,7 +14,10 @@ function useQueryUserInfo() {
     LocalStorage.get<AccessUser>(ACCESS_USER)
   );
 
-  return useQuery(queryKeys.users.userInfo(), fetchUserInfo, { enabled: !!accessUser });
+  return useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
+    refetchOnMount: true,
+    enabled: !!accessUser
+  });
 }
 
 export default useQueryUserInfo;

@@ -20,7 +20,9 @@ import { allSelectedSearchOptionsSelector } from '@recoil/searchHelper';
 function AllOptions() {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const allSelectedSearchOptions = useRecoilValue(allSelectedSearchOptionsSelector);
   const [
@@ -94,7 +96,7 @@ function AllOptions() {
                 variant="h2"
                 weight="medium"
                 customStyle={{
-                  borderBottom: `4px solid ${palette.primary.main}`,
+                  borderBottom: `4px solid ${primary.main}`,
                   marginRight: brandLineCategoryLabels.length !== index + 1 ? 8 : 0
                 }}
               >
@@ -106,7 +108,7 @@ function AllOptions() {
         <CustomTypography
           variant="h2"
           weight="medium"
-          customStyle={{ marginRight: 12, color: palette.common.grey['60'] }}
+          customStyle={{ marginRight: 12, color: common.ui60 }}
         >
           의
         </CustomTypography>
@@ -118,7 +120,7 @@ function AllOptions() {
                   variant="h2"
                   weight="medium"
                   customStyle={{
-                    borderBottom: `4px solid ${palette.primary.main}`,
+                    borderBottom: `4px solid ${primary.main}`,
                     marginRight: 8
                   }}
                 >
@@ -129,7 +131,7 @@ function AllOptions() {
             <CustomTypography
               variant="h2"
               weight="medium"
-              customStyle={{ marginRight: 12, color: palette.common.grey['60'] }}
+              customStyle={{ marginRight: 12, color: common.ui60 }}
             >
               사이즈
             </CustomTypography>
@@ -143,7 +145,7 @@ function AllOptions() {
                   variant="h2"
                   weight="medium"
                   customStyle={{
-                    borderBottom: `4px solid ${palette.primary.main}`,
+                    borderBottom: `4px solid ${primary.main}`,
                     marginRight: 8
                   }}
                 >
@@ -154,7 +156,7 @@ function AllOptions() {
             <CustomTypography
               variant="h2"
               weight="medium"
-              customStyle={{ marginRight: 12, color: palette.common.grey['60'] }}
+              customStyle={{ marginRight: 12, color: common.ui60 }}
             >
               이하
             </CustomTypography>
@@ -169,7 +171,7 @@ function AllOptions() {
                     variant="h2"
                     weight="medium"
                     customStyle={{
-                      borderBottom: `4px solid ${palette.primary.main}`,
+                      borderBottom: `4px solid ${primary.main}`,
                       marginRight: moreLabels.length !== index + 1 ? 8 : 0
                     }}
                   >
@@ -181,7 +183,7 @@ function AllOptions() {
             <CustomTypography
               variant="h2"
               weight="medium"
-              customStyle={{ marginRight: 12, color: palette.common.grey['60'] }}
+              customStyle={{ marginRight: 12, color: common.ui60 }}
             >
               (으)로
             </CustomTypography>
@@ -194,17 +196,13 @@ function AllOptions() {
                 <CustomTypography
                   variant="h2"
                   weight="medium"
-                  customStyle={{ borderBottom: `4px solid ${palette.primary.main}` }}
+                  customStyle={{ borderBottom: `4px solid ${primary.main}` }}
                 >
                   {platformLabel}
                 </CustomTypography>
               </a>
             </Link>
-            <CustomTypography
-              variant="h2"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['60'] }}
-            >
+            <CustomTypography variant="h2" weight="medium" customStyle={{ color: common.ui60 }}>
               에서
             </CustomTypography>
           </>
@@ -213,7 +211,7 @@ function AllOptions() {
       <CustomTypography
         variant="h2"
         weight="medium"
-        customStyle={{ padding: '16px 20px 187px', color: palette.common.grey['60'] }}
+        customStyle={{ padding: '16px 20px 187px', color: common.ui60 }}
       >
         매물 찾는게 맞으세요?
       </CustomTypography>
@@ -235,7 +233,11 @@ const SuccessLabelWrapper = styled.div`
     position: absolute;
     left: 0;
     top: 0;
-    background-color: ${({ theme }) => theme.palette.common.white};
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiWhite};
     transform: translateX(0%);
     animation: expandWidth 2s forwards;
   }
@@ -253,8 +255,16 @@ const SuccessLabelWrapper = styled.div`
 const SuccessLabel = styled(Typography)`
   margin: 0 auto;
   padding: 16px 32px;
-  background-color: ${({ theme }) => theme.palette.common.grey['20']};
-  color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   width: 159px;
   border-radius: 32px;
 `;

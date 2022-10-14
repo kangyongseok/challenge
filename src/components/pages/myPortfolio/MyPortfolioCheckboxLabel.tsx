@@ -47,7 +47,11 @@ function MyPortfolioCheckboxLabel({
 const Checkbox = styled.input`
   display: none;
   &:checked + label {
-    background: ${({ theme: { palette } }) => palette.primary.main};
+    background: ${({
+      theme: {
+        palette: { primary }
+      }
+    }) => primary.main};
     border: none;
   }
 `;
@@ -55,7 +59,12 @@ const CheckBoxView = styled.label`
   border-radius: 4px;
   width: 16px;
   height: 16px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['60']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui60};
   display: flex;
   align-items: center;
   justify-content: center;

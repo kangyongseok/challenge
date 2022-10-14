@@ -5,7 +5,11 @@ export const LabelDivider = styled.hr`
   height: 7px;
   width: 1px;
   margin: auto 0;
-  background-color: ${({ theme }) => theme.palette.primary.light};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.light};
   z-index: 1;
 `;
 

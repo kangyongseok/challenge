@@ -1,4 +1,6 @@
-import { Brand } from '@dto/brand';
+import { UserRoleLegit } from '@dto/user';
+import type { ProductLegit } from '@dto/productLegit';
+import type { Brand } from '@dto/brand';
 
 export interface DashboardResults {
   collectionStatus: unknown;
@@ -10,8 +12,9 @@ export interface DashboardResults {
 }
 
 export interface LegitDashboard {
-  resultReal: number;
-  resultFake: number;
-  resultNone: number;
+  mostPopular: ProductLegit;
+  realVsFake: ProductLegit;
+  authenticators: UserRoleLegit[];
+  caseHistories: ProductLegit[];
   targetBrands: Brand[];
 }

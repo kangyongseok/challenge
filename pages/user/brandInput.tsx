@@ -28,7 +28,9 @@ import { showAppDownloadBannerState } from '@recoil/common';
 
 function BrandInput() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -184,16 +186,10 @@ function BrandInput() {
             >
               어떤 브랜드 좋아하세요?
             </Typography>
-            <Typography
-              variant="body1"
-              customStyle={{ color: palette.common.grey['20'], textAlign: 'center' }}
-            >
+            <Typography variant="body1" customStyle={{ color: common.ui20, textAlign: 'center' }}>
               선택한 브랜드는 홈에서 모아볼 수 있어요.
             </Typography>
-            <Typography
-              variant="small1"
-              customStyle={{ color: palette.common.grey['60'], textAlign: 'center' }}
-            >
+            <Typography variant="small1" customStyle={{ color: common.ui60, textAlign: 'center' }}>
               최대 20개 선택할 수 있어요.
             </Typography>
           </Box>
@@ -215,11 +211,7 @@ function BrandInput() {
             />
           )}
           {!searchValue && (
-            <Typography
-              weight="bold"
-              variant="h4"
-              customStyle={{ color: palette.common.grey['20'], marginTop: 24 }}
-            >
+            <Typography weight="bold" variant="h4" customStyle={{ marginTop: 24 }}>
               인기 브랜드
             </Typography>
           )}
@@ -270,7 +262,11 @@ const FixedArea = styled.div<{ showAppDownloadBanner: boolean }>`
   width: 100%;
   padding: 0 20px 16px;
   z-index: 10;
-  background: ${({ theme: { palette } }) => palette.common.white};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {

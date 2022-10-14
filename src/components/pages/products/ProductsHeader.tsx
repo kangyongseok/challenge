@@ -24,7 +24,9 @@ interface ProductsHeaderProps {
 
 function ProductsHeader({ variant }: ProductsHeaderProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const { keyword }: { keyword?: string } = router.query;
@@ -99,7 +101,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
               name="DeleteCircleFilled"
               width={20}
               height={20}
-              customStyle={{ color: palette.common.grey['80'], minWidth: 20 }}
+              customStyle={{ color: common.ui80, minWidth: 20 }}
               onClick={handleClickSearchIcon}
             />
           }

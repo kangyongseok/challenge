@@ -1,4 +1,3 @@
-import type { GetServerSidePropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 
 import { ProductsSaveSearchPopup } from '@components/UI/organisms';
@@ -20,13 +19,8 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
 import attrProperty from '@constants/attrProperty';
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
-import { ABTestGroup } from '@provider/ABTestProvider';
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
 function BrandProducts() {
@@ -39,12 +33,7 @@ function BrandProducts() {
           <Box>
             <ProductsHeader variant="brands" />
             <ProductsCategoryTags variant="brands" />
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
-              <ProductsFilter variant="brands" />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
-              <ProductsFilter variant="brands" showDynamicFilter />
-            </ABTestGroup>
+            <ProductsFilter variant="brands" showDynamicFilter />
           </Box>
         }
         footer={
@@ -72,16 +61,6 @@ function BrandProducts() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
-}
-
-export function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(req.cookies);
-
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
 }
 
 export default BrandProducts;

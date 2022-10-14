@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Button, CtaButton, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -57,7 +57,7 @@ function AppDownloadDialog({
           직거래 가능한 주변매물만 모아보세요!
         </Typography>
         <Flexbox gap={7} customStyle={{ marginTop: 20 }}>
-          <CtaButton
+          <Button
             fullWidth
             variant="ghost"
             brandColor="primary"
@@ -65,8 +65,8 @@ function AppDownloadDialog({
             customStyle={{ minWidth: 128 }}
           >
             웹으로 볼게요
-          </CtaButton>
-          <CtaButton
+          </Button>
+          <Button
             fullWidth
             variant="contained"
             brandColor="primary"
@@ -74,7 +74,7 @@ function AppDownloadDialog({
             customStyle={{ minWidth: 128 }}
           >
             앱 다운로드
-          </CtaButton>
+          </Button>
         </Flexbox>
       </Dialog>
     );
@@ -95,7 +95,7 @@ function AppDownloadDialog({
           가격 내려갔을 때 알림 받아보세요!
         </Typography>
         <Flexbox gap={7}>
-          <CtaButton
+          <Button
             variant="ghost"
             brandColor="primary"
             customStyle={{ width: 128 }}
@@ -104,17 +104,17 @@ function AppDownloadDialog({
             <Typography variant="body1" weight="bold" customStyle={{ color: primary.main }}>
               웹으로 볼게요
             </Typography>
-          </CtaButton>
-          <CtaButton
+          </Button>
+          <Button
             variant="contained"
             brandColor="primary"
             customStyle={{ width: 128 }}
             onClick={() => handleClickAppDownload({ name: PRODUCT_NAME.PRODUCT_DETAIL, productId })}
           >
-            <Typography variant="body1" weight="bold" customStyle={{ color: common.white }}>
+            <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
               앱 다운로드
             </Typography>
-          </CtaButton>
+          </Button>
         </Flexbox>
       </Dialog>
     );
@@ -128,31 +128,31 @@ function AppDownloadDialog({
       <FeatureBox>
         <Flexbox gap={6} alignment="center">
           <TargetIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
             꿀매알림
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <HeartIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
             찜 리스트
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <UserIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
             취향추천
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <TimerIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
             매물거래
           </Typography>
         </Flexbox>
       </FeatureBox>
       <Flexbox gap={7} customStyle={{ marginTop: 20 }}>
-        <CtaButton
+        <Button
           fullWidth
           variant="ghost"
           brandColor="primary"
@@ -160,8 +160,8 @@ function AppDownloadDialog({
           customStyle={{ minWidth: 128 }}
         >
           괜찮아요
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           fullWidth
           variant="contained"
           brandColor="primary"
@@ -169,7 +169,7 @@ function AppDownloadDialog({
           customStyle={{ minWidth: 128 }}
         >
           앱 다운로드
-        </CtaButton>
+        </Button>
       </Flexbox>
     </Dialog>
   );

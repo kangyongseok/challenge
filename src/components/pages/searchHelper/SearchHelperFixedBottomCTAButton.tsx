@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { CtaButton, CustomStyle, Typography } from 'mrcamel-ui';
+import { Button, CustomStyle, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { searchHelperPopupStateFamily } from '@recoil/searchHelper';
@@ -40,7 +40,7 @@ function SearchHelperFixedBottomCTAButton({
           {showEnableEdit && '선택한 조건을 터치하면 수정할 수 있어요'}
         </InfoLabel>
       )}
-      <CtaButton
+      <Button
         variant={showEnableSkip ? 'outlined' : 'contained'}
         size="large"
         brandColor="primary"
@@ -51,7 +51,7 @@ function SearchHelperFixedBottomCTAButton({
         {showEnableEdit && !showEnableSkip && '네, 맞아요'}
         {!showEnableEdit && showEnableSkip && '건너뛰기'}
         {!showEnableEdit && !showEnableSkip && '다음'}
-      </CtaButton>
+      </Button>
       <StopButton variant="body2" weight="medium" onClick={handleClickClose}>
         검색집사 그만할래요.
       </StopButton>
@@ -64,13 +64,25 @@ const ButtonGroups = styled.div`
   bottom: 0;
   width: 100%;
   padding: 20px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   text-align: center;
 `;
 
 const InfoLabel = styled(Typography)`
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
-  color: ${({ theme }) => theme.palette.common.grey['60']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
   margin: 0 auto 20px;
   padding: 8px 16px;
   border-radius: 16px;
@@ -80,7 +92,11 @@ const InfoLabel = styled(Typography)`
 const StopButton = styled(Typography)`
   margin-top: 16px;
   text-decoration: underline;
-  color: ${({ theme }) => theme.palette.common.grey['60']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
 `;
 
 export default SearchHelperFixedBottomCTAButton;

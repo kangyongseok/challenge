@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import type { Product, ProductLegit } from '@dto/product';
+import type { ProductLegit } from '@dto/productLegit';
+import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -29,7 +30,7 @@ function ProductDetailLegitImageBottomBanner({
   const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
 
   const renderDescription = () => {
-    if (data?.status === 10 || data?.status === 20) {
+    if (data?.status === 10 || data?.status === 12 || data?.status === 13 || data?.status === 20) {
       return (
         <>
           🤓 이 모델을 잘 아는 전문가들이
@@ -46,7 +47,7 @@ function ProductDetailLegitImageBottomBanner({
         return (
           <>
             🤓 전문가들의 사진감정결과,
-            <strong style={{ color: common.white }}> 정품의견</strong>이 우세합니다!
+            <strong style={{ color: common.cmnW }}> 정품의견</strong>이 우세합니다!
           </>
         );
       }
@@ -89,29 +90,29 @@ function ProductDetailLegitImageBottomBanner({
             return;
           }
           if (data.status === 30) {
-            router.push(`/products/${router.query.id}/legit/result`);
+            router.push(`/legit/${router.query.id}/result`);
             return;
           }
-          router.push(`/products/${router.query.id}/legit`);
+          router.push(`/legit/${router.query.id}`);
         }}
       >
         {!data?.status && (
           <>
             <Typography weight="medium">🔎</Typography>
-            <Typography weight="medium" customStyle={{ color: common.white }}>
+            <Typography weight="medium" customStyle={{ color: common.cmnW }}>
               보고있는 이 매물이 정품인지 궁금하다면?
             </Typography>
           </>
         )}
         {data?.status && (
-          <Typography weight="medium" customStyle={{ color: common.white }}>
+          <Typography weight="medium" customStyle={{ color: common.cmnW }}>
             {renderDescription()}
           </Typography>
         )}
         <Icon
           name="CaretRightOutlined"
           size="small"
-          customStyle={{ marginLeft: 'auto', color: common.white }}
+          customStyle={{ marginLeft: 'auto', color: common.cmnW }}
         />
       </Banner>
     </Box>
@@ -119,8 +120,12 @@ function ProductDetailLegitImageBottomBanner({
 }
 
 const Banner = styled(Flexbox)<{ original: boolean }>`
-  background: ${({ theme: { palette }, original }) =>
-    original ? palette.primary.main : palette.common.black};
+  background: ${({
+    theme: {
+      palette: { primary, common }
+    },
+    original
+  }) => (original ? primary.main : common.uiBlack)};
   width: 100%;
   height: 53px;
   padding: 0 20px;

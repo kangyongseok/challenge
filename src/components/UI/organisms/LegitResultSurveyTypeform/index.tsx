@@ -9,7 +9,7 @@ import { PopupButton } from '@typeform/embed-react';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchProductLegit } from '@api/product';
+import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 import { LEGIT_SESSION_ID } from '@constants/localStorage';
@@ -20,18 +20,17 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function LegitResultSurveyTypeform() {
   const router = useRouter();
   const { id } = router.query;
-  const splitIds = String(id).split('-');
-  const productId = Number(splitIds[splitIds.length - 1] || 0);
-
+  const splitId = String(id).split('-');
+  const productId = Number(splitId[splitId.length - 1] || 0);
   const { data: accessUser } = useQueryAccessUser();
   const [loadSurveyTypeform, setLoadSurveyTypeform] = useState(false);
   const [open, setOpen] = useState<BehavioralType | undefined>(undefined);
 
   const { data: { userId, status } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId }),
+    queryKeys.productLegits.legit(productId),
     () => fetchProductLegit(productId),
     {
-      enabled: router.pathname === '/products/[id]/legit/result' && !!id
+      enabled: router.pathname === '/legit/[id]/result' && !!id
     }
   );
 
@@ -47,7 +46,7 @@ function LegitResultSurveyTypeform() {
 
   useEffect(() => {
     if (
-      router.pathname === '/products/[id]/legit/result' &&
+      router.pathname === '/legit/[id]/result' &&
       !!id &&
       status === 30 &&
       accessUser &&

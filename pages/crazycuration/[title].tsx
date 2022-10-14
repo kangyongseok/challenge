@@ -856,7 +856,7 @@ export async function getServerSideProps({
     try {
       const { contents: { status: currentEventStatus, targetContents } = {} } =
         await queryClient.fetchQuery(
-          queryKeys.common.contentsProducts(currentCuration.contentsId),
+          queryKeys.commons.contentsProducts(currentCuration.contentsId),
           () => fetchContentsProducts(currentCuration.contentsId)
         );
       const { status = 0, url: eventUrl = '', title: eventTitle = '' } = targetContents || {};

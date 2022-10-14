@@ -22,10 +22,12 @@ import ReviewCard from './ReviewCard';
 
 function SellerReviewsPanel() {
   const {
-    query: { id: productId }
+    query: { id: sellerId }
   } = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary }
+    }
   } = useTheme();
   const [toastState, setToastState] = useState<{ type: null | 'report' | 'block'; open: boolean }>({
     type: null,
@@ -33,7 +35,7 @@ function SellerReviewsPanel() {
   });
   const setReviewBlockState = useSetRecoilState(atom.reviewBlockState);
   const reviewInfoParams = {
-    productId: Number(productId),
+    sellerId: Number(sellerId),
     size: 20
   };
   const productsPage = useRef(0);
@@ -63,7 +65,7 @@ function SellerReviewsPanel() {
           title: 'SELLER_REVIEW',
           name: 'SELLER_REVIEW',
           page: requestReviewsPage,
-          productId
+          sellerId
         });
         await fetchNextPage();
       }
@@ -74,7 +76,7 @@ function SellerReviewsPanel() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, productId]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, sellerId]);
 
   const firstReviewInfo = data?.pages?.[0];
   const isEmpty = firstReviewInfo?.sellerReviews?.content?.length === 0;
@@ -86,7 +88,7 @@ function SellerReviewsPanel() {
 
   const handleClickCard = () => {
     setReviewBlockState(true);
-    queryClient.invalidateQueries(productId);
+    queryClient.invalidateQueries(sellerId);
   };
 
   return (
@@ -98,9 +100,7 @@ function SellerReviewsPanel() {
           marginBottom: 32
         }}
       >
-        <Typography variant="body2" color={palette.common.grey['20']}>
-          판매자의 최근 후기만 보여드려요
-        </Typography>
+        <Typography variant="body2">판매자의 최근 후기만 보여드려요</Typography>
       </Alert>
       {firstReviewInfo && (
         <Flexbox
@@ -111,7 +111,7 @@ function SellerReviewsPanel() {
           }}
         >
           <Typography variant="h4" weight="bold">
-            {(firstReviewInfo.siteUrl.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
+            {(firstReviewInfo.siteUrl?.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
           </Typography>
           <Flexbox gap={12} alignment="center">
             {isCamelProduct && (
@@ -123,7 +123,7 @@ function SellerReviewsPanel() {
             )}
             {isCamelSeller && (
               <Flexbox alignment="center">
-                <Icon name="SafeFilled" customStyle={{ color: palette.primary.main }} />
+                <Icon name="SafeFilled" customStyle={{ color: primary.main }} />
                 <Typography variant="h4" weight="bold">
                   카멜인증판매자
                 </Typography>
@@ -144,9 +144,7 @@ function SellerReviewsPanel() {
             marginBottom: 32
           }}
         >
-          <Typography variant="body2" color={palette.common.grey['20']}>
-            등록된 후기가 없어요
-          </Typography>
+          <Typography variant="body2">등록된 후기가 없어요</Typography>
         </Alert>
       )}
       {isLoading && (
@@ -178,7 +176,7 @@ function SellerReviewsPanel() {
               site={reviewInfo.site || {}}
               curnScore={reviewInfo.curnScore}
               maxScore={reviewInfo.maxScore}
-              productId={Number(productId)}
+              productId={Number(sellerId)}
               onReport={() => {
                 handleClickCard();
                 setToastState(() => ({ type: 'report', open: true }));
@@ -195,20 +193,18 @@ function SellerReviewsPanel() {
         onClose={() => setToastState(() => ({ type: null, open: false }))}
         autoHideDuration={1500}
       >
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
-          {toastState.type === 'report' && (
-            <>
-              신고가 접수되었습니다.
-              <br />이 리뷰는 가려드릴게요!
-            </>
-          )}
-          {toastState.type === 'block' && (
-            <>
-              차단 처리되었습니다.
-              <br />이 사용자는 가려드릴게요!
-            </>
-          )}
-        </Typography>
+        {toastState.type === 'report' && (
+          <>
+            신고가 접수되었습니다.
+            <br />이 리뷰는 가려드릴게요!
+          </>
+        )}
+        {toastState.type === 'block' && (
+          <>
+            차단 처리되었습니다.
+            <br />이 사용자는 가려드릴게요!
+          </>
+        )}
       </Toast>
     </Box>
   );

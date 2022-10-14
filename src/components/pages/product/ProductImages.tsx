@@ -1,19 +1,17 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MouseEvent, SyntheticEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
-import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Icon, Typography } from 'mrcamel-ui';
+import { Avatar, Box, Typography, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
-import Image from '@components/UI/atoms/Image';
-import { Skeleton } from '@components/UI/atoms';
+import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
+import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -23,8 +21,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
-
-import { PortalConsumer } from '@provider/PortalProvider';
 
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
 
@@ -39,14 +35,13 @@ interface ProductImagesProps {
     status: number;
     variant?: TypographyVariant;
   }) => EmotionJSX.Element | null;
-  openLegit?: boolean;
 }
 
 function ProductImages({
   isLoading,
   product,
-  getProductImageOverlay,
-  openLegit
+  isProductLegit,
+  getProductImageOverlay
 }: ProductImagesProps) {
   const router = useRouter();
 
@@ -54,13 +49,7 @@ function ProductImages({
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
-  const [imageModalSwiper, setImageModalSwiper] = useState<SwiperClass | null>(null);
-  const [currentScale, setCurrentScale] = useState(1);
-  const [shortSwipes, setShortSwipes] = useState(true);
-  const [followFinger, setFollowFinger] = useState(true);
-  const [panningDisabled, setPanningDisabled] = useState(true);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([null]);
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
 
   const detailImages = useMemo(() => {
@@ -86,8 +75,7 @@ function ProductImages({
     return detailImages;
   }, [detailImages, product?.imageMain, product?.imageMainLarge]);
 
-  const handleClickCloseIcon = (e: SyntheticEvent<SVGElement>) => {
-    e.stopPropagation();
+  const handleClickCloseIcon = () => {
     logEvent(attrKeys.products.CLICK_PICGALLERY_CLOSE);
     setOpenModal(false);
   };
@@ -103,23 +91,9 @@ function ProductImages({
       }
       setCurrentSlide(activeIndex);
       imageSwiper?.slideTo(activeIndex, 0);
-      imageModalSwiper?.slideTo(activeIndex, 0);
     },
-    [imageModalSwiper, imageSwiper, isLoggedSwipeXPic]
+    [imageSwiper, isLoggedSwipeXPic]
   );
-
-  const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
-    setCurrentScale(scale);
-  };
-
-  const handleImageLoad = (index: number) => () => {
-    const currentTransformRef = transformsRef.current[index];
-
-    if (currentTransformRef) {
-      currentTransformRef.centerView();
-      currentTransformRef.resetTransform();
-    }
-  };
 
   const handleImageModal = (e: MouseEvent<HTMLElement>) => {
     const target = e.currentTarget;
@@ -152,18 +126,6 @@ function ProductImages({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (currentScale > 1) {
-      setShortSwipes(false);
-      setFollowFinger(false);
-      setPanningDisabled(false);
-    } else {
-      setShortSwipes(true);
-      setFollowFinger(true);
-      setPanningDisabled(true);
-    }
-  }, [currentScale]);
 
   useEffect(() => {
     if (openModal) {
@@ -212,19 +174,22 @@ function ProductImages({
                     height: 20
                   }}
                 />
-                <Typography variant="body2" weight="bold" customStyle={{ marginLeft: 6 }}>
+                <Typography
+                  variant="body2"
+                  weight="bold"
+                  customStyle={{ marginLeft: 6, color: light.palette.common.ui20 }}
+                >
                   {product.siteUrl?.name || product.site.name}
                 </Typography>
               </Platform>
             </>
           )}
           <SwiperSlide>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Img
               className="swiper-lazy"
               src={product?.imageMain || ''}
               data-src={product?.imageMain || ''}
-              alt="product imageMain"
+              alt="Product Main Img"
               onLoad={() => setLoadedImageMain(true)}
               style={{ width: 0, height: 0, display: 'none' }}
             />
@@ -261,61 +226,20 @@ function ProductImages({
             {currentSlide + 1}/{detailImages.length + 1}
           </Pagination>
         </Swiper>
-        {openLegit && (
+        {isProductLegit && (
           <ProductDetailLegitImageBottomBanner
             product={product as Product}
             data={product?.productLegit}
           />
         )}
       </Box>
-      {modalImages.length > 0 && openModal && (
-        <PortalConsumer>
-          <ImageModal>
-            <CloseIcon name="CloseOutlined" color="white" onClick={handleClickCloseIcon} />
-            <Swiper
-              onSwiper={setImageModalSwiper}
-              nested
-              shortSwipes={shortSwipes}
-              followFinger={followFinger}
-              onSlideChange={handleSlideChange}
-              style={{ width: '100%' }}
-              initialSlide={currentSlide}
-            >
-              {modalImages.map((image, index) => (
-                <SwiperSlide key={`product-modal-image-${image.slice(image.lastIndexOf('/') + 1)}`}>
-                  <TransformWrapper
-                    ref={(ref) => {
-                      transformsRef.current[index] = ref;
-                    }}
-                    panning={{ disabled: panningDisabled }}
-                    onPanning={handleScale}
-                    onWheel={handleScale}
-                    onPinching={handleScale}
-                    doubleClick={{ mode: 'reset' }}
-                  >
-                    <TransformComponent
-                      wrapperStyle={{
-                        zIndex: 100001,
-                        width: '100%',
-                        height: '100vh'
-                      }}
-                    >
-                      <ProductImg
-                        src={image}
-                        alt={image.slice(image.lastIndexOf('/') + 1)}
-                        onLoad={handleImageLoad(index)}
-                      />
-                    </TransformComponent>
-                  </TransformWrapper>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            <ModalPagination>
-              {currentSlide + 1}/{detailImages.length + 1}
-            </ModalPagination>
-          </ImageModal>
-        </PortalConsumer>
-      )}
+      <ImageDetailDialog
+        open={openModal}
+        onClose={handleClickCloseIcon}
+        onChange={handleSlideChange}
+        images={modalImages}
+        syncIndex={currentSlide}
+      />
     </>
   );
 }
@@ -346,36 +270,10 @@ const Pagination = styled.div`
   font-weight: ${({ theme: { typography } }) => typography.body2.weight.bold};
   line-height: ${({ theme: { typography } }) => typography.body2.lineHeight};
   letter-spacing: ${({ theme: { typography } }) => typography.body2.letterSpacing};
+  color: ${light.palette.common.ui20};
 `;
 
-const ImageModal = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100000;
-  background-color: ${({ theme }) => theme.palette.common.black};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const CloseIcon = styled(Icon)`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 100002;
-`;
-
-const ModalPagination = styled(Pagination)`
-  width: fit-content;
-  left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%);
-`;
-
-const ProductImg = styled.img``;
+const Img = styled.img``;
 
 const SkeletonWrapper = styled.div`
   position: absolute;

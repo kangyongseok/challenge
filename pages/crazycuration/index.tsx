@@ -19,7 +19,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   try {
     const { contents: { url } = {} } = await queryClient.fetchQuery(
-      queryKeys.common.contentsProducts(0),
+      queryKeys.commons.contentsProducts(0),
       () => fetchContentsProducts(0)
     );
 

@@ -41,7 +41,9 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function BrandCategorySize() {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, secondary, common }
+    }
   } = useTheme();
   const [searchParams, setSearchParams] = useRecoilState(searchParamsState);
   const [selectedSearchOptions, setSelectedSearchOptions] = useRecoilState(
@@ -382,7 +384,7 @@ function BrandCategorySize() {
         <Typography
           variant="h2"
           weight="bold"
-          customStyle={{ padding: '55px 0 41px', '& > span': { color: palette.primary.main } }}
+          customStyle={{ padding: '55px 0 41px', '& > span': { color: primary.main } }}
         >
           <span>어떤 매물</span>을 찾아볼까요?
         </Typography>
@@ -413,7 +415,7 @@ function BrandCategorySize() {
                   <Typography variant="body1" weight="medium">
                     {name}
                   </Typography>
-                  <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
+                  <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                     {commaNumber(count)}
                   </Typography>
                 </Flexbox>
@@ -454,10 +456,10 @@ function BrandCategorySize() {
         </CustomBox>
         <CustomTooltip
           open={showGetUserSizeTooltip}
+          variant="ghost"
+          brandColor="primary"
           disableShadow
           placement="bottom"
-          brandColor="primary-highlight"
-          round="16"
           message={
             <Typography variant="body1" weight="bold">
               <span>{accessUser?.userName || '회원'}님의 사이즈</span>를 불러왔어요!
@@ -467,7 +469,7 @@ function BrandCategorySize() {
         <Typography
           variant="body2"
           weight="medium"
-          customStyle={{ margin: '8px 20px 0', color: palette.secondary.red.main }}
+          customStyle={{ margin: '8px 20px 0', color: secondary.red.main }}
         >
           {(showNoBrandErrorLabel ||
             (!focusedBrand && hasNoBrand && selectedSearchOptions.parentCategory.id > 0)) &&
@@ -519,10 +521,19 @@ function BrandCategorySize() {
 
 const CustomBox = styled.div<{ isShowKeywordsSuggest: boolean }>`
   width: 100%;
-  border: 2px solid ${({ theme }) => theme.palette.common.grey['90']};
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: ${({ theme }) => theme.box.round['16']};
   padding: 20px 24px ${({ isShowKeywordsSuggest }) => (isShowKeywordsSuggest ? 12 : 20)}px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   display: flex;
   flex-direction: column;
   overflow: scroll;
@@ -563,7 +574,11 @@ const CustomTooltip = styled(Tooltip)`
   }
 
   * > span {
-    color: ${({ theme }) => theme.palette.primary.main};
+    color: ${({
+      theme: {
+        palette: { primary }
+      }
+    }) => primary.main};
   }
 `;
 

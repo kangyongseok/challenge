@@ -376,9 +376,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                     height={20}
                     visibility={isLoading ? 'hidden' : 'visible'}
                     color={
-                      (searchParams.idFilterIds || []).includes(id)
-                        ? primary.light
-                        : common.grey['80']
+                      (searchParams.idFilterIds || []).includes(id) ? primary.light : common.ui80
                     }
                   />
                   <Flexbox
@@ -391,7 +389,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                     <Typography
                       variant="body1"
                       weight={index === 0 ? 'bold' : 'regular'}
-                      customStyle={{ color: isLoading ? common.grey['95'] : common.grey['20'] }}
+                      customStyle={{ color: isLoading ? common.ui95 : common.ui20 }}
                     >
                       {!(searchParams.idFilterIds || []).includes(id) &&
                       legitIdFilterOptionIds.includes(id)
@@ -405,7 +403,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                         width="10px"
                         height="20px"
                         visibility={isLoading ? 'hidden' : 'visible'}
-                        color={common.grey['60']}
+                        color={common.ui60}
                       />
                     )}
                   </Flexbox>
@@ -455,7 +453,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                         width="10px"
                         height="20px"
                         visibility={isLoading ? 'hidden' : 'visible'}
-                        color={active ? primary.light : common.grey['60']}
+                        color={active ? primary.light : common.ui60}
                       />
                     )}
                   </FilterButton>
@@ -485,7 +483,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   row-gap: 8px;
   padding: 8px 0 12px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
 `;
@@ -496,7 +494,7 @@ const IdFilterButton = styled.div<{ isLoading?: boolean }>`
   margin: 8px 0;
   column-gap: 4px;
   background-color: ${({ isLoading, theme: { palette } }) =>
-    isLoading ? palette.common.grey['95'] : 'inherit'};
+    isLoading ? palette.common.ui95 : 'inherit'};
   cursor: pointer;
 
   ${({ isLoading }) =>
@@ -527,8 +525,8 @@ const FilterButton = styled(Button)<{ active?: boolean; isLoading?: boolean }>`
     isLoading && {
       animation: `${pulse} 800ms linear 0s infinite alternate`,
       '&:disabled': {
-        color: palette.common.grey['95'],
-        backgroundColor: palette.common.grey['95'],
+        color: palette.common.ui95,
+        backgroundColor: palette.common.ui95,
         cursor: 'default'
       }
     }};
@@ -549,7 +547,7 @@ const AllFilterButton = styled.div<{ show: boolean }>`
   transform: translateY(123%);
   right: 0;
   padding-right: 16px;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
   opacity: ${({ show }) => Number(show)};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
   transition: opacity 0.1s ease-in 0s;
@@ -585,7 +583,7 @@ const Badge = styled(Typography)`
     theme: {
       palette: { common }
     }
-  }) => common.white};
+  }) => common.uiWhite};
   background-color: ${({
     theme: {
       palette: { primary }

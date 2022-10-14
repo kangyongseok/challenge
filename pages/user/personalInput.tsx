@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
@@ -91,7 +91,7 @@ function PersonalInput() {
       header={<Header hideTitle showRight={false} />}
       footer={
         <Footer>
-          <CtaButton
+          <Button
             fullWidth
             variant="contained"
             size="large"
@@ -102,7 +102,7 @@ function PersonalInput() {
             onClick={save}
           >
             저장
-          </CtaButton>
+          </Button>
         </Footer>
       }
     >
@@ -186,7 +186,11 @@ const Footer = styled.footer`
   bottom: 0;
   width: 100%;
   padding: 20px 20px 24px;
-  background-color: white;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 export default PersonalInput;

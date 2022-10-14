@@ -44,7 +44,11 @@ function RecentAddresses({ recentAddresses, onClickButton }: RecentAddressesProp
 }
 
 const RecentPlaceLists = styled.div`
-  border-top: ${({ theme: { palette } }) => palette.common.grey['90']};
+  border-top: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   margin: 40px 0 92px 0;
   padding-top: 32px;
 `;

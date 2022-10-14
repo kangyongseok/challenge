@@ -1,4 +1,3 @@
-import type { GetServerSidePropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -17,13 +16,6 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
-
-import { ABTestGroup } from '@provider/ABTestProvider';
-
 function Products() {
   return (
     <>
@@ -32,12 +24,7 @@ function Products() {
           <Box>
             <Header disableProductsKeywordClickInterceptor={false} />
             <ProductsLandingInfo />
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="A">
-              <ProductsFilter variant="search" />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.dynamicFilter2209} belong="B">
-              <ProductsFilter variant="search" showDynamicFilter />
-            </ABTestGroup>
+            <ProductsFilter variant="search" showDynamicFilter />
           </Box>
         }
         footer={
@@ -61,16 +48,6 @@ function Products() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
-}
-
-export function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(req.cookies);
-
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
 }
 
 export default Products;

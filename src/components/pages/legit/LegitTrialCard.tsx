@@ -2,10 +2,10 @@ import type { HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image, ProductLegitLabel } from '@components/UI/atoms';
+import { Image, LegitLabel } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -59,7 +59,7 @@ function LegitTrialCard({
   return (
     <StyledLegitTrialCard {...props}>
       {result === 1 && (
-        <ProductLegitLabel
+        <LegitLabel
           text="정품의견"
           customStyle={{
             position: 'absolute',
@@ -70,7 +70,7 @@ function LegitTrialCard({
         />
       )}
       {result === 2 && (
-        <ProductLegitLabel
+        <LegitLabel
           variant="fake"
           text="가품의심"
           customStyle={{
@@ -82,7 +82,7 @@ function LegitTrialCard({
         />
       )}
       {result !== 1 && result !== 2 && (
-        <ProductLegitLabel
+        <LegitLabel
           variant="impossible"
           text="감정불가"
           customStyle={{
@@ -108,16 +108,15 @@ function LegitTrialCard({
       />
       <TrialCardImg src={imageSrc} alt="TrialCard Img" />
       <Description tutorialName={tutorialName}>
-        {/* TODO 추후 UI 라이브러리 업데이트 시 수정 필요 */}
         <Typography
-          customStyle={{ color: common.white }}
+          customStyle={{ color: common.cmnW }}
           dangerouslySetInnerHTML={{ __html: resultText }}
         />
         <Button
           variant="contained"
           brandColor="black"
           size="medium"
-          startIcon={<ArrowIcon />}
+          startIcon={<Icon name="Arrow3RightFilled" />}
           onClick={handleClick}
           customStyle={{
             minWidth: 117
@@ -141,9 +140,10 @@ const StyledLegitTrialCard = styled.div`
   }) => round['16']};
   background-color: ${({
     theme: {
+      mode,
       palette: { common }
     }
-  }) => common.white};
+  }) => (mode === 'light' ? common.uiWhite : common.line01)};
 `;
 
 const TrialCardImg = styled.img`
@@ -177,14 +177,5 @@ const BackgroundBlur = styled.div`
   background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
   border-radius: 8px 8px 0 0;
 `;
-
-// TODO UI 라이브러리 업데이트 시 수정 필요
-function ArrowIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.66675 14.1663V5.83301L14.1667 9.99967L6.66675 14.1663Z" fill="white" />
-    </svg>
-  );
-}
 
 export default LegitTrialCard;

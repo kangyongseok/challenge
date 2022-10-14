@@ -1,5 +1,5 @@
-export { default as LegitGuideParticipantCard } from './LegitGuideParticipantCard';
-export { default as LegitGuideHandsUp } from './LegitGuideHandsUp';
-export { default as LegitGuideDescription } from './LegitGuideDescription';
-export { default as LegitGuideTitle } from './LegitGuideTitle';
-export { default as LegitGuideTargetBrandList } from './LegitGuideTargetBrandList';
+export { default as LegitGuideIntro } from './LegitGuideIntro';
+export { default as LegitGuideTabs } from './LegitGuideTabs';
+export { default as LegitGuideUploadPanel } from './LegitGuideUploadPanel';
+export { default as LegitGuideCtaButton } from './LegitGuideCtaButton';
+export { default as LegitGuidePicturePanel } from './LegitGuidePicturePanel';

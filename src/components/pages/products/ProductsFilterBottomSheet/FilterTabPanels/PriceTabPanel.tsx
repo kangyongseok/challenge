@@ -35,7 +35,7 @@ function PriceTabPanel() {
 
   const {
     theme: {
-      palette: { primary, common }
+      palette: { primary }
     }
   } = useTheme();
 
@@ -197,12 +197,12 @@ function PriceTabPanel() {
             </Typography>
           </Flexbox>
         }
-        brandColor="primary-highlight"
+        variant="ghost"
+        brandColor="primary"
         placement="bottom"
         triangleLeft={16}
         disablePadding
         disableShadow
-        round="16"
         customStyle={{
           // TODO UI 라이브러리 Tooltip 컴포넌트 렌더링 로직 수정
           width: '100%',
@@ -221,11 +221,7 @@ function PriceTabPanel() {
               pattern="[0-9]*"
               inputMode="numeric"
             />
-            <Typography
-              weight="medium"
-              color={common.grey['20']}
-              customStyle={{ whiteSpace: 'nowrap' }}
-            >
+            <Typography weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
               만원에서
             </Typography>
           </Flexbox>
@@ -239,11 +235,7 @@ function PriceTabPanel() {
               pattern="[0-9]*"
               inputMode="numeric"
             />
-            <Typography
-              weight="medium"
-              color={common.grey['20']}
-              customStyle={{ whiteSpace: 'nowrap' }}
-            >
+            <Typography weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
               만원까지
             </Typography>
           </Flexbox>
@@ -258,7 +250,12 @@ const PriceInput = styled.input`
   max-width: 88px;
   height: 40px;
   text-align: center;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['80']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui80};
   border-radius: ${({
     theme: {
       box: { round }
@@ -276,9 +273,10 @@ const PriceInput = styled.input`
     fontWeight: weight.bold,
     lineHeight,
     letterSpacing,
-    color: common.grey['20']
+    color: common.ui20
   })};
   outline: 0;
+  background-color: transparent;
 
   &:focus {
     border: 2px solid ${({ theme: { palette } }) => palette.primary.main};

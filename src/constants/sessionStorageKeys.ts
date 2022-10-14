@@ -4,6 +4,7 @@ const productsEventProperties = 'productsEventProperties';
 const productDetailEventProperties = 'productDetailEventProperties';
 const legitGuideEventProperties = 'legitGuideEventProperties';
 const hideMyPortfolioReservationAd = 'hideMyPortfolioReservationAd';
+const hideCamelSellerRecentPriceTooltip = 'hideCamelSellerRecentPriceTooltip';
 const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
 
 const sessionStorageKeys = {
@@ -13,6 +14,7 @@ const sessionStorageKeys = {
   productDetailEventProperties,
   legitGuideEventProperties,
   hideMyPortfolioReservationAd,
+  hideCamelSellerRecentPriceTooltip,
   hideCrazyCurationEventBannerIds
 };
 

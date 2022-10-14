@@ -49,7 +49,7 @@ function SearchHelperMoreOptionBottomSheet({
 }: SearchHelperMoreOptionBottomSheetProps) {
   const {
     theme: {
-      palette,
+      palette: { primary, common },
       box: { shadow }
     }
   } = useTheme();
@@ -262,7 +262,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Typography
                     variant="body2"
                     weight="medium"
-                    customStyle={{ padding: '16px 20px 4px', color: palette.common.grey['60'] }}
+                    customStyle={{ padding: '16px 20px 4px', color: common.ui60 }}
                   >
                     중복선택 가능
                   </Typography>
@@ -301,9 +301,7 @@ function SearchHelperMoreOptionBottomSheet({
                                     size="small"
                                     customStyle={{
                                       marginRight: 6,
-                                      color: isSelected
-                                        ? palette.primary.main
-                                        : palette.common.grey['90']
+                                      color: isSelected ? primary.main : common.ui90
                                     }}
                                   />
                                   {hasImage && (
@@ -327,10 +325,7 @@ function SearchHelperMoreOptionBottomSheet({
                                   >
                                     {name}
                                   </Typography>
-                                  <Typography
-                                    variant="small2"
-                                    customStyle={{ color: palette.common.grey['60'] }}
-                                  >
+                                  <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                                     {commaNumber(count)}
                                   </Typography>
                                 </Flexbox>
@@ -345,7 +340,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Typography
                     variant="body2"
                     weight="medium"
-                    customStyle={{ padding: '16px 20px 4px', color: palette.common.grey['60'] }}
+                    customStyle={{ padding: '16px 20px 4px', color: common.ui60 }}
                   >
                     중복선택 가능
                   </Typography>
@@ -390,9 +385,7 @@ function SearchHelperMoreOptionBottomSheet({
                                     size="small"
                                     customStyle={{
                                       marginRight: 6,
-                                      color: isSelected
-                                        ? palette.primary.main
-                                        : palette.common.grey['90']
+                                      color: isSelected ? primary.main : common.ui90
                                     }}
                                   />
                                   {getColorImageInfo && (
@@ -409,10 +402,7 @@ function SearchHelperMoreOptionBottomSheet({
                                   >
                                     {name}
                                   </Typography>
-                                  <Typography
-                                    variant="small2"
-                                    customStyle={{ color: palette.common.grey['60'] }}
-                                  >
+                                  <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                                     {commaNumber(count)}
                                   </Typography>
                                 </Flexbox>
@@ -427,7 +417,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Typography
                     variant="body2"
                     weight="medium"
-                    customStyle={{ padding: '16px 20px 4px', color: palette.common.grey['60'] }}
+                    customStyle={{ padding: '16px 20px 4px', color: common.ui60 }}
                   >
                     중복선택 가능
                   </Typography>
@@ -466,9 +456,7 @@ function SearchHelperMoreOptionBottomSheet({
                                     size="small"
                                     customStyle={{
                                       marginRight: 6,
-                                      color: isSelected
-                                        ? palette.primary.main
-                                        : palette.common.grey['90']
+                                      color: isSelected ? primary.main : common.ui90
                                     }}
                                   />
                                   <Typography
@@ -479,10 +467,7 @@ function SearchHelperMoreOptionBottomSheet({
                                   >
                                     {name}
                                   </Typography>
-                                  <Typography
-                                    variant="small2"
-                                    customStyle={{ color: palette.common.grey['60'] }}
-                                  >
+                                  <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                                     {commaNumber(count)}
                                   </Typography>
                                 </Flexbox>
@@ -497,7 +482,7 @@ function SearchHelperMoreOptionBottomSheet({
                   <Typography
                     variant="body2"
                     weight="medium"
-                    customStyle={{ padding: '16px 20px 4px', color: palette.common.grey['60'] }}
+                    customStyle={{ padding: '16px 20px 4px', color: common.ui60 }}
                   >
                     중복선택 가능
                   </Typography>
@@ -536,9 +521,7 @@ function SearchHelperMoreOptionBottomSheet({
                                     size="small"
                                     customStyle={{
                                       marginRight: 6,
-                                      color: isSelected
-                                        ? palette.primary.main
-                                        : palette.common.grey['90']
+                                      color: isSelected ? primary.main : common.ui90
                                     }}
                                   />
                                   <Typography
@@ -549,10 +532,7 @@ function SearchHelperMoreOptionBottomSheet({
                                   >
                                     {name}
                                   </Typography>
-                                  <Typography
-                                    variant="small2"
-                                    customStyle={{ color: palette.common.grey['60'] }}
-                                  >
+                                  <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                                     {commaNumber(count)}
                                   </Typography>
                                 </Flexbox>
@@ -581,14 +561,27 @@ function SearchHelperMoreOptionBottomSheet({
 }
 
 const MoreOptionMenu = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.palette.common.grey['90']}`};
+  border-bottom: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => `1px solid ${common.ui90}`};
 `;
 
 const Option = styled(Typography)<{ isActive: boolean }>`
   padding: 8px 0;
-  border-bottom: ${({ theme, isActive }) =>
-    isActive && `2px solid ${theme.palette.common.grey['20']}`};
-  color: ${({ theme, isActive }) => theme.palette.common.grey[isActive ? '20' : '60']};
+  border-bottom: ${({
+    theme: {
+      palette: { common }
+    },
+    isActive
+  }) => isActive && `2px solid ${common.ui20}`};
+  color: ${({
+    theme: {
+      palette: { common }
+    },
+    isActive
+  }) => (isActive ? common.ui20 : common.ui60)};
 `;
 
 const Badge = styled.div`
@@ -598,7 +591,11 @@ const Badge = styled.div`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.palette.primary.main};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.main};
 `;
 
 const ColorSample = styled.div<{
@@ -606,7 +603,12 @@ const ColorSample = styled.div<{
 }>`
   width: 20px;
   height: 20px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['90']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: 50%;
   background-color: ${({ colorCode }) => colorCode};
   margin-right: 6px;
@@ -617,7 +619,12 @@ const ColorImageSample = styled.div<{
 }>`
   width: 20px;
   height: 20px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['90']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: 50%;
   background-size: ${({ colorImageInfo: { size } }) => size}px;
   background-image: url('https://${process.env

@@ -707,7 +707,7 @@ export function getProductLabelColor(name: string, theme: MrCamelTheme) {
     palette: { primary, common }
   } = theme;
   if (name === '시세이하' || name === '가품 시, 100%환불') {
-    return common.grey['20'];
+    return common.ui20;
   }
   if (name === '새상품급') {
     return primary.dark;

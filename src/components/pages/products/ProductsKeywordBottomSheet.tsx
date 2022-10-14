@@ -7,7 +7,7 @@ import {
   Alert,
   BottomSheet,
   Box,
-  CtaButton,
+  Button,
   Flexbox,
   Icon,
   Label,
@@ -187,7 +187,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
           </Typography>
         </Alert>
         <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 20 }}>
-          <Typography variant="body2" weight="bold" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="bold" customStyle={{ color: common.ui60 }}>
             키워드
           </Typography>
           <Flexbox gap={6} customStyle={{ flexWrap: 'wrap' }}>
@@ -203,7 +203,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
           </Flexbox>
         </Flexbox>
         <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 20 }}>
-          <Typography variant="body2" weight="bold" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="body2" weight="bold" customStyle={{ color: common.ui60 }}>
             필터
           </Typography>
           <Flexbox customStyle={{ columnGap: 6, rowGap: 8, flexWrap: 'wrap' }}>
@@ -243,14 +243,14 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
           </Flexbox>
         </Flexbox>
         <Flexbox gap={8} customStyle={{ marginTop: 52 }}>
-          <CtaButton
+          <Button
             size="large"
             customStyle={{ minWidth: 112, fontWeight: 500 }}
             onClick={handleClose}
           >
             취소
-          </CtaButton>
-          <CtaButton
+          </Button>
+          <Button
             variant="contained"
             brandColor="primary"
             fullWidth
@@ -258,7 +258,7 @@ function ProductsKeywordBottomSheet({ variant }: ProductsKeywordBottomSheetProps
             onClick={handleClick}
           >
             저장하기
-          </CtaButton>
+          </Button>
         </Flexbox>
       </Box>
     </BottomSheet>

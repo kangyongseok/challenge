@@ -2,6 +2,14 @@ import { ReactElement } from 'react';
 
 import { ToastStatus, ToastType } from '@typings/common';
 
+const sellerProductState = {
+  hoisting: '끌어올리기가 완료되었어요. 👍',
+  reserve: '예약중으로 변경되었어요.',
+  sell: '판매중으로 변경되었어요.',
+  deleted: '상품이 삭제되었어요.',
+  soldout: '판매완료 처리되었어요!'
+};
+
 const productsKeyword = {
   saved: '저장이 완료되었어요',
   deleted: '저장한 매물목록이 삭제되었습니다.',
@@ -27,13 +35,33 @@ const product = {
   successAddWish: '찜목록에 추가했어요!'
 };
 
+const legitAdminOpinion = {
+  saved: '감정 의견 작성이 완료되었습니다.',
+  preConfirmEdited: '사진보완 요청이 완료되었습니다.'
+};
+
+const legit = {
+  saved: '감정신청이 완료되었습니다!',
+  successRequest: '감정신청이 완료되었습니다',
+  successEdit: '수정이 완료되어 다시 감정에 들어갑니다!',
+  preConfirmEdited: '사진감정 계속하기가 신청되었습니다.'
+};
+
+const legitProfile = {
+  disableUpload: '사진업로드는 앱에서만 할 수 있어요!'
+};
+
 export const toastText: Record<
   ToastType,
   Partial<Record<ToastStatus, string | number | ReactElement>>
 > = {
   productsKeyword,
   mapFilter,
-  product
+  product,
+  sellerProductState,
+  legitAdminOpinion,
+  legit,
+  legitProfile
 };
 
 const productsKeywordActionButton = {
@@ -49,13 +77,18 @@ const productActionButton = {
   successAddWish: '찜목록 보기'
 };
 
+const legitProfileActionButton = {
+  disableUpload: '앱에서 진행'
+};
+
 export const toastActionButtonText: Record<
-  Extract<ToastType, 'productsKeyword' | 'mapFilter' | 'product'>,
+  Extract<ToastType, 'productsKeyword' | 'mapFilter' | 'product' | 'legitProfile'>,
   Partial<Record<ToastStatus, string | number | ReactElement>>
 > = {
   productsKeyword: productsKeywordActionButton,
   mapFilter: mapFilterActionButton,
-  product: productActionButton
+  product: productActionButton,
+  legitProfile: legitProfileActionButton
 };
 
 const toast = {

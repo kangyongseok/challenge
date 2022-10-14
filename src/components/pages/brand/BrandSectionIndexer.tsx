@@ -76,7 +76,11 @@ const IndexItem = styled(Typography)`
   width: 40px;
   padding: 8px 0;
   text-align: center;
-  color: ${({ theme }) => theme.palette.common.grey['60']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
   line-height: 16px;
   cursor: pointer;
 `;

@@ -104,7 +104,7 @@ function GenderTabPanel() {
             customButton={
               <Chip
                 variant={checked ? 'contained' : 'outlined'}
-                brandColor={checked ? 'primary' : 'grey'}
+                brandColor={checked ? 'primary' : 'gray'}
                 size="xsmall"
                 onClick={handleClickGender({
                   selectedGender: synonyms,
@@ -118,7 +118,7 @@ function GenderTabPanel() {
                 <Typography
                   variant="small2"
                   weight="medium"
-                  customStyle={{ color: checked ? palette.common.white : 'inherit' }}
+                  customStyle={{ color: checked ? palette.common.uiWhite : 'inherit' }}
                 >
                   전체선택
                 </Typography>

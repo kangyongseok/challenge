@@ -47,14 +47,23 @@ const VerticalLine = styled.div`
   height: 160px;
   position: relative;
   right: 5px;
-  background: ${({ theme: { palette } }) => palette.secondary.red.light};
+  background: ${({
+    theme: {
+      palette: { secondary }
+    }
+  }) => secondary.red.light};
   opacity: 0.4;
 `;
 
 const DotLine = styled.div`
   width: 100%;
   height: 1px;
-  border-bottom: 1px dashed ${({ theme: { palette } }) => palette.common.grey['20']};
+  border-bottom: 1px dashed
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui20};
   position: absolute;
   top: 50%;
   left: 0;

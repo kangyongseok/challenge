@@ -4,7 +4,7 @@ import type { ChangeEvent } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import { TextInput } from '@components/UI/molecules';
 
@@ -37,7 +37,10 @@ function MyPortfolioNoneMemberReservationDialog({
 }) {
   const router = useRouter();
   const {
-    theme: { palette, typography }
+    theme: {
+      palette: { common, secondary },
+      typography
+    }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
   const [reserveData, setReserveData] = useRecoilState(PreReserveDataState);
@@ -174,7 +177,7 @@ function MyPortfolioNoneMemberReservationDialog({
           gap={20}
         >
           <Flexbox gap={8} direction="vertical">
-            <Typography weight="medium" customStyle={{ color: palette.common.grey['60'] }}>
+            <Typography weight="medium" customStyle={{ color: common.ui60 }}>
               휴대전화번호
             </Typography>
             <TextInput
@@ -190,7 +193,7 @@ function MyPortfolioNoneMemberReservationDialog({
               customStyle={{
                 padding: '12px 16px',
                 height: 48,
-                border: `1px solid ${validatorText ? palette.secondary.red.main : '#E6E6E6'}`
+                border: `1px solid ${validatorText ? secondary.red.main : '#E6E6E6'}`
               }}
             />
             {validatorText && (
@@ -200,7 +203,7 @@ function MyPortfolioNoneMemberReservationDialog({
             )}
           </Flexbox>
           <Flexbox gap={8} direction="vertical" customStyle={{ marginTop: 'auto' }}>
-            <CtaButton
+            <Button
               variant="contained"
               fullWidth
               size="large"
@@ -208,19 +211,19 @@ function MyPortfolioNoneMemberReservationDialog({
               brandColor="primary"
             >
               오픈 알림받기
-            </CtaButton>
-            <CtaButton
+            </Button>
+            <Button
               variant="contained"
               fullWidth
               size="large"
               onClick={onClick}
               customStyle={{
-                background: palette.common.grey['95'],
-                color: palette.common.grey['20']
+                background: common.ui95,
+                color: common.ui20
               }}
             >
               취소
-            </CtaButton>
+            </Button>
           </Flexbox>
         </Flexbox>
       </Box>

@@ -1,3 +1,5 @@
+import { Brand } from './brand';
+
 export interface DateGroup {
   date: number;
   day: number;
@@ -21,7 +23,44 @@ export interface JopRuleDetail {
   synonym: string;
 }
 
+export interface TempBrands {
+  dateUpdated: string;
+  dateCreated: string;
+  id: number;
+  groupId: number;
+  tierId: number;
+  name: string;
+  nameEng: string;
+  viewName?: string;
+  parentId: number;
+  isLegitProduct: boolean;
+}
+
+export interface TempCategorys {
+  dateUpdated: string;
+  dateCreated: string;
+  id: number;
+  groupId: number;
+  name: string;
+  nameEng: string;
+  depth: number;
+  order: number;
+  parentId: number;
+  subParentId: number;
+  isLegitProduct: boolean;
+  jobRulebaseDetail: {
+    id: number;
+    rulebaseId: number;
+    keyword: string;
+    score?: number;
+    synonym: string;
+    detail: string;
+    deleted: boolean;
+  };
+}
+
 export interface Models {
+  brand: Brand;
   brands: string;
   categories: string;
   category: {
@@ -50,4 +89,66 @@ export interface Models {
   modelNo: string;
   name: string;
   sort: number;
+  subParentCategoryName: string;
+  tmpBrands: TempBrands[];
+  tmpCategories: TempCategorys[];
 }
+
+export type LegitsBrand = {
+  dateCreated: string;
+  dateUpdated: string;
+  groupId: number;
+  id: number;
+  isLegitProduct: boolean;
+  name: string;
+  nameEng: string;
+  parentId: number;
+  tierId: number;
+  viewName: string;
+};
+
+export type LegitsCategory = {
+  dateCreated: string;
+  dateUpdated: string;
+  depth: number;
+  groupId: number;
+  id: number;
+  isLegitProduct: boolean;
+  name: string;
+  nameEng: string;
+  order: number;
+  parentId: number;
+  subParentId: number;
+};
+
+export type ModelLegit = {
+  brandId: number;
+  categoryId: number;
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  imageThumbnail: string;
+  legitCategoryId: number;
+  lines: string;
+  name: string;
+  sort: number;
+  subParentCategoryName: string;
+  tmpBrands: LegitsBrand[];
+  tmpCategories: LegitsCategory[];
+};
+
+/* ---------- Request Parameters ---------- */
+export interface ModelSuggestParams {
+  brandIds?: number[];
+  categoryIds?: number[];
+  keyword: string;
+}
+
+export type LegitsBrandsParams = {
+  brandIds?: number[];
+  categoryIds?: number[];
+};
+
+export type LegitsCategoriesParams = LegitsBrandsParams;
+
+export type LegitsModelsParams = LegitsBrandsParams;

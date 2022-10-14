@@ -21,7 +21,9 @@ function SearchHelperLinearProgress({
   productTotal
 }: SearchHelperLinearProgressProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary }
+    }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
 
@@ -37,7 +39,7 @@ function SearchHelperLinearProgress({
           <Typography
             variant="body2"
             weight="medium"
-            customStyle={{ '& > span': { color: palette.primary.main } }}
+            customStyle={{ '& > span': { color: primary.main } }}
           >
             {accessUser?.userName || '회원'}님을 위한 매물
             <span> {commaNumber(productTotal)}</span>
@@ -62,7 +64,11 @@ const LinearProgressBar = styled.span`
   overflow: hidden;
   display: block;
   height: 4px;
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
 `;
 
 const ActiveLinearProgressBar = styled.span<{ value: number }>`
@@ -74,7 +80,11 @@ const ActiveLinearProgressBar = styled.span<{ value: number }>`
   top: 0;
   transition: transform 0.4s linear 0s;
   transform-origin: left center;
-  background-color: ${({ theme }) => theme.palette.primary.main};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.main};
 `;
 
 export default memo(SearchHelperLinearProgress);

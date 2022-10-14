@@ -11,7 +11,7 @@ import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';
-import Skeleton from '@components/UI/atoms/Skeleton';
+import { Badge, Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -42,7 +42,9 @@ interface HomeWelcomeProps {
 
 function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcomeProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -112,7 +114,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
       component="section"
       direction="vertical"
       gap={20}
-      customStyle={{ backgroundColor: '#0D0D0D' }}
+      customStyle={{ backgroundColor: common.cmn80 }}
     >
       <Flexbox
         direction="horizontal"
@@ -120,14 +122,26 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
         alignment="center"
         customStyle={{ padding: '16px 20px' }}
       >
-        <Icon name="LogoText_96_20" color={palette.common.white} width={76} height={16} />
-        <Icon
-          name="AlarmOutlined"
-          color={palette.common.white}
-          onClick={handleClickAlarm}
-          width={23}
-          height={23}
-        />
+        <Icon name="LogoText_96_20" color={common.cmnW} width={76} height={16} />
+        <Flexbox gap={24} alignment="center">
+          <Badge
+            open={false}
+            variant="two-tone"
+            brandColor="red"
+            text={99}
+            width={20}
+            height={20}
+            customStyle={{ top: -8, right: -8 }}
+          >
+            <Icon
+              name="AlarmOutlined"
+              color={common.uiWhite}
+              onClick={handleClickAlarm}
+              width={23}
+              height={23}
+            />
+          </Badge>
+        </Flexbox>
       </Flexbox>
       <Box customStyle={{ padding: '20px 20px 0' }}>
         <Title variant="h2" weight="bold">
@@ -213,16 +227,10 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
                       gap={8}
                       customStyle={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}
                     >
-                      <Typography
-                        variant="body2"
-                        customStyle={{ color: palette.common.grey['80'] }}
-                      >
+                      <Typography variant="body2" customStyle={{ color: common.cmn20 }}>
                         {`${userId}님 ${state} ${name} ${commaNumber(price)}만원`}
                       </Typography>
-                      <Typography
-                        variant="small2"
-                        customStyle={{ color: palette.common.grey['60'] }}
-                      >
+                      <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                         {`${time}${timeUnit} 득템`}
                       </Typography>
                     </Flexbox>
@@ -239,7 +247,11 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
 
 const Title = styled(Typography)`
   display: flex;
-  color: ${({ theme: { palette } }) => palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.cmnW};
   white-space: nowrap;
 
   > span {
@@ -248,7 +260,11 @@ const Title = styled(Typography)`
       display: block;
       height: 12px;
       width: 100%;
-      background: ${({ theme: { palette } }) => palette.primary.main};
+      background: ${({
+        theme: {
+          palette: { primary }
+        }
+      }) => primary.main};
       margin-top: -13px;
     }
   }

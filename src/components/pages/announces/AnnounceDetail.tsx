@@ -2,7 +2,7 @@ import { MouseEvent, useEffect } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Typography } from 'mrcamel-ui';
+import { Box, Button, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import type { AnnounceDetail as AnnounceDetailType } from '@dto/user';
@@ -75,7 +75,7 @@ function AnnounceDetail({ announceDetail }: AnnounceDetailProps) {
           padding: '0 20px 16px'
         }}
       >
-        <CtaButton
+        <Button
           key={`announce-detail-${announceDetail.id}`}
           data-pathname={announceDetail.parameter}
           onClick={handleClickCtaButton}
@@ -85,7 +85,7 @@ function AnnounceDetail({ announceDetail }: AnnounceDetailProps) {
           fullWidth
         >
           {announceDetail.content}
-        </CtaButton>
+        </Button>
       </Box>
     );
   }

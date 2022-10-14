@@ -2,7 +2,7 @@
 import qs from 'qs';
 import has from 'lodash-es/has';
 
-import type { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -382,7 +382,7 @@ export const getCookie = (name: string) => {
 };
 
 /**
- * @name getCookie
+ * @name convertHashCode
  * @return number;
  * @example 1234567
  */
@@ -433,14 +433,20 @@ export function executedShareURl({
   return false;
 }
 
+export const parseToDashPhoneNumber = (value: string) => {
+  if (value) {
+    return value.replace(/^(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+  }
+  return value;
+};
+
 export function getProductDetailUrl({
   type = 'product',
   product
-}: {
-  type?: 'product' | 'targetProduct';
-  product: Product;
-}) {
-  const { id, urlDetail, targetProductId, targetProductUrl, quoteTitle } = product || {};
+}:
+  | { type?: 'product' | 'targetProduct'; product: Product }
+  | { type: 'productResult'; product: ProductResult }) {
+  const { id, targetProductId, targetProductUrl, quoteTitle } = product;
   let productDetailUrl = `/products/${id}`;
 
   if (type === 'targetProduct') {
@@ -449,8 +455,8 @@ export function getProductDetailUrl({
     } else if (quoteTitle) {
       productDetailUrl = `/products/${quoteTitle.replace(/ /g, '-')}-${targetProductId}`;
     }
-  } else if (urlDetail) {
-    productDetailUrl = `/products/${urlDetail}`;
+  } else if (type !== 'productResult' && (product as Product)?.urlDetail) {
+    productDetailUrl = `/products/${(product as Product).urlDetail}`;
   } else if (quoteTitle) {
     productDetailUrl = `/products/${quoteTitle.replace(/ /g, '-')}-${id}`;
   }

@@ -6,7 +6,11 @@ import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 export const StyledAppDownloadBanner = styled.div`
   width: 100%;
   height: ${APP_DOWNLOAD_BANNER_HEIGHT}px;
-  background: ${({ theme }) => theme.palette.common.grey['95']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   padding: 0 20px;
   position: fixed;
   top: 0;

@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
 export const productLegitToggleBottomSheetState = atom({
-  key: 'productLegitToggleBottomSheet',
+  key: 'product/legitToggleBottomSheet',
   default: false
 });

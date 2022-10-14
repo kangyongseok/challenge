@@ -26,20 +26,20 @@ import { pulse } from '@styles/transition';
 import atom from '@recoil/productReview';
 
 function ProductSellerReviews({ product }: { product?: Product }) {
+  const { push } = useRouter();
   const {
-    query: { id },
-    push
-  } = useRouter();
-  const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [reviewBlockState, atomReviewBlockState] = useRecoilState(atom.reviewBlockState);
 
-  const splitIds = String(id).split('-');
-  const productId = Number(splitIds[splitIds.length - 1] || 0);
+  // const splitIds = String(id).split('-');
+  // const productId = Number(splitIds[splitIds.length - 1] || 0);
+  const sellerId = product?.productSeller.id || 0;
 
   const [reviewInfoParams, setReviewInfoParams] = useState({
-    productId: Number(productId || 0),
+    sellerId,
     size: 3
   });
 
@@ -51,17 +51,17 @@ function ProductSellerReviews({ product }: { product?: Product }) {
     {
       keepPreviousData: true,
       staleTime: 5 * 60 * 1000,
-      enabled: !!reviewInfoParams.productId
+      enabled: !!reviewInfoParams.sellerId
     }
   );
 
   useEffect(() => {
-    if (productId)
+    if (sellerId)
       setReviewInfoParams({
-        productId: Number(productId || 0),
+        sellerId,
         size: 3
       });
-  }, [productId]);
+  }, [sellerId]);
 
   useEffect(() => {
     if (reviewBlockState) {
@@ -71,8 +71,8 @@ function ProductSellerReviews({ product }: { product?: Product }) {
   }, [reviewBlockState, reviewInfoParams, queryClient, atomReviewBlockState]);
 
   useEffect(() => {
-    setReviewInfoParams((props) => ({ ...props, productId: Number(productId) }));
-  }, [productId]);
+    setReviewInfoParams((props) => ({ ...props, sellerId }));
+  }, [sellerId]);
 
   const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
   const isCamelSeller =
@@ -93,7 +93,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
             },
             source: attrProperty.productSource.PRODUCT_LIST
           });
-          push(`/products/${productId}/sellerInfo?tab=reviews`);
+          push(`/products/${sellerId}/sellerInfo?tab=reviews`);
         }}
       >
         <Flexbox alignment="center">
@@ -103,7 +103,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
           <Typography
             variant="body2"
             weight="medium"
-            customStyle={{ marginLeft: 4, color: palette.common.grey['40'] }}
+            customStyle={{ marginLeft: 4, color: common.ui80 }}
           >
             ({commaNumber(reviewInfo.totalCount || reviewInfo?.sellerReviews.totalElements || 0)}
             개)
@@ -127,7 +127,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
               />
             ))
           ) : (
-            <Icon name="UserFilled" width={20} color={palette.common.grey['95']} />
+            <Icon name="UserFilled" width={20} color={common.ui95} />
           )}
           <ProductSellerName
             variant="body1"
@@ -147,18 +147,14 @@ function ProductSellerReviews({ product }: { product?: Product }) {
           )}
           {isCamelSeller && (
             <Flexbox alignment="center">
-              <Icon name="SafeFilled" size="small" customStyle={{ color: palette.primary.main }} />
+              <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
               <Typography variant="body2" weight="bold">
                 카멜인증판매자
               </Typography>
             </Flexbox>
           )}
           {reviewInfo?.curnScore && (
-            <Typography
-              variant="body2"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['40'] }}
-            >
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
               {`${
                 reviewInfo.curnScore.length > 1
                   ? reviewInfo?.curnScore
@@ -218,12 +214,18 @@ const ProductSellerName = styled(Typography)<{ hasName: boolean }>`
   -webkit-box-orient: vertical;
   overflow-wrap: anywhere;
 
-  ${({ theme, hasName }) =>
+  ${({
+    theme: {
+      box,
+      palette: { common }
+    },
+    hasName
+  }) =>
     !hasName && {
       height: '21px',
       width: '50px',
-      borderRadius: theme.box.round['4'],
-      backgroundColor: theme.palette.common.grey['90'],
+      borderRadius: box.round['4'],
+      backgroundColor: common.ui90,
       animation: `${pulse} 800ms linear 0s infinite alternate`
     }}
 `;
@@ -231,7 +233,11 @@ const ProductSellerName = styled(Typography)<{ hasName: boolean }>`
 const ReviewCard = styled.div`
   margin-top: 8px;
   padding: 12px 16px;
-  background-color: ${({ theme }) => theme.palette.common.grey['98']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui98};
   border-radius: ${({ theme }) => theme.box.round['8']};
 
   svg {
@@ -242,7 +248,11 @@ const ReviewCard = styled.div`
 
 const ReviewCardSkeleton = styled(ReviewCard)`
   height: 64px;
-  background-color: ${({ theme }) => theme.palette.common.grey['90']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   animation: ${pulse} 800ms linear 0s infinite alternate;
 `;
 

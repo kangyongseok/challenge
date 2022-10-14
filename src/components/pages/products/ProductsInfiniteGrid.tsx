@@ -14,7 +14,7 @@ import {
 } from 'react-virtualized';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
@@ -651,12 +651,12 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
           {variant === 'search' && keyword && (
             <Typography weight="medium">{`'${keyword}'`}</Typography>
           )}
-          <Typography variant="body2" customStyle={{ color: common.grey['40'] }}>
-            {!hasSelectedSearchOptions && isNotUsedBrand
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+            {!hasSelectedSearchOptions && !isNotUsedBrand
               ? '아직 서비스 대상 브랜드가 아니에요.'
               : '조건을 만족하는 매물이 없어요.'}
           </Typography>
-          <Typography variant="small2" customStyle={{ color: common.grey['60'] }}>
+          <Typography variant="small2" customStyle={{ color: common.ui60 }}>
             {hasSelectedSearchOptions
               ? '필터를 다시 조합해 보세요!'
               : '검색 키워드를 변경하거나, 다른 모델을 검색해 보세요!'}
@@ -669,7 +669,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                 width: 'calc(100% - 40px)',
                 height: 1,
                 margin: '0 20px 24px 20px',
-                backgroundColor: common.grey['90']
+                backgroundColor: common.ui90
               }}
             />
             <Flexbox
@@ -683,7 +683,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                 <br />
                 입력하신 {isNotUsedBrand ? '검색어' : '브랜드'}를 추가해달라고 요청하세요!
               </Typography>
-              <CtaButton
+              <Button
                 fullWidth
                 variant="contained"
                 brandColor="primary"
@@ -691,13 +691,11 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                 customStyle={{ maxWidth: 200, fontWeight: weight.bold }}
               >
                 {isNotUsedBrand ? '검색어' : '브랜드'} 추가 요청
-              </CtaButton>
+              </Button>
             </Flexbox>
             <Toast open={openToast} onClose={() => setOpenToast(false)}>
-              <Typography customStyle={{ color: common.white }}>
-                {isNotUsedBrand ? '검색어' : '브랜드'} 추가가 성공적으로 완료되었어요! 검토 후
-                빠르게 추가할게요.
-              </Typography>
+              {isNotUsedBrand ? '검색어' : '브랜드'} 추가가 성공적으로 완료되었어요! 검토 후 빠르게
+              추가할게요.
             </Toast>
           </>
         )}

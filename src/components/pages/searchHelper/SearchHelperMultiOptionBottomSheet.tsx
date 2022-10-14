@@ -31,7 +31,9 @@ function SearchHelperMultiOptionBottomSheet({
   needClearOptions = false
 }: SearchHelperMultiOptionBottomSheetProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const selectedSearchOptions = useRecoilValue(selectedSearchOptionsState);
   const [selectedOptions, setSelectedOptions] = useState<{ id: number; name: string }[]>([]);
@@ -81,7 +83,7 @@ function SearchHelperMultiOptionBottomSheet({
           <Typography
             variant="small2"
             weight="medium"
-            customStyle={{ color: palette.common.grey['60'], padding: '0 20px 4px' }}
+            customStyle={{ color: common.ui60, padding: '0 20px 4px' }}
           >
             중복 선택 가능
           </Typography>
@@ -105,20 +107,20 @@ function SearchHelperMultiOptionBottomSheet({
                       size="small"
                       customStyle={{
                         marginRight: 6,
-                        color: isSelected(id) ? palette.primary.main : palette.common.grey['90']
+                        color: isSelected(id) ? primary.main : common.ui90
                       }}
                     />
                     <Typography
                       variant="body1"
                       weight={isSelected(id) ? 'bold' : 'medium'}
                       customStyle={{
-                        color: isSelected(id) ? palette.primary.main : undefined,
+                        color: isSelected(id) ? primary.main : undefined,
                         marginRight: 8
                       }}
                     >
                       {name}
                     </Typography>
-                    <Typography variant="small2" customStyle={{ color: palette.common.grey['60'] }}>
+                    <Typography variant="small2" customStyle={{ color: common.ui60 }}>
                       {commaNumber(count)}
                     </Typography>
                   </Flexbox>

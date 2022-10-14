@@ -1,11 +1,16 @@
 import { useState } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Flexbox, Icon, Radio, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { openSoldoutDialogState } from '@recoil/wishes';
 
 export type OrderOptionKeys =
   | 'updatedDesc'
@@ -45,20 +50,34 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
 
   const selectedOrderOption = orderOptions.find(([optionKey]) => order === optionKey);
   const [open, setOpen] = useState(false);
+  const openSoldoutDialog = useSetRecoilState(openSoldoutDialogState);
 
   const {
-    theme: { palette }
+    theme: {
+      palette: { common, primary }
+    }
   } = useTheme();
+
+  const handleClickSoldOutDelete = () => {
+    // 판매완료 삭제 api 추가 필요
+    logEvent(attrKeys.wishes.CLICK_DELETESOLDOUT_BUTTON, {
+      name: attrProperty.name.wishList
+    });
+
+    openSoldoutDialog(true);
+  };
 
   return (
     <Flexbox justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
-      <Typography variant="body2" weight="medium">
-        찜한 매물 {userWishCount}개
-      </Typography>
+      <Flexbox alignment="center" gap={3}>
+        <Typography weight="medium" customStyle={{ color: common.ui60 }}>
+          찜한 매물
+        </Typography>
+        <Typography weight="bold"> {userWishCount}</Typography>
+      </Flexbox>
       {!hiddenTab && (
-        <Flexbox>
+        <Flexbox alignment="center" gap={2}>
           <Typography
-            variant="body2"
             weight="medium"
             onClick={() => {
               logEvent(attrKeys.wishes.CLICK_SORT, {
@@ -71,11 +90,17 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
           >
             {selectedOrderOption?.[1]}
           </Typography>
-          <Icon name="CaretDownOutlined" size="small" />
+          <Icon name="DropdownFilled" size="large" />
+          <Button startIcon={<Icon name="DeleteOutlined" />} onClick={handleClickSoldOutDelete}>
+            <Typography weight="medium" variant="small1">
+              판매완료 삭제
+            </Typography>
+          </Button>
         </Flexbox>
       )}
       <BottomSheet
         open={open}
+        disableSwipeable
         onClose={() => {
           setOpen(false);
         }}
@@ -83,11 +108,21 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
           padding: '0 16px 0 13px;'
         }}
       >
+        <Flexbox
+          justifyContent="space-between"
+          customStyle={{ margin: '16px 10px 24px 10px', textAlign: 'right' }}
+        >
+          <Typography variant="h3" weight="bold">
+            정렬 필터
+          </Typography>
+          <Icon name="CloseOutlined" size="large" onClick={() => setOpen(false)} />
+        </Flexbox>
         {orderOptions.map(([optionKey, optionName], i) => (
-          <Flexbox
+          <FilterOption
             key={`wishes-filter-bottomsheet-option-${optionKey}`}
             justifyContent="space-between"
             alignment="center"
+            isActive={optionKey === order}
             onClick={() => {
               logEvent(attrKeys.wishes.SELECT_SORT, {
                 title: 'WISH_LIST',
@@ -103,19 +138,41 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
                 }
               });
             }}
-            customStyle={{
-              height: 48,
-              borderBottom: `1px solid ${palette.common.grey[90]}`,
-              cursor: 'pointer'
-            }}
           >
-            <Typography weight="bold">{optionName}</Typography>
-            <Radio checked={optionKey === order} value={optionKey} onChange={() => false} />
-          </Flexbox>
+            <Typography
+              weight="medium"
+              customStyle={{ color: optionKey === order ? primary.main : common.ui20 }}
+            >
+              {optionName}
+            </Typography>
+          </FilterOption>
         ))}
       </BottomSheet>
     </Flexbox>
   );
 }
+
+const FilterOption = styled(Flexbox)<{ isActive: boolean }>`
+  cursor: pointer;
+  height: 41px;
+  line-height: 41px;
+  padding: 0 12px;
+  border-radius: ${({
+    theme: {
+      box: { round }
+    }
+  }) => round['8']};
+  ${({
+    theme: {
+      palette: { primary }
+    },
+    isActive
+  }): CSSObject =>
+    isActive
+      ? {
+          backgroundColor: primary.highlight
+        }
+      : {}};
+`;
 
 export default WishesFilter;

@@ -24,7 +24,9 @@ export default function SearchBrandList({
   selectBrands
 }: SearchBrandListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const handleChecked = (e: MouseEvent<HTMLLIElement>) => {
@@ -63,12 +65,8 @@ export default function SearchBrandList({
           >
             <Checkbox
               customStyle={{
-                background: find(selectBrands, { name: list.name })
-                  ? palette.common.grey['20']
-                  : palette.common.white,
-                borderColor: find(selectBrands, { name: list.name })
-                  ? palette.common.grey['20']
-                  : palette.common.grey['60']
+                background: find(selectBrands, { name: list.name }) ? common.ui20 : common.uiWhite,
+                borderColor: find(selectBrands, { name: list.name }) ? common.ui20 : common.ui60
               }}
             />
             {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}

@@ -22,24 +22,24 @@ import { commaNumber } from '@utils/common';
 import { pulse } from '@styles/transition';
 
 function ProductSellerProductList({ product }: { product?: Product }) {
+  const { push } = useRouter();
   const {
-    query: { id },
-    push
-  } = useRouter();
-  const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
-  const splitIds = String(id).split('-');
-  const productId = Number(splitIds[splitIds.length - 1] || 0);
+  // const splitIds = String(id).split('-');
+  // const productId = Number(splitIds[splitIds.length - 1] || 0);
+  const sellerId = Number(product?.productSeller.id || 0);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
-    productId: Number(productId),
+    sellerId,
     page: 0,
     size: 20
   });
   const [reviewInfoParams, setReviewInfoParams] = useState({
-    productId: Number(productId),
+    sellerId,
     size: 3
   });
   const [
@@ -71,12 +71,15 @@ function ProductSellerProductList({ product }: { product?: Product }) {
   ]);
 
   useEffect(() => {
-    if (sellerProductsParams.productId !== Number(productId)) {
-      setSellerProductsParams({ ...sellerProductsParams, productId: Number(productId) });
-      setReviewInfoParams({ ...reviewInfoParams, productId: Number(productId) });
+    if (sellerProductsParams.sellerId !== sellerId) {
+      setSellerProductsParams({
+        ...sellerProductsParams,
+        sellerId
+      });
+      setReviewInfoParams({ ...reviewInfoParams, sellerId });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+  }, [sellerId]);
 
   return sellerProductsIsLoading ||
     reviewInfoIsLoading ||
@@ -98,7 +101,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
             },
             source: attrProperty.productSource.PRODUCT_LIST
           });
-          push(`/products/${productId}/sellerInfo?tab=products`);
+          push(`/products/${sellerId}/sellerInfo?tab=products`);
         }}
       >
         <Flexbox alignment="center">
@@ -108,13 +111,14 @@ function ProductSellerProductList({ product }: { product?: Product }) {
           <Typography
             variant="body2"
             weight="medium"
-            customStyle={{ marginLeft: 4, color: palette.common.grey['40'] }}
+            customStyle={{ marginLeft: 4, color: common.ui60 }}
           >
             ({commaNumber(sellerProducts?.totalElements || 0)}개)
           </Typography>
         </Flexbox>
         <Icon name="CaretRightOutlined" size="medium" />
       </Flexbox>
+
       <ProductList>
         {!sellerProducts?.content
           ? Array.from({ length: 5 }, (_, index) => (
@@ -153,7 +157,11 @@ const ProductList = styled.div`
 `;
 
 const ImageSkeleton = styled.div`
-  background-color: ${({ theme }) => theme.palette.common.grey['90']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   animation: ${pulse} 800ms linear 0s infinite alternate;
   width: 96px;
   height: 96px;

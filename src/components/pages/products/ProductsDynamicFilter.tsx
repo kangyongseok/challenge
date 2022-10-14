@@ -324,8 +324,8 @@ function ProductsDynamicFilter() {
       direction="vertical"
       gap={1}
       customStyle={{
-        backgroundColor: common.grey['95'],
-        borderTop: `1px solid ${common.grey['95']}`
+        backgroundColor: common.ui95,
+        borderTop: `1px solid ${common.ui95}`
       }}
     >
       {dynamicOptions
@@ -334,7 +334,7 @@ function ProductsDynamicFilter() {
           <Flexbox
             key={`dynamic-filter-option-button-${codeType}-${title}`}
             alignment="center"
-            customStyle={{ backgroundColor: common.white }}
+            customStyle={{ backgroundColor: common.uiWhite }}
           >
             <Title variant="body1" weight="bold">
               {title}
@@ -387,7 +387,7 @@ function ProductsDynamicFilter() {
                             name="CheckOutlined"
                             size="medium"
                             checked={checked}
-                            color={description === 'white' ? primary.main : common.white}
+                            color={description === 'white' ? primary.main : common.uiWhite}
                           />
                         </Box>
                       </Flexbox>
@@ -520,7 +520,7 @@ const FilterItem = styled(Typography)<{ active?: boolean }>`
   padding: 8px;
   white-space: nowrap;
   color: ${({ active, theme: { palette } }) =>
-    active ? palette.primary.light : palette.common.grey['60']};
+    active ? palette.primary.light : palette.common.ui60};
   font-weight: ${({ active, theme: { typography } }) => active && typography.body1.weight.medium};
   cursor: pointer;
 `;
@@ -543,7 +543,7 @@ const ColorImageSample = styled.div<{
   height: 28px;
   border-radius: 50%;
   border: ${({ name, theme: { palette } }) =>
-    name === 'white' && `1px solid ${palette.common.grey['90']}`};
+    name === 'white' && `1px solid ${palette.common.ui90}`};
   background-size: ${({ colorImageInfo: { size } }) => size}px;
   background-image: url('https://${process.env
     .IMAGE_DOMAIN}/assets/images/ico/filter_color_ico.png');

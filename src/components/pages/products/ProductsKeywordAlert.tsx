@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Alert, Button, Icon, Typography } from 'mrcamel-ui';
+import { Button, Icon, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { productsKeywordInduceTriggerState, productsKeywordState } from '@recoil/productsKeyword';
@@ -58,15 +58,13 @@ function ProductsKeywordAlert({ index, measure }: ProductsKeywordAlertProps) {
   }, [measure]);
 
   return (
-    <CustomAlert ref={alertRef} brandColor="primary-bgLight">
+    <CustomAlert ref={alertRef}>
       <Typography variant="body2" weight="bold">
         {index % 2 === 0
           ? '같은 필터 또 적용하기 귀찮다면?'
           : '이 매물목록 다음에도 편하게 보려면?'}
       </Typography>
       <Button
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         brandColor="primary-light"
         variant="outlined"
         startIcon={<Icon name="BookmarkFilled" size="small" />}
@@ -80,11 +78,11 @@ function ProductsKeywordAlert({ index, measure }: ProductsKeywordAlertProps) {
   );
 }
 
-const CustomAlert = styled(Alert)`
+const CustomAlert = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  background-color: ${({ theme }) => theme.palette.common.bg02};
   padding: 12px;
   border-radius: 8px;
   min-height: 60px;

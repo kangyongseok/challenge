@@ -57,3 +57,15 @@ export interface ParentCategories {
   parentCategory: ParentCategory;
   subParentCategories: SubParentCategory[];
 }
+
+export interface CategorySizes {
+  categoryId: number;
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  name: string;
+  profileId: number;
+  size: string;
+  synonyms: string;
+  groupId: number;
+}

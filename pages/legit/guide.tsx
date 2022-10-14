@@ -1,55 +1,95 @@
 import { useEffect } from 'react';
 
-import { useTheme } from 'mrcamel-ui';
+import { useRouter } from 'next/router';
+import { Box, Icon, ThemeProvider, dark } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  LegitGuideDescription,
-  LegitGuideHandsUp,
-  LegitGuideTargetBrandList,
-  LegitGuideTitle
+  LegitGuideCtaButton,
+  LegitGuideIntro,
+  LegitGuidePicturePanel,
+  LegitGuideTabs,
+  LegitGuideUploadPanel
 } from '@components/pages/legitGuide';
 
-import SessionStorage from '@library/sessionStorage';
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
-import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function LegitGuide() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
+  const router = useRouter();
+  const { tab = 'upload' } = router.query;
 
   useEffect(() => {
-    const { name = 'NONE' } =
-      SessionStorage.get<{ name?: string }>(sessionStorageKeys.legitGuideEventProperties) || {};
-    logEvent(attrKeys.legitGuide.VIEW_LEGIT_POPUP, {
-      name,
-      title: attrProperty.legitTitle.HOWTO
-    });
+    logEvent(attrKeys.legitGuide.VIEW_LEGIT_HOWITWORKS);
+  }, []);
+
+  useEffect(() => {
+    document.body.className = 'legit-dark';
+
+    return () => {
+      document.body.removeAttribute('class');
+    };
+  }, []);
+
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(-30);
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, []);
+
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(-30);
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
   }, []);
 
   return (
-    <GeneralTemplate
-      header={<Header customStyle={{ backgroundColor: common.grey['95'] }} />}
-      disablePadding
-      customStyle={{
-        height: 'auto',
-        minHeight: '100%',
-        backgroundColor: common.grey['95'],
-        overflowX: 'hidden'
-      }}
-    >
-      <LegitGuideTitle />
-      <LegitGuideHandsUp />
-      <LegitGuideDescription />
-      <LegitGuideTargetBrandList />
-    </GeneralTemplate>
+    <ThemeProvider theme="dark">
+      <GeneralTemplate
+        header={
+          <Header
+            rightIcon={
+              <Box
+                onClick={() => router.back()}
+                customStyle={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 16,
+                  cursor: 'pointer'
+                }}
+              >
+                <Icon name="CloseOutlined" />
+              </Box>
+            }
+            isTransparent
+            customStyle={{
+              backgroundColor: dark.palette.common.bg03
+            }}
+          />
+        }
+        footer={<LegitGuideCtaButton />}
+        disablePadding
+        customStyle={{
+          height: 'auto',
+          minHeight: '100%',
+          backgroundColor: dark.palette.common.bg03,
+          overflowX: 'hidden'
+        }}
+      >
+        <LegitGuideIntro />
+        <LegitGuideTabs />
+        {tab === 'upload' && <LegitGuideUploadPanel />}
+        {tab === 'picture' && <LegitGuidePicturePanel />}
+      </GeneralTemplate>
+    </ThemeProvider>
   );
 }
 

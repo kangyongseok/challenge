@@ -78,7 +78,7 @@ export const StyledSkeleton = styled.div<
     theme: {
       palette: { common }
     }
-  }) => common.grey['90']};
+  }) => common.ui90};
 
   ${({ disableAspectRatio }): CSSObject =>
     !disableAspectRatio

@@ -262,7 +262,7 @@ function HomeRecentSearchList() {
             </CardList>
           </ListWrapper>
           <Box customStyle={{ padding: '0 20px' }}>
-            <Button fullWidth brandColor="grey" disabled={isLoading} onClick={handleClickAll}>
+            <Button fullWidth brandColor="gray" disabled={isLoading} onClick={handleClickAll}>
               이 검색 전체보기
             </Button>
           </Box>
@@ -295,14 +295,15 @@ const TabList = styled.div`
 const Tab = styled.div<{ isActive: boolean }>`
   padding: 12px;
   background-color: ${({ theme, isActive }) =>
-    isActive ? theme.palette.primary.highlight : theme.palette.common.grey['95']};
+    isActive ? theme.palette.primary.highlight : theme.palette.common.ui95};
   min-width: 200px;
   max-width: 200px;
   border-radius: 4px;
 `;
 
 const Keyword = styled(Typography)<{ isSelected: boolean }>`
-  color: ${({ theme: { palette }, isSelected }) => palette.common.grey[isSelected ? '20' : '60']};
+  color: ${({ theme: { palette }, isSelected }) =>
+    isSelected ? palette.common.ui20 : palette.common.ui60};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

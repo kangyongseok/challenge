@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, light, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -37,7 +37,9 @@ function LoginButtonList({
 }: LoginButtonListProps) {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const [lastLoginType, setLastLoginType] = useState('');
 
@@ -152,11 +154,7 @@ function LoginButtonList({
 
   return (
     <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
-      <Typography
-        variant="body2"
-        weight="medium"
-        customStyle={{ color: palette.common.grey['60'] }}
-      >
+      <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
         {lastLoginType.length > 0
           ? `( 최근 로그인 : ${LOGIN_TYPE[lastLoginType as keyof typeof LOGIN_TYPE]} )`
           : ''}
@@ -169,7 +167,7 @@ function LoginButtonList({
           src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
           alt="Kakao Logo Img"
         />
-        <Typography variant="h4" weight="medium">
+        <Typography variant="h4" weight="medium" customStyle={{ color: light.palette.common.ui20 }}>
           카카오톡으로 계속하기
         </Typography>
       </KakaoLoginButton>
@@ -181,7 +179,7 @@ function LoginButtonList({
           src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-facebook-icon.png`}
           alt="Kakao Logo Img"
         />
-        <Typography variant="h4" weight="medium" customStyle={{ color: palette.common.white }}>
+        <Typography variant="h4" weight="medium" customStyle={{ color: common.cmnW }}>
           페이스북으로 계속하기
         </Typography>
       </FacebookLoginButton>
@@ -207,11 +205,7 @@ function LoginButtonList({
           setTimeout(() => router.replace(returnUrl || '/'), 300);
         }}
       >
-        <Typography
-          variant="body1"
-          weight="medium"
-          customStyle={{ color: palette.common.grey['40'] }}
-        >
+        <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
           로그인하지 않고 둘러보기
         </Typography>
       </Box>
@@ -238,7 +232,12 @@ const FacebookLoginButton = styled(LoginButtonBase)`
 `;
 
 const AppleLoginButton = styled(LoginButtonBase)`
-  border: 1px solid ${({ theme }) => theme.palette.common.black};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiBlack};
 `;
 
 export default LoginButtonList;

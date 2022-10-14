@@ -32,7 +32,9 @@ export const koRegexp = /^[\w`.~!@#$%^&*|\\;:\/?]/;
 
 function Brand() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const { data: brands = [] } = useQuery(queryKeys.brands.all, fetchBrands);
   const [keywordValue, setKeywordValue] = useState('');
@@ -91,7 +93,7 @@ function Brand() {
     <GeneralTemplate
       disablePadding
       header={
-        <Header customStyle={{ borderBottom: `${palette.common.grey['90']} 1px solid` }}>
+        <Header customStyle={{ borderBottom: `${common.ui90} 1px solid` }}>
           <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
             브랜드
           </Typography>

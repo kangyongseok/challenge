@@ -19,7 +19,10 @@ const BASE_URL_USER = '/user';
 function MypageUserInfo() {
   const queryClient = useQueryClient();
   const {
-    theme: { palette, typography }
+    theme: {
+      palette: { common },
+      typography
+    }
   } = useTheme();
   const {
     data: {
@@ -94,14 +97,10 @@ function MypageUserInfo() {
     <Box
       customStyle={{
         padding: '32px 0',
-        borderBottom: `1px solid ${palette.common.grey['90']}`
+        borderBottom: `1px solid ${common.ui90}`
       }}
     >
-      <Typography
-        variant="h4"
-        weight="bold"
-        customStyle={{ color: palette.common.grey['20'], marginBottom: 16 }}
-      >
+      <Typography variant="h4" weight="bold" customStyle={{ color: common.ui20, marginBottom: 16 }}>
         내 정보
       </Typography>
       <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
@@ -146,11 +145,7 @@ function MypageUserInfo() {
           data-value={`${gender === 'M' ? '남' : '여'}, ${yearOfBirth}`}
           onClick={handleClickRoute}
         >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             성별 출생연도
           </Typography>
           <Typography variant="body2" weight="medium">
@@ -163,11 +158,7 @@ function MypageUserInfo() {
           data-att="SIZE"
           onClick={handleClickRoute}
         >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             사이즈
           </Typography>
           <ElipsisArea variant="small1">{sizeParser()}</ElipsisArea>
@@ -179,11 +170,7 @@ function MypageUserInfo() {
           data-value={(area && area?.filter((list) => list.isActive)[0]?.areaName) || ''}
           onClick={handleClickRoute}
         >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             거래지역
           </Typography>
           <ElipsisArea variant="small1">
@@ -197,11 +184,7 @@ function MypageUserInfo() {
           data-value={maxMoney}
           onClick={handleClickRoute}
         >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             예산
           </Typography>
           <Typography variant="small1" customStyle={{ textAlign: 'left' }}>
@@ -215,7 +198,11 @@ function MypageUserInfo() {
 
 const MyInfoBox = styled(Button)`
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  background: ${({ theme: { palette } }) => palette.common.white};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   width: 48%;
   height: 49px;
   flex-direction: column;

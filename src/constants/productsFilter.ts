@@ -187,7 +187,7 @@ export const idFilterOptions = [
 
 export const defaultIdFilterOptionIds = [5, 10];
 
-export const legitIdFilterOptionIds = [100, 102, 103];
+export const legitIdFilterOptionIds = [100, 101, 102, 103];
 
 export const mapFilterOptions = [
   {
@@ -271,6 +271,52 @@ export const myFilterRelatedParentCategoryIds = {
       F: [14],
       N: [14]
     }
+  }
+};
+
+export const camelSellerfilterColorImagePositions = {
+  white: [-21, -18],
+  gold: [-11, -62],
+  ivory: [-53, -18],
+  silver: [-53, -62],
+  metal: [-101, -16],
+  neon: [-99, -20],
+  'gold-deco': [-99, -62],
+  'silver-deco': [-131, -62]
+};
+
+export const camelSellerfilterColorImagesInfo = {
+  white: {
+    size: 175,
+    position: [-19, -27]
+  },
+  gold: {
+    size: 175,
+    position: [-19, -87]
+  },
+  ivory: {
+    size: 175,
+    position: [-77, -27]
+  },
+  silver: {
+    size: 175,
+    position: [-76, -86]
+  },
+  metal: {
+    size: 175,
+    position: [-196, -28]
+  },
+  neon: {
+    size: 175,
+    position: [-138, -28]
+  },
+  'gold-deco': {
+    size: 175,
+    position: [-138, -88]
+  },
+  'silver-deco': {
+    size: 175,
+    position: [-196, -87]
   }
 };
 

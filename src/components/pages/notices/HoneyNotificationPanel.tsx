@@ -24,7 +24,9 @@ function HoneyNotificationPanel() {
 
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   useEffect(() => {
@@ -75,7 +77,7 @@ function HoneyNotificationPanel() {
               {idx !== userNoti.content.length - 1 && (
                 <Box
                   customStyle={{
-                    borderTop: `1px solid ${palette.common.grey[90]}`
+                    borderTop: `1px solid ${common.ui90}`
                   }}
                 />
               )}

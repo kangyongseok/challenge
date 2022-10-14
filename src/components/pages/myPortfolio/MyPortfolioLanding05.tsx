@@ -8,7 +8,9 @@ import Image from '@components/UI/atoms/Image';
 
 function MyPortfolioLanding05() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [imageWidth, setImagewidth] = useState(0);
 
@@ -22,7 +24,7 @@ function MyPortfolioLanding05() {
       customStyle={{ textAlign: 'center', marginTop: 52, height: '100%', position: 'relative' }}
       direction="vertical"
     >
-      <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
+      <Typography weight="bold" customStyle={{ color: primary.main }}>
         내 명품 분석
       </Typography>
       <Typography variant="h2" weight="bold">
@@ -42,8 +44,8 @@ function MyPortfolioLanding05() {
             variant="contained"
             text="#샤넬 클래식 미디움 플립백"
             customStyle={{
-              background: palette.primary.highlight,
-              color: palette.primary.main,
+              background: primary.highlight,
+              color: primary.main,
               borderRadius: 36,
               marginBottom: 20
             }}
@@ -74,7 +76,7 @@ function MyPortfolioLanding05() {
             <SwiperSlide
               style={{
                 width: imageWidth,
-                border: `1px solid ${palette.common.grey['90']}`,
+                border: `1px solid ${common.ui90}`,
                 borderRadius: 20,
                 overflow: 'hidden',
                 filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
@@ -91,7 +93,7 @@ function MyPortfolioLanding05() {
             <SwiperSlide
               style={{
                 width: imageWidth,
-                border: `1px solid ${palette.common.grey['90']}`,
+                border: `1px solid ${common.ui90}`,
                 borderRadius: 20,
                 overflow: 'hidden',
                 filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
@@ -108,7 +110,7 @@ function MyPortfolioLanding05() {
             <SwiperSlide
               style={{
                 width: imageWidth,
-                border: `1px solid ${palette.common.grey['90']}`,
+                border: `1px solid ${common.ui90}`,
                 borderRadius: 20,
                 overflow: 'hidden',
                 filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'

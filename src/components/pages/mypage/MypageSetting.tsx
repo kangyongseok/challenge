@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useMutation } from 'react-query';
+import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Switch, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
@@ -15,14 +17,22 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
+import { themeState } from '@recoil/common';
+
 interface SettingProps {
   data?: Alarm;
 }
 
 function MypageSetting({ data }: SettingProps) {
+  const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
+
+  const theme = useRecoilValue(themeState);
+
   const [isAgree, setIsAgree] = useState(false);
   const [isNight, setIsNight] = useState(false);
   const [nightToast, setNightToast] = useState(false);
@@ -92,14 +102,14 @@ function MypageSetting({ data }: SettingProps) {
     <Box
       customStyle={{
         padding: '32px 0 27px',
-        borderBottom: `1px solid ${palette.common.grey['90']}`
+        borderBottom: `1px solid ${common.ui90}`
       }}
     >
       <Typography
         id="mypage-setting"
         variant="h4"
         weight="bold"
-        customStyle={{ color: palette.common.grey['20'], marginBottom: 16 }}
+        customStyle={{ color: common.ui20, marginBottom: 16 }}
       >
         설정
       </Typography>
@@ -141,7 +151,7 @@ function MypageSetting({ data }: SettingProps) {
             <Title variant="body1" weight="medium">
               알림 설정
             </Title>
-            <Typography customStyle={{ color: palette.common.grey['60'], marginLeft: 10 }}>
+            <Typography customStyle={{ color: common.ui60, marginLeft: 10 }}>
               {systemSetting ? '켜짐' : '꺼짐'}
             </Typography>
           </Flexbox>
@@ -151,17 +161,36 @@ function MypageSetting({ data }: SettingProps) {
           <Icon name="CaretRightOutlined" size="small" />
         </Box>
       </Flexbox>
-
+      <Flexbox
+        alignment="center"
+        justifyContent="space-between"
+        onClick={() => router.push('/mypage/setting/theme')}
+        customStyle={{ display: 'none', marginBottom: 24 }}
+      >
+        <Box>
+          <Flexbox>
+            <Title variant="body1" weight="medium">
+              화면 테마
+            </Title>
+            <Typography customStyle={{ color: common.ui60, marginLeft: 10 }}>
+              {theme === 'system' && '시스템 설정'}
+              {theme === 'light' && '라이트 모드'}
+              {theme === 'dark' && '다크 모드'}
+            </Typography>
+          </Flexbox>
+          <Content variant="small1">나만의 화면 테마를 설정해보세요.</Content>
+        </Box>
+        <Box>
+          <Icon name="CaretRightOutlined" size="small" />
+        </Box>
+      </Flexbox>
       <Flexbox alignment="center" justifyContent="space-between" customStyle={{ marginBottom: 24 }}>
         <Box>
           <Title variant="body1" weight="medium">
             맞춤 꿀매물 알림받기
           </Title>
           <Content variant="small1">취향에 맞춰, 꿀매물이 올라오면 바로 알려드릴게요!</Content>
-          <Typography
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'], marginTop: 4 }}
-          >
+          <Typography variant="small2" customStyle={{ color: common.ui60, marginTop: 4 }}>
             ({dayjs().format('YYYY.M.D')} 마케팅 수신 {isAgree ? '동의' : '미동의'})
           </Typography>
         </Box>
@@ -169,7 +198,6 @@ function MypageSetting({ data }: SettingProps) {
           <Switch checked={isAgree} onChange={handleAlarmSwitch} />
         </Box>
       </Flexbox>
-
       <Flexbox alignment="center" justifyContent="space-between">
         <Box>
           <Title variant="body1" weight="medium">
@@ -182,33 +210,31 @@ function MypageSetting({ data }: SettingProps) {
         </Box>
       </Flexbox>
       <Toast open={nightToast} onClose={() => setNightToast(false)}>
-        <Typography
-          customStyle={{ textAlign: 'center', color: palette.common.white }}
-          variant="small1"
-        >
-          야간 방해금지 모드가 {isNight ? '설정' : '해제'}되었어요
-        </Typography>
+        야간 방해금지 모드가 {isNight ? '설정' : '해제'}되었어요
       </Toast>
       <Toast open={alarmToast} onClose={() => setAlarmToast(false)}>
-        <Typography
-          customStyle={{ textAlign: 'center', color: palette.common.white }}
-          variant="small1"
-        >
-          {dayjs().format('YYYY.M.D')} 마케팅 수신 {isAgree ? '동의' : '미동의'} 처리되었습니다.
-          <br />
-          (재설정: 마이 {'->'} 해제)
-        </Typography>
+        {dayjs().format('YYYY.M.D')} 마케팅 수신 {isAgree ? '동의' : '미동의'} 처리되었습니다.
+        <br />
+        (재설정: 마이 {'->'} 해제)
       </Toast>
     </Box>
   );
 }
 
 const Title = styled(Typography)`
-  color: ${({ theme: { palette } }) => palette.common.grey['20']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
 `;
 
 const Content = styled(Typography)`
-  color: ${({ theme: { palette } }) => palette.common.grey['40']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
   margin-top: 4px;
 `;
 

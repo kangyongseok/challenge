@@ -107,15 +107,30 @@ const BudgetInput = styled.input<{ isFocus: boolean }>`
   width: 215px;
   height: 60px;
   padding: ${({ isFocus }) => (isFocus ? '12px 60px 12px 12px' : '12px 0')};
+  background-color: transparent;
   border: 2px solid
-    ${({ theme, value }) => (!value ? theme.palette.common.grey['80'] : theme.palette.primary.main)};
+    ${({
+      theme: {
+        palette: { primary, common }
+      },
+      value
+    }) => (!value ? common.ui80 : primary.main)};
   border-radius: 36px;
   font-weight: ${({ theme: { typography } }) => typography.h2.weight.medium};
   font-size: ${({ theme }) => theme.typography.h2.size};
-  color: ${({ theme: { palette } }) => palette.common.grey['20']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
   text-align: center;
   &:focus {
-    border: 2px solid ${({ theme: { palette } }) => palette.primary.main};
+    border: 2px solid
+      ${({
+        theme: {
+          palette: { primary }
+        }
+      }) => primary.main};
     outline: none;
   }
 `;

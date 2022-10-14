@@ -153,7 +153,9 @@ function CategoryAccordion({
 
   const buttonActive = categoryState.selectAllCategoryIds.includes(parentCategoryId);
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   return (
@@ -182,7 +184,7 @@ function CategoryAccordion({
               variant="small2"
               weight="medium"
               customStyle={{
-                color: buttonActive ? 'white' : palette.common.grey[60]
+                color: buttonActive ? 'white' : common.ui60
               }}
             >
               전체선택

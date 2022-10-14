@@ -5,9 +5,7 @@ import { useInfiniteQuery, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography } from 'mrcamel-ui';
 
-import ProductListCard from '@components/UI/molecules/ProductListCard';
-import { ProductListCardSkeleton } from '@components/UI/molecules';
-import { Gap } from '@components/UI/atoms';
+import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
 
 import { fetchSearch, fetchSearchRelatedProducts } from '@api/product';
 
@@ -68,20 +66,17 @@ function ProductsRelated() {
     (isSearchRelatedProductsFetched && !hasProducts && !content.length)
   ) {
     return (
-      <>
-        <Gap height={8} />
-        <Box customStyle={{ padding: '24px 20px 0 20px' }}>
-          <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>
-            이런 매물은 어때요?
-          </Typography>
-          <Flexbox direction="vertical" gap={20}>
-            {Array.from({ length: 10 }, (_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <ProductListCardSkeleton key={`search-related-product-${index}`} isRound />
-            ))}
-          </Flexbox>
-        </Box>
-      </>
+      <Box customStyle={{ padding: '24px 20px 0 20px' }}>
+        <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>
+          이런 매물은 어때요?
+        </Typography>
+        <Flexbox direction="vertical" gap={20}>
+          {Array.from({ length: 10 }, (_, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <ProductListCardSkeleton key={`search-related-product-${index}`} isRound />
+          ))}
+        </Flexbox>
+      </Box>
     );
   }
 

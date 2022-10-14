@@ -63,7 +63,9 @@ function CrazycurationTabList({
   handleClickWishButtonEvent
 }: CrazycurationTabListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const [{ selectedIndex, prevScroll }, setSelectedTabState] = useRecoilState(
@@ -176,7 +178,7 @@ function CrazycurationTabList({
                     compact
                     isRound
                     customStyle={{ marginBottom: 'auto' }}
-                    titlePriceStyle={{ color: palette.common.white }}
+                    titlePriceStyle={{ color: common.uiWhite }}
                     todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
                     areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
                     metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
@@ -209,14 +211,22 @@ const Tab = styled(Chip)<{
   activeColor?: string;
   activeBackgroundColor?: string;
 }>`
-  color: ${({ theme, isActive, color, activeColor }) =>
-    isActive
-      ? activeColor || theme.palette.common.black
-      : color || theme.palette.common.grey['20']};
-  background-color: ${({ theme, isActive, backgroundColor, activeBackgroundColor }) =>
-    isActive
-      ? activeBackgroundColor || '#ACFF25'
-      : backgroundColor || theme.palette.common.grey['60']};
+  color: ${({
+    theme: {
+      palette: { common }
+    },
+    isActive,
+    color,
+    activeColor
+  }) => (isActive ? activeColor || common.uiBlack : color || common.ui20)};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    },
+    isActive,
+    backgroundColor,
+    activeBackgroundColor
+  }) => (isActive ? activeBackgroundColor || '#ACFF25' : backgroundColor || common.ui60)};
   white-space: nowrap;
 
   & > * {

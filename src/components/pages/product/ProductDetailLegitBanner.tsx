@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import type { Product, ProductLegit } from '@dto/product';
+import type { ProductLegit } from '@dto/productLegit';
+import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -42,10 +43,10 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
       return;
     }
     if (data.status === 30) {
-      router.push(`/products/${router.query.id}/legit/result`);
+      router.push(`/${router.query.id}/result`);
       return;
     }
-    router.push(`/products/${router.query.id}/legit`);
+    router.push(`/legit/${router.query.id}`);
   };
 
   return (
@@ -57,7 +58,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             사진으로 정가품 문의하세요!
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/info_fill_basic.png`}
           alt="info_fill_basic"
           width={80}
@@ -65,8 +66,10 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
       </StyledBanner>
       <StyledBanner
         alignment="center"
-        bgColor={common.grey['95']}
-        isDisplay={data?.status === 10 || data?.status === 20}
+        bgColor={common.ui95}
+        isDisplay={
+          data?.status === 10 || data?.status === 12 || data?.status === 13 || data?.status === 20
+        }
         onClick={handleClick}
       >
         <Box>
@@ -75,7 +78,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             사진감정중입니다.
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/info_fill_basic.png`}
           alt="info_fill_basic"
           width={80}
@@ -83,7 +86,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
       </StyledBanner>
       <StyledBanner
         alignment="center"
-        bgColor={common.grey['95']}
+        bgColor={common.ui95}
         isDisplay={data?.status === 11}
         onClick={handleClick}
       >
@@ -93,7 +96,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             사진감정이 불가해요
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/info_fill_basic.png`}
           alt="info_fill_basic"
           width={80}
@@ -111,7 +114,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             정품의견이 우세합니다!
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/circle_fill_blue.png`}
           alt="circle_fill_blue"
           width={53}
@@ -129,7 +132,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             의심의견이 있습니다.
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/triangle_fill_red.png`}
           alt="triangle_fill_red"
           width={61}
@@ -147,7 +150,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
             사진감정의견을 확인해보세요
           </Typography>
         </Box>
-        <img
+        <Img
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/info_fill_basic.png`}
           alt="info_fill_basic"
           width={80}
@@ -170,5 +173,7 @@ const StyledBanner = styled(Flexbox)<{ bgColor?: string; isDisplay: boolean }>`
     margin-left: auto;
   }
 `;
+
+const Img = styled.img``;
 
 export default ProductDetailLegitBanner;

@@ -141,7 +141,11 @@ const SearchBarArea = styled.div<{ showAppDownloadBanner: boolean }>`
 
 const SearchListArea = styled(Flexbox)`
   width: 100%;
-  border: ${({ theme: { palette } }) => `1px solid ${palette.common.grey['90']}`};
+  border: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => `1px solid ${common.ui90}`};
   border-top: none;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;

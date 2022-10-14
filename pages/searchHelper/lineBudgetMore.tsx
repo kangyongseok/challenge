@@ -378,7 +378,12 @@ function LineBudgetMore() {
 }
 
 const CustomBox = styled.div`
-  border: 2px solid ${({ theme }) => theme.palette.common.grey['90']};
+  border: 2px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: ${({ theme }) => theme.box.round['16']};
   padding: 20px 24px;
 `;

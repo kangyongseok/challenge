@@ -16,6 +16,8 @@ import attrKeys from '@constants/attrKeys';
 
 import type { ProductsVariant } from '@typings/products';
 import { activeTabCodeIdState, selectedSearchOptionsStateFamily } from '@recoil/productsFilter';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface FilterTabsProps {
   variant: ProductsVariant;
@@ -27,6 +29,10 @@ function FilterTabs({ variant }: FilterTabsProps) {
   const { selectedSearchOptions } = useRecoilValue(
     selectedSearchOptionsStateFamily(`active-${router.asPath.split('?')[0]}`)
   );
+
+  const { data: accessUser } = useQueryAccessUser();
+  const { data: { size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {} } = {} } =
+    useQueryUserInfo();
 
   const handleClick =
     (index = 0, codeId = 0) =>
@@ -45,7 +51,9 @@ function FilterTabs({ variant }: FilterTabsProps) {
     };
 
   return (
-    <StyledFilterTabs>
+    <StyledFilterTabs
+      disableMyFilter={!accessUser || (!tops.length && !bottoms.length && !shoes.length)}
+    >
       {filterCodes[variant].map(({ codeId, name }, index) => (
         <FilterTabWrapper key={`filter-tab-${codeId}`} isActive={activeTabCodeId === codeId}>
           <Badge
@@ -76,10 +84,15 @@ function FilterTabs({ variant }: FilterTabsProps) {
   );
 }
 
-const StyledFilterTabs = styled.section`
-  margin-top: 32px;
+const StyledFilterTabs = styled.section<{ disableMyFilter: boolean }>`
+  margin-top: ${({ disableMyFilter }) => (disableMyFilter ? 24 : 32)}px;
   padding: 0 20px;
-  border-bottom: 1px solid ${({ theme: { palette } }) => palette.common.grey['90']};
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   white-space: nowrap;
   overflow-x: auto;
 
@@ -106,7 +119,7 @@ const FilterTabWrapper = styled.div<{
     },
     isActive
   }) => ({
-    borderColor: isActive ? common.grey['20'] : 'transparent'
+    borderColor: isActive ? common.ui20 : 'transparent'
   })};
 `;
 
@@ -126,7 +139,7 @@ const FilterTab = styled.div<{
     fontWeight: isActive ? weight.medium : weight.regular,
     lineHeight,
     letterSpacing,
-    color: isActive ? common.grey['20'] : common.grey['60']
+    color: isActive ? common.ui20 : common.ui60
   })};
 `;
 

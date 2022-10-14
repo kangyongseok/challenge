@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CircleIconButton, Flexbox, Icon } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -27,6 +27,12 @@ import FilterOption from '../FilterOption';
 function BrandTabPanel() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
@@ -133,11 +139,12 @@ function BrandTabPanel() {
           placeholder="브랜드명을 입력하세요."
         />
         {filterValue && (
-          <CircleIconButton
-            iconName="CloseOutlined"
+          <Icon
+            name="DeleteCircleFilled"
+            width={18}
+            height={18}
+            color={common.ui80}
             customStyle={{
-              width: 18,
-              height: 18,
               marginBottom: 8
             }}
             onClick={() =>
@@ -204,7 +211,12 @@ const BrandSearchBar = styled.div<{ hasFilterValue: boolean }>`
   align-items: center;
   gap: 8px;
   margin: 20px 20px 0 20px;
-  border-bottom: 1px solid ${({ theme: { palette } }) => palette.common.grey['40']};
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui60};
 
   ${({ hasFilterValue }): CSSObject => (hasFilterValue ? { margin: 20 } : {})};
 
@@ -227,6 +239,16 @@ const BrandSearchBar = styled.div<{ hasFilterValue: boolean }>`
   & > svg,
   input {
     margin-bottom: 8px;
+    background-color: transparent;
+    &::placeholder {
+      ${({
+        theme: {
+          palette: { common }
+        }
+      }): CSSObject => ({
+        color: common.ui60
+      })};
+    }
   }
 `;
 

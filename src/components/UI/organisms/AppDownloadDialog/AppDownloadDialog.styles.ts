@@ -17,7 +17,7 @@ export const FeatureBox = styled.div`
     theme: {
       palette: { common }
     }
-  }) => common.grey['98']};
+  }) => common.ui98};
 
   & > div {
     margin: auto;

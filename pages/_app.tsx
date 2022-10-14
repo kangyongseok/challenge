@@ -6,10 +6,15 @@ import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from 'react-que
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
-import { ThemeProvider, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Toast, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
-import { ErrorBoundary, LegitResultSurveyTypeform } from '@components/UI/organisms';
+import {
+  AppCameraAuthorCheckDialog,
+  CamelSellerSavePopup,
+  ErrorBoundary,
+  LegitResultSurveyTypeform
+} from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
@@ -20,9 +25,10 @@ import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
   ChannelTalkProvider,
-  DialogProdiver,
+  DialogProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
+  ThemeModeProvider,
   ToastProvider
 } from '@provider';
 
@@ -40,7 +46,9 @@ if (global.navigator) {
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const [open, setOpen] = useState(false);
   const queryClient = useRef(
@@ -68,28 +76,22 @@ function App({ Component, pageProps }: AppProps) {
     return decodeURI(`${originUrl}${asPath}`);
   }, [router.asPath, router.pathname]);
   const themeColor = useMemo(() => {
-    if (router.asPath.split('?')[0] === '/') return '#0D0D0D';
+    if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
     if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
-      return palette.common.black;
+      return common.uiBlack;
     }
 
-    if (router.asPath.includes('/legit')) return palette.common.grey['95'];
+    if (router.asPath.includes('/legit')) return common.ui95;
 
-    return palette.common.white;
-  }, [
-    palette.common.black,
-    palette.common.grey,
-    palette.common.white,
-    router.asPath,
-    router.pathname
-  ]);
+    return common.uiWhite;
+  }, [common.uiBlack, common.uiWhite, common.ui95, common.cmn80, router.asPath, router.pathname]);
 
   useEffect(() => {
-    document.body.style.backgroundColor = themeColor;
-  }, [themeColor, router.asPath]);
+    window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
+      logEvent(event.eventName, event.eventParams);
+    };
 
-  useEffect(() => {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
@@ -124,8 +126,8 @@ function App({ Component, pageProps }: AppProps) {
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
       <QueryClientProvider client={queryClient.current}>
-        <ThemeProvider theme="light">
-          <RecoilRoot>
+        <RecoilRoot>
+          <ThemeModeProvider>
             <Hydrate state={pageProps.dehydratedState}>
               <ErrorBoundary>
                 <ABTestProvider identifier={pageProps.abTestIdentifier}>
@@ -135,19 +137,19 @@ function App({ Component, pageProps }: AppProps) {
                 </ABTestProvider>
                 <SearchHelperPopup type="break" />
                 <ToastProvider />
-                <DialogProdiver />
+                <DialogProvider />
                 <LegitResultSurveyTypeform />
+                <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
+                  서버에서 오류가 발생했어요
+                  <br />
+                  잠시 후 다시 시도해 주세요
+                </Toast>
+                <CamelSellerSavePopup />
+                <AppCameraAuthorCheckDialog />
               </ErrorBoundary>
             </Hydrate>
-          </RecoilRoot>
-          <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
-            <Typography customStyle={{ color: 'white' }}>
-              서버에서 오류가 발생했어요
-              <br />
-              잠시 후 다시 시도해 주세요
-            </Typography>
-          </Toast>
-        </ThemeProvider>
+          </ThemeModeProvider>
+        </RecoilRoot>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>

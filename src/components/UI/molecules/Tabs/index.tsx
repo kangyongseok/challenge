@@ -1,7 +1,8 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 import { forwardRef } from 'react';
 
-import { CustomStyle, Typography, useTheme } from 'mrcamel-ui';
+import { Typography, useTheme } from 'mrcamel-ui';
+import type { BrandColor, CustomStyle } from 'mrcamel-ui';
 
 import { StyledTabs, Tab } from './Tabs.styles';
 
@@ -10,16 +11,19 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   value: string;
   changeValue: (e: MouseEvent<HTMLButtonElement> | null, newValue: string) => void;
   labels: { key: string; value: string }[];
+  brandColor?: Extract<BrandColor, 'primary' | 'black'>;
   customStyle?: CustomStyle;
   customTabStyle?: CustomStyle;
 }
 
 const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { value, changeValue, labels, customStyle, id, customTabStyle, ...props },
+  { value, changeValue, labels, brandColor, customStyle, id, customTabStyle, ...props },
   ref
 ) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const handleClick =
@@ -53,13 +57,14 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
             selected={selected}
             onClick={handleClick(selected, label.key)}
             count={labels.length}
+            brandColor={brandColor}
             css={customTabStyle}
           >
             <Typography
               variant="body1"
               weight={selected ? 'bold' : 'medium'}
               customStyle={{
-                color: palette.common.grey[selected ? '20' : '60']
+                color: selected ? common.ui20 : common.ui60
               }}
             >
               {label.value}

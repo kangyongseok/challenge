@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -70,7 +70,7 @@ function ProductsSaveSearchPopup() {
         로그인하고 저장해두세요!
       </Typography>
       <Flexbox gap={7}>
-        <CtaButton
+        <Button
           variant="ghost"
           brandColor="black"
           size="medium"
@@ -78,8 +78,8 @@ function ProductsSaveSearchPopup() {
           onClick={handleClickCancel}
         >
           그냥 볼게요
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           variant="contained"
           brandColor="primary"
           size="medium"
@@ -87,7 +87,7 @@ function ProductsSaveSearchPopup() {
           onClick={handleClickOk}
         >
           로그인하기
-        </CtaButton>
+        </Button>
       </Flexbox>
     </Dialog>
   );

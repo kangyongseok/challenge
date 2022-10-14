@@ -26,20 +26,56 @@ export const BaseOverlay = styled.div<{ variant?: TypographyVariant; isRound?: b
     height: 100%;
     align-items: center;
     justify-content: center;
-    color: ${({ theme: { palette } }) => palette.common.white};
+    color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.cmnW};
   }
 `;
 
-export const SoldOutOverlay = styled(BaseOverlay)`
+export const SoldOutOverlay = styled(BaseOverlay)<{ card?: boolean }>`
   & ::after {
     content: '판매완료';
+    ${({ card, theme: { palette, box } }): CSSObject => {
+      if (card) {
+        return {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          background: palette.common.ui20,
+          width: '100%',
+          height: '24px',
+          borderBottomRightRadius: box.round['8'],
+          borderBottomLeftRadius: box.round['8']
+        };
+      }
+      return {};
+    }}
   }
+  ${({ card }) => card && { backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
 `;
 
-export const ReservingOverlay = styled(BaseOverlay)`
+export const ReservingOverlay = styled(BaseOverlay)<{ card?: boolean }>`
   & ::after {
     content: '예약중';
+    ${({ card, theme: { palette, box } }): CSSObject => {
+      if (card) {
+        return {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          background: palette.common.ui20,
+          width: '100%',
+          height: '24px',
+          borderBottomRightRadius: box.round['8'],
+          borderBottomLeftRadius: box.round['8']
+        };
+      }
+      return {};
+    }}
   }
+  ${({ card }) => card && { backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
 `;
 
 export const DuplicatedOverlay = styled(BaseOverlay)`

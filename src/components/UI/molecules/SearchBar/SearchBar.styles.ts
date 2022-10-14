@@ -12,13 +12,21 @@ export const StyledSearchBar = styled.div<
   display: flex;
   align-items: center;
 
-  ${({ isFixed, variant, showAppDownloadBanner, theme: { palette, zIndex } }) =>
+  ${({
+    isFixed,
+    variant,
+    showAppDownloadBanner,
+    theme: {
+      palette: { common },
+      zIndex
+    }
+  }) =>
     isFixed && {
       position: 'fixed',
       top: showAppDownloadBanner ? -60 - APP_DOWNLOAD_BANNER_HEIGHT : -60,
       left: 0,
       right: 0,
-      background: palette.common.white,
+      background: common.uiWhite,
       zIndex: zIndex.header,
       animation: variant !== 'innerOutlined' ? 'smoothFixed .2s forwards' : '',
       padding: `${showAppDownloadBanner ? 120 + APP_DOWNLOAD_BANNER_HEIGHT : 60}px 0px 0px`
@@ -61,16 +69,25 @@ export const Wrapper = styled.div<
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   border-radius: 8px;
-  border: ${({ theme: { palette }, variant }) =>
-    variant !== 'standard' && `2px solid ${palette.primary.main}`};
-  z-index: ${({ theme }) => theme.zIndex.header};
+  border: ${({
+    theme: {
+      palette: { primary }
+    },
+    variant
+  }) => variant !== 'standard' && `2px solid ${primary.main}`};
+  z-index: ${({ theme: { zIndex } }) => zIndex.header};
 `;
 
 export const Input = styled.input`
   width: 100%;
   outline: 0;
+  background-color: transparent;
 
   ${({ theme: { typography } }) => ({
     fontSize: typography.h4.size,
@@ -80,7 +97,11 @@ export const Input = styled.input`
   })};
 
   :disabled {
-    background-color: ${({ theme: { palette } }) => palette.common.white};
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiWhite};
   }
 `;
 

@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
-import { Box, Button, CtaButton, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
@@ -54,7 +54,9 @@ interface ProductActionsProps {
 
 function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
   const setToastState = useSetRecoilState(toastState);
@@ -278,13 +280,13 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
           >
             <Flexbox
               alignment="center"
-              customStyle={{ color: reported || checked ? palette.primary.main : 'inherit' }}
+              customStyle={{ color: reported || checked ? primary.main : 'inherit' }}
             >
               {(reported || checked) && (
                 <Icon
                   name="CheckOutlined"
                   size="small"
-                  customStyle={{ marginRight: 6, color: palette.primary.main }}
+                  customStyle={{ marginRight: 6, color: primary.main }}
                 />
               )}
               <Typography
@@ -295,16 +297,12 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
                 {label}
               </Typography>
             </Flexbox>
-            <Typography
-              variant="small1"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['60'] }}
-            >
+            <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
               {count}
             </Typography>
           </ReportOption>
         ))}
-        <CtaButton
+        <Button
           fullWidth
           brandColor="black"
           variant="contained"
@@ -313,7 +311,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
           onClick={handleSubmitReport}
         >
           제출하기
-        </CtaButton>
+        </Button>
       </ReportTooltip>
     </Box>
   );
@@ -331,8 +329,17 @@ const ActionButtons = styled.div`
 
 const ReportTooltip = styled.div<{ open: boolean }>`
   position: absolute;
-  border: 1px solid ${({ theme }) => theme.palette.common.grey['90']};
-  background-color: ${({ theme }) => theme.palette.common.white};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   border-radius: 8px;
   padding: 20px 24px;
   top: 57px;
@@ -352,16 +359,33 @@ const ReportTooltip = styled.div<{ open: boolean }>`
     z-index: 1;
     border-width: 12px 0 12px 15px;
     border-style: solid;
-    border-color: transparent transparent transparent rgb(255, 255, 255);
+    border-color: transparent transparent transparent
+      ${({
+        theme: {
+          palette: { common }
+        }
+      }) => common.uiWhite};
     border-image: initial;
-    filter: drop-shadow(rgb(221, 221, 221) 1px 0px 0px);
+    filter: drop-shadow(
+      ${({
+          theme: {
+            palette: { common }
+          }
+        }) => common.ui90}
+        1px 0px 0px
+    );
     transform: rotate(270deg);
   }
 `;
 
 const ReportOption = styled(Typography)`
   padding: 8px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.palette.common.grey['90']};
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   display: flex;
   justify-content: space-between;
 

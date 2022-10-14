@@ -7,11 +7,9 @@ export const StyledLinearProgress = styled.div`
   height: 2px;
   background-color: ${({
     theme: {
-      palette: {
-        common: { grey }
-      }
+      palette: { common }
     }
-  }) => grey['90']};
+  }) => common.ui90};
 `;
 
 export const ProgressBar = styled.div<Pick<LinearProgressProps, 'value'>>`

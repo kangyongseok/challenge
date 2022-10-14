@@ -173,7 +173,7 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
                       key={`parent-category-${parentCategoryId}`}
                       direction="vertical"
                       gap={4}
-                      customStyle={{ margin: 'auto' }}
+                      customStyle={{ margin: 'auto', cursor: 'pointer' }}
                       onClick={handleClickParentCategory(parentCategoryId)}
                     >
                       <ImageBox isSelected={selectedParentCategory === parentCategoryId}>
@@ -265,15 +265,14 @@ const ParentCategoryList = styled.div`
 
 const ImageBox = styled.div<{ isSelected: boolean }>`
   padding: 8px;
-  background-color: ${({ theme: { palette }, isSelected }) =>
-    isSelected && palette.common.grey['95']};
+  background-color: ${({ theme: { palette }, isSelected }) => isSelected && palette.common.ui95};
   border-radius: 20px;
 `;
 
 const SubParentCategoryList = styled.div<{ isSelected: boolean }>`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background-color: ${({ theme }) => theme.palette.common.grey['98']};
+  background-color: ${({ theme }) => theme.palette.common.ui98};
   opacity: ${({ isSelected }) => Number(isSelected)};
   padding: ${({ isSelected }) => (isSelected ? '20px 32px' : '0px 32px')};
   margin-top: ${({ isSelected }) => (isSelected ? 20 : 0)}px;
@@ -283,6 +282,7 @@ const SubParentCategoryList = styled.div<{ isSelected: boolean }>`
 const SubParentCategory = styled(Typography)<{ isSelected: boolean }>`
   max-height: ${({ isSelected }) => !isSelected && 0};
   padding: ${({ isSelected }) => (isSelected ? '12px 0' : 0)};
+  cursor: pointer;
 `;
 
 export default CategoryList;

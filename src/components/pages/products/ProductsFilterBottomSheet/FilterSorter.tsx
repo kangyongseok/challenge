@@ -44,7 +44,11 @@ const StyledFilterSorter = styled.div`
     height: 10px;
     margin: 0 8px;
     vertical-align: middle;
-    background-color: ${({ theme: { palette } }) => palette.common.grey['80']};
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui80};
   }
   & > span:last-child:after {
     display: none;
@@ -69,7 +73,7 @@ const SorterItem = styled.span<{
     fontWeight: isActive ? weight.bold : weight.medium,
     lineHeight,
     letterSpacing,
-    color: isActive ? common.grey['20'] : common.grey['80']
+    color: isActive ? common.ui20 : common.ui80
   })};
 `;
 

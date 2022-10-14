@@ -44,7 +44,9 @@ function CrazycurationWeek({
 }: CrazycurationWeekProps) {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   const [activeCardIndex, setActiveCardIndex] = useState(weekData[0]);
@@ -104,7 +106,7 @@ function CrazycurationWeek({
     >
       <Flexbox direction="vertical" alignment="center" gap={12}>
         <Logo />
-        <Typography variant="h3" customStyle={{ color: palette.common.white, textAlign: 'center' }}>
+        <Typography variant="h3" customStyle={{ color: common.uiWhite, textAlign: 'center' }}>
           {weekData.length > 0 ? (
             '약한 매물은 가! 약빤 매물만 모아왔어요.'
           ) : (
@@ -164,7 +166,7 @@ function CrazycurationWeek({
           <Typography
             variant="h3"
             weight="bold"
-            customStyle={{ color: palette.common.white, textAlign: 'center' }}
+            customStyle={{ color: common.uiWhite, textAlign: 'center' }}
           >
             평일을 즐겁게 해줄 미친 매물들,
             <br />
@@ -264,8 +266,16 @@ const CurationCardButton = styled(Button)`
   width: calc(100% - 24px);
   left: 12px;
   bottom: 20px;
-  color: ${({ theme }) => theme.palette.common.black};
-  background-color: ${({ theme }) => theme.palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 const NotiOnButton = styled(Button)`
@@ -274,7 +284,11 @@ const NotiOnButton = styled(Button)`
   display: flex;
   align-items: center;
   column-gap: 4px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 const ShareButton = styled(Button)`

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useTheme } from 'mrcamel-ui';
 
 import { Skeleton } from '@components/UI/atoms';
 
@@ -43,6 +44,11 @@ function BrandList({
   customStyle
 }: BrandListProps) {
   const router = useRouter();
+
+  const {
+    theme: { mode }
+  } = useTheme();
+
   const { data: accessUser } = useQueryAccessUser();
   const {
     data: {
@@ -90,7 +96,7 @@ function BrandList({
     <StyledBrandList variant={variant} css={customStyle}>
       {!!accessUser && !isFetched && personalBrands.length === 0
         ? Array.from({ length: 8 }, (_, index) => (
-            <BrandItem key={`brand-skeleton-${index}`} css={{ margin: '0 auto' }}>
+            <BrandItem key={`brand-skeleton-${index}`} css={{ margin: 'auto' }}>
               <Skeleton width="64px" height="64px" customStyle={{ borderRadius: '50%' }} />
               <Skeleton width="64px" height="18px" isRound disableAspectRatio />
             </BrandItem>
@@ -103,9 +109,9 @@ function BrandList({
             >
               <BrandImageBox variant={variant} color={color}>
                 <BrandImage
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/${nameEng
-                    .toLowerCase()
-                    .replace(/\s/g, '')}.jpg`}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
+                    mode === 'light' ? 'white' : 'black'
+                  }/${nameEng.toLowerCase().replace(/\s/g, '')}.jpg`}
                   variant={variant}
                 />
               </BrandImageBox>

@@ -44,7 +44,9 @@ function SearchHelperBanner({
 }: SearchHelperBannerProps) {
   const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
   const setSearchParams = useSetRecoilState(searchParamsState);
@@ -122,7 +124,7 @@ function SearchHelperBanner({
             <Typography
               variant="body1"
               weight="bold"
-              customStyle={{ color: palette.primary.main, whiteSpace: 'nowrap' }}
+              customStyle={{ color: primary.main, whiteSpace: 'nowrap' }}
             >
               꿀매물&nbsp;
             </Typography>
@@ -136,7 +138,7 @@ function SearchHelperBanner({
         </Flexbox>
         <Chip variant="contained" brandColor="primary" onClick={handleClickStart} size="small">
           {showText && (
-            <Typography variant="body2" weight="bold" customStyle={{ color: palette.common.white }}>
+            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
               시작하기
             </Typography>
           )}
@@ -149,14 +151,22 @@ function SearchHelperBanner({
 
 const Wrapper = styled.section`
   padding: 16px 20px;
-  background-color: ${({ theme }) => theme.palette.primary.highlight};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.highlight};
 `;
 
 const Keyword = styled(Typography)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: ${({ theme: { palette } }) => palette.primary.main};
+  color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.main};
 `;
 
 export default memo(SearchHelperBanner);

@@ -50,6 +50,23 @@ const routers = [
     ],
     permanent: false,
     destination: '/login'
+  },
+  {
+    source: '/legit/profile',
+    destination: '/legit?tab=live',
+    permanent: false
+  },
+  {
+    source: '/legit/request/:step*',
+    has: [
+      {
+        type: 'cookie',
+        key: 'accessToken',
+        value: undefined
+      }
+    ],
+    permanent: false,
+    destination: '/legit?tab=live'
   }
 ];
 

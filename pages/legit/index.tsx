@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { QueryClient, dehydrate } from 'react-query';
 import type { DehydratedState } from 'react-query';
 import { useRouter } from 'next/router';
@@ -8,9 +10,10 @@ import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  LegitFloatingButton,
   LegitLivePanel,
   LegitMyPanel,
-  LegitNoticeBanner,
+  LegitReviewSlide,
   LegitTabs
 } from '@components/pages/legit';
 
@@ -26,23 +29,33 @@ function Legit() {
   const { tab = 'live' } = router.query;
   const {
     theme: {
+      mode,
       palette: { common }
     }
   } = useTheme();
 
+  useEffect(() => {
+    document.body.className = `legit-${mode}`;
+
+    return () => {
+      document.body.removeAttribute('class');
+    };
+  }, [mode]);
+
   return (
     <>
       <GeneralTemplate
-        header={<Header customStyle={{ backgroundColor: common.grey['95'] }} />}
+        header={<Header isTransparent isFixed customStyle={{ backgroundColor: common.bg03 }} />}
         footer={<BottomNavigation />}
         customStyle={{
           height: 'auto',
           minHeight: '100%',
-          backgroundColor: common.grey['95'],
+          backgroundColor: common.bg03,
           overflowX: 'hidden'
         }}
+        disablePadding
       >
-        <LegitNoticeBanner />
+        {tab === 'live' && <LegitReviewSlide />}
         <LegitTabs />
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}
@@ -55,6 +68,7 @@ function Legit() {
         channelTalkPosition={-50}
         name={attrProperty.legitName.LEGIT_MAIN}
       />
+      {tab === 'live' && <LegitFloatingButton />}
     </>
   );
 }
@@ -66,7 +80,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
   if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.legitTargets(), fetchUserLegitTargets);
+    await queryClient.prefetchQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets);
   }
 
   const dehydratedState: DehydratedState = dehydrate(queryClient);

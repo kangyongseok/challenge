@@ -1,3 +1,5 @@
+import { PRODUCT_SELLER } from '@constants/camelSeller';
+
 import type { Product, ProductResult, SearchParams } from './product';
 import type { Paged } from './common';
 import type { Category, CategoryValue } from './category';
@@ -118,7 +120,47 @@ export interface UserInfo {
     legitTargetCount: number;
   };
   notViewedLegitCount?: number;
+  notProcessedLegitCount?: number;
+  roles: Role['name'][];
+  userProductInfo: UserProductInfo;
 }
+
+export interface UserProductInfo {
+  displayedUserProductCount: number;
+  hasUserProduct: boolean;
+  images: string[];
+}
+
+export interface Role {
+  id: number;
+  code: string;
+  name: typeof PRODUCT_SELLER | 'PRODUCT_AUTHENTIC' | 'PRODUCT_LEGIT' | 'PRODUCT_LEGIT_HEAD';
+  description: string;
+}
+
+export type UserRoleLegit = {
+  userId: number;
+  name: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  urlShop: string | null;
+  image: string;
+  imageBackground: string | null;
+  targetBrandIds: number[];
+  cntOpinion: number;
+  dateActivated: string;
+  dateCreated: string;
+  dateUpdated: string;
+  ip: string;
+};
+
+export type SellerRole = {
+  dateUpdated: string;
+  dateCreated: string;
+  userId: number;
+  sellerId: number;
+};
 
 export type UserWish = {
   dateCreated: string;
@@ -328,3 +370,21 @@ export interface PostStyleParams {
   parentCategoryIds?: number[] | null;
   subParentCategoryIds?: number[] | null;
 }
+
+export type UserProductsParams = {
+  page?: number;
+  size?: number;
+  status?: number[];
+};
+
+export type PutUserLegitProfileData = {
+  userId: number;
+  name: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  image: string;
+  imageBackground: string;
+  targetBrandIds: number[];
+  urlShop: string;
+};

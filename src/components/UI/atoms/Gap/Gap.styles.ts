@@ -4,6 +4,10 @@ import { GapProps } from './index';
 
 export const StyledGap = styled.div<GapProps>`
   width: 100%;
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   height: ${({ height }) => height}px;
 `;

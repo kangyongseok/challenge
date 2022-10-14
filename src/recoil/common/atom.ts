@@ -7,9 +7,9 @@ import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
-import { DEVICE_ID, USER_ON_BOARDING_TRIGGER } from '@constants/localStorage';
+import { DEVICE_ID, THEME, USER_ON_BOARDING_TRIGGER } from '@constants/localStorage';
 
-import type { DialogType, ShareData, ToastStatus, ToastType } from '@typings/common';
+import type { DialogType, ShareData, ThemeMode, ToastStatus, ToastType } from '@typings/common';
 
 export const userOnBoardingTriggerState = atom({
   key: 'common/userOnBoardingTriggerState',
@@ -74,6 +74,7 @@ export const toastState = atom<{
   type: ToastType | undefined;
   status: ToastStatus | undefined;
   hideDuration?: number;
+  customStyle?: CustomStyle;
   action?: () => void;
 }>({
   key: 'common/toastState',
@@ -85,6 +86,7 @@ export const toastState = atom<{
 
 export const dialogState = atom<{
   type: DialogType | undefined;
+  theme?: Exclude<ThemeMode, 'system'>;
   firstButtonAction?: () => void;
   secondButtonAction?: () => void;
   content?: string | number | ReactElement;
@@ -97,4 +99,24 @@ export const dialogState = atom<{
   default: {
     type: undefined
   }
+});
+
+export const themeState = atom<ThemeMode>({
+  key: 'common/themeState',
+  default: 'system',
+  effects: [
+    ({ onSet, setSelf }) => {
+      const theme = LocalStorage.get<ThemeMode>(THEME);
+
+      setSelf(theme || 'system');
+
+      onSet((newValue, _, isReset) => {
+        if (isReset) {
+          LocalStorage.remove(THEME);
+        } else {
+          LocalStorage.set(THEME, newValue);
+        }
+      });
+    }
+  ]
 });

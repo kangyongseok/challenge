@@ -1,4 +1,4 @@
-import { ProductResult } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
 export type JobRuleBaseDetail = {
   id: number;
@@ -116,4 +116,36 @@ export interface CategoryCode extends CommonCode {
   name: string;
   parentId: number;
   subParentId: number;
+}
+export interface ImageGroups {
+  groupId: number;
+  name: string;
+  photoGuideDetails: CommonPhotoGuideDetail[];
+}
+
+export type CommonPhotoGuideDetail = {
+  id: number;
+  photoGuideId: number;
+  name: string;
+  description: string;
+  imageType: 0 | 1 | 2 | 3;
+  imageWatermark: string;
+  imageWatermarkDark: string;
+  imageSample: string;
+  sort?: number;
+  isRequired: boolean;
+  dateCreated: string;
+  dateUpdated: string;
+};
+
+export interface PhotoGuide {
+  groupId: number;
+  photoGuideDetails: CommonPhotoGuideDetail[];
+}
+
+/* ---------- Request Parameters ---------- */
+export interface PhotoGuideParams {
+  type: 0 | 1 | 2; // 0: 매물등록, 1: 감정등록, 2: 프로필등록
+  categoryId?: number;
+  brandId?: number;
 }

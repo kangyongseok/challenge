@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Alert, Typography, useTheme } from 'mrcamel-ui';
 
-import { fetchProductLegit } from '@api/product';
+import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 
@@ -18,15 +18,15 @@ function LegitResultDetailAlert() {
     }
   } = useTheme();
 
-  const { data: { result = 0 } = {} } = useQuery(
-    queryKeys.products.productLegit({ productId }),
+  const { data: { result = 0, status } = {} } = useQuery(
+    queryKeys.productLegits.legit(productId),
     () => fetchProductLegit(productId),
     {
       enabled: !!id
     }
   );
 
-  if (result === 1 || result === 2) return null;
+  if (status !== 30 || result === 1 || result === 2) return null;
 
   return (
     <Alert round="8" customStyle={{ marginTop: 20, padding: 16 }}>
@@ -34,7 +34,7 @@ function LegitResultDetailAlert() {
         주어진 사진만으로는 확답을 내릴 수 없다고 판단되어,&nbsp;
         <strong>실물로 더욱 상세한 감정을 추천</strong>드립니다.
       </Typography>
-      <Typography variant="small2" customStyle={{ marginTop: 4, color: common.grey['60'] }}>
+      <Typography variant="small2" customStyle={{ marginTop: 4, color: common.ui60 }}>
         실물감정 가능한 곳: 한국동산감정원, 한국명품감정원, 라올스 등
       </Typography>
     </Alert>

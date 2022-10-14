@@ -5,10 +5,11 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import type * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
+import type { IconName } from 'mrcamel-ui';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
-import { AppDownloadDialog } from '@components/UI/organisms';
+import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
+import { Badge } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -23,7 +24,8 @@ import {
   productsKeywordDialogState,
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
-import { legitCompleteGridParamsState } from '@recoil/legitCompleteGrid';
+import { legitRequestListCountsState, legitRequestParamsState } from '@recoil/legitRequest';
+import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
 import { homeLegitResultTooltipCloseState, homeSelectedTabStateFamily } from '@recoil/home';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -33,14 +35,14 @@ import {
   LegitResultTooltip,
   List,
   ListItem,
-  NewBadge,
+  NewLabel,
   StyledBottomNavigation
 } from './BottomNavigation.styles';
 
 const data: {
   title: string;
-  defaultIcon: keyof typeof SvgIcons;
-  activeIcon: keyof typeof SvgIcons;
+  defaultIcon: IconName;
+  activeIcon?: IconName;
   href: string;
   logName: string;
 }[] = [
@@ -58,6 +60,12 @@ const data: {
     href: '/legit',
     logName: 'LEGIT'
   },
+  // {
+  //   title: '',
+  //   defaultIcon: 'PlusOutlined',
+  //   href: '/camelSeller',
+  //   logName: 'LISTING_TECH'
+  // },
   {
     title: '카테고리',
     defaultIcon: 'NewCategoryOutlined',
@@ -99,18 +107,26 @@ function BottomNavigation({
   } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
-
   const resetCategory = useResetRecoilState(categoryState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
-  const resetLegitCompleteGridParamsState = useResetRecoilState(legitCompleteGridParamsState);
+  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
+  const resetLegitFiltersState = useResetRecoilState(legitFiltersState);
+  const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
+  const resetLegitRequestListCountsState = useResetRecoilState(legitRequestListCountsState);
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
   const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
-
-  const { data: { priceNotiProducts = [], notViewedLegitCount = 0 } = {}, isLoading } =
-    useQueryUserInfo();
+  const {
+    data: {
+      roles = [],
+      priceNotiProducts = [],
+      notViewedLegitCount = 0,
+      notProcessedLegitCount = 0
+    } = {},
+    isLoading
+  } = useQueryUserInfo();
 
   const triggered = useReverseScrollTrigger(!disableHideOnScroll);
 
@@ -118,6 +134,7 @@ function BottomNavigation({
   const [logAtt] = useState('');
   const legitNavRef = useRef<HTMLLIElement | null>(null);
   const [openTooltip, setOpenTooltip] = useState(false);
+  const [openLegitNotProcessedTooltip, setOpenLegitNotProcessedTooltip] = useState(false);
   const [triangleLeft, setTriangleLeft] = useState(0);
 
   const confirmPriceNotiProducts = useMemo(() => {
@@ -164,7 +181,8 @@ function BottomNavigation({
       // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
       // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
       if (href === '/legit') {
-        resetLegitCompleteGridParamsState();
+        resetLegitFilterGridParamsState();
+        resetLegitFiltersState();
 
         queryClient
           .getQueryCache()
@@ -177,20 +195,11 @@ function BottomNavigation({
       }
     };
 
-  const handleClose = (e: MouseEvent<HTMLOrSVGElement>) => {
-    logEvent(attrKeys.home.CLICK_CLOSE, {
-      title: attrProperty.legitTitle.LEGITRESULT_TOOLTIP
-    });
-
-    e.stopPropagation();
-
-    setOpenTooltip(false);
-    setLegitResultTooltipCloseState(true);
-  };
-
   const handleResize = useCallback(() => {
-    if (legitNavRef.current && openTooltip) {
-      setTriangleLeft(legitNavRef.current.offsetLeft + legitNavRef.current.clientWidth / 2 - 32);
+    if (legitNavRef.current && !openTooltip) {
+      setTriangleLeft(
+        legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 44
+      );
     }
   }, [openTooltip]);
 
@@ -208,6 +217,19 @@ function BottomNavigation({
     });
   };
 
+  const handleClickLegitNotProcessedTooltip = () => {
+    setOpenLegitNotProcessedTooltip(false);
+    setLegitResultTooltipCloseState(true);
+    resetLegitRequestListCountsState();
+    resetLegitRequestParamsState();
+    router.push({
+      pathname: '/legit/admin',
+      query: {
+        tab: 'request'
+      }
+    });
+  };
+
   const getQuery = (href: string) => {
     if (href === '/wishes' && confirmPriceNotiProducts.length) {
       return { scrollToProductId: confirmPriceNotiProducts[0].id };
@@ -216,6 +238,14 @@ function BottomNavigation({
       return { tab: 'my' };
     }
     return undefined;
+  };
+
+  const getPathName = (href: string) => {
+    if (href === '/legit') {
+      const hasLegitRole = (roles as string[]).some((role) => role.indexOf('PRODUCT_LEGIT') >= 0);
+      return hasLegitRole ? '/legit/admin' : href;
+    }
+    return href;
   };
 
   useEffect(() => {
@@ -227,80 +257,132 @@ function BottomNavigation({
   }, [handleResize]);
 
   useEffect(() => {
-    if (legitNavRef.current && openTooltip) {
+    if (legitNavRef.current && !openTooltip) {
       setTriangleLeft(
-        legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 32
+        legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 44
       );
     }
   }, [openTooltip]);
 
   useEffect(() => {
-    if (router.pathname === '/' && !isLoading && notViewedLegitCount) {
+    if (router.pathname === '/' && !isLoading && !notProcessedLegitCount && notViewedLegitCount) {
       logEvent(attrKeys.home.VIEW_LEGITRESULT_TOOLTIP, {
         name: attrProperty.productName.MAIN
       });
       setOpenTooltip(true);
     } else if (router.pathname === '/' && !isLoading && !notViewedLegitCount) {
       setOpenTooltip(false);
+    }
+  }, [router.pathname, isLoading, notViewedLegitCount, notProcessedLegitCount]);
+
+  useEffect(() => {
+    if (router.pathname === '/' && !isLoading && notProcessedLegitCount) {
+      setOpenLegitNotProcessedTooltip(true);
+    } else if (router.pathname === '/' && !isLoading && !notProcessedLegitCount) {
+      setOpenLegitNotProcessedTooltip(false);
+    }
+  }, [router.pathname, isLoading, notProcessedLegitCount]);
+
+  useEffect(() => {
+    if (router.pathname === '/' && !isLoading && !notProcessedLegitCount && !notViewedLegitCount) {
       setLegitResultTooltipCloseState(true);
     }
-  }, [router.pathname, isLoading, notViewedLegitCount, setLegitResultTooltipCloseState]);
+  }, [
+    isLoading,
+    notProcessedLegitCount,
+    notViewedLegitCount,
+    router.pathname,
+    setLegitResultTooltipCloseState
+  ]);
 
   return (
     <>
       <StyledBottomNavigation display={display}>
         <List triggered={triggered}>
           {data.map((navData) => {
-            const isActive = router.pathname === navData.href;
+            const name = navData.href.replace(/\//g, '');
+            let isActive = router.pathname.includes(name);
 
-            return (
-              <ListItem
-                key={`bottom-navigation-${navData.title}`}
-                ref={navData.href === '/legit' ? legitNavRef : undefined}
-              >
-                <Link
-                  href={{
-                    pathname: navData.href,
-                    query: getQuery(navData.href)
-                  }}
-                  as={{
-                    pathname: navData.href,
-                    query: getQuery(navData.href)
-                  }}
-                  passHref
+            if (router.pathname !== '/' && !name && isActive) {
+              isActive = false;
+            }
+
+            if (navData.activeIcon) {
+              return (
+                <ListItem
+                  key={`bottom-navigation-${navData.title}`}
+                  ref={navData.href === '/legit' ? legitNavRef : undefined}
                 >
-                  <a
-                    onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
-                    aria-hidden="true"
+                  {navData.href === '/legit' && !isLoading && !notViewedLegitCount && (
+                    <NewLabel variant="contained" text="NEW" size="xsmall" />
+                  )}
+                  <Link
+                    href={{
+                      pathname: getPathName(navData.href),
+                      query: getQuery(navData.href)
+                    }}
+                    as={{
+                      pathname: getPathName(navData.href),
+                      query: getQuery(navData.href)
+                    }}
+                    passHref
                   >
-                    <Box customStyle={{ position: 'relative' }}>
-                      <Icon
-                        name={isActive ? navData.activeIcon : navData.defaultIcon}
-                        color={isActive ? common.grey['20'] : common.grey['80']}
-                      />
-                      <NewBadge
-                        brandColor="red"
-                        position="absolute"
-                        open={navData.href === '/legit' && !isLoading && !!notViewedLegitCount}
-                        width={10}
-                        height={10}
-                      />
-                    </Box>
-                    <Typography
-                      variant="small2"
-                      weight={isActive ? 'bold' : 'regular'}
-                      customStyle={{
-                        position: 'relative',
-                        marginTop: 4,
-                        color: isActive ? common.grey['20'] : common.grey['80']
-                      }}
+                    <a
+                      onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
+                      aria-hidden="true"
                     >
-                      {navData.title}
-                    </Typography>
-                  </a>
-                </Link>
-              </ListItem>
-            );
+                      <Box customStyle={{ position: 'relative' }}>
+                        <Icon
+                          name={isActive ? navData.activeIcon : navData.defaultIcon}
+                          color={isActive ? common.ui20 : common.ui80}
+                        />
+                        <Badge
+                          variant="two-tone"
+                          brandColor="red"
+                          type="alone"
+                          open={navData.href === '/legit' && !isLoading && !!notViewedLegitCount}
+                          width={10}
+                          height={10}
+                          customStyle={{ position: 'absolute', top: -2, right: -5 }}
+                        />
+                      </Box>
+                      <Typography
+                        variant="small2"
+                        weight={isActive ? 'bold' : 'regular'}
+                        customStyle={{
+                          position: 'relative',
+                          marginTop: 4,
+                          color: isActive ? common.ui20 : common.ui80
+                        }}
+                      >
+                        {navData.title}
+                      </Typography>
+                    </a>
+                  </Link>
+                </ListItem>
+              );
+            }
+
+            // if (accessUser && roles.includes(PRODUCT_SELLER as never)) {
+            //   return (
+            //     <ListItem
+            //       key={`bottom-navigation-${navData.title}`}
+            //       ref={navData.href === '/legit' ? legitNavRef : undefined}
+            //     >
+            //       <Link as={{ pathname: navData.href }} href={{ pathname: navData.href }} passHref>
+            //         <a
+            //           onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
+            //           aria-hidden="true"
+            //         >
+            //           <CenterIcon alignment="center" justifyContent="center">
+            //             <Icon name={navData.defaultIcon} color={common.uiWhite} />
+            //           </CenterIcon>
+            //         </a>
+            //       </Link>
+            //     </ListItem>
+            //   );
+            // }
+            return '';
           })}
         </List>
       </StyledBottomNavigation>
@@ -311,42 +393,47 @@ function BottomNavigation({
         name="FOOTER"
       />
       <LegitResultTooltip
-        open={openTooltip}
-        round="8"
+        open={openLegitNotProcessedTooltip}
         message={
-          <Flexbox direction="vertical" gap={11}>
-            <Box
-              customStyle={{
-                display: 'grid',
-                alignItems: 'center',
-                gridTemplateColumns: '1fr 1fr 1fr'
-              }}
-            >
-              <div />
-              <Typography
-                variant="small1"
-                weight="bold"
-                customStyle={{
-                  textAlign: 'center',
-                  color: common.grey['60']
-                }}
-              >
-                🔔 감정결과 알림
-              </Typography>
-              <Flexbox customStyle={{ justifyContent: 'flex-end' }}>
-                <Icon name="CloseOutlined" onClick={handleClose} color={common.grey['60']} />
-              </Flexbox>
-            </Box>
-            <Typography weight="medium" customStyle={{ color: common.white }}>
-              미확인 감정결과가 {commaNumber(notViewedLegitCount)}건 있습니다!{' '}
+          <Flexbox justifyContent="space-between" gap={10}>
+            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+              🔔 감정신청이 {commaNumber(notProcessedLegitCount)}건 있습니다!
+            </Typography>
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+              바로가기
+            </Typography>
+          </Flexbox>
+        }
+        triangleLeft={triangleLeft}
+        onClick={handleClickLegitNotProcessedTooltip}
+      />
+      <LegitResultTooltip
+        open={openTooltip}
+        message={
+          <Flexbox justifyContent="space-between" gap={10}>
+            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+              🔔 미확인 감정결과가 {commaNumber(notViewedLegitCount)}건 있습니다!
+            </Typography>
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+              바로가기
             </Typography>
           </Flexbox>
         }
         triangleLeft={triangleLeft}
         onClick={handleClickTooltip}
       />
+      <MyShopAppDownloadDialog />
     </>
   );
 }
+
+// const CenterIcon = styled(Flexbox)`
+//   background: ${({ theme: { palette } }) => palette.primary.main};
+//   width: 44px;
+//   height: 44px;
+//   border-radius: 50%;
+//   margin: 8px auto;
+//   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+// `;
 
 export default BottomNavigation;

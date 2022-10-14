@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { Gap } from '@components/UI/atoms';
 
@@ -134,6 +134,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                 })
                 .then(() => window.scrollTo(0, 0))
             }
+            isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
           >
             전체
           </Text>
@@ -156,6 +157,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                     })
                     .then(() => window.scrollTo(0, 0))
                 }
+                isActive={convertStringToArray(String(parentIds)).includes(id)}
               >
                 {name.replace(/\(P\)/g, '')}
               </Text>
@@ -194,6 +196,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                       })
                       .then(() => window.scrollTo(0, 0))
                   }
+                  isActive={convertStringToArray(String(subParentIds)).includes(id)}
                 >
                   {name}
                 </Text>
@@ -214,7 +217,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
 
 const Wrapper = styled.div`
   position: fixed;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
   height: ${CATEGORY_TAGS_HEIGHT}px;
   min-height: ${CATEGORY_TAGS_HEIGHT}px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
@@ -231,13 +234,26 @@ const CategoryTags = styled.div`
   width: fit-content;
 `;
 
-const Text = styled(Typography)`
+const Text = styled(Typography)<{ isActive: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
   height: 100%;
   cursor: pointer;
+  border-bottom: 2px solid transparent;
+
+  ${({
+    theme: {
+      palette: { common }
+    },
+    isActive
+  }): CSSObject =>
+    isActive
+      ? {
+          borderColor: common.ui20
+        }
+      : {}}
 `;
 
 export default ProductsCategoryTags;

@@ -38,7 +38,9 @@ const SearchHelperInput = forwardRef<HTMLInputElement, SearchHelperInputProps>(
     ref
   ) {
     const {
-      theme: { palette }
+      theme: {
+        palette: { common }
+      }
     } = useTheme();
     const [showLabel, setShowLabel] = useState(false);
     const [focused, setFocused] = useState(false);
@@ -92,15 +94,10 @@ const SearchHelperInput = forwardRef<HTMLInputElement, SearchHelperInputProps>(
           )}
           {errorMessage}
           {showClearIcon && value && value.length > 0 && focused && (
-            <ClearIcon
-              name="CloseOutlined"
-              size="small"
-              color={palette.common.white}
-              onClick={onClear}
-            />
+            <ClearIcon name="CloseOutlined" size="small" color={common.uiWhite} onClick={onClear} />
           )}
           {showCheckIcon && !errorMessage && !focused && (
-            <CheckIcon name="CheckOutlined" color={palette.common.white} />
+            <CheckIcon name="CheckOutlined" color={common.uiWhite} />
           )}
         </Flexbox>
       </Flexbox>
@@ -109,8 +106,13 @@ const SearchHelperInput = forwardRef<HTMLInputElement, SearchHelperInputProps>(
 );
 
 const InputLabel = styled.label`
-  ${({ theme: { palette, typography } }): CSSObject => ({
-    color: palette.common.grey['60'],
+  ${({
+    theme: {
+      palette: { common },
+      typography
+    }
+  }): CSSObject => ({
+    color: common.ui60,
     fontSize: typography.body1.size,
     fontWeight: typography.body1.weight.medium,
     lineHeight: typography.body1.lineHeight,
@@ -123,9 +125,15 @@ const Input = styled.input`
   outline: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: transparent;
 
-  ${({ theme: { palette, typography } }): CSSObject => ({
-    color: palette.common.grey['20'],
+  ${({
+    theme: {
+      palette: { common },
+      typography
+    }
+  }): CSSObject => ({
+    color: common.ui20,
     fontSize: typography.h3.size,
     fontWeight: typography.h3.weight.medium,
     lineHeight: typography.h3.lineHeight,
@@ -133,7 +141,11 @@ const Input = styled.input`
   })}
 
   ::placeholder {
-    color: ${({ theme: { palette } }) => palette.common.grey['80']};
+    color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui80};
   }
 `;
 
@@ -145,7 +157,11 @@ const Suffix = styled(Typography)<{ value: number }>`
 `;
 
 const ClearIcon = styled(Icon)`
-  background: ${({ theme: { palette } }) => palette.common.grey['80']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
   border-radius: ${({ theme }) => theme.box.round['16']};
   padding: 2px;
 
@@ -155,7 +171,11 @@ const ClearIcon = styled(Icon)`
 `;
 
 const CheckIcon = styled(Icon)`
-  background: ${({ theme: { palette } }) => palette.common.grey['20']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
   border-radius: ${({ theme }) => theme.box.round['16']};
   padding: 5px;
 `;

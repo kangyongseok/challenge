@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
 import type { TypographyVariant } from 'mrcamel-ui';
-import { CtaButton, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import { AppDownloadDialog, ErrorBoundary } from '@components/UI/organisms';
+import {
+  AppDownloadDialog,
+  ErrorBoundary,
+  MyShopAppDownloadDialog
+} from '@components/UI/organisms';
 import {
   DuplicatedOverlay,
   Header,
@@ -20,6 +24,7 @@ import {
 } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
   ProductAveragePriceChart,
@@ -32,6 +37,7 @@ import {
   ProductKeywordList,
   ProductRedirect,
   ProductRelatedProductList,
+  ProductSellerBottomMenu,
   ProductSellerProductList,
   ProductSellerReviews
 } from '@components/pages/product';
@@ -58,7 +64,11 @@ import {
   PRODUCT_SOURCE,
   PRODUCT_STATUS
 } from '@constants/product';
-import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
+import {
+  ACCESS_USER,
+  // CAMEL_SELLER_START_ROOT,
+  DUPLICATED_PRODUCT_IDS
+} from '@constants/localStorage';
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -67,6 +77,7 @@ import { getMetaDescription, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
+import { userShopSelectedProductState } from '@recoil/userShop';
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryProduct from '@hooks/useQueryProduct';
@@ -78,9 +89,12 @@ function ProductDetail() {
     asPath
   } = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const {
     data,
     isLoading,
@@ -91,14 +105,15 @@ function ProductDetail() {
   } = useQueryProduct();
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
+  const [isCamelSellerProduct, setCamelSellerProduct] = useState(false);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
   });
   const [targetProductUrl, setTargetProductUrl] = useState('');
   const loggedBrazeRef = useRef(false);
-  const contentRef = useRef<HTMLHRElement>(null);
-  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice, openLegit } = useMemo(() => {
+  const contentRef = useRef<HTMLHRElement | null>(null);
+  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
     let newIsPriceDown = newTargetProductPrice < newPrice;
@@ -118,16 +133,12 @@ function ProductDetail() {
       newIsPriceDown = false;
     }
 
-    const { product: { productLegit = undefined } = {} } = data || {};
-    const { result = 99 } = productLegit || {};
-
     return {
       isPriceDown: newIsPriceDown,
       isPriceCrm: newSalePrice >= 1,
       isDup: newIsDup,
       hasTarget: newHasTarget,
-      salePrice: newSalePrice,
-      openLegit: result >= 0 && result <= 3
+      salePrice: newSalePrice
     };
   }, [chainPrice, data]);
   const isSafe = useMemo(() => {
@@ -261,12 +272,18 @@ function ProductDetail() {
   );
 
   useEffect(() => {
+    setUserShopSelectedProductState({
+      id: Number(productId)
+    });
+
     if (window.Kakao && !window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.KAKAO_JS_KEY);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    setCamelSellerProduct(data?.product.productSeller.account === String(accessUser?.userId));
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {
         if (window.webview && window.webview.callReviewRequest) {
@@ -284,7 +301,7 @@ function ProductDetail() {
         }
       }
     }
-  }, [data]);
+  }, [accessUser?.userId, data]);
 
   useEffect(() => {
     if (
@@ -410,6 +427,20 @@ function ProductDetail() {
     };
   }, [isRedirectPage]);
 
+  // const handleClickLeft = () => {
+  //   const path = LocalStorage.get(CAMEL_SELLER_START_ROOT) as string;
+  //   if (isCrm) {
+  //     return () => push(`/products/search/${data?.product.quoteTitle || ''}`);
+  //   }
+  //   if (isCamelSellerProduct && path) {
+  //     return () => {
+  //       replace(path);
+  //       LocalStorage.remove(CAMEL_SELLER_START_ROOT);
+  //     };
+  //   }
+  //   return null;
+  // };
+
   return (
     <>
       <PageHead
@@ -435,7 +466,7 @@ function ProductDetail() {
           />
         }
         footer={
-          !isRedirectPage ? (
+          !isRedirectPage && !isCamelSellerProduct ? (
             <ProductCTAButton
               product={data?.product}
               isProductLegit={data?.productLegit}
@@ -449,7 +480,9 @@ function ProductDetail() {
               onClickSMS={handleClickSMS}
               mutateMetaInfo={mutateMetaInfo}
             />
-          ) : undefined
+          ) : (
+            <ProductSellerBottomMenu status={data?.product.status as number} />
+          )
         }
         hideAppDownloadBanner={isRedirectPage}
       >
@@ -478,11 +511,10 @@ function ProductDetail() {
               product={data?.product}
               getProductImageOverlay={getProductImageOverlay}
               isProductLegit={data?.productLegit}
-              openLegit={openLegit}
             />
             <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
             <ProductActions product={product} onClickSMS={handleClickSMS} />
-            {data && data.product.productLegit && openLegit && (
+            {data?.productLegit && (
               <ProductDetailLegitBanner data={data.product.productLegit} product={data.product} />
             )}
             <ProductSellerReviews product={product} />
@@ -491,19 +523,15 @@ function ProductDetail() {
               <ProductAveragePriceChart product={product} />
             </ErrorBoundary>
             {isCrm ? (
-              <CtaButton
+              <Button
                 variant="contained"
                 brandColor="primary"
                 customStyle={{ margin: '42px auto 0' }}
               >
-                <Typography
-                  variant="body1"
-                  weight="bold"
-                  customStyle={{ color: palette.common.white }}
-                >
+                <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
                   지금 모델 전체보기 ({commaNumber((!isFetching && data?.quoteTitleCount) || 0)}개)
                 </Typography>
-              </CtaButton>
+              </Button>
             ) : (
               <ProductKeywordList
                 relatedKeywords={data?.relatedKeywords ? data?.relatedKeywords : undefined}
@@ -538,7 +566,7 @@ function ProductDetail() {
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
-              color: palette.common.white
+              color: common.uiWhite
             }}
           >
             판매자가 같은 매물을 다시 올렸어요
@@ -548,7 +576,7 @@ function ProductDetail() {
             customStyle={{
               textDecoration: 'underline',
               whiteSpace: 'nowrap',
-              color: palette.common.white
+              color: common.ui80
             }}
             onClick={() => {
               logEvent(attrKeys.products.clickProductDetail, {
@@ -577,7 +605,7 @@ function ProductDetail() {
             customStyle={{
               textDecoration: 'underline',
               whiteSpace: 'nowrap',
-              color: palette.common.white
+              color: common.ui80
             }}
           >
             <Link href={targetProductUrl}>
@@ -590,6 +618,11 @@ function ProductDetail() {
         title={String(data?.product.title)}
         thumbnail={data?.product.imageThumbnail || (data?.product.imageMain as string)}
       />
+      <MyShopAppDownloadDialog />
+      <UserShopProductDeleteConfirmDialog redirect />
+      {/* {data?.product.productSeller.account === String(accessUser?.userId) && (
+        <ProductSellerBottomMenu />
+      )} */}
     </>
   );
 }
@@ -651,11 +684,19 @@ const ProductFixedSummaryCard = styled.div<{ isOpen: boolean; showAppDownloadBan
   transition: opacity 0.3s ease-in 0s;
   width: 100%;
   margin: 0 -20px;
-  background-color: ${({ theme }) => theme.palette.common.grey['98']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui98};
 `;
 
 const PriceDownText = styled(Typography)`
-  color: ${({ theme }) => theme.palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

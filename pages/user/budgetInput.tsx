@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { CtaButton, Flexbox } from 'mrcamel-ui';
+import { Button, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -44,7 +44,7 @@ function BudgetInput() {
       footer={
         <Footer>
           <Flexbox gap={8} direction="vertical" alignment="center" justifyContent="center">
-            <CtaButton
+            <Button
               fullWidth
               variant="contained"
               size="large"
@@ -57,8 +57,8 @@ function BudgetInput() {
               }}
             >
               저장
-            </CtaButton>
-            <CtaButton
+            </Button>
+            <Button
               fullWidth
               variant="outlined"
               size="large"
@@ -74,7 +74,7 @@ function BudgetInput() {
               }}
             >
               예산 상관없이 보여주세요
-            </CtaButton>
+            </Button>
           </Flexbox>
         </Footer>
       }
@@ -89,7 +89,11 @@ const Footer = styled.footer`
   bottom: 0;
   width: 100%;
   padding: 20px 20px 24px;
-  background-color: ${({ theme: { palette } }) => palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 export default BudgetInput;

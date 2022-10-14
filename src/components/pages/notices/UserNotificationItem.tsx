@@ -151,14 +151,12 @@ function UserNotificationItem({
         }}
       >
         <Typography variant="body1" dangerouslySetInnerHTML={{ __html: notification.message }} />
-        <Typography variant="small2" customStyle={{ color: common.grey[60] }}>
+        <Typography variant="small2" customStyle={{ color: common.ui60 }}>
           {getFormattedDistanceTime(new Date(notification.dateCreated.replace(/-/g, '/')))}
         </Typography>
       </Flexbox>
       <Toast open={openToast} onClose={() => setOpenToast(false)}>
-        <Typography customStyle={{ color: common.white }}>
-          지금은 존재하지 않는 매물 목록이에요.
-        </Typography>
+        지금은 존재하지 않는 매물 목록이에요.
       </Toast>
     </Flexbox>
   );

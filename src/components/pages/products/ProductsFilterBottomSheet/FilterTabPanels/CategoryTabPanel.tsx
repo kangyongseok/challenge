@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Icon } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -28,12 +28,6 @@ function CategoryTabPanel() {
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const [currentGenderId, setCurrentGenderId] = useState(0);
   const [step, setStep] = useState(0);
@@ -287,25 +281,17 @@ function CategoryTabPanel() {
                     onClick={(e) => handleClickGenderSelectedAll({ e, genderCodeId, id: genderId })}
                     customStyle={{ marginLeft: 12 }}
                   >
-                    <Typography
-                      variant="small2"
-                      weight="medium"
-                      customStyle={{ color: common.white }}
-                    >
-                      전체선택
-                    </Typography>
+                    전체선택
                   </Chip>
                 ) : (
                   <Chip
                     variant="outlined"
-                    brandColor="grey"
+                    brandColor="gray"
                     size="xsmall"
                     onClick={(e) => handleClickGenderSelectedAll({ e, genderCodeId, id: genderId })}
                     customStyle={{ marginLeft: 12 }}
                   >
-                    <Typography variant="small2" weight="medium">
-                      전체선택
-                    </Typography>
+                    전체선택
                   </Chip>
                 )
               }
@@ -342,18 +328,12 @@ function CategoryTabPanel() {
                           }
                           customStyle={{ marginLeft: 12 }}
                         >
-                          <Typography
-                            variant="small2"
-                            weight="medium"
-                            customStyle={{ color: common.white }}
-                          >
-                            전체선택
-                          </Typography>
+                          전체선택
                         </Chip>
                       ) : (
                         <Chip
                           variant="outlined"
-                          brandColor="grey"
+                          brandColor="gray"
                           size="xsmall"
                           onClick={(e) =>
                             handleClickParentCategorySelectedAll({
@@ -364,9 +344,7 @@ function CategoryTabPanel() {
                           }
                           customStyle={{ marginLeft: 12 }}
                         >
-                          <Typography variant="small2" weight="medium">
-                            전체선택
-                          </Typography>
+                          전체선택
                         </Chip>
                       )
                     }
@@ -420,9 +398,9 @@ const ClickBackButton = styled.button`
     fontWeight: weight.medium,
     lineHeight,
     letterSpacing,
-    color: common.grey['40'],
+    color: common.ui60,
     '& > svg': {
-      color: common.grey['60']
+      color: common.ui60
     }
   })};
 `;

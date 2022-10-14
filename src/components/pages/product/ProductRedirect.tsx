@@ -43,7 +43,9 @@ function ProductRedirect({
   }
 }: ProductRedirectProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const { query } = useRouter();
   const [isBunjangView, setIsBunjangView] = useState(false);
@@ -185,10 +187,7 @@ function ProductRedirect({
           판매 페이지로 이동 할게요!
         </Typography>
         {isBunjangView && (
-          <Typography
-            variant="body2"
-            customStyle={{ marginTop: 8, color: palette.common.grey['40'] }}
-          >
+          <Typography variant="body2" customStyle={{ marginTop: 8, color: common.ui60 }}>
             (번개장터는 App이 백그라운드에 켜져 있어야 해요)
           </Typography>
         )}
@@ -227,7 +226,7 @@ function ProductRedirect({
         <Typography
           variant="small2"
           weight="medium"
-          customStyle={{ marginTop: 8, color: palette.common.grey['60'] }}
+          customStyle={{ marginTop: 8, color: common.ui60 }}
         >
           <LinesEllipsis
             text={`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
@@ -245,10 +244,7 @@ function ProductRedirect({
         <Typography variant="body2" weight="bold">
           카멜은 가격비교 정보중개자이며, 판매자가 아닙니다.
         </Typography>
-        <Typography
-          variant="small2"
-          customStyle={{ marginTop: 8, color: palette.common.grey['40'] }}
-        >
+        <Typography variant="small2" customStyle={{ marginTop: 8, color: common.ui60 }}>
           - 판매 페이지에서 가격이 일치하는지 반드시 확인 바랍니다.
           <br />- 상품정보, 배송, 환불은 해당 매물의 판매자가 관리합니다.
         </Typography>
@@ -261,7 +257,11 @@ const Loader = styled.div`
   height: 15px;
   width: 15px;
   border-style: solid;
-  border-color: ${({ theme }) => theme.palette.common.grey['80']};
+  border-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
   border-width: 4px 4px 0 0;
   transform: rotate(45deg);
   animation: bounceDelay 1.4s infinite ease-in-out both;
@@ -270,13 +270,21 @@ const Loader = styled.div`
     0%,
     100% {
       border-style: solid;
-      border-color: ${({ theme }) => theme.palette.common.grey['80']};
+      border-color: ${({
+        theme: {
+          palette: { common }
+        }
+      }) => common.ui80};
       border-width: 4px 4px 0 0;
     }
     20%,
     40% {
       border-style: solid;
-      border-color: ${({ theme }) => theme.palette.primary.main};
+      border-color: ${({
+        theme: {
+          palette: { primary }
+        }
+      }) => primary.main};
       border-width: 4px 4px 0 0;
     }
   }
@@ -285,7 +293,11 @@ const Loader = styled.div`
 const Card = styled(Flexbox)`
   margin: 40px auto;
   padding: 32px;
-  background-color: ${({ theme }) => theme.palette.common.grey['95']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   width: 228px;
   border-radius: ${({ theme }) => theme.box.round['16']};
 `;

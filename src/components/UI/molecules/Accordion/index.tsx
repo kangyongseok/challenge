@@ -75,7 +75,7 @@ function Accordion({
         {showExpandIcon && !expandIcon && (
           <Icon
             name={expanded ? 'CaretUpOutlined' : 'CaretDownOutlined'}
-            color={palette.common.grey[expandIconGreyColorKey]}
+            color={palette.common[`ui${expandIconGreyColorKey}`]}
             size="small"
             customStyle={{
               transitionProperty: 'all',

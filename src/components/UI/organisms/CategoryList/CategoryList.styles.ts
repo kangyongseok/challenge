@@ -29,15 +29,20 @@ export const CategoryItem = styled.div<{ variant: 'contained' | 'outlined' }>`
   white-space: nowrap;
   cursor: pointer;
 
-  ${({ theme: { palette }, variant }) =>
+  ${({
+    theme: {
+      palette: { common }
+    },
+    variant
+  }) =>
     variant === 'contained'
       ? {
-          backgroundColor: palette.common.grey['95'],
+          backgroundColor: common.ui95,
           padding: '8px 12px'
         }
       : {
-          backgroundColor: palette.common.white,
-          border: `1px solid ${palette.common.grey['90']}`,
+          backgroundColor: common.uiWhite,
+          border: `1px solid ${common.ui90}`,
           padding: '12px 16px'
         }};
 `;

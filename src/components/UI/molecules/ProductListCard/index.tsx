@@ -8,9 +8,7 @@ import {
   Alert,
   Avatar,
   Box,
-  CtaButton,
   CustomStyle,
-  Dialog,
   Flexbox,
   Icon,
   Label,
@@ -21,6 +19,7 @@ import {
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
 import { Badge, Image } from '@components/UI/atoms';
+import { ProductWishCancelDialog } from '@components/pages/product';
 
 import type { Product } from '@dto/product';
 
@@ -305,11 +304,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
         >
           <Badge
             brandColor="red"
-            position="absolute"
+            type="alone"
             width={8}
             height={8}
             open={!hideNewLegitBadge && !isLegitViewed}
-            customStyle={{ top: 12, left: -12 }}
+            customStyle={{ position: 'absolute', top: 12, left: -12 }}
           />
           <Content isRound={isRound}>
             <Image
@@ -324,7 +323,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               {isWish ? (
                 <Icon name="HeartFilled" color={secondary.red.main} size="large" />
               ) : (
-                <Icon name="HeartOutlined" color={common.white} size="large" />
+                <Icon name="HeartOutlined" color={common.cmnW} size="large" />
               )}
             </WishButton>
             <Avatar
@@ -399,11 +398,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
                 <MetaSocial>
                   {wishCount > 0 && (
                     <Flexbox alignment="center" gap={3}>
-                      <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
+                      <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />
                       <Typography
                         variant="small2"
                         weight="medium"
-                        customStyle={{ color: common.grey['60'] }}
+                        customStyle={{ color: common.ui60 }}
                       >
                         {wishCount}
                       </Typography>
@@ -411,16 +410,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
                   )}
                   {purchaseCount > 0 && (
                     <Flexbox alignment="center" gap={3}>
-                      <Icon
-                        name="MessageOutlined"
-                        width={14}
-                        height={14}
-                        color={common.grey['60']}
-                      />
+                      <Icon name="MessageOutlined" width={14} height={14} color={common.ui60} />
                       <Typography
                         variant="small2"
                         weight="medium"
-                        customStyle={{ color: common.grey['60'] }}
+                        customStyle={{ color: common.ui60 }}
                       >
                         {purchaseCount}
                       </Typography>
@@ -471,43 +465,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           </>
         )}
       </Box>
-      <Dialog open={openRemoveWishDialog} onClose={() => setOpenRemoveWishDialog(false)}>
-        <Box
-          customStyle={{
-            width: 285
-          }}
-        >
-          <Typography
-            weight="medium"
-            customStyle={{
-              textAlign: 'center',
-              padding: '24px 0'
-            }}
-          >
-            찜을 취소하시겠어요?
-          </Typography>
-          <Flexbox gap={8}>
-            <CtaButton
-              fullWidth
-              variant="ghost"
-              brandColor="primary"
-              customStyle={{ marginTop: 10 }}
-              onClick={() => setOpenRemoveWishDialog(false)}
-            >
-              취소
-            </CtaButton>
-            <CtaButton
-              fullWidth
-              variant="contained"
-              brandColor="primary"
-              customStyle={{ marginTop: 10 }}
-              onClick={handleClickRemoveWishConfirm}
-            >
-              확인
-            </CtaButton>
-          </Flexbox>
-        </Box>
-      </Dialog>
+      <ProductWishCancelDialog
+        open={openRemoveWishDialog}
+        setOpenRemoveWishDialog={() => setOpenRemoveWishDialog(false)}
+        submit={handleClickRemoveWishConfirm}
+      />
     </>
   );
 });

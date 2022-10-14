@@ -9,7 +9,7 @@ import {
   Avatar,
   BottomSheet,
   Box,
-  CtaButton,
+  Button,
   Flexbox,
   Icon,
   Label,
@@ -101,7 +101,9 @@ function ProductCTAButton({
   } = useRouter();
 
   const {
-    theme: { palette }
+    theme: {
+      palette: { secondary, common }
+    }
   } = useTheme();
 
   const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
@@ -364,7 +366,8 @@ function ProductCTAButton({
       <Wrapper>
         <Tooltip
           open={!isDoneWishOnBoarding}
-          brandColor="primary-highlight"
+          variant="ghost"
+          brandColor="primary"
           message={
             <Typography variant="body2" weight="bold">
               찜하면 가격이 내려갔을 때 알려드려요!🛎
@@ -377,7 +380,7 @@ function ProductCTAButton({
         >
           <WishButton onClick={handleClickWish} isWish={isWish} disabled={!product || !ctaText}>
             {isWish ? (
-              <Icon name="HeartFilled" color={palette.secondary.red.main} width={32} height={32} />
+              <Icon name="HeartFilled" color={secondary.red.main} width={32} height={32} />
             ) : (
               <Icon name="HeartOutlined" width={32} height={32} />
             )}
@@ -387,7 +390,7 @@ function ProductCTAButton({
           <OnBoardingDim onClick={handleClickWishOnBoarding}>
             {' '}
             <OnBoardingWishButton>
-              <Icon name="HeartFilled" color={palette.secondary.red.main} width={32} height={32} />
+              <Icon name="HeartFilled" color={secondary.red.main} width={32} height={32} />
             </OnBoardingWishButton>{' '}
           </OnBoardingDim>
         )}
@@ -413,7 +416,8 @@ function ProductCTAButton({
           >
             <Tooltip
               open={legitTooltip && isDoneWishOnBoarding && !isOpenPriceCRMTooltip}
-              brandColor="primary-highlight"
+              variant="ghost"
+              brandColor="primary"
               message={
                 <Flexbox gap={6} alignment="center">
                   <Label text="NEW" variant="contained" size="xsmall" />
@@ -423,7 +427,7 @@ function ProductCTAButton({
                   <Icon
                     name="CloseOutlined"
                     size="small"
-                    color={palette.common.grey['20']}
+                    color={common.ui20}
                     onClick={(e) => {
                       e.stopPropagation();
                       setLegitTooltip(false);
@@ -438,9 +442,10 @@ function ProductCTAButton({
             </Tooltip>
           </ProductLegitCTAButton>
         )}
-        <CtaButton
+        <Button
           variant="contained"
           brandColor="black"
+          size="large"
           fullWidth
           disabled={
             !product ||
@@ -454,13 +459,15 @@ function ProductCTAButton({
           }
           onClick={handleClickCTAButton}
           customStyle={{
-            height: 48,
             whiteSpace: 'nowrap',
-            backgroundColor: palette.common.black
+            backgroundColor: common.uiBlack
           }}
         >
-          <Typography variant="body1" weight="bold" customStyle={{ color: palette.common.white }}>
-            {platformId && (
+          <Typography variant="body1" weight="bold" customStyle={{ color: common.uiWhite }}>
+            {(isCamelProduct || isCamelSeller) && (
+              <Icon name="MessageOutlined" customStyle={{ marginRight: 8 }} />
+            )}
+            {!isCamelProduct && !isCamelSeller && platformId && (
               <Avatar
                 src={
                   isCamelProduct || isCamelSeller
@@ -475,7 +482,8 @@ function ProductCTAButton({
           </Typography>
           <Tooltip
             open={isOpenPriceCRMTooltip}
-            brandColor="primary-highlight"
+            variant="ghost"
+            brandColor="primary"
             disableShadow
             message={
               <Typography variant="body2" weight="bold">
@@ -488,45 +496,39 @@ function ProductCTAButton({
             open={isOpenBunJangTooltip}
             message={
               <Box onClick={handleClickBunJangTooltip}>
-                <Typography
-                  variant="body1"
-                  weight="medium"
-                  customStyle={{ color: palette.common.white }}
-                >
+                <Typography variant="body1" weight="medium" customStyle={{ color: common.cmnW }}>
                   번개장터 홈으로 이동했나요? 다시 클릭!
                 </Typography>
-                <Typography variant="body2" customStyle={{ color: palette.common.grey['60'] }}>
+                <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                   (번개장터 App이 켜져 있어야 해요)
                 </Typography>
               </Box>
             }
             customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
           />
-        </CtaButton>
+        </Button>
       </Wrapper>
       <Toast
         open={isOpenSoldOutToast}
         onClose={() => setOpenToast((prevState) => ({ ...prevState, isOpenSoldOutToast: false }))}
       >
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
-          죄송합니다. 판매 완료된 매물입니다!
-        </Typography>
+        죄송합니다. 판매 완료된 매물입니다!
       </Toast>
       <Toast
         open={isOpenAddWishToast}
         onClose={() => setOpenToast((prevState) => ({ ...prevState, isOpenAddWishToast: false }))}
       >
         <Flexbox gap={8} alignment="center" justifyContent="space-between">
-          <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
+          <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
             찜목록에 추가했어요!
           </Typography>
           <Typography
             variant="body1"
             weight="medium"
             customStyle={{
-              color: palette.common.white,
               textDecoration: 'underline',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              color: common.ui80
             }}
           >
             <Link href="/wishes">
@@ -541,9 +543,7 @@ function ProductCTAButton({
           setOpenToast((prevState) => ({ ...prevState, isOpenRemoveWishToast: false }))
         }
       >
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
-          찜목록에서 삭제했어요.
-        </Typography>
+        찜목록에서 삭제했어요.
       </Toast>
       <BottomSheet
         open={isOpenRelatedProductListBottomSheet}
@@ -587,7 +587,11 @@ const Wrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 92px;
-  background-color: ${({ theme }) => theme.palette.common.white};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   padding: 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
   box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
@@ -598,9 +602,14 @@ const WishButton = styled.button<{ isWish: boolean }>`
   justify-content: center;
   align-items: center;
   width: 48px;
-  height: 48px;
+  height: 44px;
   padding: 8px 12px;
-  background-color: ${({ theme, isWish }) => isWish && theme.palette.primary.bgLight};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    },
+    isWish
+  }) => isWish && primary.bgLight};
   border-radius: ${({ theme }) => theme.box.round['4']};
 `;
 
@@ -622,9 +631,13 @@ const OnBoardingWishButton = styled.div`
   left: 20px;
   bottom: 24px;
   width: 48px;
-  height: 48px;
+  height: 44px;
   border-radius: ${({ theme }) => theme.box.round['4']};
-  background-color: ${({ theme }) => theme.palette.primary.bgLight};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.bgLight};
   z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
 `;
 
@@ -639,11 +652,19 @@ const ProductCardList = styled.div`
   column-gap: 8px;
 `;
 
-const ProductLegitCTAButton = styled(CtaButton)`
+const ProductLegitCTAButton = styled(Button)`
   min-width: 81px;
   padding: 0;
-  background: ${({ theme: { palette } }) => palette.primary.highlight};
-  color: ${({ theme: { palette } }) => palette.primary.main};
+  background: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.highlight};
+  color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.main};
 `;
 
 export default memo(ProductCTAButton);

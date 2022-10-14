@@ -22,7 +22,9 @@ interface OnboardingSizeProps {
 
 function OnboardingSize({ onClick }: OnboardingSizeProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const { data: userInfo, refetch } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const { mutateAsync } = useMutation(postUserSize);
@@ -137,7 +139,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
         <Typography
           variant="h2"
           weight="bold"
-          customStyle={{ padding: '48px 0px 40px', '& > span': { color: palette.primary.main } }}
+          customStyle={{ padding: '48px 0px 40px', '& > span': { color: primary.main } }}
         >
           <span>사이즈 정보</span>를 알려주시면
           <br />
@@ -145,11 +147,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
         </Typography>
         {gender.length > 0 && userInfo && (
           <Box customStyle={{ flex: 1 }}>
-            <Typography
-              variant="body2"
-              weight="medium"
-              customStyle={{ color: palette.common.grey['60'] }}
-            >
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
               중복 선택 가능
             </Typography>
             <Typography variant="h4" weight="bold" customStyle={{ marginTop: 24 }}>
@@ -161,7 +159,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                   key={`top-${viewSize}-${categorySizeId}`}
                   isRound
                   variant={selectedTopList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
-                  brandColor={selectedTopList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  brandColor={selectedTopList.includes(categorySizeId) ? 'primary' : 'gray'}
                   onClick={handleClickSizeLabel({
                     type: 'top',
                     selectedValue: categorySizeId,
@@ -187,7 +185,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                   variant={
                     selectedBottomList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
                   }
-                  brandColor={selectedBottomList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  brandColor={selectedBottomList.includes(categorySizeId) ? 'primary' : 'gray'}
                   onClick={handleClickSizeLabel({
                     type: 'bottom',
                     selectedValue: categorySizeId,
@@ -215,7 +213,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                   variant={
                     selectedShoesList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
                   }
-                  brandColor={selectedShoesList.includes(categorySizeId) ? 'primary' : 'grey'}
+                  brandColor={selectedShoesList.includes(categorySizeId) ? 'primary' : 'gray'}
                   onClick={handleClickSizeLabel({
                     type: 'shoes',
                     selectedValue: categorySizeId,

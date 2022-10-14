@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Chip, CtaButton, Flexbox, Icon, useTheme } from 'mrcamel-ui';
+import { Button, Chip, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -39,7 +39,9 @@ function BrandInputFooter({
   selectBrands
 }: BrandInputFooterProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const autoHeight = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -127,11 +129,7 @@ function BrandInputFooter({
           customStyle={{
             display: searchValue || checkList.length === 0 ? 'none' : 'block'
           }}
-          color={
-            clientHeight > FOOTER_SELECT_LIST_BASIC_HEIGHT
-              ? palette.common.black
-              : palette.common.grey['90']
-          }
+          color={clientHeight > FOOTER_SELECT_LIST_BASIC_HEIGHT ? common.uiBlack : common.ui90}
           onClick={handleClickViewAll}
         />
         <SelectList
@@ -152,7 +150,7 @@ function BrandInputFooter({
           ))}
         </SelectList>
         <TransParentGradian moreToggle={moreToggle} />
-        <CtaButton
+        <Button
           fullWidth
           customStyle={{ position: 'relative', zIndex: 10 }}
           variant="contained"
@@ -162,7 +160,7 @@ function BrandInputFooter({
           onClick={searchValue ? handleSelectSuccess : handleSave}
         >
           {searchValue ? '선택완료' : '저장'}
-        </CtaButton>
+        </Button>
       </FooterFixed>
     </StyledFooter>
   );
@@ -202,7 +200,11 @@ const FooterFixed = styled(Flexbox)<{ isChecked: boolean; isSearchValue: boolean
   left: 0;
   z-index: 10;
   width: 100%;
-  background: ${({ theme: { palette } }) => palette.common.white};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   box-shadow: ${({ isSearchValue, isChecked }) =>
     isSearchValue || !isChecked ? '0' : '0px -4px 16px rgba(0, 0, 0, 0.1)'};
   border-top-right-radius: 16px;

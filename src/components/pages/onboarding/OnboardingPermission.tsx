@@ -29,7 +29,9 @@ import OnboardingBottomCTA from './OnboardingBottomCTA';
 
 function OnboardingPermission() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const router = useRouter();
   const {
@@ -182,7 +184,7 @@ function OnboardingPermission() {
         <Typography
           variant="h2"
           weight="bold"
-          customStyle={{ padding: '52px 0px', '& > span': { color: palette.primary.main } }}
+          customStyle={{ padding: '52px 0px', '& > span': { color: primary.main } }}
         >
           꿀매물 <span>득템 확률 2배</span> 상승!
           <br />
@@ -197,11 +199,7 @@ function OnboardingPermission() {
               <Typography variant="h4" weight="bold">
                 위치(선택)
               </Typography>
-              <Typography
-                variant="body1"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['40'] }}
-              >
+              <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
                 당근마켓 ‧ 직거래 매물만 골라 볼 수 있어요
               </Typography>
             </Box>
@@ -214,11 +212,7 @@ function OnboardingPermission() {
               <Typography variant="h4" weight="bold">
                 알림(선택)
               </Typography>
-              <Typography
-                variant="body1"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['40'] }}
-              >
+              <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
                 꿀매물, 가격 변동 알림 등을 받아보실 수 있어요
               </Typography>
             </Box>
@@ -226,7 +220,7 @@ function OnboardingPermission() {
         </Flexbox>
       </GeneralTemplate>
       <Flexbox direction="vertical" alignment="center" customStyle={{ paddingTop: 20 }}>
-        <Label variant="body1" weight="medium" customStyle={{ color: palette.common.grey['60'] }}>
+        <Label variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
           단말 설정에서 언제든 변경할 수 있어요.
         </Label>
         <OnboardingBottomCTA onClick={handleClick} disabled={pending}>
@@ -244,13 +238,21 @@ const IconBox = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.palette.primary.highlight};
+  background-color: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.highlight};
 `;
 
 const Label = styled(Typography)`
   margin: 0 auto;
   width: fit-content;
-  background-color: ${({ theme: { palette } }) => palette.common.grey['95']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   border-radius: 36px;
   padding: 8px 16px;
 `;

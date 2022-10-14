@@ -30,7 +30,9 @@ interface ProductInfoProps {
 
 function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { primary, common }
+    }
   } = useTheme();
   const [isClamped, setIsClamped] = useState(false);
   const [isExpended, setIsExpended] = useState(false);
@@ -43,11 +45,28 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
       product?.viewDescription || product?.description || ''
     );
 
+    if (product?.site.code === 'CAMELSELLER') {
+      return `
+∙ 상품상태: ${product.labels.filter((label) => label.codeId === 14)[0].name}
+∙ 사이즈: ${product.size}
+∙ 색상: ${product.color}
+${newDescription}
+      `;
+    }
+
     // TODO 트렌비 매물 설명이 css코드로 시작되는 경우 공백 표시하도록 임시처리
     return product?.site.id === PRODUCT_SITE.TRENBE.id && newDescription.startsWith('.box')
       ? ''
       : newDescription;
-  }, [product?.description, product?.site.id, product?.viewDescription]);
+  }, [
+    product?.color,
+    product?.description,
+    product?.labels,
+    product?.site.code,
+    product?.site.id,
+    product?.size,
+    product?.viewDescription
+  ]);
 
   const productLabels = useMemo(() => {
     if (!product?.productSeller.site || !product?.labels) return [];
@@ -75,7 +94,7 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
     <Box customStyle={{ marginTop: isCamelSeller ? 16 : 20 }}>
       {(isCamelProduct || isCamelSeller) && (
         <Flexbox customStyle={{ marginBottom: 8 }}>
-          <Icon name="SafeFilled" size="small" customStyle={{ color: palette.primary.main }} />
+          <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
           <Typography variant="small2" weight="bold">
             {isCamelSeller
               ? '저희 카멜이 인증한 친절한 판매자입니다. 편하게 연락해보세요 :)'
@@ -108,13 +127,9 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
       <Flexbox
         justifyContent="space-between"
         alignment="center"
-        customStyle={{ color: palette.common.grey['60'], marginTop: 8 }}
+        customStyle={{ color: common.ui60, marginTop: 8 }}
       >
-        <Typography
-          variant="small2"
-          weight="medium"
-          customStyle={{ color: palette.common.grey['60'] }}
-        >
+        <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
           {getFormattedDistanceTime(new Date(product.datePosted))}
           {product?.area && ` · ${getProductArea(product.area)}`}
         </Typography>
@@ -125,12 +140,12 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
                 name="ViewOutlined"
                 width={14}
                 height={14}
-                customStyle={{ color: palette.common.grey['60'], marginRight: 2 }}
+                customStyle={{ color: common.ui60, marginRight: 2 }}
               />
               <Typography
                 variant="small2"
                 weight="medium"
-                customStyle={{ color: palette.common.grey['60'], marginRight: 6 }}
+                customStyle={{ color: common.ui60, marginRight: 6 }}
               >
                 {product.viewCount}
               </Typography>
@@ -142,12 +157,12 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
                 name="HeartOutlined"
                 width={14}
                 height={14}
-                customStyle={{ color: palette.common.grey['60'], marginRight: 2 }}
+                customStyle={{ color: common.ui60, marginRight: 2 }}
               />
               <Typography
                 variant="small2"
                 weight="medium"
-                customStyle={{ color: palette.common.grey['60'], marginRight: 6 }}
+                customStyle={{ color: common.ui60, marginRight: 6 }}
               >
                 {product.wishCount}
               </Typography>
@@ -159,13 +174,9 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
                 name="MessageOutlined"
                 width={14}
                 height={14}
-                customStyle={{ color: palette.common.grey['60'], marginRight: 2 }}
+                customStyle={{ color: common.ui60, marginRight: 2 }}
               />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ color: palette.common.grey['60'] }}
-              >
+              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                 {product.purchaseCount}
               </Typography>
             </>

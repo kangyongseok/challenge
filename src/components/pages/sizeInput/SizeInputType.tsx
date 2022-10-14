@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
-import type * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
+import type { IconName } from 'mrcamel-ui';
 import { Box, Chip, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import { filter, find, uniqBy } from 'lodash-es';
 
@@ -27,7 +27,7 @@ const female = sizeFemale as SizeValue;
 
 const parseKindText = (
   value: string
-): { label: string; icon: keyof typeof SvgIcons; parentCategoryId: number } => {
+): { label: string; icon: IconName; parentCategoryId: number } => {
   switch (value) {
     case 'tops':
       return { label: '상의', icon: 'ClothesOutlined', parentCategoryId: 97 };
@@ -163,7 +163,7 @@ function SizeInputType() {
                   <Chip
                     key={`size-${info.viewSize}`}
                     variant={isChecked ? 'outlinedGhost' : 'outlined'}
-                    brandColor={isChecked ? 'primary' : 'grey'}
+                    brandColor={isChecked ? 'primary' : 'gray'}
                     data-kind={kinds}
                     data-view-size={info.viewSize}
                     data-category-size-id={info.categorySizeId}

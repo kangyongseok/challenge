@@ -3,14 +3,14 @@ import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, CtaButton, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import { postProductLegit } from '@api/product';
+import { postRequestProductLegits } from '@api/productLegit';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -20,12 +20,14 @@ import { deviceIdState } from '@recoil/common';
 
 function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; thumbnail: string }) {
   const router = useRouter();
+  const splitIds = String(router.query.id || '').split('-');
+  const productId = Number(splitIds[splitIds.length - 1] || 0);
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const { mutate: postProductLegitMutate } = useMutation(postProductLegit);
+  const { mutate: postProductLegitsMutate } = useMutation(postRequestProductLegits);
   const [legitBottomSheet, atomLegitBottomSheet] = useRecoilState(
     productLegitToggleBottomSheetState
   );
@@ -60,7 +62,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
           text="NEW"
           variant="contained"
           brandColor="black"
-          customStyle={{ margin: 20, background: common.black }}
+          customStyle={{ margin: 20, background: common.uiBlack }}
           size="xsmall"
         />
         <Box customStyle={{ width: 168, margin: '0 auto', position: 'relative', top: -15 }}>
@@ -98,15 +100,15 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
           </Typography>
         </Box>
         <Box>
-          <Typography customStyle={{ color: common.grey['60'] }}>전국 명품 전문가들이</Typography>
-          <Typography customStyle={{ color: common.grey['60'] }}>
+          <Typography customStyle={{ color: common.ui60 }}>전국 명품 전문가들이</Typography>
+          <Typography customStyle={{ color: common.ui60 }}>
             실시간으로 정가품 의견 드릴게요
           </Typography>
         </Box>
       </Flexbox>
       <Flexbox
         alignment="center"
-        customStyle={{ borderTop: `1px solid ${common.grey['90']}`, padding: 20 }}
+        customStyle={{ borderTop: `1px solid ${common.ui90}`, padding: 20 }}
         gap={8}
       >
         <NextCTAButton
@@ -123,7 +125,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
         >
           <Typography>다음에</Typography>
         </NextCTAButton>
-        <CtaButton
+        <Button
           weight="bold"
           size="large"
           variant="contained"
@@ -136,32 +138,39 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
               att: 'OK'
             });
             atomLegitBottomSheet(false);
-            postProductLegitMutate(
-              { productId: Number(router.query.id), deviceId },
+            postProductLegitsMutate(
+              { productIds: [productId], deviceId },
               {
-                // 사진감정신청 테스트는 알렉스와 협의 후 진행
                 onSuccess: () => {
-                  router.push(`/products/${router.query.id}/legit?firstLegit=true`);
+                  router.push(`/legit/${router.query.id}?firstLegit=true`);
                 }
               }
             );
           }}
         >
           실시간 사진감정받기 (무료)
-        </CtaButton>
+        </Button>
       </Flexbox>
     </BottomSheet>
   );
 }
 
-const NextCTAButton = styled(CtaButton)`
+const NextCTAButton = styled(Button)`
   min-width: 72px;
   padding: 0;
-  background: ${({ theme: { palette } }) => palette.common.grey['95']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
 `;
 
 const ImageBox = styled.div`
-  background: ${({ theme: { palette } }) => palette.primary.bgLight};
+  background: ${({
+    theme: {
+      palette: { primary }
+    }
+  }) => primary.bgLight};
   width: 100%;
   height: 240px;
   overflow: hidden;

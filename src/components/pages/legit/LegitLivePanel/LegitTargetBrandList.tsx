@@ -1,113 +1,243 @@
-import type { MouseEvent } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper';
+import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Flexbox, Typography } from 'mrcamel-ui';
+import { Avatar, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import Skeleton from '@components/UI/atoms/Skeleton';
+import { Skeleton } from '@components/UI/atoms';
 
-import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchLegitDashboard } from '@api/dashboard';
+import { fetchLegit } from '@api/dashboard';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { checkAgent, handleClickAppDownload } from '@utils/common';
+
+import { legitRequestState } from '@recoil/legitRequest';
+import { dialogState } from '@recoil/common';
+import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 function LegitTargetBrandList() {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
+  const setLegitRequestState = useSetRecoilState(legitRequestState);
+  const setDialogState = useSetRecoilState(dialogState);
+  const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
+
+  const { data: accessUser } = useQueryAccessUser();
+
   const { data: { targetBrands = [] } = {}, isLoading } = useQuery(
-    queryKeys.dashboard.legitDashboard(),
-    fetchLegitDashboard
+    queryKeys.dashboards.legit(),
+    fetchLegit
   );
 
-  const handleClick = (e: MouseEvent<HTMLImageElement>) => {
-    logEvent(attrKeys.legit.CLICK_LEGIT_BRAND, {
-      name: attrProperty.legitName.LEGIT_MAIN,
-      att: 'BRAND'
-    });
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.legitName.LEGIT,
-      title: attrProperty.legitTitle.BRAND,
-      type: attrProperty.legitType.GUIDED
-    });
+  const groupedBrands = useMemo(
+    () =>
+      Array.from(
+        {
+          length:
+            Math.floor(targetBrands.length / 8) + (Math.floor(targetBrands.length % 8) > 0 ? 1 : 0)
+        },
+        (_, index) => targetBrands.slice(index * 8, index * 8 + 8)
+      ).filter((groupedBrand) => groupedBrand.length),
+    [targetBrands]
+  );
 
-    const dataName = e.currentTarget.getAttribute('data-name');
+  const handleClick = useCallback(
+    (brandId: number, brandName: string, brandLogo: string) => () => {
+      logEvent(attrKeys.legit.CLICK_LEGIT_PROCESS, {
+        name: attrProperty.legitName.LEGIT_MAIN,
+        title: attrProperty.legitTitle.BRAND
+      });
 
-    router.push({
-      pathname: `/products/brands/${dataName}`,
-      query: {
-        idFilterIds: 100
+      setDialogState({
+        type: 'legitServiceNotice',
+        customStyleTitle: { minWidth: 269 }
+      });
+
+      return;
+
+      if (!checkAgent.isMobileApp()) {
+        setDialogState({
+          type: 'legitRequestOnlyInApp',
+          customStyleTitle: { minWidth: 270 },
+          secondButtonAction() {
+            handleClickAppDownload({});
+          }
+        });
+
+        return;
       }
+
+      if (checkAgent.isAndroidApp()) {
+        setDialogState({
+          type: 'legitRequestOnlyInIOS',
+          customStyleTitle: { minWidth: 270 }
+        });
+
+        return;
+      }
+
+      // eslint-disable-next-line no-constant-condition
+      if (checkAgent.isMobileApp() && false) {
+        // TODO: false 부분에 카메라 권한 체크 결과값으로 치환 필요
+        // + 카메라 권한이 false 일때
+        setOpenCameraSetting(({ type }) => ({
+          type,
+          open: true
+        }));
+        return;
+      }
+
+      if (!accessUser) {
+        router.push({ pathname: '/login', query: { returnUrl: '/legit/request/selectCategory' } });
+
+        return;
+      }
+
+      setLegitRequestState((currVal) => ({
+        ...currVal,
+        brandId,
+        brandName,
+        brandLogo: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${brandLogo
+          .toLowerCase()
+          .replace(/\s/g, '')}.jpg`
+      }));
+      router.push('/legit/request/selectCategory');
+    },
+    [accessUser, router, setDialogState, setLegitRequestState, setOpenCameraSetting]
+  );
+
+  const handleSwiperBrand = () => {
+    logEvent(attrKeys.legit.SWIPE_X_BRAND, {
+      name: attrProperty.legitName.LEGIT_MAIN
     });
   };
 
   return (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      customStyle={{
-        margin: '52px -20px 0'
-      }}
-    >
-      <Typography variant="h3" weight="bold" customStyle={{ margin: '0 20px' }}>
-        감정가능 브랜드 둘러보기
-      </Typography>
-      <BrandList>
-        {isLoading
-          ? Array.from({ length: 10 }).map((_, index) => (
-              <Skeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`target-brand-skeleton-${index}`}
-                width="80px"
-                height="80px"
-                disableAspectRatio
-                customStyle={{
-                  filter: 'drop-shadow(0px 4px 24px #E6E6E6)',
-                  borderRadius: '50%'
-                }}
-              />
+    <Flexbox component="section" direction="vertical" gap={32}>
+      <Flexbox direction="vertical" alignment="center" gap={4}>
+        <Typography variant="h3" weight="bold">
+          Select a Brand
+        </Typography>
+        <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+          브랜드를 선택하여 사진감정 시작하세요
+        </Typography>
+      </Flexbox>
+      <Wrapper>
+        <Swiper
+          spaceBetween={20}
+          pagination={{ clickable: true }}
+          modules={[Pagination]}
+          style={{ padding: '0 20px' }}
+          onSlideChange={handleSwiperBrand}
+        >
+          {isLoading ? (
+            <SwiperSlide>
+              <BrandList>
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <BrandItem
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`target-brand-skeleton-${index}`}
+                  >
+                    <Skeleton width="64px" height="64px" customStyle={{ borderRadius: '50%' }} />
+                    <Skeleton width="64px" height="18px" isRound disableAspectRatio />
+                  </BrandItem>
+                ))}
+              </BrandList>
+            </SwiperSlide>
+          ) : (
+            groupedBrands.map((groupedBrand, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <SwiperSlide key={`grouped-target-brand-${index}`}>
+                <BrandList>
+                  {groupedBrand.map(({ id, name, nameEng }) => (
+                    <BrandItem
+                      key={`target-brand-${id}`}
+                      css={{
+                        gridAutoColumns: 'minmax(87.5px, 1fr)'
+                      }}
+                    >
+                      <Avatar
+                        width={64}
+                        height={64}
+                        src={`https://${
+                          process.env.IMAGE_DOMAIN
+                        }/assets/images/brands/white/${nameEng
+                          .toLocaleLowerCase()
+                          .split(' ')
+                          .join('')}.jpg`}
+                        alt="Brand Logo Img"
+                        onClick={handleClick(id, name, nameEng)}
+                        customStyle={{ margin: 'auto', borderRadius: '50%' }}
+                      />
+                      <Typography variant="body1" customStyle={{ textAlign: 'center' }}>
+                        {name}
+                      </Typography>
+                    </BrandItem>
+                  ))}
+                </BrandList>
+              </SwiperSlide>
             ))
-          : targetBrands.map(({ id, name, nameEng }) => (
-              <Avatar
-                key={`target-brand-${id}`}
-                width={80}
-                height={80}
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/${nameEng
-                  .toLocaleLowerCase()
-                  .split(' ')
-                  .join('')}.jpg`}
-                alt="Brand Logo Img"
-                data-name={name}
-                onClick={handleClick}
-                customStyle={{
-                  filter: 'drop-shadow(0px 4px 24px #E6E6E6)',
-                  borderRadius: '50%',
-                  cursor: 'pointer'
-                }}
-              />
-            ))}
-      </BrandList>
+          )}
+        </Swiper>
+      </Wrapper>
     </Flexbox>
   );
 }
 
-const BrandList = styled.div`
-  padding: 16px 20px 32px;
-  white-space: nowrap;
-  overflow-x: auto;
-
-  & > img,
-  div {
-    display: inline-block;
-    margin-right: 8px;
-    &:last-child {
-      margin-right: 0;
-    }
+const Wrapper = styled.div`
+  .swiper-slide {
+    margin-right: 20px;
   }
+  .swiper-pagination {
+    bottom: -4px;
+  }
+  .swiper-pagination-bullet {
+    width: 4px;
+    height: 4px;
+    background-color: ${({ theme: { palette } }) => palette.common.ui90};
+    opacity: 1;
+    margin: 0 2px !important;
+  }
+  .swiper-pagination-bullet-active {
+    border-radius: 16px;
+    background-color: ${({ theme: { palette } }) => palette.common.uiBlack};
+  }
+`;
+
+const BrandList = styled.div`
+  width: calc(100vw - 40px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px 12px;
+  margin-bottom: 24px;
+`;
+
+const BrandItem = styled.div`
+  text-align: center;
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  justify-content: center;
+  row-gap: 8px;
+  grid-auto-columns: minmax(0, 64px);
+  grid-template-rows: 64px 18px;
+  cursor: pointer;
 `;
 
 export default LegitTargetBrandList;

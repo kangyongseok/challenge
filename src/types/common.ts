@@ -81,7 +81,14 @@ export type ABTestTask = {
 
 export type ABTestBelong = 'A' | 'B' | null;
 
-export type ToastType = 'productsKeyword' | 'mapFilter' | 'product';
+export type ToastType =
+  | 'productsKeyword'
+  | 'mapFilter'
+  | 'product'
+  | 'legitAdminOpinion'
+  | 'legit'
+  | 'legitProfile'
+  | 'sellerProductState';
 
 export type ToastStatus =
   | 'saved'
@@ -89,18 +96,33 @@ export type ToastStatus =
   | 'restored'
   | 'limited'
   | 'autoSaved'
+  | 'preConfirmEdited'
   | 'locationInfo'
   | 'signIn'
   | 'successCopy'
   | 'successReport'
   | 'successRemoveWish'
-  | 'successAddWish';
+  | 'successAddWish'
+  | 'disableUpload'
+  | 'successAdminPreConfirmEdited'
+  | 'hoisting'
+  | 'reserve'
+  | 'sell'
+  | 'soldout'
+  | 'successRequest'
+  | 'successEdit';
 
 export type DialogType =
   | 'SNSShare'
   | 'readyNextCrazyCuration'
   | 'closedCrazyCuration'
-  | 'endCrazyCuration';
+  | 'endCrazyCuration'
+  | 'deleteLegitAdminOpinion'
+  | 'deleteLegitResultComment'
+  | 'deleteLegitResultReply'
+  | 'legitRequestOnlyInApp'
+  | 'legitRequestOnlyInIOS'
+  | 'legitServiceNotice';
 
 export type ShareData = {
   title: string;
@@ -108,3 +130,7 @@ export type ShareData = {
   image?: string;
   url: string;
 };
+
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export type LegitOpinionType = 'authentic' | 'fake' | 'impossible';

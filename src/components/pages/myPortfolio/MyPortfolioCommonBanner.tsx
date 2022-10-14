@@ -10,7 +10,9 @@ import attrKeys from '@constants/attrKeys';
 
 function MyPortfolioCommonBanner({ name }: { name: string }) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   return (
@@ -25,10 +27,10 @@ function MyPortfolioCommonBanner({ name }: { name: string }) {
       justifyContent="center"
     >
       <Flexbox gap={1} direction="vertical">
-        <Typography variant="h4" customStyle={{ color: palette.common.white }}>
+        <Typography variant="h4" customStyle={{ color: common.cmnW }}>
           내가 쓰던 명품, 얼마에 팔릴까?
         </Typography>
-        <Typography weight="bold" customStyle={{ color: palette.common.white, opacity: 0.7 }}>
+        <Typography weight="bold" customStyle={{ color: common.cmnW, opacity: 0.7 }}>
           MY PORTFOLIO 사전예약
         </Typography>
       </Flexbox>

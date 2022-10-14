@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { CtaButton, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -95,21 +95,28 @@ function MyPortfolioLanding07({
   );
 }
 
-const GradationCtaButton = styled(CtaButton)`
+const GradationCtaButton = styled(Button)`
   width: 271px;
   background: linear-gradient(90deg, #1833ff 0%, #5800e5 100%);
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   border-radius: 50px;
   margin-top: 32px;
-  color: ${({ theme: { palette } }) => palette.common.white};
 `;
 
-const AppDownloadCtaButton = styled(CtaButton)`
+const AppDownloadCtaButton = styled(Button)`
   width: 271px;
-  background: ${({ theme: { palette } }) => palette.common.grey['95']};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   border-radius: 50px;
   margin-top: 8px;
-  color: ${({ theme: { palette } }) => palette.common.grey['20']};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
 `;
 
 const SlideupFrame = styled(Flexbox)<{ isAnimation: boolean }>`

@@ -12,7 +12,7 @@ function ToastProvider() {
   const {
     theme: { palette }
   } = useTheme();
-  const { type, status, hideDuration, action } = useRecoilValue(toastState);
+  const { type, status, hideDuration, action, customStyle } = useRecoilValue(toastState);
   const resetToastState = useResetRecoilState(toastState);
   const toastDisplayType = useMemo(() => {
     if (
@@ -27,9 +27,14 @@ function ToastProvider() {
   }, [status, type]);
 
   return (
-    <Toast open={!!type && !!status} autoHideDuration={hideDuration} onClose={resetToastState}>
+    <Toast
+      open={!!type && !!status}
+      autoHideDuration={hideDuration}
+      onClose={resetToastState}
+      customStyle={customStyle}
+    >
       {type && status && toastDisplayType === 'text' && (
-        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.white }}>
+        <Typography variant="body1" weight="medium" customStyle={{ color: palette.common.uiWhite }}>
           {toastText[type][status]}
         </Typography>
       )}
@@ -47,13 +52,13 @@ function ToastProvider() {
 
 const Text = styled(Typography)`
   flex-grow: 1;
-  color: ${({ theme: { palette } }) => palette.common.white};
+  color: ${({ theme: { palette } }) => palette.common.uiWhite};
   text-align: left;
 `;
 
 const ActionButton = styled(Typography)`
   text-decoration: underline;
-  color: ${({ theme: { palette } }) => palette.common.grey['80']};
+  color: ${({ theme: { palette } }) => palette.common.ui80};
   cursor: pointer;
 `;
 

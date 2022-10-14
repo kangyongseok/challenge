@@ -1,4 +1,4 @@
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import ChannelTalk from '@library/channelTalk';
 
@@ -21,14 +21,9 @@ function LoginErrorDialog({ open, onClose, provider }: LoginErrorDialogProps) {
           <br />
           다른 방법을 시도해 보세요.
         </Typography>
-        <CtaButton
-          variant="ghost"
-          brandColor="black"
-          customStyle={{ width: 263 }}
-          onClick={onClose}
-        >
+        <Button variant="ghost" brandColor="black" customStyle={{ width: 263 }} onClick={onClose}>
           확인
-        </CtaButton>
+        </Button>
       </Dialog>
     );
   }
@@ -47,15 +42,15 @@ function LoginErrorDialog({ open, onClose, provider }: LoginErrorDialogProps) {
             다시 시도하시거나 1:1문의를 이용해주세요.
           </Typography>
           <Flexbox gap={7}>
-            <CtaButton
+            <Button
               variant="ghost"
               brandColor="black"
               customStyle={{ width: 128 }}
               onClick={onClose}
             >
               확인
-            </CtaButton>
-            <CtaButton
+            </Button>
+            <Button
               variant="contained"
               brandColor="primary"
               customStyle={{ width: 128 }}
@@ -63,7 +58,7 @@ function LoginErrorDialog({ open, onClose, provider }: LoginErrorDialogProps) {
               onClick={() => ChannelTalk.showMessenger}
             >
               1:1 문의
-            </CtaButton>
+            </Button>
           </Flexbox>
         </>
       }

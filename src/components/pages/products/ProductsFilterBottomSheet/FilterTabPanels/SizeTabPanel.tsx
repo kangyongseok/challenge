@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -25,12 +25,6 @@ function SizeTabPanel() {
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const handleClickSelectedAll = ({
     e,
@@ -178,19 +172,14 @@ function SizeTabPanel() {
                     }
                     customStyle={{ marginLeft: 12 }}
                   >
-                    <Typography
-                      variant="small2"
-                      weight="medium"
-                      customStyle={{ color: common.white }}
-                    >
-                      전체선택
-                    </Typography>
+                    전체선택
                   </Chip>
                 ) : (
                   <Chip
                     variant="outlined"
-                    brandColor="grey"
+                    brandColor="gray"
                     size="xsmall"
+                    weight="medium"
                     onClick={(e) =>
                       handleClickSelectedAll({
                         e,
@@ -200,9 +189,7 @@ function SizeTabPanel() {
                     }
                     customStyle={{ marginLeft: 12 }}
                   >
-                    <Typography variant="small2" weight="medium">
-                      전체선택
-                    </Typography>
+                    전체선택
                   </Chip>
                 )
               }

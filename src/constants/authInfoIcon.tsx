@@ -3,7 +3,7 @@ function ErrorIcon() {
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M10.88 9.00008L16.6133 3.28008C16.8644 3.02901 17.0054 2.68849 17.0054 2.33342C17.0054 1.97835 16.8644 1.63782 16.6133 1.38675C16.3622 1.13568 16.0217 0.994629 15.6666 0.994629C15.3116 0.994629 14.9711 1.13568 14.72 1.38675L8.99998 7.12008L3.27998 1.38675C3.02891 1.13568 2.68838 0.994629 2.33331 0.994629C1.97824 0.994629 1.63772 1.13568 1.38665 1.38675C1.13557 1.63782 0.994524 1.97835 0.994524 2.33342C0.994524 2.68849 1.13557 3.02901 1.38665 3.28008L7.11998 9.00008L1.38665 14.7201C1.26168 14.844 1.16248 14.9915 1.09479 15.154C1.0271 15.3165 0.992249 15.4907 0.992249 15.6667C0.992249 15.8428 1.0271 16.017 1.09479 16.1795C1.16248 16.342 1.26168 16.4895 1.38665 16.6134C1.5106 16.7384 1.65806 16.8376 1.82054 16.9053C1.98302 16.973 2.1573 17.0078 2.33331 17.0078C2.50933 17.0078 2.6836 16.973 2.84608 16.9053C3.00856 16.8376 3.15603 16.7384 3.27998 16.6134L8.99998 10.8801L14.72 16.6134C14.8439 16.7384 14.9914 16.8376 15.1539 16.9053C15.3164 16.973 15.4906 17.0078 15.6666 17.0078C15.8427 17.0078 16.0169 16.973 16.1794 16.9053C16.3419 16.8376 16.4894 16.7384 16.6133 16.6134C16.7383 16.4895 16.8375 16.342 16.9052 16.1795C16.9729 16.017 17.0077 15.8428 17.0077 15.6667C17.0077 15.4907 16.9729 15.3165 16.9052 15.154C16.8375 14.9915 16.7383 14.844 16.6133 14.7201L10.88 9.00008Z"
-        fill="#CCCCCC"
+        fill="currentColor"
       />
     </svg>
   );
@@ -14,7 +14,7 @@ function ApproveIcon() {
     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M18.9467 0.613148C18.8227 0.488176 18.6753 0.388984 18.5128 0.321292C18.3503 0.253601 18.176 0.21875 18 0.21875C17.824 0.21875 17.6497 0.253601 17.4872 0.321292C17.3248 0.388984 17.1773 0.488176 17.0533 0.613148L7.12002 10.5598L2.94668 6.37315C2.81799 6.24883 2.66606 6.15108 2.49959 6.08547C2.33312 6.01987 2.15535 5.98769 1.97644 5.99079C1.79754 5.99388 1.62099 6.03219 1.45689 6.10351C1.29278 6.17484 1.14433 6.27779 1.02001 6.40648C0.895696 6.53518 0.797944 6.6871 0.732339 6.85357C0.666734 7.02005 0.63456 7.19781 0.637655 7.37672C0.64075 7.55563 0.679054 7.73217 0.750379 7.89628C0.821703 8.06038 0.924652 8.20883 1.05335 8.33315L6.17335 13.4531C6.2973 13.5781 6.44477 13.6773 6.60725 13.745C6.76972 13.8127 6.944 13.8475 7.12002 13.8475C7.29603 13.8475 7.4703 13.8127 7.63278 13.745C7.79526 13.6773 7.94273 13.5781 8.06668 13.4531L18.9467 2.57315C19.082 2.44829 19.19 2.29676 19.2639 2.12809C19.3378 1.95942 19.3759 1.77728 19.3759 1.59315C19.3759 1.40901 19.3378 1.22687 19.2639 1.05821C19.19 0.88954 19.082 0.738004 18.9467 0.613148Z"
-        fill="black"
+        fill="currentColor"
       />
     </svg>
   );
@@ -69,11 +69,11 @@ function ImportantIconBrand() {
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8 14H40V30C40 32.2091 38.2091 34 36 34H12C9.79086 34 8 32.2091 8 30V14Z"
-        fill="black"
+        fill="currentColor"
         fillOpacity="0.2"
       />
-      <rect opacity="0.4" x="16" y="18" width="16" height="8" fill="black" stroke="black" />
-      <rect x="16" y="28" width="16" height="2" fill="black" stroke="black" />
+      <rect opacity="0.4" x="16" y="18" width="16" height="8" fill="black" stroke="currentColor" />
+      <rect x="16" y="28" width="16" height="2" fill="black" stroke="currentColor" />
     </svg>
   );
 }
@@ -81,34 +81,38 @@ function ImportantIconBrand() {
 function ImportantIconEngrave() {
   return (
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 16H38V32H10V16Z" fill="black" fillOpacity="0.2" />
-      <path d="M38 16H10V32H38M38 16V32M38 16V12M38 32V36" stroke="black" strokeLinecap="round" />
-      <rect x="14" y="19" width="2" height="2" fill="black" stroke="black" />
-      <rect x="14" y="23" width="2" height="2" fill="black" stroke="black" />
-      <rect x="14" y="27" width="2" height="2" fill="black" stroke="black" />
-      <rect x="18" y="19" width="2" height="2" fill="black" stroke="black" />
-      <rect x="18" y="23" width="2" height="2" fill="black" stroke="black" />
-      <rect x="18" y="27" width="2" height="2" fill="black" stroke="black" />
+      <path d="M10 16H38V32H10V16Z" fill="currentColor" fillOpacity="0.2" />
+      <path
+        d="M38 16H10V32H38M38 16V32M38 16V12M38 32V36"
+        stroke="currentColor"
+        strokeLinecap="round"
+      />
+      <rect x="14" y="19" width="2" height="2" fill="black" stroke="currentColor" />
+      <rect x="14" y="23" width="2" height="2" fill="black" stroke="currentColor" />
+      <rect x="14" y="27" width="2" height="2" fill="black" stroke="currentColor" />
+      <rect x="18" y="19" width="2" height="2" fill="black" stroke="currentColor" />
+      <rect x="18" y="23" width="2" height="2" fill="black" stroke="currentColor" />
+      <rect x="18" y="27" width="2" height="2" fill="black" stroke="currentColor" />
     </svg>
   );
 }
 function ImportantIconDetail() {
   return (
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="16" width="40" height="16" fill="black" fillOpacity="0.2" />
-      <path d="M4 16H44" stroke="black" />
+      <rect x="4" y="16" width="40" height="16" fill="currentColor" fillOpacity="0.2" />
+      <path d="M4 16H44" stroke="currentColor" />
       <path
         d="M5 18.5C5.27614 18.5 5.5 18.2761 5.5 18C5.5 17.7239 5.27614 17.5 5 17.5V18.5ZM7 17.5C6.72386 17.5 6.5 17.7239 6.5 18C6.5 18.2761 6.72386 18.5 7 18.5V17.5ZM9 18.5C9.27614 18.5 9.5 18.2761 9.5 18C9.5 17.7239 9.27614 17.5 9 17.5V18.5ZM11 17.5C10.7239 17.5 10.5 17.7239 10.5 18C10.5 18.2761 10.7239 18.5 11 18.5V17.5ZM13 18.5C13.2761 18.5 13.5 18.2761 13.5 18C13.5 17.7239 13.2761 17.5 13 17.5V18.5ZM15 17.5C14.7239 17.5 14.5 17.7239 14.5 18C14.5 18.2761 14.7239 18.5 15 18.5V17.5ZM17 18.5C17.2761 18.5 17.5 18.2761 17.5 18C17.5 17.7239 17.2761 17.5 17 17.5V18.5ZM19 17.5C18.7239 17.5 18.5 17.7239 18.5 18C18.5 18.2761 18.7239 18.5 19 18.5V17.5ZM21 18.5C21.2761 18.5 21.5 18.2761 21.5 18C21.5 17.7239 21.2761 17.5 21 17.5V18.5ZM23 17.5C22.7239 17.5 22.5 17.7239 22.5 18C22.5 18.2761 22.7239 18.5 23 18.5V17.5ZM25 18.5C25.2761 18.5 25.5 18.2761 25.5 18C25.5 17.7239 25.2761 17.5 25 17.5V18.5ZM27 17.5C26.7239 17.5 26.5 17.7239 26.5 18C26.5 18.2761 26.7239 18.5 27 18.5V17.5ZM29 18.5C29.2761 18.5 29.5 18.2761 29.5 18C29.5 17.7239 29.2761 17.5 29 17.5V18.5ZM31 17.5C30.7239 17.5 30.5 17.7239 30.5 18C30.5 18.2761 30.7239 18.5 31 18.5V17.5ZM33 18.5C33.2761 18.5 33.5 18.2761 33.5 18C33.5 17.7239 33.2761 17.5 33 17.5V18.5ZM35 17.5C34.7239 17.5 34.5 17.7239 34.5 18C34.5 18.2761 34.7239 18.5 35 18.5V17.5ZM37 18.5C37.2761 18.5 37.5 18.2761 37.5 18C37.5 17.7239 37.2761 17.5 37 17.5V18.5ZM39 17.5C38.7239 17.5 38.5 17.7239 38.5 18C38.5 18.2761 38.7239 18.5 39 18.5V17.5ZM41 18.5C41.2761 18.5 41.5 18.2761 41.5 18C41.5 17.7239 41.2761 17.5 41 17.5V18.5ZM43 17.5C42.7239 17.5 42.5 17.7239 42.5 18C42.5 18.2761 42.7239 18.5 43 18.5V17.5ZM4 18.5H5V17.5H4V18.5ZM7 18.5H9V17.5H7V18.5ZM11 18.5H13V17.5H11V18.5ZM15 18.5H17V17.5H15V18.5ZM19 18.5H21V17.5H19V18.5ZM23 18.5H25V17.5H23V18.5ZM27 18.5H29V17.5H27V18.5ZM31 18.5H33V17.5H31V18.5ZM35 18.5H37V17.5H35V18.5ZM39 18.5H41V17.5H39V18.5ZM43 18.5H44V17.5H43V18.5Z"
-        fill="black"
+        fill="currentColor"
         fillOpacity="0.4"
       />
       <path
         d="M5 30.5C5.27614 30.5 5.5 30.2761 5.5 30C5.5 29.7239 5.27614 29.5 5 29.5V30.5ZM7 29.5C6.72386 29.5 6.5 29.7239 6.5 30C6.5 30.2761 6.72386 30.5 7 30.5V29.5ZM9 30.5C9.27614 30.5 9.5 30.2761 9.5 30C9.5 29.7239 9.27614 29.5 9 29.5V30.5ZM11 29.5C10.7239 29.5 10.5 29.7239 10.5 30C10.5 30.2761 10.7239 30.5 11 30.5V29.5ZM13 30.5C13.2761 30.5 13.5 30.2761 13.5 30C13.5 29.7239 13.2761 29.5 13 29.5V30.5ZM15 29.5C14.7239 29.5 14.5 29.7239 14.5 30C14.5 30.2761 14.7239 30.5 15 30.5V29.5ZM17 30.5C17.2761 30.5 17.5 30.2761 17.5 30C17.5 29.7239 17.2761 29.5 17 29.5V30.5ZM19 29.5C18.7239 29.5 18.5 29.7239 18.5 30C18.5 30.2761 18.7239 30.5 19 30.5V29.5ZM21 30.5C21.2761 30.5 21.5 30.2761 21.5 30C21.5 29.7239 21.2761 29.5 21 29.5V30.5ZM23 29.5C22.7239 29.5 22.5 29.7239 22.5 30C22.5 30.2761 22.7239 30.5 23 30.5V29.5ZM25 30.5C25.2761 30.5 25.5 30.2761 25.5 30C25.5 29.7239 25.2761 29.5 25 29.5V30.5ZM27 29.5C26.7239 29.5 26.5 29.7239 26.5 30C26.5 30.2761 26.7239 30.5 27 30.5V29.5ZM29 30.5C29.2761 30.5 29.5 30.2761 29.5 30C29.5 29.7239 29.2761 29.5 29 29.5V30.5ZM31 29.5C30.7239 29.5 30.5 29.7239 30.5 30C30.5 30.2761 30.7239 30.5 31 30.5V29.5ZM33 30.5C33.2761 30.5 33.5 30.2761 33.5 30C33.5 29.7239 33.2761 29.5 33 29.5V30.5ZM35 29.5C34.7239 29.5 34.5 29.7239 34.5 30C34.5 30.2761 34.7239 30.5 35 30.5V29.5ZM37 30.5C37.2761 30.5 37.5 30.2761 37.5 30C37.5 29.7239 37.2761 29.5 37 29.5V30.5ZM39 29.5C38.7239 29.5 38.5 29.7239 38.5 30C38.5 30.2761 38.7239 30.5 39 30.5V29.5ZM41 30.5C41.2761 30.5 41.5 30.2761 41.5 30C41.5 29.7239 41.2761 29.5 41 29.5V30.5ZM43 29.5C42.7239 29.5 42.5 29.7239 42.5 30C42.5 30.2761 42.7239 30.5 43 30.5V29.5ZM4 30.5H5V29.5H4V30.5ZM7 30.5H9V29.5H7V30.5ZM11 30.5H13V29.5H11V30.5ZM15 30.5H17V29.5H15V30.5ZM19 30.5H21V29.5H19V30.5ZM23 30.5H25V29.5H23V30.5ZM27 30.5H29V29.5H27V30.5ZM31 30.5H33V29.5H31V30.5ZM35 30.5H37V29.5H35V30.5ZM39 30.5H41V29.5H39V30.5ZM43 30.5H44V29.5H43V30.5Z"
-        fill="black"
+        fill="currentColor"
         fillOpacity="0.4"
       />
-      <path d="M4 32H44" stroke="black" />
-      <rect x="16" y="22" width="16" height="4" fill="black" stroke="black" />
+      <path d="M4 32H44" stroke="currentColor" />
+      <rect x="16" y="22" width="16" height="4" fill="currentColor" stroke="currentColor" />
     </svg>
   );
 }
@@ -117,40 +121,40 @@ function ImportantIconReceipt() {
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M36 42V8L34 6L32 8L30 6L28 8L26 6L24 8L22 6L20 8L18 6L16 8L14 6L12 8V42L14 40L16 42L18 40L20 42L22 40L24 42L26 40L28 42L30 40L32 42L34 40L36 42Z"
-        fill="black"
+        fill="currentColor"
         fillOpacity="0.2"
-        stroke="black"
+        stroke="currentColor"
         strokeLinejoin="round"
       />
-      <path d="M16 28H19V36H16V28Z" fill="black" />
-      <path d="M27 28H29V36H27V28Z" fill="black" />
-      <path d="M31 28H32V36H31V28Z" fill="black" />
-      <path d="M21 28H22V36H21V28Z" fill="black" />
-      <path d="M24 28H25V36H24V28Z" fill="black" />
-      <path d="M16 28H19V36H16V28Z" stroke="black" />
-      <path d="M27 28H29V36H27V28Z" stroke="black" />
-      <path d="M31 28H32V36H31V28Z" stroke="black" />
-      <path d="M21 28H22V36H21V28Z" stroke="black" />
-      <path d="M24 28H25V36H24V28Z" stroke="black" />
+      <path d="M16 28H19V36H16V28Z" fill="currentColor" />
+      <path d="M27 28H29V36H27V28Z" fill="currentColor" />
+      <path d="M31 28H32V36H31V28Z" fill="currentColor" />
+      <path d="M21 28H22V36H21V28Z" fill="currentColor" />
+      <path d="M24 28H25V36H24V28Z" fill="currentColor" />
+      <path d="M16 28H19V36H16V28Z" stroke="currentColor" />
+      <path d="M27 28H29V36H27V28Z" stroke="currentColor" />
+      <path d="M31 28H32V36H31V28Z" stroke="currentColor" />
+      <path d="M21 28H22V36H21V28Z" stroke="currentColor" />
+      <path d="M24 28H25V36H24V28Z" stroke="currentColor" />
     </svg>
   );
 }
 function ImportantIconZipper() {
   return (
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="16" y="4" width="4" height="20" fill="black" fillOpacity="0.2" />
-      <rect x="24" y="4" width="4" height="20" fill="black" fillOpacity="0.2" />
-      <rect x="17" y="19" width="4" height="1" stroke="black" />
-      <rect x="23" y="16" width="4" height="1" stroke="black" />
-      <rect x="17" y="13" width="4" height="1" stroke="black" />
-      <rect x="23" y="10" width="4" height="1" stroke="black" />
+      <rect x="16" y="4" width="4" height="20" fill="currentColor" fillOpacity="0.2" />
+      <rect x="24" y="4" width="4" height="20" fill="currentColor" fillOpacity="0.2" />
+      <rect x="17" y="19" width="4" height="1" stroke="currentColor" />
+      <rect x="23" y="16" width="4" height="1" stroke="currentColor" />
+      <rect x="17" y="13" width="4" height="1" stroke="currentColor" />
+      <rect x="23" y="10" width="4" height="1" stroke="currentColor" />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M17.6213 38.4851C17.8439 39.3754 18.6438 40 19.5616 40L24.4384 40C25.3562 40 26.1561 39.3754 26.3787 38.4851L28.7575 28.9701C29.3886 26.4456 27.4792 24 24.8769 24L19.1231 24C16.5208 24 14.6114 26.4456 15.2425 28.9701L17.6213 38.4851Z"
-        fill="black"
+        fill="currentColor"
         fillOpacity="0.2"
-        stroke="black"
+        stroke="currentColor"
       />
     </svg>
   );
@@ -158,8 +162,8 @@ function ImportantIconZipper() {
 function ImportantIconPart() {
   return (
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="14" y="8" width="12" height="20" rx="6" stroke="black" strokeWidth="2" />
-      <rect x="20" y="20" width="12" height="20" rx="6" stroke="black" strokeWidth="2" />
+      <rect x="14" y="8" width="12" height="20" rx="6" stroke="currentColor" strokeWidth="2" />
+      <rect x="20" y="20" width="12" height="20" rx="6" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }

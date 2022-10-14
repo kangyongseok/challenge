@@ -3,7 +3,9 @@ import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 function LoginUserAgreement() {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
 
   return (
@@ -19,11 +21,7 @@ function LoginUserAgreement() {
         }
       }}
     >
-      <Typography
-        variant="small2"
-        weight="regular"
-        customStyle={{ color: palette.common.grey['60'] }}
-      >
+      <Typography variant="small2" weight="regular" customStyle={{ color: common.ui60 }}>
         가입/로그인은&nbsp;
         <Link href="/privacy">
           <a>개인정보보호정책</a>

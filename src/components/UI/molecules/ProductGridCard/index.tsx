@@ -261,7 +261,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {isWish ? (
               <Icon name="HeartFilled" color={secondary.red.main} />
             ) : (
-              <Icon name="HeartOutlined" color={common.white} />
+              <Icon name="HeartOutlined" color={common.uiWhite} />
             )}
           </WishButton>
         )}
@@ -332,16 +332,16 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           <MetaSocial>
             {wishCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="HeartOutlined" width={14} height={14} color={common.grey['60']} />
-                <Typography variant="small2" weight="medium" color={common.grey['60']}>
+                <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />
+                <Typography variant="small2" weight="medium" color={common.ui60}>
                   {wishCount}
                 </Typography>
               </Flexbox>
             )}
             {purchaseCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="MessageOutlined" width={14} height={14} color={common.grey['60']} />
-                <Typography variant="small2" weight="medium" color={common.grey['60']}>
+                <Icon name="MessageOutlined" width={14} height={14} color={common.ui60} />
+                <Typography variant="small2" weight="medium" color={common.ui60}>
                   {purchaseCount}
                 </Typography>
               </Flexbox>

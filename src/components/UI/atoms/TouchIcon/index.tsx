@@ -1,13 +1,12 @@
 import type { MouseEvent } from 'react';
 
-import type { CustomStyle } from 'mrcamel-ui/dist/types';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import type * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
+import type { CustomStyle, IconName } from 'mrcamel-ui';
 import { Icon } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 interface TouchIcon extends IconProps {
-  name: keyof typeof SvgIcons;
+  name: IconName;
   wrapCustomStyle?: CustomStyle;
   customStyle?: CustomStyle;
   direction?: 'right' | 'left';

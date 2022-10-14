@@ -759,7 +759,8 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       >
         <Tooltip
           open={hasBaseSearchParams && progressDone && !complete && step === 0}
-          brandColor="primary-highlight"
+          variant="ghost"
+          brandColor="primary"
           message={
             <Typography
               variant="body2"
@@ -790,7 +791,8 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       >
         <Tooltip
           open={hasBaseSearchParams && progressDone && !complete && step === 1}
-          brandColor="primary-highlight"
+          variant="ghost"
+          brandColor="primary"
           message={
             <Typography variant="body2" weight="medium" brandColor="primary">
               당근마켓 매물도 보고, 직거래 위주로 거래하신다면 클릭!
@@ -815,12 +817,13 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       >
         <Tooltip
           open={hasBaseSearchParams && progressDone && !complete && step === 2}
-          brandColor="primary-highlight"
           message={
             <Typography variant="body2" weight="medium" brandColor="primary">
               정가품이 궁금하다면 클릭!
             </Typography>
           }
+          variant="ghost"
+          brandColor="primary"
           placement="bottom"
           customStyle={step3TooltipCustomStyle}
         />
@@ -830,7 +833,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
         open={hasBaseSearchParams && progressDone && openMyFilterTooltip}
         message={
           <Flexbox gap={8} alignment="center">
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.white }}>
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
               {variant === 'search' ? '내 성별/사이즈만 보기' : '내 사이즈만 보기'}가 켜져 있어요!
             </Typography>
             <Typography
@@ -839,7 +842,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
               onClick={handleClickMyFilterInActiveTooltip}
               customStyle={{
                 textDecoration: 'underline',
-                color: common.white,
+                color: common.ui80,
                 cursor: 'pointer'
               }}
             >

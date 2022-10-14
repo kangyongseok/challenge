@@ -32,7 +32,7 @@ function OnBoardingSpotlight({
   const [targetWidth, setTargetWidth] = useState(0);
   const [targetHeight, setTargetHeight] = useState(0);
 
-  const [backdropOpen, setBackdropOpen] = useState<boolean>(false);
+  const [backdropOpen, setBackdropOpen] = useState(false);
 
   const backdropOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 

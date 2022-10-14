@@ -62,7 +62,7 @@ export function commaNumber(value: number | string) {
   return Number(value).toLocaleString();
 }
 
-export function convertNumberToCSSValue(value: CSSValue, unit?: string) {
+export function convertNumberToCSSValue(value: CSSValue | 'auto', unit?: string) {
   if (typeof value === 'number') {
     return `${value}${unit || 'px'}`;
   }
@@ -82,3 +82,20 @@ export const calculateExpectCountPerHour = (count: number) => {
     return 2;
   }
 };
+
+/**
+ * @name getFormattedActivatedTime
+ * @returns 24시간 전 까지는 현재 시간으로 부터 시간 표시, 이후 부터는 "x일 전 접속" 으로 표시
+ * @example 접속중, x시간 전 접속, x일 전 접속
+ */
+export function getFormattedActivatedTime(date: string | Date) {
+  const minuteDiff = dayjs().diff(dayjs(date), 'minute');
+  const hourDiff = dayjs().diff(dayjs(date), 'hour');
+  const daysDiff = dayjs().diff(dayjs(date), 'days');
+
+  if (minuteDiff < 11) return '접속중';
+
+  if (hourDiff < 24) return `${hourDiff + 1}시간 전 접속`;
+
+  return `${daysDiff}일 전 접속`;
+}

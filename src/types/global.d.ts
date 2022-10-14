@@ -18,6 +18,10 @@ export declare global {
     fbq: any;
     gtag: any;
     callSetLoginUser: any;
+    getPhotoGuide: any;
+    getPhotoGuideDone: any;
+    getLogEvent: any;
+    getCameraAuth: any;
   }
 
   namespace NodeJS {

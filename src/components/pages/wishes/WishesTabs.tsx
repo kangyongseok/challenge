@@ -2,7 +2,7 @@ import { MouseEvent, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Tabs } from '@components/UI/molecules';
@@ -128,7 +128,7 @@ function WishesTabs() {
           최근 본 매물로 이동하시겠어요?
         </Typography>
         <Flexbox gap={7} customStyle={{ marginTop: 20 }}>
-          <CtaButton
+          <Button
             fullWidth
             variant="ghost"
             brandColor="primary"
@@ -136,8 +136,8 @@ function WishesTabs() {
             customStyle={{ minWidth: 128 }}
           >
             취소
-          </CtaButton>
-          <CtaButton
+          </Button>
+          <Button
             fullWidth
             variant="contained"
             brandColor="primary"
@@ -145,7 +145,7 @@ function WishesTabs() {
             customStyle={{ minWidth: 128 }}
           >
             확인
-          </CtaButton>
+          </Button>
         </Flexbox>
       </Dialog>
     </>

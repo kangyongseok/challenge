@@ -27,7 +27,9 @@ interface HotBrandListProps {
 
 function HotBrandList({ onClick, checkList }: HotBrandListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const { data: brands, isLoading } = useQuery<Brand[], Error>(
     queryKeys.brands.hotBrands(),
@@ -64,7 +66,7 @@ function HotBrandList({ onClick, checkList }: HotBrandListProps) {
           >
             {find(checkList, { name }) && (
               <CircleChecked>
-                <Icon name="CheckOutlined" width={100} height={50} color={palette.common.white} />
+                <Icon name="CheckOutlined" width={100} height={50} color={common.uiWhite} />
               </CircleChecked>
             )}
             <Image

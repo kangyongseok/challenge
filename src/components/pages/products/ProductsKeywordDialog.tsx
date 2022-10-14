@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -68,7 +68,7 @@ function ProductsKeywordDialog() {
         목록 저장하면 꿀매물 찾아드릴게요!
       </Typography>
       <Flexbox gap={7} customStyle={{ marginTop: 20 }}>
-        <CtaButton
+        <Button
           fullWidth
           variant="ghost"
           brandColor="primary"
@@ -76,8 +76,8 @@ function ProductsKeywordDialog() {
           customStyle={{ width: 128 }}
         >
           닫기
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           fullWidth
           variant="contained"
           brandColor="primary"
@@ -85,7 +85,7 @@ function ProductsKeywordDialog() {
           customStyle={{ width: 128 }}
         >
           목록 저장하기
-        </CtaButton>
+        </Button>
       </Flexbox>
     </Dialog>
   );

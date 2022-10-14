@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
-import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
+import { ProductWishesCard, ProductWishesCardSkeleton } from '@components/UI/molecules';
 import Skeleton from '@components/UI/atoms/Skeleton';
 
 import type { CategoryValue } from '@dto/category';
@@ -13,7 +14,7 @@ import type { CategoryValue } from '@dto/category';
 import { logEvent } from '@library/amplitude';
 
 import { postManage } from '@api/userHistory';
-import { fetchCategoryWishes } from '@api/user';
+import { deleteWishSoldout, fetchCategoryWishes, postProductsAdd } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
@@ -22,6 +23,12 @@ import attrKeys from '@constants/attrKeys';
 
 import { convertStringToArray } from '@utils/common';
 
+import {
+  openDeleteToastState,
+  openRollbackToastState,
+  openSoldoutDialogState,
+  removeIdState
+} from '@recoil/wishes';
 import { deviceIdState, showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -31,11 +38,21 @@ import WishesFilter from './WishesFilter';
 import WishesCategories from './WishesCategories';
 
 function WishesPanel() {
+  const {
+    theme: {
+      box,
+      palette: { common }
+    }
+  } = useTheme();
   const router = useRouter();
   const { order = 'updatedDesc', hiddenTab }: { order?: OrderOptionKeys; hiddenTab?: string } =
     router.query;
   const deviceId = useRecoilValue(deviceIdState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const [openSoldout, setOpenSoldout] = useRecoilState(openSoldoutDialogState);
+  const [deleteToast, setDeleteToast] = useRecoilState(openDeleteToastState);
+  const [rollbackToast, setRollbackToast] = useRecoilState(openRollbackToastState);
+  const removeId = useRecoilValue(removeIdState);
 
   const productRefs = useRef<HTMLDivElement[]>([]);
 
@@ -51,7 +68,7 @@ function WishesPanel() {
   const queryClient = useQueryClient();
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data, refetch, isLoading, isFetchedAfterMount } = useQuery(
+  const { data, isLoading, isFetchedAfterMount, refetch } = useQuery(
     queryKeys.users.categoryWishes(categoryWishesParam),
     () => fetchCategoryWishes(categoryWishesParam),
     {
@@ -64,6 +81,13 @@ function WishesPanel() {
   const { mutate } = useMutation(postManage, {
     onSuccess: () => queryClient.invalidateQueries(queryKeys.users.userInfo())
   });
+  const { mutate: deleteMutate } = useMutation(deleteWishSoldout, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.users.categoryWishes(categoryWishesParam));
+      setOpenSoldout(false);
+    }
+  });
+  const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd);
 
   const userWishes = useMemo(() => {
     if (!data) return [];
@@ -169,6 +193,41 @@ function WishesPanel() {
     }
   }, [router, isFetchedAfterMount, data, showAppDownloadBanner]);
 
+  const handleClickDeleteCancel = () => {
+    logEvent(attrKeys.wishes.CLICK_CLOSE, {
+      name: attrProperty.name.deleteSoldoutPopup
+    });
+
+    setOpenSoldout(false);
+  };
+
+  const handleClickDelete = () => {
+    logEvent(attrKeys.wishes.CLICK_DELETESOLDOUT, {
+      name: attrProperty.name.deleteSoldoutPopup
+    });
+
+    deleteMutate();
+  };
+
+  const handleClickRollback = () => {
+    logEvent(attrKeys.wishes.CLICK_UNDO, {
+      name: attrProperty.name.wishList,
+      title: attrProperty.title.wishCamel,
+      id: removeId
+    });
+
+    mutatePostProductsAdd(
+      { productId: removeId, deviceId },
+      {
+        onSuccess() {
+          setRollbackToast(true);
+          setDeleteToast(false);
+          refetch();
+        }
+      }
+    );
+  };
+
   if (isLoading) {
     return (
       <>
@@ -177,29 +236,36 @@ function WishesPanel() {
             width="45px"
             height="30px"
             disableAspectRatio
-            customStyle={{ borderRadius: 4 }}
+            customStyle={{ borderRadius: box.round['24'] }}
           />
           <Skeleton
             width="45px"
             height="30px"
             disableAspectRatio
-            customStyle={{ borderRadius: 4 }}
+            customStyle={{ borderRadius: box.round['24'] }}
           />
           <Skeleton
             width="45px"
             height="30px"
             disableAspectRatio
-            customStyle={{ borderRadius: 4 }}
+            customStyle={{ borderRadius: box.round['24'] }}
           />
         </Flexbox>
-        <Flexbox justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
-          <Skeleton width="30px" height="18px" disableAspectRatio isRound />
-          <Skeleton width="50px" height="18px" disableAspectRatio isRound />
+        <Flexbox customStyle={{ marginBottom: 16 }} gap={4}>
+          <Skeleton
+            width="50px"
+            height="30px"
+            disableAspectRatio
+            isRound
+            customStyle={{ marginRight: 'auto' }}
+          />
+          <Skeleton width="50px" height="30px" disableAspectRatio isRound />
+          <Skeleton width="50px" height="30px" disableAspectRatio isRound />
         </Flexbox>
         <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 20 }}>
           {Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`wish-product-card-skeleton-${index}`} isRound />
+            <ProductWishesCardSkeleton key={`wish-product-card-skeleton-${index}`} isRound />
           ))}
         </Flexbox>
       </>
@@ -209,19 +275,24 @@ function WishesPanel() {
   if (!data || !accessUser) {
     return (
       <WishesNotice
-        icon="❤"
+        imgName="wishes_login_img"
         moveTo="/login"
         message={
           <>
-            로그인하고
-            <br />
-            똑똑하게 득템하세요!
+            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
+              찜❤️이 보이지않나요?
+            </Typography>
+            <Typography>
+              카멜에 로그인하고
+              <br />
+              똑똑하게 득템하세요 😘
+            </Typography>
           </>
         }
         buttonLabel="3초 로그인하기"
         onClickLog={() => {
           logEvent(attrKeys.wishes.CLICK_LOGIN, {
-            name: 'WISH_LIST'
+            name: attrProperty.name.wishList
           });
         }}
       />
@@ -231,26 +302,24 @@ function WishesPanel() {
   if (data.userWishes.length === 0) {
     return (
       <WishesNotice
-        icon="❤"
+        imgName="wishes_empty_img"
         moveTo="/search"
         message={
           <>
-            마음에 드는 명품을 찜해보세요
-            <Typography
-              customStyle={{
-                paddingTop: 8
-              }}
-            >
+            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
+              찜해보세요!
+            </Typography>
+            <Typography>
               내 취향 매물, 빠르게 다시 찾고 싶다면
               <br />
-              하트를 눌러 명품을 저장해보세요
+              하트를 눌러 명품을 저장해보세요😘
             </Typography>
           </>
         }
         buttonLabel="매물검색 하러가기"
         onClickLog={() => {
           logEvent(attrKeys.wishes.CLICK_SEARCHMODAL, {
-            name: 'WISH_LIST',
+            name: attrProperty.name.wishList,
             att: 'CONTENT'
           });
         }}
@@ -269,23 +338,24 @@ function WishesPanel() {
       {data && (
         <Box
           customStyle={{
-            margin: hiddenTab ? '20px 0 12px 0' : '67px 0 12px 0'
+            margin: hiddenTab ? '20px 0 12px 0' : '81px 0 12px 0'
           }}
         >
           <WishesFilter order={order} userWishCount={userWishCount} />
           <Flexbox direction="vertical" gap={20}>
             {userWishes.map((wishItem, index) => (
-              <ProductListCard
+              <ProductWishesCard
+                data-id={wishItem.product.id}
                 key={`wish-product-card-${wishItem.product.id}`}
+                product={wishItem.product}
+                name={attrProperty.productName.WISH_LIST}
+                source={attrProperty.productSource.WISH_LIST}
+                onWishAfterChangeCallback={refetch}
                 ref={(ref) => {
                   if (ref) {
                     productRefs.current[index] = ref;
                   }
                 }}
-                product={wishItem.product}
-                hideMetaSocialInfo={false}
-                hideAlert={false}
-                name={attrProperty.productName.WISH_LIST}
                 productAtt={{
                   name: attrProperty.productName.WISH_LIST,
                   index: index + 1,
@@ -304,17 +374,74 @@ function WishesPanel() {
                   scorePriceRate: wishItem.product.scorePriceRate,
                   source: attrProperty.productSource.WISH_LIST
                 }}
-                source={attrProperty.productSource.WISH_LIST}
-                onWishAfterChangeCallback={refetch}
-                data-id={wishItem.product.id}
-                isRound
               />
             ))}
           </Flexbox>
         </Box>
       )}
+      <Dialog
+        open={openSoldout}
+        onClose={() => {
+          setOpenSoldout(false);
+        }}
+        customStyle={{ padding: 20, width: 300 }}
+      >
+        <Typography weight="medium" customStyle={{ marginBottom: 20, textAlign: 'center' }}>
+          판매가 완료된 매물을
+          <br />
+          삭제하시겠습니까?
+        </Typography>
+        <Flexbox alignment="center" gap={7}>
+          <Button
+            size="large"
+            fullWidth
+            variant="ghost"
+            brandColor="primary"
+            onClick={handleClickDeleteCancel}
+          >
+            취소
+          </Button>
+          <Button
+            size="large"
+            fullWidth
+            variant="contained"
+            brandColor="primary"
+            onClick={handleClickDelete}
+          >
+            확인
+          </Button>
+        </Flexbox>
+      </Dialog>
+      <Toast open={deleteToast} onClose={() => setDeleteToast(false)} autoHideDuration={4000}>
+        <Flexbox justifyContent="space-between" alignment="center" gap={8}>
+          <Typography
+            weight="medium"
+            customStyle={{ flexGrow: 1, color: common.uiWhite, textAlign: 'left' }}
+          >
+            찜 목록에서 삭제했어요.
+          </Typography>
+          <RollbackButton variant="contained" onClick={handleClickRollback}>
+            되돌리기
+          </RollbackButton>
+        </Flexbox>
+      </Toast>
+      <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
+        삭제한 찜 목록을 다시 저장했어요.
+      </Toast>
     </>
   );
 }
+
+const RollbackButton = styled(Button)`
+  background: none;
+  padding: 0;
+  height: auto;
+  text-decoration: underline;
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui80};
+`;
 
 export default WishesPanel;

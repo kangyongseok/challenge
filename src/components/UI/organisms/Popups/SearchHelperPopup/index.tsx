@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -176,7 +176,7 @@ function SearchHelperPopup({ type = 'continue' }: SearchHelperPopupProps) {
         dangerouslySetInnerHTML={{ __html: TITLE[type] }}
       />
       <Flexbox gap={7}>
-        <CtaButton
+        <Button
           variant="ghost"
           brandColor="black"
           size="medium"
@@ -184,8 +184,8 @@ function SearchHelperPopup({ type = 'continue' }: SearchHelperPopupProps) {
           onClick={handleClickBreak}
         >
           {BREAK_BUTTON[type]}
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           variant="contained"
           brandColor="primary"
           size="medium"
@@ -193,7 +193,7 @@ function SearchHelperPopup({ type = 'continue' }: SearchHelperPopupProps) {
           onClick={handleClickContinue}
         >
           이어서 할래요
-        </CtaButton>
+        </Button>
       </Flexbox>
     </Dialog>
   );

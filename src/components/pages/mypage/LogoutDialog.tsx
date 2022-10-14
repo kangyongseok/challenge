@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { CtaButton, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -42,7 +42,7 @@ function LogoutDialog({ status, setLogoutToggle }: LogoutProps) {
         그래도 로그아웃 하시겠어요?
       </Typography>
       <ButtonArea alignment="center" gap={10}>
-        <CtaButton
+        <Button
           fullWidth
           variant="ghost"
           brandColor="primary"
@@ -50,8 +50,8 @@ function LogoutDialog({ status, setLogoutToggle }: LogoutProps) {
           onClick={handleLogout}
         >
           로그아웃
-        </CtaButton>
-        <CtaButton
+        </Button>
+        <Button
           fullWidth
           variant="contained"
           brandColor="primary"
@@ -59,7 +59,7 @@ function LogoutDialog({ status, setLogoutToggle }: LogoutProps) {
           onClick={handleMaintainLogin}
         >
           로그인 유지
-        </CtaButton>
+        </Button>
       </ButtonArea>
     </Dialog>
   );

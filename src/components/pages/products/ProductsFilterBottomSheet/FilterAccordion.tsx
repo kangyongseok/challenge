@@ -59,7 +59,11 @@ const Content = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 16px 20px;
-  background-color: ${({ theme: { palette } }) => palette.common.grey['98']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui98};
 `;
 
 export default FilterAccordion;

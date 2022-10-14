@@ -48,7 +48,11 @@ const StyledFilterOptionNavigation = styled.aside`
   margin-bottom: 20px;
   padding: 4px 0;
   border-radius: 8px 8px 0 0;
-  background-color: ${({ theme: { palette } }) => palette.common.grey['95']};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
   overflow-y: auto;
 
   & > span:after {
@@ -58,7 +62,11 @@ const StyledFilterOptionNavigation = styled.aside`
     height: 1.5px;
     margin: 6px auto;
     border-radius: 50%;
-    background-color: ${({ theme: { palette } }) => palette.common.grey['40']};
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui60};
   }
   & > span:last-child:after {
     display: none;
@@ -79,7 +87,7 @@ const NavigationItem = styled.span`
     fontWeight: weight.regular,
     lineHeight,
     letterSpacing,
-    color: common.grey['40']
+    color: common.ui60
   })};
 `;
 

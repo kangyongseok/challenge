@@ -1,20 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
-import { Dialog, Icon, useTheme } from 'mrcamel-ui';
+import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import ProductLegitLabel from '@components/UI/atoms/ProductLegitLabel';
 
 interface ImageDetailDialogProps {
   open: boolean;
   onChange?: (swiper: SwiperClass) => void;
   onClose: () => void;
   images: string[];
-  legitResult?: 0 | 1 | 2 | 3;
+  label?: ReactElement;
   syncIndex?: number;
 }
 
@@ -23,16 +21,15 @@ function ImageDetailDialog({
   onChange,
   onClose,
   images = [],
-  legitResult,
-  syncIndex
+  label,
+  syncIndex = 0
 }: ImageDetailDialogProps) {
   const {
     theme: {
-      palette: { common },
       zIndex: { button }
     }
   } = useTheme();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(syncIndex);
   const [currentScale, setCurrentScale] = useState(1);
   const [shortSwipes, setShortSwipes] = useState(true);
   const [followFinger, setFollowFinger] = useState(true);
@@ -83,47 +80,28 @@ function ImageDetailDialog({
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: common.black,
+        backgroundColor: light.palette.common.uiBlack,
         border: 'none'
       }}
     >
-      {legitResult === 1 && (
-        <ProductLegitLabel
-          variant="authentic"
-          text="정품의견"
+      {label && (
+        <Box
           customStyle={{
             position: 'absolute',
             top: 20,
             left: 20,
             zIndex: button
           }}
-        />
+        >
+          {label}
+        </Box>
       )}
-      {legitResult === 2 && (
-        <ProductLegitLabel
-          variant="fake"
-          text="가품의견"
-          customStyle={{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            zIndex: button
-          }}
-        />
-      )}
-      {legitResult === 3 && (
-        <ProductLegitLabel
-          variant="impossible"
-          text="감정불가"
-          customStyle={{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            zIndex: button
-          }}
-        />
-      )}
-      <CloseIcon name="CloseOutlined" color="white" onClick={onClose} />
+      <CloseIcon
+        name="CloseOutlined"
+        color="white"
+        onClick={onClose}
+        customStyle={{ cursor: 'pointer' }}
+      />
       <Swiper
         nested
         shortSwipes={shortSwipes}
@@ -167,7 +145,7 @@ function ImageDetailDialog({
         ))}
       </Swiper>
       <Pagination>
-        {typeof syncIndex === 'number' ? syncIndex + 1 : currentIndex + 1}/{images.length}
+        {currentIndex + 1}/{images.length}
       </Pagination>
     </Dialog>
   );

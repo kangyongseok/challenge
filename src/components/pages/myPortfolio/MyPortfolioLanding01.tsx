@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, CtaButton, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -41,7 +41,9 @@ function MyPortfolioLanding01({
   onClickNext: () => void;
 }) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
   const { data: userInfo, isSuccess } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
@@ -71,7 +73,7 @@ function MyPortfolioLanding01({
             name="LogoText_96_20"
             width={72}
             height={15}
-            customStyle={{ color: palette.common.white }}
+            customStyle={{ color: common.cmnW }}
             onClick={() => router.replace('/')}
           />
           <GradationText />
@@ -96,10 +98,10 @@ function MyPortfolioLanding01({
             </SwiperSlide>
           ))}
         </Swiper>
-        <Typography weight="bold" variant="h2" customStyle={{ color: palette.common.white }}>
+        <Typography weight="bold" variant="h2" customStyle={{ color: common.cmnW }}>
           지금 팔면 얼마일까?
         </Typography>
-        <Typography variant="h4" customStyle={{ color: palette.common.grey['80'], marginTop: 8 }}>
+        <Typography variant="h4" customStyle={{ color: common.ui80, marginTop: 8 }}>
           내 명품의 시세정보, 이제 카멜이 알려드려요!
         </Typography>
       </Flexbox>
@@ -146,10 +148,10 @@ function MyPortfolioLanding01({
           customStyle={{ flexDirection: 'column' }}
           fullWidth
         >
-          <Typography weight="bold" variant="h3" customStyle={{ color: palette.common.white }}>
+          <Typography weight="bold" variant="h3" customStyle={{ color: common.cmnW }}>
             <Icon name="AlarmFilled" /> 오픈 알림 받기
           </Typography>
-          <Typography variant="small1" customStyle={{ color: palette.common.white }}>
+          <Typography variant="small1" customStyle={{ color: common.cmnW }}>
             내 명품의 가치를 가장 먼저 확인하세요
           </Typography>
         </RevervationCtaButton>
@@ -175,11 +177,10 @@ function MyPortfolioLanding01({
   );
 }
 
-const RevervationCtaButton = styled(CtaButton)`
+const RevervationCtaButton = styled(Button)`
   background: linear-gradient(90deg, #334bff 0%, #8133ff 100%);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  color: ${({ theme: { palette } }) => palette.common.white};
   margin-top: auto;
   height: 72px;
 `;
@@ -227,8 +228,18 @@ const BottomFixComponent = styled.div`
 const NextArrowIcon = styled.div`
   width: 15px;
   height: 15px;
-  border-bottom: 3px solid ${({ theme: { palette } }) => palette.common.white};
-  border-right: 3px solid ${({ theme: { palette } }) => palette.common.white};
+  border-bottom: 3px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiWhite};
+  border-right: 3px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiWhite};
   transform: rotate(45deg);
   margin-left: -20px;
 `;

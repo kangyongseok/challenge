@@ -62,7 +62,9 @@ function CrazycurationMultiList({
   handleClickWishButtonEvent
 }: CrazycurationMultiListProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
   const router = useRouter();
 
@@ -161,7 +163,7 @@ function CrazycurationMultiList({
                       compact
                       isRound
                       customStyle={{ marginBottom: 'auto' }}
-                      titlePriceStyle={{ color: palette.common.black, opacity: 0.8 }}
+                      titlePriceStyle={{ color: common.uiBlack, opacity: 0.8 }}
                       todayWishViewLabelCustomStyle={todayWishViewLabelCustomStyle}
                       areaWithDateInfoCustomStyle={areaWithDateInfoCustomStyle}
                       metaCamelInfoCustomStyle={metaCamelInfoCustomStyle}
@@ -196,7 +198,11 @@ const SubTitle = styled(Typography)<{ highlightColor?: string }>`
   font-size: 32px;
   line-height: 42px;
   letter-spacing: -0.01em;
-  color: ${({ theme }) => theme.palette.common.black};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
 
   & > b {
     color: ${({ highlightColor }) => highlightColor};
@@ -216,7 +222,11 @@ const MainTitle = styled(Typography)`
   left: 16px;
   z-index: 1;
   font-weight: 900;
-  color: ${({ theme }) => theme.palette.common.black};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
 `;
 
 const MainImage = styled.div<{ imageUrl: string; customStyle?: CustomStyle }>`
@@ -232,7 +242,11 @@ const MainImage = styled.div<{ imageUrl: string; customStyle?: CustomStyle }>`
 `;
 
 const CustomButton = styled(Button)<{ buttonColor?: string }>`
-  color: ${({ theme }) => theme.palette.common.white};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   background-color: ${({ buttonColor }) => buttonColor};
   padding: 14px 0;
   border: none;

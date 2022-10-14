@@ -29,7 +29,7 @@ function FilterOption({
 
   return (
     <StyledFilterOption {...props}>
-      <Icon name="CheckOutlined" size="small" color={checked ? primary.main : common.grey['80']} />
+      <Icon name="CheckOutlined" size="small" color={checked ? primary.main : common.ui80} />
       {avatarSrc && (
         <Avatar
           width={20}
@@ -37,7 +37,6 @@ function FilterOption({
           src={avatarSrc}
           customStyle={{
             border: checked ? `1px solid ${primary.main}` : undefined,
-            // TODO: Avatar 컴포넌트 스펙으로 추가
             boxShadow: shadow.platformLogo
           }}
           round="4"
@@ -49,7 +48,7 @@ function FilterOption({
       <Typography
         weight="medium"
         customStyle={{
-          color: checked ? primary.main : common.grey['20']
+          color: checked ? primary.main : common.ui20
         }}
       >
         {children}
@@ -57,7 +56,7 @@ function FilterOption({
       <Typography
         variant="small2"
         customStyle={{
-          color: common.grey['60']
+          color: common.ui60
         }}
       >
         {count.toLocaleString()}
@@ -79,7 +78,12 @@ const ColorSample = styled.div<{
 }>`
   width: 20px;
   height: 20px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['90']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: 50%;
   background-color: ${({ colorCode }) => colorCode};
 `;
@@ -89,7 +93,12 @@ const ColorImageSample = styled.div<{
 }>`
   width: 20px;
   height: 20px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.grey['90']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui90};
   border-radius: 50%;
   background-size: ${({ colorImageInfo: { size } }) => size}px;
   background-image: url('https://${process.env

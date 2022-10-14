@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Label, Switch, Toast, Typography, useTheme } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
@@ -9,9 +8,6 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -27,6 +23,7 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface MyFilterInfoProps {
@@ -69,9 +66,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
       info: { value: { gender = '' } = {} } = {},
       size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
     } = {}
-  } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-    enabled: !!accessUser
-  });
+  } = useQueryUserInfo();
 
   const title = useMemo(
     () => (variant === 'search' ? '내 성별/사이즈만 보기' : '내 사이즈만 보기'),
@@ -233,7 +228,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
       >
         <Flexbox direction="vertical" gap={4}>
           <Typography weight="medium">{title}</Typography>
-          <Typography variant="body2" customStyle={{ color: common.grey['40'] }}>
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
             마이페이지에서 수정할 수 있어요
           </Typography>
         </Flexbox>
@@ -274,15 +269,13 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
         )}
       </Options>
       <Toast open={open} onClose={() => setOpen(false)}>
-        <Typography customStyle={{ color: common.white }}>
-          필터 설정에 일치하는 중고매물이 없습니다😭
-        </Typography>
+        필터 설정에 일치하는 중고매물이 없습니다😭
       </Toast>
       <Toast open={activeToastOpen} onClose={() => setActiveToastOpen(false)}>
-        <Typography customStyle={{ color: common.white }}>{`${title}를 적용했어요!`}</Typography>
+        {`${title}를 적용했어요!`}
       </Toast>
       <Toast open={inactiveToastOpen} onClose={() => setInActiveToastOpen(false)}>
-        <Typography customStyle={{ color: common.white }}>{`${title}를 해제했어요!`}</Typography>
+        {`${title}를 해제했어요!`}
       </Toast>
     </Box>
   );

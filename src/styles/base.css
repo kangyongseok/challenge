@@ -41,6 +41,14 @@
   src: url('./fonts/CamelProductSans-Thin.woff2') format('woff2')
 }
 
+body.legit-light {
+  background-color: #F5F6F7;
+}
+
+body.legit-dark {
+  background-color: #111214;
+}
+
 #__next{
   height: 100%;
 }

@@ -14,13 +14,17 @@ import type {
   ProductKeywords,
   ProductsAddParams,
   ProductsRemoveParams,
+  PutUserLegitProfileData,
+  SellerRole,
   SizeMapping,
   SizeResult,
   UserHistoryManages,
   UserInfo,
+  UserProductsParams,
+  UserRoleLegit,
   UserSizeSuggestParams
 } from '@dto/user';
-import type { PageProductLegit, Product, ProductResult } from '@dto/product';
+import type { PageProduct, ProductResult } from '@dto/product';
 
 import Axios from '@library/axios';
 
@@ -175,13 +179,7 @@ export async function postPreReserve(params: { phone?: string }) {
 }
 
 export async function fetchUserLegitTargets() {
-  const { data } = await Axios.getInstance().get<Product[]>(`${BASE_PATH}/legitTargets`);
-
-  return data;
-}
-
-export async function fetchUserLegitProducts() {
-  const { data } = await Axios.getInstance().get<PageProductLegit>(`${BASE_PATH}/legitProducts`);
+  const { data } = await Axios.getInstance().get<ProductResult[]>(`${BASE_PATH}/legitTargets`);
 
   return data;
 }
@@ -202,4 +200,34 @@ export async function fetchProductKeywordProducts(id: number) {
   );
 
   return data;
+}
+
+export async function fetchUserProducts(params: UserProductsParams) {
+  const { data } = await Axios.getInstance().get<PageProduct>(`${BASE_PATH}/products`, {
+    params
+  });
+
+  return data;
+}
+
+export async function fetchLegitProfile(userId: number) {
+  const { data } = await Axios.getInstance().get<{
+    profile: UserRoleLegit;
+    roleSeller: SellerRole;
+    cntOpinion: number;
+  }>(`${BASE_PATH}/${userId}/legit/profile`);
+
+  return data;
+}
+
+export async function putLegitProfile({ userId, ...data }: PutUserLegitProfileData) {
+  const { data: responseData } = await Axios.getInstance().put<{
+    id: number;
+  }>(`${BASE_PATH}/${userId}/legit/profile`, data);
+
+  return responseData;
+}
+
+export async function deleteWishSoldout() {
+  await Axios.getInstance().delete(`${BASE_PATH}/wishes/undisplayed`);
 }

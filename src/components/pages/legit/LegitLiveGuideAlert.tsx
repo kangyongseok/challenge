@@ -35,7 +35,7 @@ function LegitLiveGuideAlert({
   };
 
   return (
-    <StyledAuthLiveGuideAlert brandColor="grey" round="8" css={customStyle} onClick={handleClick}>
+    <StyledAuthLiveGuideAlert brandColor="gray" round="8" css={customStyle} onClick={handleClick}>
       <Flexbox alignment="center" justifyContent="space-between" gap={10}>
         <AlertMessage gap={4} alignment="center">
           <CommentIcon />
@@ -64,7 +64,7 @@ const StyledAuthLiveGuideAlert = styled(Alert)`
     theme: {
       palette: { common }
     }
-  }) => common.grey['90']};
+  }) => common.ui90};
   cursor: pointer;
 `;
 
