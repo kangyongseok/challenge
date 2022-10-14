@@ -286,11 +286,14 @@ function LegitStatusCardHolder({
                 ))}
               </Swiper>
             </Box>
-            <Typography customStyle={{ marginTop: 32, textAlign: 'center', color: common.cmnW }}>
+            <Typography
+              variant="h4"
+              customStyle={{ marginTop: 32, textAlign: 'center', color: common.cmnW }}
+            >
               {postType === 2 ? quoteTitle : productTitle}
             </Typography>
             {postType === 2 ? (
-              <Typography variant="body2" customStyle={{ marginTop: 4, color: common.ui60 }}>
+              <Typography variant="body2" customStyle={{ marginTop: 4, color: common.ui80 }}>
                 신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>
             ) : (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import type { Swiper } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Grid, Label } from 'mrcamel-ui';
@@ -58,6 +59,16 @@ function LegitResultRequestInfo() {
     setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
   };
 
+  const handleChange = ({ activeIndex }: Swiper) => {
+    const findPhotoGuideDetail = (photoGuideDetails || []).find(
+      (_, index) => index === activeIndex
+    );
+
+    if (!findPhotoGuideDetail) return;
+
+    setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
+  };
+
   if (!productLegit) return null;
 
   if (status === 20 && postType === 2) {
@@ -95,6 +106,7 @@ function LegitResultRequestInfo() {
         </LegitUploadInfoPaper>
         <ImageDetailDialog
           open={open}
+          onChange={handleChange}
           onClose={() => setOpen(false)}
           images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
           label={<Label variant="ghost" brandColor="black" text={labelText} />}

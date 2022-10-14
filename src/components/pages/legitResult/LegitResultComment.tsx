@@ -227,15 +227,12 @@ function LegitResultComment({
             </Typography>
           </Flexbox>
         </Flexbox>
-        <Typography customStyle={{ marginTop: 10, color: common.ui60 }}>
-          {description.split('\n').map((content, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={`legit-result-comment-description-${index}`}>
-              {content}
-              <br />
-            </span>
-          ))}
-        </Typography>
+        <Typography
+          dangerouslySetInnerHTML={{
+            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+          }}
+          customStyle={{ marginTop: 10, color: common.ui60 }}
+        />
         {open && (
           // TODO 추후 컴포넌트화
           <ReplyWriter>

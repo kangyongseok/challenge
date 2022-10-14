@@ -19,7 +19,7 @@ import {
 
 import Initializer from '@library/initializer';
 
-import { fetchUserLegitTargets } from '@api/user';
+import { fetchUserInfo, fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -81,6 +81,19 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets);
+
+    const userInfo = await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+
+    const hasRole = userInfo.roles.some((role) => (role as string).indexOf('PRODUCT_LEGIT') >= 0);
+
+    if (hasRole) {
+      return {
+        redirect: {
+          destination: '/legit/admin',
+          permanent: false
+        }
+      };
+    }
   }
 
   const dehydratedState: DehydratedState = dehydrate(queryClient);

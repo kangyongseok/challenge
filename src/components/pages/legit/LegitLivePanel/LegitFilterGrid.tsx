@@ -179,7 +179,6 @@ function LegitFilterGrid() {
           : legitProducts.map((productLegit) => (
               <Grid key={`legit-${productLegit.productId}`} item xs={2}>
                 <LegitCard
-                  hidePrice
                   productLegit={productLegit}
                   onClick={handleClickCard({ product: productLegit.productResult })}
                 />

@@ -77,7 +77,6 @@ function HomeLegitLive() {
                   <LegitCard
                     variant="list"
                     productLegit={productLegit}
-                    hidePlatformLogoWithPrice
                     data-product-id={productLegit.productId}
                     onClick={handleClick}
                   />

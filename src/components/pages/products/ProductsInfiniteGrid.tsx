@@ -196,10 +196,22 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
     return allowPathNames.includes(router.pathname);
   }, [router.pathname]);
 
-  const products = useMemo(
-    () => groupingProducts(pages.map(({ page: { content } }) => content).flat()),
-    [pages]
-  );
+  const products = useMemo(() => {
+    const newProducts = pages
+      .map(({ page }) => {
+        if (page && page.content) {
+          return page.content;
+        }
+        return null;
+      })
+      .flat()
+      .filter((product) => product);
+
+    if (newProducts.length) {
+      return groupingProducts(newProducts as Product[]);
+    }
+    return [];
+  }, [pages]);
 
   const loadMoreRows = async () => {
     if (!hasNextPage || isFetchingNextPage) return;

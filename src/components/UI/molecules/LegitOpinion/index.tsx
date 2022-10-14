@@ -48,15 +48,21 @@ function LegitOpinion({
           {result === 2 && <LegitLabel variant="fake" text="가품의심" />}
           {result !== 1 && result !== 2 && <LegitLabel variant="impossible" text="감정불가" />}
         </Flexbox>
-        <Typography variant="body2" customStyle={{ marginTop: 4, color: common.ui60 }}>
-          {title}
-        </Typography>
+        <Typography
+          variant="body2"
+          dangerouslySetInnerHTML={{
+            __html: `${title.replaceAll(/\r?\n/gi, '<br />')}`
+          }}
+          customStyle={{ marginTop: 4, color: common.ui60 }}
+        />
         <Typography variant="body2" customStyle={{ color: common.ui60 }}>
           {subTitle}
         </Typography>
         <Typography
           customStyle={{ marginTop: 8 }}
-          dangerouslySetInnerHTML={{ __html: description }}
+          dangerouslySetInnerHTML={{
+            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+          }}
         />
         <Typography variant="small2" customStyle={{ marginTop: 8, color: common.ui60 }}>
           {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}

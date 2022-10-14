@@ -127,8 +127,6 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
       };
     }
 
-    queryClient.setQueryData(queryKeys.productLegits.legit(productId), data);
-
     const dehydratedState: DehydratedState = dehydrate(queryClient);
 
     return {

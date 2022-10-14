@@ -58,8 +58,6 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
       };
     }
 
-    await queryClient.setQueryData(queryKeys.users.userInfo(), userInfo);
-
     const { id = 0 } = query;
 
     const data = await queryClient.fetchQuery(queryKeys.productLegits.legit(Number(id)), () =>
@@ -79,8 +77,6 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
         }
       };
     }
-
-    await queryClient.setQueryData(queryKeys.productLegits.legit(Number(id)), data);
 
     return {
       props: {

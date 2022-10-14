@@ -8,9 +8,6 @@ import { Image, LegitLabel } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
-import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
-
 import { Content, ImageBox, Title } from './LegitCard.styles';
 
 interface LegitCardProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,8 +15,6 @@ interface LegitCardProps extends HTMLAttributes<HTMLDivElement> {
   productLegit?: Partial<ProductLegit>;
   hideLegitLabelWithDate?: boolean;
   hidePlatformLogo?: boolean;
-  hidePlatformLogoWithPrice?: boolean;
-  hidePrice?: boolean;
   customStyle?: CustomStyle;
 }
 
@@ -28,8 +23,7 @@ function LegitCard({
   productLegit,
   hideLegitLabelWithDate,
   hidePlatformLogo,
-  hidePlatformLogoWithPrice,
-  hidePrice = false,
+
   customStyle,
   ...props
 }: LegitCardProps) {
@@ -40,7 +34,6 @@ function LegitCard({
     productResult: {
       quoteTitle = '',
       title = '',
-      price = 0,
       brand: { nameEng = '' } = {},
       imageMain = '',
       imageThumbnail = '',
@@ -106,19 +99,6 @@ function LegitCard({
             >
               {title}
             </Typography>
-            {!hidePlatformLogoWithPrice && (
-              <Flexbox alignment="center" gap={8}>
-                <Avatar
-                  width={20}
-                  height={20}
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${siteId}.png`}
-                  alt="Platform Logo Img"
-                />
-                <Typography variant="body2" weight="bold">
-                  {commaNumber(getTenThousandUnitPrice(price))}만원
-                </Typography>
-              </Flexbox>
-            )}
           </Flexbox>
         </Content>
       </Flexbox>
@@ -174,11 +154,6 @@ function LegitCard({
         />
         <Flexbox direction="vertical">
           <Title variant="body2">{quoteTitle}</Title>
-          {!hidePrice && (
-            <Typography variant="body2" weight="bold">
-              {commaNumber(getTenThousandUnitPrice(price))}만원
-            </Typography>
-          )}
         </Flexbox>
       </Flexbox>
     </Flexbox>

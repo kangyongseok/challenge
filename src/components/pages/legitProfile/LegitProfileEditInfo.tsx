@@ -309,7 +309,6 @@ function LegitProfileEditInfo({
               putLegitProfileParams.name.length === 0 ||
               putLegitProfileParams.title.length === 0 ||
               putLegitProfileParams.image.length === 0 ||
-              putLegitProfileParams.imageBackground.length === 0 ||
               putLegitProfileParams.targetBrandIds.length === 0 ||
               putLegitProfileParams.urlShop.length === 0 ||
               isLoadingMutate ||

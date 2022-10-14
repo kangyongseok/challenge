@@ -199,15 +199,12 @@ function LegitResultReply({
             )}
           </Flexbox>
         </Flexbox>
-        <Typography customStyle={{ margin: '10px 0 0 16px', color: common.ui60 }}>
-          {description.split('\n').map((content, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={`legit-result-reply-description-${index}`}>
-              {content}
-              <br />
-            </span>
-          ))}
-        </Typography>
+        <Typography
+          dangerouslySetInnerHTML={{
+            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+          }}
+          customStyle={{ margin: '10px 0 0 16px', color: common.ui60 }}
+        />
       </Flexbox>
     </div>
   );

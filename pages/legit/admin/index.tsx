@@ -97,8 +97,6 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
     };
   }
 
-  await queryClient.setQueryData(queryKeys.users.userInfo(), userInfo);
-
   return {
     props: {
       dehydratedState: dehydrate(queryClient)

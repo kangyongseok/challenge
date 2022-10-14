@@ -80,7 +80,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
           });
 
           router.push(
-            `/legit/${getProductDetailUrl({ type: 'productResult', product }).replace(
+            `/legit${getProductDetailUrl({ type: 'productResult', product }).replace(
               '/products',
               ''
             )}/result`
@@ -123,7 +123,6 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                   <LegitCard
                     productLegit={productLegit}
                     onClick={handleClickProduct({ product: productLegit.productResult })}
-                    hidePlatformLogoWithPrice
                   />
                 </Grid>
               ))}

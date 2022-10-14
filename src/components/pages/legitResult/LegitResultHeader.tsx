@@ -114,7 +114,7 @@ function LegitResultHeader() {
           </Flexbox>
         }
         hideTitle={status === 20}
-        isTransparent
+        isTransparent={status === 20}
         customStyle={{ backgroundColor: status === 20 ? dark.palette.common.bg03 : undefined }}
       />
     );
