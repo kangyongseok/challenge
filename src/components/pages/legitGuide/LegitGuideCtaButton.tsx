@@ -21,7 +21,7 @@ function LegitGuideCtaButton() {
   const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
 
   const handleClick = () => {
-    if (tab === 'upload') {
+    if (!tab || tab === 'upload') {
       logEvent(attrKeys.legitGuide.CLICK_LEGIT_PROCESS, {
         name: attrProperty.legitName.LEGIT_HOWITWORKS
       });

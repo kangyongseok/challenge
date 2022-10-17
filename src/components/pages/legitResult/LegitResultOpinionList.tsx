@@ -29,7 +29,10 @@ function LegitResultOpinionList() {
     <Box component="section" customStyle={{ marginTop: 48 }}>
       {legitOpinions.map((legitOpinion, index) => (
         <Fragment key={`legit-opinion-${legitOpinion.id}`}>
-          <LegitOpinion legitOpinion={legitOpinion} />
+          <LegitOpinion
+            legitOpinion={legitOpinion}
+            onClick={() => router.push(`/legit/profile/${legitOpinion.roleLegit.userId}`)}
+          />
           {index !== legitOpinions.length - 1 && <Divider />}
         </Fragment>
       ))}

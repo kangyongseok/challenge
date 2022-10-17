@@ -108,6 +108,7 @@ function LegitHeadAuthenticatorList() {
                     </Typography>
                     <Description
                       variant="body2"
+                      customStyle={{ wordBreak: 'keep-all' }}
                       dangerouslySetInnerHTML={{
                         __html: `${title.replaceAll(/\r?\n/gi, '<br />')}`
                       }}

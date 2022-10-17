@@ -1,3 +1,5 @@
+import { HTMLAttributes } from 'react';
+
 import { Avatar, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
@@ -5,7 +7,7 @@ import LegitLabel from '@components/UI/atoms/LegitLabel';
 
 import type { LegitOpinion as ILegitOpinion } from '@dto/productLegit';
 
-interface LegitOpinionProps {
+interface LegitOpinionProps extends HTMLAttributes<HTMLDivElement> {
   legitOpinion: ILegitOpinion;
 }
 
@@ -15,7 +17,8 @@ function LegitOpinion({
     description,
     result,
     roleLegit: { image, name, ip, title, subTitle }
-  }
+  },
+  ...props
 }: LegitOpinionProps) {
   const {
     theme: {
@@ -24,7 +27,7 @@ function LegitOpinion({
   } = useTheme();
 
   return (
-    <Flexbox gap={12}>
+    <Flexbox gap={12} {...props}>
       {image && (
         <Avatar
           width={32}

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
@@ -26,7 +25,6 @@ import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { toastState } from '@recoil/common';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
-import LegitSelectAdditionalInfo from './LegitSelectAdditionalInfo';
 import LegitRequestTitleWithModelImage from './LegitRequestTitleWithModelImage';
 import LegitRequestTitle from './LegitRequestTitle';
 import LegitRequestOpinion from './LegitRequestOpinion';
@@ -108,7 +106,7 @@ function LegitRequestEdit() {
 
   const [isLoadingGetPhoto, setIsLoadingGetPhoto] = useState(false);
 
-  const { title, photoGuideImages, description, additionalIds = [] } = productLegitEditParams;
+  const { title, photoGuideImages } = productLegitEditParams;
 
   const isAllUploadRequiredPhoto = useMemo(
     () =>
@@ -167,27 +165,6 @@ function LegitRequestEdit() {
         }
       },
     [photoGuideDetails]
-  );
-
-  const handleClickAdditionalInfo = useCallback(
-    (id: keyof PostProductLegitData['additionalIds'], _: string) => () => {
-      setProductLegitEditParamsState(({ additionalIds: prevAdditionalIds = [], ...currVal }) => ({
-        ...currVal,
-        additionalIds: prevAdditionalIds.includes(id)
-          ? prevAdditionalIds.filter((prevAdditionalId) => prevAdditionalId !== id)
-          : prevAdditionalIds.concat([id])
-      }));
-    },
-    [setProductLegitEditParamsState]
-  );
-
-  const handleChangeDescription = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement>) =>
-      setProductLegitEditParamsState((currVal) => ({
-        ...currVal,
-        description: e.target.value.substring(0, 300)
-      })),
-    [setProductLegitEditParamsState]
   );
 
   const handleSubmit = useCallback(() => {
@@ -288,12 +265,6 @@ function LegitRequestEdit() {
         {legitOpinions.length > 0 && (
           <LegitRequestOpinion description={legitOpinions[0].description} />
         )}
-        <LegitSelectAdditionalInfo
-          additionalIds={additionalIds}
-          description={description}
-          onclickAdditionalInfo={handleClickAdditionalInfo}
-          onChangeDescription={handleChangeDescription}
-        />
       </Contents>
       <LegitRequestBottomButton
         onClick={handleSubmit}
