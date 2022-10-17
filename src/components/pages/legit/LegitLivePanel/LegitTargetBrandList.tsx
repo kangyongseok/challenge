@@ -18,7 +18,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -69,6 +69,25 @@ function LegitTargetBrandList() {
       });
 
       return;
+
+      if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
+        return;
+      }
 
       if (!checkAgent.isMobileApp()) {
         setDialogState({

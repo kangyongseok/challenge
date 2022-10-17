@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Flexbox, Typography, dark } from 'mrcamel-ui';
+import { Avatar, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -21,6 +21,12 @@ import { legitRequestState } from '@recoil/legitRequest';
 function LegitRequestSelectBrand() {
   const router = useRouter();
   const [{ categoryId }, setLegitRequestState] = useRecoilState(legitRequestState);
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const { data: legitsBrands = [] } = useQuery(
     queryKeys.models.legitsBrands(categoryId > 0 ? { categoryIds: [categoryId] } : undefined),
@@ -55,11 +61,11 @@ function LegitRequestSelectBrand() {
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} hideTitle />}
+      header={<Header showRight={false} hideTitle customStyle={{ backgroundColor: common.bg03 }} />}
       customStyle={{
         height: 'auto',
         minHeight: '100%',
-        backgroundColor: dark.palette.common.bg03,
+        backgroundColor: common.bg03,
         userSelect: 'none',
         '& > main': { padding: '28px 20px 0', rowGap: 32 }
       }}
@@ -79,17 +85,17 @@ function LegitRequestSelectBrand() {
             <Avatar
               width={64}
               height={64}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${nameEng
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
                 .toLocaleLowerCase()
                 .split(' ')
-                .join('')}.jpg`}
+                .join('')}.png`}
               alt="Brand Logo Img"
             />
             <Flexbox direction="vertical" gap={2} customStyle={{ padding: '12px 0px' }}>
               <Typography variant="h3" weight="medium">
                 {name}
               </Typography>
-              <Typography variant="body2" customStyle={{ color: dark.palette.common.ui80 }}>
+              <Typography variant="body2" customStyle={{ color: common.ui80 }}>
                 {nameEng}
               </Typography>
             </Flexbox>

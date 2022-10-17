@@ -8,7 +8,7 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
@@ -33,6 +33,25 @@ function LegitGuideCtaButton() {
 
       return;
 
+      if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
+        return;
+      }
+
       if (!checkAgent.isMobileApp()) {
         setDialogState({
           type: 'legitRequestOnlyInApp',
@@ -40,6 +59,15 @@ function LegitGuideCtaButton() {
           secondButtonAction() {
             handleClickAppDownload({});
           }
+        });
+
+        return;
+      }
+
+      if (checkAgent.isAndroidApp()) {
+        setDialogState({
+          type: 'legitRequestOnlyInIOS',
+          customStyleTitle: { minWidth: 270 }
         });
 
         return;
@@ -59,16 +87,10 @@ function LegitGuideCtaButton() {
       router.push('/legit/request');
       return;
     }
+
     logEvent(attrKeys.legitGuide.CLICK_PRODUCT_LIST, {
       name: attrProperty.legitName.LEGIT_HOWITWORKS
     });
-
-    setDialogState({
-      type: 'legitServiceNotice',
-      customStyleTitle: { minWidth: 269 }
-    });
-
-    return;
 
     router.push({
       pathname: '/products/brands/구찌',

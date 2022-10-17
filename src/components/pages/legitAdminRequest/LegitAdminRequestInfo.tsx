@@ -44,12 +44,13 @@ function LegitAdminRequestInfo() {
 
   const {
     status,
+    description,
+    additionalIds = [],
     productResult: {
       brand: { nameEng = '' } = {},
       postType = 0,
       quoteTitle = '',
       imageModel = '',
-      description = '',
       photoGuideDetails = []
     } = {}
   } = productLegit || {};
@@ -96,7 +97,8 @@ function LegitAdminRequestInfo() {
             imagSrc: imageModel || brandLogo
           }}
           title="감정을 요청했습니다"
-          description={description || ''}
+          additionalIds={additionalIds}
+          description={description}
           customStyle={{ marginTop: 68 }}
         >
           <Grid container columnGap={12} rowGap={12}>

@@ -4,7 +4,7 @@ import type { ChangeEvent } from 'react';
 import { useRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { dark } from 'mrcamel-ui';
+import { useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -34,6 +34,12 @@ import LegitRequestBottomButton from './LegitRequestBottomButton';
 
 function LegitRequestForm() {
   const router = useRouter();
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const [{ categoryName, brandName, brandLogo, modelImage, isCompleted }, setLegitRequestState] =
     useRecoilState(legitRequestState);
@@ -160,9 +166,16 @@ function LegitRequestForm() {
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} hideTitle isFixed={false} />}
+      header={
+        <Header
+          showRight={false}
+          hideTitle
+          isFixed={false}
+          customStyle={{ backgroundColor: common.bg03 }}
+        />
+      }
       disablePadding
-      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: dark.palette.common.bg03 }}
+      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg03 }}
     >
       {productLegitParams.modelId ? (
         <LegitRequestTitleWithModelImage
@@ -211,7 +224,11 @@ const Contents = styled.section`
   row-gap: 52px;
   padding: 32px 20px 52px;
   flex: 1;
-  background-color: ${dark.palette.common.bg02};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
 `;
 
 export default LegitRequestForm;

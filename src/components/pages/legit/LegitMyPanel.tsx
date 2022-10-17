@@ -21,7 +21,7 @@ import { postType } from '@constants/productlegits';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber, getProductDetailUrl } from '@utils/common';
+import { checkAgent, commaNumber, getAppVersion, getProductDetailUrl } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -84,9 +84,65 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+          setDialogState({
+            type: 'appUpdateNotice',
+            customStyleTitle: { minWidth: 269 },
+            secondButtonAction: () => {
+              if (
+                window.webkit &&
+                window.webkit.messageHandlers &&
+                window.webkit.messageHandlers.callExecuteApp
+              )
+                window.webkit.messageHandlers.callExecuteApp.postMessage(
+                  'itms-apps://itunes.apple.com/app/id1541101835'
+                );
+            }
+          });
+
+          return;
+        }
+
+        if (checkAgent.isAndroidApp()) {
+          setDialogState({
+            type: 'legitRequestOnlyInIOS',
+            customStyleTitle: { minWidth: 270 }
+          });
+
+          return;
+        }
+
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+          setDialogState({
+            type: 'appUpdateNotice',
+            customStyleTitle: { minWidth: 269 },
+            secondButtonAction: () => {
+              if (
+                window.webkit &&
+                window.webkit.messageHandlers &&
+                window.webkit.messageHandlers.callExecuteApp
+              )
+                window.webkit.messageHandlers.callExecuteApp.postMessage(
+                  'itms-apps://itunes.apple.com/app/id1541101835'
+                );
+            }
+          });
+
+          return;
+        }
+
+        if (checkAgent.isAndroidApp()) {
+          setDialogState({
+            type: 'legitRequestOnlyInIOS',
+            customStyleTitle: { minWidth: 270 }
+          });
+
+          return;
+        }
+
         router.push({
           pathname: '/legit/request',
           query: {
@@ -107,13 +163,6 @@ function LegitMyPanel() {
     logEvent(attrKeys.legit.CLICK_LEGIT_HOWITWORKS, {
       name: attrProperty.legitName.LEGIT_MY
     });
-
-    setDialogState({
-      type: 'legitServiceNotice',
-      customStyleTitle: { minWidth: 269 }
-    });
-
-    return;
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.legitName.LEGIT,

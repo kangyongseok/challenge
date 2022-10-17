@@ -22,3 +22,23 @@ export const Divider = styled.div`
     }) => common.line01};
   margin: 32px 0;
 `;
+
+export const AdditionalInfoList = styled.ul`
+  list-style: unset;
+  padding-left: 20px;
+`;
+
+export const AdditionalInfo = styled.li`
+  ${({
+    theme: {
+      palette: { common },
+      typography
+    }
+  }) => ({
+    fontSize: typography.body2.size,
+    fontWeight: typography.body2.weight.regular,
+    lineHeight: typography.body2.lineHeight,
+    letterSpacing: typography.body2.letterSpacing,
+    color: common.ui20
+  })};
+`;

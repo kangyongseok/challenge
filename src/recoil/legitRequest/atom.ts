@@ -52,7 +52,7 @@ export const productLegitParamsState = atom<PostProductLegitData>({
 });
 
 export const productLegitEditParamsState = atom<PutProductLegitData>({
-  key: 'legitRequest/productLegitParamsState',
+  key: 'legitRequest/productLegitEditParamsState',
   default: {
     productId: 0,
     title: '',

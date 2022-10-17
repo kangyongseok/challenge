@@ -122,7 +122,8 @@ export type DialogType =
   | 'deleteLegitResultReply'
   | 'legitRequestOnlyInApp'
   | 'legitRequestOnlyInIOS'
-  | 'legitServiceNotice';
+  | 'legitServiceNotice'
+  | 'appUpdateNotice';
 
 export type ShareData = {
   title: string;

@@ -60,12 +60,14 @@ export async function postProductLegitPreConfirmFail(productId: number) {
 
 export async function postProductLegitPreConfirmEdit({
   productId,
-  photoGuideIds
+  photoGuideIds,
+  description
 }: PostProductLegitPreConfirmData) {
   const { data: responseData } = await Axios.getInstance().post<number>(
     `${BASE_PATH}/${productId}/preConfirmEdit`,
     {
-      photoGuideIds
+      photoGuideIds,
+      description
     }
   );
 

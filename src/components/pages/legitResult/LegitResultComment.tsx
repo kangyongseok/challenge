@@ -79,8 +79,9 @@ function LegitResultComment({
     }
   );
 
-  const { mutate } = useMutation(postProductLegitComment);
-  const { mutate: deleteMutate } = useMutation(deleteProductLegitComment);
+  const { mutate, isLoading } = useMutation(postProductLegitComment);
+  const { mutate: deleteMutate, isLoading: isLoadingDeleteMutate } =
+    useMutation(deleteProductLegitComment);
 
   const handleClick = () => {
     if (!accessUser) {
@@ -148,6 +149,8 @@ function LegitResultComment({
       name: attrProperty.legitName.LEGIT_COMMENT,
       type: 'comment'
     });
+
+    if (isLoadingDeleteMutate) return;
 
     setDialogState({
       type: 'deleteLegitResultComment',
@@ -254,7 +257,7 @@ function LegitResultComment({
                 brandColor="primary"
                 size="small"
                 onClick={handleClickPost}
-                disabled={!accessUser || !value}
+                disabled={!accessUser || !value || isLoading}
                 customStyle={{ whiteSpace: 'nowrap' }}
               >
                 등록

@@ -1,4 +1,4 @@
-import { Flexbox, Grid, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Grid, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { LegitPhotoGuideCard } from '@components/UI/molecules';
@@ -58,7 +58,11 @@ function LegitUploadPhoto({
 const Title = styled(Typography)`
   & ::after {
     content: ' *';
-    color: ${dark.palette.secondary.red.light};
+    color: ${({
+      theme: {
+        palette: { secondary }
+      }
+    }) => secondary.red.light};
   }
 `;
 

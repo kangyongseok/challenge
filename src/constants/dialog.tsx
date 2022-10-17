@@ -16,11 +16,12 @@ export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
     <>
       사진으로 감정신청은
       <br />
-      앱에서만 진행할 수 있어요!
+      App에서만 진행할 수 있어요!
     </>
   ),
   legitRequestOnlyInIOS: '현재 이 기능은 iOS에서만 가능합니다!',
-  legitServiceNotice: '곧 서비스가 시작 됩니다!'
+  legitServiceNotice: '곧 서비스가 시작 됩니다!',
+  appUpdateNotice: '카멜 App이 업데이트 되었어요!'
 };
 
 export const dialogContent = {
@@ -34,7 +35,7 @@ export const dialogContent = {
   endCrazyCuration: '다른 중고 명품 전국에서 찾아볼까요?',
   legitRequestOnlyInApp: (
     <>
-      카멜 앱에서 사진으로 간편하게
+      카멜App에서 사진으로 간편하게
       <br />
       실시간 정가품의견 받아보세요
     </>
@@ -53,6 +54,13 @@ export const dialogContent = {
       10월 중순에 재개될 예정입니다.
       <br />
       조금만 기다려 주세요 🙏
+    </Box>
+  ),
+  appUpdateNotice: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      사진으로 감정신청을 위해 최신
+      <br />
+      App으로 업데이트해주세요.
     </Box>
   )
 };
@@ -89,6 +97,7 @@ export const secondButtonText: Record<
     | 'legitRequestOnlyInApp'
     | 'legitRequestOnlyInIOS'
     | 'legitServiceNotice'
+    | 'appUpdateNotice'
   >,
   string | number | ReactElement
 > = {
@@ -98,9 +107,10 @@ export const secondButtonText: Record<
   deleteLegitAdminOpinion: '확인',
   deleteLegitResultComment: '확인',
   deleteLegitResultReply: '확인',
-  legitRequestOnlyInApp: '앱 다운로드',
+  legitRequestOnlyInApp: '3초 앱 다운로드',
   legitRequestOnlyInIOS: '확인',
-  legitServiceNotice: '확인'
+  legitServiceNotice: '확인',
+  appUpdateNotice: '3초 업데이트'
 };
 
 const dialog = {

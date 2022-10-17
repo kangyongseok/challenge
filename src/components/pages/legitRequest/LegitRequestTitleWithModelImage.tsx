@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Image } from '@components/UI/atoms';
@@ -19,22 +19,27 @@ function LegitRequestTitleWithModelImage({
   title,
   modelImage
 }: LegitRequestTitleWithModelImageProps) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   return (
     <>
       <LegitRequestBrandLogo src={brandLogo} />
       <Title>
         <Flexbox direction="vertical" gap={4} customStyle={{ flex: 1 }}>
           <Flexbox alignment="center">
-            <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+            <Typography variant="h4" customStyle={{ color: common.ui60 }}>
               {categoryName}
             </Typography>
             <Icon
               name="CaretRightOutlined"
               width={16}
               height={16}
-              customStyle={{ color: dark.palette.common.ui60 }}
+              customStyle={{ color: common.ui60 }}
             />
-            <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+            <Typography variant="h4" customStyle={{ color: common.ui60 }}>
               {brandName}
             </Typography>
           </Flexbox>

@@ -1,4 +1,4 @@
-import { Button, Tooltip, dark } from 'mrcamel-ui';
+import { Button, Tooltip } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 interface LegitRequestBottomButtonProps {
@@ -54,7 +54,11 @@ const ButtonBox = styled.div`
   width: 100%;
   bottom: 0;
   padding: 20px;
-  background-color: ${dark.palette.common.bg03};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
 `;
 
 export default LegitRequestBottomButton;

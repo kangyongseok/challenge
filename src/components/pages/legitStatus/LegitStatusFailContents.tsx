@@ -113,7 +113,9 @@ function LegitStatusFailContents() {
         <Typography
           customStyle={{ marginTop: 8 }}
           dangerouslySetInnerHTML={{
-            __html: !isEmpty(legitOpinions) ? legitOpinions[0].description || '' : ''
+            __html: !isEmpty(legitOpinions)
+              ? legitOpinions[0].description.replaceAll(/\r?\n/gi, '<br />') || ''
+              : ''
           }}
         />
       </OpinionCard>

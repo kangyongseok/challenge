@@ -37,12 +37,13 @@ function LegitResultRequestInfo() {
 
   const {
     status,
+    additionalIds = [],
+    description,
     productResult: {
       brand: { nameEng = '' } = {},
       postType = 0,
       quoteTitle = '',
       imageModel = '',
-      description = '',
       photoGuideDetails = []
     } = {}
   } = productLegit || {};
@@ -84,7 +85,8 @@ function LegitResultRequestInfo() {
                 .replace(/\s/g, '')}.png`
           }}
           title="사진감정중입니다"
-          description={description || ''}
+          additionalIds={additionalIds}
+          description={description}
           customStyle={{ marginTop: 68 }}
         >
           <Grid container columnGap={12} rowGap={12}>

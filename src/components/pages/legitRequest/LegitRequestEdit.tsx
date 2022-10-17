@@ -4,7 +4,7 @@ import type { ChangeEvent } from 'react';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { dark } from 'mrcamel-ui';
+import { useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -29,10 +29,17 @@ import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitSelectAdditionalInfo from './LegitSelectAdditionalInfo';
 import LegitRequestTitleWithModelImage from './LegitRequestTitleWithModelImage';
 import LegitRequestTitle from './LegitRequestTitle';
+import LegitRequestOpinion from './LegitRequestOpinion';
 import LegitRequestBottomButton from './LegitRequestBottomButton';
 
 function LegitRequestEdit() {
   const router = useRouter();
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
@@ -41,6 +48,7 @@ function LegitRequestEdit() {
   const productId = useMemo(() => Number(router.query?.productId || 0), [router.query?.productId]);
   const {
     data: {
+      legitOpinions = [],
       productResult: {
         imageModel = '',
         brand: { name: brandName = '', nameEng: brandNameEng = '' } = {},
@@ -230,9 +238,16 @@ function LegitRequestEdit() {
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} hideTitle isFixed={false} />}
+      header={
+        <Header
+          showRight={false}
+          hideTitle
+          isFixed={false}
+          customStyle={{ backgroundColor: common.bg03 }}
+        />
+      }
       disablePadding
-      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: dark.palette.common.bg03 }}
+      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg03 }}
     >
       {imageModel ? (
         <LegitRequestTitleWithModelImage
@@ -270,6 +285,9 @@ function LegitRequestEdit() {
           photoGuideImages={photoGuideImages}
           onClick={handleClickPhotoGuide}
         />
+        {legitOpinions.length > 0 && (
+          <LegitRequestOpinion description={legitOpinions[0].description} />
+        )}
         <LegitSelectAdditionalInfo
           additionalIds={additionalIds}
           description={description}
@@ -303,7 +321,11 @@ const Contents = styled.section`
   row-gap: 52px;
   padding: 32px 20px 52px;
   flex: 1;
-  background-color: ${dark.palette.common.bg02};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
 `;
 
 export default LegitRequestEdit;

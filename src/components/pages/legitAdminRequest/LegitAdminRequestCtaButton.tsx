@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Grid, Typography } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import LegitPhotoGuideCard from '@components/UI/molecules/LegitPhotoGuideCard';
@@ -30,6 +30,12 @@ function LegitAdminRequestCtaButton() {
   const router = useRouter();
   const { id } = router.query;
 
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const { result, description } = useRecoilValue(legitAdminOpinionDataState);
   const editable = useRecoilValue(legitAdminOpinionEditableState);
   const setLegitAdminOpinionEditableState = useSetRecoilState(legitAdminOpinionEditableState);
@@ -41,6 +47,8 @@ function LegitAdminRequestCtaButton() {
 
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [preConfirmDescription, setPreConfirmDescription] = useState('');
   const [selectedPhotoGuideDetailIds, setSelectedPhotoGuideDetailIds] = useState<number[]>([]);
 
   const {
@@ -55,10 +63,14 @@ function LegitAdminRequestCtaButton() {
     enabled: !!id
   });
 
-  const { mutate } = useMutation(postProductLegitOpinion);
-  const { mutate: editMutate } = useMutation(putProductLegitOpinion);
-  const { mutate: deleteMutate } = useMutation(deleteProductLegitOpinion);
-  const { mutate: preConfirmMutate } = useMutation(postProductLegitPreConfirmEdit);
+  const { mutate, isLoading } = useMutation(postProductLegitOpinion);
+  const { mutate: editMutate, isLoading: isLoadingEditMutate } =
+    useMutation(putProductLegitOpinion);
+  const { mutate: deleteMutate, isLoading: isLoadingDeleteMutate } =
+    useMutation(deleteProductLegitOpinion);
+  const { mutate: preConfirmMutate, isLoading: isLoadingPreConfirmMutate } = useMutation(
+    postProductLegitPreConfirmEdit
+  );
 
   const myLegitOpinion = useMemo(
     () => legitOpinions.find(({ roleLegit: { userId } }) => userId === (accessUser || {}).userId),
@@ -151,7 +163,8 @@ function LegitAdminRequestCtaButton() {
     preConfirmMutate(
       {
         productId: Number(id),
-        photoGuideIds: selectedPhotoGuideDetailIds
+        photoGuideIds: selectedPhotoGuideDetailIds,
+        description: preConfirmDescription || undefined
       },
       {
         onSuccess: () =>
@@ -201,7 +214,7 @@ function LegitAdminRequestCtaButton() {
             brandColor="primary"
             size="xlarge"
             onClick={handleClickEditComplete}
-            disabled={!result || !description}
+            disabled={!result || !description || isLoadingEditMutate}
           >
             수정완료
           </Button>
@@ -236,6 +249,7 @@ function LegitAdminRequestCtaButton() {
                 customStyleTitle: { minWidth: 269, paddingTop: 12 }
               })
             }
+            disabled={isLoadingDeleteMutate}
           >
             삭제하기
           </Button>
@@ -254,7 +268,7 @@ function LegitAdminRequestCtaButton() {
             brandColor="primary"
             size="xlarge"
             onClick={handleClick}
-            disabled={disabled}
+            disabled={disabled || isLoading}
           >
             확인
           </Button>
@@ -263,7 +277,7 @@ function LegitAdminRequestCtaButton() {
       <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>
         <Box customStyle={{ padding: 20 }}>
           <Typography variant="h3" weight="bold">
-            불가 이미지를 선택해 주세요!
+            보완할 이미지 선택 혹은 보완의견을 남겨주세요
           </Typography>
           <Grid container columnGap={12} rowGap={12} customStyle={{ marginTop: 20 }}>
             {(photoGuideDetails || []).map(({ imageUrl, commonPhotoGuideDetail }) => (
@@ -283,15 +297,29 @@ function LegitAdminRequestCtaButton() {
               </Grid>
             ))}
           </Grid>
+          <OpinionWriter focused={focused}>
+            <TextArea
+              onChange={(e) => setPreConfirmDescription(e.currentTarget.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              value={preConfirmDescription}
+              maxLength={300}
+              placeholder="내용을 입력해주세요."
+            />
+            <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
+              {preConfirmDescription.length} / 300자
+            </Typography>
+          </OpinionWriter>
           <Button
             variant="contained"
             brandColor="primary"
             size="xlarge"
             fullWidth
             onClick={handleClickPreConfirmEditConfirm}
+            disabled={!selectedPhotoGuideDetailIds.length || isLoadingPreConfirmMutate}
             customStyle={{ marginTop: 52 }}
           >
-            확인
+            보완 요청
           </Button>
         </Box>
       </BottomSheet>
@@ -310,6 +338,75 @@ const CtaButtonWrapper = styled(Flexbox)`
     }
   }) => common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
+`;
+
+const OpinionWriter = styled.div<{ focused: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  height: 270px;
+  margin-top: 20px;
+  padding: 12px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg01};
+  border-radius: ${({ theme: { box } }) => box.round['8']};
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line01};
+  overflow: hidden;
+
+  ${({
+    theme: {
+      palette: { common }
+    },
+    focused
+  }) =>
+    focused
+      ? {
+          borderColor: common.uiBlack
+        }
+      : {}};
+`;
+
+const TextArea = styled.textarea`
+  flex-grow: 1;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  ${({
+    theme: {
+      palette: { common },
+      typography: { h4 }
+    }
+  }) => ({
+    fontSize: h4.size,
+    fontWeight: h4.weight.regular,
+    letterSpacing: h4.letterSpacing,
+    color: common.ui20
+  })};
+  &::placeholder {
+    ${({
+      theme: {
+        palette: { common },
+        typography: { h4 }
+      }
+    }) => ({
+      fontSize: h4.size,
+      fontWeight: h4.weight.regular,
+      letterSpacing: h4.letterSpacing,
+      color: common.ui90
+    })};
+  }
+  &:disabled {
+    background-color: transparent;
+  }
 `;
 
 export default LegitAdminRequestCtaButton;

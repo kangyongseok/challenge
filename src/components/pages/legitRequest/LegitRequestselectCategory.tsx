@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -22,6 +22,11 @@ import { legitRequestState } from '@recoil/legitRequest';
 
 function LegitRequestSelectCategory() {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const [{ brandId }, setLegitRequestState] = useRecoilState(legitRequestState);
 
@@ -47,11 +52,11 @@ function LegitRequestSelectCategory() {
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} hideTitle />}
+      header={<Header showRight={false} hideTitle customStyle={{ backgroundColor: common.bg03 }} />}
       customStyle={{
         height: 'auto',
         minHeight: '100%',
-        backgroundColor: dark.palette.common.bg03,
+        backgroundColor: common.bg03,
         userSelect: 'none',
         '& > main': { padding: '28px 20px 0', rowGap: 32 }
       }}
@@ -60,7 +65,7 @@ function LegitRequestSelectCategory() {
         <Typography variant="h2" weight="bold">
           카테고리를 선택해주세요
         </Typography>
-        <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+        <Typography variant="h4" customStyle={{ color: common.ui60 }}>
           카테고리 선택하면, 감정이 시작됩니다
         </Typography>
       </Flexbox>

@@ -1,4 +1,4 @@
-import { PostType } from '@dto/product';
+import type { PostType } from '@dto/product';
 
 export const additionalInfos = [
   { id: 10, label: '박스없음' },

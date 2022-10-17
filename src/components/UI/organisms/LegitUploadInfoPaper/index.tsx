@@ -5,7 +5,16 @@ import type { CustomStyle } from 'mrcamel-ui';
 
 import Image from '@components/UI/atoms/Image';
 
-import { Divider, StyledLegitUploadInfoPaper } from './LegitUploadInfoPaper.styles';
+import type { PostProductLegitData } from '@dto/productLegit';
+
+import { additionalInfos } from '@constants/productlegits';
+
+import {
+  AdditionalInfo,
+  AdditionalInfoList,
+  Divider,
+  StyledLegitUploadInfoPaper
+} from './LegitUploadInfoPaper.styles';
 
 interface LegitUploadInfoPaperProps {
   model: {
@@ -13,6 +22,7 @@ interface LegitUploadInfoPaperProps {
     imagSrc: string;
   };
   title: string;
+  additionalIds?: number[];
   description?: string;
   customStyle?: CustomStyle;
 }
@@ -21,6 +31,7 @@ function LegitUploadInfoPaper({
   children,
   model: { name, imagSrc },
   title,
+  additionalIds = [],
   description,
   customStyle
 }: PropsWithChildren<LegitUploadInfoPaperProps>) {
@@ -62,12 +73,34 @@ function LegitUploadInfoPaper({
               업로드 정보
             </Typography>
             {children}
+            {(additionalIds.length > 0 || !!description) && (
+              <Flexbox direction="vertical" gap={8}>
+                {additionalIds.length > 0 && (
+                  <AdditionalInfoList>
+                    {additionalInfos
+                      .filter((additionalInfo) =>
+                        additionalIds.includes(
+                          additionalInfo.id as keyof PostProductLegitData['additionalIds']
+                        )
+                      )
+                      .map((additionalInfo) => (
+                        <AdditionalInfo key={`additional-info-${additionalInfo.id}`}>
+                          {additionalInfo.label}
+                        </AdditionalInfo>
+                      ))}
+                  </AdditionalInfoList>
+                )}
+                {!!description && (
+                  <Typography
+                    variant="body2"
+                    dangerouslySetInnerHTML={{
+                      __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+                    }}
+                  />
+                )}
+              </Flexbox>
+            )}
           </Flexbox>
-        )}
-        {description && (
-          <Typography variant="body2" customStyle={{ marginTop: 12 }}>
-            {description}
-          </Typography>
         )}
       </Box>
     </StyledLegitUploadInfoPaper>

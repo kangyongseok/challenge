@@ -155,6 +155,7 @@ export type DeleteProductLegitCommentData = {
 export type PostProductLegitPreConfirmData = {
   productId: number;
   photoGuideIds?: number[];
+  description?: string;
 };
 
 export type ProductLegitCommentsParams = {

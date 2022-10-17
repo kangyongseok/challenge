@@ -15,9 +15,9 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { checkAgent, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
-import { toastState } from '@recoil/common';
+import { dialogState, toastState } from '@recoil/common';
 
 interface LegitProfileEditInfoProps extends PutUserLegitProfileData {
   legitsBrands: LegitsBrand[];
@@ -35,6 +35,7 @@ function LegitProfileEditInfo({
     }
   } = useTheme();
 
+  const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
 
   const { mutate: mutatePutLegitProfile, isLoading: isLoadingMutate } = useMutation(
@@ -66,6 +67,25 @@ function LegitProfileEditInfo({
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
+      if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
+        return;
+      }
+
       if (!checkAgent.isMobileApp()) {
         setToastState({
           type: 'legitProfile',
@@ -74,6 +94,15 @@ function LegitProfileEditInfo({
             handleClickAppDownload({});
           }
         });
+      }
+
+      if (checkAgent.isAndroidApp()) {
+        setDialogState({
+          type: 'legitRequestOnlyInIOS',
+          customStyleTitle: { minWidth: 270 }
+        });
+
+        return;
       }
 
       setGetPhotoState((prevState) => ({
@@ -97,7 +126,7 @@ function LegitProfileEditInfo({
         );
       }
     },
-    [isLoadingGetPhoto, isLoadingMutate, setToastState]
+    [isLoadingGetPhoto, isLoadingMutate, setDialogState, setToastState]
   );
 
   useEffect(() => {

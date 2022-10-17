@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { Chip, Flexbox, Typography, dark } from 'mrcamel-ui';
+import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import type { PostProductLegitData } from '@dto/productLegit';
@@ -24,6 +24,12 @@ function LegitSelectAdditionalInfo({
   onclickAdditionalInfo,
   onChangeDescription
 }: LegitSelectAdditionalInfoProps) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   return (
     <Flexbox direction="vertical" gap={20} customStyle={{ userSelect: 'none' }}>
       <Typography variant="h3" weight="medium">
@@ -46,8 +52,8 @@ function LegitSelectAdditionalInfo({
               backgroundColor: additionalIds.includes(
                 id as keyof PostProductLegitData['additionalIds']
               )
-                ? dark.palette.common.uiBlack
-                : dark.palette.common.ui90
+                ? common.uiBlack
+                : common.ui90
             }}
             onClick={onclickAdditionalInfo(
               id as keyof PostProductLegitData['additionalIds'],
@@ -78,11 +84,24 @@ const Description = styled.div`
   textarea {
     min-height: 168px;
     width: 100%;
-    background-color: ${dark.palette.common.bg01};
-    border: 1px solid ${dark.palette.common.line01};
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.bg01};
+    border: 1px solid
+      ${({
+        theme: {
+          palette: { common }
+        }
+      }) => common.line01};
     border-radius: 8px;
     padding: 12px 12px 24px;
-    color: ${dark.palette.common.ui20};
+    color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui20};
     resize: none;
 
     ${({ theme: { typography } }) => ({
@@ -93,7 +112,11 @@ const Description = styled.div`
     })};
 
     ::placeholder {
-      color: ${dark.palette.common.ui80};
+      color: ${({
+        theme: {
+          palette: { common }
+        }
+      }) => common.ui80};
       white-space: pre-wrap;
 
       ${({ theme: { typography } }) => ({
@@ -112,7 +135,11 @@ const DescriptionInfo = styled(Typography)`
   position: absolute;
   left: 0;
   padding: 0 0 12px 12px;
-  color: ${dark.palette.common.ui60};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
 `;
 
 export default LegitSelectAdditionalInfo;

@@ -55,6 +55,8 @@ function DialogProvider() {
         return 'textWithOneButton';
       case 'legitServiceNotice':
         return 'textWithOneButton';
+      case 'appUpdateNotice':
+        return 'textWithOneButton';
       default:
         return 'text';
     }

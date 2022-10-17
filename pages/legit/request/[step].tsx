@@ -17,6 +17,7 @@ import { logEvent } from '@library/amplitude';
 import attrKeys from '@constants/attrKeys';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitRequest() {
   const router = useRouter();
@@ -26,6 +27,8 @@ function LegitRequest() {
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
 
+  const { data: accessUser } = useQueryAccessUser();
+
   const step = String(router.query?.step || '');
 
   useEffect(() => {
@@ -33,13 +36,17 @@ function LegitRequest() {
   }, []);
 
   useEffect(() => {
+    if (!accessUser) {
+      router.back();
+      return;
+    }
     if (
       router.isReady &&
       !['selectCategory', 'selectBrand', 'selectModel', 'form', 'edit'].includes(step)
     ) {
       router.replace('/legit/request/selectCategory');
     }
-  }, [router, step]);
+  }, [accessUser, router, step]);
 
   useEffect(() => {
     router.beforePopState(({ as }) => {

@@ -29,6 +29,7 @@ import {
   legitResultCommentEditableState,
   legitResultCommentFocusedState
 } from '@recoil/legitResultComment/atom';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitResultCommentWriterProps {
@@ -65,9 +66,11 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
   });
 
   const { data: accessUser } = useQueryAccessUser();
+  const { data: { roles = [] } = {} } = useQueryUserInfo();
 
-  const { mutate } = useMutation(postProductLegitComment);
-  const { mutate: editMutate } = useMutation(putProductLegitComment);
+  const { mutate, isLoading } = useMutation(postProductLegitComment);
+  const { mutate: editMutate, isLoading: isLoadingEditMutate } =
+    useMutation(putProductLegitComment);
 
   const { data: { status } = {} } = useQuery(
     queryKeys.productLegits.legit(productId),
@@ -199,6 +202,8 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
     };
   }, [resetLegitResultCommentDataState]);
 
+  if ((roles as string[]).some((role) => role.indexOf('PRODUCT_LEGIT') >= 0)) return null;
+
   return (
     <Box ref={writerRef} component="section">
       <Flexbox gap={12} justifyContent="center">
@@ -267,7 +272,7 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
             brandColor="primary"
             size="small"
             onClick={editable ? handleClickEdit : handleClickPost}
-            disabled={!description || !result}
+            disabled={!description || !result || isLoading || isLoadingEditMutate}
             customStyle={{ whiteSpace: 'nowrap' }}
           >
             {editable ? '수정' : '등록'}

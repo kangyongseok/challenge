@@ -3,14 +3,14 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
 import { Image, Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-import { PostProductLegitData } from '@dto/productLegit';
+import type { PostProductLegitData } from '@dto/productLegit';
 
 import { logEvent } from '@library/amplitude';
 
@@ -24,6 +24,12 @@ import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest
 
 function LegitRequestSelectModel() {
   const router = useRouter();
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const [{ brandId, categoryId }, setLegitRequestState] = useRecoilState(legitRequestState);
   const setProductLegitParamsState = useSetRecoilState(productLegitParamsState);
@@ -82,11 +88,11 @@ function LegitRequestSelectModel() {
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} hideTitle />}
+      header={<Header showRight={false} hideTitle customStyle={{ backgroundColor: common.bg03 }} />}
       customStyle={{
         height: 'auto',
         minHeight: '100%',
-        backgroundColor: dark.palette.common.bg03,
+        backgroundColor: common.bg03,
         '& > main': { padding: '28px 0', rowGap: 32 },
         overflowX: 'hidden'
       }}
@@ -100,7 +106,7 @@ function LegitRequestSelectModel() {
         <Typography variant="h2" weight="bold">
           모델을 선택해주세요
         </Typography>
-        <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+        <Typography variant="h4" customStyle={{ color: common.ui60 }}>
           똑같지 않아도 괜찮아요! 가장 비슷한 모델도 괜찮아요!
         </Typography>
       </Flexbox>

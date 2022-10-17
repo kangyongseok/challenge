@@ -4,15 +4,12 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Flexbox, Grid, ThemeProvider, Typography, dark } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Box, Grid, ThemeProvider, dark } from 'mrcamel-ui';
 
 import { LegitUploadInfoPaper } from '@components/UI/organisms';
 import { Header, LegitPhotoGuideCard } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LegitRequestBottomButton, LegitRequestBrandLogo } from '@components/pages/legitRequest';
-
-import type { PostProductLegitData } from '@dto/productLegit';
 
 import Initializer from '@library/initializer';
 import ChannelTalk from '@library/channelTalk';
@@ -20,7 +17,6 @@ import ChannelTalk from '@library/channelTalk';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import { additionalInfos } from '@constants/productlegits';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { toastState } from '@recoil/common';
@@ -130,52 +126,25 @@ function LegitRequest() {
                 .join('')}.png`
           }}
           title="신청이 완료되었습니다"
+          additionalIds={additionalIds}
+          description={description}
           customStyle={{ flex: 1, margin: '0 20px 52px' }}
         >
-          <Flexbox direction="vertical" gap={12}>
-            <Grid container columnGap={8} rowGap={8}>
-              {photoGuideDetails.map(
-                ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }) => (
-                  <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
-                    <LegitPhotoGuideCard
-                      photoGuideDetail={commonPhotoGuideDetail}
-                      imageUrl={imageUrl}
-                      hideLabel
-                      hideStatusHighLite
-                      isDark
-                    />
-                  </Grid>
-                )
-              )}
-            </Grid>
-            {(additionalIds.length > 0 || !!description) && (
-              <Flexbox direction="vertical" gap={8}>
-                {additionalIds.length > 0 && (
-                  <AdditionalInfoList>
-                    {additionalInfos
-                      .filter((additionalInfo) =>
-                        additionalIds.includes(
-                          additionalInfo.id as keyof PostProductLegitData['additionalIds']
-                        )
-                      )
-                      .map((additionalInfo) => (
-                        <AdditionalInfo key={`additional-info-${additionalInfo.id}`}>
-                          {additionalInfo.label}
-                        </AdditionalInfo>
-                      ))}
-                  </AdditionalInfoList>
-                )}
-                {!!description && (
-                  <Typography
-                    variant="body2"
-                    dangerouslySetInnerHTML={{
-                      __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
-                    }}
+          <Grid container columnGap={8} rowGap={8}>
+            {photoGuideDetails.map(
+              ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }) => (
+                <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
+                  <LegitPhotoGuideCard
+                    photoGuideDetail={commonPhotoGuideDetail}
+                    imageUrl={imageUrl}
+                    hideLabel
+                    hideStatusHighLite
+                    isDark
                   />
-                )}
-              </Flexbox>
+                </Grid>
+              )
             )}
-          </Flexbox>
+          </Grid>
         </LegitUploadInfoPaper>
         <LegitRequestBottomButton onClick={handleClick} text="확인" />
       </GeneralTemplate>
@@ -215,21 +184,5 @@ export async function getServerSideProps({ req, query: { id } = {} }: GetServerS
     }
   };
 }
-
-const AdditionalInfoList = styled.ul`
-  list-style: unset;
-  padding-left: 20px;
-`;
-
-const AdditionalInfo = styled.li`
-  color: ${dark.palette.common.ui20};
-
-  ${({ theme: { typography } }) => ({
-    fontSize: typography.body2.size,
-    fontWeight: typography.body2.weight.regular,
-    lineHeight: typography.body2.lineHeight,
-    letterSpacing: typography.body2.letterSpacing
-  })};
-`;
 
 export default LegitRequest;

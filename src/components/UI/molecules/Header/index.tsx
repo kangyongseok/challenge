@@ -247,7 +247,13 @@ function Header({
   }
 
   return (
-    <StyledHeader minHeight={customHeight || HEADER_HEIGHT} isTransparent={isTransparent}>
+    <StyledHeader
+      minHeight={customHeight || HEADER_HEIGHT}
+      isTransparent={isTransparent}
+      css={{
+        backgroundColor: (customStyle || {}).backgroundColor
+      }}
+    >
       {customHeader || (
         <Wrapper
           isFixed={isFixed}
