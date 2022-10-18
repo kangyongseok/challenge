@@ -10,7 +10,6 @@ import { Toast, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
-  AppCameraAuthorCheckDialog,
   CamelSellerSavePopup,
   ErrorBoundary,
   LegitResultSurveyTypeform
@@ -145,7 +144,6 @@ function App({ Component, pageProps }: AppProps) {
                   잠시 후 다시 시도해 주세요
                 </Toast>
                 <CamelSellerSavePopup />
-                <AppCameraAuthorCheckDialog />
               </ErrorBoundary>
             </Hydrate>
           </ThemeModeProvider>

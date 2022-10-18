@@ -20,6 +20,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
+import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -29,7 +30,7 @@ function CamelSellerFloatingButton() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
-  const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
+  const setDialogState = useSetRecoilState(dialogState);
   const setContinueDialog = useSetRecoilState(camelSellerDialogStateFamily('continue'));
   const { data: { roles = [] } = {} } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const [authProductSeller, setAuthProductSeller] = useState(false);
@@ -63,12 +64,26 @@ function CamelSellerFloatingButton() {
       }
 
       if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
-        window.getCameraAuth = (result: boolean) => {
+        window.getAuthCamera = (result: boolean) => {
           if (!result) {
-            setOpenCameraSetting(({ type }) => ({
-              type,
-              open: !result
-            }));
+            setDialogState({
+              type: 'appAuthCheck',
+              customStyleTitle: { minWidth: 269, marginTop: 12 },
+              firstButtonAction: () => {
+                if (
+                  checkAgent.isIOSApp() &&
+                  window.webkit &&
+                  window.webkit.messageHandlers &&
+                  window.webkit.messageHandlers.callMoveToSetting &&
+                  window.webkit.messageHandlers.callMoveToSetting.postMessage
+                ) {
+                  window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
+                }
+                if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
+                  window.webview.moveToSetting();
+                }
+              }
+            });
           }
         };
       }

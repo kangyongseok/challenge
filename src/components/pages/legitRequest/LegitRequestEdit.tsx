@@ -22,7 +22,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
-import { toastState } from '@recoil/common';
+import { dialogState, toastState } from '@recoil/common';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitRequestTitleWithModelImage from './LegitRequestTitleWithModelImage';
@@ -38,6 +38,11 @@ function LegitRequestEdit() {
       palette: { common }
     }
   } = useTheme();
+
+  const setDialogState = useSetRecoilState(dialogState);
+
+  const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
+  const [hasCameraAuth, setHasCameraAuth] = useState(false);
 
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
@@ -134,6 +139,26 @@ function LegitRequestEdit() {
       () => {
         logEvent(attrKeys.legit.CLICK_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
 
+        if (!hasPhotoLibraryAuth || !hasCameraAuth) {
+          setDialogState({
+            type: 'appAuthCheck',
+            theme: 'dark',
+            customStyleTitle: { minWidth: 269, marginTop: 12 },
+            firstButtonAction: () => {
+              if (
+                checkAgent.isIOSApp() &&
+                window.webkit &&
+                window.webkit.messageHandlers &&
+                window.webkit.messageHandlers.callMoveToSetting &&
+                window.webkit.messageHandlers.callMoveToSetting.postMessage
+              ) {
+                window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
+              }
+            }
+          });
+          return;
+        }
+
         const [firstPhotoGuideDetail] = photoGuideDetails;
 
         if (
@@ -149,14 +174,11 @@ function LegitRequestEdit() {
               viewMode: 'ALBUM',
               startId: index,
               isEdit,
-              imageType: 2,
+              imageType: 3,
               images: photoGuideDetails.map(
-                ({
-                  imageUrl,
+                ({ imageUrl, isEdit: isEditPhotoGuide, commonPhotoGuideDetail: { id } }) => ({
+                  photoGuideId: id,
                   isEdit: isEditPhotoGuide,
-                  commonPhotoGuideDetail: { photoGuideId }
-                }) => ({
-                  photoGuideId,
                   imageUrl: isEditPhotoGuide ? '' : imageUrl
                 })
               )
@@ -164,7 +186,7 @@ function LegitRequestEdit() {
           );
         }
       },
-    [photoGuideDetails]
+    [setDialogState, hasCameraAuth, hasPhotoLibraryAuth, photoGuideDetails]
   );
 
   const handleSubmit = useCallback(() => {
@@ -212,6 +234,31 @@ function LegitRequestEdit() {
       setTimeout(() => setIsLoadingGetPhoto(false), 500);
     };
   }, [setProductLegitEditParamsState]);
+
+  useEffect(() => {
+    window.getAuthPhotoLibrary = (result: boolean) => {
+      setHasPhotoLibraryAuth(result);
+    };
+    window.getAuthCamera = (result: boolean) => {
+      setHasCameraAuth(result);
+    };
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callAuthPhotoLibrary
+    ) {
+      window.webkit.messageHandlers.callAuthPhotoLibrary.postMessage(0);
+    }
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callAuthCamera
+    ) {
+      window.webkit.messageHandlers.callAuthCamera.postMessage(0);
+    }
+  }, []);
 
   return (
     <GeneralTemplate

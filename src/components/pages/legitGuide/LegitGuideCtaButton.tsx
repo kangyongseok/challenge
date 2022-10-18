@@ -11,14 +11,12 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 
 function LegitGuideCtaButton() {
   const router = useRouter();
   const { tab = 'upload' } = router.query;
 
   const setDialogState = useSetRecoilState(dialogState);
-  const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
 
   const handleClick = () => {
     if (!tab || tab === 'upload') {
@@ -70,17 +68,6 @@ function LegitGuideCtaButton() {
           customStyleTitle: { minWidth: 270 }
         });
 
-        return;
-      }
-
-      // eslint-disable-next-line no-constant-condition
-      if (checkAgent.isMobileApp() && false) {
-        // TODO: false 부분에 카메라 권한 체크 결과값으로 치환 필요
-        // + 카메라 권한이 false 일때
-        setOpenCameraSetting(({ type }) => ({
-          type,
-          open: true
-        }));
         return;
       }
 

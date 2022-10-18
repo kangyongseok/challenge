@@ -13,7 +13,6 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitFloatingButton() {
@@ -24,7 +23,6 @@ function LegitFloatingButton() {
   } = useTheme();
   const router = useRouter();
   const setDialogState = useSetRecoilState(dialogState);
-  const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -81,23 +79,12 @@ function LegitFloatingButton() {
       return;
     }
 
-    // eslint-disable-next-line no-constant-condition
-    if (checkAgent.isMobileApp() && false) {
-      // TODO: false 부분에 카메라 권한 체크 결과값으로 치환 필요
-      // + 카메라 권한이 false 일때
-      setOpenCameraSetting(({ type }) => ({
-        type,
-        open: true
-      }));
-      return;
-    }
-
     router.push(
       accessUser
         ? { pathname: '/legit/request/selectCategory' }
         : { pathname: '/login', query: { returnUrl: '/legit/request/selectCategory' } }
     );
-  }, [accessUser, router, setDialogState, setOpenCameraSetting]);
+  }, [accessUser, router, setDialogState]);
 
   return (
     <Wrapper onClick={handleClick}>

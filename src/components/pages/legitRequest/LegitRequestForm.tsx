@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { useTheme } from 'mrcamel-ui';
@@ -25,6 +25,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import { dialogState } from '@recoil/common';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitSelectAdditionalInfo from './LegitSelectAdditionalInfo';
@@ -44,8 +45,11 @@ function LegitRequestForm() {
   const [{ categoryName, brandName, brandLogo, modelImage, isCompleted }, setLegitRequestState] =
     useRecoilState(legitRequestState);
   const [productLegitParams, setProductLegitParamsState] = useRecoilState(productLegitParamsState);
+  const setDialogState = useSetRecoilState(dialogState);
 
   const [isLoadingGetPhoto, setIsLoadingGetPhoto] = useState(false);
+  const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
+  const [hasCameraAuth, setHasCameraAuth] = useState(false);
 
   const { title, photoGuideImages, description, additionalIds = [] } = productLegitParams;
 
@@ -91,6 +95,26 @@ function LegitRequestForm() {
         name: attrProperty.legitName.LEGIT_PROCESS
       });
 
+      if (!hasPhotoLibraryAuth || !hasCameraAuth) {
+        setDialogState({
+          type: 'appAuthCheck',
+          theme: 'dark',
+          customStyleTitle: { minWidth: 269, marginTop: 12 },
+          firstButtonAction: () => {
+            if (
+              checkAgent.isIOSApp() &&
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callMoveToSetting &&
+              window.webkit.messageHandlers.callMoveToSetting.postMessage
+            ) {
+              window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
+            }
+          }
+        });
+        return;
+      }
+
       if (
         checkAgent.isIOSApp() &&
         window.webkit &&
@@ -108,7 +132,7 @@ function LegitRequestForm() {
         );
       }
     },
-    [groupId, photoGuideImages]
+    [setDialogState, hasPhotoLibraryAuth, hasCameraAuth, groupId, photoGuideImages]
   );
 
   const handleClickAdditionalInfo = useCallback(
@@ -163,6 +187,31 @@ function LegitRequestForm() {
       setTimeout(() => setIsLoadingGetPhoto(false), 500);
     };
   }, [setProductLegitParamsState]);
+
+  useEffect(() => {
+    window.getAuthPhotoLibrary = (result: boolean) => {
+      setHasPhotoLibraryAuth(result);
+    };
+    window.getAuthCamera = (result: boolean) => {
+      setHasCameraAuth(result);
+    };
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callAuthPhotoLibrary
+    ) {
+      window.webkit.messageHandlers.callAuthPhotoLibrary.postMessage(0);
+    }
+    if (
+      checkAgent.isIOSApp() &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.callAuthCamera
+    ) {
+      window.webkit.messageHandlers.callAuthCamera.postMessage(0);
+    }
+  }, []);
 
   return (
     <GeneralTemplate

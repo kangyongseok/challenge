@@ -21,7 +21,8 @@ export declare global {
     getPhotoGuide: any;
     getPhotoGuideDone: any;
     getLogEvent: any;
-    getCameraAuth: any;
+    getAuthPhotoLibrary: any;
+    getAuthCamera: any;
   }
 
   namespace NodeJS {

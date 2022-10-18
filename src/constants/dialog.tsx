@@ -21,7 +21,14 @@ export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
   ),
   legitRequestOnlyInIOS: '현재 이 기능은 iOS에서만 가능합니다!',
   legitServiceNotice: '곧 서비스가 시작 됩니다!',
-  appUpdateNotice: '카멜 App이 업데이트 되었어요!'
+  appUpdateNotice: '카멜 App이 업데이트 되었어요!',
+  appAuthCheck: (
+    <>
+      모든 사진 권한 및 카메라 권한을
+      <br />
+      설정해주세요.
+    </>
+  )
 };
 
 export const dialogContent = {
@@ -62,6 +69,13 @@ export const dialogContent = {
       <br />
       App으로 업데이트해주세요.
     </Box>
+  ),
+  appAuthCheck: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      내 물건의 사진을 등록하려면
+      <br />
+      권한이 필요해요
+    </Box>
   )
 };
 
@@ -74,6 +88,7 @@ export const firstButtonText: Record<
     | 'deleteLegitAdminOpinion'
     | 'deleteLegitResultComment'
     | 'deleteLegitResultReply'
+    | 'appAuthCheck'
   >,
   string | number | ReactElement
 > = {
@@ -82,7 +97,8 @@ export const firstButtonText: Record<
   endCrazyCuration: '아니오',
   deleteLegitAdminOpinion: '취소',
   deleteLegitResultComment: '취소',
-  deleteLegitResultReply: '취소'
+  deleteLegitResultReply: '취소',
+  appAuthCheck: '설정으로 이동'
 };
 
 export const secondButtonText: Record<
@@ -98,6 +114,7 @@ export const secondButtonText: Record<
     | 'legitRequestOnlyInIOS'
     | 'legitServiceNotice'
     | 'appUpdateNotice'
+    | 'appAuthCheck'
   >,
   string | number | ReactElement
 > = {
@@ -110,7 +127,8 @@ export const secondButtonText: Record<
   legitRequestOnlyInApp: '3초 앱 다운로드',
   legitRequestOnlyInIOS: '확인',
   legitServiceNotice: '확인',
-  appUpdateNotice: '3초 업데이트'
+  appUpdateNotice: '3초 업데이트',
+  appAuthCheck: '취소'
 };
 
 const dialog = {

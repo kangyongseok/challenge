@@ -22,7 +22,6 @@ import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitTargetBrandList() {
@@ -35,7 +34,6 @@ function LegitTargetBrandList() {
 
   const setLegitRequestState = useSetRecoilState(legitRequestState);
   const setDialogState = useSetRecoilState(dialogState);
-  const setOpenCameraSetting = useSetRecoilState(camelSellerDialogStateFamily('cameraAuth'));
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -110,17 +108,6 @@ function LegitTargetBrandList() {
         return;
       }
 
-      // eslint-disable-next-line no-constant-condition
-      if (checkAgent.isMobileApp() && false) {
-        // TODO: false 부분에 카메라 권한 체크 결과값으로 치환 필요
-        // + 카메라 권한이 false 일때
-        setOpenCameraSetting(({ type }) => ({
-          type,
-          open: true
-        }));
-        return;
-      }
-
       if (!accessUser) {
         router.push({ pathname: '/login', query: { returnUrl: '/legit/request/selectCategory' } });
 
@@ -137,7 +124,7 @@ function LegitTargetBrandList() {
       }));
       router.push('/legit/request/selectCategory');
     },
-    [accessUser, router, setDialogState, setLegitRequestState, setOpenCameraSetting]
+    [accessUser, router, setDialogState, setLegitRequestState]
   );
 
   const handleSwiperBrand = () => {

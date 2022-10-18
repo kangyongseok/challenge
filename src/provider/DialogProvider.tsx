@@ -57,6 +57,8 @@ function DialogProvider() {
         return 'textWithOneButton';
       case 'appUpdateNotice':
         return 'textWithOneButton';
+      case 'appAuthCheck':
+        return 'textWithTwoVerticalButton';
       default:
         return 'text';
     }
@@ -123,6 +125,28 @@ function DialogProvider() {
                   </Typography>
                 ))}
             </Flexbox>
+            {dialogDisplayType === 'textWithTwoVerticalButton' && (
+              <Flexbox direction="vertical" gap={8}>
+                <Button
+                  variant="contained"
+                  brandColor="primary"
+                  size="large"
+                  customStyle={{ width: '100%' }}
+                  onClick={handleClickFirst}
+                >
+                  {firstButtonText[type as keyof typeof firstButtonText]}
+                </Button>
+                <Button
+                  variant="ghost"
+                  brandColor="black"
+                  size="large"
+                  customStyle={{ width: '100%' }}
+                  onClick={handleClickSecond}
+                >
+                  {secondButtonText[type as keyof typeof secondButtonText]}
+                </Button>
+              </Flexbox>
+            )}
             {['textWithTwoButton', 'textWithOneButton'].includes(dialogDisplayType) && (
               <Flexbox gap={8}>
                 {dialogDisplayType === 'textWithTwoButton' && (

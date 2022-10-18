@@ -123,7 +123,8 @@ export type DialogType =
   | 'legitRequestOnlyInApp'
   | 'legitRequestOnlyInIOS'
   | 'legitServiceNotice'
-  | 'appUpdateNotice';
+  | 'appUpdateNotice'
+  | 'appAuthCheck';
 
 export type ShareData = {
   title: string;

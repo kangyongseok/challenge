@@ -29,10 +29,8 @@ interface LegitCaseHistoryCardProps {
 function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistoryCardProps) {
   const {
     result = 0,
-    productResult: { title = '', imageMain = '', brand: { nameEng: brandNameEng = '' } = {} } = {},
-    commentReal,
-    commentFake,
-    commentNone
+    legitOpinions = [],
+    productResult: { title = '', imageMain = '', brand: { nameEng: brandNameEng = '' } = {} } = {}
   } = productLegit || {};
 
   const router = useRouter();
@@ -54,11 +52,20 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
   }, [result]);
   const comments: { icon: IconProps['name']; count: number }[] = useMemo(
     () => [
-      { icon: 'OpinionAuthenticOutlined', count: commentReal || 0 },
-      { icon: 'OpinionFakeOutlined', count: commentFake || 0 },
-      { icon: 'OpinionImpossibleOutlined', count: commentNone || 0 }
+      {
+        icon: 'OpinionAuthenticOutlined',
+        count: legitOpinions.filter((legitOpinion) => legitOpinion.result === 1).length
+      },
+      {
+        icon: 'OpinionFakeOutlined',
+        count: legitOpinions.filter((legitOpinion) => legitOpinion.result === 2).length
+      },
+      {
+        icon: 'OpinionImpossibleOutlined',
+        count: legitOpinions.filter((legitOpinion) => legitOpinion.result === 3).length
+      }
     ],
-    [commentFake, commentNone, commentReal]
+    [legitOpinions]
   );
 
   const handleClick = useCallback(() => {

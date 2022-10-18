@@ -57,7 +57,7 @@ function LegitPhotoGuideCard({
   const status = useMemo(() => {
     if (isEdit && isInvalid) return 1;
 
-    if (isEdit) return imageUrl !== savedImageUrl ? 3 : 2;
+    if (isEdit) return imageUrl !== '' && imageUrl !== savedImageUrl ? 3 : 2;
 
     if (isEdit && !!imageSample) return 3;
 
