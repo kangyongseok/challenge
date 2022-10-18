@@ -7,7 +7,11 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { Gap } from '@components/UI/atoms';
 
+import { logEvent } from '@library/amplitude';
+
 import { CATEGORY_TAGS_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { getCenterScrollLeft } from '@utils/scroll';
 import { convertSearchParamsByQuery } from '@utils/products';
@@ -51,6 +55,91 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
     () => variant !== 'categories' && !parentIds,
     [variant, parentIds]
   );
+
+  const handleClickAll = () => {
+    if (variant === 'categories') {
+      logEvent(attrKeys.products.CLICK_CATEGORY, {
+        name: attrProperty.name.productList,
+        type: attrProperty.type.input,
+        title: attrProperty.title.CATEGORY_PARENT,
+        category: '전체',
+        parentCategory: keyword
+      });
+    } else {
+      logEvent(attrKeys.products.CLICK_CATEGORY, {
+        name: attrProperty.name.productList,
+        type: attrProperty.type.input,
+        title: attrProperty.title.BRAND_PARENT,
+        brandName: keyword
+      });
+    }
+
+    router
+      .push({
+        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+        query: { ...excludedSearchParams, parentIds }
+      })
+      .then(() => window.scrollTo(0, 0));
+  };
+
+  const handleClickParentCategory = (parentId: number, parentCategoryName: string) => () => {
+    if (variant === 'brands') {
+      logEvent(attrKeys.products.CLICK_CATEGORY, {
+        name: attrProperty.name.productList,
+        type: attrProperty.type.input,
+        title: attrProperty.title.BRAND_PARENT,
+        parentCategory: parentCategoryName,
+        brandName: keyword
+      });
+    }
+
+    router
+      .push({
+        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+        query: { ...excludedSearchParams, parentIds: [parentId] }
+      })
+      .then(() => window.scrollTo(0, 0));
+  };
+
+  const handleClickSubParentCategory =
+    ({
+      parentId,
+      subParentId,
+      subParentName
+    }: {
+      parentId: number;
+      subParentId: number;
+      subParentName: string;
+    }) =>
+    () => {
+      if (variant === 'categories') {
+        logEvent(attrKeys.products.CLICK_CATEGORY, {
+          name: attrProperty.name.productList,
+          type: attrProperty.type.input,
+          title: attrProperty.title.CATEGORY_SUBPARENT,
+          parentCategory: keyword,
+          category: subParentName
+        });
+      } else {
+        logEvent(attrKeys.products.CLICK_CATEGORY, {
+          name: attrProperty.name.productList,
+          type: attrProperty.type.input,
+          title: attrProperty.title.BRAND_SUBPARENT,
+          parentCategory: parentCategories
+            .find(({ id }) => id === parentId)
+            ?.name.replace(/\(P\)/g, ''),
+          category: subParentName,
+          brandName: keyword
+        });
+      }
+
+      router
+        .replace({
+          pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+          query: { ...excludedSearchParams, parentIds: [parentId], subParentIds: [subParentId] }
+        })
+        .then(() => window.scrollTo(0, 0));
+    };
 
   useEffect(() => {
     if (categoryTagRef.current && parentCategoryTagRefs.current.length) {
@@ -123,17 +212,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
             weight={
               (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
             }
-            onClick={() =>
-              router
-                .push({
-                  pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
-                  query: {
-                    ...excludedSearchParams,
-                    parentIds
-                  }
-                })
-                .then(() => window.scrollTo(0, 0))
-            }
+            onClick={handleClickAll}
             isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
           >
             전체
@@ -146,17 +225,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                   if (ref) parentCategoryTagRefs.current[index] = ref;
                 }}
                 weight={convertStringToArray(String(parentIds)).includes(id) ? 'bold' : 'regular'}
-                onClick={() =>
-                  router
-                    .push({
-                      pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
-                      query: {
-                        ...excludedSearchParams,
-                        parentIds: id
-                      }
-                    })
-                    .then(() => window.scrollTo(0, 0))
-                }
+                onClick={handleClickParentCategory(id, name.replace(/\(P\)/g, ''))}
                 isActive={convertStringToArray(String(parentIds)).includes(id)}
               >
                 {name.replace(/\(P\)/g, '')}
@@ -184,18 +253,11 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                   weight={
                     convertStringToArray(String(subParentIds)).includes(id) ? 'bold' : 'regular'
                   }
-                  onClick={() =>
-                    router
-                      .replace({
-                        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
-                        query: {
-                          ...excludedSearchParams,
-                          parentIds: parentId,
-                          subParentIds: id
-                        }
-                      })
-                      .then(() => window.scrollTo(0, 0))
-                  }
+                  onClick={handleClickSubParentCategory({
+                    parentId,
+                    subParentId: id,
+                    subParentName: name
+                  })}
                   isActive={convertStringToArray(String(subParentIds)).includes(id)}
                 >
                   {name}

@@ -264,7 +264,11 @@ const title = {
   SOLD: 'SOLD',
   RESERVED: 'RESERVED',
   SOLD_SURVEY: 'SOLD_SURVEY',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
+  BRAND_PARENT: 'BRAND_PARENT',
+  BRAND_SUBPARENT: 'BRAND_SUBPARENT',
+  CATEGORY_PARENT: 'CATEGORY_PARENT',
+  CATEGORY_SUBPARENT: 'CATEGORY_SUBPARENT'
 };
 
 const source = {
@@ -272,7 +276,8 @@ const source = {
 };
 
 const type = {
-  guide: 'GUIDED'
+  guide: 'GUIDED',
+  input: 'INPUT'
 };
 
 const attrProperty = {

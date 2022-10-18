@@ -342,7 +342,8 @@ const products = {
   clickRecommKeyword: 'CLICK_RECOMMKEYWORD',
   clickDynamicFilter: 'CLICK_DYNAMICFILTER',
   swipeXDynamicFilter: 'SWIPE_X_DYNAMICFILTER',
-  swipeXFilterHistory: 'SWIPE_X_FILTERHISTORY'
+  swipeXFilterHistory: 'SWIPE_X_FILTERHISTORY',
+  CLICK_CATEGORY: 'CLICK_CATEGORY'
 };
 
 const welcome = {
