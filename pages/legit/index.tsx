@@ -6,8 +6,9 @@ import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useTheme } from 'mrcamel-ui';
 
-import { LegitInduceFloatingBanner } from '@components/UI/organisms';
+import LegitInduceFloatingBanner from '@components/UI/organisms/LegitInduceFloatingBanner';
 import { BottomNavigation, Header } from '@components/UI/molecules';
+import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   LegitFloatingButton,
@@ -44,6 +45,7 @@ function Legit() {
 
   return (
     <>
+      <PageHead ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/legit-main.webp`} />
       <GeneralTemplate
         header={<Header isTransparent isFixed customStyle={{ backgroundColor: common.bg03 }} />}
         footer={<BottomNavigation />}

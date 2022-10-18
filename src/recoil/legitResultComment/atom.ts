@@ -22,3 +22,8 @@ export const legitResultCommentFocusedState = atom({
   key: 'legitResultComment/focusedState',
   default: false
 });
+
+export const legitResultCommentOpenContactBannerState = atom({
+  key: 'legitResultComment/openContactBannerState',
+  default: false
+});

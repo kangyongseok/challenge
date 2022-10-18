@@ -8,3 +8,5 @@ export { default as LegitResultTimer } from './LegitResultTimer';
 export { default as LegitResultIntro } from './LegitResultIntro';
 export { default as LegitResultRequestInfo } from './LegitResultRequestInfo';
 export { default as LegitResultHeader } from './LegitResultHeader';
+export { default as LegitResultPageHead } from './LegitResultPageHead';
+export { default as LegitResultContactBanner } from './LegitResultContactBanner';

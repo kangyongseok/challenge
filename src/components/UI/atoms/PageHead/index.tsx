@@ -34,18 +34,18 @@ function PageHead({
 
   return (
     <Head>
-      <meta name="description" content={description} />
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content={ogTitle} />
-      <meta property="og:description" content={ogDescription} />
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:url" content={ogUrl} />
+      {description && <meta name="description" content={description} />}
+      {ogTitle && <meta property="og:type" content="website" />}
+      {ogTitle && <meta property="og:title" content={ogTitle} />}
+      {ogDescription && <meta property="og:description" content={ogDescription} />}
+      {ogImage && <meta property="og:image" content={ogImage} />}
+      {ogUrl && <meta property="og:url" content={ogUrl} />}
       <meta property="og:site_name" content="Mr.Camel" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
+      {title && <meta name="twitter:title" content={title} />}
+      {description && <meta name="twitter:description" content={description} />}
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
       <meta name="twitter:card" content="summary" />
-      <meta name="twitter:url" content={ogUrl} />
+      {ogUrl && <meta name="twitter:url" content={ogUrl} />}
       {canonical && <link rel="canonical" href={canonical} />}
       {product && (
         <>
@@ -61,7 +61,7 @@ function PageHead({
           <meta property="product:price:currency" content="KRW" />
         </>
       )}
-      <title>{title}</title>
+      {title && <title>{title}</title>}
     </Head>
   );
 }

@@ -9,7 +9,7 @@ export const StyledLegitContactBanner = styled(Flexbox)<{ isDark: boolean; isFix
     theme: {
       palette: { common }
     }
-  }) => (isDark ? common.uiBlack : common.ui90)};
+  }) => (isDark ? common.cmnB : common.ui90)};
   cursor: pointer;
   height: 72px;
   z-index: ${({ theme }) => theme.zIndex.bottomNav};

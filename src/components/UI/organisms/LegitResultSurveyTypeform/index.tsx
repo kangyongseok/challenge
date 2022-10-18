@@ -15,6 +15,8 @@ import queryKeys from '@constants/queryKeys';
 import { LEGIT_SESSION_ID } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookie, setCookie } from '@utils/common';
+
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitResultSurveyTypeform() {
@@ -44,6 +46,12 @@ function LegitResultSurveyTypeform() {
     setOpen('load');
   };
 
+  const handleClose = () => {
+    setCookie('hideLegitSurveyTypeform', 'done', 1);
+    setOpen(undefined);
+    setLoadSurveyTypeform(false);
+  };
+
   useEffect(() => {
     if (
       router.pathname === '/legit/[id]/result' &&
@@ -51,7 +59,8 @@ function LegitResultSurveyTypeform() {
       status === 30 &&
       accessUser &&
       accessUser.userId === userId &&
-      LocalStorage.get(LEGIT_SESSION_ID) !== amplitude.getInstance().getSessionId()
+      LocalStorage.get(LEGIT_SESSION_ID) !== amplitude.getInstance().getSessionId() &&
+      !getCookie('hideLegitSurveyTypeform')
     ) {
       setLoadSurveyTypeform(true);
     }
@@ -71,10 +80,7 @@ function LegitResultSurveyTypeform() {
     <PopupButton
       id="Mcpmlqs5"
       open={open}
-      onClose={() => {
-        setOpen(undefined);
-        setLoadSurveyTypeform(false);
-      }}
+      onClose={handleClose}
       tracking={{
         utm_source: 'owned',
         utm_medium: 'legit',

@@ -10,11 +10,13 @@ import {
   LegitResultBottomCtaButton,
   LegitResultCommentList,
   LegitResultCommentWriter,
+  LegitResultContactBanner,
   LegitResultDetailAlert,
   LegitResultHeader,
   LegitResultIntro,
   LegitResultLoginBottomSheet,
   LegitResultOpinionList,
+  LegitResultPageHead,
   LegitResultRequestInfo,
   LegitResultTimer
 } from '@components/pages/legitResult';
@@ -47,42 +49,47 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
 
   if (status === 20) {
     return (
-      <ThemeProvider theme="dark">
-        <GeneralTemplate
-          header={<LegitResultHeader />}
-          footer={<LegitResultBottomCtaButton />}
-          customStyle={{
-            height: 'auto',
-            minHeight: '100%',
-            backgroundColor: dark.palette.common.bg03
-          }}
-        >
-          <LegitResultIntro />
-          <LegitResultTimer />
-          <LegitResultRequestInfo />
-          <LegitResultDetailAlert />
-          <Box
+      <>
+        <LegitResultPageHead />
+        <ThemeProvider theme="dark">
+          <GeneralTemplate
+            header={<LegitResultHeader />}
+            footer={<LegitResultBottomCtaButton />}
             customStyle={{
-              margin: '52px -20px 32px',
-              border: `1px dashed ${dark.palette.common.line01}`
+              height: 'auto',
+              minHeight: '100%',
+              backgroundColor: dark.palette.common.bg03
             }}
-          />
-          <LegitResultCommentWriter writerRef={writerRef} />
-          <LegitResultCommentList writerRef={writerRef} />
-          <Alert round="8" customStyle={{ margin: '84px 0 20px', padding: '8px 16px' }}>
-            <Typography variant="small1" customStyle={{ color: common.ui60 }}>
-              사진 상 정품 혹은 가품 의견을 여러 전문가로부터 받는 서비스로, 법적 효력이 있지는
-              않으며 단순 참고용으로 사용하시기 바랍니다.
-            </Typography>
-          </Alert>
-        </GeneralTemplate>
-        <LegitResultLoginBottomSheet />
-      </ThemeProvider>
+          >
+            <LegitResultIntro />
+            <LegitResultTimer />
+            <LegitResultRequestInfo />
+            <LegitResultDetailAlert />
+            <Box
+              customStyle={{
+                margin: '52px -20px 32px',
+                border: `1px dashed ${dark.palette.common.line01}`
+              }}
+            />
+            <LegitResultCommentWriter writerRef={writerRef} />
+            <LegitResultCommentList writerRef={writerRef} />
+            <Alert round="8" customStyle={{ margin: '84px 0 20px', padding: '8px 16px' }}>
+              <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+                사진 상 정품 혹은 가품 의견을 여러 전문가로부터 받는 서비스로, 법적 효력이 있지는
+                않으며 단순 참고용으로 사용하시기 바랍니다.
+              </Typography>
+            </Alert>
+          </GeneralTemplate>
+          <LegitResultContactBanner />
+          <LegitResultLoginBottomSheet />
+        </ThemeProvider>
+      </>
     );
   }
 
   return (
     <>
+      <LegitResultPageHead />
       <GeneralTemplate
         header={<LegitResultHeader />}
         footer={<LegitResultBottomCtaButton />}
@@ -101,6 +108,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
           </Typography>
         </Alert>
       </GeneralTemplate>
+      <LegitResultContactBanner />
       <LegitResultLoginBottomSheet />
     </>
   );

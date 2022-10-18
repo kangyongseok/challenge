@@ -19,7 +19,11 @@ function LegitResultIntro() {
   const {
     data: {
       cntTargetOpinions = 0,
-      productResult: { brand = { name: '' }, category = { name: '' }, postType = 0 } = {}
+      productResult: {
+        brand = { name: '', nameEng: '' },
+        category = { name: '' },
+        postType = 0
+      } = {}
     } = {}
   } = useQuery(queryKeys.productLegits.legit(productId), () => fetchProductLegit(productId), {
     enabled: !!id
@@ -43,7 +47,9 @@ function LegitResultIntro() {
       <Image
         width={96}
         height={95}
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/gucci.png`}
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${brand.nameEng
+          .toLowerCase()
+          .replace(/ /g, '')}.png`}
         alt="Brand Logo Img"
         disableAspectRatio
       />

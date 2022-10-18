@@ -27,7 +27,8 @@ import attrKeys from '@constants/attrKeys';
 import {
   legitResultCommentDataState,
   legitResultCommentEditableState,
-  legitResultCommentFocusedState
+  legitResultCommentFocusedState,
+  legitResultCommentOpenContactBannerState
 } from '@recoil/legitResultComment/atom';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -53,6 +54,9 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
   );
   const [editable, setLegitResultCommentEditableState] = useRecoilState(
     legitResultCommentEditableState
+  );
+  const setLegitResultCommentOpenContactBannerState = useSetRecoilState(
+    legitResultCommentOpenContactBannerState
   );
   const setLegitResultCommentFocusedState = useSetRecoilState(legitResultCommentFocusedState);
   const resetLegitResultCommentDataState = useResetRecoilState(legitResultCommentDataState);
@@ -160,6 +164,7 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
       {
         onSuccess: () => {
           refetch();
+          setLegitResultCommentOpenContactBannerState(true);
           resetLegitResultCommentDataState();
           setOpen(false);
         }

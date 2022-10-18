@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { Swiper } from 'swiper';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Grid, ThemeProvider, dark } from 'mrcamel-ui';
+import { Box, Grid, Label, ThemeProvider, dark } from 'mrcamel-ui';
 
-import { LegitUploadInfoPaper } from '@components/UI/organisms';
+import { ImageDetailDialog, LegitUploadInfoPaper } from '@components/UI/organisms';
 import { Header, LegitPhotoGuideCard } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LegitRequestBottomButton, LegitRequestBrandLogo } from '@components/pages/legitRequest';
@@ -34,6 +35,10 @@ function LegitRequest() {
   const productId = useMemo(() => Number(id), [id]);
 
   const { data: { roles = [] } = {} } = useQueryUserInfo();
+
+  const [open, setOpen] = useState(false);
+  const [labelText, setLabelText] = useState('');
+  const [syncIndex, setSyncIndex] = useState(0);
 
   const {
     data: {
@@ -69,6 +74,28 @@ function LegitRequest() {
     router,
     setToastState
   ]);
+
+  const handleClickPhotoGuide = (e: MouseEvent<HTMLDivElement>) => {
+    const dataIndex = Number(e.currentTarget.getAttribute('data-index') || 0);
+
+    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === dataIndex);
+
+    if (!findPhotoGuideDetail) return;
+
+    setOpen(true);
+    setSyncIndex(dataIndex);
+    setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
+  };
+
+  const handleChange = ({ activeIndex }: Swiper) => {
+    const findPhotoGuideDetail = (photoGuideDetails || []).find(
+      (_, index) => index === activeIndex
+    );
+
+    if (!findPhotoGuideDetail) return;
+
+    setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
+  };
 
   useEffect(() => {
     document.body.className = 'legit-dark';
@@ -108,10 +135,10 @@ function LegitRequest() {
         }}
       >
         <LegitRequestBrandLogo
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${nameEng
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
             .toLocaleLowerCase()
             .split(' ')
-            .join('')}.jpg`}
+            .join('')}.png`}
         />
         <Box customStyle={{ width: '100%', height: 104 }} />
         <LegitUploadInfoPaper
@@ -140,12 +167,21 @@ function LegitRequest() {
                     hideLabel
                     hideStatusHighLite
                     isDark
+                    onClick={handleClickPhotoGuide}
                   />
                 </Grid>
               )
             )}
           </Grid>
         </LegitUploadInfoPaper>
+        <ImageDetailDialog
+          open={open}
+          onChange={handleChange}
+          onClose={() => setOpen(false)}
+          images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
+          label={<Label variant="ghost" brandColor="black" text={labelText} />}
+          syncIndex={syncIndex}
+        />
         <LegitRequestBottomButton onClick={handleClick} text="확인" />
       </GeneralTemplate>
     </ThemeProvider>

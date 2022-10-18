@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 
 import { Avatar, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';

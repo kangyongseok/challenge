@@ -13,12 +13,14 @@ import { ImageBox, InfoBox, StyledLegitContactBanner } from './LegitContactBanne
 interface LegitContactBannerProps {
   isDark?: boolean;
   isFixed?: boolean;
+  onClose?: () => void;
   customStyle?: CustomStyle;
 }
 
 function LegitContactBanner({
   isDark = false,
   isFixed = false,
+  onClose,
   customStyle
 }: LegitContactBannerProps) {
   const {
@@ -32,6 +34,7 @@ function LegitContactBanner({
       id="rmVuaCLl"
       as="section"
       style={{ width: '100%' }}
+      onClose={onClose}
       onReady={() => {
         logEvent(attrKeys.legit.CLICK_BANNER, {
           name: attrProperty.legitName.LEGIT_PROFILE,
