@@ -159,7 +159,7 @@ function LegitRequest() {
         >
           <Grid container columnGap={8} rowGap={8}>
             {photoGuideDetails.map(
-              ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }) => (
+              ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }, index) => (
                 <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
                   <LegitPhotoGuideCard
                     photoGuideDetail={commonPhotoGuideDetail}
@@ -167,6 +167,7 @@ function LegitRequest() {
                     hideLabel
                     hideStatusHighLite
                     isDark
+                    data-index={index}
                     onClick={handleClickPhotoGuide}
                   />
                 </Grid>
