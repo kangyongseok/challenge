@@ -27,7 +27,7 @@ function LegitRequest() {
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser, isSuccess } = useQueryAccessUser();
 
   const step = String(router.query?.step || '');
 
@@ -36,17 +36,19 @@ function LegitRequest() {
   }, []);
 
   useEffect(() => {
-    if (!accessUser) {
+    if (isSuccess && !accessUser) {
       router.back();
-      return;
     }
+  }, [router, isSuccess, accessUser]);
+
+  useEffect(() => {
     if (
       router.isReady &&
       !['selectCategory', 'selectBrand', 'selectModel', 'form', 'edit'].includes(step)
     ) {
       router.replace('/legit/request/selectCategory');
     }
-  }, [accessUser, router, step]);
+  }, [router, step]);
 
   useEffect(() => {
     router.beforePopState(({ as }) => {
