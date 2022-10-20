@@ -24,14 +24,7 @@ function LegitGuideCtaButton() {
         name: attrProperty.legitName.LEGIT_HOWITWORKS
       });
 
-      setDialogState({
-        type: 'legitServiceNotice',
-        customStyleTitle: { minWidth: 269 }
-      });
-
-      return;
-
-      if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

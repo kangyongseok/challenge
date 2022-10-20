@@ -2,9 +2,9 @@ import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Tab, Tabs, useTheme } from 'mrcamel-ui';
 
-import { Badge } from '@components/UI/atoms';
+import Badge from '@components/UI/atoms/Badge';
 
-import { legitRequestListCountsState, legitRequestParamsState } from '@recoil/legitRequest';
+import { legitRequestParamsState } from '@recoil/legitRequest';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function LegitAdminTabs() {
@@ -12,7 +12,6 @@ function LegitAdminTabs() {
   const { tab = 'home' } = router.query;
 
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
-  const resetLegitRequestListCountsState = useResetRecoilState(legitRequestListCountsState);
 
   const { data: { notProcessedLegitCount = 0 } = {} } = useQueryUserInfo();
 
@@ -25,7 +24,6 @@ function LegitAdminTabs() {
   const handleChange = (newValue: string | number) => {
     if (newValue === 'request') {
       resetLegitRequestParamsState();
-      resetLegitRequestListCountsState();
     }
 
     router.replace({

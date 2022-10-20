@@ -24,7 +24,7 @@ import {
   productsKeywordDialogState,
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
-import { legitRequestListCountsState, legitRequestParamsState } from '@recoil/legitRequest';
+import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
 import { homeLegitResultTooltipCloseState, homeSelectedTabStateFamily } from '@recoil/home';
 import categoryState from '@recoil/category';
@@ -113,7 +113,6 @@ function BottomNavigation({
   const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetLegitFiltersState = useResetRecoilState(legitFiltersState);
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
-  const resetLegitRequestListCountsState = useResetRecoilState(legitRequestListCountsState);
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
@@ -220,7 +219,6 @@ function BottomNavigation({
   const handleClickLegitNotProcessedTooltip = () => {
     setOpenLegitNotProcessedTooltip(false);
     setLegitResultTooltipCloseState(true);
-    resetLegitRequestListCountsState();
     resetLegitRequestParamsState();
     router.push({
       pathname: '/legit/admin',

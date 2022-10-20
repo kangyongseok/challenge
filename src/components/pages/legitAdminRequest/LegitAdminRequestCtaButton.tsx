@@ -85,7 +85,7 @@ function LegitAdminRequestCtaButton() {
           tab: 'request'
         }
       });
-    } else if (postType === 2 && result === 3) {
+    } else if (isLegitHead && postType === 2 && result === 3) {
       setOpen(true);
     } else {
       mutate(
@@ -104,7 +104,7 @@ function LegitAdminRequestCtaButton() {
                 }
               })
               .then(() => {
-                if (result === 3) {
+                if (isLegitHead && result === 3) {
                   setToastState({
                     type: 'legitAdminOpinion',
                     status: 'preConfirmEdited'
@@ -195,14 +195,14 @@ function LegitAdminRequestCtaButton() {
   };
 
   useEffect(() => {
-    if ((postType === 2 && result === 3) || status === 12) {
+    if ((isLegitHead && postType === 2 && result === 3) || status === 12) {
       setDisabled(false);
     } else if ((!result || !description) && !myLegitOpinion) {
       setDisabled(true);
     } else {
       setDisabled(false);
     }
-  }, [description, myLegitOpinion, postType, result, status]);
+  }, [isLegitHead, description, myLegitOpinion, postType, result, status]);
 
   if (editable && myLegitOpinion) {
     return (

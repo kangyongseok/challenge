@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { QueryClient, dehydrate } from 'react-query';
 import type { GetServerSidePropsContext } from 'next';
 
@@ -11,6 +13,7 @@ import {
 } from '@components/pages/legitAdminRequest';
 
 import Initializer from '@library/initializer';
+import ChannelTalk from '@library/channelTalk';
 
 import { fetchRecommWishes, fetchUserInfo } from '@api/user';
 import { fetchProductLegit } from '@api/productLegit';
@@ -20,6 +23,21 @@ import queryKeys from '@constants/queryKeys';
 import { getProductDetailUrl } from '@utils/common';
 
 function LegitAdminRequestDetail() {
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(-30);
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, []);
+
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(-30);
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, []);
   return (
     <GeneralTemplate header={<Header />} footer={<LegitAdminRequestCtaButton />}>
       <LegitAdminRequestInfo />

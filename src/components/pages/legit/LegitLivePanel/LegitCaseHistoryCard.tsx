@@ -59,10 +59,6 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
       {
         icon: 'OpinionFakeOutlined',
         count: legitOpinions.filter((legitOpinion) => legitOpinion.result === 2).length
-      },
-      {
-        icon: 'OpinionImpossibleOutlined',
-        count: legitOpinions.filter((legitOpinion) => legitOpinion.result === 3).length
       }
     ],
     [legitOpinions]

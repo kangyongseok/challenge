@@ -133,20 +133,18 @@ function LegitAdminRequestOpinionWriter() {
               isActive={result === 2}
               disabled={postType === 2 && status === 12}
             />
-            {isLegitHead && (
-              <LegitOpinionButton
-                variant="impossible"
-                data-result={3}
-                onClick={handleClick}
-                isActive={result === 3 || status === 12}
-                disabled={postType === 2 && status === 12}
-              />
-            )}
+            <LegitOpinionButton
+              variant="impossible"
+              data-result={3}
+              onClick={handleClick}
+              isActive={result === 3 || status === 12}
+              disabled={postType === 2 && status === 12}
+            />
           </Flexbox>
         </Tooltip>
       </TooltipWrapper>
       <OpinionWriter
-        hide={(postType === 2 && result === 3) || (postType === 2 && status === 12)}
+        hide={(isLegitHead && postType === 2 && result === 3) || (postType === 2 && status === 12)}
         focused={focused}
         onClick={handleFocus}
       >

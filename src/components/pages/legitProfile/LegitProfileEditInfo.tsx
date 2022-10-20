@@ -67,7 +67,7 @@ function LegitProfileEditInfo({
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

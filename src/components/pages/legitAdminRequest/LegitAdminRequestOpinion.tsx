@@ -27,7 +27,7 @@ function LegitAdminRequestOpinion() {
   const editable = useRecoilValue(legitAdminOpinionEditableState);
   const { data: accessUser } = useQueryAccessUser();
 
-  const { data: { legitOpinions = [] } = {} } = useQuery(
+  const { data: { legitOpinions = [], isLegitHead } = {} } = useQuery(
     queryKeys.productLegits.legit(Number(id)),
     () => fetchProductLegit(Number(id)),
     {
@@ -44,7 +44,7 @@ function LegitAdminRequestOpinion() {
 
   return (
     <Box component="section" customStyle={{ margin: '52px 0' }}>
-      {myLegitOpinion.result === 3 ? (
+      {isLegitHead && myLegitOpinion.result === 3 ? (
         <Box
           customStyle={{
             padding: 20,

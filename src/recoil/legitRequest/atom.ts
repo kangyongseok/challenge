@@ -1,6 +1,10 @@
 import { atom } from 'recoil';
 
-import { PostProductLegitData, ProductLegitsParams, PutProductLegitData } from '@dto/productLegit';
+import type {
+  PostProductLegitData,
+  ProductLegitsParams,
+  PutProductLegitData
+} from '@dto/productLegit';
 
 export const legitRequestState = atom({
   key: 'legitRequest/state',
@@ -19,25 +23,6 @@ export const legitRequestParamsState = atom<ProductLegitsParams>({
   key: 'legitRequest/paramsState',
   default: {
     size: 20
-  }
-});
-
-export const legitRequestListCountsState = atom<{
-  cntAuthorized: number;
-  cntAuthenticating: number;
-  cntAuthenticatingOpinion: number;
-  cntPreConfirm: number;
-  cntPreConfirmEdit: number;
-  cntPreConfirmEditDone: number;
-}>({
-  key: 'legitRequest/listCountsState',
-  default: {
-    cntAuthorized: 0,
-    cntAuthenticating: 0,
-    cntAuthenticatingOpinion: 0,
-    cntPreConfirm: 0,
-    cntPreConfirmEdit: 0,
-    cntPreConfirmEditDone: 0
   }
 });
 

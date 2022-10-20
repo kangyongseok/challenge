@@ -84,7 +84,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -115,7 +115,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1141) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },

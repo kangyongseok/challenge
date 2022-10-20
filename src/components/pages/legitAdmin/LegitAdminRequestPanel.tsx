@@ -16,7 +16,7 @@ import queryKeys from '@constants/queryKeys';
 
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
-import { legitRequestListCountsState, legitRequestParamsState } from '@recoil/legitRequest';
+import { legitRequestParamsState } from '@recoil/legitRequest';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function LegitAdminRequestPanel() {
@@ -30,7 +30,6 @@ function LegitAdminRequestPanel() {
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const [params, setLegitRequestParamsState] = useRecoilState(legitRequestParamsState);
-  const [counts, setLegitRequestListCountsState] = useRecoilState(legitRequestListCountsState);
 
   const isHead = useMemo(() => (roles as string[]).includes('PRODUCT_LEGIT_HEAD'), [roles]);
 
@@ -64,7 +63,7 @@ function LegitAdminRequestPanel() {
     [pages]
   );
 
-  const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
+  const lastPage = useMemo(() => pages[pages.length - 1] || {}, [pages]);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const dataId = Number(e.currentTarget.getAttribute('data-id') || 0);
@@ -119,19 +118,6 @@ function LegitAdminRequestPanel() {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    if (!params.status && lastPage) {
-      setLegitRequestListCountsState({
-        cntAuthorized: lastPage.cntAuthorized,
-        cntAuthenticating: lastPage.cntAuthenticating,
-        cntAuthenticatingOpinion: lastPage.cntAuthenticatingOpinion,
-        cntPreConfirm: lastPage.cntPreConfirm,
-        cntPreConfirmEdit: lastPage.cntPreConfirmEdit,
-        cntPreConfirmEditDone: lastPage.cntPreConfirmEditDone
-      });
-    }
-  }, [params.status, lastPage, setLegitRequestListCountsState]);
-
   return (
     <Box component="section" customStyle={{ margin: '20px 0', padding: '0 20px' }}>
       <FilterChipList>
@@ -160,7 +146,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(10) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntPreConfirm}
+                  {lastPage.cntPreConfirm}
                 </Typography>
               }
               data-status={10}
@@ -179,7 +165,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(21) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntAuthenticatingOpinion}
+                  {lastPage.cntAuthenticatingOpinion}
                 </Typography>
               }
               data-status={21}
@@ -198,7 +184,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(12) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntPreConfirmEdit}
+                  {lastPage.cntPreConfirmEdit}
                 </Typography>
               }
               data-status={12}
@@ -217,7 +203,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(13) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntPreConfirmEditDone}
+                  {lastPage.cntPreConfirmEditDone}
                 </Typography>
               }
               data-status={13}
@@ -236,7 +222,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(30) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntAuthorized}
+                  {lastPage.cntAuthorized}
                 </Typography>
               }
               data-status={30}
@@ -259,7 +245,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(20) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntAuthenticating}
+                  {lastPage.cntAuthenticating}
                 </Typography>
               }
               data-status={20}
@@ -278,7 +264,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(21) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntAuthenticatingOpinion}
+                  {lastPage.cntAuthenticatingOpinion}
                 </Typography>
               }
               data-status={21}
@@ -297,7 +283,7 @@ function LegitAdminRequestPanel() {
                     color: (params.status || []).includes(30) ? common.cmnW : undefined
                   }}
                 >
-                  {counts.cntAuthorized}
+                  {lastPage.cntAuthorized}
                 </Typography>
               }
               data-status={30}
