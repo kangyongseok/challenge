@@ -1,5 +1,5 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticPropsContext } from 'next';
+import type { GetStaticPropsContext } from 'next';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';

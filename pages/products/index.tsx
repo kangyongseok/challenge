@@ -1,5 +1,5 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSidePropsContext } from 'next';
+import type { GetStaticPropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -54,10 +54,10 @@ function Products() {
   );
 }
 
-export async function getServerSideProps({
+export async function getStaticProps({
   locale,
   defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+}: GetStaticPropsContext) {
   return {
     props: {
       ...(await serverSideTranslations(locale || defaultLocale))

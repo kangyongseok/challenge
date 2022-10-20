@@ -23,6 +23,7 @@ import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import localeData from 'public/locales';
+import { i18n } from 'next-i18next.config';
 import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
@@ -172,4 +173,4 @@ function App({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(App);
+export default appWithTranslation(App, { i18n, reloadOnPrerender: false });
