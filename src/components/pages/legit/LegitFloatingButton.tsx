@@ -75,7 +75,7 @@ function LegitFloatingButton() {
     router.push(
       accessUser
         ? { pathname: '/legit/request/selectCategory' }
-        : { pathname: '/login', query: { returnUrl: '/legit/request/selectCategory' } }
+        : { pathname: '/login', query: { returnUrl: '/legit' } }
     );
   }, [accessUser, router, setDialogState]);
 

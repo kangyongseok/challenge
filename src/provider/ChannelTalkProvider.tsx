@@ -60,7 +60,6 @@ function ChannelTalkProvider() {
         }
       }
     ];
-
     if (
       disallowPrefixPathNames.includes(router.pathname.split('/')[1]) ||
       disallowUrlInfos.some(({ pathname, query, disallowThisPageAll }) => {
@@ -73,7 +72,9 @@ function ChannelTalkProvider() {
         return disallowThisPageAll && pathname === router.pathname;
       })
     ) {
-      ChannelTalk.hideChannelButton();
+      setTimeout(() => {
+        ChannelTalk.hideChannelButton();
+      });
     } else {
       ChannelTalk.showChannelButton();
     }

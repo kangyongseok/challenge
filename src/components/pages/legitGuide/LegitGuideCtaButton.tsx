@@ -11,12 +11,15 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitGuideCtaButton() {
   const router = useRouter();
   const { tab = 'upload' } = router.query;
 
   const setDialogState = useSetRecoilState(dialogState);
+
+  const { data: accessUser } = useQueryAccessUser();
 
   const handleClick = () => {
     if (!tab || tab === 'upload') {
@@ -64,7 +67,12 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      router.push('/legit/request');
+      if (!accessUser) {
+        router.push({ pathname: '/login', query: { returnUrl: '/legit/guide' } });
+        return;
+      }
+
+      router.push('/legit/request/selectCategory');
       return;
     }
 

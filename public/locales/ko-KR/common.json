@@ -23,11 +23,11 @@
     "welcome": {
       "titleSearch": {
         "t1": "\ub300\ud55c\ubbfc\uad6d \ubaa8\ub4e0 \uc911\uace0\uba85\ud488",
-        "t2": "\uce74\uba5c\uc5d0\uc11c <span>\ud55c\ubc29\uc5d0 \uac80\uc0c9</span>\ud558\uc138\uc694"
+        "t2": "\uce74\uba5c\uc5d0\uc11c&nbsp;<span>\ud55c\ubc29\uc5d0 \uac80\uc0c9</span>\ud558\uc138\uc694"
       },
       "titleUser": {
         "t1": "\uce74\uba5c\uc774 \ub2e4 \ubaa8\uc544\uc624\ub2c8\uae4c",
-        "t2": "{{userName}}\ub2d8\uc740 <span>\uac80\uc0c9\ub9cc</span> \ud558\uc138\uc694!"
+        "t2": "{{userName}}\ub2d8\uc740&nbsp;<span>\uac80\uc0c9\ub9cc</span>&nbsp;\ud558\uc138\uc694!"
       },
       "searchPlaceholder": "\uc624\ub298\uc740 \uc5b4\ub5a4 \uba85\ud488\uc744 \ub4dd\ud15c\ud574\ubcfc\uae4c\uc694?",
       "deal": {
@@ -37,7 +37,7 @@
     },
     "recommendationWishes": {
       "title": "\ucc1c\ud55c {{title}}",
-      "price": "<span>{{price}}\ub9cc\uc6d0</span> \uc800\ub834\ud574\uc84c\uc5b4\uc694!",
+      "price": "<span>{{price}}\ub9cc\uc6d0</span>&nbsp;\uc800\ub834\ud574\uc84c\uc5b4\uc694!",
       "priceBefore": "{{price}}\ub9cc\uc6d0",
       "priceAfter": "{{price}}\ub9cc\uc6d0",
       "purchase": "<span>{{count}}\uba85</span>\uc774\ub098 \uc0ac\uace0 \uc2f6\uc5b4 \ud574\uc694!",

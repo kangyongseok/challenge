@@ -58,6 +58,9 @@ const FIRST_CATEGORIES: FirstCategorys = {
 };
 
 const channelID = (eventName: string, eventParams: object) => {
+  // 임시처리, 조만간 제거 예정
+  if (eventName === attrKeys.debug.LOAD_USER_INFO) return;
+
   if (isProduction && channelTalkLogging && window.ChannelIO) {
     window.ChannelIO('track', eventName, eventParams);
   }

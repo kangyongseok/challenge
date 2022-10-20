@@ -25,7 +25,7 @@ function Error404() {
   };
 
   useEffect(() => {
-    logEvent(attrKeys.commonEvent.pageNotFound, {
+    logEvent(attrKeys.commonEvent.pageNotFoundError, {
       title: 404,
       userAgent: window.navigator.userAgent,
       url: window.location.href

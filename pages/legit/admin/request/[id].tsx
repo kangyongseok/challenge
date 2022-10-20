@@ -15,7 +15,7 @@ import {
 import Initializer from '@library/initializer';
 import ChannelTalk from '@library/channelTalk';
 
-import { fetchRecommWishes, fetchUserInfo } from '@api/user';
+import { fetchUserInfo } from '@api/user';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
@@ -62,7 +62,6 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
     Initializer.initAccessTokenByCookies(req.cookies);
     Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-    await queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes);
     const userInfo = await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
 
     const hasRole = userInfo.roles.some((role) => (role as string).indexOf('PRODUCT_LEGIT') >= 0);

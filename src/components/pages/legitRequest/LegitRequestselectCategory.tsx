@@ -102,7 +102,7 @@ const Menu = styled.div`
   align-items: center;
   gap: 4px;
   padding: 20px 12px;
-  background-color: ${({ theme: { palette } }) => palette.common.bg01};
+  background-color: ${({ theme: { palette } }) => palette.common.bg03};
   border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
   border-radius: 8px;
   cursor: pointer;

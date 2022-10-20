@@ -105,7 +105,7 @@ const commonEvent = {
   clickMylistAuto: 'CLICK_MYLIST_AUTO',
   viewCrazyWeek: 'VIEW_CRAZYWEEK',
   minorScriptError: 'MINOR_SCRIPT_ERROR',
-  pageNotFound: 'PAGE_NOT_FOUND'
+  pageNotFoundError: 'PAGE_NOT_FOUND_ERROR'
 };
 
 const login = {
@@ -513,6 +513,10 @@ const camelSeller = {
   SUBMIT_PRODUCT_MODAL: 'SUBMIT_PRODUCT_MODAL'
 };
 
+const debug = {
+  LOAD_USER_INFO: 'LOAD_USER_INFO'
+};
+
 const attrKeys = {
   sendLogApiEvent,
   appsFlyerEvent,
@@ -538,7 +542,8 @@ const attrKeys = {
   legitResult,
   legitGuide,
   crazycuration,
-  camelSeller
+  camelSeller,
+  debug
 };
 
 export default attrKeys;
