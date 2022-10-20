@@ -4,6 +4,7 @@ import type { UIEvent } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import has from 'lodash-es/has';
@@ -16,6 +17,7 @@ import { Skeleton } from '@components/UI/atoms';
 import type { Product, SearchParams } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import { fetchSearch } from '@api/product';
@@ -33,6 +35,8 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeRecentSearchList() {
   const router = useRouter();
+  const { t } = useTranslation();
+
   const [{ selectedIndex, prevScroll }, setSelectedTabState] = useRecoilState(
     homeSelectedTabStateFamily('recentSearch')
   );
@@ -203,9 +207,14 @@ function HomeRecentSearchList() {
       gap={20}
       customStyle={{ padding: '20px 0', width: '100%' }}
     >
-      <Typography variant="h3" weight="bold" customStyle={{ padding: '0 20px' }}>
-        {accessUser?.userName || '회원'}님의 검색목록
-      </Typography>
+      <FormattedText
+        id="home.recentSearchList.title"
+        params={{ userName: accessUser?.userName || '회원' }}
+        variant="h3"
+        weight="bold"
+        customStyle={{ padding: '0 20px' }}
+      />
+
       <ListWrapper ref={recentSearchTabRef} onScroll={handleTabScroll}>
         <TabList>
           {!has(searchParams, 'keyword')
@@ -263,17 +272,18 @@ function HomeRecentSearchList() {
           </ListWrapper>
           <Box customStyle={{ padding: '0 20px' }}>
             <Button fullWidth brandColor="gray" disabled={isLoading} onClick={handleClickAll}>
-              이 검색 전체보기
+              {t('home.recentSearchList.all')}
             </Button>
           </Box>
         </>
       ) : (
         <Flexbox direction="vertical" alignment="center" gap={20}>
           <DizzyFaceIcon />
-          <Typography customStyle={{ textAlign: 'center' }}>
-            앗, 등록되어 있던 매물이 사라졌어요.
-            <br />곧 새 매물이 올라올 수 있으니 기다려주세요.
-          </Typography>
+          <FormattedText
+            id="home.recentSearchList.noData"
+            isHtml
+            customStyle={{ textAlign: 'center' }}
+          />
         </Flexbox>
       )}
     </Flexbox>

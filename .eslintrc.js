@@ -130,6 +130,15 @@ module.exports = {
         '@typescript-eslint/no-unsafe-call': 'off',
         'no-param-reassign': 'off'
       }
+    },
+    {
+      files: ['pages/_app.tsx'],
+      parserOptions: {
+        ecmaVersion: 2020
+      },
+      rules: {
+        'no-underscore-dangle': 'off'
+      }
     }
   ]
 };

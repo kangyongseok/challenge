@@ -6,6 +6,7 @@ import { ParsedUrlQueryInput } from 'node:querystring';
 import { useRecoilState } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
@@ -17,6 +18,7 @@ import { Skeleton } from '@components/UI/atoms';
 import type { ProductResult, SearchParams } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import {
@@ -37,6 +39,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function HomeProductsKeywordList() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const [{ selectedIndex, prevScroll }, setSelectedTabState] = useRecoilState(
     homeSelectedTabStateFamily('productKeyword')
@@ -266,10 +269,13 @@ function HomeProductsKeywordList() {
       customStyle={{ padding: '20px 0', width: '100%' }}
     >
       <Flexbox direction="vertical" gap={2} customStyle={{ padding: '0 20px' }}>
-        <Typography variant="h3" weight="bold">
-          {accessUser?.userName || '회원'}님의 매물목록
-        </Typography>
-        <Typography variant="body2">저장한 검색조건의 매물 확인하세요!</Typography>
+        <FormattedText
+          id="home.productsKeywordList.title"
+          params={{ userName: accessUser?.userName || '회원' }}
+          variant="h3"
+          weight="bold"
+        />
+        <FormattedText id="home.productsKeywordList.description" variant="body2" />
       </Flexbox>
       <ListWrapper ref={productKeywordTabRef} onScroll={handleTabScroll}>
         <TabList>
@@ -345,17 +351,18 @@ function HomeProductsKeywordList() {
               disabled={isLoading || productKeywords.length === 0}
               onClick={handleClickAll}
             >
-              이 검색조건으로 전체보기
+              {t('home.productsKeywordList.all')}
             </Button>
           </Box>
         </>
       ) : (
         <Flexbox direction="vertical" alignment="center" gap={20}>
           <DizzyFaceIcon />
-          <Typography customStyle={{ textAlign: 'center' }}>
-            앗, 등록되어 있던 매물이 사라졌어요.
-            <br />새 매물이 올라오면 알림으로 알려드릴게요!
-          </Typography>
+          <FormattedText
+            id="home.productsKeywordList.noData"
+            isHtml
+            customStyle={{ textAlign: 'center' }}
+          />
         </Flexbox>
       )}
     </Flexbox>

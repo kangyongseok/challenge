@@ -3,6 +3,8 @@ import { MouseEvent, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticPropsContext } from 'next';
 import { Box, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -17,7 +19,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -125,5 +127,23 @@ const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
   z-index: 11;
   margin-left: -20px;
 `;
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true
+  };
+}
+
+export async function getStaticProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetStaticPropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
+}
 
 export default SellerInfoPage;

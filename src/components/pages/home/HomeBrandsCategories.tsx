@@ -1,6 +1,6 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Flexbox } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 
@@ -8,6 +8,7 @@ import CategoryList from '@components/UI/organisms/CategoryList';
 import { BrandList } from '@components/UI/organisms';
 
 import SessionStorage from '@library/sessionStorage';
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
@@ -150,14 +151,13 @@ function HomeBrandsCategories({ isViewSearchHelperOnboarding }: HomeBrandsCatego
   return (
     <Flexbox component="section" direction="vertical" gap={12}>
       <Flexbox direction="vertical" gap={20} customStyle={{ padding: '20px 0' }}>
-        <Typography
+        <FormattedText
+          id={accessUser ? 'home.brandAndCategory.userTitle' : 'home.brandAndCategory.guestTitle'}
           variant="h4"
           weight="bold"
           brandColor="black"
           customStyle={{ padding: '0 20px' }}
-        >
-          {accessUser ? '자주 찾는' : '인기'} 브랜드 & 카테고리
-        </Typography>
+        />
         <BrandList onClickBrand={handleClickBrand} />
       </Flexbox>
       <Box customStyle={{ padding: '20px 0' }}>

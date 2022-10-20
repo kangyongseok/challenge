@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "Search and compare all used luxury goods in Korea at once and get them. We'll help you quickly find second-hand luxury goods that are in good condition and cheap!",
+    "title": "The smartest way to buy luxury goods second-hand, Carmel"
+  },
+  "common": {
+    "privacy": "Privacy policy"
+  },
+  "info": {
+    "company": "Mr. Camel Co., Ltd",
+    "address": "Fast Five Room 811, 8F, Office-dong, Namsan 2, 366, Hangang-daero, Yongsan-gu, Seoul, Republic of Korea",
+    "businessRegistrationNumber": "Business Registration Number: 662-81-00864",
+    "mailOrderBusinessReportNumber": "Mail Order Business Report Number : 2019-\uc11c\uc6b8\uc131\ub3d9-01263"
+  },
+  "navigation": {
+    "home": "Home",
+    "legit": "Legit",
+    "category": "Category",
+    "wishes": "Wish/Recent",
+    "myPage": "My"
+  },
+  "home": {
+    "welcome": {
+      "titleSearch": {
+        "t1": "All used luxury goods in Korea",
+        "t2": "Search Camel&nbsp;<span>at once</span>"
+      },
+      "titleUser": {
+        "t1": "Camel is all gathered",
+        "t2": "{{userName}} just&nbsp;<span>search</span>!"
+      },
+      "searchPlaceholder": "What kind of luxury items should we get today?"
+    },
+    "recommendationWishes": {
+      "title": "Wished {{title}}",
+      "price": "It's gotten cheaper&nbsp;<span>₩{{price}}</span>!",
+      "priceBefore": "₩{{price}}",
+      "priceAfter": "₩{{price}}",
+      "purchase": "<span>{{count}}명</span> want to buy it!",
+      "wish": "<span>{{count}}people</span> are interested!",
+      "view": "<span>{{count}}people</span> saw it!"
+    },
+    "productsKeywordList": {
+      "title": "{{userName}}'s saved search product keyword list",
+      "description": "Check your saved search options for product!",
+      "all": "See all with this search option",
+      "noData": "Oops, the registered sale disappeared.<br />I'll let you know when a new sale comes up!"
+    },
+    "recentSearchList": {
+      "title": "{{userName}}'s search list",
+      "all": "See all with this search keyword",
+      "noData": "Oops, the registered sale disappeared.<br />A new sale may come up soon, so please wait."
+    },
+    "legitLive": {
+      "title": "Real-time photo legit",
+      "all": "See All"
+    },
+    "brandAndCategory": {
+      "userTitle": "Favorite brands & categories",
+      "guestTitle": "Popular Brands & Categories"
+    },
+    "camelProductCuration": {
+      "title": "Certified Seller by Camel",
+      "all": "See All",
+      "description": "Carmel has certified the sellers separately. Trust and make a deal!"
+    }
+  }
+}

@@ -5,11 +5,12 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
 
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProductLegits } from '@api/productLegit';
@@ -41,17 +42,13 @@ function HomeLegitLive() {
   return (
     <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: 20 }}>
       <Flexbox justifyContent="space-between">
-        <Typography variant="h3" weight="bold">
-          실시간 사진감정
-        </Typography>
+        <FormattedText id="home.legitLive.title" variant="h3" weight="bold" />
         <Flexbox
           alignment="center"
           onClick={() => router.push('/legit')}
           customStyle={{ cursor: 'pointer' }}
         >
-          <Typography variant="body2" weight="medium">
-            전체보기
-          </Typography>
+          <FormattedText id="home.legitLive.all" variant="body2" weight="medium" />
           <Icon name="CaretRightOutlined" size="small" />
         </Flexbox>
       </Flexbox>

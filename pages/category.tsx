@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
 
@@ -17,6 +18,7 @@ import { fetchUserInfo } from '@api/user';
 import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
+import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import categoryState from '@recoil/category';
@@ -65,7 +67,11 @@ function Category() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  locale: initialLocale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
   const queryClientList: Promise<void>[] = [];
 
@@ -84,6 +90,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   return {
     props: {
+      ...(await serverSideTranslations(initialLocale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

@@ -1,3 +1,6 @@
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticPropsContext } from 'next';
+
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -16,6 +19,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 function CamelProducts() {
@@ -47,6 +51,17 @@ function CamelProducts() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
+}
+
+export async function getStaticProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetStaticPropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
 }
 
 export default CamelProducts;

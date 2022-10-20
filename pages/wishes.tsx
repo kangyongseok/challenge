@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticPropsContext } from 'next';
 import { Box, Toast } from 'mrcamel-ui';
 
 import { BottomNavigation, Header, TopButton } from '@components/UI/molecules';
@@ -16,6 +18,7 @@ import {
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
+import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 function WishesPage() {
@@ -75,6 +78,17 @@ function WishesPage() {
       />
     </>
   );
+}
+
+export async function getStaticProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetStaticPropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
 }
 
 export default WishesPage;

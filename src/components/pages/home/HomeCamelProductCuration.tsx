@@ -3,7 +3,7 @@ import { UIEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import styled from '@emotion/styled';
 
@@ -13,6 +13,7 @@ import { ProductGridCardSkeleton } from '@components/UI/molecules';
 import type { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import { fetchCamelProducts } from '@api/product';
@@ -118,20 +119,15 @@ function HomeCamelProductCuration() {
       >
         <Flexbox alignment="center" justifyContent="space-between">
           <Flexbox gap={2} alignment="center">
-            <Typography variant="h3" weight="bold">
-              카멜 인증 판매자
-            </Typography>
+            <FormattedText id="home.camelProductCuration.title" variant="h3" weight="bold" />
             <Icon name="SafeFilled" color={palette.primary.main} width={23} height={23} />
           </Flexbox>
-
           <Flexbox alignment="center" gap={2} onClick={handleClickAll}>
-            <Typography variant="body2" weight="medium">
-              전체보기
-            </Typography>
+            <FormattedText id="home.camelProductCuration.all" variant="body2" weight="medium" />
             <Icon name="CaretRightOutlined" width={15} height={15} />
           </Flexbox>
         </Flexbox>
-        <Typography variant="body2">카멜이 따로 인증한 판매자들이에요. 믿고 거래하세요!</Typography>
+        <FormattedText id="home.camelProductCuration.description" variant="body2" />
       </Flexbox>
       <ProductCuration ref={productCurationRef} onScroll={throttleScrollProductCuration.current}>
         {isLoading || isFetching || !camelProducts

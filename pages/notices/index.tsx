@@ -2,6 +2,8 @@ import type { MouseEvent } from 'react';
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticPropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -9,7 +11,7 @@ import { BottomNavigation, Header, Tabs } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { ActivityNotificationPanel, HoneyNotificationPanel } from '@components/pages/notices';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, locales } from '@constants/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 
@@ -52,5 +54,16 @@ const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
   z-index: 11;
   margin-left: -16px;
 `;
+
+export async function getStaticProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetStaticPropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
+}
 
 export default Notices;

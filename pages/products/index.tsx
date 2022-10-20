@@ -1,3 +1,5 @@
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import type { GetServerSidePropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -15,6 +17,8 @@ import {
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
+
+import { locales } from '@constants/common';
 
 function Products() {
   return (
@@ -48,6 +52,17 @@ function Products() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
+}
+
+export async function getServerSideProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
 }
 
 export default Products;

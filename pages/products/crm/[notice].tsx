@@ -1,4 +1,6 @@
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import type { GetServerSidePropsContext } from 'next';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -17,6 +19,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -81,6 +84,17 @@ function CrmProducts() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
+}
+
+export async function getServerSideProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
 }
 
 const NoticeWrapper = styled.div`

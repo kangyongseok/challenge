@@ -11,6 +11,7 @@ import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Badge } from '@components/UI/atoms';
 
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
@@ -47,14 +48,14 @@ const data: {
   logName: string;
 }[] = [
   {
-    title: '홈',
+    title: 'navigation.home',
     defaultIcon: 'NewHomeOutlined',
     activeIcon: 'NewHomeFilled',
     href: '/',
     logName: 'HOME'
   },
   {
-    title: '사진감정',
+    title: 'navigation.legit',
     defaultIcon: 'LegitOutlined',
     activeIcon: 'LegitFilled',
     href: '/legit',
@@ -67,21 +68,21 @@ const data: {
   //   logName: 'LISTING_TECH'
   // },
   {
-    title: '카테고리',
+    title: 'navigation.category',
     defaultIcon: 'NewCategoryOutlined',
     activeIcon: 'NewCategoryFilled',
     href: '/category',
     logName: 'CATEGORY'
   },
   {
-    title: '찜/최근',
+    title: 'navigation.wishes',
     defaultIcon: 'NewHeartFavoriteOutlined',
     activeIcon: 'NewHeartFavoriteFilled',
     href: '/wishes',
     logName: 'WISH'
   },
   {
-    title: '마이',
+    title: 'navigation.myPage',
     defaultIcon: 'NewUserLargeOutlined',
     activeIcon: 'NewUserLargeFilled',
     href: '/mypage',
@@ -154,12 +155,12 @@ function BottomNavigation({
             : undefined
       });
 
-      if (title === '홈') {
+      if (title === 'navigation.home') {
         resetProductKeyword();
         resetRecentSearch();
       }
 
-      if (title === '카테고리' && router.pathname !== '/category') {
+      if (title === 'navigation.category' && router.pathname !== '/category') {
         resetCategory();
       }
 
@@ -297,54 +298,52 @@ function BottomNavigation({
     <>
       <StyledBottomNavigation display={display}>
         <List triggered={triggered}>
-          {data.map((navData) => {
-            const name = navData.href.replace(/\//g, '');
+          {data.map(({ href, activeIcon, title, logName, defaultIcon }) => {
+            const name = href.replace(/\//g, '');
             let isActive = router.pathname.includes(name);
 
             if (router.pathname !== '/' && !name && isActive) {
               isActive = false;
             }
 
-            if (navData.activeIcon) {
+            if (activeIcon) {
               return (
                 <ListItem
-                  key={`bottom-navigation-${navData.title}`}
-                  ref={navData.href === '/legit' ? legitNavRef : undefined}
+                  key={`bottom-navigation-${title}`}
+                  ref={href === '/legit' ? legitNavRef : undefined}
                 >
-                  {navData.href === '/legit' && !isLoading && !notViewedLegitCount && (
+                  {href === '/legit' && !isLoading && !notViewedLegitCount && (
                     <NewLabel variant="contained" text="NEW" size="xsmall" />
                   )}
                   <Link
                     href={{
-                      pathname: getPathName(navData.href),
-                      query: getQuery(navData.href)
+                      pathname: getPathName(href),
+                      query: getQuery(href)
                     }}
                     as={{
-                      pathname: getPathName(navData.href),
-                      query: getQuery(navData.href)
+                      pathname: getPathName(href),
+                      query: getQuery(href)
                     }}
                     passHref
                   >
-                    <a
-                      onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
-                      aria-hidden="true"
-                    >
+                    <a onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
                       <Box customStyle={{ position: 'relative' }}>
                         <Icon
-                          name={isActive ? navData.activeIcon : navData.defaultIcon}
+                          name={isActive ? activeIcon : defaultIcon}
                           color={isActive ? common.ui20 : common.ui80}
                         />
                         <Badge
                           variant="two-tone"
                           brandColor="red"
                           type="alone"
-                          open={navData.href === '/legit' && !isLoading && !!notViewedLegitCount}
+                          open={href === '/legit' && !isLoading && !!notViewedLegitCount}
                           width={10}
                           height={10}
                           customStyle={{ position: 'absolute', top: -2, right: -5 }}
                         />
                       </Box>
-                      <Typography
+                      <FormattedText
+                        id={title}
                         variant="small2"
                         weight={isActive ? 'bold' : 'regular'}
                         customStyle={{
@@ -352,9 +351,7 @@ function BottomNavigation({
                           marginTop: 4,
                           color: isActive ? common.ui20 : common.ui80
                         }}
-                      >
-                        {navData.title}
-                      </Typography>
+                      />
                     </a>
                   </Link>
                 </ListItem>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
@@ -25,6 +26,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -74,7 +76,11 @@ function MyPage() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(req.cookies);
@@ -86,6 +92,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   return {
     props: {
+      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

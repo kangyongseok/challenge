@@ -1,3 +1,5 @@
 .next
 cypress
 coverage
+next-i18next.config.js
+next.config.js

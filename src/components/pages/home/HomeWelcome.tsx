@@ -5,7 +5,8 @@ import { Autoplay } from 'swiper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useTranslation } from 'next-i18next';
+import { Avatar, Box, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
@@ -13,6 +14,7 @@ import styled from '@emotion/styled';
 import { SearchBar } from '@components/UI/molecules';
 import { Badge, Skeleton } from '@components/UI/atoms';
 
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProductDealInfos } from '@api/nextJs';
@@ -46,6 +48,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
       palette: { common }
     }
   } = useTheme();
+  const { t } = useTranslation();
   const router = useRouter();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setSearchHelperPopup = useSetRecoilState(searchHelperPopupStateFamily('continue'));
@@ -144,20 +147,18 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
         </Flexbox>
       </Flexbox>
       <Box customStyle={{ padding: '20px 20px 0' }}>
-        <Title variant="h2" weight="bold">
-          {titleViewType === 0 ? '대한민국 모든 중고명품' : '카멜이 다 모아오니까'}
-        </Title>
-        <Title variant="h2" weight="bold">
-          {titleViewType === 0 ? (
-            <>
-              카멜에서&nbsp;<span>한방에 검색</span>하세요
-            </>
-          ) : (
-            <>
-              {accessUser?.userName || '회원'}님은&nbsp;<span>검색만</span>&nbsp;하세요!
-            </>
-          )}
-        </Title>
+        <Title
+          id={titleViewType === 0 ? 'home.welcome.titleSearch.t1' : 'home.welcome.titleUser.t1'}
+          variant="h2"
+          weight="bold"
+        />
+        <Title
+          id={titleViewType === 0 ? 'home.welcome.titleSearch.t2' : 'home.welcome.titleUser.t2'}
+          params={{ userName: accessUser?.userName || '회원' }}
+          isHtml
+          variant="h2"
+          weight="bold"
+        />
       </Box>
       <SearchBar
         ref={searchBarRef}
@@ -165,7 +166,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
         fullWidth
         isFixed={triggered}
         variant={triggered ? 'outlined' : 'standard'}
-        placeholder="오늘은 어떤 명품을 득템해볼까요?"
+        placeholder={t('home.welcome.searchPlaceholder')}
         onClick={handleClickSearchBar}
         startAdornment={<Icon name="SearchOutlined" color="black" size="medium" />}
       />
@@ -227,12 +228,18 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
                       gap={8}
                       customStyle={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}
                     >
-                      <Typography variant="body2" customStyle={{ color: common.cmn20 }}>
-                        {`${userId}님 ${state} ${name} ${commaNumber(price)}만원`}
-                      </Typography>
-                      <Typography variant="small2" customStyle={{ color: common.ui60 }}>
-                        {`${time}${timeUnit} 득템`}
-                      </Typography>
+                      <FormattedText
+                        id="home.welcome.deal.info"
+                        params={{ userId, state, productName: name, price: commaNumber(price) }}
+                        variant="body2"
+                        customStyle={{ color: common.cmn20 }}
+                      />
+                      <FormattedText
+                        id="home.welcome.deal.time"
+                        params={{ time, timeUnit }}
+                        variant="small2"
+                        customStyle={{ color: common.ui60 }}
+                      />
                     </Flexbox>
                   </Flexbox>
                 </SwiperSlide>
@@ -245,7 +252,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
   );
 }
 
-const Title = styled(Typography)`
+const Title = styled(FormattedText)`
   display: flex;
   color: ${({
     theme: {

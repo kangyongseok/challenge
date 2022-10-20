@@ -1,9 +1,15 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
+import { locales } from '@constants/common';
+
+import { notSupport } from 'public/locales';
+
 class MyDocument extends Document {
   override render() {
+    const lang = this.props.locale || locales.ko.lng;
+
     return (
-      <Html lang="ko">
+      <Html lang={lang}>
         <Head>
           <meta charSet="utf-8" />
           <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -109,6 +115,16 @@ class MyDocument extends Document {
           <meta name="facebook-domain-verification" content="wldrbh2d5e7wpicfcndrlgz2sf8tmu" />
         </Head>
         <body>
+          <div id="not-support" style={{ display: 'none' }}>
+            <h2>{notSupport[lang as keyof typeof notSupport].message}</h2>
+            <a
+              href={notSupport[lang as keyof typeof notSupport].url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {notSupport[lang as keyof typeof notSupport].button}
+            </a>
+          </div>
           <Main />
           <NextScript />
         </body>

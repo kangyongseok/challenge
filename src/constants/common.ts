@@ -7,3 +7,22 @@ export const BOTTOM_NAVIGATION_HEIGHT = 64;
 export const GENERAL_FILTER_HEIGHT = 100;
 export const CATEGORY_TAGS_HEIGHT = 40;
 export const RELATED_KEYWORDS_HEIGHT = 52;
+
+export const locales = {
+  ko: {
+    lng: 'ko-KR',
+    name: '한국어',
+    img: {
+      filename: 'flag-ko-KR.png',
+      alt: 'KR Flag'
+    }
+  },
+  en: {
+    lng: 'en-US',
+    name: 'English',
+    img: {
+      filename: 'flag-en-us.png',
+      alt: 'US Flag'
+    }
+  }
+};

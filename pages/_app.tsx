@@ -6,6 +6,7 @@ import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from 'react-que
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
+import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
@@ -18,8 +19,10 @@ import {
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
 
+import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import localeData from 'public/locales';
 import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
@@ -41,6 +44,8 @@ import 'swiper/css/effect-cards';
 if (global.navigator) {
   Amplitude.init();
 }
+
+const originUrl = 'https://mrcamel.co.kr';
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -65,15 +70,30 @@ function App({ Component, pageProps }: AppProps) {
       })
     })
   );
-  const canonicalUrl = useMemo(() => {
-    const originUrl = 'https://mrcamel.co.kr';
 
+  const lang: keyof typeof localeData = useMemo(
+    () => pageProps?._nextI18Next?.initialLocale || locales.ko.lng,
+    [pageProps?._nextI18Next?.initialLocale]
+  );
+  const canonicalUrl = useMemo(() => {
     // 해당 페이지 내에서 렌더링하기 위함
     if (router.pathname === '/products/[id]') return '';
 
     const asPath = (router.asPath === '/' ? '' : router.asPath.split('?')[0]).replace(/ /g, '-');
     return decodeURI(`${originUrl}${asPath}`);
   }, [router.asPath, router.pathname]);
+  const alternativeLink = useMemo(
+    () =>
+      Object.entries(locales).map(([_, { lng }]) => (
+        <link
+          key={lng}
+          rel="alternate"
+          hrefLang={lng}
+          href={`${originUrl}/${lng}${router.asPath}`}
+        />
+      )),
+    [router.asPath]
+  );
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
@@ -112,14 +132,12 @@ function App({ Component, pageProps }: AppProps) {
           name="viewport"
           content="minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0"
         />
-        <meta httpEquiv="content-language" content="ko" />
-        <meta
-          name="description"
-          content="대한민국 모든 중고명품, 한번에 검색&비교하고 득템하세요. 상태 좋고 가격도 저렴한 중고명품을 빠르게 찾도록 도와드릴게요!"
-        />
+        <meta httpEquiv="content-language" content={lang} />
+        <meta name="description" content={localeData[lang].meta.description} />
         <meta name="theme-color" content={themeColor} />
-        <title>명품을 중고로 사는 가장 똑똑한 방법, 카멜</title>
+        <title>{localeData[lang].meta.title}</title>
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        {alternativeLink}
       </Head>
       <ChannelTalkProvider />
       <FacebookPixelProvider />
@@ -154,4 +172,4 @@ function App({ Component, pageProps }: AppProps) {
   );
 }
 
-export default App;
+export default appWithTranslation(App);

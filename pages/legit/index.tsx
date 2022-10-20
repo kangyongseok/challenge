@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { QueryClient, dehydrate } from 'react-query';
-import type { DehydratedState } from 'react-query';
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { useTheme } from 'mrcamel-ui';
 
@@ -23,6 +23,7 @@ import Initializer from '@library/initializer';
 import { fetchUserInfo, fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 function Legit() {
@@ -75,7 +76,11 @@ function Legit() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(req.cookies);
@@ -98,11 +103,10 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
     }
   }
 
-  const dehydratedState: DehydratedState = dehydrate(queryClient);
-
   return {
     props: {
-      dehydratedState
+      ...(await serverSideTranslations(locale || defaultLocale)),
+      dehydratedState: dehydrate(queryClient)
     }
   };
 }

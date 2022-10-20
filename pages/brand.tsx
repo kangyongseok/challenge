@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticPropsContext } from 'next';
 import { Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 
@@ -22,6 +24,7 @@ import { fetchBrands, fetchBrandsSuggest } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
 import { doubleCon } from '@constants/consonant';
+import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { deDuplication, getBrandListTitles, parseWordToConsonant, sortBrand } from '@utils/brands';
@@ -118,13 +121,17 @@ function Brand() {
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetStaticPropsContext) {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(queryKeys.brands.all, fetchBrands);
 
   return {
     props: {
+      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

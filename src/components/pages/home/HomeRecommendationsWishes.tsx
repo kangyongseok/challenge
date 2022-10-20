@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { Image, Skeleton } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
+import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import { fetchRecommWishes } from '@api/user';
@@ -53,11 +54,21 @@ function HomeRecommendationsWishes() {
       purchaseCount: number;
     }) => {
       if (purchaseCount >= 6)
-        return `<span>${commaNumber(purchaseCount)}명</span>이나 사고 싶어 해요!`;
+        return {
+          id: 'home.recommendationWishes.purchase',
+          params: { count: commaNumber(purchaseCount) }
+        };
 
-      if (wishCount >= 5) return `<span>${commaNumber(wishCount)}명</span>이나 관심 있어 해요!`;
+      if (wishCount >= 5)
+        return {
+          id: 'home.recommendationWishes.wish',
+          params: { count: commaNumber(wishCount) }
+        };
 
-      return `<span>${commaNumber(viewCount)}명</span>이나 봤어요!`;
+      return {
+        id: 'home.recommendationWishes.view',
+        params: { count: commaNumber(viewCount) }
+      };
     },
     []
   );
@@ -125,37 +136,50 @@ function HomeRecommendationsWishes() {
                 <Card onClick={handleClick(id, !!priceBefore)}>
                   <Flexbox gap={8} direction="vertical" customStyle={{ overflow: 'hidden' }}>
                     <Flexbox gap={2} direction="vertical">
-                      <Title variant={priceBefore ? 'body2' : 'body1'}>찜한 {title}</Title>
+                      <Title
+                        id="home.recommendationWishes.title"
+                        params={{ title }}
+                        variant={priceBefore ? 'body2' : 'body1'}
+                      />
                       {priceBefore ? (
-                        <PriceDownText variant="h4" weight="bold">
-                          <span>
-                            {commaNumber(getTenThousandUnitPrice(priceBefore - price))}만원&nbsp;
-                          </span>
-                          저렴해졌어요!
-                        </PriceDownText>
+                        <PriceDownText
+                          variant="h4"
+                          weight="bold"
+                          id="home.recommendationWishes.price"
+                          params={{
+                            price: commaNumber(getTenThousandUnitPrice(priceBefore - price))
+                          }}
+                          isHtml
+                        />
                       ) : (
                         <PopularText
                           variant="h4"
                           weight="bold"
-                          dangerouslySetInnerHTML={{
-                            __html: getPopularText({ viewCount, wishCount, purchaseCount })
-                          }}
+                          {...getPopularText({ viewCount, wishCount, purchaseCount })}
+                          isHtml
                         />
                       )}
                     </Flexbox>
                     {priceBefore ? (
                       <Flexbox alignment="center" gap={2}>
-                        <Typography weight="medium" customStyle={{ color: common.ui60 }}>
-                          {commaNumber(getTenThousandUnitPrice(priceBefore))}만
-                        </Typography>
+                        <FormattedText
+                          id="home.recommendationWishes.priceBefore"
+                          params={{ price: commaNumber(getTenThousandUnitPrice(priceBefore)) }}
+                          isHtml
+                          weight="medium"
+                          customStyle={{ color: common.ui60 }}
+                        />
                         <Icon
                           name="ArrowRightOutlined"
                           size="small"
                           customStyle={{ color: common.ui60 }}
                         />
-                        <Typography weight="medium">
-                          {commaNumber(getTenThousandUnitPrice(price))}만
-                        </Typography>
+                        <FormattedText
+                          id="home.recommendationWishes.priceAfter"
+                          params={{ price: commaNumber(getTenThousandUnitPrice(price)) }}
+                          isHtml
+                          weight="medium"
+                        />
                       </Flexbox>
                     ) : (
                       <Flexbox alignment="center" gap={6}>
@@ -242,13 +266,13 @@ const Card = styled.div`
   border-radius: 16px;
 `;
 
-const Title = styled(Typography)`
+const Title = styled(FormattedText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const PriceDownText = styled(Typography)`
+const PriceDownText = styled(FormattedText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -262,7 +286,7 @@ const PriceDownText = styled(Typography)`
   }
 `;
 
-const PopularText = styled(Typography)`
+const PopularText = styled(FormattedText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

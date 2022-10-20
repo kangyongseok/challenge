@@ -1,3 +1,5 @@
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import type { GetServerSidePropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 
 import { ProductsSaveSearchPopup } from '@components/UI/organisms';
@@ -19,6 +21,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
@@ -61,6 +64,17 @@ function BrandProducts() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
+}
+
+export async function getServerSideProps({
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || defaultLocale))
+    }
+  };
 }
 
 export default BrandProducts;

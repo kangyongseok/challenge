@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Box, Flexbox, useTheme } from 'mrcamel-ui';
 
@@ -35,6 +36,7 @@ import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -140,7 +142,11 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
   const queryClientList: Promise<void>[] = [];
 
@@ -164,6 +170,7 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   return {
     props: {
+      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient),
       titleViewType: Number((Math.random() % 2).toFixed(0))
     }
