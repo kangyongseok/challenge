@@ -10,7 +10,8 @@ import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
-import { convertStringToArray } from '@utils/common';
+import { getTenThousandUnitPrice } from '@utils/formats';
+import { commaNumber, convertStringToArray } from '@utils/common';
 
 import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 
@@ -677,7 +678,12 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
   });
 }
 
-export function getMetaDescription(description: string) {
+export function getMetaDescription(product: Product) {
+  const { description = '', viewCount = 0, wishCount = 0, quoteTitle, price = 0 } = product;
+
+  if (!description) return '';
+
+  // {조회수}명이 본 매물이에요. {찜 수}명이 찜했으니 {매물 모델} {매물 가격}으로 득템하세요! | {매물상세 내용}
   let byte = 0;
   let result = '';
   let overflow = false;
@@ -699,7 +705,11 @@ export function getMetaDescription(description: string) {
 
   if (!result) result = description;
 
-  return result.replace(/[\n|\r]/g, ' ') + (overflow ? '...' : '');
+  return `${viewCount ? `${commaNumber(viewCount)}명이 본 매물이에요. ` : ''}${
+    wishCount ? `${commaNumber(wishCount)}명이 찜했으니 ` : ''
+  }${quoteTitle} ${commaNumber(getTenThousandUnitPrice(price))}만원으로 득템하세요! | ${
+    result.replace(/[\n|\r]/g, ' ') + (overflow ? '...' : '')
+  }`;
 }
 
 export function getProductLabelColor(name: string, theme: MrCamelTheme) {

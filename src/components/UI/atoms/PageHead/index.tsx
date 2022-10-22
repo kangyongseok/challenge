@@ -7,6 +7,7 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 interface PageHeadProps {
   title?: string;
   description?: string;
+  keywords?: string;
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
@@ -18,6 +19,7 @@ interface PageHeadProps {
 function PageHead({
   title,
   description,
+  keywords,
   ogTitle,
   ogDescription,
   ogImage,
@@ -35,12 +37,15 @@ function PageHead({
   return (
     <Head>
       {description && <meta name="description" content={description} />}
+      {keywords && <meta name="keywords" content={keywords} />}
       {ogTitle && <meta property="og:type" content="website" />}
       {ogTitle && <meta property="og:title" content={ogTitle} />}
       {ogDescription && <meta property="og:description" content={ogDescription} />}
       {ogImage && <meta property="og:image" content={ogImage} />}
       {ogUrl && <meta property="og:url" content={ogUrl} />}
-      <meta property="og:site_name" content="Mr.Camel" />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="카멜" />
+      <meta property="og:locale" content="ko_KR" />
       {title && <meta name="twitter:title" content={title} />}
       {description && <meta name="twitter:description" content={description} />}
       {ogImage && <meta name="twitter:image" content={ogImage} />}

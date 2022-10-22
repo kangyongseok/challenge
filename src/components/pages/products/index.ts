@@ -16,3 +16,4 @@ export { default as ProductsRelatedKeywords } from './ProductsRelatedKeywords';
 export { default as ProductsGeneralFilter } from './ProductsGeneralFilter';
 export { default as ProductsDynamicFilter } from './ProductsDynamicFilter';
 export { default as ProductsFilterHistory } from './ProductsFilterHistory';
+export { default as ProductsPageHead } from './ProductsPageHead';

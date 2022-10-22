@@ -1,3 +1,4 @@
+import { Announce } from '@dto/user';
 import type { ProductContent } from '@dto/product';
 import type { CommonCode, PhotoGuide, PhotoGuideParams } from '@dto/common';
 
@@ -27,6 +28,12 @@ export async function fetchPhotoGuide(params: PhotoGuideParams) {
   const { data } = await Axios.getInstance().get<PhotoGuide>(`${BASE_PATH}/photoGuide`, {
     params
   });
+
+  return data;
+}
+
+export async function fetchAnnounce(id: number) {
+  const { data } = await Axios.getInstance().get<Announce>(`${BASE_PATH}/announces/${id}`);
 
   return data;
 }

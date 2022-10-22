@@ -444,15 +444,16 @@ function ProductDetail() {
   return (
     <>
       <PageHead
-        title={`${data?.product.title} | 카멜 최저가 가격비교`}
-        description={`${getMetaDescription(data?.product.description || '')}`}
-        ogTitle={`${data?.product.title} | 카멜 최저가 가격비교`}
-        ogDescription={`${getMetaDescription(data?.product.description || '')}`}
+        title={`${data?.product.title} | 카멜`}
+        description={`${getMetaDescription(data?.product as Product)}`}
+        ogTitle={`${data?.product.title} | 카멜`}
+        ogDescription={`${getMetaDescription(data?.product as Product)}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
         ogUrl={`https://mrcamel.co.kr${getProductDetailUrl({ product: data?.product as Product })}`}
         canonical={`https://mrcamel.co.kr${getProductDetailUrl({
           product: data?.product as Product
         })}`}
+        keywords={`중고 ${data?.product.brand.name}, 중고 ${data?.product.category.name}, 중고 ${data?.product.quoteTitle}, ${data?.product.brand.name}, ${data?.product.category.name}, ${data?.product.quoteTitle}, 여자 ${data?.product.category.name}, 남자 ${data?.product.category.name}`}
         product={data?.product}
       />
       <GeneralTemplate
@@ -666,7 +667,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
         dehydratedState: dehydrate(queryClient)
       }
     };
-  } catch (e) {
+  } catch {
     return {
       notFound: true
     };

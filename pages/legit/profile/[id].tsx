@@ -12,7 +12,8 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   LegitProfileEditInfo,
   LegitProfileInfo,
-  LegitProfileOpinionLegitList
+  LegitProfileOpinionLegitList,
+  LegitProfilePageHead
 } from '@components/pages/legitProfile';
 
 import Initializer from '@library/initializer';
@@ -85,47 +86,52 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
     };
   }, [mode]);
 
-  return profile ? (
-    <GeneralTemplate
-      header={
-        <ThemeProvider theme={!isEdit && !triggered ? 'dark' : 'light'}>
-          <Header isTransparent={!isEdit && !triggered} isFixed />
-        </ThemeProvider>
-      }
-      customStyle={{ '& > main': { backgroundColor: common.bg03 } }}
-      disablePadding
-    >
-      {isEdit ? (
-        <LegitProfileEditInfo
-          userId={userId}
-          name={profile.name}
-          title={profile.title}
-          subTitle={profile.subTitle || ''}
-          description={(profile.description || '').trim()}
-          image={profile.image}
-          imageBackground={profile.imageBackground || ''}
-          urlShop={(profile.urlShop || '').trim()}
-          legitsBrands={legitsBrands}
-          targetBrandIds={profile.targetBrandIds}
-          onCloseEditMode={handleCloseEditMode}
-        />
-      ) : (
-        <>
-          <LegitProfileInfo
-            isLoading={isLoading}
-            profile={profile}
+  if (!profile) return null;
+
+  return (
+    <>
+      <LegitProfilePageHead />
+      <GeneralTemplate
+        header={
+          <ThemeProvider theme={!isEdit && !triggered ? 'dark' : 'light'}>
+            <Header isTransparent={!isEdit && !triggered} isFixed />
+          </ThemeProvider>
+        }
+        customStyle={{ '& > main': { backgroundColor: common.bg03 } }}
+        disablePadding
+      >
+        {isEdit ? (
+          <LegitProfileEditInfo
+            userId={userId}
+            name={profile.name}
+            title={profile.title}
+            subTitle={profile.subTitle || ''}
+            description={(profile.description || '').trim()}
+            image={profile.image}
+            imageBackground={profile.imageBackground || ''}
+            urlShop={(profile.urlShop || '').trim()}
             legitsBrands={legitsBrands}
-            cntOpinion={cntOpinion}
-            customStyle={{ marginTop: -HEADER_HEIGHT }}
-            infoCustomStyle={{ paddingTop: HEADER_HEIGHT + 20 }}
-            sellerId={roleSeller?.sellerId}
+            targetBrandIds={profile.targetBrandIds}
+            onCloseEditMode={handleCloseEditMode}
           />
-          <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />
-          {!isLegitUser && <LegitContactBanner isDark isFixed />}
-        </>
-      )}
-    </GeneralTemplate>
-  ) : null;
+        ) : (
+          <>
+            <LegitProfileInfo
+              isLoading={isLoading}
+              profile={profile}
+              legitsBrands={legitsBrands}
+              cntOpinion={cntOpinion}
+              customStyle={{ marginTop: -HEADER_HEIGHT }}
+              infoCustomStyle={{ paddingTop: HEADER_HEIGHT + 20 }}
+              sellerId={roleSeller?.sellerId}
+            />
+            <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />
+            {!isLegitUser && <LegitContactBanner isDark isFixed />}
+          </>
+        )}
+      </GeneralTemplate>
+    </>
+  );
 }
 
 export async function getServerSideProps({
@@ -153,7 +159,7 @@ export async function getServerSideProps({
       const legitProfile = await queryClient.fetchQuery(queryKeys.users.legitProfile(+userId), () =>
         fetchLegitProfile(+userId)
       );
-      queryClient.prefetchQuery(queryKeys.models.legitsBrands(), () => fetchLegitsBrands());
+      await queryClient.prefetchQuery(queryKeys.models.legitsBrands(), () => fetchLegitsBrands());
 
       if (legitProfile) {
         if (req.cookies.accessToken) {

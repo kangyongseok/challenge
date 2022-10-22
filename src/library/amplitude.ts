@@ -17,7 +17,7 @@ import {
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, setCookie } from '@utils/common';
 
 import LocalStorage from './localStorage';
 
@@ -329,6 +329,7 @@ const Amplitude = {
       },
       () => {
         LocalStorage.set(DEVICE_ID, amplitude.getInstance().getDeviceId());
+        setCookie(DEVICE_ID, amplitude.getInstance().getDeviceId(), 365);
 
         logEvent('LOAD_AMPLITUDE');
         try {

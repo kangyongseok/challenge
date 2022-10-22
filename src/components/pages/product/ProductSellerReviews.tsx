@@ -26,7 +26,7 @@ import { pulse } from '@styles/transition';
 import atom from '@recoil/productReview';
 
 function ProductSellerReviews({ product }: { product?: Product }) {
-  const { push } = useRouter();
+  const router = useRouter();
   const {
     theme: {
       palette: { primary, common }
@@ -34,8 +34,6 @@ function ProductSellerReviews({ product }: { product?: Product }) {
   } = useTheme();
   const [reviewBlockState, atomReviewBlockState] = useRecoilState(atom.reviewBlockState);
 
-  // const splitIds = String(id).split('-');
-  // const productId = Number(splitIds[splitIds.length - 1] || 0);
   const sellerId = product?.productSeller.id || 0;
 
   const [reviewInfoParams, setReviewInfoParams] = useState({
@@ -93,7 +91,12 @@ function ProductSellerReviews({ product }: { product?: Product }) {
             },
             source: attrProperty.productSource.PRODUCT_LIST
           });
-          push(`/products/${sellerId}/sellerInfo?tab=reviews`);
+          router.push({
+            pathname: `/sellerInfo/${sellerId}`,
+            query: {
+              tab: 'reviews'
+            }
+          });
         }}
       >
         <Flexbox alignment="center">

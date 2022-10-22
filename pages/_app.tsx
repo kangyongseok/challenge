@@ -133,6 +133,8 @@ function App({ Component, pageProps }: AppProps) {
           name="viewport"
           content="minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0"
         />
+        <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta httpEquiv="content-language" content={lang} />
         <meta name="description" content={localeData[lang].meta.description} />
         <meta name="theme-color" content={themeColor} />

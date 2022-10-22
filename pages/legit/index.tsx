@@ -46,7 +46,15 @@ function Legit() {
 
   return (
     <>
-      <PageHead ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/legit-main.webp`} />
+      <PageHead
+        title="오늘 사려는 중고명품, 정가품 궁금하다면 사진감정 | 카멜"
+        description="중고명품 정품이 의심이 된다면 카멜에서 명품 감정사들로부터 감정 의견을 받아보세요!"
+        ogTitle="오늘 사려는 중고 명품, 정가품 궁금하다면 사진감정 | 카멜"
+        ogDescription="중고 명품 정품이 의심이 된다면 카멜에서 명품 감정사들로부터 감정 의견을 받아보세요!"
+        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/legit-main.webp`}
+        ogUrl="https://mrcamel.co.kr/legit"
+        keywords="중고 명품 감정, 정품가품 구별법, 명품 정품가품 구별, 정품가품 확인, 명품 정품가품 확인, 중고 명품, 명품 감정사, 중고 정품가품 확인, 중고 명품 정품가품 확인, 정품가품 구별하기, 정품 구별법, 가품 구별법"
+      />
       <GeneralTemplate
         header={<Header isTransparent isFixed customStyle={{ backgroundColor: common.bg03 }} />}
         footer={<BottomNavigation />}

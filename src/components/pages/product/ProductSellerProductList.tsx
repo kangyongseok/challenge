@@ -22,15 +22,13 @@ import { commaNumber } from '@utils/common';
 import { pulse } from '@styles/transition';
 
 function ProductSellerProductList({ product }: { product?: Product }) {
-  const { push } = useRouter();
+  const router = useRouter();
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
-  // const splitIds = String(id).split('-');
-  // const productId = Number(splitIds[splitIds.length - 1] || 0);
   const sellerId = Number(product?.productSeller.id || 0);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
@@ -101,7 +99,12 @@ function ProductSellerProductList({ product }: { product?: Product }) {
             },
             source: attrProperty.productSource.PRODUCT_LIST
           });
-          push(`/products/${sellerId}/sellerInfo?tab=products`);
+          router.push({
+            pathname: `/sellerInfo/${sellerId}`,
+            query: {
+              tab: 'products'
+            }
+          });
         }}
       >
         <Flexbox alignment="center">

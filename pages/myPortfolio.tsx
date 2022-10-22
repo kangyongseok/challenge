@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { TouchIcon } from '@components/UI/atoms';
+import { PageHead, TouchIcon } from '@components/UI/atoms';
 import {
   MyPortfolioLanding01,
   MyPortfolioLanding02,
@@ -260,6 +260,15 @@ function MyPortfolio() {
 
   return (
     <>
+      <PageHead
+        title="내가 쓰던 명품, 얼마에 팔릴지 시세조회 | 카멜"
+        description="옷장에 잠들어 있는 내 명품의 시세 정보를 실거래가로 확인하세요."
+        ogTitle="내가 쓰던 명품, 얼마에 팔릴지 시세조회 | 카멜"
+        ogDescription="옷장에 잠들어 있는 내 명품의 시세 정보를 실거래가로 확인하세요."
+        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/my-portfolio.webp`}
+        ogUrl="https://mrcamel.co.kr/myPortfolio"
+        keywords="중고 명품 시세 조회, 명품 시세 조회, 명품 시세, 중고 명품 시세, 샤넬 가브리엘 호보백 시세, 조던1 하이 블랙모카 시세, 샤넬 클래식 미디움 시세, 샤넬 시세, 조던 시세, 롤렉스 시세"
+      />
       <LandingHeader
         isBorder={currentSection > 0}
         borderColor={currentSection === 0 ? common.ui20 : common.ui90}
@@ -332,6 +341,9 @@ function MyPortfolio() {
       )}
     </>
   );
+}
+export async function getStaticProps() {
+  return { props: {} };
 }
 
 const LandingHeader = styled(Flexbox)<{

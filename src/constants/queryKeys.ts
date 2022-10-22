@@ -131,7 +131,8 @@ const commons = {
   codeDetails: (id: number) => [...commons.all, 'codeDetails', id] as const,
   photoGuide: (params: PhotoGuideParams) => [...commons.all, 'photoGuide', params] as const,
   contentsProducts: (contentsId: number) =>
-    [...commons.all, 'contentsProducts', contentsId] as const
+    [...commons.all, 'contentsProducts', contentsId] as const,
+  announce: (id: number) => [...commons.all, 'announce', id] as const
 };
 
 const userHistory = {

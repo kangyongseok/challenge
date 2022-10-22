@@ -109,7 +109,7 @@ function LegitProfileInfo({
       name: attrProperty.legitName.LEGIT_PROFILE
     });
 
-    router.push(`/products/${sellerId}/sellerInfo?tab=products`);
+    router.push(`/sellerInfo/${sellerId}?tab=products`);
   };
 
   const handleClickMoveUrlShop = () => {

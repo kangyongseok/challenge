@@ -11,10 +11,7 @@ class MyDocument extends Document {
     return (
       <Html lang={lang}>
         <Head>
-          <meta charSet="utf-8" />
-          <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
-          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="application-name" content="Mr Camel" />
+          <meta name="application-name" content="카멜" />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />

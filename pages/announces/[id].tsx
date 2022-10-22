@@ -1,90 +1,82 @@
-import { useQuery } from 'react-query';
+import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
-import dayjs from 'dayjs';
+import type { GetServerSidePropsContext } from 'next';
+import { Flexbox, Icon } from 'mrcamel-ui';
 
-import { Header } from '@components/UI/molecules';
+import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import AnnounceDetail from '@components/pages/announces/AnnounceDetail';
+import { AnnounceDetail, AnnouncePageHead } from '@components/pages/announce';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
+import { fetchAnnounce } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-function AnnouncePage() {
-  const { query, back } = useRouter();
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
-  const announce = userInfo?.announces.find((announceData) => String(announceData.id) === query.id);
+function Announce() {
+  const router = useRouter();
 
   const handleClickClose = () => {
     logEvent(attrKeys.header.CLICK_CLOSE, {
       name: attrProperty.productName.ANNOUNCE_DETAIL
     });
-    back();
+    router.back();
   };
 
-  if (!announce) {
-    return null;
-  }
-
   return (
-    <GeneralTemplate
-      disablePadding
-      header={
-        <Header
-          rightIcon={
-            <Flexbox
-              justifyContent="center"
-              alignment="center"
-              onClick={handleClickClose}
-              customStyle={{
-                padding: 16,
-                maxHeight: 56,
-                cursor: 'pointer'
-              }}
-            >
-              <Icon name="CloseOutlined" />
-            </Flexbox>
-          }
-        />
-      }
-    >
-      <Box component="section">
-        <Alert
-          round="16"
-          customStyle={{
-            padding: '12px 24px',
-            margin: '8px 20px 24px'
-          }}
-        >
-          <Typography variant="h3" weight="medium">
-            {announce.title}
-          </Typography>
-          <Typography
-            variant="body2"
-            customStyle={{
-              textAlign: 'right'
-            }}
-          >
-            {dayjs(announce.datePosted).format('YYYY.M.D')}
-          </Typography>
-        </Alert>
-        <Flexbox gap={32} direction="vertical">
-          {announce.announceDetails.map((announceDetail) => (
-            <AnnounceDetail
-              key={`announce-detail-${announceDetail.id}`}
-              announceDetail={announceDetail}
-            />
-          ))}
-        </Flexbox>
-      </Box>
-    </GeneralTemplate>
+    <>
+      <AnnouncePageHead />
+      <GeneralTemplate
+        disablePadding
+        header={
+          <Header
+            rightIcon={
+              <Flexbox
+                justifyContent="center"
+                alignment="center"
+                onClick={handleClickClose}
+                customStyle={{
+                  padding: 16,
+                  maxHeight: 56,
+                  cursor: 'pointer'
+                }}
+              >
+                <Icon name="CloseOutlined" />
+              </Flexbox>
+            }
+          />
+        }
+      >
+        <AnnounceDetail />
+      </GeneralTemplate>
+    </>
   );
 }
 
-export default AnnouncePage;
+export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
+  try {
+    const queryClient = new QueryClient();
+
+    Initializer.initAccessTokenByCookies(req.cookies);
+    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+
+    await queryClient.fetchQuery(queryKeys.commons.announce(Number(query.id)), () =>
+      fetchAnnounce(Number(query.id))
+    );
+
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient)
+      }
+    };
+  } catch {
+    return {
+      notFound: true
+    };
+  }
+}
+
+export default Announce;

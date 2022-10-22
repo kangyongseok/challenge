@@ -9,6 +9,7 @@ import find from 'lodash-es/find';
 import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';
+import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   SearchBrandList,
@@ -185,6 +186,14 @@ function Search() {
 
   return (
     <>
+      <PageHead
+        title="검색만 하면 전국에서 중고명품 모아드릴게요 | 카멜"
+        description="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
+        ogTitle="검색만 하면 전국에서 중고명품 모아드릴게요 | 카멜"
+        ogDescription="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
+        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
+        ogUrl="https://mrcamel.co.kr/search"
+      />
       <GeneralTemplate disablePadding>
         <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
           <SearchForm onSubmit={handleSubmit}>

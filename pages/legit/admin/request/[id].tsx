@@ -100,7 +100,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
         dehydratedState: dehydrate(queryClient)
       }
     };
-  } catch (e) {
+  } catch {
     return {
       notFound: true
     };

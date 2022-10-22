@@ -5,7 +5,7 @@ import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 
-import { Skeleton } from '@components/UI/atoms';
+import Skeleton from '@components/UI/atoms/Skeleton';
 
 import { logEvent } from '@library/amplitude';
 
@@ -18,11 +18,11 @@ import attrKeys from '@constants/attrKeys';
 
 import atom from '@recoil/productReview';
 
-import ReviewCard from './ReviewCard';
+import SellerInfoReviewCard from './SellerInfoReviewCard';
 
-function SellerReviewsPanel() {
+function SellerInfoReviewsPanel() {
   const {
-    query: { id: sellerId }
+    query: { id }
   } = useRouter();
   const {
     theme: {
@@ -35,7 +35,7 @@ function SellerReviewsPanel() {
   });
   const setReviewBlockState = useSetRecoilState(atom.reviewBlockState);
   const reviewInfoParams = {
-    sellerId: Number(sellerId),
+    sellerId: Number(id || 0),
     size: 20
   };
   const productsPage = useRef(0);
@@ -65,7 +65,7 @@ function SellerReviewsPanel() {
           title: 'SELLER_REVIEW',
           name: 'SELLER_REVIEW',
           page: requestReviewsPage,
-          sellerId
+          sellerId: id
         });
         await fetchNextPage();
       }
@@ -76,7 +76,7 @@ function SellerReviewsPanel() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, sellerId]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, id]);
 
   const firstReviewInfo = data?.pages?.[0];
   const isEmpty = firstReviewInfo?.sellerReviews?.content?.length === 0;
@@ -88,7 +88,7 @@ function SellerReviewsPanel() {
 
   const handleClickCard = () => {
     setReviewBlockState(true);
-    queryClient.invalidateQueries(sellerId);
+    queryClient.invalidateQueries(id);
   };
 
   return (
@@ -170,13 +170,13 @@ function SellerReviewsPanel() {
       {!isLoading &&
         data?.pages?.map((reviewInfo) =>
           reviewInfo?.sellerReviews?.content?.map((sellerReview) => (
-            <ReviewCard
+            <SellerInfoReviewCard
               key={`seller-review-card-${sellerReview.id}`}
               sellerReview={sellerReview}
               site={reviewInfo.site || {}}
               curnScore={reviewInfo.curnScore}
               maxScore={reviewInfo.maxScore}
-              productId={Number(sellerId)}
+              productId={sellerReview.productId}
               onReport={() => {
                 handleClickCard();
                 setToastState(() => ({ type: 'report', open: true }));
@@ -210,4 +210,4 @@ function SellerReviewsPanel() {
   );
 }
 
-export default SellerReviewsPanel;
+export default SellerInfoReviewsPanel;

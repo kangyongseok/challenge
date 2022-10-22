@@ -12,7 +12,7 @@ import { PRODUCT_SITE, REPORT_STATUS } from '@constants/product';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-interface ReviewCardProps {
+interface SellerInfoReviewCardProps {
   sellerReview: ProductSellerReview;
   site: Site;
   curnScore: string | null;
@@ -22,7 +22,7 @@ interface ReviewCardProps {
   onBlock(): void;
 }
 
-function ReviewCard({
+function SellerInfoReviewCard({
   sellerReview: { id, reportStatus, creator, content, score },
   site: { id: siteId = 0 },
   curnScore,
@@ -30,7 +30,7 @@ function ReviewCard({
   productId,
   onReport,
   onBlock
-}: ReviewCardProps) {
+}: SellerInfoReviewCardProps) {
   const { data: accessUser } = useQueryAccessUser();
   const {
     mutate: block,
@@ -148,7 +148,7 @@ function ReviewCard({
             </Flexbox>
           )}
           <ReviewContent variant="body2">{`${content}${
-            siteId === PRODUCT_SITE.DAANGN.id ? ` (${score})` : ''
+            siteId === PRODUCT_SITE.DAANGN.id && score ? ` (${score})` : ''
           }`}</ReviewContent>
         </>
       )}
@@ -186,4 +186,4 @@ const ReviewContent = styled(Typography)`
   -webkit-box-orient: vertical;
 `;
 
-export default ReviewCard;
+export default SellerInfoReviewCard;

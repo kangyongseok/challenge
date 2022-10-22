@@ -15,15 +15,15 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-function SellerProductsPanel() {
+function SellerInfoProductsPanel() {
   const {
-    query: { id: sellerId }
+    query: { id }
   } = useRouter();
 
   const productsPage = useRef(0);
 
   const sellerProductsParams = {
-    sellerId: Number(sellerId),
+    sellerId: Number(id || 0),
     size: 20
   };
 
@@ -52,7 +52,7 @@ function SellerProductsPanel() {
           title: 'SELLER_PRODUCT',
           name: 'SELLER_PRODUCT',
           page: requestProductsPage,
-          sellerId
+          sellerId: id
         });
         await fetchNextPage();
       }
@@ -63,7 +63,7 @@ function SellerProductsPanel() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, sellerId]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, id]);
   if (!isLoading && !data?.pages.map((sellerProducts) => sellerProducts.content)[0].length) {
     return (
       <Flexbox
@@ -126,4 +126,4 @@ function SellerProductsPanel() {
   );
 }
 
-export default SellerProductsPanel;
+export default SellerInfoProductsPanel;

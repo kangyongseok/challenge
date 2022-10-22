@@ -8,6 +8,7 @@ import { Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
+import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   BrandList,
@@ -93,31 +94,41 @@ function Brand() {
   }, []);
 
   return (
-    <GeneralTemplate
-      disablePadding
-      header={
-        <Header customStyle={{ borderBottom: `${common.ui90} 1px solid` }}>
-          <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
-            브랜드
-          </Typography>
-        </Header>
-      }
-      footer={<BottomNavigation />}
-    >
-      <BrandSearchBar value={keywordValue} onChange={handleChangeKeyword} />
-      {keywordValue.length > 0 && keywordsSuggest.length > 0 ? (
-        <BrandSuggestList brandsList={keywordsSuggest} />
-      ) : (
-        <>
-          <BrandList
-            brandNavRef={brandNavRef}
-            brandsTitleList={brandsTitleList}
-            brandsList={brandsList}
-          />
-          <BrandSectionIndexer brandNavRef={brandNavRef} brandsIndexList={brandsIndexList} />
-        </>
-      )}
-    </GeneralTemplate>
+    <>
+      <PageHead
+        title="전국 중고명품 브랜드 모음! 비교분석은 카멜에서 하세요 | 카멜"
+        description="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
+        ogTitle="전국 중고명품 브랜드 모음! 비교분석은 카멜에서 하세요 | 카멜"
+        ogDescription="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
+        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
+        ogUrl="https://mrcamel.co.kr/brand"
+      />
+      <GeneralTemplate
+        disablePadding
+        header={
+          <Header customStyle={{ borderBottom: `${common.ui90} 1px solid` }}>
+            <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
+              브랜드
+            </Typography>
+          </Header>
+        }
+        footer={<BottomNavigation />}
+      >
+        <BrandSearchBar value={keywordValue} onChange={handleChangeKeyword} />
+        {keywordValue.length > 0 && keywordsSuggest.length > 0 ? (
+          <BrandSuggestList brandsList={keywordsSuggest} />
+        ) : (
+          <>
+            <BrandList
+              brandNavRef={brandNavRef}
+              brandsTitleList={brandsTitleList}
+              brandsList={brandsList}
+            />
+            <BrandSectionIndexer brandNavRef={brandNavRef} brandsIndexList={brandsIndexList} />
+          </>
+        )}
+      </GeneralTemplate>
+    </>
   );
 }
 
