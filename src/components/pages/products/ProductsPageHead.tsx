@@ -7,7 +7,7 @@ import PageHead from '@components/UI/atoms/PageHead';
 
 import type { SearchParams } from '@dto/product';
 
-import { fetchSearchOptions } from '@api/product';
+import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 
@@ -63,7 +63,7 @@ function ProductsPageHead({ variant, params }: ProductsPageHeadProps) {
   const { keyword }: { keyword?: string } = router.query;
   const {
     data: { productTotal = 0, baseSearchOptions: { minPrice = 0, idFilters = [] } = {} } = {}
-  } = useQuery(queryKeys.products.searchOptions(params), () => fetchSearchOptions(params), {
+  } = useQuery(queryKeys.products.searchMeta(params), () => fetchSearchMeta(params), {
     keepPreviousData: true,
     enabled: Object.keys(params).length > 0,
     staleTime: 5 * 60 * 1000

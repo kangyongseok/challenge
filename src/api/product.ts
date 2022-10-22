@@ -92,6 +92,17 @@ export async function fetchSearchOptions(params?: SearchParams) {
   return data;
 }
 
+export async function fetchSearchMeta(params?: SearchParams) {
+  const { data } = await Axios.getInstance().get<Search>(`${BASE_PATH}/search`, {
+    params: {
+      ...params,
+      isMeta: true
+    }
+  });
+
+  return data;
+}
+
 export async function fetchSearchAiProduct(params?: SearchAiProductParams) {
   const { data: { products = [] } = {} } = await Axios.getInstance().get<{
     products: PageProduct[];

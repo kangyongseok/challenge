@@ -59,6 +59,7 @@ const products = {
     [...products.all, 'sellerProducts', params] as const,
   search: (params?: SearchParams) => compact([...products.all, 'search', params]),
   searchOptions: (params?: SearchParams) => compact([...products.all, 'searchOptions', params]),
+  searchMeta: (params?: SearchParams) => compact([...products.all, 'searchMeta', params]),
   searchAiProduct: (params?: SearchAiProductParams) =>
     compact([...products.all, 'searchAiProduct', params]),
   searchRelatedProducts: (params?: SearchRelatedProductsParams) =>

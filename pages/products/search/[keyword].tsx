@@ -22,7 +22,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import { fetchSearch } from '@api/product';
+import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
@@ -71,36 +71,26 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
 }
 
 export async function getServerSideProps({
-  req,
   query,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
-  const convertedInitSearchParams = convertSearchParamsByQuery(query, {
-    variant: 'search',
-    defaultValue: {
-      order: 'recommDesc',
-      deviceId: req.cookies.deviceId
-    }
+  const params = convertSearchParamsByQuery(query, {
+    variant: 'search'
   });
 
-  const data = await fetchSearch(convertedInitSearchParams);
+  const data = await fetchSearchMeta(params);
 
   if (data) {
-    queryClient.setQueryData(queryKeys.products.searchOptions(convertedInitSearchParams), data);
-    // TODO 매번 새로운 fetch 가 이루어지는데 정렬이 추천순인 경우 랜덤한 로직이 있어 이전에 사용자가 보던 데이터 유지가 안됨
-    // queryClient.setQueryData(queryKeys.products.search(convertedInitSearchParams), {
-    //   pages: [data],
-    //   pageParams: [0]
-    // });
+    queryClient.setQueryData(queryKeys.products.searchMeta(params), data);
   }
 
   return {
     props: {
       ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient),
-      params: convertedInitSearchParams
+      params
     }
   };
 }

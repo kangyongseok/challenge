@@ -23,9 +23,6 @@ import {
 
 import Initializer from '@library/initializer';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
 
 function LegitAdmin() {
@@ -89,31 +86,11 @@ export async function getServerSideProps({
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
-  if (!req.cookies.accessToken)
-    return {
-      redirect: {
-        destination: '/legit',
-        permanent: false
-      }
-    };
-
+  // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
-
-  const userInfo = await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
-  const hasRole = userInfo.roles.some((role) => (role as string).indexOf('PRODUCT_LEGIT') >= 0);
-
-  if (!hasRole) {
-    return {
-      redirect: {
-        destination: '/legit',
-        permanent: false
-      }
-    };
-  }
 
   return {
     props: {

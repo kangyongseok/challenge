@@ -20,7 +20,7 @@ import {
 
 import Initializer from '@library/initializer';
 
-import { fetchUserInfo, fetchUserLegitTargets } from '@api/user';
+import { fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
@@ -89,6 +89,7 @@ export async function getServerSideProps({
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
+  // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(req.cookies);
@@ -96,19 +97,6 @@ export async function getServerSideProps({
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets);
-
-    const userInfo = await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
-    const hasRole = userInfo.roles.some((role) => (role as string).indexOf('PRODUCT_LEGIT') >= 0);
-
-    if (hasRole) {
-      return {
-        redirect: {
-          destination: '/legit/admin',
-          permanent: false
-        }
-      };
-    }
   }
 
   return {
