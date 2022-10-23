@@ -19,11 +19,14 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
+
 function HomeLegitLive() {
   const router = useRouter();
 
   const [params] = useState({ page: 0, size: 8, status: [30] });
 
+  const { data: { roles = [] } = {} } = useQueryUserInfo();
   const { data: { productLegits: { content: legitProducts = [] } = {} } = {}, isLoading } =
     useQuery(queryKeys.productLegits.legits(params), () => fetchProductLegits(params), {
       refetchOnMount: true
@@ -39,15 +42,17 @@ function HomeLegitLive() {
     router.push(`/legit/${dataProductId}/result`);
   };
 
+  const handleLegitClick = () => {
+    const hasLegitRole = (roles as string[]).some((role) => role.indexOf('PRODUCT_LEGIT') > -1);
+
+    router.push({ pathname: hasLegitRole ? '/legit/admin' : '/legit' });
+  };
+
   return (
     <Flexbox component="section" direction="vertical" gap={20} customStyle={{ padding: 20 }}>
       <Flexbox justifyContent="space-between">
         <FormattedText id="home.legitLive.title" variant="h3" weight="bold" />
-        <Flexbox
-          alignment="center"
-          onClick={() => router.push('/legit')}
-          customStyle={{ cursor: 'pointer' }}
-        >
+        <Flexbox alignment="center" onClick={handleLegitClick} customStyle={{ cursor: 'pointer' }}>
           <FormattedText id="home.legitLive.all" variant="body2" weight="medium" />
           <Icon name="CaretRightOutlined" size="small" />
         </Flexbox>

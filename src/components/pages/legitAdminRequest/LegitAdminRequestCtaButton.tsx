@@ -195,7 +195,9 @@ function LegitAdminRequestCtaButton() {
   };
 
   useEffect(() => {
-    if ((isLegitHead && postType === 2 && result === 3) || status === 12) {
+    if ((status === 10 || status === 12) && result) {
+      setDisabled(false);
+    } else if ((isLegitHead && postType === 2 && result === 3) || status === 12) {
       setDisabled(false);
     } else if ((!result || !description) && !myLegitOpinion) {
       setDisabled(true);

@@ -44,7 +44,7 @@ function LegitAdminRequestOpinion() {
 
   return (
     <Box component="section" customStyle={{ margin: '52px 0' }}>
-      {isLegitHead && myLegitOpinion.result === 3 ? (
+      {isLegitHead && myLegitOpinion.result === 3 && myLegitOpinion.description ? (
         <Box
           customStyle={{
             padding: 20,

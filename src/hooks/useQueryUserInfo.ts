@@ -24,7 +24,8 @@ function useQueryUserInfo() {
       // 임시처리, 조만간 제거 예정
       if (router.pathname !== '/')
         logEvent(attrKeys.debug.LOAD_USER_INFO, {
-          data
+          ...data,
+          ...window.location
         });
     },
     enabled: !!accessUser

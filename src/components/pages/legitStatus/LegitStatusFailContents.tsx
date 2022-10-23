@@ -103,22 +103,24 @@ function LegitStatusFailContents() {
           <strong>감정</strong>을 계속할까요?
         </Typography>
       )}
-      <OpinionCard>
-        <Typography weight="bold" customStyle={{ marginBottom: 4 }}>
-          camel
-        </Typography>
-        <Typography variant="small1" customStyle={{ color: common.ui60 }}>
-          카멜 실시간 사진감정팀
-        </Typography>
-        <Typography
-          customStyle={{ marginTop: 8 }}
-          dangerouslySetInnerHTML={{
-            __html: !isEmpty(legitOpinions)
-              ? legitOpinions[0].description.replaceAll(/\r?\n/gi, '<br />') || ''
-              : ''
-          }}
-        />
-      </OpinionCard>
+      {!isEmpty(legitOpinions) && legitOpinions[0].description && (
+        <OpinionCard>
+          <Typography weight="bold" customStyle={{ marginBottom: 4 }}>
+            camel
+          </Typography>
+          <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+            카멜 실시간 사진감정팀
+          </Typography>
+          <Typography
+            customStyle={{ marginTop: 8 }}
+            dangerouslySetInnerHTML={{
+              __html: !isEmpty(legitOpinions)
+                ? legitOpinions[0].description.replaceAll(/\r?\n/gi, '<br />') || ''
+                : ''
+            }}
+          />
+        </OpinionCard>
+      )}
       {(status === 11 ||
         (status === 12 && !canModified) ||
         (status === 12 && canModified && !isAuthUser)) && (

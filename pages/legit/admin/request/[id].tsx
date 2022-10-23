@@ -15,7 +15,6 @@ import {
 import Initializer from '@library/initializer';
 import ChannelTalk from '@library/channelTalk';
 
-import { fetchUserInfo } from '@api/user';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
@@ -48,32 +47,11 @@ function LegitAdminRequestDetail() {
 }
 
 export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
-  if (!req.cookies.accessToken)
-    return {
-      redirect: {
-        destination: '/legit',
-        permanent: false
-      }
-    };
-
   try {
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(req.cookies);
     Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
-
-    const userInfo = await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
-    const hasRole = userInfo.roles.some((role) => (role as string).indexOf('PRODUCT_LEGIT') >= 0);
-
-    if (!hasRole) {
-      return {
-        redirect: {
-          destination: '/legit',
-          permanent: false
-        }
-      };
-    }
 
     const { id = 0 } = query;
 

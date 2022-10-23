@@ -84,11 +84,9 @@ export async function getServerSideProps({
     variant: 'brands'
   });
 
-  const data = await fetchSearchMeta(params);
-
-  if (data) {
-    queryClient.setQueryData(queryKeys.products.searchMeta(params), data);
-  }
+  await queryClient.prefetchQuery(queryKeys.products.searchMeta(params), () =>
+    fetchSearchMeta(params)
+  );
 
   return {
     props: {
