@@ -4,6 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSidePropsContext } from 'next';
 import { Box, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -23,7 +24,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -131,7 +132,12 @@ function SellerInfo() {
   );
 }
 
-export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  query,
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(req.cookies);
@@ -157,6 +163,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     return {
       props: {
+        ...(await serverSideTranslations(locale || defaultLocale)),
         dehydratedState: dehydrate(queryClient)
       }
     };
