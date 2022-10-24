@@ -135,19 +135,11 @@ export function convertSearchParamsByQuery(
   options?: {
     variant?: ProductsVariant;
     onlyBaseSearchParams?: boolean;
-    defaultValue?: {
-      order?: ProductOrder;
-      deviceId?: string;
-    };
+    defaultValue?: Partial<SearchParams>;
     excludeSearchParams?: Array<keyof SearchParams>;
   }
 ): Partial<SearchParams> {
-  const {
-    variant,
-    onlyBaseSearchParams,
-    defaultValue: { order: defaultOrder = undefined, deviceId: defaultDeviceId = undefined } = {},
-    excludeSearchParams = []
-  } = options || {};
+  const { variant, onlyBaseSearchParams, defaultValue, excludeSearchParams = [] } = options || {};
   const {
     keyword,
     brands,
@@ -205,7 +197,7 @@ export function convertSearchParamsByQuery(
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
-    deviceId: deviceId || defaultDeviceId
+    deviceId
   };
   const searchParams = {
     keyword,
@@ -237,14 +229,15 @@ export function convertSearchParamsByQuery(
     seasonIds,
     colorIds,
     materialIds,
-    order: order || defaultOrder,
+    order,
     notice,
     distance,
     requiredBrands,
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
-    deviceId: deviceId || defaultDeviceId
+    deviceId,
+    ...defaultValue
   };
 
   if (variant === 'categories') {

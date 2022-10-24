@@ -375,10 +375,12 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       const convertedInitSearchParams = convertSearchParamsByQuery(router.query, {
         variant,
         defaultValue: {
+          idFilterIds: variant === 'camel' ? [5] : undefined,
           order: 'recommDesc',
           deviceId
         }
       });
+
       setSearchParamsState(({ type }) => ({
         type,
         searchParams: convertedInitSearchParams

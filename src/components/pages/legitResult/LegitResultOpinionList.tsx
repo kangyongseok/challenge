@@ -27,15 +27,17 @@ function LegitResultOpinionList() {
 
   return (
     <Box component="section" customStyle={{ marginTop: 48 }}>
-      {legitOpinions.map((legitOpinion, index) => (
-        <Fragment key={`legit-opinion-${legitOpinion.id}`}>
-          <LegitOpinion
-            legitOpinion={legitOpinion}
-            onClick={() => router.push(`/legit/profile/${legitOpinion.roleLegit.userId}`)}
-          />
-          {index !== legitOpinions.length - 1 && <Divider />}
-        </Fragment>
-      ))}
+      {legitOpinions
+        .filter((legitOpinion) => legitOpinion.description)
+        .map((legitOpinion, index) => (
+          <Fragment key={`legit-opinion-${legitOpinion.id}`}>
+            <LegitOpinion
+              legitOpinion={legitOpinion}
+              onClick={() => router.push(`/legit/profile/${legitOpinion.roleLegit.userId}`)}
+            />
+            {index !== legitOpinions.filter((lo) => lo.description).length - 1 && <Divider />}
+          </Fragment>
+        ))}
     </Box>
   );
 }

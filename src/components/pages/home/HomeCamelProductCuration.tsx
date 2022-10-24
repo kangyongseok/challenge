@@ -61,7 +61,7 @@ function HomeCamelProductCuration() {
       type: attrProperty.productType.GUIDED
     });
 
-    router.push('/products/camel?idFilterIds=5');
+    router.push('/products/camel');
   };
 
   const handleWishAtt = (product: ProductResult, i: number) => {
