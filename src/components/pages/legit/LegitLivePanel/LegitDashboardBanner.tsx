@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -29,6 +29,11 @@ function LegitDashboardBanner() {
       palette: { common }
     }
   } = useTheme();
+  const [initLoad, setInitLoad] = useState(false);
+
+  useEffect(() => {
+    setInitLoad(true);
+  }, []);
 
   const { isLoading, data: { mostPopular, realVsFake } = {} } = useQuery(
     queryKeys.dashboards.legit(),
@@ -104,10 +109,12 @@ function LegitDashboardBanner() {
   };
 
   const handleSwiperBanner = () => {
-    logEvent(attrKeys.legit.SWIPE_X_BANNER, {
-      name: attrProperty.legitName.LEGIT_MAIN,
-      title: attrProperty.legitTitle.LEGITDASHBOARD
-    });
+    if (initLoad) {
+      logEvent(attrKeys.legit.SWIPE_X_BANNER, {
+        name: attrProperty.legitName.LEGIT_MAIN,
+        title: attrProperty.legitTitle.LEGITDASHBOARD
+      });
+    }
   };
 
   return (
@@ -125,7 +132,7 @@ function LegitDashboardBanner() {
         style={{ padding: '0 20px' }}
         onSlideChange={handleSwiperBanner}
         loop
-        loopedSlides={2}
+        // loopedSlides={1}
       >
         {isLoading
           ? Array.from({ length: 3 }, (_, index) => (
