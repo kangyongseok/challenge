@@ -1,11 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 
 import { LegitProfileInfo, LegitProfileOpinionLegitList } from '@components/pages/legitProfile';
-
-import ChannelTalk from '@library/channelTalk';
 
 import { fetchLegitProfile } from '@api/user';
 import { fetchLegitsBrands } from '@api/model';
@@ -42,10 +40,6 @@ function LegitAdminProfilePanel() {
       });
     }
   }, [accessUser?.userId, router]);
-
-  useEffect(() => {
-    ChannelTalk.hideChannelButton();
-  }, []);
 
   return accessUser?.userId && (isLoading || (isFetched && profile)) ? (
     <>

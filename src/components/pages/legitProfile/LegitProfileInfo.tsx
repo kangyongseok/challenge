@@ -45,13 +45,14 @@ function LegitProfileInfo({
   infoCustomStyle
 }: LegitProfileInfoProps) {
   const {
+    userId,
     name = '',
     title = '',
     image = '',
     imageBackground = '',
     dateActivated = '',
-    targetBrandIds = [],
-    urlShop
+    targetBrandIds = []
+    // urlShop
   } = profile || {};
   const {
     theme: {
@@ -112,13 +113,13 @@ function LegitProfileInfo({
     router.push(`/sellerInfo/${sellerId}?tab=products`);
   };
 
-  const handleClickMoveUrlShop = () => {
-    logEvent(attrKeys.legit.CLICK_PROFILE_LINK, {
-      name: attrProperty.legitName.LEGIT_PROFILE
-    });
-
-    window.open(urlShop as string, '_blank');
-  };
+  // const handleClickMoveUrlShop = () => {
+  //   logEvent(attrKeys.legit.CLICK_PROFILE_LINK, {
+  //     name: attrProperty.legitName.LEGIT_PROFILE
+  //   });
+  //
+  //   window.open(urlShop as string, '_blank');
+  // };
 
   return (
     <Wrapper css={customStyle}>
@@ -208,21 +209,24 @@ function LegitProfileInfo({
           </Flexbox>
           <Flexbox direction="vertical" gap={8}>
             <Flexbox alignment="center" gap={8}>
-              <Button
-                size="large"
-                variant="contained"
-                brandColor="black"
-                customStyle={{ minWidth: 128 }}
-                startIcon={<Icon name="ShopOutlined" customStyle={{ color: common.cmnW }} />}
-                onClick={handleClickMoveToShop}
-              >
-                SHOP
-              </Button>
-              {(urlShop || '').trim().length > 0 && (
-                <Button size="large" onClick={handleClickMoveUrlShop}>
-                  <Icon name="HyperlinkOutlined" />
+              {userId && ![10029, 56881, 70679].includes(userId) && (
+                <Button
+                  size="large"
+                  variant="contained"
+                  brandColor="black"
+                  customStyle={{ minWidth: 128 }}
+                  startIcon={<Icon name="ShopOutlined" customStyle={{ color: common.cmnW }} />}
+                  onClick={handleClickMoveToShop}
+                >
+                  SHOP
                 </Button>
               )}
+              {/* 추후 활성화 */}
+              {/* {(urlShop || '').trim().length > 0 && ( */}
+              {/*  <Button size="large" onClick={handleClickMoveUrlShop}> */}
+              {/*    <Icon name="HyperlinkOutlined" /> */}
+              {/*  </Button> */}
+              {/* )} */}
               <Button size="large" onClick={handleClickShare}>
                 <Icon name="ShareOutlined" />
               </Button>
