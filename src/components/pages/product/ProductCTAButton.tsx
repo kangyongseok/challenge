@@ -43,7 +43,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
-import { productDetailAtt } from '@utils/products';
+import { getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
@@ -225,7 +225,11 @@ function ProductCTAButton({
       site: product?.site.name,
       price: product?.price,
       scoreTotal: product?.scoreTotal,
-      cluster: product?.cluster
+      cluster: product?.cluster,
+      productType: getProductType(
+        product?.productSeller.site.id || 0,
+        product?.productSeller.type || 0
+      )
     });
 
     if (onClickWish(isWish)) {

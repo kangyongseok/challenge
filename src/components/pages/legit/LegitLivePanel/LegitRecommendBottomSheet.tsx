@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import type { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
@@ -7,6 +6,8 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import LegitCard from '@components/UI/molecules/LegitCard';
+
+import type { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -19,6 +20,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { getCookie, setCookie } from '@utils/common';
 
 import { deviceIdState } from '@recoil/common';
@@ -49,16 +51,16 @@ function LegitRecommendBottomSheet() {
 
   const { mutate, isLoading: isLoadingMutation } = useMutation(postRequestProductLegits);
 
-  const handleClickCard = (e: MouseEvent<HTMLDivElement>) => {
+  const handleClickCard = (product: ProductResult) => () => {
     logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.legitName.LEGIT_MAIN,
-      title: attrProperty.legitTitle.WISHRECENT_LEGIT
+      title: attrProperty.legitTitle.WISHRECENT_LEGIT,
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
     });
     SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
       source: attrProperty.legitSource.LEGIT_TARGET
     });
-    const dataProductId = e.currentTarget.getAttribute('data-product-id');
-    router.push(`/products/${dataProductId}`);
+    router.push(`/products/${product.id}`);
   };
 
   const handleClickTodayHidden = () => {
@@ -145,7 +147,7 @@ function LegitRecommendBottomSheet() {
               variant="list"
               productLegit={{ productResult: product }}
               data-product-id={product.id}
-              onClick={handleClickCard}
+              onClick={handleClickCard(product)}
               hidePlatformLogo
               hideLegitLabelWithDate
             />

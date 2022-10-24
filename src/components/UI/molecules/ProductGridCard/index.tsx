@@ -23,6 +23,7 @@ import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
@@ -176,7 +177,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const imageBoxRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
-    logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
+    logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
+      ...productAtt,
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+    });
 
     if (source) {
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
@@ -193,7 +197,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       return;
     }
 
-    logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, wishAtt);
+    logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, {
+      ...wishAtt,
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+    });
 
     if (isWish) {
       mutatePostProductsRemove({ productId: id, deviceId });

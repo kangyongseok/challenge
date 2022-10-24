@@ -6,7 +6,9 @@ import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@
 
 import { logEvent } from '@library/amplitude';
 
+import { SELLER_STATUS } from '@constants/user';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
+import { PRODUCT_SITE } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
@@ -646,6 +648,18 @@ export function getEventPropertyViewType(variant: ProductsVariant, parentIds?: s
   return 'SEARCH';
 }
 
+export function getProductType(siteId: number, sellerType: number) {
+  // TODO 추후 순수 카멜에서 등록한 매물 구분 필요
+  if (
+    siteId === PRODUCT_SITE.CAMEL.id ||
+    SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']
+  ) {
+    return 'transferred';
+  }
+
+  return 'crawled';
+}
+
 export function productDetailAtt({ key, product, rest, source }: ProductDetailAttProps) {
   logEvent(key, {
     name: attrProperty.productName.PRODUCT_DETAIL,
@@ -667,7 +681,8 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     scorePriceRate: product.scorePriceRate,
     source: source || attrProperty.productSource.MAIN_CAMEL,
     imageCount: product.imageCount,
-    isProductLegit: product.isProductLegit
+    isProductLegit: product.isProductLegit,
+    productType: getProductType(product.productSeller.site.id, product.productSeller.type)
   });
 }
 

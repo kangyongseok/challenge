@@ -20,6 +20,7 @@ import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { commaNumber, getTenThousandUnitPrice } from '@utils/formats';
 import { getProductDetailUrl } from '@utils/common';
 
@@ -127,7 +128,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     const handleClickAlert = (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
 
-      logEvent('CLICK_PRODUCT_DETAIL', {
+      logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
         name: 'WISH_LIST',
         att: isPriceDown ? 'PRICELOW' : 'SAME',
         index,
@@ -137,7 +138,8 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         line,
         site: siteName,
         price: targetProductPrice,
-        scoreTotal
+        scoreTotal,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
       });
 
       if (!showDuplicateUploadAlert && showDuplicateWithPriceDownAlert) {
@@ -163,7 +165,10 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         return;
       }
 
-      logEvent(isWish ? attrKeys.home.CLICK_WISH_CANCEL : attrKeys.home.CLICK_WISH, wishAtt);
+      logEvent(isWish ? attrKeys.home.CLICK_WISH_CANCEL : attrKeys.home.CLICK_WISH, {
+        ...wishAtt,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      });
 
       if (isWish) {
         mutatePostProductsRemove(
@@ -184,7 +189,10 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     };
 
     const handleClickRemoveWishConfirm = () => {
-      logEvent(attrKeys.wishes.CLICK_WISH_CANCEL, productAtt);
+      logEvent(attrKeys.wishes.CLICK_WISH_CANCEL, {
+        ...productAtt,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      });
       setRemoveId(id);
       mutatePostProductsRemove(
         {
@@ -205,7 +213,11 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     };
 
     const handleClickProductDetail = () => {
-      logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, productAtt);
+      logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
+        ...productAtt,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      });
+
       if (source) {
         SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
       }

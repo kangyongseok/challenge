@@ -10,6 +10,8 @@ import styled from '@emotion/styled';
 
 import { Image, Skeleton } from '@components/UI/atoms';
 
+import { ProductSeller } from '@dto/product';
+
 import SessionStorage from '@library/sessionStorage';
 import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
@@ -21,6 +23,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
@@ -73,11 +76,12 @@ function HomeRecommendationsWishes() {
     []
   );
 
-  const handleClick = (id: number, isPriceLow: boolean) => () => {
+  const handleClick = (id: number, isPriceLow: boolean, productSeller: ProductSeller) => () => {
     logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.productName.MAIN,
       title: attrProperty.productTitle.WISHPRODUCT,
-      att: isPriceLow ? 'PRICELOW' : 'HOT'
+      att: isPriceLow ? 'PRICELOW' : 'HOT',
+      productType: getProductType(productSeller.site.id, productSeller.type)
     });
     SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
       source: attrProperty.productSource.MAIN_WISH
@@ -126,14 +130,24 @@ function HomeRecommendationsWishes() {
         ) : (
           recommWishes.map(
             (
-              { id, title, priceBefore, price, viewCount, wishCount, purchaseCount, imageMain },
+              {
+                id,
+                title,
+                priceBefore,
+                price,
+                viewCount,
+                wishCount,
+                purchaseCount,
+                imageMain,
+                productSeller
+              },
               index
             ) => (
               <SwiperSlide
                 key={`recommendations-wishes-card-${id}`}
                 onLoad={onLoadSwiperSlide(index, priceBefore)}
               >
-                <Card onClick={handleClick(id, !!priceBefore)}>
+                <Card onClick={handleClick(id, !!priceBefore, productSeller)}>
                   <Flexbox gap={8} direction="vertical" customStyle={{ overflow: 'hidden' }}>
                     <Flexbox gap={2} direction="vertical">
                       <Title

@@ -73,7 +73,7 @@ import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getMetaDescription, productDetailAtt } from '@utils/products';
+import { getMetaDescription, getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
@@ -582,7 +582,11 @@ function ProductDetail() {
             onClick={() => {
               logEvent(attrKeys.products.clickProductDetail, {
                 name: attrProperty.name.productDetail,
-                att: isPriceDown ? 'TOASTPRICELOW' : 'TOASTSAME'
+                att: isPriceDown ? 'TOASTPRICELOW' : 'TOASTSAME',
+                productType: getProductType(
+                  data?.product.productSeller.site.id || 0,
+                  data?.product.productSeller.type || 0
+                )
               });
             }}
           >

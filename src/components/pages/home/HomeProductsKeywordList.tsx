@@ -33,6 +33,8 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
+
 import { homeSelectedTabStateFamily } from '@recoil/home';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -180,10 +182,11 @@ function HomeProductsKeywordList() {
   };
 
   const handleClickProductKeywordProduct = useCallback(
-    (id: number) => () => {
+    (product: ProductResult) => () => {
       logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
         name: attrProperty.productName.MAIN,
-        title: attrProperty.productTitle.MYLIST
+        title: attrProperty.productTitle.MYLIST,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_MYLIST
@@ -203,7 +206,7 @@ function HomeProductsKeywordList() {
               });
             }
 
-            router.push(`/products/${id}`);
+            router.push(`/products/${product.id}`);
           }
         });
       }
@@ -339,7 +342,7 @@ function HomeProductsKeywordList() {
                       compact
                       isRound
                       customStyle={{ minWidth: 144, maxWidth: 144, flex: 1 }}
-                      onClick={handleClickProductKeywordProduct(product.id)}
+                      onClick={handleClickProductKeywordProduct(product)}
                     />
                   ))}
             </CardList>

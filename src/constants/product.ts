@@ -104,7 +104,8 @@ export const PRODUCT_SITE = {
   MJOONGNA: { id: 25, name: '중나앱' },
   CAMELNCAFE: { id: 26, name: '카멜-N카페' },
   CAMELNBLOG: { id: 27, name: '카멜-N블로그' },
-  COLLECTIV: { id: 28, name: '콜렉티브' }
+  COLLECTIV: { id: 28, name: '콜렉티브' },
+  MUSTIT: { id: 166, name: '머스트잇' }
 };
 
 export const PRODUCT_SITE_NAVER = Object.entries(PRODUCT_SITE)

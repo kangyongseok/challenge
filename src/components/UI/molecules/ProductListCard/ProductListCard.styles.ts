@@ -50,9 +50,11 @@ export const Area = styled(Typography)`
       palette: { common }
     }
   }) => common.ui60};
-  white-space: nowrap;
-  overflow-x: hidden;
+  display: -webkit-box;
+  overflow: hidden;
   text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 `;
 
 export const MetaSocial = styled(Flexbox)`

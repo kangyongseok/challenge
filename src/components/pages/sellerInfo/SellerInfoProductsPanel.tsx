@@ -108,17 +108,16 @@ function SellerInfoProductsPanel() {
         {!isLoading &&
           data?.pages?.map((sellerProducts) =>
             sellerProducts?.content?.map((product) => (
-              <Box key={`sellerInfo-seller-product-${product.id}`}>
-                <ProductListCard
-                  product={product}
-                  productAtt={{
-                    name: attrKeys.products.SELLER_PRODUCT,
-                    ...product
-                  }}
-                  isRound
-                  source={attrProperty.productSource.SELLER_PRODUCT}
-                />
-              </Box>
+              <ProductListCard
+                key={`sellerInfo-seller-product-${product.id}`}
+                product={product}
+                productAtt={{
+                  name: attrKeys.products.SELLER_PRODUCT,
+                  ...product
+                }}
+                isRound
+                source={attrProperty.productSource.SELLER_PRODUCT}
+              />
             ))
           )}
       </Flexbox>

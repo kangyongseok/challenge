@@ -33,6 +33,8 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
+
 import { homePersonalProductCurationPrevScrollState } from '@recoil/home';
 
 const cache = new CellMeasurerCache({
@@ -115,15 +117,16 @@ function HomePersonalProductCuration() {
   }, []);
 
   const handleClickProduct = useCallback(
-    (id: number) => () => {
+    (product: ProductResult) => () => {
       logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
         name: attrProperty.productName.MAIN,
-        title: attrProperty.productTitle.PERSONAL
+        title: attrProperty.productTitle.PERSONAL,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_PERSONAL
       });
-      router.push(`/products/${id}`);
+      router.push(`/products/${product.id}`);
     },
     [router]
   );
@@ -155,7 +158,7 @@ function HomePersonalProductCuration() {
                   source={attrProperty.productSource.MAIN_PERSONAL}
                   compact
                   isRound
-                  onClick={handleClickProduct(firstProduct.id)}
+                  onClick={handleClickProduct(firstProduct)}
                 />
               )}
               {secondProduct && (
@@ -169,7 +172,7 @@ function HomePersonalProductCuration() {
                   source={attrProperty.productSource.MAIN_PERSONAL}
                   compact
                   isRound
-                  onClick={handleClickProduct(secondProduct.id)}
+                  onClick={handleClickProduct(secondProduct)}
                 />
               )}
             </ProductGridCardBox>

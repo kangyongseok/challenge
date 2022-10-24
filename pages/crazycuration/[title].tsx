@@ -33,6 +33,7 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { checkAgent, executedShareURl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
@@ -585,7 +586,8 @@ function Crazycuration({
           todayWishCount = 0,
           todayViewCount = 0,
           updatedCount = 0,
-          priceDownCount = 0
+          priceDownCount = 0,
+          productSeller
         }: ProductResult,
         index: number
       ) =>
@@ -593,7 +595,8 @@ function Crazycuration({
         const eventParmas: Record<string, string | number> = {
           name: attrProperty.name.crazyWeek,
           title: currentCuration?.logEventTitle || '',
-          index
+          index,
+          productType: getProductType(productSeller.site.id, productSeller.type)
         };
 
         if (todayWishCount > 0 || todayViewCount > 0) {

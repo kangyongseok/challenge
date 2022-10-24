@@ -76,7 +76,8 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
   const handleClickProduct = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.name.MY_STORE,
-      title: getTitle
+      title: getTitle,
+      productType: 'original'
     });
 
     router.push(`/products/${id}`);

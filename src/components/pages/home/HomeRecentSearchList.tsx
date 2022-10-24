@@ -28,6 +28,8 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
+
 import { RecentItems } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 import { homeSelectedTabStateFamily } from '@recoil/home';
@@ -152,7 +154,8 @@ function HomeRecentSearchList() {
         category: product.category.name,
         parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
         site: product.site.name,
-        price: product.price
+        price: product.price,
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_RECENT
