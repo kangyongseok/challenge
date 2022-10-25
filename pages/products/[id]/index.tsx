@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import type { TypographyVariant } from 'mrcamel-ui';
 import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
@@ -59,6 +60,7 @@ import {
   PRODUCT_STATUS
 } from '@constants/product';
 import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
+import { locales } from '@constants/common';
 // import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -636,7 +638,12 @@ function ProductDetail() {
   );
 }
 
-export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  query,
+  locale,
+  defaultLocale = locales.ko.lng
+}: GetServerSidePropsContext) {
   try {
     const queryClient = new QueryClient();
 
@@ -672,6 +679,7 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     return {
       props: {
+        ...(await serverSideTranslations(locale || defaultLocale)),
         dehydratedState: dehydrate(queryClient)
       }
     };
