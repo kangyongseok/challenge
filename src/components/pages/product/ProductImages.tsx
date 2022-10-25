@@ -4,8 +4,9 @@ import type { MouseEvent } from 'react';
 import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
+import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Typography, light } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Typography, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
@@ -13,15 +14,19 @@ import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import { Image, Skeleton } from '@components/UI/atoms';
 
-import type { Product } from '@dto/product';
+import type { Product, SearchLowerProductsParams } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { fetchSearchRelatedProducts } from '@api/product';
+
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 
+import ProductLastLowerPrice from './ProductLastLowerPrice';
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
 
 interface ProductImagesProps {
@@ -50,29 +55,85 @@ function ProductImages({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [isDisplay, setIsDisplay] = useState(true);
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
+  const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
+    useState<SearchLowerProductsParams | null>(null);
+  const { data: searchRelatedProducts } = useQuery(
+    queryKeys.products.searchRelatedProducts(
+      searchRelatedProductsParams as SearchLowerProductsParams
+    ),
+    () => fetchSearchRelatedProducts(searchRelatedProductsParams as SearchLowerProductsParams),
+    {
+      keepPreviousData: true,
+      staleTime: 5 * 60 * 1000,
+      enabled: !!searchRelatedProductsParams
+    }
+  );
+
+  useEffect(() => {
+    if (searchRelatedProducts && !isLoading) {
+      if (searchRelatedProducts.page.content.length < 8) {
+        setIsDisplay(false);
+      }
+    }
+  }, [isLoading, searchRelatedProducts]);
+
+  useEffect(() => {
+    if (product) {
+      setSearchRelatedProductsParams({
+        brandIds: product.brandId ? [product.brandId] : [],
+        categoryIds: product.categoryId ? [product.categoryId] : [],
+        line: product.line || undefined,
+        related: 1,
+        size: 8,
+        idFilterIds: 30,
+        scorePriceAvg: product.scorePriceAvg,
+        quoteTitle: product.quoteTitle
+      });
+    }
+  }, [product]);
 
   const detailImages = useMemo(() => {
     if (product?.imageDetailsLarge) {
-      return product.imageDetailsLarge.split('|');
+      const result = [
+        ...product.imageDetailsLarge.split('|'),
+        { lastComponent: <ProductLastLowerPrice type="lastImage" /> }
+      ];
+
+      if (searchRelatedProducts?.page.content && searchRelatedProducts.page.content.length < 8) {
+        result.pop();
+      }
+      return result;
     }
 
     if (product?.imageDetails) {
-      return product.imageDetails.split('|');
+      const result = [
+        ...product.imageDetails.split('|'),
+        { lastComponent: <ProductLastLowerPrice type="lastImage" /> }
+      ];
+      if (searchRelatedProducts?.page.content && searchRelatedProducts.page.content.length < 8) {
+        result.pop();
+      }
+      return result;
     }
 
     return [];
-  }, [product?.imageDetails, product?.imageDetailsLarge]);
-  const modalImages = useMemo(() => {
+  }, [product?.imageDetails, product?.imageDetailsLarge, searchRelatedProducts?.page.content]);
+
+  const modalImages: string[] = useMemo(() => {
     if (product?.imageMainLarge) {
-      return [product.imageMainLarge, ...detailImages];
+      return [
+        product.imageMainLarge,
+        ...detailImages.slice(0, detailImages.length - 1)
+      ] as string[];
     }
 
     if (product?.imageMain) {
-      return [product.imageMain, ...detailImages];
+      return [product.imageMain, ...detailImages.slice(0, detailImages.length - 1)] as string[];
     }
 
-    return detailImages;
+    return detailImages as string[];
   }, [detailImages, product?.imageMain, product?.imageMainLarge]);
 
   const handleClickCloseIcon = () => {
@@ -82,6 +143,11 @@ function ProductImages({
 
   const handleSlideChange = useCallback(
     ({ activeIndex }: SwiperClass) => {
+      if (typeof detailImages[currentSlide] === 'object') {
+        logEvent(attrKeys.products.VIEW_LOWPRICE_PRODUCT, {
+          type: 'PIC'
+        });
+      }
       if (!isLoggedSwipeXPic) {
         setIsLoggedSwipeXPic(true);
         logEvent(attrKeys.products.SWIPE_X_PIC, {
@@ -92,7 +158,7 @@ function ProductImages({
       setCurrentSlide(activeIndex);
       imageSwiper?.slideTo(activeIndex, 0);
     },
-    [imageSwiper, isLoggedSwipeXPic]
+    [detailImages, currentSlide, isLoggedSwipeXPic, imageSwiper]
   );
 
   const handleImageModal = (e: MouseEvent<HTMLElement>) => {
@@ -147,6 +213,11 @@ function ProductImages({
     }
   }, [router.query.id, imageSwiper]);
 
+  const lowerPriceDisplay = () => {
+    if (isDisplay && currentSlide === detailImages.length) return true;
+    return false;
+  };
+
   return (
     <>
       <Box ref={wrapperRef} customStyle={{ margin: '0 -20px' }}>
@@ -158,7 +229,7 @@ function ProductImages({
           onSlideChange={handleSlideChange}
           preventClicks
         >
-          {product && (
+          {product && !lowerPriceDisplay() && (
             <>
               {getProductImageOverlay({ status: product.status })}
               <Platform>
@@ -206,25 +277,52 @@ function ProductImages({
           </SwiperSlide>
           {detailImages.map((image, i) => (
             <SwiperSlide
-              key={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}
+              key={`product-image-${
+                typeof image === 'string'
+                  ? image.slice(image.lastIndexOf('/') + 1)
+                  : 'last-lower-price'
+              }`}
               style={{ position: 'relative' }}
             >
-              <Image
-                className="swiper-lazy"
-                data-src={image}
-                alt="image"
-                onClick={handleImageModal}
-                data-index={i + 2}
-                disableSkeletonRender
-              />
+              {typeof image === 'string' ? (
+                <Image
+                  className="swiper-lazy"
+                  data-src={image}
+                  alt="image"
+                  onClick={handleImageModal}
+                  data-index={i + 2}
+                  disableSkeletonRender
+                />
+              ) : (
+                <Box
+                  customStyle={{
+                    position: 'relative',
+                    display: isDisplay ? 'block' : 'none'
+                  }}
+                >
+                  <BackgroundBlurImage
+                    imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                  />
+                  <LastImageContents justifyContent="center" alignment="center">
+                    {image.lastComponent}
+                  </LastImageContents>
+                </Box>
+              )}
+
               <SkeletonWrapper className="swiper-lazy-preloader">
                 <Skeleton />
               </SkeletonWrapper>
             </SwiperSlide>
           ))}
-          <Pagination>
-            {currentSlide + 1}/{detailImages.length + 1}
-          </Pagination>
+          {!lowerPriceDisplay() && (
+            <Pagination>
+              {currentSlide + 1}/
+              {searchRelatedProducts?.page.content &&
+              searchRelatedProducts?.page.content.length >= 8
+                ? detailImages.length
+                : detailImages.length + 1}
+            </Pagination>
+          )}
         </Swiper>
         {isProductLegit && (
           <ProductDetailLegitImageBottomBanner
@@ -282,6 +380,26 @@ const SkeletonWrapper = styled.div`
   width: 100%;
   height: 100%;
   z-index: -1;
+`;
+
+const LastImageContents = styled(Flexbox)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 20px;
+`;
+
+const BackgroundBlurImage = styled.div<{ imageUrl: string }>`
+  background: ${({ imageUrl }) => `url(${imageUrl})`} no-repeat;
+  background-color: rgba(0, 0, 0, 0.3);
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  height: 100%;
+  padding-top: 100%;
+  background-size: cover;
+  position: relative;
 `;
 
 export default memo(ProductImages);

@@ -10,6 +10,7 @@ import { Header } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -173,7 +174,7 @@ const Wrap = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
   height: 56px;
   background: ${({ theme: { palette } }) => palette.common.uiWhite};
   position: fixed;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 60 : 0)}px;
+  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
   left: 0;
   z-index: 11;
   justify-content: space-between;

@@ -1,7 +1,8 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 
 import { Line } from 'react-chartjs-2';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { useRouter } from 'next/router';
+import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import {
   CategoryScale,
@@ -16,9 +17,14 @@ import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
+import { logEvent } from '@library/amplitude';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
+
 import { commaNumber } from '@utils/common';
 
-import { pulse } from '@styles/transition';
+// import { pulse } from '@styles/transition';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
@@ -72,6 +78,7 @@ interface ProductAveragePriceChartProps {
 }
 
 function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
+  const { push } = useRouter();
   const {
     theme: {
       palette: { primary, common }
@@ -81,18 +88,16 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   const [options, setOptions] = useState<ChartOptions<'line'> | null>(null);
   const chartValues = useMemo(() => {
     let averagePrices: number[] = [];
-
-    if (product?.weekAvgPrices && product?.scorePriceAvg) {
-      averagePrices = [product.scorePriceAvg]
-        .concat(product.weekAvgPrices)
-        .filter((weekAvgPrice) => weekAvgPrice !== 0);
+    if (product?.weekAvgPrices) {
+      averagePrices = product.weekAvgPrices.filter((weekAvgPrice) => weekAvgPrice !== 0);
     }
 
     return averagePrices
       .map((averagePrice) => Number((averagePrice / 10000).toFixed(1)))
       .slice(0, 7)
       .reverse();
-  }, [product?.scorePriceAvg, product?.weekAvgPrices]);
+  }, [product?.weekAvgPrices]);
+
   const productPrice = useMemo(() => {
     const viewPrice = chartValues[6] || 0;
 
@@ -102,6 +107,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
 
     return Math.floor(viewPrice);
   }, [chartValues]);
+
   const isShowChart = useMemo(() => {
     if (product?.weekAvgPrices) {
       return (
@@ -117,37 +123,54 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
     return false;
   }, [product?.quoteTitle, product?.scorePriceCount, product?.weekAvgPrices]);
 
+  const handleClickLowerProduct = () => {
+    logEvent(attrKeys.products.CLICK_PRODUCT_LIST, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: '시세이하'
+    });
+
+    push({
+      pathname: `/products/search/${product?.quoteTitle}`,
+      query: {
+        idFilterIds: 30
+      }
+    });
+  };
+
   useEffect(() => {
     const slicedValues = chartValues.slice(3, 7);
-
     if (slicedValues.length > 0) {
       const suggestedMax = Number(((105 / 100) * Math.max(...slicedValues)).toFixed(1));
       const suggestedMin = Number(((95 / 100) * Math.min(...slicedValues)).toFixed(1));
       const stepSize = Number(((suggestedMax - suggestedMin) / 3).toFixed(0));
       const previousMonth = Number(dayjs().format('M')) - 1;
+      const year = dayjs().format('YY년');
 
       setData({
         labels: [
+          `${year} ${previousMonth - 3}월`,
           `${previousMonth - 2}월`,
           `${previousMonth - 1}월`,
-          `${previousMonth}월`,
-          '평균시세'
+          `${previousMonth}월`
         ],
         datasets: [
           {
             data: slicedValues,
             pointRadius: [4, 4, 4, 7],
-            borderColor: [common.ui90, common.ui90, common.ui90, primary.highlight],
-            pointBackgroundColor: [common.ui60, common.ui60, common.ui60, primary.main],
-            pointBorderWidth: [0, 0, 0, 5]
+            borderColor: common.bg02,
+            pointBackgroundColor: [common.ui80, common.ui80, common.ui80, primary.light],
+            pointBorderWidth: [0, 0, 0, 0]
           }
         ]
       });
+
       setOptions({
         responsive: true,
         layout: {
           padding: {
-            top: 24
+            top: 24,
+            left: 20,
+            right: 25
           }
         },
         scales: {
@@ -159,10 +182,10 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               maxRotation: 0,
               align: 'inner',
               font: {
-                size: 14,
+                size: 12,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                weight: ['400', '400', '400', '500']
+                weight: ['400', '400', '400', '700']
               },
               color: [common.ui60, common.ui60, common.ui60, common.ui20]
             },
@@ -183,9 +206,8 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             },
             grid: {
               lineWidth: 1,
-              color: common.ui90,
+              color: common.line02,
               drawBorder: false,
-              borderDash: [5, 5],
               display: true
             }
           }
@@ -209,11 +231,15 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
                 fillStyle: common.uiWhite
               });
               // eslint-disable-next-line quotes
-              ctx.font = "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-              ctx.fillStyle = common.uiBlack;
+              ctx.font = "500 12px 'Camel Product Sans', 'Helvetica', 'Arial', sans-serif";
+              ctx.fillStyle = common.ui60;
               ctx.textAlign = 'center';
               ctx.textBaseline = 'bottom';
-              ctx.fillText(String(slicedValues[index]), chartElement.x, chartElement.y - 18);
+              ctx.fillText(
+                slicedValues[index] ? `${String(slicedValues[index])}만원` : '',
+                chartElement.x,
+                chartElement.y - 18
+              );
             });
           }
         },
@@ -231,6 +257,8 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
     }
   }, [
     chartValues,
+    common.bg02,
+    common.line02,
     common.ui20,
     common.ui60,
     common.ui80,
@@ -238,6 +266,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
     common.uiBlack,
     common.uiWhite,
     primary.highlight,
+    primary.light,
     primary.main
   ]);
 
@@ -246,72 +275,95 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   }
 
   return (
-    <Box customStyle={{ marginTop: 32 }}>
-      <Typography variant="h4" weight="bold">
-        평균시세
-      </Typography>
-      {!product ? (
-        <LabelSkeleton />
-      ) : (
-        <>
-          <Label isShowChart={isShowChart}>
-            {isShowChart ? (
-              <>
-                <Typography variant="body1" weight="medium">
-                  {product.quoteTitle}
-                </Typography>
-                <Typography variant="body1" weight="medium">
-                  {commaNumber(productPrice)}만원
-                </Typography>
-              </>
-            ) : (
+    <>
+      <Box customStyle={{ paddingTop: 20 }} />
+      <Box customStyle={{ marginBottom: 32 }}>
+        <Typography
+          variant="small1"
+          weight="bold"
+          customStyle={{ color: common.ui60, marginBottom: 4 }}
+        >
+          #{product?.quoteTitle}
+        </Typography>
+        <Flexbox gap={4} alignment="center">
+          <Typography variant="h3" weight="bold">
+            평균시세
+          </Typography>
+          <Typography variant="h3" weight="bold" customStyle={{ color: primary.light }}>
+            {commaNumber(productPrice)}만원
+          </Typography>
+        </Flexbox>
+        {data && options && <Line data={data} options={options} />}
+        <Button
+          fullWidth
+          size="large"
+          variant="contained"
+          customStyle={{ marginTop: 32, background: common.ui95, color: common.ui20 }}
+          onClick={handleClickLowerProduct}
+        >
+          시세이하 매물보기
+        </Button>
+        {/* {!product ? (
+      <LabelSkeleton />
+    ) : (
+      <>
+        <Label isShowChart={isShowChart}>
+          {isShowChart ? (
+            <>
               <Typography variant="body1" weight="medium">
-                데이터가 부족해요
+                {product.quoteTitle}
               </Typography>
-            )}
-          </Label>
-          {isShowChart && data && options && <Line data={data} options={options} />}
-        </>
-      )}
-      <Divider />
-    </Box>
+              <Typography variant="body1" weight="medium">
+                {commaNumber(productPrice)}만원
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="body1" weight="medium">
+              데이터가 부족해요
+            </Typography>
+          )}
+        </Label>
+        {isShowChart && data && options && <Line data={data} options={options} />}
+      </>
+    )} */}
+        <Divider />
+      </Box>
+    </>
   );
 }
 
-const LabelSkeleton = styled.div`
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui90};
-  animation: ${pulse} 800ms linear 0s infinite alternate;
-  margin-top: 16px;
-  height: 128px;
-`;
+// const LabelSkeleton = styled.div`
+//   background-color: ${({
+//     theme: {
+//       palette: { common }
+//     }
+//   }) => common.ui90};
+//   animation: ${pulse} 800ms linear 0s infinite alternate;
+//   margin-top: 16px;
+//   height: 128px;
+// `;
 
-const Label = styled.div<{ isShowChart: boolean }>`
-  margin-top: 16px;
-  padding: 12px 16px;
-  display: ${({ isShowChart }) => (isShowChart ? 'grid' : 'inline-block')};
-  grid-template-columns: 1fr auto;
-  grid-gap: 8px;
-  justify-content: space-between;
-  align-items: center;
-  background-color: ${({
-    theme: {
-      palette: { primary }
-    }
-  }) => primary.bgLight};
-  border-radius: ${({ theme }) => theme.box.round['8']};
-`;
+// const Label = styled.div<{ isShowChart: boolean }>`
+//   margin-top: 16px;
+//   padding: 12px 16px;
+//   display: ${({ isShowChart }) => (isShowChart ? 'grid' : 'inline-block')};
+//   grid-template-columns: 1fr auto;
+//   grid-gap: 8px;
+//   justify-content: space-between;
+//   align-items: center;
+//   background-color: ${({
+//     theme: {
+//       palette: { primary }
+//     }
+//   }) => primary.bgLight};
+//   border-radius: ${({ theme }) => theme.box.round['8']};
+// `;
 
-const Divider = styled.hr`
+const Divider = styled.div`
   margin-top: 32px;
-  border-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui90};
+  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.bg02};
+  margin-left: -20px;
+  width: calc(100% + 40px);
 `;
 
 export default memo(ProductAveragePriceChart);

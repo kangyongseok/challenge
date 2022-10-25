@@ -15,3 +15,4 @@ export { default as LegitStatusCardHolder } from './LegitStatusCardHolder';
 export { default as LegitContactBanner } from './LegitContactBanner';
 export { default as UserAvatar } from './UserAvatar';
 export { default as MyShopAppDownloadDialog } from './MyShopAppDownloadDialog';
+export { default as LoginBottomSheet } from './LoginBottomSheet';

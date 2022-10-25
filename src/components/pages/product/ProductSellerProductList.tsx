@@ -2,17 +2,18 @@ import { memo, useEffect, useState } from 'react';
 
 import { useQueries } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Divider } from '@components/UI/molecules';
-import Image from '@components/UI/atoms/Image';
+import { Divider, ProductGridCard } from '@components/UI/molecules';
 
 import type { Product } from '@dto/product';
 
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
+import { SELLER_STATUS } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
+import { PRODUCT_SITE } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -25,7 +26,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
   const router = useRouter();
   const {
     theme: {
-      palette: { common }
+      palette: { common, primary }
     }
   } = useTheme();
 
@@ -79,6 +80,12 @@ function ProductSellerProductList({ product }: { product?: Product }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sellerId]);
 
+  const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
+  const isCamelSeller =
+    reviewInfo &&
+    SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
+      SELLER_STATUS['3'];
+
   return sellerProductsIsLoading ||
     reviewInfoIsLoading ||
     sellerProductsIsFetching ||
@@ -86,10 +93,11 @@ function ProductSellerProductList({ product }: { product?: Product }) {
     sellerProductsIsError ||
     reviewInfoIsError ||
     (reviewInfo?.productSeller?.count || 0) > 0 ? (
-    <Box customStyle={{ marginTop: 32 }}>
+    <Box>
       <Flexbox
         alignment="center"
         justifyContent="space-between"
+        customStyle={{ marginBottom: 20 }}
         onClick={() => {
           productDetailAtt({
             key: attrKeys.products.CLICK_SELLER_PRODUCT,
@@ -107,38 +115,76 @@ function ProductSellerProductList({ product }: { product?: Product }) {
           });
         }}
       >
-        <Flexbox alignment="center">
-          <Typography variant="h4" weight="bold">
-            이 판매자의 매물
-          </Typography>
-          <Typography
-            variant="body2"
-            weight="medium"
-            customStyle={{ marginLeft: 4, color: common.ui60 }}
-          >
-            ({commaNumber(sellerProducts?.totalElements || 0)}개)
-          </Typography>
+        <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
+          {reviewInfo ? (
+            (isCamelProduct && (
+              <Avatar
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
+                customStyle={{ borderRadius: '50%', marginRight: 12 }}
+                width={44}
+              />
+            )) ||
+            (isCamelSeller && (
+              <Avatar
+                src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
+                customStyle={{ borderRadius: '50%', marginRight: 12 }}
+                width={44}
+              />
+            )) || (
+              <EmptyAvatar justifyContent="center" alignment="center">
+                <Icon name="UserFilled" size="large" />
+              </EmptyAvatar>
+            )
+          ) : (
+            <Icon name="UserFilled" width={20} color={common.ui95} />
+          )}
+          <Flexbox direction="vertical">
+            <Flexbox gap={6} alignment="center">
+              <ProductSellerName
+                variant="h3"
+                weight="bold"
+                hasName={!!reviewInfo?.productSeller?.name}
+                isCamelSeller={!!isCamelSeller}
+              >
+                {reviewInfo?.productSeller?.name}
+              </ProductSellerName>
+              {isCamelSeller && (
+                <Icon name="SafeFilled" size="large" customStyle={{ color: primary.main }} />
+              )}
+            </Flexbox>
+            <Typography customStyle={{ color: common.ui60 }}>
+              {isCamelSeller ? '카멜인증판매자 ∙ ' : ''}
+              {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
+            </Typography>
+          </Flexbox>
+          <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5 }}>
+            <Typography weight="medium" variant="small1">
+              더보기
+            </Typography>
+            <Icon name="CaretRightOutlined" size="small" />
+          </Flexbox>
         </Flexbox>
-        <Icon name="CaretRightOutlined" size="medium" />
       </Flexbox>
-
       <ProductList>
         {!sellerProducts?.content
           ? Array.from({ length: 5 }, (_, index) => (
               <ImageSkeleton key={`seller-product-${index}`} />
             ))
-          : sellerProducts.content.map(({ id: sellerProductId, imageThumbnail, imageMain }) => (
-              <Image
-                key={`seller-product-${sellerProductId}`}
-                width={96}
-                height={96}
-                src={imageThumbnail || imageMain}
-                alt="Seller Product Img"
-                disableLazyLoad={false}
-                disableSkeletonRender={false}
-                disableAspectRatio
-                isRound
-              />
+          : sellerProducts.content.map((sellerProduct) => (
+              <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
+                <ProductGridCard
+                  product={sellerProduct}
+                  // wishAtt={handleWishAtt(product, i)}
+                  // productAtt={handleProductAtt(product, i)}
+                  name={attrProperty.productName.PRODUCT_DETAIL}
+                  isRound
+                  compact
+                  gap={17}
+                  source={attrProperty.productSource.LIST_RELATED}
+                  hideProductLabel
+                  hideAreaWithDateInfo
+                />
+              </Box>
             ))}
       </ProductList>
       <Divider />
@@ -149,13 +195,14 @@ function ProductSellerProductList({ product }: { product?: Product }) {
 const ProductList = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 96px;
-  grid-auto-rows: 96px;
-  gap: 8px;
+  grid-auto-columns: 144px;
+  /* grid-auto-rows: 96px; */
+  gap: 12px;
   margin: 0 -20px;
-  padding: 16px 20px 0;
+  padding: 0 20px 0;
   overflow-x: auto;
-  overflow-y: hidden;
+  /* overflow-x: auto;
+  overflow-y: hidden; */
   justify-content: flex-start;
 `;
 
@@ -169,6 +216,42 @@ const ImageSkeleton = styled.div`
   width: 96px;
   height: 96px;
   border-radius: 8px;
+`;
+
+const ProductSellerName = styled(Typography)<{ hasName: boolean; isCamelSeller: boolean }>`
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+  color: ${({ isCamelSeller, theme: { palette } }) =>
+    isCamelSeller ? palette.primary.main : palette.common.ui20};
+  ${({
+    theme: {
+      box,
+      palette: { common }
+    },
+    hasName
+  }) =>
+    !hasName && {
+      height: '21px',
+      width: '50px',
+      borderRadius: box.round['4'],
+      backgroundColor: common.ui90,
+      animation: `${pulse} 800ms linear 0s infinite alternate`
+    }}
+`;
+
+const EmptyAvatar = styled(Flexbox)`
+  width: 44px;
+  height: 44px;
+  background: ${({ theme: { palette } }) => palette.common.bg02};
+  border-radius: 50%;
+  margin-right: 12px;
+
+  svg {
+    color: ${({ theme: { palette } }) => palette.common.ui80};
+  }
 `;
 
 export default memo(ProductSellerProductList);

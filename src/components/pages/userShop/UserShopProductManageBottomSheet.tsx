@@ -173,7 +173,7 @@ function UserShopProductManageBottomSheet() {
     }));
 
     if (process.env.NODE_ENV !== 'development') {
-      if (!(checkAgent.isAndroidApp() || checkAgent.isIOSApp())) {
+      if (!(checkAgent.isIOSApp() || checkAgent.isAndroidApp())) {
         setOpenAppDown(({ type }) => ({
           type,
           open: true

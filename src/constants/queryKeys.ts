@@ -13,6 +13,7 @@ import type {
   RecommProductsParams,
   ReviewInfoParams,
   SearchAiProductParams,
+  SearchLowerProductsParams,
   SearchParams,
   SearchRelatedProductsParams,
   SellerProductsParams
@@ -77,7 +78,9 @@ const products = {
   searchHistoryTopFive: (params?: SearchParams) =>
     [...products.all, 'searchHistoryFive', params] as const,
   sellerModifyProducs: (params: ProductParams) =>
-    [...products.all, 'sellerModifyProducs', params] as const
+    [...products.all, 'sellerModifyProducs', params] as const,
+  searchLowerProducts: (params?: SearchLowerProductsParams) =>
+    compact([...products.all, 'searchLowerProducts', params])
 };
 
 const productLegits = {

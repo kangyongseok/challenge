@@ -3,7 +3,7 @@ import { memo, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';
@@ -12,14 +12,12 @@ import type { Product } from '@dto/product';
 
 import { fetchReviewInfo } from '@api/product';
 
-import { SELLER_STATUS } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { PRODUCT_SITE, REPORT_STATUS } from '@constants/product';
+import { REPORT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
-import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
 
@@ -29,7 +27,7 @@ function ProductSellerReviews({ product }: { product?: Product }) {
   const router = useRouter();
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
   const [reviewBlockState, atomReviewBlockState] = useRecoilState(atom.reviewBlockState);
@@ -72,16 +70,16 @@ function ProductSellerReviews({ product }: { product?: Product }) {
     setReviewInfoParams((props) => ({ ...props, sellerId }));
   }, [sellerId]);
 
-  const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
-  const isCamelSeller =
-    reviewInfo &&
-    SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
-      SELLER_STATUS['3'];
+  // const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
+  // const isCamelSeller =
+  //   reviewInfo &&
+  //   SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
+  //     SELLER_STATUS['3'];
   return reviewInfo?.sellerReviews?.totalElements ? (
-    <Box customStyle={{ marginTop: 32 }}>
+    <Box>
       <Flexbox
         alignment="center"
-        justifyContent="space-between"
+        customStyle={{ margin: '32px 0 20px' }}
         onClick={() => {
           productDetailAtt({
             key: attrKeys.products.CLICK_SELLER_REVIEW,
@@ -99,22 +97,38 @@ function ProductSellerReviews({ product }: { product?: Product }) {
           });
         }}
       >
-        <Flexbox alignment="center">
-          <Typography variant="h4" weight="bold">
-            판매자 리뷰
+        <Flexbox alignment="center" customStyle={{ marginRight: 'auto' }}>
+          <Typography variant="h3" weight="bold">
+            판매자 후기
           </Typography>
-          <Typography
+          {/* <Typography
             variant="body2"
             weight="medium"
             customStyle={{ marginLeft: 4, color: common.ui80 }}
           >
             ({commaNumber(reviewInfo.totalCount || reviewInfo?.sellerReviews.totalElements || 0)}
             개)
-          </Typography>
+          </Typography> */}
         </Flexbox>
-        <Icon name="CaretRightOutlined" size="medium" />
+        {reviewInfo?.curnScore && (
+          <Flexbox alignment="center" gap={2}>
+            <Icon name="StarFilled" customStyle={{ color: '#FEB700' }} size="medium" />
+            <Typography variant="h4" weight="bold" customStyle={{ color: common.ui20 }}>
+              {`${
+                reviewInfo.curnScore.length > 1
+                  ? reviewInfo?.curnScore
+                  : `${reviewInfo?.curnScore}.0` || 0
+              }${reviewInfo?.maxScore ? `/${reviewInfo?.maxScore}` : ''}`}
+            </Typography>
+          </Flexbox>
+        )}
+        <Icon
+          name="CaretRightOutlined"
+          size="medium"
+          customStyle={{ color: common.ui60, marginLeft: 5 }}
+        />
       </Flexbox>
-      <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginTop: 16 }}>
+      {/* <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginTop: 16 }}>
         <Flexbox alignment="center">
           {reviewInfo ? (
             (isCamelProduct && (
@@ -166,13 +180,14 @@ function ProductSellerReviews({ product }: { product?: Product }) {
             </Typography>
           )}
         </Flexbox>
-      </Flexbox>
+      </Flexbox> */}
       {!reviewInfo?.sellerReviews
-        ? Array.from({ length: 3 }, (_, index) => (
+        ? Array.from({ length: 2 }, (_, index) => (
             <ReviewCardSkeleton key={`review-loading-${index}`} />
           ))
-        : reviewInfo.sellerReviews.content.map(
-            ({ id: sellerReviewId, reportStatus, creator, content, score }) => (
+        : reviewInfo.sellerReviews.content
+            .slice(0, 2)
+            .map(({ id: sellerReviewId, reportStatus, creator, content, score }) => (
               <ReviewCard key={`review-${sellerReviewId}`}>
                 {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[0] && (
                   <>
@@ -202,36 +217,35 @@ function ProductSellerReviews({ product }: { product?: Product }) {
                   <ReviewContent variant="body2">차단하신 사용자의 리뷰입니다.</ReviewContent>
                 )}
               </ReviewCard>
-            )
-          )}
+            ))}
       <Divider />
     </Box>
   ) : null;
 }
 
-const ProductSellerName = styled(Typography)<{ hasName: boolean }>`
-  margin-left: 6px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow-wrap: anywhere;
+// const ProductSellerName = styled(Typography)<{ hasName: boolean }>`
+//   margin-left: 6px;
+//   overflow: hidden;
+//   display: -webkit-box;
+//   -webkit-line-clamp: 1;
+//   -webkit-box-orient: vertical;
+//   overflow-wrap: anywhere;
 
-  ${({
-    theme: {
-      box,
-      palette: { common }
-    },
-    hasName
-  }) =>
-    !hasName && {
-      height: '21px',
-      width: '50px',
-      borderRadius: box.round['4'],
-      backgroundColor: common.ui90,
-      animation: `${pulse} 800ms linear 0s infinite alternate`
-    }}
-`;
+//   ${({
+//     theme: {
+//       box,
+//       palette: { common }
+//     },
+//     hasName
+//   }) =>
+//     !hasName && {
+//       height: '21px',
+//       width: '50px',
+//       borderRadius: box.round['4'],
+//       backgroundColor: common.ui90,
+//       animation: `${pulse} 800ms linear 0s infinite alternate`
+//     }}
+// `;
 
 const ReviewCard = styled.div`
   margin-top: 8px;

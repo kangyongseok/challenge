@@ -1,24 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
 import type { TypographyVariant } from 'mrcamel-ui';
-import { Button, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import {
-  AppDownloadDialog,
-  ErrorBoundary,
-  MyShopAppDownloadDialog
-} from '@components/UI/organisms';
+import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import {
   DuplicatedOverlay,
-  Header,
   PriceDownOverlay,
+  ProductDetailHeader,
   ReservingOverlay,
   SoldOutOverlay
 } from '@components/UI/molecules';
@@ -27,19 +23,17 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
-  ProductAveragePriceChart,
   ProductCTAButton,
+  ProductDetailFooter,
   ProductDetailLegitBanner,
   ProductDetailLegitBottomSheet,
-  ProductFixedSummary,
+  // ProductFixedSummary,
   ProductImages,
   ProductInfo,
-  ProductKeywordList,
+  ProductMowebAppContents,
   ProductRedirect,
   ProductRelatedProductList,
-  ProductSellerBottomMenu,
-  ProductSellerProductList,
-  ProductSellerReviews
+  ProductSoldoutCard
 } from '@components/pages/product';
 
 import type { AccessUser } from '@dto/userAuth';
@@ -64,12 +58,8 @@ import {
   PRODUCT_SOURCE,
   PRODUCT_STATUS
 } from '@constants/product';
-import {
-  ACCESS_USER,
-  // CAMEL_SELLER_START_ROOT,
-  DUPLICATED_PRODUCT_IDS
-} from '@constants/localStorage';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
+// import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -78,22 +68,24 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-import { showAppDownloadBannerState } from '@recoil/common';
-import useScrollTrigger from '@hooks/useScrollTrigger';
+// import { showAppDownloadBannerState } from '@recoil/common';
+// import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductDetail() {
   const {
     push,
-    query: { id: productId, redirect, isCrm, chainPrice },
-    asPath
+    query: { id: productId, redirect, chainPrice, outsideAccess },
+    asPath,
+    beforePopState,
+    replace
   } = useRouter();
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  // const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const {
     data,
@@ -106,6 +98,7 @@ function ProductDetail() {
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
   const [isCamelSellerProduct, setCamelSellerProduct] = useState(false);
+  const [viewDetail, setViewDetail] = useState(false);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
@@ -141,6 +134,29 @@ function ProductDetail() {
       salePrice: newSalePrice
     };
   }, [chainPrice, data]);
+
+  useEffect(() => {
+    if (outsideAccess) {
+      const searchName =
+        data?.product.quoteTitle || data?.product.category.name || data?.product.brand.name || '';
+      beforePopState(() => {
+        if (searchName) {
+          replace(`/products/search/${searchName}`);
+          return false;
+        }
+        replace('/');
+        return false;
+      });
+    }
+  }, [
+    beforePopState,
+    data?.product.brand.name,
+    data?.product.category.name,
+    data?.product.quoteTitle,
+    outsideAccess,
+    replace
+  ]);
+
   const isSafe = useMemo(() => {
     if (data) {
       return (
@@ -165,13 +181,13 @@ function ProductDetail() {
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading && !isFetching ? data?.product : undefined;
 
-  const triggered = useScrollTrigger({
-    ref: contentRef,
-    additionalOffsetTop: showAppDownloadBanner
-      ? -(HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT)
-      : -HEADER_HEIGHT,
-    delay: 300
-  });
+  // const triggered = useScrollTrigger({
+  //   ref: contentRef,
+  //   additionalOffsetTop: showAppDownloadBanner
+  //     ? -(HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT)
+  //     : -HEADER_HEIGHT,
+  //   delay: 300
+  // });
 
   const handleClickWish = useCallback(
     (isWish: boolean) => {
@@ -427,6 +443,14 @@ function ProductDetail() {
     };
   }, [isRedirectPage]);
 
+  const handleClickViewDetail = () => {
+    logEvent(attrKeys.products.CLICK_SOLDOUT_DETAIL, {
+      name: attrProperty.name.productDetail
+    });
+
+    setViewDetail(true);
+  };
+
   // const handleClickLeft = () => {
   //   const path = LocalStorage.get(CAMEL_SELLER_START_ROOT) as string;
   //   if (isCrm) {
@@ -440,6 +464,14 @@ function ProductDetail() {
   //   }
   //   return null;
   // };
+
+  const soldout = useMemo(
+    () =>
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+      !(isDup && hasTarget) &&
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'],
+    [data?.product.status, hasTarget, isDup]
+  );
 
   return (
     <>
@@ -457,93 +489,65 @@ function ProductDetail() {
         product={data?.product}
       />
       <GeneralTemplate
-        header={
-          <Header
-            showRight={!isRedirectPage}
-            onClickLeft={
-              isCrm ? () => push(`/products/search/${data?.product.quoteTitle || ''}`) : undefined
-            }
-            disableAppDownloadBannerVariableTop={isRedirectPage}
-          />
-        }
+        header={<ProductDetailHeader data={data} />}
         footer={
-          !isRedirectPage && !isCamelSellerProduct ? (
-            <ProductCTAButton
-              product={data?.product}
-              isProductLegit={data?.productLegit}
-              isDup={isDup}
-              hasTarget={hasTarget}
-              isPriceCrm={isPriceCrm}
-              salePrice={salePrice}
-              isPriceDown={isPriceDown}
-              isWish={data?.wish}
-              onClickWish={handleClickWish}
-              onClickSMS={handleClickSMS}
-              mutateMetaInfo={mutateMetaInfo}
-            />
-          ) : (
-            <ProductSellerBottomMenu status={data?.product.status as number} />
-          )
+          <ProductDetailFooter
+            data={data}
+            viewDetail={viewDetail}
+            isRedirectPage={isRedirectPage}
+            isCamelSellerProduct={isCamelSellerProduct}
+            soldout={soldout}
+            productButton={
+              <ProductCTAButton
+                product={data?.product}
+                isProductLegit={data?.productLegit}
+                isDup={isDup}
+                hasTarget={hasTarget}
+                isPriceCrm={isPriceCrm}
+                salePrice={salePrice}
+                isPriceDown={isPriceDown}
+                isWish={data?.wish}
+                onClickWish={handleClickWish}
+                onClickSMS={handleClickSMS}
+                mutateMetaInfo={mutateMetaInfo}
+              />
+            }
+          />
         }
         hideAppDownloadBanner={isRedirectPage}
       >
-        {isRedirectPage ? (
-          data?.product && <ProductRedirect product={data.product} />
-        ) : (
+        {isRedirectPage && data?.product && <ProductRedirect product={data.product} />}
+        {!isRedirectPage && (
           <>
-            {data?.product && !isFetching && (
-              <ProductFixedSummaryCard
-                isOpen={triggered}
-                showAppDownloadBanner={showAppDownloadBanner}
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                <ProductFixedSummary
-                  isSafe={isSafe}
-                  image={data.product.imageThumbnail || data.product.imageMain}
-                  title={data.product.title}
-                  price={data.product.price}
-                  status={data.product.status}
+            {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && soldout && !viewDetail ? (
+              <ProductSoldoutCard
+                product={data?.product}
+                isSafe={isSafe}
+                onClick={handleClickViewDetail}
+              />
+            ) : (
+              <>
+                <ProductImages
+                  isLoading={isLoading || isFetching}
+                  product={data?.product}
                   getProductImageOverlay={getProductImageOverlay}
+                  isProductLegit={data?.productLegit}
                 />
-              </ProductFixedSummaryCard>
+                <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
+                <ProductActions product={product} onClickSMS={handleClickSMS} />
+              </>
             )}
-            <ProductImages
-              isLoading={isLoading || isFetching}
-              product={data?.product}
-              getProductImageOverlay={getProductImageOverlay}
-              isProductLegit={data?.productLegit}
-            />
-            <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
-            <ProductActions product={product} onClickSMS={handleClickSMS} />
-            {data?.productLegit && (
+            {data && data.product.productLegit && (
               <ProductDetailLegitBanner data={data.product.productLegit} product={data.product} />
             )}
-            <ProductSellerReviews product={product} />
-            <ProductSellerProductList product={product} />
-            <ErrorBoundary disableFallback>
-              <ProductAveragePriceChart product={product} />
-            </ErrorBoundary>
-            {isCrm ? (
-              <Button
-                variant="contained"
-                brandColor="primary"
-                customStyle={{ margin: '42px auto 0' }}
-              >
-                <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
-                  지금 모델 전체보기 ({commaNumber((!isFetching && data?.quoteTitleCount) || 0)}개)
-                </Typography>
-              </Button>
-            ) : (
-              <ProductKeywordList
-                relatedKeywords={data?.relatedKeywords ? data?.relatedKeywords : undefined}
-                productId={data?.product.id}
-              />
-            )}
+            <ProductMowebAppContents data={data} />
             <ProductRelatedProductList
               brandId={data?.product?.brand.id}
               categoryId={data?.product?.category.id}
               line={data?.product?.line}
               prevProduct={data?.product}
+              quoteTitle={data?.product.quoteTitle}
+              price={data?.product.price}
             />
           </>
         )}
@@ -678,23 +682,23 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
   }
 }
 
-const ProductFixedSummaryCard = styled.div<{ isOpen: boolean; showAppDownloadBanner: boolean }>`
-  position: fixed;
-  display: grid;
-  grid-template-columns: 64px auto;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header};
-  opacity: ${({ isOpen }) => Number(isOpen)};
-  transition: opacity 0.3s ease-in 0s;
-  width: 100%;
-  margin: 0 -20px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui98};
-`;
+// const ProductFixedSummaryCard = styled.div<{ isOpen: boolean; showAppDownloadBanner: boolean }>`
+//   position: fixed;
+//   display: grid;
+//   grid-template-columns: 64px auto;
+//   top: ${({ showAppDownloadBanner }) =>
+//     showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
+//   z-index: ${({ theme: { zIndex } }) => zIndex.header};
+//   opacity: ${({ isOpen }) => Number(isOpen)};
+//   transition: opacity 0.3s ease-in 0s;
+//   width: 100%;
+//   margin: 0 -20px;
+//   background-color: ${({
+//     theme: {
+//       palette: { common }
+//     }
+//   }) => common.ui98};
+// `;
 
 const PriceDownText = styled(Typography)`
   color: ${({

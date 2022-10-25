@@ -13,7 +13,8 @@ import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
   CamelSellerSavePopup,
   ErrorBoundary,
-  LegitResultSurveyTypeform
+  LegitResultSurveyTypeform,
+  LoginBottomSheet
 } from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
@@ -115,6 +116,15 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
+    if (router.pathname === '/products/[id]' && !router.query.outsideAccess) {
+      router.push({
+        pathname: router.asPath,
+        query: {
+          outsideAccess: true
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -165,6 +175,7 @@ function App({ Component, pageProps }: AppProps) {
                   잠시 후 다시 시도해 주세요
                 </Toast>
                 <CamelSellerSavePopup />
+                <LoginBottomSheet />
               </ErrorBoundary>
             </Hydrate>
           </ThemeModeProvider>

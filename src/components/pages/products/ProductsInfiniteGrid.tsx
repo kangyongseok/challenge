@@ -86,7 +86,7 @@ interface ProductsInfiniteGridProps {
 
 function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const router = useRouter();
-  const { keyword, parentIds } = router.query;
+  const { keyword, parentIds, idFilterIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
@@ -143,8 +143,17 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const queryClient = useQueryClient();
 
   const { data: { userProductKeyword } = {}, isFetched: isSearchOptionsFetched } = useQuery(
-    queryKeys.products.searchOptions(searchOptionsParams),
-    () => fetchSearchOptions(searchOptionsParams),
+    queryKeys.products.searchOptions(
+      idFilterIds
+        ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
+        : searchOptionsParams
+    ),
+    () =>
+      fetchSearchOptions(
+        idFilterIds
+          ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
+          : searchOptionsParams
+      ),
     {
       keepPreviousData: true,
       enabled: Object.keys(searchOptionsParams).length > 0,

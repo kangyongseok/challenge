@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { useMemo, useState } from 'react';
 
 import LinesEllipsis from 'react-lines-ellipsis';
-import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductLabel } from '@components/UI/organisms';
@@ -87,6 +87,30 @@ ${newDescription}
         description: labelDescription
       }));
   }, [product?.labels, product?.productSeller.site]);
+
+  const handleClickMoreInfo = () => {
+    if (product) {
+      logEvent(attrKeys.products.CLICK_EXPAND, {
+        name: attrProperty.productName.PRODUCT_DETAIL,
+        id: product.id,
+        site: product.site.name,
+        brand: product.brand.name,
+        category: product.category.name,
+        parentId: product.category.parentId,
+        parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+        line: product.line,
+        price: product.price,
+        scoreTotal: product.scoreTotal,
+        scoreStatus: product.scoreStatus,
+        scoreSeller: product.scoreSeller,
+        scorePrice: product.scorePrice,
+        scorePriceAvg: product.scorePriceAvg,
+        scorePriceCount: product.scorePriceCount,
+        scorePriceRate: product.scorePriceRate
+      });
+    }
+    setIsExpended(!isExpended);
+  };
 
   return !product ? (
     <ProductInfoSkeleton />
@@ -202,35 +226,27 @@ ${newDescription}
           />
         </Content>
       )}
-      <CustomDivider isClamped={isClamped} />
       {isClamped && (
-        <Flexbox
-          justifyContent="center"
-          onClick={() => {
-            logEvent(attrKeys.products.CLICK_EXPAND, {
-              name: attrProperty.productName.PRODUCT_DETAIL,
-              id: product.id,
-              site: product.site.name,
-              brand: product.brand.name,
-              category: product.category.name,
-              parentId: product.category.parentId,
-              parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-              line: product.line,
-              price: product.price,
-              scoreTotal: product.scoreTotal,
-              scoreStatus: product.scoreStatus,
-              scoreSeller: product.scoreSeller,
-              scorePrice: product.scorePrice,
-              scorePriceAvg: product.scorePriceAvg,
-              scorePriceCount: product.scorePriceCount,
-              scorePriceRate: product.scorePriceRate
-            });
-            setIsExpended(!isExpended);
-          }}
-          customStyle={{ padding: '8px 0' }}
+        <MoreInfoButton
+          isExpended={isExpended}
+          fullWidth
+          variant="contained"
+          size="large"
+          onClick={handleClickMoreInfo}
         >
-          <Icon name={isExpended ? 'CaretUpOutlined' : 'CaretDownOutlined'} />
-        </Flexbox>
+          <Flexbox
+            alignment="center"
+            justifyContent="center"
+            customStyle={{ padding: '8px 0' }}
+            gap={8}
+          >
+            <Typography variant="h4">{isExpended ? '접어보기' : '펼쳐보기'}</Typography>
+            <Icon
+              customStyle={{ color: common.uiBlack }}
+              name={isExpended ? 'CaretUpOutlined' : 'CaretDownOutlined'}
+            />
+          </Flexbox>
+        </MoreInfoButton>
       )}
     </Box>
   );
@@ -254,6 +270,27 @@ const Content = styled(Typography)<{ isClamped: boolean }>`
   margin-bottom: ${({ isClamped }) => isClamped && '24px'};
   white-space: pre-wrap;
   overflow: hidden;
+`;
+
+const MoreInfoButton = styled(Button)<{ isExpended: boolean }>`
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui95};
+  ${({ isExpended }) =>
+    !isExpended && {
+      boxShadow: '1px -40px 28px 13px rgba(255, 255, 255, 0.8)'
+      // -webkit-boxShadow: '1px -56px 28px 13px rgba(255, 255, 255, 0.8)',
+      // -moz-boxShadow: `1px -56px 28px 13px rgba(255, 255, 255, 0.8)`
+    }}
+  svg {
+    color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui20};
+  }
 `;
 
 export default ProductInfo;

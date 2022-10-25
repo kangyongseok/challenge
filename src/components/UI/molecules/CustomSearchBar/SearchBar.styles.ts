@@ -109,7 +109,7 @@ export const Wrapper = styled.div<
 
   ${({ isBottomBorderFixed, theme: { zIndex }, showAppDownloadBanner }) =>
     isBottomBorderFixed && {
-      top: showAppDownloadBanner ? 60 : 0,
+      top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0,
       left: 0,
       borderRadius: 0,
       borderTop: 'none',

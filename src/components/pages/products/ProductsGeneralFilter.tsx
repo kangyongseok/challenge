@@ -25,7 +25,7 @@ import {
   productDynamicOptionCodeType,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
-import { GENERAL_FILTER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, GENERAL_FILTER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -36,12 +36,13 @@ import {
   activeTabCodeIdState,
   dynamicOptionsStateFamily,
   filterOperationInfoSelector,
+  isRelatedKeywordState,
   productsFilterProgressDoneState,
   productsFilterStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import { toastState } from '@recoil/common';
+import { showAppDownloadBannerState, toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ProductsGeneralFilterProps {
@@ -63,8 +64,10 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     } = useTheme();
     const router = useRouter();
     const atomParam = router.asPath.split('?')[0];
+    const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
     const progressDone = useRecoilValue(productsFilterProgressDoneState);
+    const isRelatedKeyword = useRecoilValue(isRelatedKeywordState);
     const [{ searchParams }, setSearchParamsState] = useRecoilState(
       searchParamsStateFamily(`search-${atomParam}`)
     );
@@ -339,13 +342,17 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         selectedSearchOptions
       }));
     };
-
     return (
       <Box
         component="section"
         customStyle={{ minHeight: GENERAL_FILTER_HEIGHT, position: 'relative' }}
       >
-        <Wrapper ref={ref}>
+        <Wrapper
+          ref={ref}
+          showAppDownloadBanner={showAppDownloadBanner}
+          // eslint-disable-next-line no-nested-ternary
+          defaultTop={isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56}
+        >
           <Flexbox gap={12} alignment="center" customStyle={{ padding: '0 16px', minHeight: 36 }}>
             {idFilterOptions
               .filter(
@@ -477,7 +484,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
   }
 );
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ showAppDownloadBanner: boolean; defaultTop: number }>`
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -486,6 +493,8 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
+  top: ${({ showAppDownloadBanner, defaultTop }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + defaultTop : defaultTop}px;
 `;
 
 const IdFilterButton = styled.div<{ isLoading?: boolean }>`

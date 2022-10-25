@@ -9,7 +9,7 @@ import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import { CATEGORY_TAGS_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -19,6 +19,7 @@ import { convertStringToArray } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import { searchOptionsStateFamily } from '@recoil/productsFilter';
+import { showAppDownloadBannerState } from '@recoil/common';
 
 interface ProductsCategoryTagListProps {
   variant: ProductsVariant;
@@ -35,6 +36,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const categoryTagRef = useRef<HTMLDivElement | null>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const {
     searchOptions: { parentCategories = [], subParentCategories = [] }
@@ -206,7 +208,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
       component="section"
       customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT + 8, position: 'relative' }}
     >
-      <Wrapper>
+      <Wrapper showAppDownloadBanner={showAppDownloadBanner}>
         <CategoryTags ref={categoryTagRef}>
           <Text
             weight={
@@ -270,14 +272,15 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
         customStyle={{
           position: 'fixed',
           marginTop: CATEGORY_TAGS_HEIGHT,
-          zIndex: zIndex.header
+          zIndex: zIndex.header,
+          top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56
         }}
       />
     </Box>
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
   height: ${CATEGORY_TAGS_HEIGHT}px;
@@ -285,6 +288,8 @@ const Wrapper = styled.div`
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   width: 100%;
   overflow-x: auto;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
 `;
 
 const CategoryTags = styled.div`

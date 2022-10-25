@@ -1,21 +1,19 @@
-import { useEffect } from 'react';
 import type { PropsWithChildren, ReactElement } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import type { CustomStyle } from 'mrcamel-ui';
 import { Box } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import MowebFooter from '@components/UI/organisms/MowebFooter';
 import { AppDownloadBanner } from '@components/UI/organisms';
 
-import SessionStorage from '@library/sessionStorage';
+// import SessionStorage from '@library/sessionStorage';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
+// import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
-
-import { showAppDownloadBannerState } from '@recoil/common';
 
 interface GeneralTemplateProps {
   header?: ReactElement;
@@ -33,26 +31,41 @@ function GeneralTemplate({
   hideAppDownloadBanner = false,
   customStyle
 }: PropsWithChildren<GeneralTemplateProps>) {
-  const [showAppDownloadBanner, setShowAppDownloadBannerState] = useRecoilState(
-    showAppDownloadBannerState
-  );
+  const router = useRouter();
+  // const [isSafari, setIsSafari] = useState(true);
+  // const setShowAppDownloadBannerState = useSetRecoilState(showAppDownloadBannerState);
 
-  useEffect(() => {
-    if (!checkAgent.isMobileApp()) {
-      const sessionBanner = SessionStorage.get(sessionStorageKeys.hideAppDownloadBanner);
-      setShowAppDownloadBannerState(!sessionBanner);
-    }
-  }, [setShowAppDownloadBannerState]);
+  // useEffect(() => {
+  //   if (!checkAgent.isMobileApp()) {
+  //     const sessionBanner = SessionStorage.get(sessionStorageKeys.hideAppDownloadBanner);
+  //     setShowAppDownloadBannerState(!sessionBanner);
+  //   }
+  // }, [setShowAppDownloadBannerState]);
+
+  const showMowebFooterCase = ['/', '/products/[id]', '/mypage', '/wishes'].includes(
+    router.pathname
+  );
+  // useEffect(() => {
+  //   if (window.navigator.userAgent.toLowerCase().indexOf('crios') > -1) {
+  //     setIsSafari(false);
+  //     setShowAppDownloadBannerState(true);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <Wrapper css={customStyle}>
-      {!hideAppDownloadBanner && showAppDownloadBanner && (
-        <Box customStyle={{ minHeight: APP_DOWNLOAD_BANNER_HEIGHT, position: 'relative' }}>
+      {!hideAppDownloadBanner && !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && (
+        <>
           <AppDownloadBanner />
-        </Box>
+          <Box customStyle={{ minHeight: APP_DOWNLOAD_BANNER_HEIGHT }} />
+        </>
       )}
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>
+      {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && showMowebFooterCase && (
+        <MowebFooter />
+      )}
       {footer}
     </Wrapper>
   );

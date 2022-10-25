@@ -166,7 +166,7 @@ const StyledBanner = styled(Flexbox)<{ bgColor?: string; isDisplay: boolean }>`
   border-radius: 8px;
   background: ${({ theme: { palette }, bgColor }) => bgColor || palette.primary.bgLight};
   padding: 16px 20px;
-  margin-top: 32px;
+  margin-bottom: 32px;
   display: ${({ isDisplay }) => (isDisplay ? 'flex' : 'none')};
   img {
     display: block;

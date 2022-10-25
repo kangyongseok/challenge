@@ -379,7 +379,9 @@ function ProductCTAButton({
           }
           triangleLeft={20}
           customStyle={{
-            left: 115
+            left: 115,
+            bottom: 5,
+            top: 'auto'
           }}
         >
           <WishButton onClick={handleClickWish} isWish={isWish} disabled={!product || !ctaText}>
@@ -394,7 +396,7 @@ function ProductCTAButton({
           <OnBoardingDim onClick={handleClickWishOnBoarding}>
             {' '}
             <OnBoardingWishButton>
-              <Icon name="HeartFilled" color={secondary.red.main} width={32} height={32} />
+              <Icon name="HeartFilled" color={secondary.red.main} width={25} />
             </OnBoardingWishButton>{' '}
           </OnBoardingDim>
         )}
@@ -469,7 +471,7 @@ function ProductCTAButton({
         >
           <Typography variant="body1" weight="bold" customStyle={{ color: common.uiWhite }}>
             {(isCamelProduct || isCamelSeller) && (
-              <Icon name="MessageOutlined" customStyle={{ marginRight: 8 }} />
+              <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
             )}
             {!isCamelProduct && !isCamelSeller && platformId && (
               <Avatar
@@ -480,6 +482,7 @@ function ProductCTAButton({
                 }
                 alt="Platform Logo Img"
                 customStyle={{ marginRight: 8 }}
+                width={20}
               />
             )}
             {ctaText}
@@ -590,15 +593,15 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 92px;
+  /* height: 92px; */
   background-color: ${({
     theme: {
       palette: { common }
     }
   }) => common.uiWhite};
-  padding: 20px;
+  padding: 12px 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
-  box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1); */
 `;
 
 const WishButton = styled.button<{ isWish: boolean }>`
@@ -633,7 +636,7 @@ const OnBoardingWishButton = styled.div`
   align-items: center;
   justify-content: center;
   left: 20px;
-  bottom: 24px;
+  bottom: 11px;
   width: 48px;
   height: 44px;
   border-radius: ${({ theme }) => theme.box.round['4']};

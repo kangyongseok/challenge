@@ -137,7 +137,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
           <HomeCamelProductCuration />
           {/* <Box customStyle={{ height: 8 }} /> */}
           {/* <HomePersonalProductCuration /> */}
-          <HomeFooter />
+          {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
         </Flexbox>
       </GeneralTemplate>
       <HomeEventBannerBottomSheet />

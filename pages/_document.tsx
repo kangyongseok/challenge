@@ -16,6 +16,10 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
           <meta name="apple-mobile-web-app-title" content="Mr Camel" />
+          {/* <meta
+            name="apple-itunes-app"
+            content={`app-id=1541101835`}
+          /> */}
           <meta
             name="google-site-verification"
             content="7prKl76G0FB_U38s9lbBEiQDRbi6JnhgZYMJKnGw_hE"

@@ -18,13 +18,12 @@ export const Wrapper = styled.div<{
   height: 56px;
   background-color: inherit;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-
   ${({ isFixed, showAppDownloadBanner }) =>
     isFixed
       ? {
           position: 'fixed',
-          top: -60 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0),
-          padding: `${60 + (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)}px 0 0`
+          top: -50 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0),
+          padding: `${50 + (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)}px 0 0`
         }
       : {
           position: 'initial',

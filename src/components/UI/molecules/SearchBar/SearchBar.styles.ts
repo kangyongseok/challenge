@@ -29,7 +29,7 @@ export const StyledSearchBar = styled.div<
       background: common.uiWhite,
       zIndex: zIndex.header,
       animation: variant !== 'innerOutlined' ? 'smoothFixed .2s forwards' : '',
-      padding: `${showAppDownloadBanner ? 120 + APP_DOWNLOAD_BANNER_HEIGHT : 60}px 0px 0px`
+      padding: `${showAppDownloadBanner ? 110 + APP_DOWNLOAD_BANNER_HEIGHT : 60}px 0px 0px`
     }};
 
   @keyframes smoothFixed {

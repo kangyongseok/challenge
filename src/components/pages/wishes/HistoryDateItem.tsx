@@ -135,6 +135,7 @@ const KeywordTypo = styled(Typography)`
   background: ${({ theme: { palette } }) => palette.primary.bgLight};
   padding: 6px 8px;
   border-radius: ${({ theme: { box } }) => box.round['24']};
+  min-width: 48px;
 `;
 
 const KeywordFlexbox = styled(Flexbox)`

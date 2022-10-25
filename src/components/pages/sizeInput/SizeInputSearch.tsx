@@ -14,6 +14,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserSizeSuggest } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { Kind } from '@typings/user';
@@ -132,7 +133,8 @@ function SizeInputSearch() {
 
 const SearchBarArea = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 206 : 146)}px;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? 146 + APP_DOWNLOAD_BANNER_HEIGHT : 146}px;
   left: 0;
   width: 100%;
   padding: 0 20px;

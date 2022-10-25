@@ -1,16 +1,19 @@
+// import { useSetRecoilState } from 'recoil';
+import { useEffect } from 'react';
+
 import { useSetRecoilState } from 'recoil';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { Image } from '@components/UI/atoms';
 
-import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
+import attrKeys from '@constants/attrKeys';
 
 import { handleClickAppDownload } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 import {
   CamelIconBox,
@@ -42,32 +45,47 @@ function getPageNameByPathName(pathname: string) {
 
 function AppDownloadBanner() {
   const setShowAppDownloadBannerState = useSetRecoilState(showAppDownloadBannerState);
-
+  const triggered = useReverseScrollTrigger(true);
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
-  const handleClickDownload = () =>
+  useEffect(() => {
+    logEvent(attrKeys.commonEvent.VIEW_APPDOWNLOAD, {
+      type: 'BANNER'
+    });
+  }, []);
+
+  useEffect(() => {
+    setShowAppDownloadBannerState(triggered);
+  }, [setShowAppDownloadBannerState, triggered]);
+
+  const handleClickDownload = () => {
+    logEvent(attrKeys.commonEvent.CLICK_APPDOWNLOAD, {
+      name: getPageNameByPathName(window.location.pathname),
+      att: 'BANNER'
+    });
+
     handleClickAppDownload({
       options: {
         name: getPageNameByPathName(window.location.pathname),
         att: 'BANNER'
       }
     });
-
-  const handleClickClose = () => {
-    setShowAppDownloadBannerState(false);
-    SessionStorage.set(sessionStorageKeys.hideAppDownloadBanner, true);
-    logEvent('CLICK_APPDOWNLOAD_CLOSE', {
-      name: getPageNameByPathName(window.location.pathname),
-      att: 'BANNER'
-    });
   };
+  // const handleClickClose = () => {
+  //   setShowAppDownloadBannerState(false);
+  //   SessionStorage.set(sessionStorageKeys.hideAppDownloadBanner, true);
+  // logEvent('CLICK_APPDOWNLOAD_CLOSE', {
+  //   name: getPageNameByPathName(window.location.pathname),
+  //   att: 'BANNER'
+  // });
+  // };
 
   return (
-    <StyledAppDownloadBanner>
+    <StyledAppDownloadBanner scrollTriggered={triggered}>
       <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
         <CamelIconBox>
           <Image
@@ -82,8 +100,8 @@ function AppDownloadBanner() {
             whiteSpace: 'nowrap'
           }}
         >
-          <Typography weight="medium" variant="small1">
-            카멜 앱 1개로
+          <Typography weight="bold" variant="small1" customStyle={{ color: common.uiWhite }}>
+            카멜 - 세살 모든 중고명품
           </Typography>
           <Typography
             weight="medium"
@@ -91,23 +109,16 @@ function AppDownloadBanner() {
             customStyle={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              color: common.uiWhite
             }}
           >
-            대한민국 중고명품 다 모아보세요!
+            앱으로 대한민국 중고명품 모두 보기!
           </Typography>
         </Box>
-        <DownloadButtonBox
-          variant="contained"
-          brandColor="primary"
-          endIcon={<Icon name="DownloadFilled" size="small" />}
-          onClick={handleClickDownload}
-        >
-          <Typography weight="bold" variant="small2" customStyle={{ color: common.cmnW }}>
-            다운로드
-          </Typography>
+        <DownloadButtonBox variant="contained" onClick={handleClickDownload}>
+          <Typography customStyle={{ color: common.cmn80 }}>다운로드</Typography>
         </DownloadButtonBox>
-        <Icon name="CloseOutlined" width={24} height={24} onClick={handleClickClose} />
       </Flexbox>
     </StyledAppDownloadBanner>
   );

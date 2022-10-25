@@ -16,6 +16,7 @@ import { fetchPhotoGuide } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 import { CAMEL_SELLER } from '@constants/localStorage';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
 
@@ -332,7 +333,8 @@ const StyledPhotoGuide = styled.div<{ showAppDownloadBanner: boolean }>`
     }
   }) => common.ui95};
   position: absolute;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 116 : 56)}px;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   left: 0;
   padding: 20px 0;
 `;

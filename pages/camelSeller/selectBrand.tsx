@@ -21,6 +21,7 @@ import { fetchBrandsSuggest, fetchHotBrands } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
 import { CAMEL_SELLER } from '@constants/localStorage';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -252,7 +253,8 @@ function SelectBrand() {
 
 const StyledSearch = styled.div<{ showAppDownloadBanner: boolean }>`
   position: sticky;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 116 : 56)}px;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   left: 0;
   z-index: 5;
   background: white;

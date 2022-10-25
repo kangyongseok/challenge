@@ -19,3 +19,4 @@ export { default as LegitPhotoGuideCard } from './LegitPhotoGuideCard';
 export { default as LegitOpinionButton } from './LegitOpinionButton';
 export { default as LegitOpinion } from './LegitOpinion';
 export { default as ProductWishesCard } from './ProductWishesCard';
+export { default as ProductDetailHeader } from './ProductDetailHeader';

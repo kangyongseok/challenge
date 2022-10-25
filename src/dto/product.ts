@@ -644,6 +644,13 @@ export interface SearchRelatedProductsParams {
   line?: string;
   related?: number;
   size?: number;
+  quoteTitle?: string;
+  price?: number;
+}
+
+export interface SearchLowerProductsParams extends SearchRelatedProductsParams {
+  idFilterIds?: number;
+  scorePriceAvg?: number;
 }
 
 export interface RecommProductsParams {

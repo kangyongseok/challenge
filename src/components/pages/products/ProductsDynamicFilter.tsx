@@ -325,7 +325,8 @@ function ProductsDynamicFilter() {
       gap={1}
       customStyle={{
         backgroundColor: common.ui95,
-        borderTop: `1px solid ${common.ui95}`
+        borderTop: `1px solid ${common.ui95}`,
+        marginTop: 10
       }}
     >
       {dynamicOptions

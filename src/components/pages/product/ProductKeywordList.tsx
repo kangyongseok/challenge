@@ -2,10 +2,11 @@ import { memo } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Chip, Typography } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
-import { Divider } from '@components/UI/molecules';
+// import { Divider } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -14,7 +15,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { pulse } from '@styles/transition';
+// import { pulse } from '@styles/transition';
 
 interface ProductKeywordListProps {
   relatedKeywords?: string[];
@@ -22,6 +23,11 @@ interface ProductKeywordListProps {
 }
 
 function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListProps) {
+  const {
+    theme: {
+      palette: { primary, secondary, common }
+    }
+  } = useTheme();
   const router = useRouter();
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -40,14 +46,69 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
     router.push(`/products/search/${dataRelatedKeyword}`);
   };
 
+  const handleClickScroll = debounce(() => {
+    logEvent(attrKeys.products.SWIPE_X_RECENT, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.RELATED
+    });
+  }, 300);
+
+  const line01 = relatedKeywords?.slice(0, 6);
+  const line02 =
+    (relatedKeywords as string[]).length > 6
+      ? relatedKeywords?.slice(7, relatedKeywords.length)
+      : [];
+
+  const keywordBgColor = [primary.main, secondary.blue.main, secondary.purple.main];
+
   return (
-    <Box customStyle={{ marginTop: 32 }}>
-      <Typography variant="h4" weight="bold">
-        키워드로 검색
+    <Box customStyle={{ marginTop: 20 }}>
+      <Typography variant="h3" weight="bold">
+        같이 찾아본 키워드에요
       </Typography>
-      <KeywordList>
+      <KeywordWrap direction="vertical" gap={8} onScroll={handleClickScroll}>
+        <Flexbox alignment="center" customStyle={{ flexWrap: 'nowrap' }} gap={6}>
+          {line01?.map((relatedKeyword) => (
+            <Chip
+              key={`related-keyword-${relatedKeyword}`}
+              size="medium"
+              variant="contained"
+              customStyle={{
+                flexWrap: 'wrap',
+                whiteSpace: 'nowrap',
+                background: keywordBgColor[Math.floor(Math.random() * 3)],
+                color: common.uiWhite
+              }}
+              data-related-keyword={relatedKeyword}
+              onClick={handleClick}
+            >
+              {relatedKeyword}
+            </Chip>
+          ))}
+        </Flexbox>
+        <Flexbox alignment="center" gap={6} customStyle={{ flexWrap: 'nowrap' }}>
+          {line02?.map((relatedKeyword) => (
+            <Chip
+              key={`related-keyword-${relatedKeyword}`}
+              size="medium"
+              variant="contained"
+              customStyle={{
+                flexWrap: 'wrap',
+                whiteSpace: 'nowrap',
+                background: keywordBgColor[Math.floor(Math.random() * 3)],
+                color: common.uiWhite
+              }}
+              data-related-keyword={relatedKeyword}
+              onClick={handleClick}
+            >
+              {relatedKeyword}
+            </Chip>
+          ))}
+        </Flexbox>
+      </KeywordWrap>
+      {/* <KeywordList>
         {relatedKeywords
-          ? relatedKeywords.map((relatedKeyword) => (
+          ? line01?.map((relatedKeyword) => (
               <Chip
                 key={`related-keyword-${relatedKeyword}`}
                 size="small"
@@ -57,7 +118,7 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
                 data-related-keyword={relatedKeyword}
                 onClick={handleClick}
               >
-                #{relatedKeyword}
+                {relatedKeyword}
               </Chip>
             ))
           : Array.from({ length: 5 }, (_, index) => (
@@ -72,19 +133,18 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
                 }}
               />
             ))}
-      </KeywordList>
-      <Divider />
+      </KeywordList> */}
     </Box>
   );
 }
 
-const KeywordList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  overflow-x: auto;
-  margin-top: 16px;
-  column-gap: 6px;
-  row-gap: 8px;
+const KeywordWrap = styled(Flexbox)`
+  margin: 20px 0 0 -20px;
+  width: calc(100% + 40px);
+  overflow: auto;
+  padding: 0 20px 32px;
+  /* margin-bottom: 32px; */
+  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.bg02};
 `;
 
 export default memo(ProductKeywordList);

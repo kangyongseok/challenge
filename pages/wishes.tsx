@@ -58,7 +58,7 @@ function WishesPage() {
         footer={hiddenTab === 'legit' ? <WishesBottomCtaButton /> : <BottomNavigation />}
       >
         <WishesTabs />
-        <Box customStyle={{ marginTop: 45 }}>
+        <Box customStyle={{ marginTop: 45, minHeight: 'calc(100vh - 220px)' }}>
           {tab === 'wish' && <WishesPanel />}
           {tab === 'history' && <HistoryPanel />}
         </Box>

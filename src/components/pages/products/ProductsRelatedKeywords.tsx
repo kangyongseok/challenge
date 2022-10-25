@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Chip, useTheme } from 'mrcamel-ui';
+import { Chip } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Gap, Skeleton } from '@components/UI/atoms';
+import { Skeleton } from '@components/UI/atoms';
 
 import type { RelatedKeyword } from '@dto/product';
 
@@ -15,20 +15,22 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { RELATED_KEYWORDS_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, RELATED_KEYWORDS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
   filterOperationInfoSelector,
+  isRelatedKeywordState,
   productsFilterProgressDoneState,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
+import { showAppDownloadBannerState } from '@recoil/common';
 
 function ProductsRelatedKeywords() {
-  const {
-    theme: { zIndex }
-  } = useTheme();
+  // const {
+  //   theme: { zIndex }
+  // } = useTheme();
   const router = useRouter();
   const { keyword = '', ...query } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -38,6 +40,8 @@ function ProductsRelatedKeywords() {
   const { searchParams: searchOptionsParams } = useRecoilValue(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
+  const setIsRelatedKeyword = useSetRecoilState(isRelatedKeywordState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const { data: { relatedKeywords = [] } = {} } = useQuery(
     queryKeys.products.searchOptions(searchOptionsParams),
@@ -49,9 +53,7 @@ function ProductsRelatedKeywords() {
       onSuccess(response) {
         if (selectedSearchOptionsHistory.length === 0) {
           const [relatedKeyword] = response.relatedKeywords || [];
-
           let title = attrProperty.title.brand;
-
           if (relatedKeyword?.categoryId) title = attrProperty.title.category;
           if (relatedKeyword?.lineId) title = attrProperty.title.line;
 
@@ -63,6 +65,17 @@ function ProductsRelatedKeywords() {
       }
     }
   );
+
+  useEffect(() => {
+    setIsRelatedKeyword(
+      !!(!progressDone || relatedKeywords.length > 0) && selectedSearchOptionsHistory.length === 0
+    );
+  }, [
+    progressDone,
+    relatedKeywords.length,
+    selectedSearchOptionsHistory.length,
+    setIsRelatedKeyword
+  ]);
 
   const handleClick = useCallback(
     ({ keyword: relatedKeyword, ...rest }: RelatedKeyword) =>
@@ -91,7 +104,7 @@ function ProductsRelatedKeywords() {
 
   return !progressDone || relatedKeywords.length > 0 ? (
     <Wrapper show={selectedSearchOptionsHistory.length === 0}>
-      <KeywordWrapper>
+      <KeywordWrapper showAppDownloadBanner={showAppDownloadBanner}>
         <KeywordList>
           {!progressDone
             ? Array.from({ length: 10 }, (_, index) => (
@@ -116,14 +129,14 @@ function ProductsRelatedKeywords() {
               ))}
         </KeywordList>
       </KeywordWrapper>
-      <Gap
+      {/* <Gap
         height={8}
         customStyle={{
           position: 'fixed',
-          marginTop: RELATED_KEYWORDS_HEIGHT,
+          marginTop: showAppDownloadBanner ? RELATED_KEYWORDS_HEIGHT : 4,
           zIndex: zIndex.header
         }}
-      />
+      /> */}
     </Wrapper>
   ) : null;
 }
@@ -136,14 +149,17 @@ const Wrapper = styled.section<{ show: boolean }>`
   transition: all 0.1s ease-in-out 0s;
 `;
 
-const KeywordWrapper = styled.div`
+const KeywordWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
-  height: ${RELATED_KEYWORDS_HEIGHT}px;
+  height: ${RELATED_KEYWORDS_HEIGHT + 10}px;
   min-height: ${RELATED_KEYWORDS_HEIGHT}px;
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
   overflow-x: auto;
+  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.ui90};
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
 `;
 
 const KeywordList = styled.div`

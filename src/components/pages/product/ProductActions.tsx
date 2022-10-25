@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
@@ -232,43 +232,27 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   }, [accessUser?.userId, product]);
 
   return (
-    <Box customStyle={{ position: 'relative' }}>
+    <ActionButtonWrap>
       <ActionButtons>
         {product && sellerPhoneNumber && (
-          <Button
-            variant="ghost"
-            brandColor="black"
+          <ActionButton
             size="small"
             disabled={!product || !sellerPhoneNumber}
             onClick={handleClickSendSMS}
+            sms
           >
-            <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              문자보내기
-            </Typography>
-          </Button>
+            <Icon name="MessageFilled" customStyle={{ color: primary.light }} />
+            <Typography weight="medium">문자보내기</Typography>
+          </ActionButton>
         )}
-        <Button
-          variant="ghost"
-          brandColor="black"
-          size="small"
-          disabled={!product}
-          onClick={handleClickShare}
-        >
-          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-            공유하기
-          </Typography>
-        </Button>
-        <Button
-          variant="ghost"
-          brandColor="black"
-          size="small"
-          disabled={!product}
-          onClick={handleClickReport}
-        >
-          <Typography variant="body2" weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-            신고하기
-          </Typography>
-        </Button>
+        <ActionButton size="small" disabled={!product} onClick={handleClickShare}>
+          <Icon name="ShareFilled" />
+          <Typography weight="medium">공유</Typography>
+        </ActionButton>
+        <ActionButton size="small" disabled={!product} onClick={handleClickReport}>
+          <Icon name="NotiFilled" />
+          <Typography weight="medium">신고</Typography>
+        </ActionButton>
       </ActionButtons>
       <ReportTooltip open={isOpenReportTooltip}>
         {Object.values(reportOptions).map(({ type, label, count, checked, reported }) => (
@@ -313,9 +297,29 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
           제출하기
         </Button>
       </ReportTooltip>
-    </Box>
+    </ActionButtonWrap>
   );
 }
+
+const ActionButtonWrap = styled.div`
+  position: relative;
+  left: -20px;
+  border-top: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.bg02};
+  border-bottom: 8px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.bg02};
+  width: calc(100% + 40px);
+  margin: 20px 0 32px;
+  padding: 20px 0;
+`;
 
 const ActionButtons = styled.div`
   display: grid;
@@ -395,6 +399,16 @@ const ReportOption = styled(Typography)`
   :last-of-type {
     border-bottom: none;
     padding: 8px 0 0;
+  }
+`;
+
+const ActionButton = styled(Button)<{ sms?: boolean }>`
+  border: none;
+  div {
+    color: ${({ theme: { palette }, sms }) => (sms ? palette.primary.light : palette.common.ui60)};
+  }
+  svg {
+    color: ${({ theme: { palette }, sms }) => (sms ? palette.primary.light : palette.common.ui60)};
   }
 `;
 

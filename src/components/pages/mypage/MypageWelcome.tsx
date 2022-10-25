@@ -10,6 +10,7 @@ import type { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -30,7 +31,7 @@ function MypageWelcome() {
       <Box
         customStyle={{
           position: 'absolute',
-          top: showAppDownloadBanner ? 116 : 56,
+          top: showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56,
           left: 0,
           width: '100%'
         }}

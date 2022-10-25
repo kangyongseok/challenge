@@ -18,13 +18,17 @@ interface ProductRelatedProductListProps {
   categoryId?: number | null;
   line?: string;
   prevProduct?: Product;
+  quoteTitle?: string;
+  price?: number;
 }
 
 function ProductRelatedProductList({
   brandId,
   categoryId,
   line,
-  prevProduct
+  prevProduct,
+  quoteTitle,
+  price
 }: ProductRelatedProductListProps) {
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchRelatedProductsParams>({
@@ -32,7 +36,9 @@ function ProductRelatedProductList({
       categoryIds: categoryId ? [categoryId] : undefined,
       line: line || undefined,
       related: 1,
-      size: 8
+      size: 8,
+      quoteTitle,
+      price
     });
 
   const { data: searchRelatedProducts, isLoading } = useQuery(
@@ -53,9 +59,11 @@ function ProductRelatedProductList({
       categoryIds: categoryId ? [categoryId] : undefined,
       line: line || undefined,
       related: 1,
-      size: 8
+      size: 8,
+      quoteTitle,
+      price
     });
-  }, [brandId, categoryId, line]);
+  }, [brandId, categoryId, line, price, quoteTitle]);
 
   const handleWishAtt = (product: Product, i: number) => {
     return {
@@ -110,10 +118,10 @@ function ProductRelatedProductList({
 
   return (
     <Box customStyle={{ margin: '32px 0 112px' }}>
-      <Typography variant="h4" weight="bold">
-        이런 매물은 어때요?
+      <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
+        보고 있는 매물과 비슷해요
       </Typography>
-      <Grid container rowGap={32} columnGap={7} customStyle={{ marginTop: 16 }}>
+      <Grid container rowGap={32} columnGap={12}>
         {isLoading
           ? Array.from({ length: 4 }, (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>

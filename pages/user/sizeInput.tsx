@@ -18,6 +18,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo, postUserSize } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import type { SelectSize } from '@typings/user';
@@ -165,7 +166,8 @@ const PageHaederFlex = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
     }
   }) => common.uiWhite};
   position: fixed;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? 116 : 56)}px;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   left: 0;
   padding-top: 18px;
   text-align: center;

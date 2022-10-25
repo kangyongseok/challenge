@@ -21,6 +21,8 @@ export declare global {
     getPhotoGuide: any;
     getPhotoGuideDone: any;
     getLogEvent: any;
+    getCameraAuth: any;
+    chrome: any;
     getAuthPhotoLibrary: any;
     getAuthCamera: any;
   }

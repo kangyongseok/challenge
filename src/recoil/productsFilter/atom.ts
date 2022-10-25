@@ -158,4 +158,9 @@ export const prevScrollTopStateFamily = atomFamily<
   })
 });
 
+export const isRelatedKeywordState = atom({
+  key: 'productsFilter/isRelatedKeywordState',
+  default: false
+});
+
 export default productsFilterStateFamily;

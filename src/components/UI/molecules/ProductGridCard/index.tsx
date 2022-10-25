@@ -28,7 +28,7 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
@@ -127,6 +127,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
+  const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
@@ -193,7 +194,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     e.stopPropagation();
 
     if (!accessUser) {
-      router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
+      // router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
+      setLoginBottomSheet(true);
       return;
     }
 

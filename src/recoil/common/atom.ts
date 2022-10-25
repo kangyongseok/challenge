@@ -120,3 +120,8 @@ export const themeState = atom<ThemeMode>({
     }
   ]
 });
+
+export const loginBottomSheetState = atom({
+  key: 'common/loginBottomSheetState',
+  default: false
+});
