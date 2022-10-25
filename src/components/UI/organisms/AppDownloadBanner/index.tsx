@@ -101,7 +101,7 @@ function AppDownloadBanner() {
           }}
         >
           <Typography weight="bold" variant="small1" customStyle={{ color: common.uiWhite }}>
-            카멜 - 세살 모든 중고명품
+            카멜 - 세상 모든 중고명품
           </Typography>
           <Typography
             weight="medium"
