@@ -18,6 +18,7 @@ import type {
 
 import Axios from '@library/axios';
 
+import { SearcgRelatedKeywordsParams } from '@typings/products';
 import type { SubmitType } from '@typings/camelSeller';
 
 // import convertQueryStringByObject from '@utils/convertQueryStringByObject';
@@ -177,5 +178,11 @@ export async function deleteProduct({ productId }: { productId: number }) {
 
 export async function postProducts(parameter: SubmitType) {
   const { data } = await Axios.getInstance().post(`${BASE_PATH}`, { ...parameter });
+  return data;
+}
+
+export async function fetchRelatedKeywords(params: SearcgRelatedKeywordsParams) {
+  const { data } = await Axios.getInstance().get(`${BASE_PATH}/searchRelatedKeywords`, { params });
+
   return data;
 }

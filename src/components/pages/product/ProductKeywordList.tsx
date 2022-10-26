@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { MouseEvent } from 'react';
 
+import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
@@ -11,24 +12,36 @@ import styled from '@emotion/styled';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import { fetchRelatedKeywords } from '@api/product';
+
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { SearcgRelatedKeywordsParams } from '@typings/products';
 
 // import { pulse } from '@styles/transition';
 
 interface ProductKeywordListProps {
-  relatedKeywords?: string[];
   productId?: number;
+  params: SearcgRelatedKeywordsParams;
 }
 
-function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListProps) {
+function ProductKeywordList({ productId, params }: ProductKeywordListProps) {
   const {
     theme: {
       palette: { primary, secondary, common }
     }
   } = useTheme();
   const router = useRouter();
+  const { data } = useQuery(
+    queryKeys.products.searchRelatedKeyword(params),
+    () => fetchRelatedKeywords(params),
+    {
+      enabled: !!params.quoteTitle
+    }
+  );
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const dataRelatedKeyword = e.currentTarget.getAttribute('data-related-keyword');
@@ -53,10 +66,10 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
     });
   }, 300);
 
-  const line01 = relatedKeywords?.slice(0, 6);
+  const line01 = data?.slice(0, 6);
   const line02 =
-    (relatedKeywords as string[]).length > 6
-      ? relatedKeywords?.slice(7, relatedKeywords.length)
+    data && (data as string[]).length > 6
+      ? data?.slice(7, data.length < 13 ? data.length : 13)
       : [];
 
   const keywordBgColor = [primary.main, secondary.blue.main, secondary.purple.main];
@@ -68,7 +81,7 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
       </Typography>
       <KeywordWrap direction="vertical" gap={8} onScroll={handleClickScroll}>
         <Flexbox alignment="center" customStyle={{ flexWrap: 'nowrap' }} gap={6}>
-          {line01?.map((relatedKeyword) => (
+          {line01?.map((relatedKeyword: string) => (
             <Chip
               key={`related-keyword-${relatedKeyword}`}
               size="medium"
@@ -87,7 +100,7 @@ function ProductKeywordList({ relatedKeywords, productId }: ProductKeywordListPr
           ))}
         </Flexbox>
         <Flexbox alignment="center" gap={6} customStyle={{ flexWrap: 'nowrap' }}>
-          {line02?.map((relatedKeyword) => (
+          {line02?.map((relatedKeyword: string) => (
             <Chip
               key={`related-keyword-${relatedKeyword}`}
               size="medium"

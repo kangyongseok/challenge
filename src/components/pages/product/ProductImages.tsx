@@ -393,13 +393,23 @@ const LastImageContents = styled(Flexbox)`
 
 const BackgroundBlurImage = styled.div<{ imageUrl: string }>`
   background: ${({ imageUrl }) => `url(${imageUrl})`} no-repeat;
-  background-color: rgba(0, 0, 0, 0.3);
   filter: blur(8px);
   -webkit-filter: blur(8px);
   height: 100%;
   padding-top: 100%;
   background-size: cover;
   position: relative;
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
 `;
 
 export default memo(ProductImages);

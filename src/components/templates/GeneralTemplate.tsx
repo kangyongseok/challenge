@@ -8,9 +8,6 @@ import styled from '@emotion/styled';
 import MowebFooter from '@components/UI/organisms/MowebFooter';
 import { AppDownloadBanner } from '@components/UI/organisms';
 
-// import SessionStorage from '@library/sessionStorage';
-
-// import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
@@ -32,26 +29,10 @@ function GeneralTemplate({
   customStyle
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
-  // const [isSafari, setIsSafari] = useState(true);
-  // const setShowAppDownloadBannerState = useSetRecoilState(showAppDownloadBannerState);
-
-  // useEffect(() => {
-  //   if (!checkAgent.isMobileApp()) {
-  //     const sessionBanner = SessionStorage.get(sessionStorageKeys.hideAppDownloadBanner);
-  //     setShowAppDownloadBannerState(!sessionBanner);
-  //   }
-  // }, [setShowAppDownloadBannerState]);
 
   const showMowebFooterCase = ['/', '/products/[id]', '/mypage', '/wishes'].includes(
     router.pathname
   );
-  // useEffect(() => {
-  //   if (window.navigator.userAgent.toLowerCase().indexOf('crios') > -1) {
-  //     setIsSafari(false);
-  //     setShowAppDownloadBannerState(true);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   return (
     <Wrapper css={customStyle}>
@@ -63,9 +44,10 @@ function GeneralTemplate({
       )}
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>
-      {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && showMowebFooterCase && (
-        <MowebFooter />
-      )}
+      {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) &&
+        showMowebFooterCase &&
+        !router.query.redirect &&
+        !router.query.userAgent && <MowebFooter />}
       {footer}
     </Wrapper>
   );

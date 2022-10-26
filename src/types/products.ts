@@ -50,3 +50,9 @@ export type ProductsEventProperties = {
   keyword?: string | string[];
   filters?: string | string[];
 };
+
+export interface SearcgRelatedKeywordsParams {
+  quoteTitle: string;
+  brandIds: number[];
+  categoryIds: number[];
+}

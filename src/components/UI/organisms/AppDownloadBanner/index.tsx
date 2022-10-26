@@ -1,7 +1,6 @@
-// import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { Image } from '@components/UI/atoms';
@@ -44,8 +43,12 @@ function getPageNameByPathName(pathname: string) {
 }
 
 function AppDownloadBanner() {
-  const setShowAppDownloadBannerState = useSetRecoilState(showAppDownloadBannerState);
-  const triggered = useReverseScrollTrigger(true);
+  const [isAppdownBannerState, setShowAppDownloadBannerState] = useRecoilState(
+    showAppDownloadBannerState
+  );
+
+  // const touchTriggerd = useTouchScrollTrigger(true);
+  const scrollTriggerd = useReverseScrollTrigger(true);
   const {
     theme: {
       palette: { common }
@@ -59,8 +62,8 @@ function AppDownloadBanner() {
   }, []);
 
   useEffect(() => {
-    setShowAppDownloadBannerState(triggered);
-  }, [setShowAppDownloadBannerState, triggered]);
+    setShowAppDownloadBannerState(scrollTriggerd);
+  }, [setShowAppDownloadBannerState, scrollTriggerd]);
 
   const handleClickDownload = () => {
     logEvent(attrKeys.commonEvent.CLICK_APPDOWNLOAD, {
@@ -85,7 +88,7 @@ function AppDownloadBanner() {
   // };
 
   return (
-    <StyledAppDownloadBanner scrollTriggered={triggered}>
+    <StyledAppDownloadBanner scrollTriggered={scrollTriggerd && isAppdownBannerState}>
       <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
         <CamelIconBox>
           <Image

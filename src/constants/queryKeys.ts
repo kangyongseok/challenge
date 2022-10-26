@@ -29,6 +29,8 @@ import type { SuggestParams } from '@dto/brand';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
+import { SearcgRelatedKeywordsParams } from '@typings/products';
+
 const brands = {
   all: ['brands'] as const,
   brand: (brandId: number) => [...brands.all, brandId] as const,
@@ -80,7 +82,9 @@ const products = {
   sellerModifyProducs: (params: ProductParams) =>
     [...products.all, 'sellerModifyProducs', params] as const,
   searchLowerProducts: (params?: SearchLowerProductsParams) =>
-    compact([...products.all, 'searchLowerProducts', params])
+    compact([...products.all, 'searchLowerProducts', params]),
+  searchRelatedKeyword: (params: SearcgRelatedKeywordsParams) =>
+    [...products.all, 'searchRelatedKeyword', params] as const
 };
 
 const productLegits = {

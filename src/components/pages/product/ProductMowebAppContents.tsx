@@ -48,6 +48,12 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
     return false;
   }, [data?.product.quoteTitle, data?.product.scorePriceCount, data?.product.weekAvgPrices]);
 
+  const relatedKeywordParams = {
+    quoteTitle: data?.product.quoteTitle || '',
+    brandIds: data?.product.brand.id ? [data.product.brand.id] : [],
+    categoryIds: data?.product.category.id ? [data.product.category.id] : []
+  };
+
   if (isApp) {
     return (
       <>
@@ -66,10 +72,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
           </Button>
         )}
         {!isCrm && (
-          <ProductKeywordList
-            relatedKeywords={data?.relatedKeywords ? data?.relatedKeywords : undefined}
-            productId={data?.product.id}
-          />
+          <ProductKeywordList productId={data?.product.id} params={relatedKeywordParams} />
         )}
       </>
     );
@@ -84,12 +87,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
           </Typography>
         </Button>
       )}
-      {!isCrm && (
-        <ProductKeywordList
-          relatedKeywords={data?.relatedKeywords ? data?.relatedKeywords : undefined}
-          productId={data?.product.id}
-        />
-      )}
+      {!isCrm && <ProductKeywordList productId={data?.product.id} params={relatedKeywordParams} />}
       <ErrorBoundary disableFallback>
         <ProductAveragePriceChart product={data?.product} />
       </ErrorBoundary>

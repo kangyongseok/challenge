@@ -9,16 +9,17 @@ export default function useReverseScrollTrigger(trigger = true, delay = 50) {
   useEffect(() => {
     const handleScroll = throttle(() => {
       const { scrollY } = window;
-
-      if (scrollY <= 0) {
-        setTriggered(true);
-      } else if (prevScrollYRef.current > scrollY) {
-        setTriggered(true);
-      } else if (prevScrollYRef.current < scrollY) {
-        setTriggered(false);
+      const iosScrollBounceBlock = document.body.scrollHeight - window.innerHeight > scrollY;
+      if (iosScrollBounceBlock) {
+        if (scrollY <= 0) {
+          setTriggered(true);
+        } else if (prevScrollYRef.current > scrollY) {
+          setTriggered(true);
+        } else if (prevScrollYRef.current < scrollY) {
+          setTriggered(false);
+        }
+        prevScrollYRef.current = scrollY;
       }
-
-      prevScrollYRef.current = scrollY;
     }, delay);
 
     if (trigger) {
