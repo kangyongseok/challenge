@@ -103,7 +103,7 @@ const nextConfig = {
     domains: [process.env.IMAGE_DOMAIN, 's3.ap-northeast-2.amazonaws.com']
   },
   async redirects() {
-    return !isDevelopment
+    return isDevelopment
       ? routers
       : routers.concat([
           {
