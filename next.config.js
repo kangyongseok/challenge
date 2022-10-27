@@ -103,7 +103,7 @@ const nextConfig = {
     domains: [process.env.IMAGE_DOMAIN, 's3.ap-northeast-2.amazonaws.com']
   },
   async redirects() {
-    return isDevelopment
+    return !isDevelopment
       ? routers
       : routers.concat([
           {
@@ -116,7 +116,7 @@ const nextConfig = {
               }
             ],
             permanent: false,
-            destination: 'https://intro.mrcamel.co.kr'
+            destination: 'https://intro.mrcamel.co.kr/:path*'
           },
           {
             source: '/:path*',
@@ -128,7 +128,7 @@ const nextConfig = {
               }
             ],
             permanent: false,
-            destination: 'https://intro.mrcamel.co.kr'
+            destination: 'https://intro.mrcamel.co.kr/:path*'
           }
         ]);
   },
