@@ -116,8 +116,10 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
+
     if (
       router.pathname === '/products/[id]' &&
+      !router.query.conversionId &&
       !router.query.outsideAccess &&
       !router.query.redirect &&
       !router.query.userAgent

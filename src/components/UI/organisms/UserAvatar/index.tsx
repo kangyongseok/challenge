@@ -19,7 +19,7 @@ function UserAvatar({ src, dateActivated, customStyle }: UserAvatarProps) {
     <Box customStyle={{ position: 'relative', ...customStyle }}>
       <UserImage
         src={
-          src.length > 0
+          src && src.length > 0
             ? src
             : `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
         }
