@@ -5,7 +5,8 @@ import type { Swiper as SwiperClass } from 'swiper';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+
+import { CloseIcon, LegitImg, Pagination, RotateButton } from './ImageDetailDialog.styles';
 
 interface ImageDetailDialogProps {
   open: boolean;
@@ -34,6 +35,7 @@ function ImageDetailDialog({
   const [shortSwipes, setShortSwipes] = useState(true);
   const [followFinger, setFollowFinger] = useState(true);
   const [panningDisabled, setPanningDisabled] = useState(true);
+  const [rotates, setRotates] = useState<number[]>([]);
   const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([null]);
 
   const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
@@ -50,8 +52,15 @@ function ImageDetailDialog({
   };
 
   const handleSlideChange = (swiper: SwiperClass) => {
-    const { activeIndex } = swiper;
-    setCurrentIndex(activeIndex);
+    const { realIndex } = swiper;
+    setCurrentIndex(realIndex);
+
+    const currentTransformRef = transformsRef.current[realIndex];
+
+    if (currentTransformRef) {
+      currentTransformRef.centerView();
+      currentTransformRef.resetTransform();
+    }
 
     if (typeof onChange === 'function') {
       onChange(swiper);
@@ -69,6 +78,18 @@ function ImageDetailDialog({
       setPanningDisabled(true);
     }
   }, [currentScale]);
+
+  useEffect(() => {
+    if (!rotates.length) {
+      setRotates(new Array(images.length).fill(0));
+    }
+  }, [rotates, images]);
+
+  useEffect(() => {
+    if (!open) {
+      setRotates([]);
+    }
+  }, [open]);
 
   return (
     <Dialog
@@ -108,6 +129,7 @@ function ImageDetailDialog({
         followFinger={followFinger}
         onSlideChange={handleSlideChange}
         initialSlide={syncIndex}
+        loop
         style={{
           textAlign: 'center'
         }}
@@ -122,6 +144,7 @@ function ImageDetailDialog({
               onPanning={handleScale}
               onWheel={handleScale}
               onPinching={handleScale}
+              centerOnInit
               doubleClick={{ mode: 'reset' }}
             >
               <TransformComponent
@@ -137,6 +160,7 @@ function ImageDetailDialog({
                 <LegitImg
                   src={image}
                   alt={`product-legit-image-${image.slice(image.lastIndexOf('/') + 1)}`}
+                  rotate={rotates[index]}
                   onLoad={handleLoad(index)}
                 />
               </TransformComponent>
@@ -147,34 +171,29 @@ function ImageDetailDialog({
       <Pagination>
         {currentIndex + 1}/{images.length}
       </Pagination>
+      <RotateButton
+        variant="contained"
+        brandColor="black"
+        size="large"
+        startIcon={<Icon name="RotateOutlined" />}
+        iconOnly
+        onClick={() =>
+          setRotates((prevRotates) => {
+            return prevRotates.map((prevRotate, index) => {
+              if (currentIndex === index) {
+                const newRotate = prevRotate + 90;
+                if (newRotate >= 360) {
+                  return 0;
+                }
+                return newRotate;
+              }
+              return prevRotate;
+            });
+          })
+        }
+      />
     </Dialog>
   );
 }
-
-const LegitImg = styled.img``;
-
-const CloseIcon = styled(Icon)`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: ${({ theme: { zIndex } }) => zIndex.button};
-`;
-
-const Pagination = styled.div`
-  position: absolute;
-  width: fit-content;
-  left: 50%;
-  padding: 6px 12px;
-  bottom: 20px;
-  right: 20px;
-  border-radius: ${({ theme }) => theme.box.round['16']};
-  background-color: rgba(255, 255, 255, 0.6);
-  transform: translateX(-50%);
-  z-index: ${({ theme: { zIndex } }) => zIndex.button};
-  font-size: ${({ theme: { typography } }) => typography.body2.size};
-  font-weight: ${({ theme: { typography } }) => typography.body2.weight.bold};
-  line-height: ${({ theme: { typography } }) => typography.body2.lineHeight};
-  letter-spacing: ${({ theme: { typography } }) => typography.body2.letterSpacing};
-`;
 
 export default ImageDetailDialog;

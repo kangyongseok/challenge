@@ -142,7 +142,7 @@ function ProductImages({
   };
 
   const handleSlideChange = useCallback(
-    ({ activeIndex }: SwiperClass) => {
+    ({ realIndex }: SwiperClass) => {
       if (typeof detailImages[currentSlide] === 'object') {
         logEvent(attrKeys.products.VIEW_LOWPRICE_PRODUCT, {
           type: 'PIC'
@@ -152,11 +152,11 @@ function ProductImages({
         setIsLoggedSwipeXPic(true);
         logEvent(attrKeys.products.SWIPE_X_PIC, {
           name: attrProperty.productName.PICGALLERY,
-          index: activeIndex
+          index: realIndex
         });
       }
-      setCurrentSlide(activeIndex);
-      imageSwiper?.slideTo(activeIndex, 0);
+      setCurrentSlide(realIndex);
+      imageSwiper?.slideTo(realIndex, 0);
     },
     [detailImages, currentSlide, isLoggedSwipeXPic, imageSwiper]
   );

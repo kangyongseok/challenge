@@ -87,10 +87,8 @@ function LegitRequest() {
     setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
   };
 
-  const handleChange = ({ activeIndex }: Swiper) => {
-    const findPhotoGuideDetail = (photoGuideDetails || []).find(
-      (_, index) => index === activeIndex
-    );
+  const handleChange = ({ realIndex }: Swiper) => {
+    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === realIndex);
 
     if (!findPhotoGuideDetail) return;
 
