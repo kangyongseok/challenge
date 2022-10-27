@@ -12,7 +12,7 @@ export const StyledBottomNavigation = styled.nav<{
 
 export const List = styled.ul<{ triggered: boolean }>`
   position: fixed;
-  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav + 3};
+  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
   opacity: 1;
   bottom: 0;
   border-top: ${({
