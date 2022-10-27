@@ -2,6 +2,10 @@ import { ReactElement } from 'react';
 
 import { ToastStatus, ToastType } from '@typings/common';
 
+const bottomSheetLogin = {
+  loginSuccess: '로그인 되었습니다.'
+};
+
 const sellerProductState = {
   hoisting: '끌어올리기가 완료되었어요. 👍',
   reserve: '예약중으로 변경되었어요.',
@@ -61,7 +65,8 @@ export const toastText: Record<
   sellerProductState,
   legitAdminOpinion,
   legit,
-  legitProfile
+  legitProfile,
+  bottomSheetLogin
 };
 
 const productsKeywordActionButton = {

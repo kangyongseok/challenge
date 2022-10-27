@@ -72,6 +72,7 @@ import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@
 import { userShopSelectedProductState } from '@recoil/userShop';
 // import { showAppDownloadBannerState } from '@recoil/common';
 // import useScrollTrigger from '@hooks/useScrollTrigger';
+// import { loginBottomSheetState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductDetail() {
@@ -89,6 +90,7 @@ function ProductDetail() {
   } = useTheme();
   // const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+  // const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const {
     data,
     isLoading,
@@ -197,6 +199,7 @@ function ProductDetail() {
 
       if (!accessUser) {
         push({ pathname: '/login', query: { returnUrl: asPath } });
+        // setLoginBottomSheet(true); 바텀시트 로그인 이슈 처리되면 부활 2210
         return false;
       }
 

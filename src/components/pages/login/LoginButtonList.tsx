@@ -26,6 +26,7 @@ interface LoginButtonListProps {
   setErrorPopup: Dispatch<SetStateAction<{ open: boolean; provider: string | null }>>;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  disabledRecentLogin?: boolean;
 }
 
 function LoginButtonList({
@@ -33,7 +34,8 @@ function LoginButtonList({
   returnUrl,
   setErrorPopup,
   setShow,
-  setLoading
+  setLoading,
+  disabledRecentLogin
 }: LoginButtonListProps) {
   const router = useRouter();
   const {
@@ -153,12 +155,19 @@ function LoginButtonList({
   }, [openLogin]);
 
   return (
-    <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
-      <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
-        {lastLoginType.length > 0
-          ? `( 최근 로그인 : ${LOGIN_TYPE[lastLoginType as keyof typeof LOGIN_TYPE]} )`
-          : ''}
-      </Typography>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      gap={8}
+      customStyle={{ textAlign: 'center', paddingTop: disabledRecentLogin ? 32 : 0 }}
+    >
+      {!disabledRecentLogin && (
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
+          {!disabledRecentLogin && lastLoginType.length > 0
+            ? `( 최근 로그인 : ${LOGIN_TYPE[lastLoginType as keyof typeof LOGIN_TYPE]} )`
+            : ''}
+        </Typography>
+      )}
       <KakaoLoginButton ref={kakaoLoginButtonRef} onClick={handleClickKakaoLogin}>
         <Image
           width={20}
@@ -198,7 +207,7 @@ function LoginButtonList({
         </AppleLoginButton>
       )}
       <Box
-        customStyle={{ margin: '12px 0 80px' }}
+        customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
         onClick={() => {
           setShow(false);
           logEvent(attrKeys.login.CLICK_NONLOGIN);

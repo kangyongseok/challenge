@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 
 import { Image } from '@components/UI/atoms';
 
@@ -88,42 +88,48 @@ function AppDownloadBanner() {
   // };
 
   return (
-    <StyledAppDownloadBanner scrollTriggered={scrollTriggerd && isAppdownBannerState}>
-      <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
-        <CamelIconBox>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/logo_icon_blue.png`}
-            alt="Logo Img"
-          />
-        </CamelIconBox>
-        <Box
-          customStyle={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          <Typography weight="bold" variant="small1" customStyle={{ color: common.uiWhite }}>
-            카멜 - 세상 모든 중고명품
-          </Typography>
-          <Typography
-            weight="medium"
-            variant="small1"
+    <ThemeProvider theme="dark">
+      <StyledAppDownloadBanner scrollTriggered={scrollTriggerd && isAppdownBannerState}>
+        <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
+          <CamelIconBox>
+            <Image
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/logo_icon_blue.png`}
+              alt="Logo Img"
+            />
+          </CamelIconBox>
+          <Box
             customStyle={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              color: common.uiWhite
+              whiteSpace: 'nowrap'
             }}
           >
-            앱으로 대한민국 중고명품 모두 보기!
-          </Typography>
-        </Box>
-        <DownloadButtonBox variant="contained" onClick={handleClickDownload}>
-          <Typography customStyle={{ color: common.cmn80 }}>다운로드</Typography>
-        </DownloadButtonBox>
-      </Flexbox>
-    </StyledAppDownloadBanner>
+            <Typography
+              weight="bold"
+              variant="small1"
+              customStyle={{ color: dark.palette.common.uiBlack }}
+            >
+              카멜 - 세상 모든 중고명품
+            </Typography>
+            <Typography
+              weight="medium"
+              variant="small1"
+              customStyle={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                color: dark.palette.common.uiBlack
+              }}
+            >
+              앱으로 대한민국 중고명품 모두 보기!
+            </Typography>
+          </Box>
+          <DownloadButtonBox variant="contained" onClick={handleClickDownload}>
+            <Typography customStyle={{ color: common.cmn80 }}>다운로드</Typography>
+          </DownloadButtonBox>
+        </Flexbox>
+      </StyledAppDownloadBanner>
+    </ThemeProvider>
   );
 }
 

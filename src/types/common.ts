@@ -88,6 +88,7 @@ export type ToastType =
   | 'legitAdminOpinion'
   | 'legit'
   | 'legitProfile'
+  | 'bottomSheetLogin'
   | 'sellerProductState';
 
 export type ToastStatus =
@@ -110,6 +111,7 @@ export type ToastStatus =
   | 'sell'
   | 'soldout'
   | 'successRequest'
+  | 'loginSuccess'
   | 'successEdit';
 
 export type DialogType =
