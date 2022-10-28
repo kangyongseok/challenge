@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { Box, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -6,9 +7,14 @@ import Skeleton from '@components/UI/atoms/Skeleton';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function ProductDetail() {
+  const router = useRouter();
+  const { redirect } = router.query;
+
+  const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
+
   return (
     <GeneralTemplate
-      header={<ProductDetailHeader />}
+      header={<ProductDetailHeader hideRightIcon />}
       footer={
         <CtaButtonWrapper>
           <Skeleton
@@ -25,25 +31,13 @@ function ProductDetail() {
           />
         </CtaButtonWrapper>
       }
+      hideAppDownloadBanner={isRedirectPage}
     >
       <Box customStyle={{ margin: '0 -20px' }}>
         <Skeleton />
       </Box>
       <Box customStyle={{ marginTop: 20 }}>
-        <Flexbox alignment="center" gap={6}>
-          <Skeleton
-            width="45px"
-            height="18px"
-            disableAspectRatio
-            customStyle={{ borderRadius: 4 }}
-          />
-          <Skeleton
-            width="45px"
-            height="18px"
-            disableAspectRatio
-            customStyle={{ borderRadius: 4 }}
-          />
-        </Flexbox>
+        <Skeleton width="45px" height="18px" disableAspectRatio customStyle={{ borderRadius: 4 }} />
         <Skeleton
           width="100%"
           maxWidth="150px"

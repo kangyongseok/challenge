@@ -17,7 +17,12 @@ import { dialogState, showAppDownloadBannerState } from '@recoil/common';
 import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 import Header from '../Header';
 
-function ProductDetailHeader({ data }: { data?: ProductDetail }) {
+interface ProductDetailHeaderProps {
+  data?: ProductDetail;
+  hideRightIcon?: boolean;
+}
+
+function ProductDetailHeader({ data, hideRightIcon }: ProductDetailHeaderProps) {
   const {
     push,
     query: { id: redirect, isCrm }
@@ -69,7 +74,7 @@ function ProductDetailHeader({ data }: { data?: ProductDetail }) {
   if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
     return (
       <Header
-        showRight={!isRedirectPage}
+        showRight={!isRedirectPage && !hideRightIcon}
         onClickLeft={
           isCrm ? () => push(`/products/search/${data?.product.quoteTitle || ''}`) : undefined
         }
