@@ -78,10 +78,10 @@ import useQueryProduct from '@hooks/useQueryProduct';
 function ProductDetail() {
   const {
     push,
-    query: { id: productId, redirect, chainPrice, outsideAccess },
-    asPath,
-    beforePopState,
-    replace
+    query: { id: productId, redirect, chainPrice },
+    asPath
+    // beforePopState,
+    // replace
   } = useRouter();
   const {
     theme: {
@@ -139,27 +139,27 @@ function ProductDetail() {
     };
   }, [chainPrice, data]);
 
-  useEffect(() => {
-    if (outsideAccess) {
-      const searchName =
-        data?.product.quoteTitle || data?.product.category.name || data?.product.brand.name || '';
-      beforePopState(() => {
-        if (searchName) {
-          replace(`/products/search/${searchName}`);
-          return false;
-        }
-        replace('/');
-        return false;
-      });
-    }
-  }, [
-    beforePopState,
-    data?.product.brand.name,
-    data?.product.category.name,
-    data?.product.quoteTitle,
-    outsideAccess,
-    replace
-  ]);
+  // useEffect(() => {
+  //   if (outsideAccess) {
+  //     const searchName =
+  //       data?.product.quoteTitle || data?.product.category.name || data?.product.brand.name || '';
+  //     beforePopState(() => {
+  //       if (searchName) {
+  //         replace(`/products/search/${searchName}`);
+  //         return false;
+  //       }
+  //       replace('/');
+  //       return false;
+  //     });
+  //   }
+  // }, [
+  //   beforePopState,
+  //   data?.product.brand.name,
+  //   data?.product.category.name,
+  //   data?.product.quoteTitle,
+  //   outsideAccess,
+  //   replace
+  // ]);
 
   const isSafe = useMemo(() => {
     if (data) {
