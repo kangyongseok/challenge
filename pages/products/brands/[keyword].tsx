@@ -76,13 +76,28 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
 
 export async function getServerSideProps({
   query,
+  req,
+  res,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
   const params = convertSearchParamsByQuery(query, {
     variant: 'brands'
   });
+
+  const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
+  if (isGoBack) {
+    res.setHeader('Set-Cookie', 'isGoBack=false;path=/');
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale || defaultLocale)),
+        params
+      }
+    };
+  }
+
+  const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(queryKeys.products.searchMeta(params), () =>
     fetchSearchMeta(params)

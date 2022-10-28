@@ -170,13 +170,7 @@ function LegitMyPanel() {
       type: attrProperty.legitType.GUIDED
     });
 
-    router.push({
-      pathname: '/products/brands/구찌',
-      query: {
-        parentIds: 98,
-        idFilterIds: 100
-      }
-    });
+    router.push('/legit/guide');
   };
 
   useEffect(() => {

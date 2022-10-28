@@ -102,6 +102,10 @@ class MyDocument extends Document {
             name="msapplication-TileImage"
             content={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/ms-icon-144x144.png`}
           />
+          <link
+            rel="shortcut icon"
+            href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/favicon.ico`}
+          />
           <script defer src="https://developers.kakao.com/sdk/js/kakao.min.js" />
           <noscript>
             {/* eslint-disable-next-line @next/next/no-img-element */}

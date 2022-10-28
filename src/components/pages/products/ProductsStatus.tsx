@@ -82,15 +82,6 @@ function ProductsStatus() {
   );
 
   useEffect(() => {
-    router.beforePopState(({ url }) => {
-      if (url.indexOf('/products') > -1) {
-        setProductsFilterProgressDoneState(true);
-      }
-      return true;
-    });
-  }, [router, setProductsFilterProgressDoneState]);
-
-  useEffect(() => {
     if (!progressDone && isLoading) {
       if (timerRef.current) {
         clearInterval(timerRef.current);

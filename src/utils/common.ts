@@ -479,3 +479,19 @@ export function getAppVersion() {
 
   return Number(appVersion.slice(0, lastIndex).replace(/\./g, ''));
 }
+
+export function getPathNameByAsPath(asPath: string) {
+  if (asPath.indexOf('/products/categories') > -1) {
+    return '/products/categories/[keyword]';
+  }
+  if (asPath.indexOf('/products/brands') > -1) {
+    return '/products/brands/[keyword]';
+  }
+  if (asPath.indexOf('/products/search') > -1) {
+    return '/products/search/[keyword]';
+  }
+  if (asPath.indexOf('/products') > -1) {
+    return '/products/[id]';
+  }
+  return '/';
+}

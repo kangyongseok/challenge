@@ -125,3 +125,21 @@ export const loginBottomSheetState = atom({
   key: 'common/loginBottomSheetState',
   default: false
 });
+
+export const historyState = atom<{
+  index: number;
+  pathNames: string[];
+  asPaths: string[];
+}>({
+  key: 'common/historyState',
+  default: {
+    index: 0,
+    pathNames: ['/'],
+    asPaths: ['/']
+  }
+});
+
+export const isGoBackState = atom({
+  key: 'common/isGoBackState',
+  default: false
+});

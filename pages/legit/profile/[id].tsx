@@ -134,26 +134,24 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   );
 }
 
-export async function getServerSideProps({
-  req,
-  query: { id, isEdit }
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
   const userId = String(id);
 
   if (/^[0-9]+$/.test(userId)) {
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(req.cookies);
-    const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-    if (isEdit && +userId !== accessUser?.userId) {
-      return {
-        redirect: {
-          destination: `/legit/profile/${id}`,
-          permanent: false
-        }
-      };
-    }
+    // TODO 의도치 않은 redirect 발생, 임시 비활성화 처리 후 추후 보완
+    // if (isEdit && +userId !== accessUser?.userId) {
+    //   return {
+    //     redirect: {
+    //       destination: `/legit/profile/${id}`,
+    //       permanent: false
+    //     }
+    //   };
+    // }
 
     try {
       const legitProfile = await queryClient.fetchQuery(queryKeys.users.legitProfile(+userId), () =>

@@ -643,10 +643,20 @@ function ProductDetail() {
 
 export async function getServerSideProps({
   req,
+  res,
   query,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
+  const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
+  if (isGoBack) {
+    res.setHeader('Set-Cookie', 'isGoBack=false;path=/');
+
+    return {
+      props: {}
+    };
+  }
+
   try {
     const queryClient = new QueryClient();
 

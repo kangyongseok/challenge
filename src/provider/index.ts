@@ -6,3 +6,4 @@ export { default as DialogProvider } from '@provider/DialogProvider';
 export { default as ChannelTalkProvider } from './ChannelTalkProvider';
 export { default as ABTestProvider } from './ABTestProvider';
 export { default as ThemeModeProvider } from './ThemeModeProvider';
+export { default as HistoryProvider } from './HistoryProvider';

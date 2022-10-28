@@ -9,7 +9,7 @@ import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -33,7 +33,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const { keyword = '', parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const categoryTagRef = useRef<HTMLDivElement | null>(null);
+  const categoryTagRef = useRef<HTMLDivElement>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -273,7 +273,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
           position: 'fixed',
           marginTop: CATEGORY_TAGS_HEIGHT,
           zIndex: zIndex.header,
-          top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56
+          top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT
         }}
       />
     </Box>
@@ -289,7 +289,7 @@ const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   width: 100%;
   overflow-x: auto;
   top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px;
 `;
 
 const CategoryTags = styled.div`

@@ -137,12 +137,16 @@ function Search() {
       });
     }
 
-    router
-      .replace({
-        pathname: '/search',
-        query: { keyword: searchValue }
-      })
-      .then(() => router.push(`/products/search/${keyword}`));
+    if (searchValue) {
+      router
+        .replace({
+          pathname: '/search',
+          query: { keyword: searchValue }
+        })
+        .then(() => router.push(`/products/search/${keyword}`));
+    } else {
+      router.push(`/products/search/${keyword}`);
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {

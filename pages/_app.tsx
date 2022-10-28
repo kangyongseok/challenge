@@ -14,7 +14,8 @@ import {
   CamelSellerSavePopup,
   ErrorBoundary,
   LegitResultSurveyTypeform,
-  LoginBottomSheet
+  LoginBottomSheet,
+  PageSkeleton
 } from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
@@ -32,6 +33,7 @@ import {
   DialogProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
+  HistoryProvider,
   ThemeModeProvider,
   ToastProvider
 } from '@provider';
@@ -167,22 +169,25 @@ function App({ Component, pageProps }: AppProps) {
           <ThemeModeProvider>
             <Hydrate state={pageProps.dehydratedState}>
               <ErrorBoundary>
-                <ABTestProvider identifier={pageProps.abTestIdentifier}>
-                  <PortalProvider>
-                    <Component {...pageProps} />
-                  </PortalProvider>
-                </ABTestProvider>
-                <SearchHelperPopup type="break" />
-                <ToastProvider />
-                <DialogProvider />
-                <LegitResultSurveyTypeform />
-                <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
-                  서버에서 오류가 발생했어요
-                  <br />
-                  잠시 후 다시 시도해 주세요
-                </Toast>
-                <CamelSellerSavePopup />
-                <LoginBottomSheet />
+                <HistoryProvider>
+                  <PageSkeleton />
+                  <ABTestProvider identifier={pageProps.abTestIdentifier}>
+                    <PortalProvider>
+                      <Component {...pageProps} />
+                    </PortalProvider>
+                  </ABTestProvider>
+                  <SearchHelperPopup type="break" />
+                  <ToastProvider />
+                  <DialogProvider />
+                  <LegitResultSurveyTypeform />
+                  <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
+                    서버에서 오류가 발생했어요
+                    <br />
+                    잠시 후 다시 시도해 주세요
+                  </Toast>
+                  <CamelSellerSavePopup />
+                  <LoginBottomSheet />
+                </HistoryProvider>
               </ErrorBoundary>
             </Hydrate>
           </ThemeModeProvider>
