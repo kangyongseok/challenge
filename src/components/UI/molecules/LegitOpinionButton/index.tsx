@@ -26,7 +26,7 @@ function LegitOpinionButton({
         {variant === 'impossible' && <Icon name="OpinionImpossibleOutlined" />}
         <Typography variant="body2" weight="medium">
           {variant === 'authentic' && '정품의견'}
-          {variant === 'fake' && '가품의견'}
+          {variant === 'fake' && '가품의심'}
           {variant === 'impossible' && '감정불가'}
         </Typography>
       </Flexbox>

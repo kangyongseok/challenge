@@ -31,7 +31,7 @@ function LegitLivePanel() {
       <Flexbox
         direction="vertical"
         gap={52}
-        customStyle={{ margin: '12px 0 52px', userSelect: 'none' }}
+        customStyle={{ margin: '12px 0 84px', userSelect: 'none' }}
       >
         <LegitDashboardBanner />
         <LegitTargetBrandList />

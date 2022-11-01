@@ -99,13 +99,13 @@ function LegitFloatingButton() {
   useEffect(() => {
     if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {
       setOpen(true);
-    } else if (!accessUser && !isSuccess) {
+    } else if (!accessUser) {
       setOpen(true);
     }
   }, [accessUser, isSuccess, openLegitRecommendBottomSheet]);
 
   useEffect(() => {
-    if (open)
+    if (open && !openLegitRecommendBottomSheet)
       openTimerRef.current = setTimeout(() => {
         setOpen(false);
       }, 3000);
@@ -115,7 +115,7 @@ function LegitFloatingButton() {
         clearTimeout(openTimerRef.current);
       }
     };
-  }, [open]);
+  }, [open, openLegitRecommendBottomSheet]);
 
   return (
     <>
