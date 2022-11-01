@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination } from 'swiper';
+import { Autoplay, EffectCoverflow, Pagination } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
@@ -121,6 +121,7 @@ function LegitDashboardBanner() {
     <Wrapper>
       <Swiper
         spaceBetween={8}
+        modules={[Pagination, EffectCoverflow, Autoplay]}
         effect="coverflow"
         coverflowEffect={{
           rotate: 0,
@@ -128,7 +129,7 @@ function LegitDashboardBanner() {
           slideShadows: false
         }}
         pagination={{ clickable: true }}
-        modules={[Pagination, EffectCoverflow]}
+        autoplay
         style={{ padding: '0 20px' }}
         onSlideChange={handleSwiperBanner}
         loop

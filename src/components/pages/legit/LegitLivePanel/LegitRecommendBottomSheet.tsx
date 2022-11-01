@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
@@ -23,6 +23,7 @@ import attrKeys from '@constants/attrKeys';
 import { getProductType } from '@utils/products';
 import { getCookie, setCookie } from '@utils/common';
 
+import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -36,7 +37,9 @@ function LegitRecommendBottomSheet() {
 
   const deviceId = useRecoilValue(deviceIdState);
 
-  const [open, setOpen] = useState(false);
+  const [open, setLegitOpenRecommendBottomSheetState] = useRecoilState(
+    legitOpenRecommendBottomSheetState
+  );
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -70,7 +73,7 @@ function LegitRecommendBottomSheet() {
     });
 
     setCookie('hideRecommendLegitProduct', 'done', 1);
-    setOpen(false);
+    setLegitOpenRecommendBottomSheetState(false);
   };
 
   const handleClickAll = async () => {
@@ -85,7 +88,7 @@ function LegitRecommendBottomSheet() {
       { productIds: products.map(({ id }) => id), deviceId },
       {
         onSettled: () => {
-          setOpen(false);
+          setLegitOpenRecommendBottomSheetState(false);
           router.push(
             {
               pathname: '/legit',
@@ -108,16 +111,16 @@ function LegitRecommendBottomSheet() {
       title: attrProperty.legitTitle.LEGIT_WISH
     });
 
-    setOpen(false);
+    setLegitOpenRecommendBottomSheetState(false);
   };
 
   useEffect(() => {
     if (getCookie('hideRecommendLegitProduct')) return;
 
     if (accessUser && products.length > 0) {
-      setOpen(true);
+      setLegitOpenRecommendBottomSheetState(true);
     }
-  }, [accessUser, products.length]);
+  }, [setLegitOpenRecommendBottomSheetState, accessUser, products.length]);
 
   useEffect(() => {
     if (open) {
@@ -128,7 +131,11 @@ function LegitRecommendBottomSheet() {
   }, [open]);
 
   return accessUser && products.length > 0 ? (
-    <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>
+    <BottomSheet
+      open={open}
+      onClose={() => setLegitOpenRecommendBottomSheetState(false)}
+      disableSwipeable
+    >
       <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
         <Flexbox direction="vertical" gap={4}>
           <Typography variant="small2" weight="bold" customStyle={{ color: secondary.blue.main }}>

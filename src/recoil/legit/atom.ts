@@ -3,7 +3,7 @@ import { atom } from 'recoil';
 import type { ProductLegitsParams } from '@dto/productLegit';
 
 export const legitFilterGridParamsState = atom<ProductLegitsParams>({
-  key: 'legit/legitFilterGridParamsState',
+  key: 'legit/filterGridParamsState',
   default: {
     page: 0,
     size: 16,
@@ -13,7 +13,7 @@ export const legitFilterGridParamsState = atom<ProductLegitsParams>({
 });
 
 export const legitFiltersState = atom({
-  key: 'legit/legitFiltersState',
+  key: 'legit/filtersState',
   default: {
     initialized: false,
     legitFilters: [
@@ -22,4 +22,9 @@ export const legitFiltersState = atom({
       { result: 0, status: 20, label: '감정진행중', count: 0, isActive: false }
     ]
   }
+});
+
+export const legitOpenRecommendBottomSheetState = atom({
+  key: 'legit/openRecommendBottomSheetState',
+  default: false
 });

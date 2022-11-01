@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 
 const reviews = [
   {
@@ -38,7 +38,13 @@ function LegitReviewSlide() {
   } = useTheme();
 
   return (
-    <Box component="section" customStyle={{ margin: '8px 20px 0', userSelect: 'none' }}>
+    <Flexbox
+      component="section"
+      alignment="center"
+      gap={8}
+      customStyle={{ margin: '8px 20px 0', userSelect: 'none' }}
+    >
+      <Label variant="contained" brandColor="black" size="xsmall" text="USER REVIEW" />
       <Swiper
         slidesPerView={1}
         loop
@@ -54,7 +60,6 @@ function LegitReviewSlide() {
         {reviews.map(({ id, message }) => (
           <SwiperSlide key={`legit-review-${id}`}>
             <Flexbox alignment="center" gap={8} customStyle={{ height: '100%' }}>
-              <Label variant="contained" brandColor="black" size="xsmall" text="USER REVIEW" />
               <Flexbox
                 alignment="center"
                 gap={3}
@@ -78,7 +83,7 @@ function LegitReviewSlide() {
           </SwiperSlide>
         ))}
       </Swiper>
-    </Box>
+    </Flexbox>
   );
 }
 
