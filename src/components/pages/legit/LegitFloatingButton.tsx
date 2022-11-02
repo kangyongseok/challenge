@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
@@ -29,7 +29,9 @@ function LegitFloatingButton() {
   } = useTheme();
   const router = useRouter();
 
-  const openLegitRecommendBottomSheet = useRecoilValue(legitOpenRecommendBottomSheetState);
+  const [openLegitRecommendBottomSheet, setOpenLegitRecommendBottomSheet] = useRecoilState(
+    legitOpenRecommendBottomSheetState
+  );
   const setDialogState = useSetRecoilState(dialogState);
   const { data: accessUser } = useQueryAccessUser();
 
@@ -116,6 +118,12 @@ function LegitFloatingButton() {
       }
     };
   }, [open, openLegitRecommendBottomSheet]);
+
+  useEffect(() => {
+    return () => {
+      setOpenLegitRecommendBottomSheet(false);
+    };
+  }, [setOpenLegitRecommendBottomSheet]);
 
   return (
     <>

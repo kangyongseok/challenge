@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { Gap } from '@components/UI/atoms';
+import { Gap, Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -210,15 +210,51 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
     >
       <Wrapper showAppDownloadBanner={showAppDownloadBanner}>
         <CategoryTags ref={categoryTagRef}>
-          <Text
-            weight={
-              (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
-            }
-            onClick={handleClickAll}
-            isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
-          >
-            전체
-          </Text>
+          {(parentCategories.length > 0 || subParentCategories.length > 0) && (
+            <Text
+              weight={
+                (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
+              }
+              onClick={handleClickAll}
+              isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
+            >
+              전체
+            </Text>
+          )}
+          {parentCategories.length === 0 && subParentCategories.length === 0 && (
+            <>
+              <Skeleton
+                width="24px"
+                height="24px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 8 }}
+              />
+              <Skeleton
+                width="37px"
+                height="24px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 8 }}
+              />
+              <Skeleton
+                width="33px"
+                height="24px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 8 }}
+              />
+              <Skeleton
+                width="37px"
+                height="24px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 8 }}
+              />
+              <Skeleton
+                width="37px"
+                height="24px"
+                disableAspectRatio
+                customStyle={{ borderRadius: 8 }}
+              />
+            </>
+          )}
           {showParentCategories &&
             parentCategories.map(({ id, name }, index) => (
               <Text

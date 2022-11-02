@@ -446,7 +446,7 @@ export function getProductDetailUrl({
 }:
   | { type?: 'product' | 'targetProduct'; product: Product }
   | { type: 'productResult'; product: ProductResult }) {
-  const { id, targetProductId, targetProductUrl, quoteTitle } = product;
+  const { id, targetProductId, targetProductUrl, quoteTitle } = product || {};
   let productDetailUrl = `/products/${id}`;
 
   if (type === 'targetProduct') {
@@ -489,6 +489,12 @@ export function getPathNameByAsPath(asPath: string) {
   }
   if (asPath.indexOf('/products/search') > -1) {
     return '/products/search/[keyword]';
+  }
+  if (asPath.indexOf('/products/camel') > -1) {
+    return '/products/camel';
+  }
+  if (asPath.indexOf('/products/crm') > -1) {
+    return '/products/crm/[notice]';
   }
   if (asPath.indexOf('/products') > -1) {
     return '/products/[id]';

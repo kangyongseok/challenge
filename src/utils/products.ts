@@ -687,7 +687,7 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
 }
 
 export function getMetaDescription(product: Product) {
-  const { description = '', viewCount = 0, wishCount = 0, quoteTitle, price = 0 } = product;
+  const { description = '', viewCount = 0, wishCount = 0, quoteTitle, price = 0 } = product || {};
 
   if (!description) return '';
 
