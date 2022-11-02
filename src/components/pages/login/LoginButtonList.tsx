@@ -26,6 +26,7 @@ interface LoginButtonListProps {
   setErrorPopup: Dispatch<SetStateAction<{ open: boolean; provider: string | null }>>;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  onClickNotLoginShow?: () => void;
   disabledRecentLogin?: boolean;
 }
 
@@ -35,6 +36,7 @@ function LoginButtonList({
   setErrorPopup,
   setShow,
   setLoading,
+  onClickNotLoginShow,
   disabledRecentLogin
 }: LoginButtonListProps) {
   const router = useRouter();
@@ -111,10 +113,9 @@ function LoginButtonList({
       window.webkit.messageHandlers.callLoginFacebook
     ) {
       window.webkit.messageHandlers.callLoginFacebook.postMessage(0);
-    } else {
+    } else if (window.FB.getLoginStatus) {
       window.FB.getLoginStatus((response: FacebookLoginResponse) => {
         setLoading(true);
-
         if (response.status === 'connected') {
           checkFacebookLoginState(response);
         } else {
@@ -209,8 +210,12 @@ function LoginButtonList({
       <Box
         customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
         onClick={() => {
-          setShow(false);
           logEvent(attrKeys.login.CLICK_NONLOGIN);
+          if (onClickNotLoginShow) {
+            onClickNotLoginShow();
+            return;
+          }
+          setShow(false);
           setTimeout(() => router.replace(returnUrl || '/'), 300);
         }}
       >

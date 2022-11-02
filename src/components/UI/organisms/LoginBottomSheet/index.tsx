@@ -445,6 +445,7 @@ function LoginBottomSheet() {
                 setErrorPopup={setErrorPopup}
                 setShow={setShow}
                 setLoading={setLoading}
+                onClickNotLoginShow={() => setOpen(false)}
                 disabledRecentLogin
               />
             </animated.div>
