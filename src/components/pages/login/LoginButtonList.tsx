@@ -13,6 +13,7 @@ import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
@@ -27,6 +28,7 @@ interface LoginButtonListProps {
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   onClickNotLoginShow?: () => void;
+  attName?: 'MODAL';
   disabledRecentLogin?: boolean;
 }
 
@@ -37,6 +39,7 @@ function LoginButtonList({
   setShow,
   setLoading,
   onClickNotLoginShow,
+  attName,
   disabledRecentLogin
 }: LoginButtonListProps) {
   const router = useRouter();
@@ -52,7 +55,10 @@ function LoginButtonList({
   const { openLogin } = router.query;
 
   const handleClickKakaoLogin = () => {
-    logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'KAKAO' });
+    logEvent(attrKeys.login.CLICK_LOGIN_SNS, {
+      title: 'KAKAO',
+      name: attName || attrProperty.name.GENERAL
+    });
 
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
       window.webview.callLoginKakao();
@@ -77,7 +83,10 @@ function LoginButtonList({
   };
 
   const handleClickFacebookLogin = () => {
-    logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'FACEBOOK' });
+    logEvent(attrKeys.login.CLICK_LOGIN_SNS, {
+      title: 'FACEBOOK',
+      name: attName || attrProperty.name.GENERAL
+    });
 
     const checkFacebookLoginState = (response: FacebookLoginResponse) => {
       const provider = 'facebook';
@@ -129,7 +138,10 @@ function LoginButtonList({
   };
 
   const handleClickAppleLogin = () => {
-    logEvent(attrKeys.login.CLICK_LOGIN_SNS, { title: 'APPLE' });
+    logEvent(attrKeys.login.CLICK_LOGIN_SNS, {
+      title: 'APPLE',
+      name: attName || attrProperty.name.GENERAL
+    });
 
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
       window.webview.callLoginApple();
