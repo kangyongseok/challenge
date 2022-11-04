@@ -274,6 +274,7 @@ const SubParentCategoryList = styled.div<{ isSelected: boolean }>`
   grid-template-columns: 1fr 1fr;
   background-color: ${({ theme }) => theme.palette.common.ui98};
   opacity: ${({ isSelected }) => Number(isSelected)};
+  visibility: ${({ isSelected }) => !isSelected && 'hidden'};
   padding: ${({ isSelected }) => (isSelected ? '20px 32px' : '0px 32px')};
   margin-top: ${({ isSelected }) => (isSelected ? 20 : 0)}px;
   transition: padding 0.2s ease-in-out;
