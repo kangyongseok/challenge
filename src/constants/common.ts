@@ -10,19 +10,11 @@ export const RELATED_KEYWORDS_HEIGHT = 52;
 
 export const locales = {
   ko: {
-    lng: 'ko-KR',
-    name: '한국어',
-    img: {
-      filename: 'flag-ko-KR.png',
-      alt: 'KR Flag'
-    }
+    lng: 'ko',
+    name: '한국어'
   },
   en: {
-    lng: 'en-US',
-    name: 'English',
-    img: {
-      filename: 'flag-en-us.png',
-      alt: 'US Flag'
-    }
+    lng: 'en',
+    name: 'English'
   }
 };

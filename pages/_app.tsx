@@ -84,8 +84,8 @@ function App({ Component, pageProps }: AppProps) {
     if (router.pathname === '/products/[id]') return '';
 
     const asPath = (router.asPath === '/' ? '' : router.asPath.split('?')[0]).replace(/ /g, '-');
-    return decodeURI(`${originUrl}${asPath}`);
-  }, [router.asPath, router.pathname]);
+    return decodeURI(`${originUrl}${asPath}${lang === locales.ko.lng ? '' : `/${lang}`}`);
+  }, [lang, router.asPath, router.pathname]);
   const alternativeLink = useMemo(
     () =>
       Object.entries(locales).map(([_, { lng }]) => (
@@ -93,7 +93,9 @@ function App({ Component, pageProps }: AppProps) {
           key={lng}
           rel="alternate"
           hrefLang={lng}
-          href={`${originUrl}/${lng}${router.asPath}`}
+          href={`${originUrl}${lng === locales.ko.lng ? '' : `/${lng}`}${
+            router.asPath === '/' ? '' : router.asPath
+          }`}
         />
       )),
     [router.asPath]
@@ -160,6 +162,11 @@ function App({ Component, pageProps }: AppProps) {
         <title>{localeData[lang].meta.title}</title>
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
         {alternativeLink}
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={`${originUrl}${router.asPath === '/' ? '' : router.asPath}`}
+        />
       </Head>
       <ChannelTalkProvider />
       <FacebookPixelProvider />

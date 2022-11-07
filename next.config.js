@@ -69,6 +69,16 @@ const routers = [
     ],
     permanent: false,
     destination: '/legit?tab=live'
+  },
+  {
+    source: '/en-US/:path*',
+    destination: '/en/:path*',
+    permanent: true
+  },
+  {
+    source: '/ko-KR/:path*',
+    destination: '/ko/:path*',
+    permanent: true
   }
 ];
 

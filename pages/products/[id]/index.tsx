@@ -5,7 +5,8 @@ import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSidePropsContext } from 'next';
+import type { SSRConfig } from 'next-i18next';
+import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import type { TypographyVariant } from 'mrcamel-ui';
 import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -70,12 +71,10 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-// import { showAppDownloadBannerState } from '@recoil/common';
-// import useScrollTrigger from '@hooks/useScrollTrigger';
 import { loginBottomSheetState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 
-function ProductDetail() {
+function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const {
     query: { id: productId, redirect, chainPrice },
     asPath
@@ -491,7 +490,11 @@ function ProductDetail() {
         ogDescription={`${getMetaDescription(data?.product as Product)}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
         ogUrl={`https://mrcamel.co.kr${getProductDetailUrl({ product: data?.product as Product })}`}
-        canonical={`https://mrcamel.co.kr${getProductDetailUrl({
+        canonical={`https://mrcamel.co.kr${
+          (_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale === locales.ko.lng
+            ? ''
+            : `/${(_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale}`
+        }${getProductDetailUrl({
           product: data?.product as Product
         })}`}
         keywords={`중고 ${data?.product.brand.name}, 중고 ${data?.product.category.name}, 중고 ${data?.product.quoteTitle}, ${data?.product.brand.name}, ${data?.product.category.name}, ${data?.product.quoteTitle}, 여자 ${data?.product.category.name}, 남자 ${data?.product.category.name}`}
@@ -657,7 +660,9 @@ export async function getServerSideProps({
     res.setHeader('Set-Cookie', 'isGoBack=false;path=/');
 
     return {
-      props: {}
+      props: {
+        ...(await serverSideTranslations(locale || defaultLocale))
+      }
     };
   }
 
