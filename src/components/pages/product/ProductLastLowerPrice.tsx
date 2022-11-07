@@ -70,7 +70,8 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
   const handleWishAtt = (product: Product, i: number) => {
     return {
       name: attrProperty.productName.PRODUCT_DETAIL,
-      title: attrProperty.productTitle.RELATED,
+      title: attrProperty.title.LOWPRICE_PRODUCT,
+      type: attrProperty.type.RECOMM,
       id: product.id,
       index: i + 1,
       brand: product.brand.name,
@@ -89,7 +90,8 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
     if (data?.product) {
       return {
         name: attrProperty.productName.PRODUCT_DETAIL,
-        title: attrProperty.productTitle.RELATED,
+        title: attrProperty.title.LOWPRICE_PRODUCT,
+        type: attrProperty.type.RECOMM,
         index: i + 1,
         id: data?.product.id,
         brand: data?.product.brand.name,
@@ -121,7 +123,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
   const handleClickProductList = () => {
     logEvent(attrKeys.products.CLICK_PRODUCT_LIST, {
       name: attrProperty.name.productDetail,
-      title: attrProperty.title.LOWERPRICE_PRODUCT,
+      title: attrProperty.title.LOWPRICE_PRODUCT,
       type: 'RECOMM'
     });
     push(`/products/search/${data?.product.quoteTitle}`);

@@ -272,7 +272,8 @@ const title = {
   BRAND_SUBPARENT: 'BRAND_SUBPARENT',
   CATEGORY_PARENT: 'CATEGORY_PARENT',
   CATEGORY_SUBPARENT: 'CATEGORY_SUBPARENT',
-  WISH: 'WISH'
+  WISH: 'WISH',
+  LOWPRICE_PRODUCT: 'LOWPRICE_PRODUCT'
 };
 
 const source = {
@@ -281,7 +282,8 @@ const source = {
 
 const type = {
   guide: 'GUIDED',
-  input: 'INPUT'
+  input: 'INPUT',
+  RECOMM: 'RECOMM'
 };
 
 const attrProperty = {
