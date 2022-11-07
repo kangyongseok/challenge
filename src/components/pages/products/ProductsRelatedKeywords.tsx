@@ -57,10 +57,12 @@ function ProductsRelatedKeywords() {
           if (relatedKeyword?.categoryId) title = attrProperty.title.category;
           if (relatedKeyword?.lineId) title = attrProperty.title.line;
 
-          logEvent(attrKeys.products.viewRecommKeyword, {
-            name: attrProperty.name.productList,
-            title
-          });
+          if (response.relatedKeywords.length > 0) {
+            logEvent(attrKeys.products.viewRecommKeyword, {
+              name: attrProperty.name.productList,
+              title
+            });
+          }
         }
       }
     }
