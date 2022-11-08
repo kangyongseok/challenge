@@ -66,6 +66,7 @@ import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { scrollEnable } from '@utils/scroll';
 import { getMetaDescription, getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
@@ -158,6 +159,10 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   //   outsideAccess,
   //   replace
   // ]);
+
+  useEffect(() => {
+    scrollEnable();
+  }, [data]);
 
   const isSafe = useMemo(() => {
     if (data) {
