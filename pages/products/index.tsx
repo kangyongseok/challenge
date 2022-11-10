@@ -18,7 +18,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import { locales } from '@constants/common';
+import { HEADER_HEIGHT, PRODUCTS_LANDING_INFO_HEIGHT, locales } from '@constants/common';
 
 function Products() {
   return (
@@ -28,7 +28,11 @@ function Products() {
           <Box>
             <Header disableProductsKeywordClickInterceptor={false} />
             <ProductsLandingInfo />
-            <ProductsFilter variant="search" showDynamicFilter />
+            <ProductsFilter
+              variant="search"
+              showDynamicFilter
+              customTop={HEADER_HEIGHT + PRODUCTS_LANDING_INFO_HEIGHT}
+            />
           </Box>
         }
         footer={

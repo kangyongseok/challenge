@@ -7,8 +7,14 @@ import styled from '@emotion/styled';
 import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  HEADER_HEIGHT,
+  PRODUCTS_LANDING_INFO_HEIGHT
+} from '@constants/common';
 
 import { productsFilterProgressDoneState, searchParamsStateFamily } from '@recoil/productsFilter';
+import { showAppDownloadBannerState } from '@recoil/common';
 
 function ProductsLandingInfo() {
   const router = useRouter();
@@ -24,6 +30,7 @@ function ProductsLandingInfo() {
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const { isFetched, data: { productTotal = 0 } = {} } = useQuery(
     queryKeys.products.searchOptions(searchOptionsParams),
@@ -36,8 +43,8 @@ function ProductsLandingInfo() {
   );
 
   return (
-    <Box customStyle={{ minHeight: 102, position: 'relative' }}>
-      <Wrapper>
+    <Box customStyle={{ minHeight: PRODUCTS_LANDING_INFO_HEIGHT, position: 'relative' }}>
+      <Wrapper showAppDownloadBanner={showAppDownloadBanner}>
         <Typography weight="medium" customStyle={{ color: common.ui60 }}>
           대한민국 모든 중고매물 한번에 비교중!
         </Typography>
@@ -54,13 +61,15 @@ function ProductsLandingInfo() {
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   padding: 16px 20px;
   position: fixed;
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
   border-bottom: 2px solid ${({ theme }) => theme.palette.primary.main};
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px;
 `;
 
 export default ProductsLandingInfo;

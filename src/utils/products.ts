@@ -4,11 +4,13 @@ import { MrCamelTheme } from 'mrcamel-ui/dist/types';
 
 import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@dto/product';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { SELLER_STATUS } from '@constants/user';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 import { PRODUCT_SITE } from '@constants/product';
+import { DEVICE_ID } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
@@ -199,7 +201,7 @@ export function convertSearchParamsByQuery(
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
-    deviceId
+    deviceId: deviceId || defaultValue?.deviceId || String(LocalStorage.get(DEVICE_ID) || '')
   };
   const searchParams = {
     keyword,

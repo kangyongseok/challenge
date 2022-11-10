@@ -54,9 +54,10 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 interface ProductsFilterProps {
   variant: ProductsVariant;
   showDynamicFilter?: boolean;
+  customTop?: number;
 }
 
-function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterProps) {
+function ProductsFilter({ variant, showDynamicFilter = false, customTop }: ProductsFilterProps) {
   const {
     theme: {
       palette: { primary, common }
@@ -740,6 +741,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
         legitFilterButtonRef={legitFilterButtonRef}
         isLoading={!hasBaseSearchParams || !progressDone}
         variant={variant}
+        customTop={customTop}
       />
       {showDynamicFilter && dynamicOptions.length > 0 && hasBaseSearchParams && progressDone && (
         <ProductsDynamicFilter />

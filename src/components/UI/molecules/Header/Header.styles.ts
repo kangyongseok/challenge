@@ -22,8 +22,11 @@ export const Wrapper = styled.div<{
     isFixed
       ? {
           position: 'fixed',
-          top: -60 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : -10),
-          padding: `${50 + (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)}px 0 0`
+          top: -60 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : -12),
+          padding: `${
+            APP_DOWNLOAD_BANNER_HEIGHT +
+            (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)
+          }px 0 0`
         }
       : {
           position: 'initial',

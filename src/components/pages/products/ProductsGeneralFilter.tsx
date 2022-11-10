@@ -50,11 +50,12 @@ interface ProductsGeneralFilterProps {
   legitFilterButtonRef: MutableRefObject<HTMLDivElement | null>;
   isLoading?: boolean;
   variant: ProductsVariant;
+  customTop?: number;
 }
 
 const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterProps>(
   function ProductsGeneralFilter(
-    { mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant },
+    { mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant, customTop },
     ref
   ) {
     const {
@@ -351,7 +352,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
           ref={ref}
           showAppDownloadBanner={showAppDownloadBanner}
           // eslint-disable-next-line no-nested-ternary
-          defaultTop={isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56}
+          defaultTop={customTop || (isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56)}
         >
           <Flexbox gap={12} alignment="center" customStyle={{ padding: '0 16px', minHeight: 36 }}>
             {idFilterOptions

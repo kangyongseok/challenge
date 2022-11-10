@@ -1,3 +1,4 @@
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
@@ -19,9 +20,15 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import { locales } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  CMR_LANDING_INFO_HEIGHT,
+  HEADER_HEIGHT,
+  locales
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
+import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function CrmProducts() {
@@ -33,6 +40,7 @@ function CrmProducts() {
   } = useRouter();
 
   const { data: accessUser } = useQueryAccessUser();
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   return (
     <>
@@ -41,8 +49,8 @@ function CrmProducts() {
           <Box>
             <Header disableProductsKeywordClickInterceptor={false} />
             {notice && (
-              <Box customStyle={{ minHeight: 72, position: 'relative' }}>
-                <NoticeWrapper>
+              <Box customStyle={{ minHeight: CMR_LANDING_INFO_HEIGHT, position: 'relative' }}>
+                <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
                   <Typography variant="h4" weight="bold">
                     {`${(accessUser || {}).userName || '회원'}님`}
                   </Typography>
@@ -55,12 +63,19 @@ function CrmProducts() {
                   customStyle={{
                     position: 'fixed',
                     marginTop: 64,
-                    zIndex: zIndex.header
+                    zIndex: zIndex.header,
+                    top: showAppDownloadBanner
+                      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
+                      : HEADER_HEIGHT
                   }}
                 />
               </Box>
             )}
-            <ProductsFilter variant="search" showDynamicFilter />
+            <ProductsFilter
+              variant="search"
+              showDynamicFilter
+              customTop={HEADER_HEIGHT + CMR_LANDING_INFO_HEIGHT}
+            />
           </Box>
         }
         footer={
@@ -97,7 +112,7 @@ export async function getServerSideProps({
   };
 }
 
-const NoticeWrapper = styled.div`
+const NoticeWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -105,6 +120,8 @@ const NoticeWrapper = styled.div`
   width: 100%;
   z-index: ${({ theme }) => theme.zIndex.header};
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px;
 `;
 
 export default CrmProducts;

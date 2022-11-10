@@ -7,6 +7,8 @@ export const BOTTOM_NAVIGATION_HEIGHT = 64;
 export const GENERAL_FILTER_HEIGHT = 100;
 export const CATEGORY_TAGS_HEIGHT = 40;
 export const RELATED_KEYWORDS_HEIGHT = 52;
+export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
+export const CMR_LANDING_INFO_HEIGHT = 72;
 
 export const locales = {
   ko: {
