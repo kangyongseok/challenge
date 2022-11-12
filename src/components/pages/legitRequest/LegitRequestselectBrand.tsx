@@ -50,9 +50,9 @@ function LegitRequestSelectBrand() {
         ...currVal,
         brandId,
         brandName,
-        brandLogo: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${brandLogo
+        brandLogo: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${brandLogo
           .toLowerCase()
-          .replace(/\s/g, '')}.jpg`
+          .replace(/\s/g, '')}.png`
       }));
       router.push('/legit/request/selectModel', undefined, { shallow: true });
     },

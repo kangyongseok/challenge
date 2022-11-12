@@ -1,7 +1,7 @@
 import { Button, Icon } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-export const LegitImg = styled.img<{ rotate: number }>`
+export const Img = styled.img<{ rotate: number }>`
   transform: rotate(${({ rotate }) => rotate}deg);
 `;
 

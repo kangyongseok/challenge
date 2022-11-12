@@ -1,4 +1,5 @@
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ReactElement } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
@@ -6,7 +7,7 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 
-import { CloseIcon, LegitImg, Pagination, RotateButton } from './ImageDetailDialog.styles';
+import { CloseIcon, Img, Pagination, RotateButton } from './ImageDetailDialog.styles';
 
 interface ImageDetailDialogProps {
   open: boolean;
@@ -36,9 +37,12 @@ function ImageDetailDialog({
   const [followFinger, setFollowFinger] = useState(true);
   const [panningDisabled, setPanningDisabled] = useState(true);
   const [rotates, setRotates] = useState<number[]>([]);
-  const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([null]);
+  const [imagesLoadStatus, setImagesLoadStatus] = useState<number[]>([]);
 
   const swiperRef = useRef<SwiperClass>();
+  const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([]);
+  const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const isFirstChangeRef = useRef(false);
 
   const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
     setCurrentScale(scale);
@@ -47,41 +51,34 @@ function ImageDetailDialog({
   const handleLoad = (index: number) => () => {
     const currentTransformRef = transformsRef.current[index];
 
+    setImagesLoadStatus((prevState) => [...prevState, index]);
+
     if (currentTransformRef) {
-      currentTransformRef.centerView();
       currentTransformRef.resetTransform();
     }
   };
 
-  const handleClose = () => {
-    if (swiperRef.current && typeof onChange === 'function') {
-      const { realIndex, previousIndex } = swiperRef.current;
-
-      // TODO loop 활성화 시, 간헐적으로 realIndex 싱크가 맞지 않는 문제가 있는데 이유를 찾지 못함, 임시방편 조치
-      if (!syncIndex && realIndex === 1) {
-        onChange({ ...swiperRef.current, realIndex: previousIndex });
-      } else {
-        onChange(swiperRef.current);
+  const handleSlideNextTransitionStart = () =>
+    transformsRef.current.forEach((ref) => {
+      if (ref) {
+        ref.resetTransform();
       }
-    }
-    onClose();
-  };
+    });
 
   const handleSlideChange = (swiper: SwiperClass) => {
-    const { realIndex, previousIndex } = swiper;
-
+    const { realIndex } = swiper;
     // TODO loop 활성화 시, 간헐적으로 realIndex 싱크가 맞지 않는 문제가 있는데 이유를 찾지 못함, 임시방편 조치
-    if (!syncIndex && realIndex === 1) {
-      setCurrentIndex(previousIndex);
-    } else {
-      setCurrentIndex(realIndex);
+    let newRealIndex = realIndex;
+
+    if (!isFirstChangeRef.current && newRealIndex !== syncIndex) {
+      newRealIndex -= 1;
     }
+    isFirstChangeRef.current = true;
 
-    const currentTransformRef = transformsRef.current[realIndex];
+    setCurrentIndex(newRealIndex);
 
-    if (currentTransformRef) {
-      currentTransformRef.centerView();
-      currentTransformRef.resetTransform();
+    if (typeof onChange === 'function') {
+      onChange({ ...swiper, realIndex: newRealIndex });
     }
   };
 
@@ -106,14 +103,30 @@ function ImageDetailDialog({
   useEffect(() => {
     if (!open) {
       setRotates([]);
+      setImagesLoadStatus([]);
+      setCurrentIndex(0);
+      transformsRef.current = [];
+      imagesRef.current = [];
+      isFirstChangeRef.current = false;
     }
   }, [open]);
+
+  useEffect(() => {
+    // +2 = loopSlide Count
+    if (open && imagesLoadStatus.length === images.length + 2) {
+      transformsRef.current.forEach((ref) => {
+        if (ref) {
+          ref.resetTransform();
+        }
+      });
+    }
+  }, [open, imagesLoadStatus, images, currentIndex, syncIndex]);
 
   return (
     <Dialog
       fullScreen
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       disablePadding
       customStyle={{
         position: 'relative',
@@ -138,7 +151,7 @@ function ImageDetailDialog({
       <CloseIcon
         name="CloseOutlined"
         color="white"
-        onClick={handleClose}
+        onClick={onClose}
         customStyle={{ cursor: 'pointer' }}
       />
       <Swiper
@@ -148,44 +161,59 @@ function ImageDetailDialog({
         nested
         shortSwipes={shortSwipes}
         followFinger={followFinger}
+        onSlideNextTransitionStart={handleSlideNextTransitionStart}
         onSlideChange={handleSlideChange}
         initialSlide={syncIndex}
         loop={images.length > 1}
         style={{
-          textAlign: 'center'
+          height: '100%'
         }}
       >
         {images.map((image, index) => (
-          <SwiperSlide key={`product-legit-image-${image.slice(image.lastIndexOf('/') + 1)}`}>
-            <TransformWrapper
-              ref={(ref) => {
-                transformsRef.current[index] = ref;
-              }}
-              panning={{ disabled: panningDisabled }}
-              onPanning={handleScale}
-              onWheel={handleScale}
-              onPinching={handleScale}
-              centerOnInit
-              doubleClick={{ mode: 'reset' }}
-            >
-              <TransformComponent
-                wrapperStyle={{
-                  width: '100%',
-                  height: '100vh'
-                }}
-                contentStyle={{
-                  width: '100%',
-                  justifyContent: 'center'
-                }}
-              >
-                <LegitImg
-                  src={image}
-                  alt={`product-legit-image-${image.slice(image.lastIndexOf('/') + 1)}`}
-                  rotate={rotates[index]}
-                  onLoad={handleLoad(index)}
-                />
-              </TransformComponent>
-            </TransformWrapper>
+          <SwiperSlide key={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}>
+            {({ isDuplicate }) => {
+              const loopIndex = isDuplicate ? index + 10 : index;
+              return (
+                <TransformWrapper
+                  ref={(ref) => {
+                    if (ref) {
+                      transformsRef.current[loopIndex] = ref;
+                    }
+                  }}
+                  panning={{ disabled: panningDisabled }}
+                  onPanning={handleScale}
+                  onWheel={handleScale}
+                  onPinching={handleScale}
+                  doubleClick={{
+                    mode: 'reset'
+                  }}
+                  centerOnInit
+                >
+                  <TransformComponent
+                    wrapperStyle={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    contentStyle={{
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Img
+                      ref={(ref) => {
+                        if (ref) {
+                          imagesRef.current[loopIndex] = ref;
+                        }
+                      }}
+                      src={image}
+                      alt={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}
+                      rotate={rotates[index]}
+                      onLoad={handleLoad(loopIndex)}
+                    />
+                  </TransformComponent>
+                </TransformWrapper>
+              );
+            }}
           </SwiperSlide>
         ))}
       </Swiper>

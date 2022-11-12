@@ -275,10 +275,12 @@ function LegitRequestEdit() {
     >
       {imageModel ? (
         <LegitRequestTitleWithModelImage
-          brandLogo={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${brandNameEng
+          brandLogo={`https://${
+            process.env.IMAGE_DOMAIN
+          }/assets/images/brands/transparent/${brandNameEng
             .toLocaleLowerCase()
             .split(' ')
-            .join('')}.jpg`}
+            .join('')}.png`}
           brandName={brandName}
           categoryName={categoryName.replace(/\(P\)/g, '')}
           title={title}
@@ -286,10 +288,12 @@ function LegitRequestEdit() {
         />
       ) : (
         <LegitRequestTitle
-          brandLogo={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${brandNameEng
+          brandLogo={`https://${
+            process.env.IMAGE_DOMAIN
+          }/assets/images/brands/transparent/${brandNameEng
             .toLocaleLowerCase()
             .split(' ')
-            .join('')}.jpg`}
+            .join('')}.png`}
           brandName={brandName}
           categoryName={categoryName.replace(/\(P\)/g, '')}
           title={title}

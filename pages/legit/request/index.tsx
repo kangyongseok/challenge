@@ -181,7 +181,11 @@ function LegitRequest() {
           label={<Label variant="ghost" brandColor="black" text={labelText} />}
           syncIndex={syncIndex}
         />
-        <LegitRequestBottomButton onClick={handleClick} text="확인" />
+        <LegitRequestBottomButton
+          onClick={handleClick}
+          text="확인"
+          backgroundColor={dark.palette.common.bg03}
+        />
       </GeneralTemplate>
     </ThemeProvider>
   );

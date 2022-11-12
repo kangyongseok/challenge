@@ -1,4 +1,5 @@
 import { Button, Tooltip } from 'mrcamel-ui';
+import type { Color } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 interface LegitRequestBottomButtonProps {
@@ -7,6 +8,7 @@ interface LegitRequestBottomButtonProps {
   text: string;
   showTooltip?: boolean;
   tooltipMessage?: string;
+  backgroundColor?: Color;
 }
 
 function LegitRequestBottomButton({
@@ -14,11 +16,12 @@ function LegitRequestBottomButton({
   onClick,
   text,
   showTooltip = false,
-  tooltipMessage = ''
+  tooltipMessage = '',
+  backgroundColor
 }: LegitRequestBottomButtonProps) {
   return (
     <ButtonWrapper>
-      <ButtonBox>
+      <ButtonBox backgroundColor={backgroundColor}>
         <Button
           size="xlarge"
           variant="contained"
@@ -49,7 +52,7 @@ const ButtonWrapper = styled.section`
   user-select: none;
 `;
 
-const ButtonBox = styled.div`
+const ButtonBox = styled.div<{ backgroundColor?: Color }>`
   position: fixed;
   width: 100%;
   bottom: 0;
@@ -57,8 +60,9 @@ const ButtonBox = styled.div`
   background-color: ${({
     theme: {
       palette: { common }
-    }
-  }) => common.bg02};
+    },
+    backgroundColor
+  }) => backgroundColor || common.bg02};
 `;
 
 export default LegitRequestBottomButton;

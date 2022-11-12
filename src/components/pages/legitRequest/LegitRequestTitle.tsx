@@ -24,7 +24,7 @@ function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitR
       customStyle={{
         padding: '0 20px 32px',
         userSelect: 'none',
-        backgroundColor: common.bg01
+        backgroundColor: common.bg03
       }}
     >
       <Flexbox direction="vertical" gap={4} customStyle={{ flex: 1 }}>
