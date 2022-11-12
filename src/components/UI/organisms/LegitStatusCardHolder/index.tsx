@@ -64,7 +64,8 @@ function LegitStatusCardHolder({
       imageDetailsLarge = '',
       price = 0,
       brand: { nameEng = '' },
-      siteUrl: { id: siteUrlId = 0, hasImage = false },
+      site,
+      siteUrl,
       postType
     }
   },
@@ -76,6 +77,9 @@ function LegitStatusCardHolder({
       palette: { common }
     }
   } = useTheme();
+  const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
+  const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
+
   const [open, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
@@ -298,11 +302,13 @@ function LegitStatusCardHolder({
               </Typography>
             ) : (
               <Flexbox gap={5} alignment="center" customStyle={{ marginTop: 10 }}>
-                {hasImage && (
+                {(siteUrlHasImage || siteHasImage) && (
                   <Avatar
                     width={20}
                     height={20}
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${siteUrlId}.png`}
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                      (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
+                    }.png`}
                     alt="Platform Logo Img"
                     customStyle={{ maxWidth: 20, maxHeight: 20 }}
                   />

@@ -133,7 +133,7 @@ function LegitDashboardBanner() {
         style={{ padding: '0 20px' }}
         onSlideChange={handleSwiperBanner}
         loop
-        // loopedSlides={1}
+        loopedSlides={2}
       >
         {isLoading
           ? Array.from({ length: 3 }, (_, index) => (

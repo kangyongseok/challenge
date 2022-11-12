@@ -58,6 +58,10 @@ function ChannelTalkProvider() {
         query: {
           tab: 'home'
         }
+      },
+      {
+        pathname: '/products/[id]',
+        disallowThisPageAll: true
       }
     ];
     if (

@@ -38,6 +38,8 @@ function ImageDetailDialog({
   const [rotates, setRotates] = useState<number[]>([]);
   const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([null]);
 
+  const swiperRef = useRef<SwiperClass>();
+
   const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
     setCurrentScale(scale);
   };
@@ -51,19 +53,35 @@ function ImageDetailDialog({
     }
   };
 
+  const handleClose = () => {
+    if (swiperRef.current && typeof onChange === 'function') {
+      const { realIndex, previousIndex } = swiperRef.current;
+
+      // TODO loop 활성화 시, 간헐적으로 realIndex 싱크가 맞지 않는 문제가 있는데 이유를 찾지 못함, 임시방편 조치
+      if (!syncIndex && realIndex === 1) {
+        onChange({ ...swiperRef.current, realIndex: previousIndex });
+      } else {
+        onChange(swiperRef.current);
+      }
+    }
+    onClose();
+  };
+
   const handleSlideChange = (swiper: SwiperClass) => {
-    const { realIndex } = swiper;
-    setCurrentIndex(realIndex);
+    const { realIndex, previousIndex } = swiper;
+
+    // TODO loop 활성화 시, 간헐적으로 realIndex 싱크가 맞지 않는 문제가 있는데 이유를 찾지 못함, 임시방편 조치
+    if (!syncIndex && realIndex === 1) {
+      setCurrentIndex(previousIndex);
+    } else {
+      setCurrentIndex(realIndex);
+    }
 
     const currentTransformRef = transformsRef.current[realIndex];
 
     if (currentTransformRef) {
       currentTransformRef.centerView();
       currentTransformRef.resetTransform();
-    }
-
-    if (typeof onChange === 'function') {
-      onChange(swiper);
     }
   };
 
@@ -95,7 +113,7 @@ function ImageDetailDialog({
     <Dialog
       fullScreen
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       disablePadding
       customStyle={{
         position: 'relative',
@@ -120,16 +138,19 @@ function ImageDetailDialog({
       <CloseIcon
         name="CloseOutlined"
         color="white"
-        onClick={onClose}
+        onClick={handleClose}
         customStyle={{ cursor: 'pointer' }}
       />
       <Swiper
+        onInit={(swiper) => {
+          swiperRef.current = swiper;
+        }}
         nested
         shortSwipes={shortSwipes}
         followFinger={followFinger}
         onSlideChange={handleSlideChange}
         initialSlide={syncIndex}
-        loop
+        loop={images.length > 1}
         style={{
           textAlign: 'center'
         }}

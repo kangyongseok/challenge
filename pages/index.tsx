@@ -62,6 +62,7 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
   } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
     enabled: !!accessUser
   });
+  const { mutate } = useMutation(postManage);
   const { mutate: mutatePostManage } = useMutation(postManage, {
     onSettled() {
       refetch().finally(() => {
@@ -101,6 +102,12 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
       router.replace(`/onboarding?step=${signUpStep}`);
     }
   }, [accessUser, router]);
+
+  useEffect(() => {
+    mutate({
+      event: 'VIEW_MAIN'
+    });
+  }, [mutate]);
 
   return (
     <>

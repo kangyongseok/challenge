@@ -122,19 +122,23 @@ function ProductImages({
   }, [product?.imageDetails, product?.imageDetailsLarge, searchRelatedProducts?.page.content]);
 
   const modalImages: string[] = useMemo(() => {
+    let newModalImages: string[] = [];
+    if (product?.imageDetailsLarge) {
+      newModalImages = product.imageDetailsLarge.split('|');
+    }
+    if (product?.imageDetails) {
+      newModalImages = product.imageDetails.split('|');
+    }
     if (product?.imageMainLarge) {
-      return [
-        product.imageMainLarge,
-        ...detailImages.slice(0, detailImages.length - 1)
-      ] as string[];
+      return [product.imageMainLarge, ...newModalImages];
     }
 
     if (product?.imageMain) {
-      return [product.imageMain, ...detailImages.slice(0, detailImages.length - 1)] as string[];
+      return [product.imageMain, ...newModalImages];
     }
 
-    return detailImages as string[];
-  }, [detailImages, product?.imageMain, product?.imageMainLarge]);
+    return newModalImages;
+  }, [product]);
 
   const handleClickCloseIcon = () => {
     logEvent(attrKeys.products.CLICK_PICGALLERY_CLOSE);
@@ -316,11 +320,7 @@ function ProductImages({
           ))}
           {!lowerPriceDisplay() && (
             <Pagination>
-              {currentSlide + 1}/
-              {searchRelatedProducts?.page.content &&
-              searchRelatedProducts?.page.content.length >= 8
-                ? detailImages.length
-                : detailImages.length + 1}
+              {currentSlide + 1}/{modalImages.length}
             </Pagination>
           )}
         </Swiper>

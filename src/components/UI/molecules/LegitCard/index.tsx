@@ -12,7 +12,7 @@ import { Content, ImageBox, Title } from './LegitCard.styles';
 
 interface LegitCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'grid' | 'list';
-  productLegit?: Partial<ProductLegit>;
+  productLegit: Partial<ProductLegit>;
   hideLegitLabelWithDate?: boolean;
   hidePlatformLogo?: boolean;
   customStyle?: CustomStyle;
@@ -23,7 +23,6 @@ function LegitCard({
   productLegit,
   hideLegitLabelWithDate,
   hidePlatformLogo,
-
   customStyle,
   ...props
 }: LegitCardProps) {
@@ -37,10 +36,13 @@ function LegitCard({
       brand: { nameEng = '' } = {},
       imageMain = '',
       imageThumbnail = '',
-      site: { id: siteId = 0 } = {},
+      site,
+      siteUrl,
       postType = 0
     } = {}
-  } = productLegit || {};
+  } = productLegit;
+  const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
+  const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
 
   const {
     theme: { box }
@@ -64,7 +66,9 @@ function LegitCard({
             <Avatar
               width={15}
               height={15}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${siteId}.png`}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
+              }.png`}
               alt="Platform Logo Img"
               customStyle={{
                 position: 'absolute',

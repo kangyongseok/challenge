@@ -45,6 +45,8 @@ function LegitStatusCard({
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const isMine = accessUser && accessUser.userId === userId;
+  const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
+  const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
 
   const role = useMemo(() => {
     if ((roles as string[]).includes('PRODUCT_LEGIT_HEAD')) {
@@ -147,7 +149,7 @@ function LegitStatusCard({
             height="20px"
             alt="Platform Logo Img"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (siteUrl || {}).id || (site || {}).id
+              (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
             }.png`}
             round="4"
             customStyle={{
