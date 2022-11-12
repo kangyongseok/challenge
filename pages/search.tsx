@@ -143,7 +143,11 @@ function Search() {
           pathname: '/search',
           query: { keyword: searchValue }
         })
-        .then(() => router.push(`/products/search/${keyword}`));
+        .then(() =>
+          setTimeout(() => {
+            router.push(`/products/search/${keyword}`);
+          }, 300)
+        );
     } else {
       router.push(`/products/search/${keyword}`);
     }
@@ -200,7 +204,7 @@ function Search() {
       />
       <GeneralTemplate disablePadding>
         <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
-          <SearchForm onSubmit={handleSubmit}>
+          <SearchForm action="" onSubmit={handleSubmit}>
             <SearchBar
               type="search"
               autoCapitalize="none"

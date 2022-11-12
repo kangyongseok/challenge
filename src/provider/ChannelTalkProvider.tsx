@@ -76,9 +76,7 @@ function ChannelTalkProvider() {
         return disallowThisPageAll && pathname === router.pathname;
       })
     ) {
-      setTimeout(() => {
-        ChannelTalk.hideChannelButton();
-      });
+      ChannelTalk.hideChannelButton();
     } else {
       ChannelTalk.showChannelButton();
     }

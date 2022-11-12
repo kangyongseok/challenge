@@ -137,6 +137,24 @@ function LegitStatusCardHolder({
     }
   };
 
+  const handleImageDetailDialogSlideChange = ({ realIndex, slides }: SwiperClass) => {
+    setCurrentIndex(realIndex);
+
+    const currentSlides = slides.filter((slide: HTMLDivElement) => {
+      return realIndex === Number(slide.getAttribute('data-swiper-slide-index'));
+    });
+
+    if (currentSlides[0]) {
+      const img = currentSlides[0].getElementsByClassName('product-legit-result-image');
+
+      if (!img[0]) return;
+
+      const src = img[0].getAttribute('data-src');
+
+      setBackgroundImageSrc(src || '');
+    }
+  };
+
   const handleClickSlide = () => {
     logEvent(attrKeys.legitResult.CLICK_THUMBPIC, {
       name: attrProperty.legitName.LEGIT_INFO
@@ -324,7 +342,7 @@ function LegitStatusCardHolder({
       </StyledLegitStatusCardHolder>
       <ImageDetailDialog
         open={open}
-        onChange={handleSlideChange}
+        onChange={handleImageDetailDialogSlideChange}
         onClose={handleClose}
         images={images}
         label={getLegitResultLabel(result)}

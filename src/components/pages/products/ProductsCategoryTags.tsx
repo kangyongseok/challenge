@@ -33,7 +33,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const { keyword = '', parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const categoryTagRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -144,7 +144,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
     };
 
   useEffect(() => {
-    if (categoryTagRef.current && parentCategoryTagRefs.current.length) {
+    if (wrapperRef.current && parentCategoryTagRefs.current.length) {
       const [activeCategoryTag] = parentCategoryTagRefs.current.filter((parentCategoryTagRef) => {
         return convertStringToArray(String(parentIds)).includes(
           Number(parentCategoryTagRef.getAttribute('data-id') || 0)
@@ -154,7 +154,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
       let scrollLeft = 0;
 
       if (activeCategoryTag) {
-        const { scrollWidth, clientWidth } = categoryTagRef.current;
+        const { scrollWidth, clientWidth } = wrapperRef.current;
         const { offsetLeft: targetOffsetLeft, clientWidth: targetClientWidth } = activeCategoryTag;
 
         scrollLeft = getCenterScrollLeft({
@@ -165,7 +165,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
         });
       }
 
-      categoryTagRef.current.scrollTo({
+      wrapperRef.current.scrollTo({
         left: scrollLeft,
         behavior: 'smooth'
       });
@@ -173,7 +173,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   }, [parentIds, parentCategories]);
 
   useEffect(() => {
-    if (categoryTagRef.current && subParentCategoryTagRefs.current.length) {
+    if (wrapperRef.current && subParentCategoryTagRefs.current.length) {
       const [activeCategoryTag] = subParentCategoryTagRefs.current.filter(
         (subParentCategoryTagRef) => {
           return convertStringToArray(String(subParentIds)).includes(
@@ -185,7 +185,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
       let scrollLeft = 0;
 
       if (activeCategoryTag) {
-        const { scrollWidth, clientWidth } = categoryTagRef.current;
+        const { scrollWidth, clientWidth } = wrapperRef.current;
         const { offsetLeft: targetOffsetLeft, clientWidth: targetClientWidth } = activeCategoryTag;
 
         scrollLeft = getCenterScrollLeft({
@@ -196,7 +196,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
         });
       }
 
-      categoryTagRef.current.scrollTo({
+      wrapperRef.current.scrollTo({
         left: scrollLeft,
         behavior: 'smooth'
       });
@@ -208,8 +208,8 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
       component="section"
       customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT + 8, position: 'relative' }}
     >
-      <Wrapper showAppDownloadBanner={showAppDownloadBanner}>
-        <CategoryTags ref={categoryTagRef}>
+      <Wrapper ref={wrapperRef} showAppDownloadBanner={showAppDownloadBanner}>
+        <CategoryTags>
           {(parentCategories.length > 0 || subParentCategories.length > 0) && (
             <Text
               weight={

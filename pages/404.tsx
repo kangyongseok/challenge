@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import GeneralTemplate from '@components/templates/GeneralTemplate';
+
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
@@ -33,13 +35,14 @@ function Error404() {
   }, []);
 
   return (
-    <Flexbox customStyle={{ height: '100vh', backgroundColor: common.ui98 }}>
+    <GeneralTemplate customStyle={{ backgroundColor: common.ui98 }} hideAppDownloadBanner>
       <Flexbox
         direction="vertical"
         alignment="center"
-        customStyle={{ width: '100%', padding: '0 20px' }}
+        justifyContent="center"
+        customStyle={{ flex: 1 }}
       >
-        <Icon name="Logo_45_45" customStyle={{ marginTop: 24 }} />
+        <Icon name="Logo_45_45" />
         <Camel />
         <Typography customStyle={{ marginTop: 24 }}>존재하지 않는 페이지네요.</Typography>
         <Typography>깔끔한 경험을 드리지 못해 죄송합니다😔</Typography>
@@ -63,7 +66,7 @@ function Error404() {
           * 오류를 알려주신 분께 감사의 의미로 기프티콘을 드립니다.
         </Typography>
       </Flexbox>
-    </Flexbox>
+    </GeneralTemplate>
   );
 }
 

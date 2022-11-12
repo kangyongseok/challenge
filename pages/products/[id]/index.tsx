@@ -45,7 +45,6 @@ import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -445,16 +444,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
 
     updateAccessUserOnBraze({ ...accessUser, lastProductModel: quoteTitle });
   }, [data, accessUser]);
-
-  useEffect(() => {
-    if (!isRedirectPage) {
-      ChannelTalk.moveChannelButtonPosition(-30);
-    }
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
-  }, [isRedirectPage]);
 
   const handleClickViewDetail = () => {
     logEvent(attrKeys.products.CLICK_SOLDOUT_DETAIL, {

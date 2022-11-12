@@ -129,7 +129,9 @@ function LegitDashboardBanner() {
           slideShadows: false
         }}
         pagination={{ clickable: true }}
-        autoplay
+        autoplay={{
+          disableOnInteraction: false
+        }}
         style={{ padding: '0 20px' }}
         onSlideChange={handleSwiperBanner}
         loop

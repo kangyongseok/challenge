@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { Box, Icon } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -7,12 +8,16 @@ import { TextInput } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { showAppDownloadBannerState } from '@recoil/common';
 
 type BrandSearchBarProps = InputHTMLAttributes<HTMLInputElement>;
 
 function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   return (
     <Box
       component="section"
@@ -21,7 +26,7 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
         logEvent(attrKeys.brand.CLICK_BRAND_SEARCH, { name: attrProperty.productName.BRAND_LIST })
       }
     >
-      <SearchBarBox>
+      <SearchBarBox showAppDownloadBanner={showAppDownloadBanner}>
         <TextInput
           autoCapitalize="none"
           autoComplete="off"
@@ -42,8 +47,10 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
   );
 }
 
-const SearchBarBox = styled.div`
+const SearchBarBox = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT}px;
   width: 100%;
   background-color: ${({
     theme: {

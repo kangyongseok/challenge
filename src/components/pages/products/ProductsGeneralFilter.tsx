@@ -351,8 +351,11 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         <Wrapper
           ref={ref}
           showAppDownloadBanner={showAppDownloadBanner}
-          // eslint-disable-next-line no-nested-ternary
-          defaultTop={customTop || (isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56)}
+          defaultTop={
+            customTop ||
+            // eslint-disable-next-line no-nested-ternary
+            (variant === 'search' && isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56)
+          }
         >
           <Flexbox gap={12} alignment="center" customStyle={{ padding: '0 16px', minHeight: 36 }}>
             {idFilterOptions
