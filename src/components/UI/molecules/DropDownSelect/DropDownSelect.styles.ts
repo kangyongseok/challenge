@@ -8,13 +8,14 @@ export const StyledDropDownWrap = styled.div`
 `;
 
 export const FilterButton = styled(Button)<{
-  borderHidden: boolean;
+  disabledBorder: boolean;
   isSelectValue: boolean;
-  isRecent: boolean;
+  disabledBg?: boolean;
 }>`
   height: 36px;
   padding: 6px 8px;
   line-height: 1;
+  background: ${({ theme: { palette } }) => palette.common.ui95};
   color: ${({
     theme: {
       palette: { common }
@@ -29,14 +30,14 @@ export const FilterButton = styled(Button)<{
       }
     }) => (isSelectValue ? primary.main : common.ui20)};
   }
-  ${({ borderHidden, isSelectValue, isRecent, theme: { palette } }): CSSObject => {
-    if (isRecent) {
+  ${({ disabledBorder, isSelectValue, disabledBg, theme: { palette } }): CSSObject => {
+    if (disabledBg) {
       return {
         background: 'none',
         padding: 0
       };
     }
-    if (borderHidden) {
+    if (disabledBorder) {
       return {
         border: 'none',
         padding: 0

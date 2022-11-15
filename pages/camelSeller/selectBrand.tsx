@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent, MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
@@ -13,23 +13,19 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { AllBrand, Brand } from '@dto/brand';
 
-import LocalStorage from '@library/localStorage';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchBrandsSuggest, fetchHotBrands } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { CamelSellerLocalStorage } from '@typings/camelSeller';
-import { showAppDownloadBannerState } from '@recoil/common';
+import { camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function SelectBrand() {
-  const router = useRouter();
+  const { query, push } = useRouter();
 
   const {
     theme: {
@@ -41,7 +37,7 @@ function SelectBrand() {
   const [searchValue, setSearchValue] = useState('');
   const [isFocus, setIsFocus] = useState(false);
   const [brands, setBrands] = useState<Brand[] | AllBrand[]>([]);
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const { data: defaultBrands } = useQuery(queryKeys.brands.hotBrands(), fetchHotBrands);
   const {
     data: searchBrands,
@@ -50,31 +46,16 @@ function SelectBrand() {
   } = useQuery(queryKeys.brands.brandName(), () => fetchBrandsSuggest({ keyword: searchValue }), {
     enabled: false
   });
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-
-  useEffect(() => {
-    setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-  }, []);
 
   const attTitle = useMemo(() => {
-    return camelSeller?.title ? attrProperty.title.NO_MODEL : attrProperty.title.DONTKNOW_MODEL;
-  }, [camelSeller]);
+    return query.title ? attrProperty.title.NO_MODEL : attrProperty.title.DONTKNOW_MODEL;
+  }, [query.title]);
 
   useEffect(() => {
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_BRAND, {
       title: attTitle
     });
-  }, [camelSeller, attTitle]);
-
-  useEffect(() => {
-    if (camelSeller) {
-      if (!searchValue && camelSeller.brand?.searchValue && inputRef.current) {
-        setSearchValue(camelSeller.brand?.searchValue);
-        (inputRef.current.querySelector('input') as HTMLInputElement).value =
-          camelSeller.brand?.searchValue;
-      }
-    }
-  }, [camelSeller, searchValue]);
+  }, [attTitle, query.title]);
 
   useEffect(() => {
     if (defaultBrands) {
@@ -132,19 +113,38 @@ function SelectBrand() {
       att: target.dataset.brandName
     });
 
-    LocalStorage.set(CAMEL_SELLER, {
-      ...camelSeller,
-      brand: { id: Number(target.dataset.brandId), name: target.dataset.brandName, searchValue }
-    });
-    if (camelSeller?.title) {
-      router.push('/camelSeller/registerConfirm');
+    if (query.title) {
+      setTempData({
+        ...tempData,
+        title: query.title as string,
+        quoteTitle: target.dataset.brandName as string
+      });
+
+      push({
+        pathname: '/camelSeller/registerConfirm',
+        query: {
+          ...query,
+          brandIds: Number(target.dataset.brandId),
+          brandName: target.dataset.brandName
+        }
+      });
     } else {
-      router.push('/camelSeller/selectLine');
+      push({
+        pathname: '/camelSeller/selectLine',
+        query: {
+          ...query,
+          brandIds: Number(target.dataset.brandId),
+          brandName: target.dataset.brandName
+        }
+      });
     }
   };
 
   return (
-    <GeneralTemplate header={<Header showRight={false} />}>
+    <GeneralTemplate
+      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
+      hideAppDownloadBanner
+    >
       <Box
         customStyle={{
           marginTop: '32px',
@@ -153,10 +153,10 @@ function SelectBrand() {
       >
         <Label
           variant="ghost"
-          text={camelSeller?.category?.name || ''}
+          text={(query.categoryName as string) || ''}
           customStyle={{ marginBottom: 16 }}
         />
-        {camelSeller?.search === false ? (
+        {!query.title ? (
           <>
             <Typography variant="h2" weight="bold">
               판매하고자 하는
@@ -168,7 +168,7 @@ function SelectBrand() {
         ) : (
           <>
             <Typography variant="h3">
-              <UnderLineTitle>{camelSeller?.keyword}</UnderLineTitle>의
+              <UnderLineTitle>{query.title}</UnderLineTitle>의
             </Typography>
             <Typography variant="h2" weight="bold" customStyle={{ marginTop: 8 }}>
               <HighlightTitle>브랜드</HighlightTitle>를 알려주세요.
@@ -176,7 +176,7 @@ function SelectBrand() {
           </>
         )}
       </Box>
-      <StyledSearch showAppDownloadBanner={showAppDownloadBanner}>
+      <StyledSearch>
         <SearchWrap isActive={!!(searchValue || isFocus)}>
           <CustomSearchBar
             fullWidth
@@ -219,7 +219,7 @@ function SelectBrand() {
                 border: `1px solid ${common.ui80}`,
                 padding: '10px 14px'
               }}
-              onClick={() => ChannelTalk.showMessenger}
+              onClick={() => ChannelTalk.showMessenger()}
             >
               브랜드 추가 요청
             </Button>
@@ -251,10 +251,9 @@ function SelectBrand() {
   );
 }
 
-const StyledSearch = styled.div<{ showAppDownloadBanner: boolean }>`
+const StyledSearch = styled.div`
   position: sticky;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
+  top: 56px;
   left: 0;
   z-index: 5;
   background: white;
@@ -334,15 +333,16 @@ const HighlightTitle = styled.span`
 `;
 
 const GridBox = styled.div<{ isDisabled: boolean }>`
-  display: ${({ isDisabled }) => (isDisabled ? 'none' : 'grid')};
-  grid-template-columns: repeat(3, 1fr);
+  display: ${({ isDisabled }) => (isDisabled ? 'none' : 'flex')};
+  flex-wrap: wrap;
+  /* grid-template-columns: repeat(3, 1fr); */
   margin: 32px 0;
   gap: 12px;
-  min-height: 77vh;
+  /* min-height: 77vh; */
 `;
 
 const BrandChip = styled(Chip)`
-  min-width: 94px;
+  min-width: calc(33% - 9px);
   height: 94px;
   border: 2px solid
     ${({
@@ -353,20 +353,19 @@ const BrandChip = styled(Chip)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui95};
+  background: #eff2f7;
   overflow: hidden;
   & > div {
     width: 100%;
   }
   img {
-    width: 50%;
+    max-width: 50px;
   }
 `;
 
-const Img = styled.img``;
+const Img = styled.img`
+  /* max-width: 43px; */
+  /* height: auto; */
+`;
 
 export default SelectBrand;

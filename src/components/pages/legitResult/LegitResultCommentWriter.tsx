@@ -137,7 +137,6 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
 
   const handleClickPost = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-
     const attResult = () => {
       switch (result) {
         case 1:

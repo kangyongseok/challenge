@@ -5,9 +5,11 @@ import styled from '@emotion/styled';
 
 function PhotoIconBox({
   onClick,
-  count
+  count,
+  totalImageCount
 }: {
   count: number;
+  totalImageCount: number;
   onClick: (e: MouseEvent<HTMLDivElement>) => void;
 }) {
   const {
@@ -27,7 +29,7 @@ function PhotoIconBox({
           /
         </Typography>
         <Typography customStyle={{ color: common.ui60 }} weight="bold" variant="small2">
-          10
+          {totalImageCount}
         </Typography>
       </Flexbox>
     </PhotoBox>

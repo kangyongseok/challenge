@@ -20,3 +20,5 @@ export const locales = {
     name: 'English'
   }
 };
+
+export const globalSizeGroupId = [1, 3, 6, 8, 10];

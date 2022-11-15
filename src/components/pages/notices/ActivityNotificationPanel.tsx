@@ -1,27 +1,99 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { useQuery } from 'react-query';
-import { Alert, Box, Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
+import { useRouter } from 'next/router';
+import * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
+import { Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
+import { Image } from '@components/UI/atoms';
+
+import type { UserNoti } from '@dto/user';
+import type { SearchParams } from '@dto/product';
+
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchProductKeywords, fetchUserNoti } from '@api/user';
-import { fetchDashboard } from '@api/dashboard';
+import { fetchUserNoti, postNotiRead } from '@api/userHistory';
+import { fetchProductKeywords, putProductKeywordView } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getFormattedDistanceTime } from '@utils/formats';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-import UserNotificationItem from './UserNotificationItem';
+interface LabelData {
+  id: 10 | 20 | 30 | 40 | 50;
+  text: '찜한매물' | '사진감정' | '가격하락' | '이벤트' | '카멜추천';
+  iconName: keyof typeof SvgIcons;
+  bgColor: string;
+  color: string;
+}
 
-function ActivityNotificationPanel() {
-  const { data } = useQuery(queryKeys.users.userNoti(0), () => fetchUserNoti(0));
-  const { data: dashboard } = useQuery(queryKeys.dashboards.all, () => fetchDashboard());
-  const [showDialog, setShowDialog] = useState(false);
+function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
+  const router = useRouter();
+  const {
+    theme: {
+      palette: { common, secondary, primary }
+    }
+  } = useTheme();
+  const labelData: LabelData[] = [
+    {
+      id: 10,
+      text: '찜한매물',
+      iconName: 'HeartFilled',
+      bgColor: secondary.red.highlight,
+      color: secondary.red.light
+    },
+    { id: 20, text: '사진감정', iconName: 'LegitFilled', bgColor: common.ui95, color: common.ui20 },
+    {
+      id: 30,
+      text: '가격하락',
+      iconName: 'WonFilled',
+      bgColor: primary.highlight,
+      color: primary.light
+    },
+    {
+      id: 40,
+      text: '이벤트',
+      iconName: 'StarFilled',
+      bgColor: secondary.purple.bgLight,
+      color: secondary.purple.light
+    },
+    {
+      id: 50,
+      text: '카멜추천',
+      iconName: 'SafeFilled',
+      bgColor: primary.highlight,
+      color: secondary.blue.light
+    }
+  ];
+  const params = {
+    size: 20,
+    sort: 'dateCreated,DESC',
+    type: 0
+  };
+  const observerRef = useRef<IntersectionObserver>();
+  const targetRef = useRef<HTMLDivElement>(null);
   const { data: accessUser } = useQueryAccessUser();
-
+  const [openToast, setOpenToast] = useState(false);
+  const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
+  const { mutate: productNotiReadMutate } = useMutation(postNotiRead);
+  const { data, fetchNextPage, refetch } = useInfiniteQuery(
+    queryKeys.userHistory.userNoti(params),
+    ({ pageParam = 0 }) => fetchUserNoti({ ...params, page: pageParam as number }),
+    {
+      getNextPageParam: (nextData) => {
+        const { number = 0 } = nextData || {};
+        return number < 4 ? number + 1 : undefined;
+      }
+    }
+  );
   const { data: { content: productKeywords = [] } = {} } = useQuery(
     queryKeys.users.userProductKeywords(),
     fetchProductKeywords,
@@ -30,154 +102,264 @@ function ActivityNotificationPanel() {
     }
   );
 
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   useEffect(() => {
     logEvent(attrKeys.noti.VIEW_BEHAVIOR_LIST);
   }, []);
 
-  if (!data) {
-    return null;
-  }
+  useEffect(() => {
+    if (allRead) {
+      refetch();
+    }
+  }, [allRead, refetch]);
+
+  const isProductKeywordProcess = (activityInfo: UserNoti) => {
+    const productKeywordId = Number(activityInfo.parameter.split('/?')[1].split('=')[1]);
+    const findProductKeyword = productKeywords.find(({ id }) => id === productKeywordId);
+
+    if (findProductKeyword) {
+      const searchParams: SearchParams = JSON.parse(findProductKeyword.keywordFilterJson);
+      const getViewType = () => {
+        if (findProductKeyword.sourceType === 3) {
+          return 'categories';
+        }
+
+        if (findProductKeyword.sourceType === 1 || findProductKeyword.sourceType === 2) {
+          return 'brands';
+        }
+
+        return 'search';
+      };
+      const getKeywordByViewType = (viewType: string) => {
+        if (viewType === 'categories') {
+          return searchParams.categories;
+        }
+        if (viewType === 'brands') {
+          return searchParams.requiredBrands;
+        }
+        return searchParams.keyword;
+      };
+
+      const viewType = getViewType();
+      const keyword = getKeywordByViewType(viewType);
+
+      if (findProductKeyword.isNew) {
+        productKeywordViewMutate(findProductKeyword.id, {
+          onSettled: () =>
+            router.push({
+              pathname: `/products/${viewType}/${encodeURIComponent(String(keyword))}`,
+              query: { ...searchParams }
+            })
+        });
+      } else {
+        router.push({
+          pathname: `/products/${viewType}/${encodeURIComponent(String(keyword))}`,
+          query: { ...searchParams }
+        });
+      }
+
+      return;
+    }
+    setOpenToast(true);
+  };
+
+  const handleClick = (activityInfo: UserNoti) => {
+    logEvent(attrKeys.noti.CLICK_BEHAVIOR, {
+      id: activityInfo.id,
+      targetId: activityInfo.targetId,
+      type: activityInfo.type,
+      keyword: activityInfo.keyword
+    });
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.productName.HISTORY,
+      title: attrProperty.productTitle.BEHAVIOR,
+      type: attrProperty.productType.HISTORY
+    });
+    const productKeywordId = Number(activityInfo.parameter.split('/?')[1].split('=')[1]);
+    const findProductKeyword = productKeywords.find(({ id }) => id === productKeywordId);
+    if (findProductKeyword) {
+      logEvent(attrKeys.noti.CLICK_PRODUCT_LIST, {
+        name: attrProperty.name.ALARM_LIST
+      });
+    }
+    if (!findProductKeyword && activityInfo.parameter.split('/').includes('products')) {
+      logEvent(attrKeys.noti.CLICK_PRODUCT_DETAIL, {
+        name: attrProperty.name.ALARM_LIST
+      });
+    }
+    if (activityInfo.parameter.split('/').includes('wishes')) {
+      logEvent(attrKeys.noti.CLICK_WISH_LIST, {
+        name: attrProperty.name.ALARM_LIST
+      });
+    }
+    if (activityInfo.parameter.split('/').includes('announces')) {
+      logEvent(attrKeys.noti.CLICK_ANNOUNCE_DETAIL, {
+        name: attrProperty.name.ALARM_LIST
+      });
+    }
+    if (activityInfo.parameter.split('/').includes('legit')) {
+      logEvent(attrKeys.noti.CLICK_LEGIT_INFO, {
+        name: attrProperty.name.ALARM_LIST
+      });
+    }
+
+    productNotiReadMutate(
+      {
+        targetId: activityInfo.id,
+        typeName: 'NV'
+      },
+      {
+        onSuccess() {
+          refetch();
+          if (activityInfo.parameter) {
+            if (activityInfo.parameter.indexOf('productKeywordId') !== -1) {
+              isProductKeywordProcess(activityInfo);
+              return;
+            }
+            router.push(activityInfo.parameter);
+          }
+        }
+      }
+    );
+  };
+
+  const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        io.unobserve(entry.target);
+        fetchNextPage();
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+    observerRef.current = new IntersectionObserver(intersectionObserver);
+    if (targetRef.current) {
+      observerRef.current.observe(targetRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
-    <Box
-      customStyle={{
-        marginTop: 16
-      }}
-    >
-      <Alert
-        round="16"
-        customStyle={{
-          padding: '16px 24px',
-          marginBottom: 24
-        }}
-      >
-        <Flexbox justifyContent="space-between">
-          <Flexbox direction="vertical">
-            <Flexbox justifyContent="space-between" alignment="center">
-              <Typography weight="bold" variant="h4">
-                {dashboard?.theme.personalCount.toLocaleString() ?? 0}명
+    <Flexbox direction="vertical" gap={32} customStyle={{ padding: '32px 0' }}>
+      {data?.pages.map((page, pageIndex) => {
+        if (!page) {
+          return (
+            <Flexbox direction="vertical" gap={4} alignment="center" justifyContent="center">
+              <Typography variant="h0">😮</Typography>
+              <Typography variant="h3" weight="bold">
+                활동알림이 없습니다!
               </Typography>
-              <DialogToggle
-                onClick={() => {
-                  setShowDialog(true);
-                }}
-              >
-                ?
-              </DialogToggle>
             </Flexbox>
-            <Typography variant="body2">명품 취향을 알려줬어요!</Typography>
-          </Flexbox>
-          <Box
-            customStyle={{
-              height: 40,
-              width: 1,
-              backgroundColor: common.ui80
-            }}
-          />
-          <Flexbox direction="vertical">
-            <Typography weight="bold" variant="h4">
-              {dashboard?.theme.productCount.toLocaleString() ?? 0}번
-            </Typography>
-            <Typography variant="body2">꿀매물 득템하러 갔어요!</Typography>
-          </Flexbox>
-        </Flexbox>
-      </Alert>
-      <Flexbox
-        direction="vertical"
-        gap={18}
-        customStyle={{
-          paddingBottom: 40
-        }}
-      >
-        {data.content?.map((notification, idx) => (
-          <React.Fragment key={`user-noti-${notification.id}`}>
-            <UserNotificationItem
-              type="userNoti"
-              notification={notification}
-              productKeywords={productKeywords}
-            />
-            {idx !== data.content.length - 1 && (
-              <Box
-                customStyle={{
-                  borderTop: `1px solid ${common.ui90}`
-                }}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </Flexbox>
-      <Dialog
-        open={showDialog}
-        onClose={() => {
-          setShowDialog(false);
-        }}
-      >
-        <Box
-          customStyle={{
-            padding: '8px 0'
-          }}
-        >
-          <Typography
-            variant="h3"
-            weight="bold"
-            customStyle={{
-              padding: '8px 0'
-            }}
-          >
-            ✍🏻맞춤형 추천이란?
-          </Typography>
-          <Typography
-            variant="body2"
-            customStyle={{
-              padding: '8px 0'
-            }}
-          >
-            •고객님이 관심을 표현한 브랜드, 많이 찾아본 상품을 기반으로 취향에 꼭 맞는 매물들을
-            찾아드려요
-          </Typography>
-          <Typography
-            variant="body2"
-            customStyle={{
-              padding: '8px 0'
-            }}
-          >
-            •카멜을 더 많이 사용하실수록 더 정확한 추천을 해드릴 수 있어요!
-          </Typography>
-          <Button
-            fullWidth
-            onClick={() => {
-              setShowDialog(false);
-            }}
-          >
-            확인했어요
-          </Button>
-        </Box>
-      </Dialog>
-    </Box>
+          );
+        }
+        return page.content?.map((activityInfo, i) => {
+          const findLabel = find(labelData, { id: Number(activityInfo.label.name) }) as LabelData;
+          return (
+            <Flexbox
+              gap={20}
+              alignment="center"
+              justifyContent="space-between"
+              key={`user-noti-${activityInfo.id}`}
+              onClick={() => handleClick(activityInfo)}
+              customStyle={{ opacity: activityInfo.isViewed ? 0.3 : 1 }}
+              ref={
+                page.content.length * pageIndex + i === data.pages.length * page.content.length - 1
+                  ? targetRef
+                  : null
+              }
+            >
+              <Box>
+                <ActivityNotiLabel
+                  justifyContent="center"
+                  alignment="center"
+                  gap={3}
+                  bgColor={findLabel.bgColor}
+                >
+                  <Icon
+                    name={findLabel.iconName}
+                    width={10}
+                    height={10}
+                    customStyle={{ color: findLabel.color }}
+                  />
+                  <Typography
+                    variant="small2"
+                    weight="medium"
+                    customStyle={{ color: findLabel.color }}
+                  >
+                    {findLabel?.text}
+                  </Typography>
+                </ActivityNotiLabel>
+                <ItemContentsText dangerouslySetInnerHTML={{ __html: activityInfo.message }} />
+                <Typography variant="small2" customStyle={{ color: common.ui60 }}>
+                  {getFormattedDistanceTime(new Date(activityInfo.dateCreated.replace(/-/g, '/')))}
+                </Typography>
+              </Box>
+              {activityInfo.image && (
+                <Box
+                  customStyle={{
+                    minWidth: 64,
+                    position: 'relative'
+                  }}
+                >
+                  {!activityInfo.isViewed && (
+                    <NewIcon
+                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/badge_new.png`}
+                      width={16}
+                      height={16}
+                      disableAspectRatio
+                    />
+                  )}
+                  <Image
+                    src={activityInfo.image}
+                    disableAspectRatio
+                    width={64}
+                    height={64}
+                    customStyle={{ borderRadius: 8 }}
+                  />
+                </Box>
+              )}
+            </Flexbox>
+          );
+        });
+      })}
+      <Toast open={openToast} onClose={() => setOpenToast(false)}>
+        지금은 존재하지 않는 매물 목록이에요.
+      </Toast>
+    </Flexbox>
   );
 }
 
-const DialogToggle = styled.button`
-  color: white;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 100%;
-  font-size: 12px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui80};
+const ActivityNotiLabel = styled(Flexbox)<{ bgColor: string }>`
+  max-width: 59px;
+  padding: 3.5px 4px;
+  border-radius: 4px;
+  background: ${({ bgColor }) => bgColor};
+  margin-bottom: 8px;
+  div {
+    line-height: 11px;
+  }
+`;
+
+const NewIcon = styled(Image)`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 1;
+`;
+
+const ItemContentsText = styled(Typography)`
+  p:first-child {
+    font-size: ${({ theme: { typography } }) => typography.h4.size};
+    font-weight: ${({ theme: { typography } }) => typography.h4.weight.medium};
+    margin-bottom: 4px;
+  }
+  p:last-child {
+    color: ${({ theme: { palette } }) => palette.common.ui60};
+    margin-bottom: 8px;
+  }
 `;
 
 export default ActivityNotificationPanel;

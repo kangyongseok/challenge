@@ -1,48 +1,54 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import type { MouseEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Icon, Label, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { CustomSearchBar, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-import LocalStorage from '@library/localStorage';
+import { Models } from '@dto/model';
+
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchModelSuggest } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { CamelSellerLocalStorage } from '@typings/camelSeller';
-import { showAppDownloadBannerState } from '@recoil/common';
+import { camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function SelectLine() {
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const router = useRouter();
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+  const { query, push } = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState('');
   const [isFocus, setIsFocus] = useState(false);
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const { data: models, refetch } = useQuery(
-    queryKeys.models.suggest(),
+    queryKeys.models.suggest({
+      brandIds: [Number(query.brandIds)],
+      categoryIds: [Number(query.categoryIds)],
+      keyword: searchValue || (query.brandName as string) || ''
+    }),
     () =>
       fetchModelSuggest({
-        brandIds: [Number(camelSeller?.brand?.id)],
-        categoryIds: [Number(camelSeller?.category.id)],
-        keyword: searchValue || camelSeller?.brand?.name || ''
+        brandIds: [Number(query.brandIds)],
+        categoryIds: [Number(query.categoryIds)],
+        keyword: searchValue || (query.brandName as string) || ''
       }),
     {
-      enabled: false,
+      enabled: !!(searchValue || query.brandName),
       onSuccess(data) {
         logEvent(attrKeys.camelSeller.LOAD_KEYWORD_AUTO, {
           name: attrProperty.name.DONTKNOW_MODEL,
@@ -55,39 +61,15 @@ function SelectLine() {
   );
 
   useEffect(() => {
-    setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
     ChannelTalk.hideChannelButton();
-  }, []);
-
-  useEffect(() => {
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MODEL, {
       name: attrProperty.name.DONTKNOW_MODEL
     });
-  }, [camelSeller]);
+  }, []);
 
   useEffect(() => {
-    if (camelSeller) {
-      if (!searchValue && camelSeller.modelSearchValue && inputRef.current) {
-        setSearchValue(camelSeller.modelSearchValue);
-        (inputRef.current.querySelector('input') as HTMLInputElement).value =
-          camelSeller.modelSearchValue;
-      }
-      refetch();
-    }
-  }, [camelSeller, refetch, searchValue]);
-
-  useEffect(() => {
-    if (searchValue) {
-      // if (isFocus) {
-      //   window.scroll({
-      //     top: 150,
-      //     left: 0,
-      //     behavior: 'smooth'
-      //   });
-      // }
-      refetch();
-    }
-  }, [searchValue, refetch, isFocus]);
+    refetch();
+  }, [refetch, searchValue]);
 
   const handleFocus = () => {
     setIsFocus(true);
@@ -98,22 +80,28 @@ function SelectLine() {
     });
   };
 
-  const handleClickSelect = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
+  const handleClickSelect = (model: Models) => {
     logEvent(attrKeys.camelSeller.CLICK_MODEL, {
       name: attrProperty.name.DONTKNOW_MODEL,
       title: attrProperty.title.MODEL,
-      att: target.dataset.modelName
+      att: model.name
     });
 
-    LocalStorage.set(CAMEL_SELLER, {
-      ...camelSeller,
-      title: target.dataset.modelName,
-      keyword: target.dataset.modelName,
-      modelSearchValue: searchValue,
-      subCategoryName: target.dataset.modelSubCategory
+    setTempData({
+      ...tempData,
+      title: model.name as string,
+      quoteTitle: model.name as string
     });
-    router.push('/camelSeller/registerConfirm');
+
+    push({
+      pathname: '/camelSeller/registerConfirm',
+      query: {
+        ...query,
+        title: model.name,
+        brandIds: model.tmpBrands.map((brands) => brands.id),
+        categoryIds: model.tmpCategories.map((category) => category.id)
+      }
+    });
   };
 
   const handleChange = debounce((e: FormEvent<HTMLInputElement>) => {
@@ -127,12 +115,19 @@ function SelectLine() {
       title: attrProperty.title.SKIP
     });
 
-    router.push('/camelSeller/registerConfirm');
+    push({
+      pathname: '/camelSeller/registerConfirm',
+      query: {
+        ...query,
+        title: query.brandName
+      }
+    });
   };
 
   return (
     <GeneralTemplate
-      header={<Header showRight={false} />}
+      hideAppDownloadBanner
+      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
       footer={
         <FooterWrap>
           <TransParentGradian />
@@ -150,22 +145,24 @@ function SelectLine() {
       <Box
         customStyle={{
           marginTop: '32px'
-          // display: searchValue && searchBrands?.length === 0 ? 'none' : 'block'
         }}
       >
         <Label
           variant="ghost"
-          text={camelSeller?.category.name || ''}
+          text={(query.categoryName as string) || ''}
           customStyle={{ marginBottom: 16 }}
         />
         <Typography variant="h3">
-          <UnderLineTitle>{camelSeller?.brand?.name}</UnderLineTitle>의
+          <UnderLineTitle>{query.brandName}</UnderLineTitle>의
         </Typography>
         <Typography variant="h2" weight="bold" customStyle={{ marginTop: 8 }}>
           <HighlightTitle>모델</HighlightTitle>을 알려주세요.
         </Typography>
+        <Typography customStyle={{ color: common.ui60, marginTop: 8 }}>
+          보유한 명품과 비슷한 모델을 골라주세요.
+        </Typography>
       </Box>
-      <StyledSearch showAppDownloadBanner={showAppDownloadBanner}>
+      <StyledSearch>
         <SearchWrap isActive={!!(searchValue || isFocus)}>
           <CustomSearchBar
             fullWidth
@@ -181,13 +178,14 @@ function SelectLine() {
       </StyledSearch>
       <GridBox>
         {models?.map((model) => (
-          <ModelCard
-            key={`select-line-${model.name}`}
-            onClick={handleClickSelect}
-            data-model-name={model.name}
-            data-model-sub-category={model.subParentCategoryName}
-          >
-            <Img src={model.imageThumbnail} alt={model.name} />
+          <ModelCard key={`select-line-${model.name}`} onClick={() => handleClickSelect(model)}>
+            <Flexbox
+              customStyle={{ width: '100%', height: 100 }}
+              alignment="center"
+              justifyContent="center"
+            >
+              <Img src={model.imageThumbnail} alt={model.name} />
+            </Flexbox>
             <Typography variant="small1" customStyle={{ padding: 8 }}>
               {model.name}
             </Typography>
@@ -214,10 +212,9 @@ const FooterWrap = styled.div`
   }) => common.uiWhite};
 `;
 
-const StyledSearch = styled.div<{ showAppDownloadBanner: boolean }>`
+const StyledSearch = styled.div`
   position: sticky;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
+  top: 56px;
   left: 0;
   z-index: 5;
   background: white;
@@ -268,7 +265,6 @@ const GridBox = styled.div`
   grid-template-columns: repeat(3, 1fr);
   margin: 15px 0 100px;
   gap: 12px;
-  min-height: 77vh;
 `;
 
 const ModelCard = styled.div`

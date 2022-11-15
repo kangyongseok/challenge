@@ -33,6 +33,7 @@ interface ProductImagesProps {
   isLoading: boolean;
   product?: Product;
   isProductLegit?: boolean;
+  isCamelSellerProduct?: boolean;
   getProductImageOverlay: ({
     status,
     variant
@@ -46,7 +47,8 @@ function ProductImages({
   isLoading,
   product,
   isProductLegit,
-  getProductImageOverlay
+  getProductImageOverlay,
+  isCamelSellerProduct
 }: ProductImagesProps) {
   const router = useRouter();
 
@@ -104,9 +106,9 @@ function ProductImages({
       if (searchRelatedProducts?.page.content && searchRelatedProducts.page.content.length < 8) {
         result.pop();
       }
+
       return result;
     }
-
     if (product?.imageDetails) {
       const result = [
         ...product.imageDetails.split('|'),
@@ -236,27 +238,29 @@ function ProductImages({
           {product && !lowerPriceDisplay() && (
             <>
               {getProductImageOverlay({ status: product.status })}
-              <Platform>
-                <Avatar
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                    (product.siteUrl?.hasImage && product.siteUrl?.id) ||
-                    (product.site?.hasImage && product.site?.id) ||
-                    ''
-                  }.png`}
-                  alt={`${product.siteUrl?.name || 'Platform'} Logo Img`}
-                  customStyle={{
-                    width: 20,
-                    height: 20
-                  }}
-                />
-                <Typography
-                  variant="body2"
-                  weight="bold"
-                  customStyle={{ marginLeft: 6, color: light.palette.common.ui20 }}
-                >
-                  {product.siteUrl?.name || product.site.name}
-                </Typography>
-              </Platform>
+              {!isCamelSellerProduct && (
+                <Platform>
+                  <Avatar
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                      (product.siteUrl?.hasImage && product.siteUrl?.id) ||
+                      (product.site?.hasImage && product.site?.id) ||
+                      ''
+                    }.png`}
+                    alt={`${product.siteUrl?.name || 'Platform'} Logo Img`}
+                    customStyle={{
+                      width: 20,
+                      height: 20
+                    }}
+                  />
+                  <Typography
+                    variant="body2"
+                    weight="bold"
+                    customStyle={{ marginLeft: 6, color: light.palette.common.ui20 }}
+                  >
+                    {product.siteUrl?.name || product.site.name}
+                  </Typography>
+                </Platform>
+              )}
             </>
           )}
           <SwiperSlide>
@@ -331,6 +335,9 @@ function ProductImages({
           />
         )}
       </Box>
+      {/* {console.log(detailImages, 'detail')} */}
+      {/* {console.log(modalImages, 'modal')} */}
+      {/* {console.log(currentSlide)} */}
       <ImageDetailDialog
         open={openModal}
         onClose={handleClickCloseIcon}

@@ -30,6 +30,7 @@ function UserShopProductManageBottomSheet() {
     }
   } = useTheme();
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('manage'));
+  const setOpenSoldoutState = useSetRecoilState(userShopOpenStateFamily('soldOutConfirm'));
   const { id, status } = useRecoilValue(userShopSelectedProductState);
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
@@ -106,18 +107,27 @@ function UserShopProductManageBottomSheet() {
       title: getTitle,
       att: getAtt(dataStatus)
     });
-
+    if (dataStatus === 1) {
+      setOpenState(({ type }) => ({
+        type,
+        open: false
+      }));
+      setTimeout(() => {
+        setOpenSoldoutState(({ type }) => ({ type, open: true }));
+      }, 500);
+      return;
+    }
     updateMutation(
       { productId: id, status: dataStatus },
       {
         onSettled: () => {
-          if (dataStatus === 1) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'soldout',
-              customStyle: { bottom: TOAST_BOTTOM }
-            });
-          }
+          // if (dataStatus === 1) {
+          //   setToastState({
+          //     type: 'sellerProductState',
+          //     status: 'soldout',
+          //     customStyle: { bottom: TOAST_BOTTOM }
+          //   });
+          // }
           if (dataStatus === 0) {
             setToastState({
               type: 'sellerProductState',
@@ -183,7 +193,7 @@ function UserShopProductManageBottomSheet() {
     }
 
     // LocalStorage.remove(CAMEL_SELLER);
-    router.push(`/camelSeller/registerConfirm?id=${id}`);
+    router.push(`/camelSeller/registerConfirm/${id}`);
   };
 
   return (

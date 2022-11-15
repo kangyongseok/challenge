@@ -6,7 +6,6 @@ import type {
   CategoryWishesParams,
   PageHoneyNoti,
   PageUserHistory,
-  PageUserNoti,
   PostAreaParams,
   PostSize,
   PostStyleParams,
@@ -114,14 +113,6 @@ export async function fetchUserHistory(parameter: { page: number }) {
 export async function fetchUserHoneyNoti() {
   const { data } = await Axios.getInstance().get<PageHoneyNoti>(
     '/userhoneynoti?size=200&sort=dateCreated,DESC'
-  );
-
-  return data;
-}
-
-export async function fetchUserNoti(type: number) {
-  const { data } = await Axios.getInstance().get<PageUserNoti>(
-    `/userhistory/usernoti?size=100&sort=dateCreated,DESC&type=${type}`
   );
 
   return data;

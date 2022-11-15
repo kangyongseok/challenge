@@ -5,3 +5,10 @@ export interface ManageParams {
   title?: string;
   userId?: number;
 }
+
+export interface ActivityNotiParams {
+  size: number;
+  sort: string;
+  type: number;
+  page?: number;
+}

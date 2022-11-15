@@ -20,7 +20,7 @@ const tasks: ABTestTask[] = [
       A: 50,
       B: 50
     },
-    running: true,
+    running: false,
     defaultBelong: 'A'
   }
 ];

@@ -110,7 +110,11 @@ const nextConfig = {
     GOOGLE_ANALYTICS_TRACKING_ID: process.env.GOOGLE_ANALYTICS_TRACKING_ID
   },
   images: {
-    domains: [process.env.IMAGE_DOMAIN, 's3.ap-northeast-2.amazonaws.com']
+    domains: [
+      process.env.IMAGE_DOMAIN,
+      's3.ap-northeast-2.amazonaws.com',
+      'mrcamel-dev.s3.ap-northeast-2.amazonaws.com'
+    ]
   },
   async redirects() {
     return isDevelopment

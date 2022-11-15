@@ -3,19 +3,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
-import LocalStorage from '@library/localStorage';
+import { CommonCode } from '@dto/common';
+
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import {
   camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState
+  // camelSellerSubmitState,
+  camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
 
 function CamelSellerRegisterCondition() {
@@ -24,26 +23,28 @@ function CamelSellerRegisterCondition() {
       palette: { secondary, common }
     }
   } = useTheme();
-
-  const submitData = useRecoilValue(camelSellerSubmitState);
   const { isState } = useRecoilValue(camelSellerBooleanStateFamily('submitClick'));
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const editData = useRecoilValue(camelSellerEditState);
+  const tempData = useRecoilValue(camelSellerTempSaveDataState);
   const setOpen = useSetRecoilState(camelSellerDialogStateFamily('condition'));
+  const [condition, setCondition] = useState<CommonCode | { id: number; name: string } | null>(
+    null
+  );
 
   useEffect(() => {
-    setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
-  }, [submitData, editData]);
+    if (tempData.condition.name) {
+      setCondition(tempData.condition);
+    }
+  }, [tempData]);
 
   const getColor = useMemo(() => {
-    if (isState && !camelSeller?.condition?.id) {
+    if (isState && !condition) {
       return secondary.red.light;
     }
-    if (camelSeller?.condition?.id) {
+    if (condition) {
       return common.ui20;
     }
     return common.ui80;
-  }, [isState, camelSeller?.condition?.id, common.ui80, common.ui20, secondary.red.light]);
+  }, [isState, condition, common.ui80, common.ui20, secondary.red.light]);
 
   const handleClick = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
@@ -62,7 +63,7 @@ function CamelSellerRegisterCondition() {
           color: getColor
         }}
       >
-        {camelSeller?.condition?.name || '상태'}
+        {condition?.name || '상태'}
       </Typography>
       <Icon name="CaretRightOutlined" customStyle={{ color: common.ui80 }} />
     </Flexbox>

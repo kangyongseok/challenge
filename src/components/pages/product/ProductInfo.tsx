@@ -1,6 +1,6 @@
-import type { MutableRefObject } from 'react';
-import { useMemo, useState } from 'react';
+import { MutableRefObject, useEffect, useMemo, useState } from 'react';
 
+import { useRecoilState } from 'recoil';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { Box, Button, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -22,6 +22,8 @@ import attrKeys from '@constants/attrKeys';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, removeTagAndAddNewLine } from '@utils/common';
 
+import { toastState } from '@recoil/common';
+
 interface ProductInfoProps {
   contentRef: MutableRefObject<HTMLHRElement | null>;
   isSafe: boolean;
@@ -36,6 +38,8 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
   } = useTheme();
   const [isClamped, setIsClamped] = useState(false);
   const [isExpended, setIsExpended] = useState(false);
+  const [hoistingState, setHoistingState] = useState(false);
+  const [getToastState] = useRecoilState(toastState);
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
   const isCamelSeller =
     product &&
@@ -48,7 +52,7 @@ function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
     if (product?.site.code === 'CAMELSELLER') {
       return `
 ∙ 상품상태: ${product.labels.filter((label) => label.codeId === 14)[0].name}
-∙ 사이즈: ${product.size}
+∙ 사이즈: ${product.size || 'ONE SIZE'}
 ∙ 색상: ${product.color}
 ${newDescription}
       `;
@@ -67,6 +71,12 @@ ${newDescription}
     product?.size,
     product?.viewDescription
   ]);
+
+  useEffect(() => {
+    if (getToastState.status === 'hoisting') {
+      setHoistingState(true);
+    }
+  }, [getToastState]);
 
   const productLabels = useMemo(() => {
     if (!product?.productSeller.site || !product?.labels) return [];
@@ -126,8 +136,8 @@ ${newDescription}
           </Typography>
         </Flexbox>
       )}
-      <Flexbox gap={6} customStyle={{ marginBottom: 8 }}>
-        <Flexbox>
+      <Flexbox customStyle={{ marginBottom: 8 }}>
+        <Flexbox customStyle={{ margin: productLabels.length > 0 ? 6 : 0 }}>
           {productLabels.map((label, index) => (
             <ProductLabel
               key={`product-label-${label.id}`}
@@ -154,7 +164,7 @@ ${newDescription}
         customStyle={{ color: common.ui60, marginTop: 8 }}
       >
         <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
-          {getFormattedDistanceTime(new Date(product.datePosted))}
+          {getFormattedDistanceTime(hoistingState ? new Date() : new Date(product.datePosted))}
           {product?.area && ` · ${getProductArea(product.area)}`}
         </Typography>
         <Flexbox alignment="center">

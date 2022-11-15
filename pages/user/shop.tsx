@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Typography } from 'mrcamel-ui';
+import { Box, Typography } from 'mrcamel-ui';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
@@ -18,7 +18,10 @@ function UserShop() {
     <>
       <GeneralTemplate
         header={
-          <Header onClickLeft={() => router.replace('/mypage')}>
+          <Header
+            onClickLeft={() => router.replace('/mypage')}
+            rightIcon={<Box customStyle={{ width: 56 }} />}
+          >
             <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
               내 상점
             </Typography>

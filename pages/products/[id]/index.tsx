@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -22,7 +22,10 @@ import {
 } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
+import {
+  UserShopProductDeleteConfirmDialog,
+  UserShopProductSoldOutConfirmBottomSheet
+} from '@components/pages/userShop';
 import {
   ProductActions,
   ProductCTAButton,
@@ -71,7 +74,9 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-import { loginBottomSheetState } from '@recoil/common';
+// import { showAppDownloadBannerState } from '@recoil/common';
+// import useScrollTrigger from '@hooks/useScrollTrigger';
+import { loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -93,6 +98,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     data,
     isLoading,
     isFetching,
+    refetch,
     mutatePostProductsAdd,
     mutatePostProductsRemove,
     mutateMetaInfo
@@ -101,6 +107,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
   const [isCamelSellerProduct, setCamelSellerProduct] = useState(false);
   const [viewDetail, setViewDetail] = useState(false);
+  const setToastState = useRecoilValue(toastState);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
@@ -137,31 +144,15 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     };
   }, [chainPrice, data]);
 
-  // useEffect(() => {
-  //   if (outsideAccess) {
-  //     const searchName =
-  //       data?.product.quoteTitle || data?.product.category.name || data?.product.brand.name || '';
-  //     beforePopState(() => {
-  //       if (searchName) {
-  //         replace(`/products/search/${searchName}`);
-  //         return false;
-  //       }
-  //       replace('/');
-  //       return false;
-  //     });
-  //   }
-  // }, [
-  //   beforePopState,
-  //   data?.product.brand.name,
-  //   data?.product.category.name,
-  //   data?.product.quoteTitle,
-  //   outsideAccess,
-  //   replace
-  // ]);
-
   useEffect(() => {
     scrollEnable();
   }, [data]);
+
+  useEffect(() => {
+    if (setToastState.status === 'soldout' && isCamelSellerProduct) {
+      refetch();
+    }
+  }, [setToastState, refetch, isCamelSellerProduct]);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -503,6 +494,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
             isRedirectPage={isRedirectPage}
             isCamelSellerProduct={isCamelSellerProduct}
             soldout={soldout}
+            refresh={refetch}
             productButton={
               <ProductCTAButton
                 product={data?.product}
@@ -538,9 +530,13 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
                   product={data?.product}
                   getProductImageOverlay={getProductImageOverlay}
                   isProductLegit={data?.productLegit}
+                  isCamelSellerProduct={isCamelSellerProduct}
                 />
                 <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
-                <ProductActions product={product} onClickSMS={handleClickSMS} />
+                {!isCamelSellerProduct && (
+                  <ProductActions product={product} onClickSMS={handleClickSMS} />
+                )}
+                {isCamelSellerProduct && <DivideLine />}
               </>
             )}
             {data && data.product.productLegit && (
@@ -635,9 +631,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
       />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
-      {/* {data?.product.productSeller.account === String(accessUser?.userId) && (
-        <ProductSellerBottomMenu />
-      )} */}
+      <UserShopProductSoldOutConfirmBottomSheet />
     </>
   );
 }
@@ -706,24 +700,6 @@ export async function getServerSideProps({
   }
 }
 
-// const ProductFixedSummaryCard = styled.div<{ isOpen: boolean; showAppDownloadBanner: boolean }>`
-//   position: fixed;
-//   display: grid;
-//   grid-template-columns: 64px auto;
-//   top: ${({ showAppDownloadBanner }) =>
-//     showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
-//   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-//   opacity: ${({ isOpen }) => Number(isOpen)};
-//   transition: opacity 0.3s ease-in 0s;
-//   width: 100%;
-//   margin: 0 -20px;
-//   background-color: ${({
-//     theme: {
-//       palette: { common }
-//     }
-//   }) => common.ui98};
-// `;
-
 const PriceDownText = styled(Typography)`
   color: ${({
     theme: {
@@ -733,6 +709,19 @@ const PriceDownText = styled(Typography)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+`;
+
+const DivideLine = styled.div`
+  position: relative;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: 8px;
+  margin-bottom: 30px;
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
 `;
 
 export default ProductDetail;

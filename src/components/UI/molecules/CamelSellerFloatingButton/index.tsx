@@ -17,7 +17,7 @@ import { PRODUCT_SELLER } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, getAppVersion, productionEnvUrl } from '@utils/common';
 
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
@@ -32,13 +32,33 @@ function CamelSellerFloatingButton() {
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setDialogState = useSetRecoilState(dialogState);
   const setContinueDialog = useSetRecoilState(camelSellerDialogStateFamily('continue'));
-  const { data: { roles = [] } = {} } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: { roles = [], notProcessedLegitCount = 0 } = {} } = useQuery(
+    queryKeys.users.userInfo(),
+    fetchUserInfo
+  );
+
   const [authProductSeller, setAuthProductSeller] = useState(false);
 
   useEffect(() => {
-    if (accessUser && roles.includes(PRODUCT_SELLER as never)) {
-      setAuthProductSeller(true);
+    ChannelTalk.hideChannelButton();
+    setTimeout(() => {
       ChannelTalk.hideChannelButton();
+    }, 2500);
+  }, []);
+
+  useEffect(() => {
+    // beta 일땐 모든 판매하기 접근경로 오픈
+    // 운영에서 노출 조건
+    // IOS + 로그인 + PRODUCT_SELLER 권한 보유자
+    // 운영에서 안드로이드는 비노출
+    if (productionEnvUrl) {
+      if (accessUser && roles.includes(PRODUCT_SELLER as never) && checkAgent.isIOSApp()) {
+        setAuthProductSeller(true);
+      } else {
+        setAuthProductSeller(false);
+      }
+    } else {
+      setAuthProductSeller(true);
     }
   }, [accessUser, roles]);
 
@@ -60,6 +80,25 @@ function CamelSellerFloatingButton() {
           type,
           open: true
         }));
+        return;
+      }
+
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
         return;
       }
 
@@ -89,19 +128,25 @@ function CamelSellerFloatingButton() {
       }
     }
 
-    if (accessUser && prevStep?.step) {
+    if (accessUser && prevStep) {
+      // accessUser && prevStep
       setContinueDialog(({ type }) => ({ type, open: true }));
+      return;
     }
+
+    router.push('/camelSeller');
   };
 
   // eslint-disable-next-line no-constant-condition
-  if (authProductSeller && false) {
+  if (authProductSeller) {
+    // authProductSeller
     return (
       <FloatingButton
         variant="contained"
         brandColor="primary"
         size="large"
         onClick={handleClickMoveToCamelSeller}
+        isLegitTooltip={!!notProcessedLegitCount}
       >
         <Icon name="PlusOutlined" />
         판매하기

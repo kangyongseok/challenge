@@ -7,24 +7,30 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import LocalStorage from '@library/localStorage';
+import { Product } from '@dto/product';
+
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
-import { userShopOpenStateFamily } from '@recoil/userShop';
+import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { toastState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 
-const TOAST_BOTTOM = 20;
-
-function ProductSellerBottomMenu({ status }: { status: number }) {
+function ProductSellerBottomMenu({
+  status,
+  refresh,
+  product
+}: {
+  status: number;
+  refresh: () => void;
+  product: Product;
+}) {
   const {
     theme: {
       palette: { common }
@@ -40,6 +46,8 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
+  const setOpenState = useSetRecoilState(userShopOpenStateFamily('soldOutConfirm'));
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;
@@ -65,6 +73,13 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
       title: getTitle,
       att: getAtt(Number(dataset.statusId))
     });
+    if (Number(dataset.statusId) === 1) {
+      setOpenChangeStatus(false);
+      setTimeout(() => {
+        setOpenState(({ type }) => ({ type, open: true }));
+      }, 500);
+      return;
+    }
 
     updateMutation(
       {
@@ -76,19 +91,16 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
           if (Number(dataset.statusId) === 0) {
             setToastState({
               type: 'sellerProductState',
-              status: 'sell',
-              customStyle: { bottom: TOAST_BOTTOM }
+              status: 'sell'
             });
           } else if (Number(dataset.statusId) === 4) {
             setToastState({
               type: 'sellerProductState',
-              status: 'reserve',
-              customStyle: { bottom: TOAST_BOTTOM }
+              status: 'reserve'
             });
           }
-
           setOpenChangeStatus(false);
-          router.push('/user/shop');
+          refresh();
         }
       }
     );
@@ -104,9 +116,7 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
         return;
       }
     }
-
-    LocalStorage.remove(CAMEL_SELLER);
-    router.push(`/camelSeller/registerConfirm?id=${router.query.id}`);
+    router.push(`/camelSeller/registerConfirm/${router.query.id}`);
   };
 
   const handleClickHoisting = () => {
@@ -123,6 +133,7 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
           status: 'hoisting'
         });
         setOpenChangeStatus(false);
+        // refresh();
       }
     });
   };
@@ -138,59 +149,69 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
       type,
       open: true
     }));
-
-    // deleteMutation(parameter, {
-    //   onSuccess() {
-    //     setToastState({
-    //       type: 'sellerProductState',
-    //       status: 'deleted',
-    //       customStyle: { bottom: TOAST_BOTTOM }
-    //     });
-    //     setOpenChangeStatus(false);
-    //     router.replace('/user/shop');
-    //   }
-    // });
   };
 
   return (
     <StyledWrap>
       <SellerBottomNav alignment="center" justifyContent="space-between">
+        {status === 0 && (
+          <Flexbox
+            direction="vertical"
+            alignment="center"
+            gap={7}
+            customStyle={{ flex: 1 }}
+            onClick={handleClickHoisting}
+          >
+            <IconPullUp />
+            <Typography
+              draggable={false}
+              variant="small1"
+              weight="medium"
+              customStyle={{ color: common.ui60 }}
+            >
+              끌어올리기
+            </Typography>
+          </Flexbox>
+        )}
         <Flexbox
           direction="vertical"
           alignment="center"
           gap={7}
           customStyle={{ flex: 1 }}
-          onClick={handleClickHoisting}
-        >
-          <IconPullUp />
-          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
-            끌어올리기
-          </Typography>
-        </Flexbox>
-        <Flexbox
-          direction="vertical"
-          alignment="center"
-          gap={7}
-          customStyle={{ flex: 1 }}
-          onClick={() => setOpenChangeStatus(true)}
+          onClick={() => {
+            setOpenChangeStatus(true);
+            setUserShopSelectedProductState(product);
+          }}
         >
           <IconChangeStatus />
-          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+          <Typography
+            draggable={false}
+            variant="small1"
+            weight="medium"
+            customStyle={{ color: common.ui60 }}
+          >
             상태변경
           </Typography>
         </Flexbox>
-        <Flexbox
-          direction="vertical"
-          alignment="center"
-          gap={7}
-          customStyle={{ flex: 1 }}
-          onClick={handleClickEdit}
-        >
-          <IconEdit />
-          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
-            수정
-          </Typography>
-        </Flexbox>
+        {status !== 1 && (
+          <Flexbox
+            direction="vertical"
+            alignment="center"
+            gap={7}
+            customStyle={{ flex: 1 }}
+            onClick={handleClickEdit}
+          >
+            <IconEdit />
+            <Typography
+              draggable={false}
+              variant="small1"
+              weight="medium"
+              customStyle={{ color: common.ui60 }}
+            >
+              수정
+            </Typography>
+          </Flexbox>
+        )}
         <Flexbox
           direction="vertical"
           alignment="center"
@@ -199,7 +220,12 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
           onClick={handleClickDelete}
         >
           <IconDelete />
-          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+          <Typography
+            draggable={false}
+            variant="small1"
+            weight="medium"
+            customStyle={{ color: common.ui60 }}
+          >
             삭제
           </Typography>
         </Flexbox>
@@ -264,6 +290,7 @@ function ProductSellerBottomMenu({ status }: { status: number }) {
 const StyledWrap = styled.div`
   width: 100%;
   min-height: 72px;
+  user-select: none;
 `;
 
 const SellerBottomNav = styled(Flexbox)`

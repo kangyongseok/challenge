@@ -1,6 +1,6 @@
 import compact from 'lodash-es/compact';
 
-import type { ManageParams } from '@dto/userHistory';
+import type { ActivityNotiParams, ManageParams } from '@dto/userHistory';
 import type { CategoryWishesParams, UserProductsParams } from '@dto/user';
 import type {
   OpinionLegitsParams,
@@ -10,6 +10,7 @@ import type {
 import type {
   CamelProductsParams,
   ProductParams,
+  RecentSearchParams,
   RecommProductsParams,
   ReviewInfoParams,
   SearchAiProductParams,
@@ -73,18 +74,20 @@ const products = {
   camelProducts: (params?: CamelProductsParams) =>
     compact([...products.all, 'camelProducts', params]),
   userInfo: () => [...products.all, 'userInfo'] as const,
-  searchHistory: (params?: SearchParams) =>
+  searchHistory: (params?: SearchParams | RecentSearchParams) =>
     params
       ? ([...products.all, 'searchHistory', params] as const)
       : ([...products.all, 'searchHistory'] as const),
-  searchHistoryTopFive: (params?: SearchParams) =>
+  searchHistoryTopFive: (params?: SearchParams | RecentSearchParams) =>
     [...products.all, 'searchHistoryFive', params] as const,
   sellerModifyProducs: (params: ProductParams) =>
     [...products.all, 'sellerModifyProducs', params] as const,
   searchLowerProducts: (params?: SearchLowerProductsParams) =>
     compact([...products.all, 'searchLowerProducts', params]),
   searchRelatedKeyword: (params: SearcgRelatedKeywordsParams) =>
-    [...products.all, 'searchRelatedKeyword', params] as const
+    [...products.all, 'searchRelatedKeyword', params] as const,
+  sellerEditProducs: (params: ProductParams) =>
+    [...products.all, 'sellerEditProducs', params] as const
 };
 
 const productLegits = {
@@ -106,7 +109,6 @@ const users = {
     compact([...users.all, 'categoryWishes', params]),
   userHistory: (pageNumber: number) => [...users.all, 'userHistory', pageNumber] as const,
   userHoneyNoti: () => [...users.all, 'userHoneyNoti'] as const,
-  userNoti: (type: number) => [...users.all, 'userNoti', type] as const,
   userHistoryManages: (event: string) => [...users.all, 'userHistoryManages', event] as const,
   sizeMapping: () => [...users.all, 'sizeMapping'] as const,
   userProductKeywords: () => [...users.all, 'userProductKeywords'] as const,
@@ -140,12 +142,14 @@ const commons = {
   photoGuide: (params: PhotoGuideParams) => [...commons.all, 'photoGuide', params] as const,
   contentsProducts: (contentsId: number) =>
     [...commons.all, 'contentsProducts', contentsId] as const,
-  announce: (id: number) => [...commons.all, 'announce', id] as const
+  announce: (id: number) => [...commons.all, 'announce', id] as const,
+  announces: () => [...commons.all, 'announces'] as const
 };
 
 const userHistory = {
   all: ['userhistory'] as const,
-  manage: (params: ManageParams) => [...userHistory.all, 'manage', params] as const
+  manage: (params: ManageParams) => [...userHistory.all, 'manage', params] as const,
+  userNoti: (params: ActivityNotiParams) => [...users.all, 'userNoti', params] as const
 };
 
 const logs = {

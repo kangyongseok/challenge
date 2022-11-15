@@ -1,7 +1,7 @@
 import { Box } from 'mrcamel-ui';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
-import type { ProductDetail } from '@dto/product';
+import type { Product, ProductDetail } from '@dto/product';
 
 import { checkAgent } from '@utils/common';
 
@@ -13,7 +13,8 @@ function ProductDetailFooter({
   isRedirectPage,
   isCamelSellerProduct,
   viewDetail,
-  soldout
+  soldout,
+  refresh
 }: {
   data?: ProductDetail;
   productButton: ReactJSXElement;
@@ -21,11 +22,19 @@ function ProductDetailFooter({
   isCamelSellerProduct: boolean;
   viewDetail: boolean;
   soldout: boolean;
+  refresh: () => void;
 }) {
   const isMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp());
+
   if (isMoweb && soldout && !viewDetail) return <Box />;
   if (isCamelSellerProduct)
-    return <ProductSellerBottomMenu status={data?.product.status as number} />;
+    return (
+      <ProductSellerBottomMenu
+        product={data?.product as Product}
+        status={data?.product.status as number}
+        refresh={refresh}
+      />
+    );
   return !isRedirectPage ? productButton : <Box />;
 }
 

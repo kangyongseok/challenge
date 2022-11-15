@@ -1,28 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Button, Toast } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { CamelSellerHeader } from '@components/pages/camelSeller';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 
-import type { CamelSellerLocalStorage, SubmitType } from '@typings/camelSeller';
-import {
-  camelSellerBooleanStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState
-} from '@recoil/camelSeller';
+import type { SubmitType } from '@typings/camelSeller';
+import { camelSellerSubmitState, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 const placeholder =
   '구입 연도, 구입가, 하자 유무, 구성품, 원하는 거래방식 등 구매자에게 필요한 정보를 추가로 작성해주세요.';
@@ -33,29 +27,28 @@ function CamelSellerRegisterTextForm() {
   const [addInfoText, setAddInfoText] = useState('');
   const [overTextToast, setOverTextToast] = useState(false);
   const [submitData, setSubmitData] = useRecoilState(camelSellerSubmitState);
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
-  const [editData, setEditData] = useRecoilState(camelSellerEditState);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
 
   useEffect(() => {
-    setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
     if (textareaRef.current) {
       const textArea = textareaRef.current as HTMLTextAreaElement;
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [addInfoText, submitData]);
+
+  useEffect(() => {
+    if (tempData.description) {
+      setAddInfoText(tempData.description);
+    }
+  }, [tempData]);
 
   useEffect(() => {
     if (submitData?.description) {
       setAddInfoText(submitData?.description);
-      if (textareaRef.current) {
-        const textArea = textareaRef.current as HTMLTextAreaElement;
-        textArea.style.height = `${textArea.scrollHeight}px`;
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submitData?.description, addInfoText]);
+  }, [submitData?.description]);
 
   useEffect(() => {
     if (openTextarea) {
@@ -77,6 +70,7 @@ function CamelSellerRegisterTextForm() {
 ∙ 구성품:
 ∙ 거래방식:
 ∙ 보충설명:
+${addInfoText}
     `);
   };
 
@@ -95,7 +89,7 @@ function CamelSellerRegisterTextForm() {
     scrollDisable();
   };
 
-  const handleClick = () => {
+  const handleClickSucess = () => {
     if (addInfoText.length > 2000) {
       setOverTextToast(true);
       return;
@@ -109,17 +103,10 @@ function CamelSellerRegisterTextForm() {
       ...(submitData as SubmitType),
       description: addInfoText
     });
-    if (editMode.isState) {
-      setEditData({
-        ...(editData as CamelSellerLocalStorage),
-        description: addInfoText
-      });
-    } else {
-      LocalStorage.set(CAMEL_SELLER, {
-        ...camelSeller,
-        description: addInfoText
-      });
-    }
+    setTempData({
+      ...tempData,
+      description: addInfoText
+    });
 
     setOpenTextarea(false);
     scrollEnable();
@@ -128,6 +115,7 @@ function CamelSellerRegisterTextForm() {
   if (openTextarea) {
     return (
       <GeneralTemplate
+        hideAppDownloadBanner
         header={
           <CamelSellerHeader
             type="textarea"
@@ -147,7 +135,12 @@ function CamelSellerRegisterTextForm() {
             onChange={handleChangeAddInfo}
             autoFocus
           />
-          <SubmitCtaButton fullWidth brandColor="primary" variant="contained" onClick={handleClick}>
+          <SubmitCtaButton
+            fullWidth
+            brandColor="primary"
+            variant="contained"
+            onClick={handleClickSucess}
+          >
             완료
           </SubmitCtaButton>
         </LayerStyle>
@@ -167,11 +160,8 @@ function CamelSellerRegisterTextForm() {
       ref={textareaRef}
       placeholder={placeholder}
       onClick={handleOpenTextarea}
-      defaultValue={
-        !submitData?.description || submitData?.description === 'null'
-          ? ''
-          : submitData?.description
-      }
+      defaultValue={addInfoText}
+      readOnly
     />
   );
 }
@@ -184,6 +174,7 @@ const TextareaAddInfo = styled.textarea`
   font-size: ${({ theme }) => theme.typography.h4.size};
   letter-spacing: -0.2px;
   background: white;
+  padding-bottom: 84px;
 `;
 
 const LayerStyle = styled.div`

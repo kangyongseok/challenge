@@ -24,9 +24,9 @@ export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
   appUpdateNotice: '카멜 App이 업데이트 되었어요!',
   appAuthCheck: (
     <>
-      모든 사진 권한 및 카메라 권한을
+      사진 및 카메라 권한을
       <br />
-      설정해주세요.
+      허용해주세요.
     </>
   )
 };

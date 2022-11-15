@@ -29,6 +29,18 @@ function CamelSellerSizeState({
         사이즈를 선택해주세요.
       </Typography>
       <Flexbox gap={8} customStyle={{ marginTop: 12, flexWrap: 'wrap' }}>
+        <Chip
+          variant="contained"
+          customStyle={{
+            background: common.ui95,
+            color: common.ui20
+          }}
+          onClick={() => {
+            onClick({ id: 0, name: 'ONE SIZE' });
+          }}
+        >
+          ONE SIZE
+        </Chip>
         {sizes &&
           sizes.map((size) => (
             <Chip

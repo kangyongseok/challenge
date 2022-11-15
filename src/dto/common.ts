@@ -1,3 +1,4 @@
+import type { Announce } from '@dto/user';
 import type { ProductResult } from '@dto/product';
 
 export type JobRuleBaseDetail = {
@@ -125,7 +126,7 @@ export interface ImageGroups {
 
 export type CommonPhotoGuideDetail = {
   id: number;
-  photoGuideId: number;
+  photoGuideId?: number;
   name: string;
   description: string;
   imageType: 0 | 1 | 2 | 3;
@@ -141,6 +142,27 @@ export type CommonPhotoGuideDetail = {
 export interface PhotoGuide {
   groupId: number;
   photoGuideDetails: CommonPhotoGuideDetail[];
+}
+
+export interface GetAnnounces {
+  content: Announce[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  pageable: {
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+    paged: boolean;
+    sort: Sort;
+    unpaged: boolean;
+  };
+  size: number;
+  sort: Sort;
+  totalElements: number;
+  totalPages: number;
 }
 
 /* ---------- Request Parameters ---------- */

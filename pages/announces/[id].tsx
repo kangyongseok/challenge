@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -8,6 +10,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { AnnounceDetail, AnnouncePageHead } from '@components/pages/announce';
 
 import Initializer from '@library/initializer';
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchAnnounce } from '@api/common';
@@ -18,6 +21,13 @@ import attrKeys from '@constants/attrKeys';
 
 function Announce() {
   const router = useRouter();
+
+  useEffect(() => {
+    ChannelTalk.moveChannelButtonPosition(50);
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, []);
 
   const handleClickClose = () => {
     logEvent(attrKeys.header.CLICK_CLOSE, {
@@ -31,6 +41,7 @@ function Announce() {
       <AnnouncePageHead />
       <GeneralTemplate
         disablePadding
+        hideAppDownloadBanner
         header={
           <Header
             rightIcon={

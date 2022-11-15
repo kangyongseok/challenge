@@ -3,8 +3,11 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+// import Image from 'next/image';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
+
+// import { Skeleton } from '@components/UI/atoms';
 
 import { Image, Skeleton } from '@components/UI/atoms';
 
@@ -86,7 +89,15 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
   return (
     <Flexbox gap={12} onClick={handleClickProduct} customStyle={{ cursor: 'pointer' }}>
       <ImageWrapper>
-        <Image src={imageUrl} alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)} />
+        {/* <ImageWrap
+          src={imageUrl}
+          alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
+          layout="fixed"
+          width={100}
+          height={100}
+          priority
+        /> */}
+        <ImageWrap src={imageUrl} alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)} />
         {!loaded && (
           <SkeletonWrapper>
             <Skeleton isRound customStyle={{ height: '100%' }} />
@@ -148,13 +159,14 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
           </Flexbox>
         )}
       </Box>
-      <Icon
-        name="MoreFilled"
-        size="small"
-        color={common.ui80}
-        onClick={handleClick}
-        customStyle={{ minWidth: 16, cursor: 'pointer' }}
-      />
+      <Box customStyle={{ padding: '0 10px', marginRight: -10 }} onClick={handleClick}>
+        <Icon
+          name="MoreFilled"
+          size="medium"
+          color={common.ui80}
+          customStyle={{ minWidth: 16, cursor: 'pointer' }}
+        />
+      </Box>
     </Flexbox>
   );
 }
@@ -215,6 +227,12 @@ export const SkeletonWrapper = styled.div`
   width: 100%;
   height: 100%;
   z-index: -1;
+`;
+
+export const ImageWrap = styled(Image)`
+  object-fit: cover;
+  width: 100px;
+  height: 100px;
 `;
 
 export default UserShopProductCard;

@@ -123,6 +123,8 @@ export interface UserInfo {
   notProcessedLegitCount?: number;
   roles: Role['name'][];
   userProductInfo: UserProductInfo;
+  notViewedHistoryCount: number;
+  notViewedAnnounceCount: number;
 }
 
 export interface UserProductInfo {
@@ -280,6 +282,11 @@ export interface UserNoti {
   dateCreated: string;
   dateViewed: null | string;
   type: number;
+  label: {
+    description: string;
+    name: '10' | '20' | '30' | '40' | '50';
+  };
+  isViewed: boolean;
 }
 
 export interface PageUserNoti {

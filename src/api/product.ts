@@ -4,6 +4,7 @@ import type {
   PageProductResult,
   ProductDetail,
   ProductParams,
+  RecentSearchParams,
   RecommProductsParams,
   ReviewInfoParams,
   Search,
@@ -18,10 +19,10 @@ import type {
 
 import Axios from '@library/axios';
 
+import { convertQueryStringByObject } from '@utils/common';
+
 import { SearcgRelatedKeywordsParams } from '@typings/products';
 import type { SubmitType } from '@typings/camelSeller';
-
-// import convertQueryStringByObject from '@utils/convertQueryStringByObject';
 
 const BASE_PATH = '/products';
 
@@ -140,7 +141,7 @@ export async function fetchCamelProducts(params: CamelProductsParams) {
   return data;
 }
 
-export async function fetchSearchHistory(params?: SearchParams) {
+export async function fetchSearchHistory(params?: SearchParams | RecentSearchParams) {
   const { data } = await Axios.getInstance().get<Search>(`${BASE_PATH}/searchHistory`, {
     params
   });
@@ -163,12 +164,19 @@ export async function putProductHoisting({ productId }: { productId: number }) {
 
 export async function putProductUpdateStatus({
   productId,
-  status
+  status,
+  soldType
 }: {
   productId: number;
   status: number;
+  soldType?: 0 | 1;
 }) {
-  await Axios.getInstance().put(`${BASE_PATH}/${productId}/updateStatus?status=${status}`);
+  await Axios.getInstance().put(
+    `${BASE_PATH}/${productId}/updateStatus${convertQueryStringByObject({
+      status: String(status),
+      soldType: typeof soldType === 'number' ? String(soldType) : null
+    })}`
+  );
 }
 
 export async function deleteProduct({ productId }: { productId: number }) {

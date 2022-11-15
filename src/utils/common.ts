@@ -501,3 +501,5 @@ export function getPathNameByAsPath(asPath: string) {
   }
   return '/';
 }
+
+export const productionEnvUrl = process.env.NEXT_JS_API_BASE_URL === 'https://mrcamel.co.kr/api';

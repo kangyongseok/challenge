@@ -8,7 +8,7 @@ export { default as CamelSellerViewStateValue } from './CamelSellerViewStateValu
 export { default as CamelSellerProductSearchItem } from './CamelSellerProductSearchItem';
 export { default as CamelSellerHeader } from './CamelSellerHeader';
 export { default as CamelSellerPhotoGuide } from './CamelSellerPhotoGuide';
-export { default as CamelSellerPhotoTitle } from './CamelSellerPhotoTitle';
+export { default as CamelSellerProductTitle } from './CamelSellerProductTitle';
 export { default as CamelSellerRecentBottomSheet } from './CamelSellerRecentBottomSheet';
 export { default as CamelSellerSmsDialog } from './CamelSellerSmsDialog';
 export { default as CamelSellerPrice } from './CamelSellerPrice';
@@ -16,3 +16,6 @@ export { default as CamelSellerRegisterState } from './CamelSellerRegisterState'
 export { default as CamelSellerRegisterCondition } from './CamelSellerRegisterCondition';
 export { default as CamelSellerRegisterTextForm } from './CamelSellerRegisterTextForm';
 export { default as CamelSellerProductSearch } from './CamelSellerProductSearch';
+export { default as CamelSellerConfirmFooter } from './CamelSellerConfirmFooter';
+export { default as CamelSellerPhotoGuideEdit } from './CamelSellerPhotoGuideEdit';
+export { default as CamelSellerSelectProductState } from './CamelSellerSelectProductState';

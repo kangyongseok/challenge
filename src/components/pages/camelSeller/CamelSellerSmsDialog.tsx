@@ -1,47 +1,42 @@
 import { useEffect } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
 import { parseToDashPhoneNumber } from '@utils/common';
 
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import { camelSellerSMSDialogState, camelSellerSubmitState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function CamelSellerSmsDialog() {
-  const [state, setOpen] = useRecoilState(camelSellerDialogStateFamily('initDialog'));
+  const [state, setOpen] = useRecoilState(camelSellerSMSDialogState);
+  const submitData = useRecoilValue(camelSellerSubmitState);
   const { data: accessUser } = useQueryAccessUser();
+
   useEffect(() => {
-    setTimeout(() => {
-      setOpen(({ type }) => ({
-        type,
-        open: true
-      }));
-    }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!submitData?.title) {
+      setTimeout(() => {
+        setOpen(true);
+      }, 100);
+    }
+  }, [setOpen, submitData]);
 
   return (
     <Dialog
-      open={state.open}
-      onClose={() =>
-        setOpen(({ type }) => ({
-          type,
-          open: false
-        }))
-      }
+      open={state}
+      onClose={() => setOpen(false)}
       customStyle={{ width: 311, height: 284, padding: 20, textAlign: 'center' }}
     >
       <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
         <Typography customStyle={{ fontSize: 52, height: 52, paddingTop: 20 }}>💬</Typography>
         <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 32 }}>
-          <Typography variant="h4" weight="bold">
-            문자를 통해 거래 연락을 받을거에요
+          <Typography variant="h3" weight="bold">
+            구매연락은 문자메시지로!
           </Typography>
           <Typography variant="body1">
-            입력해둔 {parseToDashPhoneNumber(accessUser?.phone as string)}으로
+            입력해두신 {parseToDashPhoneNumber(accessUser?.phone as string)}으로
             <br />
-            구매자들이 연락하게 됩니다.
+            구매자가 SMS를 보냅니다.
           </Typography>
         </Flexbox>
         <Button
@@ -50,12 +45,7 @@ function CamelSellerSmsDialog() {
           variant="contained"
           brandColor="primary"
           customStyle={{ marginTop: 'auto' }}
-          onClick={() =>
-            setOpen(({ type }) => ({
-              type,
-              open: false
-            }))
-          }
+          onClick={() => setOpen(false)}
         >
           알겠어요
         </Button>

@@ -28,7 +28,7 @@ function UserShopEmpty() {
           <Typography variant="h4">카멜에서 내 명품을 등록하고 판매해보세요!</Typography>
           <Button
             variant="contained"
-            customStyle={{ marginTop: 20, color: common.ui20 }}
+            customStyle={{ marginTop: 20, color: common.cmn20 }}
             onClick={handleClick}
           >
             매물 등록하기

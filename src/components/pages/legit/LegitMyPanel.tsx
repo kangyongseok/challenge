@@ -21,7 +21,13 @@ import { postType } from '@constants/productlegits';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber, getAppVersion, getProductDetailUrl } from '@utils/common';
+import {
+  checkAgent,
+  commaNumber,
+  getAppVersion,
+  getProductDetailUrl,
+  productionEnvUrl
+} from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -84,7 +90,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -103,7 +109,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp()) {
+        if (checkAgent.isAndroidApp() && productionEnvUrl) {
           setDialogState({
             type: 'legitRequestOnlyInIOS',
             customStyleTitle: { minWidth: 270 }
@@ -115,7 +121,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -134,7 +140,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp()) {
+        if (checkAgent.isAndroidApp() && productionEnvUrl) {
           setDialogState({
             type: 'legitRequestOnlyInIOS',
             customStyleTitle: { minWidth: 270 }

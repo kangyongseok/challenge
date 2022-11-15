@@ -25,7 +25,7 @@ import attrKeys from '@constants/attrKeys';
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 
 function SelectCategory() {
-  const router = useRouter();
+  const { query, push } = useRouter();
   const {
     theme: {
       palette: { common }
@@ -42,8 +42,8 @@ function SelectCategory() {
   const [targetSubParentCategory, setTargetSubParentCategory] = useState<SubParentCategory[]>([]);
 
   const attTitle = useMemo(() => {
-    return camelSeller?.keyword ? attrProperty.title.NO_MODEL : attrProperty.title.DONTKNOW_MODEL;
-  }, [camelSeller]);
+    return query.title ? attrProperty.title.NO_MODEL : attrProperty.title.DONTKNOW_MODEL;
+  }, [query.title]);
 
   useEffect(() => {
     setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
@@ -82,14 +82,14 @@ function SelectCategory() {
       step: 2
     });
 
-    LocalStorage.set(CAMEL_SELLER, {
-      ...camelSeller,
-      category: {
-        id: Number(target.dataset.subParentId),
-        name: target.dataset.subParentName
+    push({
+      pathname: '/camelSeller/selectBrand',
+      query: {
+        ...query,
+        categoryIds: Number(target.dataset.subParentId),
+        categoryName: target.dataset.subParentName
       }
     });
-    router.push('/camelSeller/selectBrand');
   };
 
   const handlePreviouse = () => {
@@ -98,20 +98,23 @@ function SelectCategory() {
   };
 
   return (
-    <GeneralTemplate header={<Header showRight={false} />}>
+    <GeneralTemplate
+      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
+      hideAppDownloadBanner
+    >
       <Box customStyle={{ margin: '32px 0' }}>
-        {camelSeller?.keyword ? (
+        {query.title ? (
           <>
             <Typography variant="h3">
-              <UnderLineTitle>{camelSeller?.keyword}</UnderLineTitle>은
+              <UnderLineTitle>{query.title}</UnderLineTitle>은(는)
             </Typography>
             <Typography variant="h2" weight="bold" customStyle={{ marginTop: 8 }}>
-              <HighlightTitle>어떤 상품</HighlightTitle>인가요?
+              <HighlightTitle>어떤 카테고리</HighlightTitle>인가요?
             </Typography>
           </>
         ) : (
           <Typography variant="h2" weight="bold" customStyle={{ marginTop: 8 }}>
-            <HighlightTitle>어떤 상품</HighlightTitle>을 판매할까요?
+            <HighlightTitle>어떤 물건</HighlightTitle>을 판매할까요?
           </Typography>
         )}
       </Box>
@@ -197,6 +200,7 @@ const PrevButton = styled(Button)<{ parentCategory: boolean }>`
   }) => common.ui20};
   font-size: ${({ theme: { typography } }) => typography.small1.size};
   align-items: center;
+  background: ${({ theme: { palette } }) => palette.common.ui95};
 `;
 
 const CategoryChip = styled(Chip)`

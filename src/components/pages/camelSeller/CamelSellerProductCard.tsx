@@ -42,7 +42,6 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
       <Flexbox gap={12} onClick={handleClickRecentProduct} alignment="center">
         <ProductImageBox alignment="center" justifyContent="center">
           <Img src={data.imageMain} alt={data.title} width={100} />
-          <PhotoCount variant="contained" text={String(data.imageCount)} />
         </ProductImageBox>
         <Box>
           <Typography weight="medium" variant="small1">
@@ -68,11 +67,11 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
             )}
           </Flexbox>
           <Flexbox alignment="center" gap={3}>
-            {data.siteUrl.id && (
+            {data.site.id && (
               <Img
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${data.siteUrl.id}.png`}
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${data.site.id}.png`}
                 width="20px"
-                alt={data.siteUrl.name}
+                alt={data.site.name}
               />
             )}
             <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
@@ -86,19 +85,6 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
   );
 }
 
-const PhotoCount = styled(Label)`
-  position: absolute;
-  right: 4px;
-  bottom: 4px;
-  width: 19px;
-  height: 19px;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui20};
-`;
-
 const ProductImageBox = styled(Flexbox)`
   max-width: 100px;
   max-height: 100px;
@@ -108,6 +94,8 @@ const ProductImageBox = styled(Flexbox)`
   position: relative;
 `;
 
-const Img = styled.img``;
+const Img = styled.img`
+  border-radius: 4px;
+`;
 
 export default CamelSellerProductCard;

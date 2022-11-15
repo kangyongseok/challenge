@@ -3,36 +3,36 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
-import { Box, Button, Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { useRouter } from 'next/router';
+import { Box, Button, Flexbox, Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
 import { Image } from '@components/UI/atoms';
 
-import { SearchParams } from '@dto/product';
+import { RecentSearchParams } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchSearchHistory } from '@api/product';
+import { fetchProduct, fetchSearchHistory } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
-import type { CamelSellerLocalStorage, SubmitType } from '@typings/camelSeller';
+import type { SubmitType } from '@typings/camelSeller';
+import { deviceIdState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerEditState,
   camelSellerSubmitState,
+  camelSellerTempSaveDataState,
   recentPriceCardTabNumState,
   setModifyProductPriceState
 } from '@recoil/camelSeller';
@@ -44,18 +44,19 @@ function CamelSellerPrice() {
       zIndex
     }
   } = useTheme();
+  const { query } = useRouter();
+  const deviceId = useRecoilValue(deviceIdState);
+  const productId = Number(query.id || 0);
   const [changePrice, setChangePrice] = useState<number | null>(null);
   const [isFocus, setIsFocus] = useState(false);
   const openRecnetPriceBottomSheet = useSetRecoilState(camelSellerDialogStateFamily('recentPrice'));
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
   const setRecentPriceCardNum = useSetRecoilState(recentPriceCardTabNumState);
   const [submitData, setSubmitData] = useRecoilState(camelSellerSubmitState);
   const modifyProductPrice = useRecoilValue(setModifyProductPriceState);
-  const [editData, setEditData] = useRecoilState(camelSellerEditState);
   const { isState } = useRecoilValue(camelSellerBooleanStateFamily('submitClick'));
   const [openTooltip, setOpenTooltip] = useState(true);
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const [fetchData, setFetchData] = useState<SearchParams>({});
+  const [fetchData, setFetchData] = useState<RecentSearchParams>({});
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const { data: searchHistory } = useQuery(
     queryKeys.products.searchHistoryTopFive(fetchData),
     () => fetchSearchHistory(fetchData),
@@ -64,33 +65,73 @@ function CamelSellerPrice() {
     }
   );
 
-  useEffect(() => {
-    if (camelSeller) {
-      setFetchData({
-        brandIds: camelSeller.brand ? [camelSeller.brand.id] : [],
-        categoryIds: camelSeller.category ? [camelSeller.category.id] : [],
-        keyword: camelSeller.keyword,
-        conditionIds: camelSeller.condition ? [camelSeller.condition?.id] : [],
-        colorIds: camelSeller.color ? [camelSeller.color.id] : [],
-        sizeIds: camelSeller.size ? [camelSeller.size.id] : [],
-        order: 'postedAllDesc'
-      });
+  const { data: editData } = useQuery(
+    queryKeys.products.sellerEditProducs({ productId, deviceId }),
+    () => fetchProduct({ productId, deviceId }),
+    {
+      enabled: !!productId
     }
-  }, [camelSeller, editData]);
-
-  useEffect(() => {
-    const localData = editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-    setCamelSeller(localData);
-    setChangePrice(localData?.price as number);
-    controlTooltip();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editData]);
+  );
 
   useEffect(() => {
     if (modifyProductPrice) {
       setChangePrice(modifyProductPrice);
     }
   }, [modifyProductPrice]);
+
+  useEffect(() => {
+    if (editData) {
+      setFetchData({
+        brandIds: [editData.product.brand.id].concat(
+          editData.product?.productBrands?.map(({ brand }) => brand.id) || []
+        ),
+        categoryIds: [editData.product.category.id || 0],
+        keyword: editData.product.title,
+        conditionIds: [editData.product.labels[0].id],
+        colorIds: [editData.product.colors[0].id],
+        sizeIds: editData.product.categorySizes[0] ? [editData.product.categorySizes[0].id] : [0],
+        order: 'postedAllDesc' // updatedDesc
+      });
+
+      if (changePrice === null) setChangePrice(editData.product.price);
+    } else if (query.title) {
+      setFetchData({
+        brandIds:
+          typeof query.brandIds === 'string'
+            ? [Number(query.brandIds)]
+            : (query.brandIds?.map((id) => Number(id)) as number[]),
+        categoryIds: [Number(query.categoryIds)],
+        keyword: tempData.quoteTitle || `${String(query.brandName)} ${query.categoryName}`,
+        conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
+        colorIds: tempData.color.id ? [tempData.color.id] : [],
+        sizeIds: tempData.size.id ? [tempData.size.id] : [],
+        order: 'postedAllDesc' // updatedDesc
+      });
+      setChangePrice(tempData.price);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    editData,
+    query.brandIds,
+    query.brandName,
+    query.categoryIds,
+    query.categoryName,
+    query.id,
+    query.title,
+    tempData.color.id,
+    tempData.condition.id,
+    tempData.price,
+    tempData.quoteTitle,
+    tempData.size.id
+  ]);
+
+  useEffect(() => {
+    // const localData = editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
+    // setCamelSeller(localData);
+    // setChangePrice(localData?.price as number);
+    controlTooltip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editData]);
 
   const controlTooltip = () => {
     const hideTooltip = SessionStorage.get(sessionStorageKeys.hideCamelSellerRecentPriceTooltip);
@@ -107,38 +148,20 @@ function CamelSellerPrice() {
 
   const handleChangePrice = (e: ChangeEvent<HTMLInputElement>) => {
     const inputPrice = e.target.value.replace(/[^0-9]*/g, '');
-    if (String(inputPrice).length <= 10) {
-      if (Number(inputPrice) === 0) {
-        setChangePrice(null);
-        if (editMode.isState) {
-          setEditData({
-            ...(editData as CamelSellerLocalStorage),
-            price: 0
-          });
-        } else {
-          LocalStorage.set(CAMEL_SELLER, {
-            ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
-            price: 0
-          });
-        }
-      } else {
-        setChangePrice(Number(inputPrice));
-        setSubmitData({
-          ...(submitData as SubmitType),
-          price: Number(inputPrice)
-        });
-        if (editMode.isState) {
-          setEditData({
-            ...(editData as CamelSellerLocalStorage),
-            price: Number(inputPrice)
-          });
-        } else {
-          LocalStorage.set(CAMEL_SELLER, {
-            ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
-            price: Number(inputPrice)
-          });
-        }
-      }
+    if (String(inputPrice).length > 10) return;
+    if (Number(inputPrice) === 0) {
+      setChangePrice(0);
+    } else {
+      setChangePrice(Number(inputPrice) || null);
+      setTempData({
+        ...tempData,
+        price: Number(inputPrice)
+      });
+
+      setSubmitData({
+        ...(submitData as SubmitType),
+        price: Number(inputPrice)
+      });
     }
   };
 
@@ -160,7 +183,9 @@ function CamelSellerPrice() {
   return (
     <>
       <Flexbox justifyContent="space-between" customStyle={{ margin: '8px 0' }} alignment="center">
-        <WonIcon color={isState && !changePrice ? secondary.red.light : common.ui20} />
+        <Box customStyle={{ minWidth: 21 }}>
+          <WonIcon color={isState && !changePrice ? secondary.red.light : common.ui20} />
+        </Box>
         <MoneyInput
           placeholder="0"
           customStyle={{
@@ -176,37 +201,16 @@ function CamelSellerPrice() {
           value={changePrice ? commaNumber(changePrice as number) : ''}
           min={1000}
         />
-        {changePrice && changePrice > 0 && (
-          <Typography customStyle={{ color: common.ui60, minWidth: 'fit-content' }}>
-            {commaNumber(getTenThousandUnitPrice(changePrice as number))} 만원
-          </Typography>
-        )}
       </Flexbox>
-      {searchHistory?.searchOptions?.avgPrice && (
-        <>
-          <Typography
-            weight="medium"
-            customStyle={{ display: 'inline-block', color: primary.light }}
-            variant="small1"
-          >
-            {commaNumber(
-              getTenThousandUnitPrice((searchHistory?.searchOptions?.avgPrice as number) || 0)
-            )}
-            만원
-          </Typography>
-          <Typography
-            variant="small1"
-            customStyle={{
-              display: 'inline-block',
-              paddingLeft: 3,
-              color: common.ui60
-            }}
-          >
-            정도에 거래되고 있는 모델이에요
-          </Typography>
-        </>
+      {changePrice && changePrice > 0 ? (
+        <Typography customStyle={{ color: common.ui60, minWidth: 'fit-content', marginLeft: 34 }}>
+          {commaNumber(getTenThousandUnitPrice(changePrice as number))} 만원
+        </Typography>
+      ) : (
+        ''
       )}
-      {isFocus && (
+
+      {isFocus ? ( // isFocus
         <PriceCardList alignment="center" gap={8}>
           {searchHistory?.page?.content.slice(0, 5).map((product, i) => (
             <PriceCard
@@ -227,16 +231,51 @@ function CamelSellerPrice() {
               <Flexbox alignment="center" gap={4}>
                 <Image
                   disableAspectRatio
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${product.siteUrl.id}.png`}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${product.site.id}.png`}
                   width={15}
                 />
                 <Typography variant="small1" customStyle={{ color: common.ui60 }}>
-                  {dayjs(new Date(product.dateUpdated)).format('MM.DD')} 거래완료
+                  {dayjs(new Date(product.dateUpdated)).format('MM.DD')}
+                  거래완료
                 </Typography>
               </Flexbox>
             </PriceCard>
           ))}
         </PriceCardList>
+      ) : (
+        ''
+      )}
+      {!(!isFocus && changePrice) && searchHistory?.searchOptions?.avgPrice ? (
+        <>
+          <Icon
+            name="BangCircleFilled"
+            width={16}
+            height={16}
+            customStyle={{ color: primary.light, marginRight: 4 }}
+          />
+          <Typography
+            weight="medium"
+            customStyle={{ display: 'inline-block', color: primary.light }}
+            variant="small1"
+          >
+            {commaNumber(
+              getTenThousandUnitPrice((searchHistory?.searchOptions?.avgPrice as number) || 0)
+            )}
+            만원
+          </Typography>
+          <Typography
+            variant="small1"
+            customStyle={{
+              display: 'inline-block',
+              paddingLeft: 3,
+              color: common.ui60
+            }}
+          >
+            정도에 거래되고 있어요.
+          </Typography>
+        </>
+      ) : (
+        ''
       )}
       <Box>
         <Button
@@ -298,7 +337,7 @@ const PriceCardList = styled(Flexbox)`
   margin-top: 12px;
   padding: 0 20px;
   flex-wrap: nowrap;
-  overflow: auto;
+  overflow-x: auto;
 `;
 
 const PriceCard = styled.div`
@@ -309,7 +348,7 @@ const PriceCard = styled.div`
   }) => common.ui95};
   padding: 8px 12px;
   border-radius: 8px;
-  min-width: 120px;
+  min-width: 122px;
   height: 56px;
 `;
 

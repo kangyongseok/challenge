@@ -2,6 +2,7 @@ import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
@@ -10,52 +11,30 @@ import Image from '@components/UI/atoms/Image';
 
 import type { PhotoGuideParams } from '@dto/common';
 
-import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
 
 import { fetchPhotoGuide } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
 import type {
-  CamelSellerLocalStorage,
+  EditPhotoGuideImages,
   MergePhotoImages,
   PhotoGuideImages,
   SubmitType
 } from '@typings/camelSeller';
-import { showAppDownloadBannerState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState
+  camelSellerSubmitState,
+  camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
 
 import SkeletonPhotoGuideBox from './SkeletonPhotoGuideBox';
 import PhotoIconBox from './PhotoIconBox';
-
-// const sample = [
-//   {
-//     dateUpdated: '2022-09-30 06:50:14',
-//     dateCreated: '2022-09-30 06:50:14',
-//     id: 215,
-//     productId: 32974535,
-//     photoGuideId: 75,
-//     imageSize: 0,
-//     imageUrl: 'https://s3.ap-northeast-2.amazonaws.com/mrcamel/product/20210723_12842408_0.jpg'
-//   },
-//   {
-//     dateUpdated: '2022-09-30 06:50:14',
-//     dateCreated: '2022-09-30 06:50:14',
-//     id: 216,
-//     productId: 32974535,
-//     photoGuideId: 76,
-//     imageSize: 0,
-//     imageUrl: 'https://s3.ap-northeast-2.amazonaws.com/mrcamel/product/20210723_12842408_0.jpg'
-//   }
-// ];
 
 function CamelSellerPhotoGuide() {
   const {
@@ -63,15 +42,14 @@ function CamelSellerPhotoGuide() {
       palette: { secondary, common, primary }
     }
   } = useTheme();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const { query } = useRouter();
   const [submitData, setSubmitData] = useRecoilState(camelSellerSubmitState);
-  const [editData, setEditData] = useRecoilState(camelSellerEditState);
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
   const { isState } = useRecoilValue(camelSellerBooleanStateFamily('submitClick'));
   const setRequirePhotoValid = useSetRecoilState(
     camelSellerBooleanStateFamily('requirePhotoValid')
   );
-  const [photoImages, setPhotoImages] = useState<PhotoGuideImages[]>([]);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const [photoImages, setPhotoImages] = useState<EditPhotoGuideImages[]>([]);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [photoGuideParams, setPhotoGuideParams] = useState<PhotoGuideParams>({
     brandId: 0,
@@ -87,19 +65,16 @@ function CamelSellerPhotoGuide() {
   );
 
   useEffect(() => {
-    const getData = editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-    if (editData) {
-      setPhotoImages(editData.photoGuideImages);
-    }
-    if (!editData && submitData?.photoGuideImages && submitData.photoGuideImages.length > 0) {
-      setPhotoImages(submitData?.photoGuideImages);
-    }
+    setPhotoImages(tempData.photoGuideImages);
     setPhotoGuideParams({
-      brandId: getData?.brand?.id as number,
-      categoryId: getData?.category?.id as number,
+      brandId:
+        typeof query?.brandIds === 'string'
+          ? Number(query.brandIds)
+          : Number((query?.brandIds as [string])[0] || 0),
+      categoryId: query?.categoryIds ? Number(query.categoryIds) : 0,
       type: 0
     });
-  }, [editData, submitData?.photoGuideImages]);
+  }, [query, tempData.photoGuideImages]);
 
   useEffect(() => {
     window.getPhotoGuide = () => {
@@ -110,23 +85,17 @@ function CamelSellerPhotoGuide() {
       const isImages = result.filter(({ imageUrl }) => !!imageUrl);
       setIsImageLoading(false);
       setPhotoImages(isImages);
-      if (editMode.isState) {
-        setEditData({
-          ...(editData as CamelSellerLocalStorage),
-          photoGuideImages: isImages
-        });
-      } else {
-        LocalStorage.set(CAMEL_SELLER, {
-          ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
-          photoGuideImages: isImages
-        });
-      }
+      setTempData({
+        ...tempData,
+        photoGuideImages: isImages
+      });
       setSubmitData({
         ...(submitData as SubmitType),
         photoGuideImages: isImages
       });
     };
-  }, [editData, editMode.isState, setEditData, setSubmitData, submitData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tempData]);
 
   const isIOSCallMessage = () => {
     return !!(
@@ -136,8 +105,17 @@ function CamelSellerPhotoGuide() {
     );
   };
 
+  const isAndroidCallMessage = () => {
+    return !!(window.webview && window.webview.callPhotoGuide);
+  };
+
   const handleClickCallPhotoGuide = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
+    logEvent(attrKeys.camelSeller.CLICK_PHOTO_GUIDE, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      index: Number(target.dataset.index)
+    });
+
     if (checkAgent.isIOSApp() && isIOSCallMessage()) {
       window.webkit.messageHandlers.callPhotoGuide.postMessage(
         JSON.stringify({
@@ -145,7 +123,24 @@ function CamelSellerPhotoGuide() {
           viewMode: 'ALBUM',
           startId: Number(target.dataset.index),
           imageType: Number(target.dataset.type),
-          images: photoImages.map((a) => ({ photoGuideId: a.photoGuideId, imageUrl: a.imageUrl }))
+          images: photoImages.map((imageInfo) => ({
+            photoGuideId: imageInfo.photoGuideId,
+            imageUrl: imageInfo.imageUrl
+          }))
+        })
+      );
+    }
+    if (checkAgent.isAndroidApp() && isAndroidCallMessage()) {
+      window.webview.callPhotoGuide(
+        guideImages?.groupId,
+        JSON.stringify({
+          viewMode: 'ALBUM',
+          startId: Number(target.dataset.index),
+          imageType: Number(target.dataset.type),
+          images: photoImages.map((imageInfo) => ({
+            photoGuideId: imageInfo.photoGuideId,
+            imageUrl: imageInfo.imageUrl
+          }))
         })
       );
     }
@@ -153,13 +148,15 @@ function CamelSellerPhotoGuide() {
 
   const mergePhotoResult = useCallback(() => {
     if (photoImages.length > 0 && guideImages) {
+      // alert(JSON.stringify(photoImages))
       return guideImages.photoGuideDetails.map((photoGuide) => {
         if (find(photoImages, { photoGuideId: photoGuide.id })) {
           return {
             ...find(photoImages, { photoGuideId: photoGuide.id }),
             isRequired: photoGuide.isRequired,
             imageType: photoGuide.imageType,
-            imageWatermark: photoGuide.imageWatermark
+            imageWatermark: photoGuide.imageWatermark,
+            imageWatermarkDark: photoGuide.imageWatermarkDark
           };
         }
         return photoGuide as MergePhotoImages;
@@ -204,8 +201,13 @@ function CamelSellerPhotoGuide() {
 
   const photoRegisterStateText = useMemo(() => {
     if (isRequiredPhotoValid() && isAllRequiredPhotoValid())
-      return `감정에 필요한 사진까지 등록했어요!\n
-    매물 등록 시, 사진감정이 무료로 신청됩니다.`;
+      return (
+        <p>
+          감정에 필요한 사진까지 등록했어요!
+          <br />
+          매물 등록 시, 사진감정이 무료로 신청됩니다.
+        </p>
+      );
     if (isRequiredPhotoValid() && !isAllRequiredPhotoValid()) return '필수사진을 모두 등록했어요.';
     if (isState && !isRequiredPhotoValid()) return '필수사진을 등록해주세요';
     if (!isState && !isRequiredPhotoValid())
@@ -216,14 +218,11 @@ function CamelSellerPhotoGuide() {
   const isPhotoUrl = useMemo(() => photoImages.filter((img) => !!img.imageUrl), [photoImages]);
 
   const count = useMemo(() => {
-    if (editData) {
-      return editData.photoGuideImages?.length;
-    }
     if (photoImages) {
       return isPhotoUrl.length;
     }
     return 0;
-  }, [editData, isPhotoUrl.length, photoImages]);
+  }, [isPhotoUrl.length, photoImages]);
 
   useEffect(() => {
     if (isRequiredPhotoValid()) {
@@ -232,12 +231,16 @@ function CamelSellerPhotoGuide() {
         isState: true
       }));
     }
-  }, [isRequiredPhotoValid, editData, setRequirePhotoValid]);
+  }, [isRequiredPhotoValid, setRequirePhotoValid]);
 
   return (
-    <StyledPhotoGuide showAppDownloadBanner={showAppDownloadBanner}>
+    <StyledPhotoGuide isLongText={isRequiredPhotoValid() && isAllRequiredPhotoValid()}>
       <PhotoGuideArea gap={8}>
-        <PhotoIconBox onClick={handleClickCallPhotoGuide} count={count} />
+        <PhotoIconBox
+          onClick={handleClickCallPhotoGuide}
+          count={count}
+          totalImageCount={guideImages?.photoGuideDetails.length as number}
+        />
         {!isSuccess && <SkeletonPhotoGuideBox />}
         {isSuccess &&
           !mergePhotoResult() &&
@@ -267,38 +270,40 @@ function CamelSellerPhotoGuide() {
             )
           )}
         {mergePhotoResult() &&
-          mergePhotoResult()?.map(({ imageWatermark, isRequired, imageUrl, imageType }, i) => (
-            <GuideBox
-              key={`photo-guide-${imageWatermark}`}
-              data-index={i}
-              data-type={imageType}
-              onClick={handleClickCallPhotoGuide}
-            >
-              {isImageLoading && !imageUrl ? (
-                <AnimationLoading
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
-                  alt="이미지 로딩중"
-                  disableAspectRatio
-                />
-              ) : (
-                <>
-                  <Image
-                    src={imageUrl}
+          mergePhotoResult()?.map(
+            ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (
+              <GuideBox
+                key={`photo-guide-${imageWatermark}`}
+                data-index={i}
+                data-type={imageType}
+                onClick={handleClickCallPhotoGuide}
+              >
+                {isImageLoading && !imageUrl ? (
+                  <AnimationLoading
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
+                    alt="이미지 로딩중"
                     disableAspectRatio
-                    customStyle={imageUrl ? {} : { opacity: 0.5, width: '66%' }}
                   />
-                  <OverlayWarterMark>
-                    <CenterImage src={imageWatermark} disableAspectRatio />
-                  </OverlayWarterMark>
-                </>
-              )}
-              {isRequired && (
-                <RequireText weight="medium" variant="small2">
-                  {imageType === 1 ? '필수' : '감정'}
-                </RequireText>
-              )}
-            </GuideBox>
-          ))}
+                ) : (
+                  <>
+                    <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                    <OverlayWarterMark>
+                      <CenterImage
+                        isImage={!!imageUrl}
+                        src={imageUrl ? imageWatermarkDark : imageWatermark}
+                        disableAspectRatio
+                      />
+                    </OverlayWarterMark>
+                  </>
+                )}
+                {isRequired && (
+                  <RequireText weight="medium" variant="small2">
+                    {imageType === 1 ? '필수' : '감정'}
+                  </RequireText>
+                )}
+              </GuideBox>
+            )
+          )}
       </PhotoGuideArea>
       <Flexbox alignment="center" customStyle={{ width: 'calc(100% - 20px)', marginLeft: 20 }}>
         <Flexbox alignment="flex-start">
@@ -325,7 +330,7 @@ function CamelSellerPhotoGuide() {
   );
 }
 
-const StyledPhotoGuide = styled.div<{ showAppDownloadBanner: boolean }>`
+const StyledPhotoGuide = styled.div<{ isLongText: boolean }>`
   width: 100%;
   background: ${({
     theme: {
@@ -333,10 +338,9 @@ const StyledPhotoGuide = styled.div<{ showAppDownloadBanner: boolean }>`
     }
   }) => common.ui95};
   position: absolute;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
+  top: 56px;
   left: 0;
-  padding: 20px 0;
+  padding: ${({ isLongText }) => (isLongText ? '10px 0' : '20px 0')};
 `;
 
 const PhotoGuideArea = styled(Flexbox)`
@@ -361,6 +365,12 @@ const GuideBox = styled.div`
   justify-content: center;
   overflow: hidden;
   position: relative;
+  & > div:first-of-type {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const RequireText = styled(Typography)`
@@ -397,11 +407,18 @@ const OverlayWarterMark = styled.div`
   justify-content: center;
 `;
 
-const CenterImage = styled(Image)`
-  opacity: 0.5;
+const CenterImage = styled(Image)<{ isImage?: boolean }>`
+  opacity: ${({ isImage }) => (isImage ? 1 : 0.5)};
   width: 66%;
   display: block;
   margin: 0 auto;
+`;
+
+const FullCoverImage = styled(Image)<{ isImage: boolean }>`
+  object-fit: cover;
+  opacity: ${({ isImage }) => (isImage ? 1 : 0.5)};
+  width: ${({ isImage }) => (isImage ? '72px' : '66%')};
+  height: 72px;
 `;
 
 export default CamelSellerPhotoGuide;

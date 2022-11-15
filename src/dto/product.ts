@@ -144,6 +144,7 @@ export type ProductSearchOption = {
   chartLabels: number[];
   chartValues: number[];
   colors: CommonCode[];
+  conditions: CommonCode[];
   genders: CommonCode[];
   keywordBrands: Brand[];
   keywordCategories: Category[];
@@ -172,6 +173,7 @@ export type ProductSearchOption = {
   units: CommonCode[];
   genderCategories: GenderCategory<CommonCode>[];
   idFilters: CommonCode[];
+  productTotal: number;
 };
 
 export type ProductSellerReport = {
@@ -664,4 +666,8 @@ export interface CamelProductsParams {
   size?: number;
   sort?: string[];
   type?: string[]; // default "recomm"
+}
+
+export interface RecentSearchParams extends Omit<SearchParams, 'order'> {
+  order?: 'updatedDesc' | ProductOrder;
 }

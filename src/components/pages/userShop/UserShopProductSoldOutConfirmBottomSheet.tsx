@@ -14,14 +14,23 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
+import { toastState } from '@recoil/common';
 
 function UserShopProductSoldOutConfirmBottomSheet() {
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('soldOutConfirm'));
   const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
+  const setToastState = useSetRecoilState(toastState);
 
   const { id, imageMain, imageThumbnail } = useRecoilValue(userShopSelectedProductState);
 
   const { mutate: updateStatusMutate } = useMutation(putProductUpdateStatus, {
+    onSuccess: () => {
+      setToastState({
+        type: 'sellerProductState',
+        status: 'soldout',
+        customStyle: { bottom: 20 }
+      });
+    },
     onSettled: () => {
       setOpenSoldOutFeedbackState(({ type }) => ({
         type,
@@ -42,7 +51,7 @@ function UserShopProductSoldOutConfirmBottomSheet() {
       att: option === 'other' ? 'OTHER' : 'CAMEL'
     });
 
-    updateStatusMutate({ productId: id, status: 1 });
+    updateStatusMutate({ productId: id, status: 1, soldType: option === 'other' ? 1 : 0 });
   };
 
   useEffect(() => {

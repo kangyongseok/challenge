@@ -15,7 +15,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload, productionEnvUrl } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
 
@@ -67,7 +67,7 @@ function LegitProfileEditInfo({
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -96,7 +96,7 @@ function LegitProfileEditInfo({
         });
       }
 
-      if (checkAgent.isAndroidApp()) {
+      if (checkAgent.isAndroidApp() && productionEnvUrl) {
         setDialogState({
           type: 'legitRequestOnlyInIOS',
           customStyleTitle: { minWidth: 270 }
@@ -119,6 +119,17 @@ function LegitProfileEditInfo({
         window.webkit.messageHandlers.callPhotoGuide.postMessage(
           JSON.stringify({
             guideId: isBackground ? 25 : 24,
+            viewMode: 'ALBUM',
+            type: 2,
+            imageType: 3
+          })
+        );
+      }
+
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callPhotoGuide) {
+        window.webview.callPhotoGuide(
+          isBackground ? 25 : 24,
+          JSON.stringify({
             viewMode: 'ALBUM',
             type: 2,
             imageType: 3

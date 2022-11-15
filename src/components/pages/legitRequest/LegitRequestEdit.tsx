@@ -19,7 +19,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, productionEnvUrl } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { dialogState, toastState } from '@recoil/common';
@@ -139,7 +139,7 @@ function LegitRequestEdit() {
       () => {
         logEvent(attrKeys.legit.CLICK_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
 
-        if (!hasPhotoLibraryAuth || !hasCameraAuth) {
+        if (productionEnvUrl && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
           setDialogState({
             type: 'appAuthCheck',
             theme: 'dark',
@@ -171,6 +171,25 @@ function LegitRequestEdit() {
           window.webkit.messageHandlers.callPhotoGuide.postMessage(
             JSON.stringify({
               guideId: firstPhotoGuideDetail.commonPhotoGuideDetail.photoGuideId,
+              viewMode: 'ALBUM',
+              startId: index,
+              isEdit,
+              imageType: 3,
+              images: photoGuideDetails.map(
+                ({ imageUrl, isEdit: isEditPhotoGuide, commonPhotoGuideDetail: { id } }) => ({
+                  photoGuideId: id,
+                  isEdit: isEditPhotoGuide,
+                  imageUrl: isEditPhotoGuide ? '' : imageUrl
+                })
+              )
+            })
+          );
+        }
+
+        if (checkAgent.isAndroidApp() && window.webview && window.webview.callPhotoGuide) {
+          window.webview.callPhotoGuide(
+            firstPhotoGuideDetail.commonPhotoGuideDetail.photoGuideId,
+            JSON.stringify({
               viewMode: 'ALBUM',
               startId: index,
               isEdit,

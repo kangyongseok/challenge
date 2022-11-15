@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
+import { fetchProduct } from '@api/product';
+
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { CamelSellerLocalStorage } from '@typings/camelSeller';
-import {
-  camelSellerBooleanStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState
-} from '@recoil/camelSeller';
+import { deviceIdState } from '@recoil/common';
+import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+
+import CamelSellerSelectProductState from './CamelSellerSelectProductState';
 
 function CamelSellerRegisterState() {
   const {
@@ -25,16 +25,34 @@ function CamelSellerRegisterState() {
       palette: { secondary, common }
     }
   } = useTheme();
-  const router = useRouter();
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const editData = useRecoilValue(camelSellerEditState);
-  const submitData = useRecoilValue(camelSellerSubmitState);
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
+  const { query } = useRouter();
+  const deviceId = useRecoilValue(deviceIdState);
+  const productId = Number(query.id || 0);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const [isStatePage, setIsStatePage] = useState(false);
   const { isState } = useRecoilValue(camelSellerBooleanStateFamily('submitClick'));
+  const { data: editData } = useQuery(
+    queryKeys.products.sellerEditProducs({ productId, deviceId }),
+    () => fetchProduct({ productId, deviceId }),
+    {
+      enabled: !!productId
+    }
+  );
 
   useEffect(() => {
-    setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
-  }, [submitData, editData]);
+    if (editData && !tempData.color.name) {
+      setTempData({
+        ...tempData,
+        color: editData.product.colors[0],
+        size: editData.product.categorySizes[0]
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editData]);
+
+  // useEffect(() => {
+  //   setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
+  // }, [submitData, editData]);
 
   const handleClickStyle = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
@@ -42,26 +60,26 @@ function CamelSellerRegisterState() {
       title: attrProperty.title.STYLE
     });
 
-    if (editMode.isState) {
-      router.push(`/camelSeller/selectProductState?id=${router.query.id}`);
-      return;
-    }
-    router.push('/camelSeller/selectProductState');
+    setIsStatePage(true);
   };
+
+  if (isStatePage) {
+    return <CamelSellerSelectProductState close={() => setIsStatePage(false)} />;
+  }
 
   return (
     <Flexbox alignment="center" justifyContent="space-between" onClick={handleClickStyle}>
-      {camelSeller?.size?.name && camelSeller?.color?.name ? (
+      {tempData?.size?.name && tempData?.color?.name ? (
         <Flexbox alignment="center" gap={8}>
-          <ProductStateLabel text={camelSeller?.size?.name} variant="contained" />
-          <ProductStateLabel text={camelSeller?.color?.name} variant="contained" />
+          <ProductStateLabel text={tempData?.size?.name} variant="contained" />
+          <ProductStateLabel text={tempData?.color?.name} variant="contained" />
         </Flexbox>
       ) : (
         <Typography
           variant="h4"
           weight="medium"
           customStyle={{
-            color: !camelSeller?.size?.name && isState ? secondary.red.light : common.ui80
+            color: !tempData?.size?.name && isState ? secondary.red.light : common.ui80
           }}
         >
           사이즈 및 색상

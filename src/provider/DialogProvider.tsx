@@ -132,9 +132,9 @@ function DialogProvider() {
                   brandColor="primary"
                   size="large"
                   customStyle={{ width: '100%' }}
-                  onClick={handleClickFirst}
+                  onClick={handleClickSecond}
                 >
-                  {firstButtonText[type as keyof typeof firstButtonText]}
+                  {secondButtonText[type as keyof typeof secondButtonText]}
                 </Button>
                 <Button
                   variant="ghost"

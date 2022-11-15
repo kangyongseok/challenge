@@ -2,31 +2,29 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { DropDownSelect } from '@components/UI/molecules';
 import { Skeleton } from '@components/UI/atoms';
 
-import { SearchParams } from '@dto/product';
+import { RecentSearchParams } from '@dto/product';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchSearchHistory } from '@api/product';
+import { fetchProduct, fetchSearchHistory } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { CamelSellerLocalStorage } from '@typings/camelSeller';
+import { deviceIdState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState,
+  camelSellerTempSaveDataState,
   recentPriceCardTabNumState
 } from '@recoil/camelSeller';
 
@@ -40,41 +38,78 @@ function CamelSellerRecentBottomSheet() {
       palette: { common }
     }
   } = useTheme();
+  const { query, beforePopState, push, asPath } = useRouter();
+  const observerRef = useRef<IntersectionObserver>();
+  const targetRef = useRef(null);
+  const deviceId = useRecoilValue(deviceIdState);
+  const productId = Number(query.id || 0);
   const [viewRecentPriceList, setViewRecentPriceList] = useRecoilState(
     camelSellerDialogStateFamily('recentPrice')
   );
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const [fetchData, setFetchData] = useState<SearchParams>({});
+  const [fetchData, setFetchData] = useState<RecentSearchParams>({});
   const [filterType, setFilterType] = useState('');
-  const [order, setOrder] = useState({ name: '최근 거래순', id: 'postedAllDesc' });
+  const [order, setOrder] = useState({ name: '최근 거래순', id: 'updatedDesc' });
   const resetFilter = useSetRecoilState(camelSellerBooleanStateFamily('filterReset'));
   const recentPriceCardTabNum = useRecoilValue(recentPriceCardTabNumState);
-  const submitState = useRecoilValue(camelSellerSubmitState);
-  const editData = useRecoilValue(camelSellerEditState);
   const bottomSheetRef = useRef<HTMLDivElement>(null);
+  const tempData = useRecoilValue(camelSellerTempSaveDataState);
+  const { data: editData } = useQuery(
+    queryKeys.products.sellerEditProducs({ productId, deviceId }),
+    () => fetchProduct({ productId, deviceId }),
+    {
+      enabled: !!productId
+    }
+  );
 
   const {
     data: { pages = [] } = {},
     isSuccess,
     isLoading,
-    // fetchNextPage,
-    isFetchingNextPage
+    fetchNextPage,
+    isFetchingNextPage,
+    status
   } = useInfiniteQuery(
     queryKeys.products.searchHistory(fetchData),
     ({ pageParam = 0 }) => fetchSearchHistory({ ...fetchData, page: pageParam }),
     {
       getNextPageParam: (nextData) => {
         const { number = 0, totalPages = 0 } = nextData.page || {};
-
         return number < totalPages - 1 ? number + 1 : undefined;
       }
     }
   );
 
   useEffect(() => {
-    setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
+    if (viewRecentPriceList.open) {
+      beforePopState(() => {
+        setViewRecentPriceList(({ type }) => ({ type, open: false }));
+        handleClickFilterReset();
+        window.history.pushState(null, '', asPath);
+        return false;
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submitState]);
+  }, [beforePopState, push, query, viewRecentPriceList.open]);
+
+  const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        io.unobserve(entry.target);
+        fetchNextPage();
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+    observerRef.current = new IntersectionObserver(intersectionObserver);
+    if (targetRef.current) {
+      observerRef.current.observe(targetRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pages]);
 
   useEffect(() => {
     if (viewRecentPriceList.open) {
@@ -85,11 +120,22 @@ function CamelSellerRecentBottomSheet() {
   }, [viewRecentPriceList]);
 
   const handleClickFilterReset = useCallback(() => {
-    if (camelSeller) {
+    if (tempData) {
+      const brandIds = () => {
+        if (tempData.brand.id) return [tempData.brand.id];
+        if (query.brandIds) {
+          if (typeof query.brandIds === 'string') {
+            return [Number(query.brandIds)];
+          }
+          return query.brandIds.map((id) => Number(id));
+        }
+        return [];
+      };
+
       setFetchData({
-        brandIds: camelSeller.brand ? [camelSeller.brand.id] : [],
-        categoryIds: camelSeller.category ? [camelSeller.category.id] : [],
-        keyword: camelSeller.keyword,
+        brandIds: brandIds(),
+        categoryIds: [tempData.category.id || Number(query.categoryIds)],
+        keyword: tempData.quoteTitle,
         conditionIds: [],
         colorIds: [],
         sizeIds: [],
@@ -97,7 +143,7 @@ function CamelSellerRecentBottomSheet() {
       });
     }
     resetFilter(({ type }) => ({ type, isState: true }));
-  }, [camelSeller, resetFilter]);
+  }, [tempData, resetFilter, query.brandIds, query.categoryIds]);
 
   const getScrollTop = useCallback((index: number) => {
     if (index === 0) return 52;
@@ -120,18 +166,48 @@ function CamelSellerRecentBottomSheet() {
   }, [getScrollTop, recentPriceCardTabNum, viewRecentPriceList]);
 
   useEffect(() => {
-    if (camelSeller && viewRecentPriceList.open) {
-      setFetchData({
-        brandIds: camelSeller.brand ? [camelSeller.brand.id] : [],
-        categoryIds: camelSeller.category ? [camelSeller.category.id] : [],
-        keyword: camelSeller.keyword,
-        conditionIds: camelSeller.condition ? [camelSeller.condition.id] : [],
-        colorIds: camelSeller.color ? [camelSeller.color.id] : [],
-        sizeIds: camelSeller.size ? [camelSeller.size.id] : [],
-        order: 'postedAllDesc'
-      });
+    if (viewRecentPriceList.open) {
+      if (editData) {
+        setFetchData({
+          brandIds: [editData.product.brand.id].concat(
+            editData.product?.productBrands?.map(({ brand }) => brand.id) || []
+          ),
+          categoryIds: [editData.product.category.id || 0],
+          keyword: editData.product.quoteTitle,
+          conditionIds: [editData.product.labels[0].id],
+          colorIds: [editData.product.colors[0].id],
+          sizeIds: [editData.product.categorySizes[0].id],
+          order: 'postedAllDesc' // updatedDesc
+        });
+      } else if (query.title) {
+        setFetchData({
+          brandIds:
+            typeof query.brandIds === 'string'
+              ? [Number(query.brandIds)]
+              : (query.brandIds?.map((id) => Number(id)) as number[]),
+          categoryIds: [Number(query.categoryIds)],
+          keyword: tempData.quoteTitle || `${String(query.brandName)} ${query.categoryName}`,
+          conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
+          colorIds: tempData.color.id ? [tempData.color.id] : [],
+          sizeIds: tempData.size.id ? [tempData.size.id] : [],
+          order: 'postedAllDesc' // updatedDesc
+        });
+      }
     }
-  }, [camelSeller, viewRecentPriceList.open]);
+  }, [
+    editData,
+    query.brandIds,
+    query.brandName,
+    query.categoryIds,
+    query.categoryName,
+    query.id,
+    query.title,
+    tempData.color.id,
+    tempData.condition.id,
+    tempData.quoteTitle,
+    tempData.size.id,
+    viewRecentPriceList.open
+  ]);
 
   // useEffect(() => {
   //   if (inView) {
@@ -142,7 +218,7 @@ function CamelSellerRecentBottomSheet() {
   const handleClickFilterSelect = ({ type, id }: { type: string; id: number }) => {
     setFetchData((props) => ({
       ...props,
-      [type]: [id]
+      [type]: id ? [id] : []
     }));
   };
 
@@ -171,8 +247,7 @@ function CamelSellerRecentBottomSheet() {
   };
 
   const emptyList =
-    (isSuccess && pages[0]?.page && pages[0].page.content.length === 0) ||
-    (isSuccess && !pages[0]?.page);
+    status === 'error' || (isSuccess && pages[0]?.page && pages[0].page.content.length === 0);
 
   return (
     <BottomSheet
@@ -186,7 +261,9 @@ function CamelSellerRecentBottomSheet() {
       <FilterHeaderFix ref={bottomSheetRef}>
         <Flexbox>
           <Typography brandColor="primary" weight="bold" variant="h3">
-            {camelSeller?.keyword}
+            {tempData.quoteTitle ||
+              `${String(query.brandName)} ${query.categoryName}` ||
+              query.brandName}
             <Typography weight="bold" variant="h3" customStyle={{ display: 'inline-block' }}>
               의 최근 거래가
             </Typography>
@@ -199,40 +276,40 @@ function CamelSellerRecentBottomSheet() {
         alignment="center"
         customStyle={{ padding: '0 20px', marginTop: 116, height: 52 }}
       >
-        {!emptyList && (
-          <>
-            <DropDownSelect
-              borderHidden
-              title="최근 거래순"
-              type="recent"
-              lists={[
-                { name: '최근 거래순', id: 'postedAllDesc' },
-                { name: '높은 가격순', id: 'priceDesc' },
-                { name: '낮은 가격순', id: 'priceAsc' }
-              ]}
-              currnetType={filterType}
-              selectValue={order.id}
-              onClick={handleClickFilterButton}
-              onClickSelect={handleClickSelect}
-            />
-            <Button
-              customStyle={{ border: 'none', padding: 0 }}
-              startIcon={<Icon name="RotateOutlined" customStyle={{ marginRight: 4 }} />}
-              onClick={() => {
-                logEvent(attrKeys.camelSeller.CLICK_RESET, {
-                  name: attrProperty.name.MARKET_PRICE,
-                  title: attrProperty.title.TOP
-                });
-                handleClickFilterReset();
-              }}
-            >
-              <Typography variant="body1">필터 재설정</Typography>
-            </Button>
-          </>
-        )}
+        <DropDownSelect
+          disabledBorder
+          disabledCount
+          disabledBg
+          title="최근 거래순"
+          type="recent"
+          lists={[
+            { name: '최근 거래순', id: 'postedAllDesc' },
+            { name: '높은 가격순', id: 'priceDesc' },
+            { name: '낮은 가격순', id: 'priceAsc' }
+          ]}
+          currnetType={filterType}
+          selectValue={order.id}
+          onClick={handleClickFilterButton}
+          onClickSelect={handleClickSelect}
+        />
+        <Button
+          customStyle={{ border: 'none', padding: 0 }}
+          startIcon={<Icon name="RotateOutlined" customStyle={{ marginRight: 4 }} />}
+          onClick={() => {
+            logEvent(attrKeys.camelSeller.CLICK_RESET, {
+              name: attrProperty.name.MARKET_PRICE,
+              title: attrProperty.title.TOP
+            });
+            handleClickFilterReset();
+          }}
+        >
+          <Typography variant="body1">필터 재설정</Typography>
+        </Button>
       </Flexbox>
       {!!emptyList && (
-        <RecentBottomSheetEmptyResult camelSeller={camelSeller as CamelSellerLocalStorage} />
+        <RecentBottomSheetEmptyResult
+          title={(query.title as string) || editData?.product.title || ''}
+        />
       )}
       <Flexbox direction="vertical" gap={20} customStyle={{ padding: '0 20px' }}>
         {isLoading &&
@@ -280,12 +357,13 @@ function CamelSellerRecentBottomSheet() {
             </Flexbox>
           ))}
       </Flexbox>
-      {isSuccess && pages[0]?.page && pages[0].page.content.length !== 0 && (
+      {isSuccess && ((pages[0]?.page && pages[0].page.content.length !== 0) || !pages[0]) && (
         <Flexbox
           customStyle={{ margin: '36px 0' }}
           alignment="center"
           justifyContent="center"
           direction="vertical"
+          ref={targetRef}
         >
           <Typography weight="medium">더 많은 매물을 보고싶으세요?</Typography>
           <Typography variant="small1" customStyle={{ color: common.ui60 }}>

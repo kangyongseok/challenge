@@ -22,6 +22,7 @@ import { fetchProductDealInfos } from '@api/nextJs';
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
@@ -58,7 +59,8 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
   );
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
+  const { data: { notViewedHistoryCount = 0, info: { value: { gender = '' } = {} } = {} } = {} } =
+    useQueryUserInfo();
   const { isLoading, data: productDealInfos = [] } = useQuery(
     queryKeys.nextJs.productDealInfos(),
     fetchProductDealInfos
@@ -101,7 +103,7 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
 
   const handleClickAlarm = () => {
     logEvent(attrKeys.home.CLICK_BEHAVIOR_LIST, {
-      name: 'MAIN'
+      title: notViewedHistoryCount > 0 ? attrProperty.title.NEW : attrProperty.title.GENERAL
     });
 
     if (!accessUser) {
@@ -128,13 +130,13 @@ function HomeWelcome({ isViewSearchHelperOnboarding, titleViewType }: HomeWelcom
         <Icon name="LogoText_96_20" color={common.cmnW} width={76} height={16} />
         <Flexbox gap={24} alignment="center">
           <Badge
-            open={false}
+            open={!!notViewedHistoryCount}
             variant="two-tone"
             brandColor="red"
-            text={99}
+            text={notViewedHistoryCount > 99 ? '99+' : notViewedHistoryCount}
             width={20}
             height={20}
-            customStyle={{ top: -8, right: -8 }}
+            customStyle={{ top: -8, right: -8, width: 'fit-content', minWidth: 20 }}
           >
             <Icon
               name="AlarmOutlined"

@@ -1,23 +1,44 @@
 import { atom, atomFamily, selector } from 'recoil';
 
-import type { CamelSellerLocalStorage, SubmitType } from '@typings/camelSeller';
+import type {
+  // CamelSellerLocalStorage,
+  CamelSellerTempData,
+  SubmitType
+} from '@typings/camelSeller';
+
+export const camelSellerTempSaveDataState = atom<CamelSellerTempData>({
+  key: '@camelSeller/TempSaveDataState',
+  default: {
+    title: '',
+    quoteTitle: '',
+    condition: { id: 0, name: '' },
+    color: { id: 0, name: '' },
+    size: { id: 0, name: '' },
+    brand: { id: 0, name: '' },
+    category: { id: 0, name: '' },
+    brandIds: [],
+    price: 0,
+    description: '',
+    photoGuideImages: []
+  }
+});
 
 export const camelSellerSubmitState = atom<SubmitType | null>({
-  key: 'camelSellerStore',
+  key: '@camelSeller/Store',
   default: null
 });
 
-export const camelSellerEditState = atom<CamelSellerLocalStorage | null>({
-  key: 'camelSellerEditState',
-  default: null
-});
+// export const camelSellerEditState = atom<CamelSellerLocalStorage | null>({
+//   key: '@camelSeller/EditState',
+//   default: null
+// });
 
 export const submitValidatorState = selector({
   key: 'submitValidatorState',
   get: ({ get }) => {
-    const submitData = get(camelSellerSubmitState);
+    const submitData = get(camelSellerTempSaveDataState);
     if (submitData) {
-      return !!(submitData.conditionId && submitData.colorIds?.length > 0 && submitData.price);
+      return !!(submitData.condition.id && submitData.color.id && submitData.price);
     }
     return false;
   }
@@ -44,7 +65,7 @@ export const recentPriceCardTabNumState = atom<{ id: number; index: number } | n
 });
 
 export const camelSellerBooleanStateFamily = atomFamily({
-  key: 'camelSellerBooleanStateFamily',
+  key: '@camelSeller/BooleanStateFamily',
   default: (type: string) => ({
     type,
     isState: false
@@ -52,9 +73,14 @@ export const camelSellerBooleanStateFamily = atomFamily({
 });
 
 export const camelSellerDialogStateFamily = atomFamily({
-  key: 'camelSellterDialogState',
+  key: '@camelSeller/DialogState',
   default: (type: string) => ({
     type,
     open: false
   })
+});
+
+export const camelSellerSMSDialogState = atom({
+  key: '@camelSeller/camelSellerSMSDialogState',
+  default: true
 });

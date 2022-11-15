@@ -1,28 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { BottomSheet, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchCommonCodeDetails } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { SubmitType } from '@typings/camelSeller';
-import { CamelSellerLocalStorage } from '@typings/camelSeller';
+// import type { SubmitType } from '@typings/camelSeller';
 import {
-  camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerEditState,
-  camelSellerSubmitState
+  // camelSellerSubmitState,
+  camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
 
 function CamelSellerBottomSheetCondition() {
@@ -31,11 +27,8 @@ function CamelSellerBottomSheetCondition() {
       palette: { common }
     }
   } = useTheme();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setCamelSeller] = useState<CamelSellerLocalStorage>();
-  const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
-  const [editData, setEditData] = useRecoilState(camelSellerEditState);
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
+  // const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [{ open }, setOpen] = useRecoilState(camelSellerDialogStateFamily('condition'));
   const { data: codeDetails } = useQuery(queryKeys.commons.codeDetails(14), () =>
     fetchCommonCodeDetails({
@@ -43,9 +36,9 @@ function CamelSellerBottomSheetCondition() {
     })
   );
 
-  useEffect(() => {
-    setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-  }, []);
+  // useEffect(() => {
+  //   setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
+  // }, []);
 
   useEffect(() => {
     if (open) {
@@ -65,29 +58,33 @@ function CamelSellerBottomSheetCondition() {
     });
 
     setOpen(({ type }) => ({ type, open: false }));
-    if (!editMode.isState) {
-      LocalStorage.set(CAMEL_SELLER, {
-        ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
-        condition: {
-          name: target.dataset.name as string,
-          id: Number(target.dataset.id)
-        }
-      });
-    }
-    if (editMode.isState) {
-      setEditData({
-        ...(editData as CamelSellerLocalStorage),
-        condition: {
-          name: target.dataset.name as string,
-          id: Number(target.dataset.id)
-        }
-      });
-    }
-
-    setSubmitState({
-      ...(submitState as SubmitType),
-      conditionId: Number(target.dataset.id)
+    // if (!editMode.isState) {
+    //   LocalStorage.set(CAMEL_SELLER, {
+    //     ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
+    //     condition: {
+    //       name: target.dataset.name as string,
+    //       id: Number(target.dataset.id)
+    //     }
+    //   });
+    // }
+    // if (editMode.isState) {
+    //   setEditData({
+    //     ...(editData as CamelSellerLocalStorage),
+    //     condition: {
+    //       name: target.dataset.name as string,
+    //       id: Number(target.dataset.id)
+    //     }
+    //   });
+    // }
+    setTempData({
+      ...tempData,
+      condition: { id: Number(target.dataset.id), name: target.dataset.name || '' }
     });
+
+    // setSubmitState({
+    //   ...(submitState as SubmitType),
+    //   conditionId: Number(target.dataset.id)
+    // });
   };
 
   return (

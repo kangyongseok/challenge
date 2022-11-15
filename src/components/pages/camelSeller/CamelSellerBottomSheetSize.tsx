@@ -3,34 +3,45 @@ import type { MouseEvent } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
+import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
-import { Box, Flexbox, Typography } from 'mrcamel-ui';
-import { filter } from 'lodash-es';
+import { useRouter } from 'next/router';
+import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { filter, sortBy, uniqBy } from 'lodash-es';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import LocalStorage from '@library/localStorage';
+// import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchCategorySizes } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
+import { globalSizeGroupId } from '@constants/common';
+// import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { CamelSellerLocalStorage, GroupSize } from '@typings/camelSeller';
+import type { GroupSize } from '@typings/camelSeller';
+import { camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 interface BottomSheetSizeProps {
-  onClick: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+  const { query } = useRouter();
   const swiperRef = useRef<SwiperClass | null>(null);
   const [tab, setTab] = useState(0);
   const [groupSize, setGroupSize] = useState<GroupSize[]>([]);
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
+  // const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
   const [fetchData, setFetchData] = useState({ brandId: 0, categoryId: 0 });
+  const tempData = useRecoilValue(camelSellerTempSaveDataState);
   const { data: categorySizes } = useQuery(
     queryKeys.categories.categorySizes(fetchData),
     () => fetchCategorySizes(fetchData),
@@ -45,18 +56,24 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
       title: attrProperty.title.SIZE
     });
 
-    setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
+    // setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (camelSeller && camelSeller.brand && camelSeller.category) {
+    if (query.brandIds && query.categoryIds) {
       setFetchData({
-        brandId: camelSeller.brand.id,
-        categoryId: camelSeller.category.id
+        brandId:
+          typeof query.brandIds === 'string' ? Number(query.brandIds) : Number(query.brandIds[0]),
+        categoryId: Number(query.categoryIds)
+      });
+    } else {
+      setFetchData({
+        brandId: tempData.brand.id,
+        categoryId: tempData.category.id
       });
     }
-  }, [camelSeller]);
+  }, [query, tempData]);
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -69,20 +86,21 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
       id: data.id,
       groupId: data.groupId
     }));
+
     if (sizes) {
       const ukSize = filter(sizes, { groupId: 4 });
       const euSize = filter(sizes, { groupId: 5 });
       const globalSize = sizes?.filter((size) => {
-        if (size.groupId === 1 || size.groupId === 3 || size.groupId === 6) {
+        if (globalSizeGroupId.includes(size.groupId)) {
           return size;
         }
         return '';
       });
 
       setGroupSize([
-        { id: 0, label: '글로벌 사이즈', data: globalSize },
-        { id: 1, label: 'UK', data: ukSize },
-        { id: 2, label: 'EU', data: euSize }
+        { id: 0, label: '글로벌 사이즈', data: uniqBy(sortBy(globalSize, 'name'), 'id') },
+        { id: 1, label: 'UK', data: uniqBy(sortBy(ukSize, 'name'), 'id') },
+        { id: 2, label: 'EU', data: uniqBy(sortBy(euSize, 'name'), 'name') }
       ]);
     }
   }, [categorySizes]);
@@ -116,7 +134,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
           })}
         </Flexbox>
       </Header>
-      <Box customStyle={{ marginTop: 103 }}>
+      <Box customStyle={{ marginTop: 103, paddingTop: 18 }}>
         <Swiper
           onSlideChange={handleSlideChange}
           initialSlide={tab}
@@ -124,36 +142,129 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
             swiperRef.current = swiper;
           }}
         >
-          {groupSize.map(({ data, id }) => {
-            if (data.length !== 0) {
-              return (
-                <SwiperSlide data-slide-id={id} key={`swiper-size-${id}`}>
-                  <Flexbox direction="vertical" gap={20} customStyle={{ height: data.length * 40 }}>
-                    <Typography
-                      weight="medium"
-                      onClick={onClick}
-                      data-size-id={0}
-                      data-size-name="One Size"
-                    >
-                      One Size
-                    </Typography>
-                    {data.map((size) => (
-                      <Typography
-                        data-size-id={size.id}
-                        data-size-name={size.name}
-                        weight="medium"
-                        onClick={onClick}
-                        key={`size-${size.id}`}
-                      >
-                        {size.name}
-                      </Typography>
-                    ))}
-                  </Flexbox>
-                </SwiperSlide>
-              );
-            }
-            return null;
-          })}
+          {groupSize[0]?.data.length > 0 && (
+            <SwiperSlide data-slide-id={0}>
+              <Flexbox
+                gap={10}
+                customStyle={{
+                  overflow: 'auto',
+                  flexWrap: 'wrap',
+                  maxHeight: 'calc(100vh - 200px)'
+                }}
+              >
+                <Chip
+                  key="size-global-oneSize"
+                  data-size-id={0}
+                  data-size-name="ONE SIZE"
+                  variant="contained"
+                  customStyle={{
+                    background: common.ui95,
+                    color: common.ui20
+                  }}
+                  onClick={onClick}
+                >
+                  ONE SIZE
+                </Chip>
+                {groupSize[0].data.map((list) => (
+                  <Chip
+                    key={`size-global-${list.id}`}
+                    data-size-id={list.id}
+                    data-size-name={list.name}
+                    variant="contained"
+                    customStyle={{
+                      background: common.ui95,
+                      color: common.ui20
+                    }}
+                    onClick={onClick}
+                  >
+                    {list.name}
+                  </Chip>
+                ))}
+              </Flexbox>
+            </SwiperSlide>
+          )}
+          {groupSize[1]?.data.length > 0 && (
+            <SwiperSlide data-slide-id={1}>
+              <Flexbox
+                gap={10}
+                customStyle={{
+                  overflow: 'auto',
+                  flexWrap: 'wrap',
+                  maxHeight: 'calc(100vh - 200px)'
+                }}
+              >
+                <Chip
+                  key="size-uk-oneSize"
+                  data-size-id={0}
+                  data-size-name="One Size"
+                  variant="contained"
+                  customStyle={{
+                    background: common.ui95,
+                    color: common.ui20
+                  }}
+                  onClick={onClick}
+                >
+                  ONE SIZE
+                </Chip>
+                {groupSize[1].data.map((list) => (
+                  <Chip
+                    key={`size-uk-${list.id}`}
+                    data-size-id={list.id}
+                    data-size-name={list.name}
+                    variant="contained"
+                    customStyle={{
+                      background: common.ui95,
+                      color: common.ui20
+                    }}
+                    onClick={onClick}
+                  >
+                    {list.name}
+                  </Chip>
+                ))}
+              </Flexbox>
+            </SwiperSlide>
+          )}
+          {groupSize[2]?.data.length > 0 && (
+            <SwiperSlide data-slide-id={2}>
+              <Flexbox
+                gap={10}
+                customStyle={{
+                  overflow: 'auto',
+                  flexWrap: 'wrap',
+                  maxHeight: 'calc(100vh - 200px)'
+                }}
+              >
+                <Chip
+                  key="size-eu-oneSize"
+                  data-size-id={0}
+                  data-size-name="One Size"
+                  variant="contained"
+                  customStyle={{
+                    background: common.ui95,
+                    color: common.ui20
+                  }}
+                  onClick={onClick}
+                >
+                  ONE SIZE
+                </Chip>
+                {groupSize[2].data.map((list) => (
+                  <Chip
+                    key={`size-eu-${list.id}`}
+                    data-size-id={list.id}
+                    data-size-name={list.name}
+                    variant="contained"
+                    customStyle={{
+                      background: common.ui95,
+                      color: common.ui20
+                    }}
+                    onClick={onClick}
+                  >
+                    {list.name}
+                  </Chip>
+                ))}
+              </Flexbox>
+            </SwiperSlide>
+          )}
         </Swiper>
       </Box>
     </Box>

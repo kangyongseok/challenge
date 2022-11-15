@@ -1,3 +1,4 @@
+import { Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
@@ -31,7 +32,7 @@ export const Tab = styled.button<
   appearance: none;
   text-decoration: none;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 21px;
   letter-spacing: -0.2px;
   text-align: center;
@@ -75,4 +76,19 @@ export const Tab = styled.button<
         };
     }
   }}
+`;
+
+export const BadgeText = styled(Typography)<{ selected: boolean; badge?: boolean }>`
+  ${({ badge }): CSSObject => {
+    return badge
+      ? {
+          background:
+            'url(https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/ico/badge_new.png) no-repeat 100% 50%',
+          backgroundSize: '16px'
+        }
+      : {};
+  }};
+  padding: 0 22px;
+  color: ${({ theme: { palette }, selected }) =>
+    selected ? palette.common.ui20 : palette.common.ui60};
 `;

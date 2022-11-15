@@ -121,20 +121,6 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
 
-    // if (
-    //   router.pathname === '/products/[id]' &&
-    //   !router.query.conversionId &&
-    //   !router.query.outsideAccess &&
-    //   !router.query.redirect &&
-    //   !router.query.userAgent
-    // ) {
-    //   router.push({
-    //     pathname: router.asPath,
-    //     query: {
-    //       outsideAccess: true
-    //     }
-    //   });
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

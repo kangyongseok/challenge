@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -8,14 +8,19 @@ import styled from '@emotion/styled';
 import { IconBox } from '@components/UI/molecules/Header/Header.styles';
 import { Header } from '@components/UI/molecules';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { showAppDownloadBannerState } from '@recoil/common';
-import { camelSellerEditState, camelSellerSubmitState } from '@recoil/camelSeller';
+import {
+  camelSellerBooleanStateFamily,
+  camelSellerDialogStateFamily,
+  camelSellerSubmitState,
+  camelSellerTempSaveDataState
+} from '@recoil/camelSeller';
 
 function CamelSellerHeader({
   type,
@@ -27,54 +32,95 @@ function CamelSellerHeader({
   backEvent?: () => void;
   onClickClose?: () => void;
 }) {
-  const router = useRouter();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const { pathname, query, back, replace, push, beforePopState, asPath } = useRouter();
   const resetSubmitData = useResetRecoilState(camelSellerSubmitState);
-  const setEditData = useSetRecoilState(camelSellerEditState);
-  const setSubmitData = useSetRecoilState(camelSellerSubmitState);
+  const resetClickState = useResetRecoilState(camelSellerBooleanStateFamily('submitClick'));
+  const tempData = useRecoilValue(camelSellerTempSaveDataState);
+  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
+  const [disabledCallForm, setDisabledCallForm] = useState(false);
+  const viewRecentPriceList = useRecoilValue(camelSellerDialogStateFamily('recentPrice'));
 
   const {
-    theme: { typography, palette }
+    theme: {
+      typography,
+      palette: { common, primary }
+    }
   } = useTheme();
   const [toggleLaterDialog, setToggleLaterDialog] = useState(false);
 
   useEffect(() => {
+    if (!query.id && !viewRecentPriceList.open && pathname.split('/').includes('registerConfirm')) {
+      beforePopState(() => {
+        window.history.pushState(null, '', asPath);
+        setToggleLaterDialog(true);
+        return false;
+      });
+    }
+  }, [asPath, beforePopState, pathname, query.id, viewRecentPriceList.open]);
+
+  useEffect(() => {
     if (toggleLaterDialog) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_POPUP, {
-        name: router.pathname,
+        name: pathname,
         title: attrProperty.title.LATER
       });
     }
-  }, [router.pathname, toggleLaterDialog]);
+  }, [pathname, toggleLaterDialog]);
 
   const handleClickBack = () => {
     logEvent(attrKeys.camelSeller.CLICK_CLOSE, {
       name: attrProperty.name.PRODUCT
     });
-    if (router.query.id) {
-      // LocalStorage.remove(CAMEL_SELLER);
-      setEditData(null);
-      setSubmitData(null);
-      router.back();
+    if (query.id) {
+      resetSubmitData();
+      resetTempData();
+      back();
       return;
     }
+    if (pathname.split('/').includes('registerConfirm')) {
+      setToggleLaterDialog(true);
+    } else {
+      back();
+    }
+  };
 
-    setToggleLaterDialog(true);
+  const handleClickLogo = () => {
+    if (query.id) {
+      resetSubmitData();
+      resetTempData();
+      push('/');
+      return;
+    }
+    if (pathname.split('/').includes('registerConfirm')) {
+      setToggleLaterDialog(true);
+    } else {
+      push('/');
+    }
   };
 
   const handlClickLater = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_POPUP, {
-      name: router.pathname,
+      name: pathname,
       title: attrProperty.title.LATER,
       att: 'SAVE'
     });
-    resetSubmitData();
-    router.replace('/');
+
+    if (!query.id) {
+      LocalStorage.set(CAMEL_SELLER, {
+        ...tempData,
+        brand: { id: query.brandIds, name: query.brandName },
+        category: { id: query.categoryIds, name: query.categoryName }
+      });
+      // resetTempData();
+      // resetSubmitData();
+    }
+    resetClickState();
+    replace('/');
   };
 
   const handleClickContinue = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_POPUP, {
-      name: router.pathname,
+      name: pathname,
       title: attrProperty.title.LATER,
       att: 'CONTINUE'
     });
@@ -82,24 +128,35 @@ function CamelSellerHeader({
     setToggleLaterDialog(false);
   };
 
+  const handleClickCallForm = () => {
+    if (!(disabledCallForm || tempData.description)) {
+      setDisabledCallForm(true);
+      if (callForm) {
+        callForm();
+      }
+    }
+  };
+
   if (type === 'textarea') {
     return (
       <Header
+        disableAppDownloadBannerVariableTop
         customHeader={
           <>
             <Box customStyle={{ height: 56 }} />
-            <Wrap
-              alignment="center"
-              showAppDownloadBanner={showAppDownloadBanner}
-              customStyle={{ padding: '0 20px' }}
-            >
+            <Wrap alignment="center" customStyle={{ padding: '0 20px' }}>
               <Icon
                 onClick={onClickClose}
                 name="ArrowLeftOutlined"
                 // customStyle={{ display: type === 'isSearch' ? 'none' : 'block' }}
                 size="medium"
               />
-              <CallFormButton variant="contained" onClick={callForm}>
+              <CallFormButton
+                variant="contained"
+                weight="medium"
+                onClick={handleClickCallForm}
+                disabled={!!(disabledCallForm || tempData.description)}
+              >
                 판매 양식 불러오기
               </CallFormButton>
             </Wrap>
@@ -112,16 +169,17 @@ function CamelSellerHeader({
   return (
     <>
       <Header
+        disableAppDownloadBannerVariableTop
         customHeader={
           <>
             <Box customStyle={{ height: 56 }} />
-            <Wrap alignment="center" showAppDownloadBanner={showAppDownloadBanner}>
+            <Wrap alignment="center">
               <IconBox show onClick={handleClickBack}>
                 <Icon name="CloseOutlined" size="medium" />
               </IconBox>
               <Icon
                 name="LogoText_96_20"
-                onClick={() => router.push('/')}
+                onClick={handleClickLogo}
                 customStyle={{ marginLeft: -50 }}
               />
               <Box />
@@ -132,23 +190,20 @@ function CamelSellerHeader({
       <Dialog
         open={toggleLaterDialog}
         onClose={() => setToggleLaterDialog(false)}
-        customStyle={{ width: '100%' }}
+        customStyle={{ width: '100%', paddingTop: 32 }}
       >
         <Box customStyle={{ textAlign: 'center' }}>
-          <Typography customStyle={{ color: palette.common.ui20 }} weight="medium">
-            등록하던 물건을 임시저장하고
-          </Typography>
-          <Typography customStyle={{ color: palette.common.ui20 }} weight="medium">
-            나중에 다시 진행할까요?
+          <Typography customStyle={{ color: common.ui20 }} weight="bold" variant="h3">
+            등록하던 내용을 임시저장할까요?
           </Typography>
         </Box>
-        <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 16 }}>
+        <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 32 }}>
           <Button
             fullWidth
             size="large"
             variant="contained"
             brandColor="primary"
-            customStyle={{ fontWeight: typography.body1.weight.bold }}
+            customStyle={{ fontWeight: typography.body1.weight.medium }}
             onClick={handlClickLater}
           >
             임시 저장하기
@@ -157,8 +212,11 @@ function CamelSellerHeader({
             fullWidth
             size="large"
             variant="outlined"
-            brandColor="primary"
-            customStyle={{ fontWeight: typography.body1.weight.medium }}
+            customStyle={{
+              fontWeight: typography.body1.weight.medium,
+              background: primary.highlight,
+              color: primary.light
+            }}
             onClick={handleClickContinue}
           >
             계속 진행하기
@@ -169,28 +227,30 @@ function CamelSellerHeader({
   );
 }
 
-const Wrap = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
+const Wrap = styled(Flexbox)`
   width: 100%;
   height: 56px;
   background: ${({ theme: { palette } }) => palette.common.uiWhite};
   position: fixed;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
+  top: 0;
   left: 0;
   z-index: 11;
   justify-content: space-between;
 `;
 
-const CallFormButton = styled(Button)`
+const CallFormButton = styled(Button)<{ disabled: boolean }>`
   background: ${({
     theme: {
-      palette: { common }
-    }
-  }) => common.ui95};
+      palette: { common, primary }
+    },
+    disabled
+  }) => (disabled ? common.ui80 : primary.highlight)};
   color: ${({
     theme: {
-      palette: { common }
-    }
-  }) => common.ui20};
+      palette: { common, primary }
+    },
+    disabled
+  }) => (disabled ? common.ui60 : primary.light)};
   font-size: ${({ theme }) => theme.typography.small1.size};
   padding: 0 6px;
   height: 30px;

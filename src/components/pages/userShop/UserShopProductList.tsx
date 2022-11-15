@@ -43,6 +43,7 @@ function UserShopProductList() {
         page: pageParam
       }),
     {
+      refetchOnMount: 'always',
       getNextPageParam: (data) => {
         const { number = 0, totalPages = 0 } = data || {};
 
@@ -72,7 +73,7 @@ function UserShopProductList() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    if (setToastState) {
+    if (setToastState.status) {
       refetch();
     }
   }, [setToastState, refetch]);

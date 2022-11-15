@@ -23,10 +23,13 @@ interface DropDownSelectProps {
   lists?: FilterDropItem[];
   groupSize?: GroupSize[];
   currnetType: string;
-  borderHidden?: boolean;
+  disabledBorder?: boolean;
   selectValue?: number | string;
   right?: number;
   allCount?: number;
+  disabledCount?: boolean;
+  disabledBg?: boolean;
+  groupSelect?: boolean;
   onClick: (parameter: string) => void;
   onClickSelect: (e: MouseEvent<HTMLDivElement>) => void;
 }
@@ -37,10 +40,13 @@ function DropDownSelect({
   lists,
   groupSize,
   currnetType,
-  borderHidden,
+  disabledBorder,
   selectValue,
   right,
   allCount,
+  disabledCount,
+  groupSelect,
+  disabledBg,
   onClick,
   onClickSelect
 }: DropDownSelectProps) {
@@ -85,16 +91,16 @@ function DropDownSelect({
   return (
     <StyledDropDownWrap ref={wrapRef}>
       <FilterButton
-        borderHidden={!!borderHidden}
-        endIcon={<Icon name="DropdownFilled" viewBox="0 0 5 24" />}
-        onClick={handleClickFilterButton}
+        disabledBorder={!!disabledBorder}
         data-drop-filter
         isSelectValue={!!activeValue && type !== 'recent'}
-        isRecent={type === 'recent'}
+        disabledBg={disabledBg}
         variant="contained"
         ref={dropDownIconRef}
+        onClick={handleClickFilterButton}
       >
         {activeValue || title}
+        <Icon name="DropdownFilled" viewBox="0 0 5 24" />
       </FilterButton>
       <DropDownArea isDisplay={currnetType === type} direction="vertical" right={right as number}>
         {type !== 'recent' && (
@@ -127,7 +133,7 @@ function DropDownSelect({
           </Item>
         )}
 
-        {type === 'size' &&
+        {groupSelect &&
           lists &&
           groupSize?.map(({ label, data }) => (
             <Box key={`group-size-${label}`}>
@@ -179,7 +185,7 @@ function DropDownSelect({
               </Box>
             </Box>
           ))}
-        {type !== 'size' &&
+        {!groupSelect &&
           lists?.map((list) => (
             <Item
               isActive={selectValue === list.id}
@@ -207,14 +213,14 @@ function DropDownSelect({
               >
                 {list.name}
               </Typography>
-              {list.count && (
+              {!disabledCount && (
                 <Typography
                   variant="small2"
                   customStyle={{
                     color: selectValue === list.id ? primary.light : common.ui60
                   }}
                 >
-                  {commaNumber(list.count)}
+                  {commaNumber(list.count || 0)}
                 </Typography>
               )}
             </Item>

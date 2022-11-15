@@ -1,31 +1,25 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 import { forwardRef } from 'react';
 
-import { Typography, useTheme } from 'mrcamel-ui';
 import type { BrandColor, CustomStyle } from 'mrcamel-ui';
 
-import { StyledTabs, Tab } from './Tabs.styles';
+import { BadgeText, StyledTabs, Tab } from './Tabs.styles';
 
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   id?: string;
   value: string;
   changeValue: (e: MouseEvent<HTMLButtonElement> | null, newValue: string) => void;
-  labels: { key: string; value: string }[];
+  labels: { key: string; value: string; badge?: boolean }[];
   brandColor?: Extract<BrandColor, 'primary' | 'black'>;
   customStyle?: CustomStyle;
   customTabStyle?: CustomStyle;
+  isNew?: boolean;
 }
 
 const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { value, changeValue, labels, brandColor, customStyle, id, customTabStyle, ...props },
+  { value, changeValue, labels, brandColor, customStyle, id, customTabStyle, isNew, ...props },
   ref
 ) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const handleClick =
     (selected: boolean, selectedValue: string) => (e: MouseEvent<HTMLButtonElement>) => {
       if (!selected) {
@@ -60,15 +54,14 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
             brandColor={brandColor}
             css={customTabStyle}
           >
-            <Typography
-              variant="body1"
+            <BadgeText
+              variant="h4"
               weight={selected ? 'bold' : 'medium'}
-              customStyle={{
-                color: selected ? common.ui20 : common.ui60
-              }}
+              selected={selected}
+              badge={isNew && label.badge}
             >
               {label.value}
-            </Typography>
+            </BadgeText>
           </Tab>
         );
       })}

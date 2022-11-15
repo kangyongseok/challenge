@@ -22,7 +22,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, productionEnvUrl } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -95,7 +95,7 @@ function LegitRequestForm() {
         name: attrProperty.legitName.LEGIT_PROCESS
       });
 
-      if (!hasPhotoLibraryAuth || !hasCameraAuth) {
+      if (productionEnvUrl && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
         setDialogState({
           type: 'appAuthCheck',
           theme: 'dark',
@@ -124,6 +124,18 @@ function LegitRequestForm() {
         window.webkit.messageHandlers.callPhotoGuide.postMessage(
           JSON.stringify({
             guideId: groupId,
+            viewMode: 'ALBUM',
+            startId: index,
+            imageType: 2,
+            images: photoGuideImages
+          })
+        );
+      }
+
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callPhotoGuide) {
+        window.webview.callPhotoGuide(
+          groupId,
+          JSON.stringify({
             viewMode: 'ALBUM',
             startId: index,
             imageType: 2,

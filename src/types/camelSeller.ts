@@ -11,31 +11,63 @@ export interface PhotoGuideImages {
   imageUrl: string;
   id?: number;
   imageWatermark?: string;
+  commonPhotoGuideDetail: CommonPhotoGuideDetail;
 }
+
+export interface EditPhotoGuideImages {
+  photoGuideId: number;
+  imageUrl: string;
+  commonPhotoGuideDetail: { id: number };
+}
+
 export interface CamelSellerLocalStorage {
   title: string;
-  keyword: string;
-  search?: boolean;
-  step?: string;
-  modelSearchValue?: string;
-  price?: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  subCategoryName?: string;
-  brand?: {
-    id: number;
-    name: string;
-    searchValue?: string;
-  };
-  color?: { id: number; name: string; count?: number };
-  size?: { id: number; name: string; count?: number };
-  platform?: { id: number; name: string; count?: number; hasImage?: boolean };
-  condition?: { name: string; id: number };
-  description?: string;
+  quoteTitle: string;
+  brand: { id: number; name: string };
+  category: { id: number; name: string };
+  color: { id: number; name: string; count?: number };
+  size: { id: number; name: string; count?: number };
+  condition: { name: string; id: number };
+  price: number;
+  description: string;
   photoGuideImages: PhotoGuideImages[];
-  [x: string]: FilterDropItem | PhotoGuideImages[] | number | string | undefined | boolean;
+  // title: string;
+  // keyword: string;
+  // search?: boolean;
+  // step?: string;
+  // modelSearchValue?: string;
+  // price?: number;
+  // category: {
+  //   id: number;
+  //   name: string;
+  // };
+  // subCategoryName?: string;
+  // brand?: {
+  //   id: number;
+  //   name: string;
+  //   searchValue?: string;
+  // };
+  // color?: { id: number; name: string; count?: number };
+  // size?: { id: number; name: string; count?: number };
+  // platform?: { id: number; name: string; count?: number; hasImage?: boolean };
+  // condition?: { name: string; id: number };
+  // description?: string;
+  // photoGuideImages: PhotoGuideImages[];
+  // [x: string]: FilterDropItem | PhotoGuideImages[] | number | string | undefined | boolean;
+}
+
+export interface CamelSellerTempData {
+  title: string;
+  quoteTitle: string;
+  condition: { id: number; name: string };
+  color: { id: number; name: string };
+  size: { id: number; name: string };
+  price: number;
+  description: string;
+  photoGuideImages: EditPhotoGuideImages[];
+  brand: { id: number; name: string };
+  category: { id: number; name: string };
+  brandIds?: number[];
 }
 
 export type CommonCodeId = { codeId: number };

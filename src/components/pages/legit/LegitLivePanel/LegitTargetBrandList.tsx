@@ -18,7 +18,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload, productionEnvUrl } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -61,7 +61,7 @@ function LegitTargetBrandList() {
         title: attrProperty.legitTitle.BRAND
       });
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -92,7 +92,7 @@ function LegitTargetBrandList() {
         return;
       }
 
-      if (checkAgent.isAndroidApp()) {
+      if (checkAgent.isAndroidApp() && productionEnvUrl) {
         setDialogState({
           type: 'legitRequestOnlyInIOS',
           customStyleTitle: { minWidth: 270 }

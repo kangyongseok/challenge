@@ -8,7 +8,7 @@ import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 function MyShopAppDownloadDialog() {
   const {
     theme: {
-      palette: { primary }
+      palette: { common }
     }
   } = useTheme();
   const [openAppDown, setOpenAppDown] = useRecoilState(
@@ -25,25 +25,30 @@ function MyShopAppDownloadDialog() {
       }
       customStyle={{ width: '100%' }}
     >
-      <Typography customStyle={{ textAlign: 'center' }} weight="medium">
-        상품등록을 하려면 모바일앱이 필요해요.
+      <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
+        판매하시려면
       </Typography>
-      <Typography customStyle={{ textAlign: 'center' }} weight="medium">
-        카멜 앱을 다운받아보세요.
+      <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
+        카멜 앱이 필요해요
       </Typography>
-      <Flexbox customStyle={{ marginTop: 16 }} gap={8} direction="vertical">
+      <Typography customStyle={{ textAlign: 'center', marginTop: 8 }} variant="h4">
+        지금 바로 앱을 다운받아볼까요?
+      </Typography>
+      <Flexbox customStyle={{ marginTop: 32 }} gap={8} direction="vertical">
         <Button
           fullWidth
           variant="contained"
           brandColor="primary"
           onClick={() => handleClickAppDownload({})}
+          size="large"
         >
           카멜 앱 다운로드
         </Button>
         <Button
           fullWidth
           variant="contained"
-          customStyle={{ background: primary.highlight, color: primary.main }}
+          customStyle={{ background: common.ui95, color: common.ui20 }}
+          size="large"
           onClick={() =>
             setOpenAppDown(({ type }) => ({
               type,

@@ -1,28 +1,23 @@
-import { useEffect, useState } from 'react';
-
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Box, Button, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
-import type { CamelSellerLocalStorage, SubmitType } from '@typings/camelSeller';
+import type { SubmitType } from '@typings/camelSeller';
 import {
-  camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerEditState,
   camelSellerSubmitState,
+  camelSellerTempSaveDataState,
   setModifyProductPriceState
 } from '@recoil/camelSeller';
 
@@ -32,35 +27,21 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
       palette: { primary, common }
     }
   } = useTheme();
-  const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
   const openRecnetPriceBottomSheet = useSetRecoilState(camelSellerDialogStateFamily('recentPrice'));
-  const editMode = useRecoilValue(camelSellerBooleanStateFamily('edit'));
-  const [editData, setEditData] = useRecoilState(camelSellerEditState);
   const setModifyProductPrice = useSetRecoilState(setModifyProductPriceState);
   const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
-
-  useEffect(() => {
-    setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
 
   const handleClickSellPrice = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {
       name: attrProperty.name.MARKET_PRICE,
       title: attrProperty.title.THIS_PRICE
     });
-    if (editMode.isState) {
-      setEditData({
-        ...(editData as CamelSellerLocalStorage),
-        price: data.price
-      });
-    } else {
-      LocalStorage.set(CAMEL_SELLER, {
-        ...camelSeller,
-        price: data.price
-      });
-    }
     setModifyProductPrice(data.price);
+    setTempData({
+      ...tempData,
+      price: data.price
+    });
     setSubmitState({
       ...(submitState as SubmitType),
       price: data.price
@@ -106,11 +87,13 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
               )}
             </Flexbox>
             <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-              {data.siteUrl.id && (
+              {(data.siteUrl.id || data.site.id) && (
                 <Img
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${data.siteUrl.id}.png`}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                    data.siteUrl.id || data.site.id
+                  }.png`}
                   width="20px"
-                  alt={data.siteUrl.name}
+                  alt={data.siteUrl.name || data.site.name}
                 />
               )}
               <Typography
@@ -151,6 +134,8 @@ const DetailImage = styled.img`
   object-fit: cover;
 `;
 
-const Img = styled.img``;
+const Img = styled.img`
+  border-radius: 4px;
+`;
 
 export default CamelSellerProductCardDetail;
