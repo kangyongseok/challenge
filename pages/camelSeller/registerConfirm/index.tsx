@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -32,6 +32,7 @@ function RegisterConfirm() {
   const { query } = useRouter();
   const resetSubmitState = useResetRecoilState(camelSellerBooleanStateFamily('submitClick'));
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
@@ -53,7 +54,7 @@ function RegisterConfirm() {
   return (
     <GeneralTemplate
       header={<CamelSellerHeader />}
-      footer={<CamelSellerConfirmFooter />}
+      footer={<CamelSellerConfirmFooter footerRef={footerRef} />}
       hideAppDownloadBanner
     >
       <CamelSellerPhotoGuide />
@@ -68,7 +69,7 @@ function RegisterConfirm() {
           <CamelSellerRegisterState />
         </Content>
         <Content>
-          <CamelSellerPrice />
+          <CamelSellerPrice footerRef={footerRef} />
         </Content>
         <CamelSellerRegisterTextForm />
       </Box>

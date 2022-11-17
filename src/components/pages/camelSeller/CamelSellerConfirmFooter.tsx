@@ -1,3 +1,6 @@
+import type { RefObject } from 'react';
+import { useState } from 'react';
+
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
@@ -16,19 +19,26 @@ import attrKeys from '@constants/attrKeys';
 import { SubmitType } from '@typings/camelSeller';
 import {
   camelSellerBooleanStateFamily,
+  camelSellerIsImageLoadingState,
   camelSellerSubmitState,
   camelSellerTempSaveDataState,
   setModifyProductTitleState,
   submitValidatorState
 } from '@recoil/camelSeller';
 
-function CamelSellerConfirmFooter() {
+interface CamelSellerConfirmFooterProps {
+  footerRef: RefObject<HTMLDivElement>;
+}
+
+function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) {
   const {
     theme: { typography }
   } = useTheme();
   const { query, replace } = useRouter();
   const productId = Number(query.id || 0);
+  const [open, setOpen] = useState(false);
   const validatorResult = useRecoilValue(submitValidatorState);
+  const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
   const [modify, setIsModify] = useRecoilState(camelSellerBooleanStateFamily('modifyName'));
   const setSubmitClickState = useSetRecoilState(camelSellerBooleanStateFamily('submitClick'));
   const [openValidateToast, setOpenValidateToast] = useRecoilState(
@@ -62,6 +72,10 @@ function CamelSellerConfirmFooter() {
   };
 
   const handleClickRegister = () => {
+    if (isImageLoading) {
+      setOpen(true);
+      return;
+    }
     if (!validatorResult || !validatorPhoto.isState) {
       setSubmitClickState(({ type }) => ({ type, isState: true }));
       setOpenValidateToast(({ type }) => ({
@@ -145,8 +159,9 @@ function CamelSellerConfirmFooter() {
   return (
     <>
       <RegisterButtonBox
+        ref={footerRef}
         isEditTitle={modify.isState}
-        registerActive={!!validatorResult && !!validatorPhoto.isState}
+        registerActive={!!validatorResult && !!validatorPhoto.isState && !isImageLoading}
       >
         <Button
           fullWidth
@@ -175,6 +190,11 @@ function CamelSellerConfirmFooter() {
         사진, 상태, 사이즈 및 색상, 가격은
         <br />
         필수 입력사항이에요.
+      </Toast>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        이미지를 저장하고 있어요!
+        <br />
+        잠시만 기다려 주세요.
       </Toast>
     </>
   );

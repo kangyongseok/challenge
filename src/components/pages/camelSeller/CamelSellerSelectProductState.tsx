@@ -195,7 +195,8 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
                 variant="h4"
                 customStyle={{
                   color: common.ui80,
-                  display: size.name ? 'none' : 'block'
+                  display: size.name ? 'none' : 'block',
+                  marginTop: 8
                 }}
                 onClick={() => atomToggleBottomSheet('size')}
               >

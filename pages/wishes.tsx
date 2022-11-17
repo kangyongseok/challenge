@@ -71,11 +71,7 @@ function WishesPage() {
       >
         {toastMessage}
       </Toast>
-      <TopButton
-        show
-        name="WISH_LIST"
-        customStyle={{ bottom: hiddenTab === 'legit' ? 167 : undefined }}
-      />
+      <TopButton show name="WISH_LIST" customStyle={{ bottom: hiddenTab === 'legit' ? 105 : 80 }} />
     </>
   );
 }

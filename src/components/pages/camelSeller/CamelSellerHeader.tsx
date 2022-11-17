@@ -49,13 +49,18 @@ function CamelSellerHeader({
   const [toggleLaterDialog, setToggleLaterDialog] = useState(false);
 
   useEffect(() => {
-    if (!query.id && !viewRecentPriceList.open && pathname.split('/').includes('registerConfirm')) {
-      beforePopState(() => {
+    beforePopState(() => {
+      if (
+        !query.id &&
+        !viewRecentPriceList.open &&
+        pathname.split('/').includes('registerConfirm')
+      ) {
         window.history.pushState(null, '', asPath);
         setToggleLaterDialog(true);
         return false;
-      });
-    }
+      }
+      return true;
+    });
   }, [asPath, beforePopState, pathname, query.id, viewRecentPriceList.open]);
 
   useEffect(() => {
@@ -85,6 +90,10 @@ function CamelSellerHeader({
   };
 
   const handleClickLogo = () => {
+    logEvent(attrKeys.camelSeller.CLICK_CLOSE, {
+      name: attrProperty.name.PRODUCT
+    });
+
     if (query.id) {
       resetSubmitData();
       resetTempData();

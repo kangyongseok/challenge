@@ -31,6 +31,7 @@ export type ChannelTalkBootOption = {
   mobileMessengerMode: string;
   zIndex: number;
   memberId?: number;
+  hideChannelButtonOnBoot: boolean;
 };
 
 export type ChannelTalkUser = {

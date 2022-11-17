@@ -16,7 +16,7 @@ function ProductsTopButton() {
     <TopButton
       show={triggered}
       customStyle={{
-        bottom: 136
+        bottom: 80
       }}
     />
   );

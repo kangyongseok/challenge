@@ -8,6 +8,7 @@ import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
+import { datadogRum } from '@datadog/browser-rum';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
@@ -48,6 +49,22 @@ import 'swiper/css/effect-cards';
 if (global.navigator) {
   Amplitude.init();
 }
+
+datadogRum.init({
+  applicationId: 'a1faa99a-09c7-4ab6-aaf7-db1212b2efcc',
+  clientToken: 'pubd26ef7496cfbc8cc8aca7d568c3472e8',
+  site: 'datadoghq.com',
+  service: 'camel',
+  env: 'beta',
+  sampleRate: 100,
+  sessionReplaySampleRate: 20,
+  trackInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: 'mask-user-input'
+});
+
+datadogRum.startSessionReplayRecording();
 
 const originUrl = 'https://mrcamel.co.kr';
 

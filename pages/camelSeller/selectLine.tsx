@@ -169,6 +169,12 @@ function SelectLine() {
             startIcon={<Icon name="SearchOutlined" />}
             placeholder="모델명 검색"
             onChange={handleChange}
+            onClick={() => {
+              logEvent(attrKeys.camelSeller.CLICK_MODEL_SEARCH, {
+                name: attrProperty.name.PRODUCT_MODEL,
+                title: attrProperty.title.DONTKNOW_MODEL
+              });
+            }}
             onFocus={handleFocus}
             onBlur={() => setIsFocus(false)}
             ref={inputRef}

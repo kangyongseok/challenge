@@ -136,8 +136,8 @@ ${newDescription}
           </Typography>
         </Flexbox>
       )}
-      <Flexbox customStyle={{ marginBottom: 8 }}>
-        <Flexbox customStyle={{ margin: productLabels.length > 0 ? 6 : 0 }}>
+      <Flexbox alignment="center" customStyle={{ marginBottom: 8 }}>
+        <Flexbox>
           {productLabels.map((label, index) => (
             <ProductLabel
               key={`product-label-${label.id}`}
@@ -148,7 +148,13 @@ ${newDescription}
           ))}
         </Flexbox>
         {isCamelSeller && (
-          <Label text="가품 시, 100%환불" size="xsmall" variant="ghost" brandColor="black" />
+          <Label
+            text="가품 시, 100%환불"
+            size="xsmall"
+            variant="ghost"
+            brandColor="black"
+            customStyle={{ marginLeft: 6 }}
+          />
         )}
       </Flexbox>
       <Title component="h1" variant="h4" weight="medium">

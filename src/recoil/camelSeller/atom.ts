@@ -84,3 +84,8 @@ export const camelSellerSMSDialogState = atom({
   key: '@camelSeller/camelSellerSMSDialogState',
   default: true
 });
+
+export const camelSellerIsImageLoadingState = atom({
+  key: '@camelSeller/camelSellerIsImageLoadingState',
+  default: false
+});

@@ -1,4 +1,4 @@
-import { PRODUCT_SELLER } from '@constants/camelSeller';
+import { PRODUCT_CREATE } from '@constants/camelSeller';
 
 import type { Product, ProductResult, SearchParams } from './product';
 import type { Paged } from './common';
@@ -136,7 +136,7 @@ export interface UserProductInfo {
 export interface Role {
   id: number;
   code: string;
-  name: typeof PRODUCT_SELLER | 'PRODUCT_AUTHENTIC' | 'PRODUCT_LEGIT' | 'PRODUCT_LEGIT_HEAD';
+  name: typeof PRODUCT_CREATE | 'PRODUCT_AUTHENTIC' | 'PRODUCT_LEGIT' | 'PRODUCT_LEGIT_HEAD';
   description: string;
 }
 

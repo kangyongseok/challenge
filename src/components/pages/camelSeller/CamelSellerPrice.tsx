@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -24,7 +24,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { checkAgent, commaNumber } from '@utils/common';
 
 import type { SubmitType } from '@typings/camelSeller';
 import { deviceIdState } from '@recoil/common';
@@ -37,7 +37,11 @@ import {
   setModifyProductPriceState
 } from '@recoil/camelSeller';
 
-function CamelSellerPrice() {
+interface CamelSellerPriceProps {
+  footerRef: RefObject<HTMLDivElement>;
+}
+
+function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
   const {
     theme: {
       palette: { primary, secondary, common },
@@ -49,6 +53,9 @@ function CamelSellerPrice() {
   const productId = Number(query.id || 0);
   const [changePrice, setChangePrice] = useState<number | null>(null);
   const [isFocus, setIsFocus] = useState(false);
+  const footerHideTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const boxRef = useRef<HTMLDivElement>(null);
   const openRecnetPriceBottomSheet = useSetRecoilState(camelSellerDialogStateFamily('recentPrice'));
   const setRecentPriceCardNum = useSetRecoilState(recentPriceCardTabNumState);
   const [submitData, setSubmitData] = useRecoilState(camelSellerSubmitState);
@@ -57,7 +64,7 @@ function CamelSellerPrice() {
   const [openTooltip, setOpenTooltip] = useState(true);
   const [fetchData, setFetchData] = useState<RecentSearchParams>({});
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
-  const { data: searchHistory } = useQuery(
+  const { data: searchHistory, isFetched } = useQuery(
     queryKeys.products.searchHistoryTopFive(fetchData),
     () => fetchSearchHistory(fetchData),
     {
@@ -171,18 +178,55 @@ function CamelSellerPrice() {
       title: attrProperty.title.PRICE
     });
 
+    if (footerHideTimerRef.current) {
+      clearTimeout(footerHideTimerRef.current);
+    }
+
+    if (focusTimerRef.current) {
+      clearTimeout(focusTimerRef.current);
+    }
+
+    if (checkAgent.isAndroid()) {
+      if (footerRef.current) {
+        footerRef.current.setAttribute('style', 'display: none');
+      }
+    }
     setIsFocus(true);
   };
 
   const handleBlur = () => {
-    setTimeout(() => {
+    if (checkAgent.isAndroid()) {
+      footerHideTimerRef.current = setTimeout(() => {
+        if (footerRef.current) {
+          footerRef.current.removeAttribute('style');
+        }
+      }, 200);
+    }
+    focusTimerRef.current = setTimeout(() => {
       setIsFocus(false);
     }, 1000);
   };
 
+  useEffect(() => {
+    if (checkAgent.isAndroid() && isFocus && isFetched) {
+      setTimeout(() => {
+        if (boxRef.current)
+          window.scrollTo({
+            top: boxRef.current.offsetTop / 2,
+            behavior: 'smooth'
+          });
+      }, 200);
+    }
+  }, [isFocus, isFetched]);
+
   return (
     <>
-      <Flexbox justifyContent="space-between" customStyle={{ margin: '8px 0' }} alignment="center">
+      <Flexbox
+        ref={boxRef}
+        justifyContent="space-between"
+        customStyle={{ margin: '8px 0' }}
+        alignment="center"
+      >
         <Box customStyle={{ minWidth: 21 }}>
           <WonIcon color={isState && !changePrice ? secondary.red.light : common.ui20} />
         </Box>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
@@ -39,6 +39,7 @@ function RegisterConfirmEdit() {
   const resetPhotoState = useResetRecoilState(camelSellerBooleanStateFamily('requirePhotoValid'));
   const productId = Number(query.id || 0);
   const setTempData = useSetRecoilState(camelSellerTempSaveDataState);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   const { data: editData } = useQuery(
     queryKeys.products.sellerEditProducs({ productId, deviceId }),
@@ -91,7 +92,7 @@ function RegisterConfirmEdit() {
   return (
     <GeneralTemplate
       header={<CamelSellerHeader />}
-      footer={<CamelSellerConfirmFooter />}
+      footer={<CamelSellerConfirmFooter footerRef={footerRef} />}
       hideAppDownloadBanner
     >
       <CamelSellerPhotoGuideEdit />
@@ -106,7 +107,7 @@ function RegisterConfirmEdit() {
           <CamelSellerRegisterState />
         </Content>
         <Content>
-          <CamelSellerPrice />
+          <CamelSellerPrice footerRef={footerRef} />
         </Content>
         <CamelSellerRegisterTextForm />
       </Box>

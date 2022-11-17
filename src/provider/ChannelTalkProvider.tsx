@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import Script from 'next/script';
 import { useRouter } from 'next/router';
-import { isEmpty, isEqual } from 'lodash-es';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -19,72 +18,18 @@ function ChannelTalkProvider() {
   useEffect(() => {
     ChannelTalk.hideMessenger();
 
-    const disallowPrefixPathNames = [
-      'login',
-      'welcome',
-      'user',
-      'search',
-      'onboarding',
-      'searchHelper',
-      'crazycuration'
-    ];
-    const disallowUrlInfos = [
-      {
-        pathname: '/legit',
-        disallowThisPageAll: false
-      },
-      {
-        pathname: '/legit',
-        disallowThisPageAll: false,
-        query: {
-          tab: 'live'
-        }
-      },
-      {
-        pathname: '/legit/[id]',
-        disallowThisPageAll: true
-      },
-      {
-        pathname: '/legit/[id]/result',
-        disallowThisPageAll: true
-      },
-      {
-        pathname: '/legit/admin',
-        disallowThisPageAll: false
-      },
-      {
-        pathname: '/legit/admin',
-        disallowThisPageAll: false,
-        query: {
-          tab: 'home'
-        }
-      },
-      {
-        pathname: '/products/[id]',
-        disallowThisPageAll: true
-      }
-    ];
-    if (
-      disallowPrefixPathNames.includes(router.pathname.split('/')[1]) ||
-      disallowUrlInfos.some(({ pathname, query, disallowThisPageAll }) => {
-        if (query && isEqual(query, router.query)) {
-          return true;
-        }
-        if (!query && isEmpty(router.query) && pathname === router.pathname) {
-          return true;
-        }
-        return disallowThisPageAll && pathname === router.pathname;
-      })
-    ) {
-      ChannelTalk.hideChannelButton();
-    } else {
+    const allowPrefixPathNames = ['mypage'];
+    if (allowPrefixPathNames.includes(router.pathname.split('/')[1])) {
       ChannelTalk.showChannelButton();
+    } else {
+      ChannelTalk.hideChannelButton();
     }
   }, [router.pathname, router.query]);
 
   useEffect(() => {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
     const option: ChannelTalkBootOption = {
+      hideChannelButtonOnBoot: true,
       pluginKey: process.env.CHANNEL_TALK_PLUGIN_KEY,
       trackDefaultEvent: false,
       mobileMessengerMode: 'iframe',

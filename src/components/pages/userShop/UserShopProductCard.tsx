@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 // import Image from 'next/image';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 // import { Skeleton } from '@components/UI/atoms';
@@ -121,15 +122,26 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
         <Typography variant="h4" weight="bold" customStyle={{ marginTop: 4 }}>
           {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
         </Typography>
-        <Typography
-          variant="small2"
-          weight="medium"
-          customStyle={{ marginTop: 8, color: common.ui60 }}
-        >
-          {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
-            new Date(datePosted)
-          )}${area ? ` · ${getProductArea(area)}` : ''}`}
-        </Typography>
+        {dayjs().diff(dayjs(datePosted), 'second') === 0 && (
+          <Typography
+            variant="small2"
+            weight="medium"
+            customStyle={{ marginTop: 8, color: common.ui60 }}
+          >
+            끌올 몇 초 전
+          </Typography>
+        )}
+        {dayjs().diff(dayjs(datePosted), 'second') > 0 && (
+          <Typography
+            variant="small2"
+            weight="medium"
+            customStyle={{ marginTop: 8, color: common.ui60 }}
+          >
+            {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
+              new Date(datePosted)
+            )}${area ? ` · ${getProductArea(area)}` : ''}`}
+          </Typography>
+        )}
         {(wishCount > 0 || purchaseCount > 0) && (
           <Flexbox gap={6} alignment="center" customStyle={{ marginTop: 4, height: 12 }}>
             {wishCount > 0 && (

@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import * as SvgIcons from 'mrcamel-ui/dist/assets/icons';
-import { Box, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, IconName, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
@@ -30,7 +29,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 interface LabelData {
   id: 10 | 20 | 30 | 40 | 50;
   text: '찜한매물' | '사진감정' | '가격하락' | '이벤트' | '카멜추천';
-  iconName: keyof typeof SvgIcons;
+  iconName: IconName;
   bgColor: string;
   color: string;
 }
@@ -112,6 +111,7 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
     }
   }, [allRead, refetch]);
 
+  // 이 함수를 살려서 써야하는건지 제거해도 되는건지??
   const isProductKeywordProcess = (activityInfo: UserNoti) => {
     const productKeywordId = Number(activityInfo.parameter.split('/?')[1].split('=')[1]);
     const findProductKeyword = productKeywords.find(({ id }) => id === productKeywordId);
@@ -167,21 +167,22 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
       id: activityInfo.id,
       targetId: activityInfo.targetId,
       type: activityInfo.type,
-      keyword: activityInfo.keyword
+      keyword: activityInfo.keyword,
+      parameter: activityInfo.parameter
     });
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.productName.HISTORY,
       title: attrProperty.productTitle.BEHAVIOR,
       type: attrProperty.productType.HISTORY
     });
-    const productKeywordId = Number(activityInfo.parameter.split('/?')[1].split('=')[1]);
-    const findProductKeyword = productKeywords.find(({ id }) => id === productKeywordId);
-    if (findProductKeyword) {
+
+    if (activityInfo.parameter.indexOf('productList') === 1) {
       logEvent(attrKeys.noti.CLICK_PRODUCT_LIST, {
         name: attrProperty.name.ALARM_LIST
       });
     }
-    if (!findProductKeyword && activityInfo.parameter.split('/').includes('products')) {
+
+    if (activityInfo.parameter.split('/').includes('products')) {
       logEvent(attrKeys.noti.CLICK_PRODUCT_DETAIL, {
         name: attrProperty.name.ALARM_LIST
       });
@@ -211,6 +212,7 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
         onSuccess() {
           refetch();
           if (activityInfo.parameter) {
+            // productKeywordId 란 파라미터는 제거됨
             if (activityInfo.parameter.indexOf('productKeywordId') !== -1) {
               isProductKeywordProcess(activityInfo);
               return;

@@ -1,1 +1,2 @@
 export const PRODUCT_SELLER = 'PRODUCT_SELLER';
+export const PRODUCT_CREATE = 'PRODUCT_CREATE';

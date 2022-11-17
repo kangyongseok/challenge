@@ -13,7 +13,6 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { CAMEL_SELLER } from '@constants/localStorage';
-import { PRODUCT_SELLER } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -40,8 +39,7 @@ function MypageUserShopCard() {
 
   const {
     data: {
-      userProductInfo: { displayedUserProductCount = 0, hasUserProduct = false, images = [] } = {},
-      roles = []
+      userProductInfo: { displayedUserProductCount = 0, hasUserProduct = false, images = [] } = {}
     } = {}
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
 
@@ -122,7 +120,7 @@ function MypageUserShopCard() {
     }
   };
 
-  if (!roles.length || !roles.some((role) => role === PRODUCT_SELLER)) return null;
+  // if (!roles.length || !roles.some((role) => role === PRODUCT_CREATE)) return null;
 
   return (
     <StyledMypageUserShopCard onClick={handleClickCamelSeller}>

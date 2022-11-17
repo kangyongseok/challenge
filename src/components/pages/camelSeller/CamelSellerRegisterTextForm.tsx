@@ -123,6 +123,9 @@ ${addInfoText}
             onClickClose={() => {
               setOpenTextarea(false);
               scrollEnable();
+              if (!tempData.description) {
+                setAddInfoText('');
+              }
             }}
           />
         }

@@ -7,6 +7,7 @@ import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
+import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import Image from '@components/UI/atoms/Image';
 
 import type { PhotoGuideParams } from '@dto/common';
@@ -29,6 +30,7 @@ import type {
 } from '@typings/camelSeller';
 import {
   camelSellerBooleanStateFamily,
+  camelSellerIsImageLoadingState,
   camelSellerSubmitState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
@@ -48,9 +50,11 @@ function CamelSellerPhotoGuide() {
   const setRequirePhotoValid = useSetRecoilState(
     camelSellerBooleanStateFamily('requirePhotoValid')
   );
+  const [isImageLoading, setIsImageLoadingState] = useRecoilState(camelSellerIsImageLoadingState);
+  const [openModal, setOpenModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [photoImages, setPhotoImages] = useState<EditPhotoGuideImages[]>([]);
-  const [isImageLoading, setIsImageLoading] = useState(false);
   const [photoGuideParams, setPhotoGuideParams] = useState<PhotoGuideParams>({
     brandId: 0,
     categoryId: 0,
@@ -66,24 +70,26 @@ function CamelSellerPhotoGuide() {
 
   useEffect(() => {
     setPhotoImages(tempData.photoGuideImages);
-    setPhotoGuideParams({
-      brandId:
-        typeof query?.brandIds === 'string'
-          ? Number(query.brandIds)
-          : Number((query?.brandIds as [string])[0] || 0),
-      categoryId: query?.categoryIds ? Number(query.categoryIds) : 0,
-      type: 0
-    });
+    if (query?.brandIds) {
+      setPhotoGuideParams({
+        brandId:
+          typeof query?.brandIds === 'string'
+            ? Number(query.brandIds)
+            : Number((query?.brandIds as [string])[0] || 0),
+        categoryId: query?.categoryIds ? Number(query.categoryIds) : 0,
+        type: 0
+      });
+    }
   }, [query, tempData.photoGuideImages]);
 
   useEffect(() => {
     window.getPhotoGuide = () => {
-      setIsImageLoading(true);
+      setIsImageLoadingState(true);
     };
 
     window.getPhotoGuideDone = (result: PhotoGuideImages[]) => {
       const isImages = result.filter(({ imageUrl }) => !!imageUrl);
-      setIsImageLoading(false);
+      setIsImageLoadingState(false);
       setPhotoImages(isImages);
       setTempData({
         ...tempData,
@@ -113,7 +119,7 @@ function CamelSellerPhotoGuide() {
     const target = e.currentTarget;
     logEvent(attrKeys.camelSeller.CLICK_PHOTO_GUIDE, {
       name: attrProperty.name.PRODUCT_MAIN,
-      index: Number(target.dataset.index)
+      index: target.dataset.index ? Number(target.dataset.index) + 1 : 0
     });
 
     if (checkAgent.isIOSApp() && isIOSCallMessage()) {
@@ -233,6 +239,18 @@ function CamelSellerPhotoGuide() {
     }
   }, [isRequiredPhotoValid, setRequirePhotoValid]);
 
+  useEffect(() => {
+    return () => {
+      setIsImageLoadingState(false);
+    };
+  }, [setIsImageLoadingState]);
+
+  const handleClickDetailModal = (e: MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    setCurrentIndex(Number(target.dataset.index));
+    setOpenModal(true);
+  };
+
   return (
     <StyledPhotoGuide isLongText={isRequiredPhotoValid() && isAllRequiredPhotoValid()}>
       <PhotoGuideArea gap={8}>
@@ -276,9 +294,9 @@ function CamelSellerPhotoGuide() {
                 key={`photo-guide-${imageWatermark}`}
                 data-index={i}
                 data-type={imageType}
-                onClick={handleClickCallPhotoGuide}
+                onClick={imageUrl ? handleClickDetailModal : handleClickCallPhotoGuide}
               >
-                {isImageLoading && !imageUrl ? (
+                {isImageLoading ? (
                   <AnimationLoading
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
                     alt="이미지 로딩중"
@@ -326,6 +344,18 @@ function CamelSellerPhotoGuide() {
           </Typography>
         </Flexbox>
       </Flexbox>
+      {mergePhotoResult() && (
+        <ImageDetailDialog
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          images={
+            mergePhotoResult()
+              ?.filter((result) => result.imageUrl)
+              .map((item) => item.imageUrl) as string[]
+          }
+          syncIndex={currentIndex}
+        />
+      )}
     </StyledPhotoGuide>
   );
 }

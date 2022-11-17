@@ -202,7 +202,6 @@ function CamelSellerFilter({
       setFilterType('');
     }
   };
-  // console.log(selectCondition, selectSizeId, selectColorId);
 
   const parseCondition = (name: string) => {
     if (name === 'N') return '새상품';

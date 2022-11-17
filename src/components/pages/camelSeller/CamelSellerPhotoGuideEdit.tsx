@@ -7,6 +7,7 @@ import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
+import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import Image from '@components/UI/atoms/Image';
 
 import type { PhotoGuideParams } from '@dto/common';
@@ -24,7 +25,11 @@ import { checkAgent } from '@utils/common';
 
 import type { EditPhotoGuideImages, MergePhotoImages } from '@typings/camelSeller';
 import { deviceIdState } from '@recoil/common';
-import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+import {
+  camelSellerBooleanStateFamily,
+  camelSellerIsImageLoadingState,
+  camelSellerTempSaveDataState
+} from '@recoil/camelSeller';
 
 import SkeletonPhotoGuideBox from './SkeletonPhotoGuideBox';
 import PhotoIconBox from './PhotoIconBox';
@@ -42,9 +47,11 @@ function CamelSellerPhotoGuideEdit() {
   const setRequirePhotoValid = useSetRecoilState(
     camelSellerBooleanStateFamily('requirePhotoValid')
   );
+  const [openModal, setOpenModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [photoImages, setPhotoImages] = useState<EditPhotoGuideImages[]>([]);
-  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [isImageLoading, setIsImageLoadingState] = useRecoilState(camelSellerIsImageLoadingState);
   const [photoGuideParams, setPhotoGuideParams] = useState<PhotoGuideParams>({
     brandId: 0,
     categoryId: 0,
@@ -79,7 +86,7 @@ function CamelSellerPhotoGuideEdit() {
 
   useEffect(() => {
     window.getPhotoGuide = () => {
-      setIsImageLoading(true);
+      setIsImageLoadingState(true);
     };
 
     window.getPhotoGuideDone = (result: EditPhotoGuideImages[]) => {
@@ -91,7 +98,7 @@ function CamelSellerPhotoGuideEdit() {
         // productId: Number(query.id)
       }));
 
-      setIsImageLoading(false);
+      setIsImageLoadingState(false);
       setPhotoImages(isImages);
       setTempData({
         ...tempData,
@@ -121,7 +128,7 @@ function CamelSellerPhotoGuideEdit() {
     const target = e.currentTarget;
     logEvent(attrKeys.camelSeller.CLICK_PHOTO_GUIDE, {
       name: attrProperty.name.PRODUCT_MAIN,
-      index: target.dataset.index ? Number(target.dataset.index + 1) : 0
+      index: target.dataset.index ? Number(target.dataset.index) + 1 : 0
     });
 
     if (checkAgent.isIOSApp() && isIOSCallMessage()) {
@@ -243,6 +250,18 @@ function CamelSellerPhotoGuideEdit() {
     }
   }, [isRequiredPhotoValid, editData, setRequirePhotoValid]);
 
+  useEffect(() => {
+    return () => {
+      setIsImageLoadingState(false);
+    };
+  }, [setIsImageLoadingState]);
+
+  const handleClickDetailModal = (e: MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    setCurrentIndex(Number(target.dataset.index));
+    setOpenModal(true);
+  };
+
   return (
     <StyledPhotoGuide isLongText={isRequiredPhotoValid() && isAllRequiredPhotoValid()}>
       <PhotoGuideArea gap={8}>
@@ -286,7 +305,7 @@ function CamelSellerPhotoGuideEdit() {
                 key={`photo-guide-${imageWatermark}`}
                 data-index={i}
                 data-type={imageType}
-                onClick={handleClickCallPhotoGuide}
+                onClick={imageUrl ? handleClickDetailModal : handleClickCallPhotoGuide}
               >
                 {isImageLoading && !imageUrl ? (
                   <AnimationLoading
@@ -336,6 +355,18 @@ function CamelSellerPhotoGuideEdit() {
           </Typography>
         </Flexbox>
       </Flexbox>
+      {mergePhotoResult() && (
+        <ImageDetailDialog
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          images={
+            mergePhotoResult()
+              ?.filter((result) => result.imageUrl)
+              .map((item) => item.imageUrl) as string[]
+          }
+          syncIndex={currentIndex}
+        />
+      )}
     </StyledPhotoGuide>
   );
 }

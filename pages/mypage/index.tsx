@@ -26,7 +26,7 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
-import { PRODUCT_SELLER } from '@constants/camelSeller';
+import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -42,12 +42,12 @@ function MyPage() {
   useEffect(() => {
     // beta 일땐 모든 판매하기 접근경로 오픈
     // 운영에서 노출 조건
-    // IOS + 로그인 + PRODUCT_SELLER 권한 보유자
+    // IOS + 로그인 + PRODUCT_CREATE 권한 보유자
     // 운영에서 안드로이드는 비노출
     if (productionEnvUrl) {
       if (
         accessUser &&
-        userInfo?.roles.includes(PRODUCT_SELLER as never) &&
+        userInfo?.roles.includes(PRODUCT_CREATE as never) &&
         checkAgent.isIOSApp()
       ) {
         setAuthProductSeller(true);

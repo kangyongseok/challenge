@@ -33,7 +33,7 @@ function SelectCategory() {
   } = useTheme();
   const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
 
-  const { data: parentCategories, isLoading } = useQuery(
+  const { data: parentCategories = [], isLoading } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );
@@ -159,18 +159,20 @@ function SelectCategory() {
             </CategoryChip>
           ))}
         {targetSubParentCategory.length === 0 &&
-          parentCategories?.map((category, i) => (
-            <CategoryChip
-              key={`select-category-${category.parentCategory.id}`}
-              isRound={false}
-              data-parent-id={category.parentCategory.id}
-              data-parent-name={category.parentCategory.name.replace('(P)', '')}
-              data-index={i}
-              onClick={handleClick}
-            >
-              {category.parentCategory.name.replace('(P)', '')}
-            </CategoryChip>
-          ))}
+          parentCategories
+            .filter(({ subParentCategories }) => subParentCategories.length)
+            .map((category, i) => (
+              <CategoryChip
+                key={`select-category-${category.parentCategory.id}`}
+                isRound={false}
+                data-parent-id={category.parentCategory.id}
+                data-parent-name={category.parentCategory.name.replace('(P)', '')}
+                data-index={i}
+                onClick={handleClick}
+              >
+                {category.parentCategory.name.replace('(P)', '')}
+              </CategoryChip>
+            ))}
       </Flexbox>
     </GeneralTemplate>
   );

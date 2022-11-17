@@ -44,7 +44,15 @@ function SelectBrand() {
     refetch,
     isSuccess
   } = useQuery(queryKeys.brands.brandName(), () => fetchBrandsSuggest({ keyword: searchValue }), {
-    enabled: false
+    enabled: false,
+    onSuccess(data) {
+      logEvent(attrKeys.camelSeller.LOAD_KEYWORD_AUTO, {
+        name: attrProperty.name.PRODUCT_BRAND,
+        title: attrProperty.title.BRAND,
+        att: searchValue,
+        count: data.length
+      });
+    }
   });
 
   const attTitle = useMemo(() => {
