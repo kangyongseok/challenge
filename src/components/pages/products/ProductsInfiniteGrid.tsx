@@ -579,8 +579,6 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       }
 
       logEvent(attrKeys.products.viewProductList, eventProperties);
-
-      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
   }, [
     router.pathname,
@@ -619,6 +617,8 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         productTotal,
         sellerTotal
       });
+
+      SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
   }, [router.query, variant, progressDone, isFetched, lastPage]);
 
