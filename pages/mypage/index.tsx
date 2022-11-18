@@ -30,7 +30,7 @@ import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, productionEnvUrl } from '@utils/common';
+import { checkAgent, isProduction } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -44,7 +44,7 @@ function MyPage() {
     // 운영에서 노출 조건
     // IOS + 로그인 + PRODUCT_CREATE 권한 보유자
     // 운영에서 안드로이드는 비노출
-    if (productionEnvUrl) {
+    if (isProduction) {
       if (
         accessUser &&
         userInfo?.roles.includes(PRODUCT_CREATE as never) &&

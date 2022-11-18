@@ -231,12 +231,10 @@ function CamelSellerPhotoGuide() {
   }, [isPhotoUrl.length, photoImages]);
 
   useEffect(() => {
-    if (isRequiredPhotoValid()) {
-      setRequirePhotoValid(({ type }) => ({
-        type,
-        isState: true
-      }));
-    }
+    setRequirePhotoValid(({ type }) => ({
+      type,
+      isState: isRequiredPhotoValid()
+    }));
   }, [isRequiredPhotoValid, setRequirePhotoValid]);
 
   useEffect(() => {

@@ -16,7 +16,7 @@ import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber, getAppVersion, productionEnvUrl } from '@utils/common';
+import { checkAgent, commaNumber, getAppVersion, isProduction } from '@utils/common';
 
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
@@ -66,7 +66,7 @@ function MypageUserShopCard() {
           return;
         }
 
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },

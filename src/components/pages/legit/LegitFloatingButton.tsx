@@ -14,7 +14,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, getAppVersion, handleClickAppDownload, productionEnvUrl } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload, isProduction } from '@utils/common';
 
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { dialogState } from '@recoil/common';
@@ -51,7 +51,7 @@ function LegitFloatingButton() {
       title: attrProperty.legitTitle.FLOATING
     });
 
-    if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+    if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
       setDialogState({
         type: 'appUpdateNotice',
         customStyleTitle: { minWidth: 269 },
@@ -82,7 +82,7 @@ function LegitFloatingButton() {
       return;
     }
 
-    if (checkAgent.isAndroidApp() && productionEnvUrl) {
+    if (checkAgent.isAndroidApp() && isProduction) {
       setDialogState({
         type: 'legitRequestOnlyInIOS',
         customStyleTitle: { minWidth: 270 }

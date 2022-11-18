@@ -26,7 +26,7 @@ import {
   commaNumber,
   getAppVersion,
   getProductDetailUrl,
-  productionEnvUrl
+  isProduction
 } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
@@ -90,7 +90,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -109,7 +109,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && productionEnvUrl) {
+        if (checkAgent.isAndroidApp() && isProduction) {
           setDialogState({
             type: 'legitRequestOnlyInIOS',
             customStyleTitle: { minWidth: 270 }
@@ -121,7 +121,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -140,7 +140,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && productionEnvUrl) {
+        if (checkAgent.isAndroidApp() && isProduction) {
           setDialogState({
             type: 'legitRequestOnlyInIOS',
             customStyleTitle: { minWidth: 270 }

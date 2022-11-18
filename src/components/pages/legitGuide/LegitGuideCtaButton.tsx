@@ -8,7 +8,7 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, getAppVersion, handleClickAppDownload, productionEnvUrl } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload, isProduction } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -27,7 +27,7 @@ function LegitGuideCtaButton() {
         name: attrProperty.legitName.LEGIT_HOWITWORKS
       });
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -58,7 +58,7 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      if (checkAgent.isAndroidApp() && productionEnvUrl) {
+      if (checkAgent.isAndroidApp() && isProduction) {
         setDialogState({
           type: 'legitRequestOnlyInIOS',
           customStyleTitle: { minWidth: 270 }

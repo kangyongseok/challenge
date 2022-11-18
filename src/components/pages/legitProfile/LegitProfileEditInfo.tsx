@@ -15,7 +15,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { checkAgent, getAppVersion, handleClickAppDownload, productionEnvUrl } from '@utils/common';
+import { checkAgent, getAppVersion, handleClickAppDownload, isProduction } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
 
@@ -67,7 +67,7 @@ function LegitProfileEditInfo({
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && productionEnvUrl) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -96,7 +96,7 @@ function LegitProfileEditInfo({
         });
       }
 
-      if (checkAgent.isAndroidApp() && productionEnvUrl) {
+      if (checkAgent.isAndroidApp() && isProduction) {
         setDialogState({
           type: 'legitRequestOnlyInIOS',
           customStyleTitle: { minWidth: 270 }

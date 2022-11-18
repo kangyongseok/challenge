@@ -22,7 +22,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, productionEnvUrl } from '@utils/common';
+import { checkAgent, isProduction } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -95,7 +95,7 @@ function LegitRequestForm() {
         name: attrProperty.legitName.LEGIT_PROCESS
       });
 
-      if (productionEnvUrl && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
+      if (isProduction && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
         setDialogState({
           type: 'appAuthCheck',
           theme: 'dark',
