@@ -127,6 +127,7 @@ function ProductCTAButton({
       isOpenAddWishToast: false
     });
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
+  const isCamelSelfSeller = product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id;
   const isCamelSeller =
     product &&
     SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
@@ -136,6 +137,7 @@ function ProductCTAButton({
   const isReserving =
     product &&
     PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4'];
+
   const ctaText = useMemo(() => {
     const siteName =
       (product?.siteUrl.hasImage && product?.siteUrl.name) ||
@@ -156,12 +158,21 @@ function ProductCTAButton({
       return '판매완료';
     }
 
-    if (isCamelProduct || isCamelSeller) {
+    if (isCamelProduct || isCamelSeller || isCamelSelfSeller) {
       return '판매자에게 문자 보내기';
     }
 
     return `${siteName}에서 거래하기`;
-  }, [hasTarget, isCamelProduct, isCamelSeller, isDup, isReserving, isSoldOut, product]);
+  }, [
+    hasTarget,
+    isCamelProduct,
+    isCamelSeller,
+    isDup,
+    isReserving,
+    isSoldOut,
+    product,
+    isCamelSelfSeller
+  ]);
 
   const sessionId = amplitude.getInstance().getSessionId();
   const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {

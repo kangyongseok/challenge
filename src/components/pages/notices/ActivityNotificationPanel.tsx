@@ -163,45 +163,31 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
   };
 
   const handleClick = (activityInfo: UserNoti) => {
+    const logTitleParser = () => {
+      const splitParameter = activityInfo.parameter.split('/');
+      if (activityInfo.parameter.indexOf('productList') === 1)
+        return attrProperty.title.PRODUCT_LIST;
+      if (splitParameter.includes('products')) return attrProperty.title.PRODUCT_DETAIL;
+      if (splitParameter.includes('wishes')) return attrProperty.title.WISH_LIST;
+      if (splitParameter.includes('announces')) return attrProperty.title.ANNOUNCE_DETAIL;
+      if (splitParameter.includes('legit')) return attrProperty.title.LEGIT_INFO;
+      return 'undefined parameter';
+    };
+
     logEvent(attrKeys.noti.CLICK_BEHAVIOR, {
+      title: logTitleParser(),
       id: activityInfo.id,
       targetId: activityInfo.targetId,
       type: activityInfo.type,
       keyword: activityInfo.keyword,
       parameter: activityInfo.parameter
     });
+
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.productName.HISTORY,
       title: attrProperty.productTitle.BEHAVIOR,
       type: attrProperty.productType.HISTORY
     });
-
-    if (activityInfo.parameter.indexOf('productList') === 1) {
-      logEvent(attrKeys.noti.CLICK_PRODUCT_LIST, {
-        name: attrProperty.name.ALARM_LIST
-      });
-    }
-
-    if (activityInfo.parameter.split('/').includes('products')) {
-      logEvent(attrKeys.noti.CLICK_PRODUCT_DETAIL, {
-        name: attrProperty.name.ALARM_LIST
-      });
-    }
-    if (activityInfo.parameter.split('/').includes('wishes')) {
-      logEvent(attrKeys.noti.CLICK_WISH_LIST, {
-        name: attrProperty.name.ALARM_LIST
-      });
-    }
-    if (activityInfo.parameter.split('/').includes('announces')) {
-      logEvent(attrKeys.noti.CLICK_ANNOUNCE_DETAIL, {
-        name: attrProperty.name.ALARM_LIST
-      });
-    }
-    if (activityInfo.parameter.split('/').includes('legit')) {
-      logEvent(attrKeys.noti.CLICK_LEGIT_INFO, {
-        name: attrProperty.name.ALARM_LIST
-      });
-    }
 
     productNotiReadMutate(
       {
