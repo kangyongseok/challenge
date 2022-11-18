@@ -303,24 +303,8 @@ function ProductImages({
                       disableSkeletonRender
                     />
                   ) : (
-                    <Box
-                      customStyle={{
-                        position: 'relative',
-                        display: isDisplay ? 'block' : 'none'
-                      }}
-                    >
-                      <BackgroundBlurImage
-                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
-                      />
-                      <LastImageContents justifyContent="center" alignment="center">
-                        {image.lastComponent}
-                      </LastImageContents>
-                    </Box>
+                    ''
                   )}
-
-                  <SkeletonWrapper className="swiper-lazy-preloader">
-                    <Skeleton />
-                  </SkeletonWrapper>
                 </SwiperSlide>
               );
             }
@@ -359,9 +343,9 @@ function ProductImages({
                     </Box>
                   )}
 
-                  <SkeletonWrapper className="swiper-lazy-preloader">
+                  {/* <SkeletonWrapper className="swiper-lazy-preloader">
                     <Skeleton />
-                  </SkeletonWrapper>
+                  </SkeletonWrapper> */}
                 </SwiperSlide>
               );
             }
@@ -425,14 +409,14 @@ const Pagination = styled.div`
 
 const Img = styled.img``;
 
-const SkeletonWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-`;
+// const SkeletonWrapper = styled.div`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   z-index: -1;
+// `;
 
 const LastImageContents = styled(Flexbox)`
   position: absolute;
