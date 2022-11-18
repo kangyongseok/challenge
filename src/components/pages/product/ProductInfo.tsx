@@ -235,7 +235,7 @@ ${newDescription}
         <Typography
           variant="body1"
           dangerouslySetInnerHTML={{ __html: convertedDescription }}
-          customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap' }}
+          customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         />
       ) : (
         <Content variant="body1" isClamped={isClamped}>
