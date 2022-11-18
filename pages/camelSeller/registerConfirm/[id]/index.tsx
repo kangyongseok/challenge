@@ -94,6 +94,7 @@ function RegisterConfirmEdit() {
       header={<CamelSellerHeader />}
       footer={<CamelSellerConfirmFooter footerRef={footerRef} />}
       hideAppDownloadBanner
+      subset
     >
       <CamelSellerPhotoGuideEdit />
       <Box customStyle={{ marginTop: 160 }}>

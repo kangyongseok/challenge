@@ -149,10 +149,7 @@ function SelectBrand() {
   };
 
   return (
-    <GeneralTemplate
-      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
-      hideAppDownloadBanner
-    >
+    <GeneralTemplate header={<Header showRight={false} />} hideAppDownloadBanner subset>
       <Box
         customStyle={{
           marginTop: '32px',

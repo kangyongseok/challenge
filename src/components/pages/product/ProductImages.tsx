@@ -283,45 +283,90 @@ function ProductImages({
               />
             )}
           </SwiperSlide>
-          {detailImages.map((image, i) => (
-            <SwiperSlide
-              key={`product-image-${
-                typeof image === 'string'
-                  ? image.slice(image.lastIndexOf('/') + 1)
-                  : 'last-lower-price'
-              }`}
-              style={{ position: 'relative' }}
-            >
-              {typeof image === 'string' ? (
-                <Image
-                  className="swiper-lazy"
-                  data-src={image}
-                  alt="image"
-                  onClick={handleImageModal}
-                  data-index={i + 2}
-                  disableSkeletonRender
-                />
-              ) : (
-                <Box
-                  customStyle={{
-                    position: 'relative',
-                    display: isDisplay ? 'block' : 'none'
-                  }}
+          {detailImages.map((image, i) => {
+            if (i < 2) {
+              return (
+                <SwiperSlide
+                  key={`product-image-${
+                    typeof image === 'string'
+                      ? image.slice(image.lastIndexOf('/') + 1)
+                      : 'last-lower-price'
+                  }`}
+                  style={{ position: 'relative' }}
                 >
-                  <BackgroundBlurImage
-                    imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
-                  />
-                  <LastImageContents justifyContent="center" alignment="center">
-                    {image.lastComponent}
-                  </LastImageContents>
-                </Box>
-              )}
+                  {typeof image === 'string' ? (
+                    <Image
+                      src={image}
+                      alt="image"
+                      onClick={handleImageModal}
+                      data-index={i + 2}
+                      disableSkeletonRender
+                    />
+                  ) : (
+                    <Box
+                      customStyle={{
+                        position: 'relative',
+                        display: isDisplay ? 'block' : 'none'
+                      }}
+                    >
+                      <BackgroundBlurImage
+                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                      />
+                      <LastImageContents justifyContent="center" alignment="center">
+                        {image.lastComponent}
+                      </LastImageContents>
+                    </Box>
+                  )}
 
-              <SkeletonWrapper className="swiper-lazy-preloader">
-                <Skeleton />
-              </SkeletonWrapper>
-            </SwiperSlide>
-          ))}
+                  <SkeletonWrapper className="swiper-lazy-preloader">
+                    <Skeleton />
+                  </SkeletonWrapper>
+                </SwiperSlide>
+              );
+            }
+
+            if (currentSlide > 1) {
+              return (
+                <SwiperSlide
+                  key={`product-image-${
+                    typeof image === 'string'
+                      ? image.slice(image.lastIndexOf('/') + 1)
+                      : 'last-lower-price'
+                  }`}
+                  style={{ position: 'relative' }}
+                >
+                  {typeof image === 'string' ? (
+                    <Image
+                      src={image}
+                      alt="image"
+                      onClick={handleImageModal}
+                      data-index={i + 2}
+                      disableSkeletonRender
+                    />
+                  ) : (
+                    <Box
+                      customStyle={{
+                        position: 'relative',
+                        display: isDisplay ? 'block' : 'none'
+                      }}
+                    >
+                      <BackgroundBlurImage
+                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                      />
+                      <LastImageContents justifyContent="center" alignment="center">
+                        {image.lastComponent}
+                      </LastImageContents>
+                    </Box>
+                  )}
+
+                  <SkeletonWrapper className="swiper-lazy-preloader">
+                    <Skeleton />
+                  </SkeletonWrapper>
+                </SwiperSlide>
+              );
+            }
+            return '';
+          })}
           {!lowerPriceDisplay() && (
             <Pagination>
               {currentSlide + 1}/{modalImages.length}

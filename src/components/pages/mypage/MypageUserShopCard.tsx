@@ -149,30 +149,27 @@ function MypageUserShopCard() {
           <Icon name="PlusOutlined" color={primary.main} />
         </ProductCreateButton>
       )}
-      {displayedUserProductCount ? (
-        hasUserProduct &&
-        images.length > 0 && (
-          <Box customStyle={{ position: 'relative', width: 56, minWidth: 56, height: 56 }}>
-            {images.map((image, index) => (
-              <UserProductImage
-                key={`user-shop-product-image-${image?.slice(image.lastIndexOf('/') + 1)}`}
-                width={`${56 - index * 4}px`}
-                height={`${56 - index * 4}px`}
-                src={image}
-                alt="Shop Product Img"
-                disableAspectRatio
-                index={index}
-                customStyle={{
-                  borderRadius: round['8']
-                }}
-              />
-            ))}
-          </Box>
-        )
+      {hasUserProduct && images.length > 0 && displayedUserProductCount ? (
+        <Box customStyle={{ position: 'relative', width: 56, minWidth: 56, height: 56 }}>
+          {images.map((image, index) => (
+            <UserProductImage
+              key={`user-shop-product-image-${image?.slice(image.lastIndexOf('/') + 1)}`}
+              width={`${56 - index * 4}px`}
+              height={`${56 - index * 4}px`}
+              src={image}
+              alt="Shop Product Img"
+              disableAspectRatio
+              index={index}
+              customStyle={{
+                borderRadius: round['8']
+              }}
+            />
+          ))}
+        </Box>
       ) : (
-        <Icon name="CaretRightOutlined" />
+        ''
       )}
-      {hasUserProduct && !images.length && <Icon name="Arrow2RightOutlined" />}
+      {hasUserProduct && !displayedUserProductCount && <Icon name="Arrow2RightOutlined" />}
     </StyledMypageUserShopCard>
   );
 }

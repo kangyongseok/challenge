@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, SEARCH_BAR_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  CAMEL_SUBSET_FONTFAMILY,
+  SEARCH_BAR_HEIGHT
+} from '@constants/common';
 
 import { SearchBarProps } from '.';
 
@@ -88,6 +92,7 @@ export const Input = styled.input`
   width: 100%;
   outline: 0;
   background-color: transparent;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
   ${({ theme: { typography } }) => ({
     fontSize: typography.h4.size,

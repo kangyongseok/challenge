@@ -43,7 +43,7 @@ function ProductDetailLegitBanner({ data, product }: { data: ProductLegit; produ
       return;
     }
     if (data.status === 30) {
-      router.push(`/${router.query.id}/result`);
+      router.push(`/legit/${router.query.id}/result`);
       return;
     }
     router.push(`/legit/${router.query.id}`);

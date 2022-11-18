@@ -258,6 +258,12 @@ function CamelSellerPhotoGuideEdit() {
 
   const handleClickDetailModal = (e: MouseEvent<HTMLElement>) => {
     const target = e.currentTarget;
+    logEvent(attrKeys.camelSeller.CLICK_PIC, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      index: target.dataset.index,
+      att: 'SAVE'
+    });
+
     setCurrentIndex(Number(target.dataset.index));
     setOpenModal(true);
   };
@@ -307,7 +313,7 @@ function CamelSellerPhotoGuideEdit() {
                 data-type={imageType}
                 onClick={imageUrl ? handleClickDetailModal : handleClickCallPhotoGuide}
               >
-                {isImageLoading && !imageUrl ? (
+                {isImageLoading ? (
                   <AnimationLoading
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
                     alt="이미지 로딩중"

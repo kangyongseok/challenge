@@ -486,6 +486,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
         product={data?.product}
       />
       <GeneralTemplate
+        subset
         header={<ProductDetailHeader data={data} />}
         footer={
           <ProductDetailFooter
@@ -532,7 +533,12 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
                   isProductLegit={data?.productLegit}
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
-                <ProductInfo contentRef={contentRef} isSafe={isSafe} product={product} />
+                <ProductInfo
+                  contentRef={contentRef}
+                  isSafe={isSafe}
+                  product={product}
+                  isCamelSellerProduct={isCamelSellerProduct}
+                />
                 {!isCamelSellerProduct && (
                   <ProductActions product={product} onClickSMS={handleClickSMS} />
                 )}

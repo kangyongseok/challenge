@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 import { CustomSearchBarProps } from '.';
 
@@ -125,6 +125,7 @@ export const Input = styled.input<Pick<CustomSearchBarProps, 'brandColor'>>`
   width: 100%;
   outline: 0;
   cursor: pointer;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
   ${({ theme: { typography } }) => ({
     fontSize: typography.body1.size,

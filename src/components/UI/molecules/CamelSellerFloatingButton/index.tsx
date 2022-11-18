@@ -40,7 +40,7 @@ function CamelSellerFloatingButton() {
   const [authProductSeller, setAuthProductSeller] = useState(false);
 
   useEffect(() => {
-    // beta 일땐 모든 판매하기 접근경로 오픈
+    // 운영이 아닐땐 일땐 모든 판매하기 접근경로 오픈
     // 운영에서 노출 조건
     // IOS + 로그인 + PRODUCT_CREATE 권한 보유자
     // 운영에서 안드로이드는 비노출

@@ -503,3 +503,4 @@ export function getPathNameByAsPath(asPath: string) {
 }
 
 export const productionEnvUrl = process.env.NEXT_JS_API_BASE_URL === 'https://mrcamel.co.kr/api';
+// export const productionEnvUrl = process.env.NEXT_JS_API_BASE_URL === 'http://localhost:3000/api';

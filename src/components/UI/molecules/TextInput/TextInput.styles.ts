@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
+import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
+
 export type TextInputVariant = 'outlined' | 'contained' | 'standard' | 'underlined';
 
 export type TextInputProps = {
@@ -113,6 +115,7 @@ export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
     variant === 'underlined' &&
     `${borderWidth}px solid ${isSelected ? primary.main : common.ui90}`};
   transition-duration: 0.2s;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
   :focus {
     ${({

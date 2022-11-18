@@ -247,6 +247,12 @@ function CamelSellerPhotoGuide() {
 
   const handleClickDetailModal = (e: MouseEvent<HTMLElement>) => {
     const target = e.currentTarget;
+    logEvent(attrKeys.camelSeller.CLICK_PIC, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      index: target.dataset.index,
+      att: 'EDIT'
+    });
+
     setCurrentIndex(Number(target.dataset.index));
     setOpenModal(true);
   };

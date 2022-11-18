@@ -1,6 +1,8 @@
 import { Flexbox, Label, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
+
 export const WishButton = styled.button`
   position: absolute;
   top: 0;
@@ -26,6 +28,7 @@ export const Title = styled(Typography)`
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
   & > span {
     color: ${({

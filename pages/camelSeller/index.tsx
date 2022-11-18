@@ -32,7 +32,7 @@ function CamelSeller() {
   }, []);
 
   return (
-    <GeneralTemplate header={<CamelSellerHeader />} hideAppDownloadBanner>
+    <GeneralTemplate subset header={<CamelSellerHeader />} hideAppDownloadBanner>
       <CamelSellerProductSearch />
       <CamelSellerSmsDialog />
     </GeneralTemplate>

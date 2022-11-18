@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 // import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Flexbox } from 'mrcamel-ui';
-import { filter, sortBy } from 'lodash-es';
+import { filter, find, sortBy } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { DropDownSelect } from '@components/UI/molecules';
@@ -26,10 +26,12 @@ import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@re
 // import queryKeys from '@constants/queryKeys';
 
 function CamelSellerFilter({
-  data,
+  baseSearchOptions,
+  searchOptions,
   onClick
 }: {
-  data: ProductSearchOption | undefined;
+  baseSearchOptions: ProductSearchOption | undefined;
+  searchOptions: ProductSearchOption | undefined;
   onClick: (parameters: { type: string; id: number }) => void;
 }) {
   const [filterType, setFilterType] = useState('');
@@ -93,35 +95,65 @@ function CamelSellerFilter({
     }
   }, [isResetFilter, setResetFilter]);
 
+  const countParser = useCallback(
+    (type: 'colors' | 'conditions' | 'sizes' | 'siteUrls') => {
+      if (baseSearchOptions && searchOptions) {
+        return baseSearchOptions[type].map((item) => {
+          const findSearchOption = find(searchOptions[type], { id: item.id }) as
+            | CommonCode
+            | SiteUrl;
+          if (findSearchOption) {
+            return {
+              ...item,
+              count: findSearchOption?.count
+            };
+          }
+          return {
+            ...item,
+            count: 0
+          };
+        });
+      }
+      return [];
+    },
+    [baseSearchOptions, searchOptions]
+  );
+
   const setFilterItem = useCallback(() => {
-    if (data) {
+    if (countParser('colors').length) {
       setColors(
-        data.colors.map((color) => ({
+        countParser('colors').map((color) => ({
           ...getDefaultObject(color)
         }))
       );
+    }
 
+    if (countParser('conditions').length) {
       setCondtionIds(
-        data.conditions.map((condi) => ({
+        countParser('conditions').map((condi) => ({
           ...getDefaultObject(condi)
         }))
       );
+    }
 
+    if (countParser('sizes').length) {
       setSizes(
-        data.sizes.map((size) => ({
+        (countParser('sizes') as CommonCode[]).map((size) => ({
           ...getDefaultObject(size),
           groupId: size.groupId
         }))
       );
+    }
 
+    if (countParser('siteUrls')) {
       setPlatforms(
-        data.siteUrls.map((platform) => ({
+        (countParser('siteUrls') as SiteUrl[]).map((platform) => ({
           ...getDefaultObject(platform),
           hasImage: platform.hasImage
         }))
       );
     }
-  }, [data]);
+  }, [countParser]);
 
   const getDefaultObject = (item: CommonCode | SiteUrl) => {
     return {
@@ -238,7 +270,7 @@ function CamelSellerFilter({
         selectValue={selectSizeId || 'all'}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={data?.productTotal}
+        allCount={baseSearchOptions?.productTotal}
       />
       <DropDownSelect
         title="색상"
@@ -249,7 +281,7 @@ function CamelSellerFilter({
         right={-70}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={data?.productTotal}
+        allCount={baseSearchOptions?.productTotal}
       />
       <DropDownSelect
         title="플랫폼"
@@ -260,7 +292,7 @@ function CamelSellerFilter({
         right={0}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={data?.productTotal}
+        allCount={baseSearchOptions?.productTotal}
       />
     </DropDownStyledWrap>
   );

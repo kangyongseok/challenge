@@ -202,7 +202,7 @@ function Search() {
         ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
         ogUrl="https://mrcamel.co.kr/search"
       />
-      <GeneralTemplate disablePadding>
+      <GeneralTemplate disablePadding subset>
         <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
           <SearchForm action="" onSubmit={handleSubmit}>
             <SearchBar

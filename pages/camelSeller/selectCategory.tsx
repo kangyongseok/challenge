@@ -98,10 +98,7 @@ function SelectCategory() {
   };
 
   return (
-    <GeneralTemplate
-      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
-      hideAppDownloadBanner
-    >
+    <GeneralTemplate header={<Header showRight={false} />} hideAppDownloadBanner subset>
       <Box customStyle={{ margin: '32px 0' }}>
         {query.title ? (
           <>

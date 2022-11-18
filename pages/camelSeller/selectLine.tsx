@@ -127,7 +127,8 @@ function SelectLine() {
   return (
     <GeneralTemplate
       hideAppDownloadBanner
-      header={<Header showRight={false} disableAppDownloadBannerVariableTop />}
+      subset
+      header={<Header showRight={false} />}
       footer={
         <FooterWrap>
           <TransParentGradian />

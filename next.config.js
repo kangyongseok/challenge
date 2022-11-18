@@ -42,6 +42,18 @@ const routers = [
     destination: '/login'
   },
   {
+    source: '/camelSeller/:path*',
+    has: [
+      {
+        type: 'cookie',
+        key: 'accessToken',
+        value: undefined
+      }
+    ],
+    permanent: false,
+    destination: '/login'
+  },
+  {
     source: '/logout',
     has: [
       {

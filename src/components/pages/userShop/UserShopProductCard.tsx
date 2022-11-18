@@ -16,6 +16,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -198,6 +199,7 @@ const Title = styled(Typography)`
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 `;
 
 const Overlay = styled.div`

@@ -269,7 +269,11 @@ function CamelSellerRecentBottomSheet() {
             </Typography>
           </Typography>
         </Flexbox>
-        <CamelSellerFilter data={pages[0]?.baseSearchOptions} onClick={handleClickFilterSelect} />
+        <CamelSellerFilter
+          baseSearchOptions={pages[0]?.baseSearchOptions}
+          searchOptions={pages[0]?.searchOptions}
+          onClick={handleClickFilterSelect}
+        />
       </FilterHeaderFix>
       <Flexbox
         justifyContent="space-between"

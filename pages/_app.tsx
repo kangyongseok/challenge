@@ -40,6 +40,7 @@ import {
 } from '@provider';
 
 import '@styles/base.css';
+import '@styles/subsetFont.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';

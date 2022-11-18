@@ -28,9 +28,15 @@ interface ProductInfoProps {
   contentRef: MutableRefObject<HTMLHRElement | null>;
   isSafe: boolean;
   product?: Product;
+  isCamelSellerProduct?: boolean;
 }
 
-function ProductInfo({ contentRef, isSafe, product }: ProductInfoProps) {
+function ProductInfo({
+  contentRef,
+  isSafe,
+  product,
+  isCamelSellerProduct = false
+}: ProductInfoProps) {
   const {
     theme: {
       palette: { primary, common }
@@ -170,6 +176,7 @@ ${newDescription}
         customStyle={{ color: common.ui60, marginTop: 8 }}
       >
         <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+          {isCamelSellerProduct && product.datePosted > product.dateFirstPosted ? '끌올 ' : ''}
           {getFormattedDistanceTime(hoistingState ? new Date() : new Date(product.datePosted))}
           {product?.area && ` · ${getProductArea(product.area)}`}
         </Typography>

@@ -22,3 +22,6 @@ export const locales = {
 };
 
 export const globalSizeGroupId = [1, 3, 6, 8, 10];
+
+export const CAMEL_SUBSET_FONTFAMILY =
+  'Camel Product Sans Subset, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji';
