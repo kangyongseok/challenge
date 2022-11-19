@@ -339,6 +339,10 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
         }
       });
 
+      if (variant === 'camel') {
+        convertedBaseSearchParams.idFilterIds = [5];
+      }
+
       const { parentIds: newParentIds, subParentIds: newSubParentIds } = convertSearchParamsByQuery(
         router.query,
         {

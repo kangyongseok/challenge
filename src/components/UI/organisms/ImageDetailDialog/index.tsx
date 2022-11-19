@@ -45,6 +45,7 @@ function ImageDetailDialog({
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
   const isFirstChangeRef = useRef(false);
   const swipeCloseTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const zoomStopTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const slideMovingRef = useRef(false);
   const pinchingRef = useRef(false);
   const metrics = useRef({
@@ -63,9 +64,11 @@ function ImageDetailDialog({
   };
 
   const handleZoomStop = ({ state: { scale } }: ReactZoomPanPinchRef) => {
-    setCurrentScale(scale);
-    slideMovingRef.current = false;
-    pinchingRef.current = false;
+    zoomStopTimerRef.current = setTimeout(() => {
+      setCurrentScale(scale < 1 ? 1 : scale);
+      slideMovingRef.current = false;
+      pinchingRef.current = false;
+    }, 200);
   };
 
   const handlePinching = () => {
@@ -166,11 +169,11 @@ function ImageDetailDialog({
       return;
     const currentDialogY = dialogRef.current.getBoundingClientRect().y;
 
-    if (currentDialogY > 1) {
+    if (currentDialogY > 10) {
       dialogRef.current.style.setProperty('transform', 'translateY(120%)');
       swipeCloseTimerRef.current = setTimeout(() => onClose(), 150);
-    } else if (currentDialogY <= 10) {
-      dialogRef.current.style.setProperty('transform', 'translateY(0)');
+    } else {
+      dialogRef.current.removeAttribute('style');
     }
 
     metrics.current = {
@@ -197,6 +200,12 @@ function ImageDetailDialog({
   }, [currentScale]);
 
   useEffect(() => {
+    if (currentScale === 0.6) {
+      setCurrentScale(1);
+    }
+  }, [currentScale]);
+
+  useEffect(() => {
     if (!rotates.length) {
       setRotates(new Array(images.length).fill(0));
     }
@@ -206,6 +215,7 @@ function ImageDetailDialog({
     if (!open) {
       setRotates([]);
       setImagesLoadStatus([]);
+      setCurrentScale(1);
       setCurrentIndex(0);
       transformsRef.current = [];
       imagesRef.current = [];
@@ -223,6 +233,17 @@ function ImageDetailDialog({
       });
     }
   }, [open, imagesLoadStatus, images, currentIndex, syncIndex]);
+
+  useEffect(() => {
+    return () => {
+      if (swipeCloseTimerRef.current) {
+        clearTimeout(swipeCloseTimerRef.current);
+      }
+      if (zoomStopTimerRef.current) {
+        clearTimeout(zoomStopTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Dialog
