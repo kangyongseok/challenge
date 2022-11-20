@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import type { FormEvent, RefObject } from 'react';
 import { useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -69,6 +69,10 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       ...tempData,
       title: customTitle
     });
+  };
+
+  const handleBlurBlock = (e: FormEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
 
   const handleClickRegister = () => {
@@ -162,6 +166,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
         ref={footerRef}
         isEditTitle={modify.isState}
         registerActive={!!validatorResult && !!validatorPhoto.isState && !isImageLoading}
+        onMouseDown={handleBlurBlock}
       >
         <Button
           fullWidth

@@ -7,13 +7,17 @@ import styled from '@emotion/styled';
 
 import { Divider, ProductGridCard } from '@components/UI/molecules';
 
+import { AccessUser } from '@dto/userAuth';
 import type { Product } from '@dto/product';
+
+import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
 import { SELLER_STATUS } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SITE } from '@constants/product';
+import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -29,7 +33,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
       palette: { common, primary }
     }
   } = useTheme();
-
+  const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const sellerId = Number(product?.productSeller.id || 0);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
@@ -183,6 +187,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
                   source={attrProperty.productSource.LIST_RELATED}
                   hideProductLabel
                   hideAreaWithDateInfo
+                  hideWishButton={Number(product?.productSeller.account) === accessUser?.userId}
                 />
               </Box>
             ))}

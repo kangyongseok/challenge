@@ -113,7 +113,8 @@ export type ToastStatus =
   | 'soldout'
   | 'successRequest'
   | 'loginSuccess'
-  | 'successEdit';
+  | 'successEdit'
+  | 'selfCamelProduct';
 
 export type DialogType =
   | 'SNSShare'

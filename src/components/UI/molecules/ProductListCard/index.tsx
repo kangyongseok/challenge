@@ -217,6 +217,18 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
       return;
     }
 
+    if (Number(product.productSeller.account) === accessUser.userId) {
+      logEvent(attrKeys.products.CLICK_WISH_SELF, {
+        ...wishAtt
+      });
+
+      setToastState({
+        type: 'product',
+        status: 'selfCamelProduct'
+      });
+      return;
+    }
+
     logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.home.CLICK_WISH, {
       ...wishAtt,
       productType: getProductType(product.productSeller.site.id, product.productSeller.type)

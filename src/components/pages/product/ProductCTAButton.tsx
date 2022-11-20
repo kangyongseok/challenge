@@ -296,7 +296,7 @@ function ProductCTAButton({
       return;
     }
 
-    if (product && (isCamelProduct || isCamelSeller)) {
+    if (product && (isCamelProduct || isCamelSeller || isCamelSelfSeller)) {
       onClickSMS({
         siteId: product.site?.id,
         sellerType: product.productSeller?.type,
@@ -481,13 +481,13 @@ function ProductCTAButton({
           }}
         >
           <Typography variant="body1" weight="bold" customStyle={{ color: common.uiWhite }}>
-            {(isCamelProduct || isCamelSeller) && (
+            {(isCamelProduct || isCamelSeller || isCamelSelfSeller) && (
               <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
             )}
-            {!isCamelProduct && !isCamelSeller && platformId && (
+            {!isCamelProduct && !isCamelSeller && !isCamelSelfSeller && platformId && (
               <Avatar
                 src={
-                  isCamelProduct || isCamelSeller
+                  isCamelProduct || isCamelSeller || isCamelSelfSeller
                     ? `https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/message-white.png`
                     : `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`
                 }

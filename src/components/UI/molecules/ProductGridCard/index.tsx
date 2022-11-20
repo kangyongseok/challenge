@@ -198,6 +198,18 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       return;
     }
 
+    if (Number(product.productSeller.account) === accessUser.userId) {
+      logEvent(attrKeys.products.CLICK_WISH_SELF, {
+        ...wishAtt
+      });
+
+      setToastState({
+        type: 'product',
+        status: 'selfCamelProduct'
+      });
+      return;
+    }
+
     logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, {
       ...wishAtt,
       productType: getProductType(product.productSeller.site.id, product.productSeller.type)

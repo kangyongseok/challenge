@@ -36,7 +36,8 @@ const product = {
   successCopy: 'URL이 복사 되었어요.',
   successReport: '감사합니다! 신고 접수 완료되었습니다 😇',
   successRemoveWish: '찜목록에서 삭제했어요.',
-  successAddWish: '찜목록에 추가했어요!'
+  successAddWish: '찜목록에 추가했어요!',
+  selfCamelProduct: '내 매물은 찜할 수 없어요.'
 };
 
 const legitAdminOpinion = {

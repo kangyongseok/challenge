@@ -120,16 +120,14 @@ function DropDownSelect({
             >
               전체보기
             </Typography>
-            {allCount && (
-              <Typography
-                variant="small2"
-                customStyle={{
-                  color: common.ui60
-                }}
-              >
-                {commaNumber(allCount)}
-              </Typography>
-            )}
+            <Typography
+              variant="small2"
+              customStyle={{
+                color: common.ui60
+              }}
+            >
+              {commaNumber(allCount || 0)}
+            </Typography>
           </Item>
         )}
 
@@ -141,7 +139,7 @@ function DropDownSelect({
                 <Typography
                   weight="bold"
                   variant="small1"
-                  customStyle={{ color: common.ui60, padding: '32px 0 5px 12px' }}
+                  customStyle={{ color: common.ui60, padding: '20px 0 5px 12px' }}
                 >
                   {label}
                 </Typography>
@@ -170,16 +168,14 @@ function DropDownSelect({
                     >
                       {list.name}
                     </Typography>
-                    {list.count && (
-                      <Typography
-                        variant="small2"
-                        customStyle={{
-                          color: selectValue === list.id ? primary.light : common.ui60
-                        }}
-                      >
-                        {commaNumber(list.count)}
-                      </Typography>
-                    )}
+                    <Typography
+                      variant="small2"
+                      customStyle={{
+                        color: selectValue === list.id ? primary.light : common.ui60
+                      }}
+                    >
+                      {commaNumber(list.count || 0)}
+                    </Typography>
                   </Item>
                 ))}
               </Box>

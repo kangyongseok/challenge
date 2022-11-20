@@ -1,5 +1,5 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
@@ -109,12 +109,7 @@ function CamelSellerProductTitle() {
     <>
       <Flexbox alignment="center" justifyContent="space-between" onClick={handleClickEdit}>
         {isState && (
-          <ModofyArea
-            isTitle={title}
-            alignment="center"
-            justifyContent="space-between"
-            onMouseDown={handleBlurBlock}
-          >
+          <ModifyArea isTitle={title} alignment="center" justifyContent="space-between">
             <FormWrap onSubmit={handleClickSubmit}>
               <TextareaTitle
                 ref={textareaRef}
@@ -135,12 +130,13 @@ function CamelSellerProductTitle() {
                 right: 0
               }}
               onClick={handleClickClose}
+              onMouseDown={handleBlurBlock}
             >
               <CloseIconWrap alignment="center" justifyContent="center">
                 <Icon name="CloseOutlined" />
               </CloseIconWrap>
             </Box>
-          </ModofyArea>
+          </ModifyArea>
         )}
         {!isState && (
           <>
@@ -193,7 +189,7 @@ const FormWrap = styled.form`
   width: 100%;
 `;
 
-const ModofyArea = styled(Flexbox)<{ isTitle: string }>`
+const ModifyArea = styled(Flexbox)<{ isTitle: string }>`
   width: 100%;
   position: relative;
   /* border-bottom: ${({ isTitle, theme }) =>

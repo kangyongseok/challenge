@@ -145,7 +145,7 @@ function CamelSellerFilter({
       );
     }
 
-    if (countParser('siteUrls')) {
+    if (countParser('siteUrls').length) {
       setPlatforms(
         (countParser('siteUrls') as SiteUrl[]).map((platform) => ({
           ...getDefaultObject(platform),
@@ -259,6 +259,7 @@ function CamelSellerFilter({
         selectValue={selectCondition || 'all'}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
+        allCount={searchOptions?.productTotal}
       />
       <DropDownSelect
         groupSelect
@@ -270,7 +271,7 @@ function CamelSellerFilter({
         selectValue={selectSizeId || 'all'}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={baseSearchOptions?.productTotal}
+        allCount={searchOptions?.productTotal}
       />
       <DropDownSelect
         title="색상"
@@ -281,7 +282,7 @@ function CamelSellerFilter({
         right={-70}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={baseSearchOptions?.productTotal}
+        allCount={searchOptions?.productTotal}
       />
       <DropDownSelect
         title="플랫폼"
@@ -292,7 +293,7 @@ function CamelSellerFilter({
         right={0}
         onClick={handleClickFilterButton}
         onClickSelect={handleClickSelect}
-        allCount={baseSearchOptions?.productTotal}
+        allCount={searchOptions?.productTotal}
       />
     </DropDownStyledWrap>
   );

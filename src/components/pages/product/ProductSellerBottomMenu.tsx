@@ -38,8 +38,12 @@ function ProductSellerBottomMenu({
   } = useTheme();
 
   const router = useRouter();
-  const { id } = router.query;
-  const parameter = { productId: Number(id) };
+  const queryId = router.query.id as string;
+  const splitRouter = queryId?.split('-');
+  const parameter = {
+    productId:
+      splitRouter.length === 1 ? Number(queryId) : Number(splitRouter[splitRouter.length - 1])
+  };
   const setToastState = useSetRecoilState(toastState);
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
@@ -116,7 +120,7 @@ function ProductSellerBottomMenu({
         return;
       }
     }
-    router.push(`/camelSeller/registerConfirm/${router.query.id}`);
+    router.push(`/camelSeller/registerConfirm/${parameter.productId}`);
   };
 
   const handleClickHoisting = () => {
