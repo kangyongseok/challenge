@@ -52,11 +52,11 @@ if (global.navigator) {
 }
 
 datadogRum.init({
-  applicationId: 'a1faa99a-09c7-4ab6-aaf7-db1212b2efcc',
-  clientToken: 'pubd26ef7496cfbc8cc8aca7d568c3472e8',
+  applicationId: process.env.DATADOG_RUM_APP_ID,
+  clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
   site: 'datadoghq.com',
   service: 'camel',
-  env: 'beta',
+  env: process.env.DATADOG_RUM_ENV,
   sampleRate: 100,
   sessionReplaySampleRate: 20,
   trackInteractions: true,
