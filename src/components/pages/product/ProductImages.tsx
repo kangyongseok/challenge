@@ -303,7 +303,19 @@ function ProductImages({
                       disableSkeletonRender
                     />
                   ) : (
-                    ''
+                    <Box
+                      customStyle={{
+                        position: 'relative',
+                        display: isDisplay ? 'block' : 'none'
+                      }}
+                    >
+                      <BackgroundBlurImage
+                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                      />
+                      <LastImageContents justifyContent="center" alignment="center">
+                        {image.lastComponent}
+                      </LastImageContents>
+                    </Box>
                   )}
                 </SwiperSlide>
               );
