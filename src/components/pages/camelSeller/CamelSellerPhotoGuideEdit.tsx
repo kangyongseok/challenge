@@ -232,22 +232,17 @@ function CamelSellerPhotoGuideEdit() {
   const isPhotoUrl = useMemo(() => photoImages.filter((img) => !!img.imageUrl), [photoImages]);
 
   const count = useMemo(() => {
-    if (editData) {
-      return editData.product.photoGuideImages?.length;
-    }
     if (photoImages) {
       return isPhotoUrl.length;
     }
     return 0;
-  }, [editData, isPhotoUrl.length, photoImages]);
+  }, [isPhotoUrl.length, photoImages]);
 
   useEffect(() => {
-    if (isRequiredPhotoValid()) {
-      setRequirePhotoValid(({ type }) => ({
-        type,
-        isState: true
-      }));
-    }
+    setRequirePhotoValid(({ type }) => ({
+      type,
+      isState: isRequiredPhotoValid()
+    }));
   }, [isRequiredPhotoValid, editData, setRequirePhotoValid]);
 
   useEffect(() => {
@@ -304,6 +299,7 @@ function CamelSellerPhotoGuideEdit() {
               </GuideBox>
             )
           )}
+
         {mergePhotoResult() &&
           mergePhotoResult()?.map(
             ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (
