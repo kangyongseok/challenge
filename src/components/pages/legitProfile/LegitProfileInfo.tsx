@@ -209,7 +209,7 @@ function LegitProfileInfo({
           </Flexbox>
           <Flexbox direction="vertical" gap={8}>
             <Flexbox alignment="center" gap={8}>
-              {userId && ![10029, 56881, 70679].includes(userId) && (
+              {userId && ![56881, 70679].includes(userId) && (
                 <Button
                   size="large"
                   variant="contained"
