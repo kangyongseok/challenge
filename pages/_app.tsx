@@ -55,7 +55,7 @@ datadogRum.init({
   applicationId: process.env.DATADOG_RUM_APP_ID,
   clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
   site: 'datadoghq.com',
-  service: 'camel',
+  service: process.env.DATADOG_RUM_SERVICE,
   env: process.env.DATADOG_RUM_ENV,
   sampleRate: 100,
   sessionReplaySampleRate: 20,

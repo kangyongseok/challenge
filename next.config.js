@@ -122,7 +122,8 @@ const nextConfig = {
     GOOGLE_ANALYTICS_TRACKING_ID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
     DATADOG_RUM_APP_ID: process.env.DATADOG_RUM_APP_ID,
     DATADOG_RUM_CLIENT_TOKEN: process.env.DATADOG_RUM_CLIENT_TOKEN,
-    DATADOG_RUM_ENV: process.env.DATADOG_RUM_ENV
+    DATADOG_RUM_ENV: process.env.DATADOG_RUM_ENV,
+    DATADOG_RUM_SERVICE: process.env.DATADOG_RUM_SERVICE
   },
   images: {
     domains: [
