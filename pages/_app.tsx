@@ -60,6 +60,7 @@ datadogRum.init({
   sampleRate: 100,
   sessionReplaySampleRate: 20,
   trackInteractions: true,
+  trackFrustrations: true,
   trackResources: true,
   trackLongTasks: true,
   defaultPrivacyLevel: 'mask-user-input'
@@ -138,6 +139,7 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
+    Initializer.initAccessUserInRum();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

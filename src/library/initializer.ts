@@ -1,6 +1,7 @@
 import type { QueryClient } from 'react-query';
 import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import type { AmplitudeClient } from 'amplitude-js';
+import { datadogRum } from '@datadog/browser-rum';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -78,6 +79,26 @@ const Initializer = {
     ) {
       window.webkit.messageHandlers.callSetLoginUser.postMessage(JSON.stringify(accessUser));
     }
+  },
+  initAccessUserInRum() {
+    const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
+
+    if (!accessUser) return;
+
+    const { userId, email, userName, snsType, area, gender, birthday, alarmAgree, adAgree } =
+      accessUser;
+
+    datadogRum.setUser({
+      id: String(userId),
+      name: userName,
+      email,
+      snsType,
+      area,
+      gender,
+      birthday,
+      alarmAgree,
+      adAgree
+    });
   },
   initABTestIdentifierByCookie({ abTestIdentifier }: NextApiRequestCookies) {
     if (abTestIdentifier) {
