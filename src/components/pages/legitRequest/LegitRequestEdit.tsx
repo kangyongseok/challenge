@@ -122,6 +122,7 @@ function LegitRequestEdit() {
         ),
     [photoGuideDetails, photoGuideImages]
   );
+
   const isAllUploadRequestedEditPhoto = useMemo(
     () =>
       photoGuideDetails
@@ -176,17 +177,38 @@ function LegitRequestEdit() {
               isEdit,
               imageType: 3,
               images: photoGuideDetails.map(
-                ({ imageUrl, isEdit: isEditPhotoGuide, commonPhotoGuideDetail: { id } }) => ({
-                  photoGuideId: id,
+                ({
+                  imageUrl: savedImageUrl,
                   isEdit: isEditPhotoGuide,
-                  imageUrl: isEditPhotoGuide ? '' : imageUrl
-                })
+                  commonPhotoGuideDetail: { id }
+                }) => {
+                  const findEditedPhotoGuide = photoGuideImages.find(
+                    ({ photoGuideId, imageUrl }) =>
+                      photoGuideId === id && savedImageUrl !== imageUrl
+                  );
+                  let newImageUrl = isEditPhotoGuide ? '' : savedImageUrl;
+
+                  if (findEditedPhotoGuide) {
+                    newImageUrl = findEditedPhotoGuide.imageUrl;
+                  }
+
+                  return {
+                    photoGuideId: id,
+                    isEdit: findEditedPhotoGuide ? false : isEditPhotoGuide,
+                    imageUrl: newImageUrl
+                  };
+                }
               )
             })
           );
         }
 
-        if (checkAgent.isAndroidApp() && window.webview && window.webview.callPhotoGuide) {
+        if (
+          checkAgent.isAndroidApp() &&
+          window.webview &&
+          window.webview.callPhotoGuide &&
+          firstPhotoGuideDetail
+        ) {
           window.webview.callPhotoGuide(
             firstPhotoGuideDetail.commonPhotoGuideDetail.photoGuideId,
             JSON.stringify({
@@ -195,17 +217,33 @@ function LegitRequestEdit() {
               isEdit,
               imageType: 3,
               images: photoGuideDetails.map(
-                ({ imageUrl, isEdit: isEditPhotoGuide, commonPhotoGuideDetail: { id } }) => ({
-                  photoGuideId: id,
+                ({
+                  imageUrl: savedImageUrl,
                   isEdit: isEditPhotoGuide,
-                  imageUrl: isEditPhotoGuide ? '' : imageUrl
-                })
+                  commonPhotoGuideDetail: { id }
+                }) => {
+                  const findEditedPhotoGuide = photoGuideImages.find(
+                    ({ photoGuideId, imageUrl }) =>
+                      photoGuideId === id && savedImageUrl !== imageUrl
+                  );
+                  let newImageUrl = isEditPhotoGuide ? '' : savedImageUrl;
+
+                  if (findEditedPhotoGuide) {
+                    newImageUrl = findEditedPhotoGuide.imageUrl;
+                  }
+
+                  return {
+                    photoGuideId: id,
+                    isEdit: findEditedPhotoGuide ? false : isEditPhotoGuide,
+                    imageUrl: newImageUrl
+                  };
+                }
               )
             })
           );
         }
       },
-    [setDialogState, hasCameraAuth, hasPhotoLibraryAuth, photoGuideDetails]
+    [setDialogState, hasCameraAuth, hasPhotoLibraryAuth, photoGuideDetails, photoGuideImages]
   );
 
   const handleSubmit = useCallback(() => {

@@ -19,8 +19,11 @@ import { logEvent } from '@library/amplitude';
 import { fetchModelSuggest } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   camelSellerBooleanStateFamily,
@@ -202,7 +205,13 @@ function CamelSellerProductSearch() {
           {!searchValue && (
             <Flexbox
               alignment="flex-end"
-              customStyle={{ position: 'absolute', top: 65, left: 0, zIndex: 0 }}
+              customStyle={{
+                position: 'absolute',
+                top: 65,
+                left: 0,
+                zIndex: 0,
+                paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+              }}
             >
               <Typography
                 weight="bold"
@@ -233,7 +242,11 @@ function CamelSellerProductSearch() {
                 </Flexbox>
               </Flexbox>
             ))}
-
+          {/* {
+            models &&
+            models.length > 0 && 
+            isExtendedLayoutIOSVersion() && <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />
+          } */}
           {models &&
             models.length > 0 &&
             models.map((result) => (
@@ -314,6 +327,7 @@ const SearchWrap = styled.div<{ isSearchValue: boolean }>`
   width: calc(100% - 40px);
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
   background: ${({ theme: { palette } }) => palette.common.uiWhite};
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
   border-bottom: ${({
     isSearchValue,
     theme: {

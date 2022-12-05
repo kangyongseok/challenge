@@ -1,4 +1,4 @@
-import type { DashboardResults, LegitDashboard } from '@dto/dashboard';
+import type { DashboardResults, LegitDashboard, LegitDashboardParams } from '@dto/dashboard';
 
 import Axios from '@library/axios';
 
@@ -10,8 +10,10 @@ export async function fetchDashboard() {
   return data;
 }
 
-export async function fetchLegit() {
-  const { data } = await Axios.getInstance().get<LegitDashboard>(`${BASE_PATH}/legit`);
+export async function fetchLegit(params?: LegitDashboardParams) {
+  const { data } = await Axios.getInstance().get<LegitDashboard>(`${BASE_PATH}/legit`, {
+    params
+  });
 
   return data;
 }

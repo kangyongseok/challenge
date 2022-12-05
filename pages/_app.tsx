@@ -9,6 +9,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
 import { datadogRum } from '@datadog/browser-rum';
+import { datadogLogs } from '@datadog/browser-logs';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
@@ -24,10 +25,12 @@ import Amplitude, { logEvent } from '@library/amplitude';
 
 import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import localeData from 'public/locales';
 import { i18n } from 'next-i18next.config';
 import { PortalProvider } from '@provider/PortalProvider';
+import { ABTestCookie } from '@provider/ABTestProvider';
 import {
   ABTestProvider,
   ChannelTalkProvider,
@@ -64,6 +67,15 @@ datadogRum.init({
   trackResources: true,
   trackLongTasks: true,
   defaultPrivacyLevel: 'mask-user-input'
+});
+
+datadogLogs.init({
+  clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
+  site: 'datadoghq.com',
+  forwardErrorsToLogs: true,
+  sampleRate: 100,
+  env: process.env.DATADOG_RUM_ENV,
+  service: 'camel'
 });
 
 datadogRum.startSessionReplayRecording();
@@ -122,20 +134,20 @@ function App({ Component, pageProps }: AppProps) {
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
+    if (router.asPath.split('?')[0] === '/legit') return common.bg03;
+
     if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
       return common.uiBlack;
     }
 
-    if (router.asPath.includes('/legit')) return common.ui95;
-
     return common.uiWhite;
-  }, [common.uiBlack, common.uiWhite, common.ui95, common.cmn80, router.asPath, router.pathname]);
+  }, [router.asPath, router.pathname, common.cmn80, common.bg03, common.uiWhite, common.uiBlack]);
 
   useEffect(() => {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
       logEvent(event.eventName, event.eventParams);
     };
-
+    ABTestCookie({ name: abTestTaskNameKeys.WELCOME3_2211, cookieName: 'useAi' });
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();

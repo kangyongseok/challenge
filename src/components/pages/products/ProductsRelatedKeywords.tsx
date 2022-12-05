@@ -15,9 +15,15 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, RELATED_KEYWORDS_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
+  RELATED_KEYWORDS_HEIGHT
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   filterOperationInfoSelector,
@@ -106,7 +112,10 @@ function ProductsRelatedKeywords() {
 
   return !progressDone || relatedKeywords.length > 0 ? (
     <Wrapper show={selectedSearchOptionsHistory.length === 0}>
-      <KeywordWrapper showAppDownloadBanner={showAppDownloadBanner}>
+      <KeywordWrapper
+        showAppDownloadBanner={showAppDownloadBanner}
+        layoutHeight={isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}
+      >
         <KeywordList>
           {!progressDone
             ? Array.from({ length: 10 }, (_, index) => (
@@ -151,17 +160,16 @@ const Wrapper = styled.section<{ show: boolean }>`
   transition: all 0.1s ease-in-out 0s;
 `;
 
-const KeywordWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
+const KeywordWrapper = styled.div<{ showAppDownloadBanner: boolean; layoutHeight: number }>`
   position: fixed;
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
-  height: ${RELATED_KEYWORDS_HEIGHT + 10}px;
   min-height: ${RELATED_KEYWORDS_HEIGHT}px;
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
   overflow-x: auto;
   border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.ui90};
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
+  top: ${({ showAppDownloadBanner, layoutHeight }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56 + layoutHeight}px;
 `;
 
 const KeywordList = styled.div`

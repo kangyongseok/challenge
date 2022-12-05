@@ -49,7 +49,7 @@ function HomeRecentSearchList() {
   const {
     isLoading: isLoadingSearch,
     isFetching: isFetchingSearch,
-    data: { page: { content = [] } = {} } = {}
+    data: { page: { content = [] } = {}, resultUseAI } = {}
   } = useQuery(queryKeys.products.search(searchParams), () => fetchSearch(searchParams), {
     enabled: !!searchParams?.keyword?.length,
     onSettled() {
@@ -83,6 +83,12 @@ function HomeRecentSearchList() {
     }, 500)
   ).current;
   const isLoading = !has(searchParams, 'keyword') || isLoadingSearch || isFetchingSearch;
+
+  useEffect(() => {
+    if (resultUseAI) {
+      logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+    }
+  }, [resultUseAI]);
 
   const handleTabScroll = (e: UIEvent<HTMLDivElement>) => {
     throttleScrollRecentSearch.current(e);

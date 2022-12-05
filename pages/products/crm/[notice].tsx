@@ -22,11 +22,14 @@ import {
 
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
   CMR_LANDING_INFO_HEIGHT,
   HEADER_HEIGHT,
   locales
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -46,7 +49,9 @@ function CrmProducts() {
     <>
       <GeneralTemplate
         header={
-          <Box>
+          <Box
+            customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
+          >
             <Header disableProductsKeywordClickInterceptor={false} />
             {notice && (
               <Box customStyle={{ minHeight: CMR_LANDING_INFO_HEIGHT, position: 'relative' }}>

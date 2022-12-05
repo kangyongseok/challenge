@@ -361,7 +361,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-              (status === 4 ? <ReservingOverlay variant="h4" /> : <SoldOutOverlay variant="h4" />)}
+              (status === 4 ? (
+                <ReservingOverlay card variant="small1" />
+              ) : (
+                <SoldOutOverlay card variant="small1" />
+              ))}
           </Content>
           <div>
             {!hideProductLabel && productLabels.length > 0 && (

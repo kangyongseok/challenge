@@ -6,3 +6,4 @@ export { default as MypageEtc } from './MypageEtc';
 export { default as MypageUserShopCard } from './MypageUserShopCard';
 export { default as NonMemberWelcome } from './NonMembers/NonMemberWelcome';
 export { default as NonMemberContents } from './NonMembers/NonMemberContents';
+export { default as MypageIntro } from './MypageIntro';

@@ -76,7 +76,7 @@ function CamelSellerFloatingButton() {
         return;
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1144) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -92,6 +92,18 @@ function CamelSellerFloatingButton() {
           }
         });
 
+        return;
+      }
+
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1140) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (window.webview && window.webview.callExecuteApp)
+              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+          }
+        });
         return;
       }
 

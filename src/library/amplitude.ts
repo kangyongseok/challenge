@@ -1,5 +1,6 @@
 import qs from 'qs';
 import amplitude from 'amplitude-js';
+import { datadogLogs } from '@datadog/browser-logs';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -289,9 +290,18 @@ const initAmplitude = () => {
   Initializer.initAccessUserInAmplitude(amplitude.getInstance());
 };
 
+const errorCode = [403, 404, 500, 502, 503, 504];
+
 export const logEvent = (eventName: string, eventParams?: object) => {
   try {
     amplitude.getInstance().logEvent(eventName, eventParams);
+    datadogLogs.logger.log(
+      eventName,
+      eventParams,
+      errorCode.includes(Number((eventParams as { title: string })?.title || 0) as number)
+        ? 'error'
+        : 'info'
+    );
     channelID(eventName, eventParams as object);
     sendLogApi(eventName, eventParams as SendApiEventParams);
     commonEventBraze(eventName, eventParams as object);

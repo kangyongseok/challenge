@@ -1,6 +1,5 @@
 import { MouseEvent, useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -9,17 +8,13 @@ import Tabs from '@components/UI/molecules/Tabs';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { showAppDownloadBannerState } from '@recoil/common';
 
 function UserShopTabs() {
   const router = useRouter();
   const { tab = '0' }: { tab?: string } = router.query;
-
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useEffect(() => {
     logEvent(attrKeys.camelSeller.VIEW_MY_STORE, {
@@ -38,9 +33,8 @@ function UserShopTabs() {
   };
 
   return (
-    <Box customStyle={{ height: 41 }}>
+    <Box customStyle={{ minHeight: TAB_HEIGHT, zIndex: 1 }}>
       <StyledUserShopTabs
-        showAppDownloadBanner={showAppDownloadBanner}
         brandColor="black"
         value={tab}
         changeValue={handleChange}
@@ -59,10 +53,8 @@ function UserShopTabs() {
   );
 }
 
-const StyledUserShopTabs = styled(Tabs)<{ showAppDownloadBanner: boolean }>`
+const StyledUserShopTabs = styled(Tabs)`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
   width: 100%;
   margin: 0 -20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};

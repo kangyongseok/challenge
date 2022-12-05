@@ -120,6 +120,7 @@ export const DISTANCE = 13;
 
 export const LABELS = {
   [ID_FILTER]: [
+    { name: '5', description: '카멜인증' },
     { name: '10', description: '새상품급' },
     { name: '20', description: '신용판매자' },
     { name: '30', description: '시세이하' },

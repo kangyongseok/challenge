@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button } from 'mrcamel-ui';
+import { Box, Button, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -17,6 +17,15 @@ function LegitGuideCtaButton() {
   const router = useRouter();
   const { tab = 'upload' } = router.query;
 
+  const {
+    theme: {
+      palette: {
+        secondary: { red },
+        common
+      }
+    }
+  } = useTheme();
+
   const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
@@ -27,7 +36,19 @@ function LegitGuideCtaButton() {
         name: attrProperty.legitName.LEGIT_HOWITWORKS
       });
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+      if (!checkAgent.isMobileApp()) {
+        setDialogState({
+          type: 'legitRequestOnlyInApp',
+          customStyleTitle: { minWidth: 270 },
+          secondButtonAction() {
+            handleClickAppDownload({});
+          }
+        });
+
+        return;
+      }
+
+      if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -46,24 +67,15 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      if (!checkAgent.isMobileApp()) {
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
         setDialogState({
-          type: 'legitRequestOnlyInApp',
-          customStyleTitle: { minWidth: 270 },
-          secondButtonAction() {
-            handleClickAppDownload({});
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (window.webview && window.webview.callExecuteApp)
+              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
           }
         });
-
-        return;
-      }
-
-      if (checkAgent.isAndroidApp() && isProduction) {
-        setDialogState({
-          type: 'legitRequestOnlyInIOS',
-          customStyleTitle: { minWidth: 270 }
-        });
-
         return;
       }
 
@@ -83,10 +95,49 @@ function LegitGuideCtaButton() {
     router.push({
       pathname: '/products/brands/구찌',
       query: {
-        parentIds: 98
+        parentIds: 98,
+        idFilterIds: 101
       }
     });
   };
+
+  if (tab === 'upload') {
+    return (
+      <Box customStyle={{ height: 92 }}>
+        <StyledLegitGuideCtaButton onClick={handleClick}>
+          <TooltipWrapper>
+            <Tooltip
+              open
+              message={
+                <Typography
+                  variant="body2"
+                  weight="medium"
+                  customStyle={{
+                    color: common.cmnB,
+                    '& > strong': {
+                      color: red.light
+                    }
+                  }}
+                >
+                  😎 베타기간 내 <strong>무료진행</strong>중입니다!
+                </Typography>
+              }
+              placement="top"
+              customStyle={{
+                top: 10,
+                height: 'fit-content',
+                zIndex: 0
+              }}
+            >
+              <Button variant="contained" brandColor="primary" size="xlarge" fullWidth>
+                {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
+              </Button>
+            </Tooltip>
+          </TooltipWrapper>
+        </StyledLegitGuideCtaButton>
+      </Box>
+    );
+  }
 
   return (
     <Box customStyle={{ height: 92 }}>
@@ -110,6 +161,12 @@ const StyledLegitGuideCtaButton = styled.div`
       palette: { common }
     }
   }) => common.bg03};
+`;
+
+const TooltipWrapper = styled.div`
+  & > div {
+    width: 100%;
+  }
 `;
 
 export default LegitGuideCtaButton;

@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Grid, Typography, dark } from 'mrcamel-ui';
+import { Button, Chip, Flexbox, Grid, Typography, dark, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
@@ -25,6 +25,13 @@ import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
 
 function LegitFilterGrid() {
   const router = useRouter();
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const [legitFilterGridParams, setLegitFilterGridParams] = useRecoilState(
     legitFilterGridParamsState
   );
@@ -184,28 +191,32 @@ function LegitFilterGrid() {
                 />
               </Grid>
             ))}
-        {!isLastPage && (
-          <Grid item xs={1}>
-            <Button
-              fullWidth
-              onClick={handleClickMoreButton}
-              customStyle={{ borderColor: 'transparent', borderRadius: 0 }}
-            >
-              <Typography variant="body2" weight="medium">
-                더보기
-              </Typography>
-            </Button>
-          </Grid>
-        )}
       </ProductGrid>
+      {!isLastPage && (
+        <Button
+          fullWidth
+          onClick={handleClickMoreButton}
+          customStyle={{ borderTop: 'none', borderColor: common.ui95, borderRadius: '0 0 8px 8px' }}
+        >
+          <Typography variant="body2" weight="medium">
+            더보기
+          </Typography>
+        </Button>
+      )}
     </Flexbox>
   );
 }
 
 const ProductGrid = styled(Grid)`
   margin-top: 17px;
-  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line02};
+  border-right: none;
   background-color: ${({
     theme: {
       palette: { common }
@@ -218,7 +229,7 @@ const ProductGrid = styled(Grid)`
       theme: {
         palette: { common }
       }
-    }) => common.ui95};
+    }) => common.line02};
   }
 `;
 

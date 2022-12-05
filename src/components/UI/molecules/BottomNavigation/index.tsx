@@ -27,7 +27,11 @@ import {
 } from '@recoil/productsKeyword';
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
-import { homeLegitResultTooltipCloseState, homeSelectedTabStateFamily } from '@recoil/home';
+import {
+  homeLegitResultTooltipCloseState,
+  homePersonalCurationBannersState,
+  homeSelectedTabStateFamily
+} from '@recoil/home';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -114,6 +118,9 @@ function BottomNavigation({
   const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetLegitFiltersState = useResetRecoilState(legitFiltersState);
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
+  const resetHomePersonalCurationBannersState = useResetRecoilState(
+    homePersonalCurationBannersState
+  );
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
@@ -123,7 +130,8 @@ function BottomNavigation({
       roles = [],
       priceNotiProducts = [],
       notViewedLegitCount = 0,
-      notProcessedLegitCount = 0
+      notProcessedLegitCount = 0,
+      isNewUser
     } = {},
     isLoading
   } = useQueryUserInfo();
@@ -146,6 +154,32 @@ function BottomNavigation({
     });
   }, [priceNotiProducts]);
 
+  // const currentTab = useMemo(() => {
+  //   if (router.query.tab) return router.query.tab;
+  //   if ((isNewUser || isNewUser === undefined) && !router.query.tab) {
+  //     return 'recommend';
+  //   }
+  //   return 'following';
+  // }, [router, isNewUser]);
+
+  // const homeTabChange = () => {
+  //   if (router.query.tab === 'following' || isNewUser) {
+  //     router.push({
+  //       pathname: '/',
+  //       query: {
+  //         tab: 'recommend'
+  //       }
+  //     });
+  //   } else {
+  //     router.push({
+  //       pathname: '/',
+  //       query: {
+  //         tab: 'following'
+  //       }
+  //     });
+  //   }
+  // };
+
   const handleClickInterceptor =
     (title: string, logName: string, href: string) => (e: MouseEvent<HTMLAnchorElement>) => {
       logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
@@ -156,6 +190,7 @@ function BottomNavigation({
       });
 
       if (title === 'navigation.home') {
+        // homeTabChange();
         resetProductKeyword();
         resetRecentSearch();
       }
@@ -177,6 +212,18 @@ function BottomNavigation({
         });
       }
 
+      if (href === '/') {
+        resetHomePersonalCurationBannersState();
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .forEach(({ queryKey }) => {
+            if (queryKey.includes('personalProducts') || queryKey.includes('recommendProducts')) {
+              queryClient.resetQueries(queryKey);
+            }
+          });
+      }
+
       // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
       // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
       // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
@@ -188,7 +235,7 @@ function BottomNavigation({
           .getQueryCache()
           .getAll()
           .forEach(({ queryKey }) => {
-            if (queryKey.includes('legitProducts') && queryKey.length >= 3) {
+            if (queryKey.includes('productLegits') && queryKey.length >= 3) {
               queryClient.resetQueries(queryKey);
             }
           });
@@ -230,6 +277,18 @@ function BottomNavigation({
   };
 
   const getQuery = (href: string) => {
+    if (href === '/') {
+      if (!router.query.tab) {
+        if (isNewUser || isNewUser === undefined) {
+          return { tab: 'following' };
+        }
+        return { tab: 'recommend' };
+      }
+      if (router.query.tab === 'recommend') {
+        return { tab: 'following' };
+      }
+      return { tab: 'recommend' };
+    }
     if (href === '/wishes' && confirmPriceNotiProducts.length) {
       return { scrollToProductId: confirmPriceNotiProducts[0].id };
     }

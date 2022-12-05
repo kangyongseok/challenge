@@ -17,6 +17,7 @@ export const StyledAppDownloadBanner = styled.div<{ scrollTriggered: boolean }>`
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.header + 2};
   transition: all 0.5s;
+  transform: ${({ scrollTriggered }) => `translateY(${scrollTriggered ? 0 : -100}%)`};
   cursor: pointer;
   ${({ scrollTriggered }): CSSObject =>
     !scrollTriggered
@@ -41,4 +42,12 @@ export const DownloadButtonBox = styled(Button)`
   width: 74px;
   white-space: nowrap;
   background: ${({ theme: { palette } }) => palette.common.cmnW};
+  color: ${({ theme: { palette } }) => palette.common.cmn80};
+
+  ${({ theme: { typography } }) => ({
+    fontSize: typography.body1.size,
+    fontWeight: typography.body1.weight.regular,
+    lineHeight: typography.body1.lineHeight,
+    letterSpacing: typography.body1.letterSpacing
+  })};
 `;

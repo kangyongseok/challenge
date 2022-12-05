@@ -7,10 +7,13 @@ import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import LinearProgress from '@components/UI/molecules/LinearProgress';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { orderFilterOptions } from '@constants/productsFilter';
+import attrKeys from '@constants/attrKeys';
 
 import {
   productsFilterProgressDoneState,
@@ -25,7 +28,6 @@ function getRandomCount(minCount: number, maxCount: number) {
 function ProductsStatus() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
-
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const [progressDone, setProductsFilterProgressDoneState] = useRecoilState(
     productsFilterProgressDoneState
@@ -49,7 +51,9 @@ function ProductsStatus() {
     {
       select: ({ pages = [], pageParams }) => {
         const lastPage = pages[pages.length - 1];
-
+        if (pages[0].resultUseAI) {
+          logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+        }
         const { sellerTotal = 0, productTotal = 0, productCounts = [0, 0] } = lastPage || {};
         return {
           pages: [[sellerTotal, productTotal, productCounts[0], productCounts[1]]],
@@ -75,7 +79,6 @@ function ProductsStatus() {
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const updatedFirstAnalysisCountRef = useRef(false);
   const updatedSecondAnalysisCountRef = useRef(false);
-
   const selectedOrderFilterOption = useMemo(
     () => orderFilterOptions.find(({ order }) => order === searchParams.order),
     [searchParams]

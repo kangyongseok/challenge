@@ -10,7 +10,6 @@ interface PortalProviderProps {
 
 export function PortalProvider({ children }: PortalProviderProps) {
   const [portalContainerRef, setPortalContainerRef] = useState<HTMLDivElement | null>(null);
-
   return (
     <PortalContext.Provider value={portalContainerRef}>
       {children}

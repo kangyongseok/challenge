@@ -1,5 +1,8 @@
 import type { Announce } from '@dto/user';
 import type { ProductResult } from '@dto/product';
+import type { Brand } from '@dto/brand';
+
+import type { Category } from './category';
 
 export type JobRuleBaseDetail = {
   id: number;
@@ -144,6 +147,45 @@ export interface PhotoGuide {
   photoGuideDetails: CommonPhotoGuideDetail[];
 }
 
+export interface Styles {
+  styles: {
+    style: ParentStyle;
+    styleDetails: StyleDetails[];
+  }[];
+}
+
+export interface ParentStyle {
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  image: string;
+  name: string;
+  sort: number;
+}
+
+export interface StyleDetails {
+  dateCreated: string;
+  dateUpdated: string;
+  description: string;
+  groupId: number;
+  id: number;
+  name: string;
+  image: string;
+  styleId: number;
+  type: number;
+  value: number;
+  barnd: Brand;
+  category: Category;
+}
+
+export interface Content {
+  brands: Brand[];
+  description: string;
+  imageMain: string;
+  title: string;
+  url: string;
+}
+
 export interface GetAnnounces {
   content: Announce[];
   empty: boolean;
@@ -170,4 +212,12 @@ export interface PhotoGuideParams {
   type: 0 | 1 | 2; // 0: 매물등록, 1: 감정등록, 2: 프로필등록
   categoryId?: number;
   brandId?: number;
+}
+
+export interface ContentProductsParams {
+  id: number;
+  brandIds?: number[];
+  page?: number;
+  size?: number;
+  sort?: string;
 }

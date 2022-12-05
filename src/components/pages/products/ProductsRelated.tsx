@@ -7,10 +7,13 @@ import { Box, Flexbox, Typography } from 'mrcamel-ui';
 
 import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchSearch, fetchSearchRelatedProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { searchParamsStateFamily } from '@recoil/productsFilter';
 
@@ -35,6 +38,9 @@ function ProductsRelated() {
     {
       select: ({ pages = [], pageParams }) => {
         const lastPage = pages[pages.length - 1];
+        if (pages[0].resultUseAI) {
+          logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+        }
         return {
           pages: [(lastPage || {}).productTotal || 0],
           pageParams

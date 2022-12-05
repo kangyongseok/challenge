@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -6,9 +7,10 @@ import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { ProductWishesCard, ProductWishesCardSkeleton } from '@components/UI/molecules';
+import { ProductWishesCard, ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
 import Skeleton from '@components/UI/atoms/Skeleton';
 
+import type { CategoryWishesParams } from '@dto/user';
 import type { CategoryValue } from '@dto/category';
 
 import { logEvent } from '@library/amplitude';
@@ -37,10 +39,23 @@ import type { OrderOptionKeys } from './WishesFilter';
 import WishesFilter from './WishesFilter';
 import WishesCategories from './WishesCategories';
 
-function WishesPanel() {
+interface WishesPanelProps {
+  categoryWishesParam: CategoryWishesParams;
+  selectedCategoryIds: number[];
+  setSelectedCategoryIds: Dispatch<SetStateAction<number[]>>;
+  initialCategories: CategoryValue[];
+  setInitialCategories: Dispatch<SetStateAction<CategoryValue[]>>;
+}
+
+function WishesPanel({
+  categoryWishesParam,
+  selectedCategoryIds,
+  setSelectedCategoryIds,
+  initialCategories,
+  setInitialCategories
+}: WishesPanelProps) {
   const {
     theme: {
-      box,
       palette: { common }
     }
   } = useTheme();
@@ -55,15 +70,6 @@ function WishesPanel() {
   const removeId = useRecoilValue(removeIdState);
 
   const productRefs = useRef<HTMLDivElement[]>([]);
-
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
-  const [initialCategories, setInitialCategories] = useState<CategoryValue[]>([]);
-  const categoryWishesParam = {
-    size: 200,
-    sort: [order],
-    isLegitProduct: hiddenTab === 'legit',
-    deviceId
-  };
 
   const queryClient = useQueryClient();
 
@@ -125,7 +131,7 @@ function WishesPanel() {
     if (accessUser && data?.categories.length && initialCategories.length === 0) {
       setInitialCategories(data.categories);
     }
-  }, [accessUser, data, initialCategories.length]);
+  }, [accessUser, data, initialCategories.length, setInitialCategories]);
 
   useEffect(() => {
     if (accessUser) {
@@ -140,7 +146,7 @@ function WishesPanel() {
           .filter(({ count }) => count)
       );
     }
-  }, [accessUser, data]);
+  }, [accessUser, data, setInitialCategories]);
 
   useEffect(() => {
     setSelectedCategoryIds((prevState) =>
@@ -148,13 +154,13 @@ function WishesPanel() {
         initialCategories.map(({ id: initialCategoryId }) => initialCategoryId).includes(id)
       )
     );
-  }, [initialCategories]);
+  }, [initialCategories, setSelectedCategoryIds]);
 
   useEffect(() => {
     setSelectedCategoryIds(
       convertStringToArray(String(router.query.selectedCategoryIds)).filter((id) => id)
     );
-  }, [router.query.selectedCategoryIds]);
+  }, [router.query.selectedCategoryIds, setSelectedCategoryIds]);
 
   useEffect(() => {
     if (!accessUser) return;
@@ -233,34 +239,34 @@ function WishesPanel() {
       <>
         <Flexbox gap={6} customStyle={{ margin: '16px 0 24px' }}>
           <Skeleton
-            width="45px"
-            height="30px"
+            width="63px"
+            height="33px"
             disableAspectRatio
-            customStyle={{ borderRadius: box.round['24'] }}
+            customStyle={{ borderRadius: 36 }}
+          />
+          <Skeleton
+            width="63px"
+            height="33px"
+            disableAspectRatio
+            customStyle={{ borderRadius: 36 }}
           />
           <Skeleton
             width="45px"
-            height="30px"
+            height="33px"
             disableAspectRatio
-            customStyle={{ borderRadius: box.round['24'] }}
-          />
-          <Skeleton
-            width="45px"
-            height="30px"
-            disableAspectRatio
-            customStyle={{ borderRadius: box.round['24'] }}
+            customStyle={{ borderRadius: 36 }}
           />
         </Flexbox>
         <Flexbox customStyle={{ marginBottom: 16 }} gap={4}>
           <Skeleton
             width="50px"
-            height="30px"
+            height="33px"
             disableAspectRatio
             isRound
             customStyle={{ marginRight: 'auto' }}
           />
-          <Skeleton width="50px" height="30px" disableAspectRatio isRound />
-          <Skeleton width="50px" height="30px" disableAspectRatio isRound />
+          <Skeleton width="50px" height="33px" disableAspectRatio isRound />
+          <Skeleton width="50px" height="33px" disableAspectRatio isRound />
         </Flexbox>
         <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 20 }}>
           {Array.from({ length: 10 }).map((_, index) => (
@@ -275,7 +281,7 @@ function WishesPanel() {
   if (!data || !accessUser) {
     return (
       <WishesNotice
-        imgName="wishes_login_img"
+        imgName="login-img"
         moveTo="/login"
         message={
           <>
@@ -302,7 +308,7 @@ function WishesPanel() {
   if (data.userWishes.length === 0) {
     return (
       <WishesNotice
-        imgName="wishes_empty_img"
+        imgName="wishe-empty-img"
         moveTo="/search"
         message={
           <>
@@ -329,18 +335,15 @@ function WishesPanel() {
 
   return (
     <>
-      {!hiddenTab && (
+      {hiddenTab !== 'legit' && (
         <WishesCategories
+          isLoading={isLoading}
           categories={initialCategories}
           selectedCategoryIds={selectedCategoryIds}
         />
       )}
       {data && (
-        <Box
-          customStyle={{
-            margin: hiddenTab ? '20px 0 12px 0' : '81px 0 12px 0'
-          }}
-        >
+        <Box customStyle={{ margin: '20px 0 12px' }}>
           <WishesFilter order={order} userWishCount={userWishCount} />
           <Flexbox direction="vertical" gap={20}>
             {userWishes.map((wishItem, index) => (
@@ -428,6 +431,7 @@ function WishesPanel() {
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
         삭제한 찜 목록을 다시 저장했어요.
       </Toast>
+      <TopButton show name="WISH_LIST" customStyle={{ bottom: hiddenTab === 'legit' ? 105 : 80 }} />
     </>
   );
 }

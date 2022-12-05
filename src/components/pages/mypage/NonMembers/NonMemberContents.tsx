@@ -1,6 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -9,10 +8,7 @@ import Image from '@components/UI/atoms/Image';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
-
-import { showAppDownloadBannerState } from '@recoil/common';
 
 const picStyle = [
   { src: '/assets/images/personal/pic_style01.jpg', text: '클래식 명품' },
@@ -37,7 +33,6 @@ const picBrands = [
 
 function NonMemberContents() {
   const router = useRouter();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const handleClickLogin = () => {
     // router.push('/camelSeller/registerConfirm?id=32945602');
@@ -48,8 +43,8 @@ function NonMemberContents() {
   };
 
   return (
-    <Box customStyle={{ marginTop: 30, paddingTop: 180 }}>
-      <SlideContents showAppDownloadBanner={showAppDownloadBanner}>
+    <Box customStyle={{ margin: '30px -16px 0' }}>
+      <SlideContents>
         <Swiper
           loop
           slidesPerView="auto"
@@ -149,13 +144,10 @@ const SlideImage = styled.div`
   }
 `;
 
-const SlideContents = styled.div<{ showAppDownloadBanner: boolean }>`
+const SlideContents = styled.div`
   height: 180px;
   width: 100%;
-  position: absolute;
   left: 0;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 170 + APP_DOWNLOAD_BANNER_HEIGHT : 170}px;
 `;
 
 const ImageArea = styled.div`

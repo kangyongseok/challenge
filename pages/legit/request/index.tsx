@@ -1,27 +1,46 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Grid, Label, ThemeProvider, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Grid, Icon, Label, ThemeProvider, dark } from 'mrcamel-ui';
+import dayjs from 'dayjs';
 
 import { ImageDetailDialog, LegitUploadInfoPaper } from '@components/UI/organisms';
 import { Header, LegitPhotoGuideCard } from '@components/UI/molecules';
+import { LegitLabel } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LegitRequestBottomButton, LegitRequestBrandLogo } from '@components/pages/legitRequest';
 
 import Initializer from '@library/initializer';
-import ChannelTalk from '@library/channelTalk';
 
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+
+function getLegitResultLabel(result?: 0 | 1 | 2 | 3) {
+  if (result === 1) {
+    return <LegitLabel variant="authentic" text="정품의견" />;
+  }
+
+  if (result === 2) {
+    return <LegitLabel variant="fake" text="가품의심" />;
+  }
+
+  if (result === 3) {
+    return <LegitLabel variant="impossible" text="감정불가" />;
+  }
+
+  return undefined;
+}
 
 function LegitRequest() {
   const router = useRouter();
@@ -42,6 +61,8 @@ function LegitRequest() {
 
   const {
     data: {
+      status,
+      result,
       productResult: {
         quoteTitle = '',
         imageModel = '',
@@ -49,7 +70,8 @@ function LegitRequest() {
         photoGuideDetails = []
       } = {},
       description,
-      additionalIds = []
+      additionalIds = [],
+      dateCreated
     } = {}
   } = useQuery(queryKeys.productLegits.legit(productId), () => fetchProductLegit(productId));
 
@@ -103,21 +125,89 @@ function LegitRequest() {
     };
   }, []);
 
-  useEffect(() => {
-    ChannelTalk.moveChannelButtonPosition(-30);
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
-  }, []);
-
-  useEffect(() => {
-    ChannelTalk.moveChannelButtonPosition(-30);
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
-  }, []);
+  if (status === 30) {
+    return (
+      <ThemeProvider theme="dark">
+        <GeneralTemplate
+          header={
+            <Header
+              rightIcon={
+                <Box onClick={() => router.back()} customStyle={{ padding: 16 }}>
+                  <Icon name="CloseOutlined" />
+                </Box>
+              }
+              isTransparent
+              isFixed={false}
+              hideTitle
+            />
+          }
+          disablePadding
+          customStyle={{
+            height: 'auto',
+            minHeight: '100%',
+            backgroundColor: dark.palette.common.bg03
+          }}
+        >
+          <LegitRequestBrandLogo
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
+              .toLocaleLowerCase()
+              .split(' ')
+              .join('')}.png`}
+          />
+          <Box customStyle={{ width: '100%', height: 104 }} />
+          <LegitUploadInfoPaper
+            model={{
+              name: quoteTitle,
+              imagSrc:
+                (modelImage.length > 0 && modelImage) ||
+                imageModel ||
+                `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
+                  .toLocaleLowerCase()
+                  .split(' ')
+                  .join('')}.png`
+            }}
+            title={quoteTitle}
+            subTitle={`신청일 : ${dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}`}
+            additionalIds={additionalIds}
+            description={description}
+            customStyle={{ flex: 1, margin: '0 20px 60px' }}
+          >
+            <Grid container columnGap={8} rowGap={8}>
+              {photoGuideDetails.map(
+                ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }, index) => (
+                  <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
+                    <LegitPhotoGuideCard
+                      photoGuideDetail={commonPhotoGuideDetail}
+                      imageUrl={imageUrl}
+                      hideLabel
+                      hideStatusHighLite
+                      isDark
+                      data-index={index}
+                      onClick={handleClickPhotoGuide}
+                    />
+                  </Grid>
+                )
+              )}
+            </Grid>
+          </LegitUploadInfoPaper>
+          <ImageDetailDialog
+            open={open}
+            onChange={handleChange}
+            onClose={() => setOpen(false)}
+            images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
+            label={
+              <Flexbox gap={4}>
+                {getLegitResultLabel(result)}
+                <Label variant="ghost" brandColor="black" text={labelText} />
+              </Flexbox>
+            }
+            syncIndex={syncIndex}
+            name={attrProperty.name.LEGIT_INFO}
+          />
+        </GeneralTemplate>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme="dark">
@@ -180,6 +270,7 @@ function LegitRequest() {
           images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
           label={<Label variant="ghost" brandColor="black" text={labelText} />}
           syncIndex={syncIndex}
+          name={attrProperty.name.LEGIT_INFO}
         />
         <LegitRequestBottomButton
           onClick={handleClick}

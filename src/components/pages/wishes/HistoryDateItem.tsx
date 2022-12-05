@@ -47,7 +47,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
   };
 
   return (
-    <Box customStyle={{ marginTop: 39 }}>
+    <>
       <Typography
         variant="h4"
         weight="bold"
@@ -126,7 +126,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
           })}
         </TimeLineWrap>
       </Box>
-    </Box>
+    </>
   );
 }
 

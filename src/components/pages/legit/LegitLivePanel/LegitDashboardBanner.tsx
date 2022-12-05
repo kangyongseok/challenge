@@ -37,7 +37,7 @@ function LegitDashboardBanner() {
 
   const { isLoading, data: { mostPopular, realVsFake } = {} } = useQuery(
     queryKeys.dashboards.legit(),
-    fetchLegit
+    () => fetchLegit()
   );
 
   const dashBoardData: {

@@ -62,7 +62,8 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
         size: 8,
         idFilterIds: 30,
         scorePriceAvg: data.product.scorePriceAvg,
-        quoteTitle: data.product.quoteTitle
+        quoteTitle: data.product.quoteTitle,
+        productId: data.product.id
       });
     }
   }, [data, isSuccess]);

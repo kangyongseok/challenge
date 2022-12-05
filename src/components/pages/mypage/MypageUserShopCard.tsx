@@ -66,7 +66,7 @@ function MypageUserShopCard() {
           return;
         }
 
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -79,6 +79,19 @@ function MypageUserShopCard() {
                 window.webkit.messageHandlers.callExecuteApp.postMessage(
                   'itms-apps://itunes.apple.com/app/id1541101835'
                 );
+            }
+          });
+
+          return;
+        }
+
+        if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
+          setDialogState({
+            type: 'appUpdateNotice',
+            customStyleTitle: { minWidth: 269 },
+            secondButtonAction: () => {
+              if (window.webview && window.webview.callExecuteApp)
+                window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
             }
           });
 

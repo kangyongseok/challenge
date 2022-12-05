@@ -1,5 +1,6 @@
 export const ACCESS_USER = 'accessUser';
 export const ACCESS_TOKEN = 'accessToken';
+export const ACCESS_USER_SETTING_VALUES = 'accessUserSettingValues';
 export const RECENT_SEARCH_LIST = 'recentSearchList';
 export const BRAND_STATE = 'brandState';
 export const ACTIVE_MY_FILTER = 'activeMyFilter';
@@ -25,3 +26,6 @@ export const PREV_LAST_ACCESS = 'lastAccess';
 export const HIDE_PRODUCTS_CRAZY_CURATION_BANNER_IDS = 'hideProductsCrazyCurationBannerIds';
 export const THEME = 'theme';
 export const CAMEL_SELLER_START_ROOT = 'camelSellerStartRoot';
+export const MODEL_CATEGORY_IDS = 'modelCategoryIds';
+export const SELECTED_STYLE_CARD_IDS = 'selectedStyleCardIds';
+export const SELECTED_MODEL_CARD = 'selectedModelCard';

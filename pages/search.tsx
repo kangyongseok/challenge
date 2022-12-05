@@ -30,11 +30,12 @@ import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { SEARCH_BAR_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { calculateExpectCountPerHour } from '@utils/formats';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { RecentItems, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
@@ -203,25 +204,23 @@ function Search() {
         ogUrl="https://mrcamel.co.kr/search"
       />
       <GeneralTemplate disablePadding subset>
-        <Box component="section" customStyle={{ minHeight: 56, zIndex: 1 }}>
-          <SearchForm action="" onSubmit={handleSubmit}>
-            <SearchBar
-              type="search"
-              autoCapitalize="none"
-              autoComplete="off"
-              spellCheck="false"
-              autoFocus
-              variant="innerOutlined"
-              fullWidth
-              isFixed
-              placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
-              startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
-            />
-          </SearchForm>
-        </Box>
+        <SearchForm action="" onSubmit={handleSubmit}>
+          <SearchBar
+            type="search"
+            autoCapitalize="none"
+            autoComplete="off"
+            spellCheck="false"
+            autoFocus
+            variant="innerOutlined"
+            fullWidth
+            isFixed
+            placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
+            startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
+          />
+        </SearchForm>
         <Box customStyle={{ padding: `0 0 ${hasKeywordsSuggestData ? 0 : '64px'}` }}>
           {!hasKeywordsSuggestData ? (
             <>
@@ -283,7 +282,7 @@ export async function getStaticProps() {
 }
 
 const SearchForm = styled.form`
-  min-height: ${SEARCH_BAR_HEIGHT}px;
+  min-height: ${SEARCH_BAR_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
 `;
 
 export default Search;

@@ -18,7 +18,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { ProductsVariant } from '@typings/products';
 import { productsKeywordAutoSaveTriggerState } from '@recoil/productsKeyword';
-import { searchParamsStateFamily } from '@recoil/productsFilter';
+import { filterOperationInfoSelector, searchParamsStateFamily } from '@recoil/productsFilter';
 import { homeSelectedTabStateFamily } from '@recoil/home';
 import { deviceIdState, toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -27,7 +27,7 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
-
+  const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const deviceId = useRecoilValue(deviceIdState);
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const { searchParams: searchOptionsParams } = useRecoilValue(
@@ -80,7 +80,8 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       isFetchedSearchOptions &&
       !userProductKeyword &&
       productKeywords.length === 0 &&
-      productsKeywordAutoSaveTrigger
+      productsKeywordAutoSaveTrigger &&
+      selectedSearchOptionsHistory.length > 0
     ) {
       logEvent(attrKeys.products.loadMyListSave, {
         name: attrProperty.productName.AUTO
@@ -113,7 +114,8 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       !isLoadingSearchOptions &&
       isFetchedSearchOptions &&
       productKeywords.length > 0 &&
-      productsKeywordAutoSaveTrigger
+      productsKeywordAutoSaveTrigger &&
+      selectedSearchOptionsHistory.length > 0
     ) {
       setProductsKeywordAutoSaveTrigger(false);
     }
@@ -126,6 +128,7 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
     productKeywords.length,
     productsKeywordAutoSaveTrigger,
     searchParams,
+    selectedSearchOptionsHistory.length,
     setProductsKeywordAutoSaveTrigger,
     userProductKeyword,
     variant

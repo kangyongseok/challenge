@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
+import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Box, Flexbox, useTheme } from 'mrcamel-ui';
+import type { GetServerSidePropsContext } from 'next';
+import dayjs from 'dayjs';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
@@ -13,84 +13,65 @@ import { BottomNavigation } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  // HomePersonalProductCuration,
-  HomeBrandsCategories,
-  HomeCamelProductCuration,
-  HomeEventBanner,
-  HomeEventBannerBottomSheet,
+  HomeFollowingPanel,
   HomeFooter,
-  HomeLegitLive,
-  HomeProductsKeywordList,
-  HomeRecentSearchList,
-  HomeRecommendationsWishes,
-  HomeWelcome
+  HomeRecommendPanel,
+  HomeSearchHeader,
+  HomeTabs
 } from '@components/pages/home';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
-import { logEvent } from '@library/amplitude';
 
 import { postManage } from '@api/userHistory';
-import { fetchProductKeywords, fetchRecommWishes, fetchUserInfo } from '@api/user';
+import { fetchRecommWishes, fetchUserInfo } from '@api/user';
 import { fetchProductDealInfos } from '@api/nextJs';
 import { fetchParentCategories } from '@api/category';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
-import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
+function Home() {
   const router = useRouter();
+  const { tab } = router.query;
+
+  const { data: { isNewUser } = {} } = useQueryUserInfo();
   const { data: accessUser } = useQueryAccessUser();
-  const { data: userHistoryManage, refetch } = useQueryUserHistoryManages();
-  const {
-    data: { content: productKeywords = [] } = {},
-    isLoading: isLoadingProductKeywords,
-    isFetched: isFetchedProductKeywords
-  } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
-    enabled: !!accessUser
-  });
+
   const { mutate } = useMutation(postManage);
-  const { mutate: mutatePostManage } = useMutation(postManage, {
-    onSettled() {
-      refetch().finally(() => {
-        router.push('/searchHelper/onboarding');
-      });
+
+  const currentTab = useMemo(() => {
+    if (!tab) {
+      if (isNewUser || isNewUser === undefined) {
+        return 'recommend';
+      }
+      return 'following';
     }
-  });
-
-  const isViewSearchHelperOnboarding = () => {
-    if (accessUser && userHistoryManage?.VIEW_SEARCH_HELPER) {
-      mutatePostManage({ event: 'VIEW_SEARCH_HELPER', userId: accessUser.userId });
-
-      return true;
-    }
-
-    return false;
-  };
+    return tab;
+  }, [tab, isNewUser]);
 
   useEffect(() => {
-    // 앱을 처음 실행한 경우 로그인 페이지로 이동
     const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
-
+    if (!SessionStorage.get(sessionStorageKeys.personalProductsCache)) {
+      SessionStorage.set(
+        sessionStorageKeys.personalProductsCache,
+        dayjs().format('YYYY-MM-DD HH:mm')
+      );
+    }
     if (checkAgent.isMobileApp() && !isNotFirstVisit) {
       LocalStorage.set(IS_NOT_FIRST_VISIT, true);
-      router.replace('/login');
+      router.replace('/appIntro/step');
     }
-
-    logEvent(attrKeys.home.VIEW_MAIN);
+    return () => SessionStorage.remove(sessionStorageKeys.personalProductsCache);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -120,34 +101,13 @@ function Home({ titleViewType }: InferGetServerSidePropsType<typeof getServerSid
         ogUrl="https://mrcamel.co.kr"
         keywords="중고 명품, 빈티지 명품, 구찌, 샤넬, 루이비통, 보테가베네타, 톰브라운, 명품 중고, 중고 샤넬, 중고 루이비통, 중고 구찌, 중고 톰브라운, 중고 보테가베네타"
       />
-      <GeneralTemplate
-        footer={<BottomNavigation />}
-        disablePadding
-        customStyle={{ '& > main': { backgroundColor: common.uiWhite } }}
-      >
-        <Flexbox direction="vertical" gap={12} customStyle={{ userSelect: 'none' }}>
-          <HomeWelcome
-            isViewSearchHelperOnboarding={isViewSearchHelperOnboarding}
-            titleViewType={titleViewType}
-          />
-          <HomeRecommendationsWishes />
-          {!!accessUser &&
-          (isLoadingProductKeywords || (isFetchedProductKeywords && productKeywords.length > 0)) ? (
-            <HomeProductsKeywordList />
-          ) : (
-            <HomeRecentSearchList />
-          )}
-          <HomeLegitLive />
-          <HomeBrandsCategories isViewSearchHelperOnboarding={isViewSearchHelperOnboarding} />
-          <Box customStyle={{ height: 8 }} />
-          <HomeEventBanner />
-          <HomeCamelProductCuration />
-          {/* <Box customStyle={{ height: 8 }} /> */}
-          {/* <HomePersonalProductCuration /> */}
-          {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
-        </Flexbox>
+      <GeneralTemplate footer={<BottomNavigation />} disablePadding>
+        <HomeTabs />
+        <HomeSearchHeader />
+        {currentTab === 'recommend' && <HomeRecommendPanel />}
+        {currentTab === 'following' && <HomeFollowingPanel />}
+        {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
       </GeneralTemplate>
-      <HomeEventBannerBottomSheet />
       <SearchHelperPopup type="continue" />
       <LegitInduceFloatingBanner
         edgeSpacing={20}
@@ -172,10 +132,8 @@ export async function getServerSideProps({
   Initializer.initABTestIdentifierByCookie(req.cookies);
 
   if (req.cookies.accessToken) {
-    queryClientList.concat([
-      queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo),
-      queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes)
-    ]);
+    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    await queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes);
   }
 
   queryClientList.concat([
@@ -188,8 +146,7 @@ export async function getServerSideProps({
   return {
     props: {
       ...(await serverSideTranslations(locale || defaultLocale)),
-      dehydratedState: dehydrate(queryClient),
-      titleViewType: Number((Math.random() % 2).toFixed(0))
+      dehydratedState: dehydrate(queryClient)
     }
   };
 }

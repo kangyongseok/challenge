@@ -10,11 +10,7 @@ import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { postLegitsFollow } from '@api/user';
-import {
-  fetchProductLegit,
-  postProductLegitPreConfirmEditDone,
-  postProductLegitPreConfirmFail
-} from '@api/productLegit';
+import { fetchProductLegit, postProductLegitPreConfirmEditDone } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -53,7 +49,6 @@ function LegitStatusCtaButton() {
   );
 
   const { mutate } = useMutation(postLegitsFollow);
-  const { mutate: preConfirmFailMutate } = useMutation(postProductLegitPreConfirmFail);
   const { mutate: preConfirmEditDoneMutate } = useMutation(postProductLegitPreConfirmEditDone);
 
   const isButton = () => {
@@ -130,10 +125,10 @@ function LegitStatusCtaButton() {
       { productId },
       {
         onSuccess: () => {
+          refetch();
           const hasLegitRole = (roles as string[]).find(
             (role) => role.indexOf('PRODUCT_LEGIT') > -1
           );
-
           router
             .push({
               pathname: hasLegitRole ? '/legit/admin' : '/legit',
@@ -182,10 +177,13 @@ function LegitStatusCtaButton() {
           <Tooltip
             open
             message={
-              <Typography weight="bold" variant="small1" customStyle={{ color: common.uiWhite }}>
+              <Typography weight="medium" variant="small1" customStyle={{ color: common.uiWhite }}>
                 판매자에게 추가 사진을 받으셨다면, 1:1 상담 요청하세요!
               </Typography>
             }
+            customStyle={{
+              top: 12
+            }}
           >
             <Flexbox gap={8}>
               <Button
@@ -210,30 +208,15 @@ function LegitStatusCtaButton() {
         </Box>
       )}
       {data?.status === 12 && data?.canModified && isAuthUser && (
-        <Flexbox gap={8}>
-          <Button
-            variant="outlinedGhost"
-            fullWidth
-            size="xlarge"
-            onClick={() =>
-              preConfirmFailMutate(productId, {
-                onSuccess: () => refetch()
-              })
-            }
-            customStyle={{ maxWidth: 78 }}
-          >
-            아니요
-          </Button>
-          <Button
-            brandColor="primary"
-            variant="contained"
-            fullWidth
-            size="xlarge"
-            onClick={handleClickContinue}
-          >
-            네! 사진감정 계속해주세요!
-          </Button>
-        </Flexbox>
+        <Button
+          brandColor="primary"
+          variant="contained"
+          fullWidth
+          size="xlarge"
+          onClick={handleClickContinue}
+        >
+          네! 대신 사진 받아서 계속해주세요!
+        </Button>
       )}
       {data?.status !== 11 && data?.status !== 12 && (
         <Box customStyle={{ '& > div': { width: '100%' } }}>
@@ -261,7 +244,9 @@ function LegitStatusCtaButton() {
                 )}
               </Flexbox>
             }
-            placement="top"
+            customStyle={{
+              top: 10
+            }}
           >
             <Button
               variant="contained"

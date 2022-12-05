@@ -4,7 +4,7 @@ import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { useTheme } from 'mrcamel-ui';
+import { Box, useTheme } from 'mrcamel-ui';
 
 import LegitInduceFloatingBanner from '@components/UI/organisms/LegitInduceFloatingBanner';
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -23,8 +23,10 @@ import Initializer from '@library/initializer';
 import { fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 function Legit() {
   const router = useRouter();
@@ -66,6 +68,11 @@ function Legit() {
         }}
         disablePadding
       >
+        {isExtendedLayoutIOSVersion() ? (
+          <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />
+        ) : (
+          ''
+        )}
         {tab === 'live' && <LegitReviewSlide />}
         <LegitTabs />
         {tab === 'live' && <LegitLivePanel />}

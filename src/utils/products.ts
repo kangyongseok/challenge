@@ -734,3 +734,17 @@ export function getProductLabelColor(name: string, theme: MrCamelTheme) {
   }
   return primary.main;
 }
+
+export function groupingProducts<T>(products: T[]) {
+  const productsLength = products.length;
+  const newProducts = products.map((product, index) => ({ ...product, index }));
+  const newGroupingProducts = [];
+  const newGroupingProductsLength =
+    Math.floor(productsLength / 2) + (Math.floor(productsLength % 2) > 0 ? 1 : 0);
+
+  for (let i = 0; i <= newGroupingProductsLength; i += 1) {
+    newGroupingProducts.push(newProducts.splice(0, 2));
+  }
+
+  return newGroupingProducts.filter((newProduct) => newProduct.length);
+}

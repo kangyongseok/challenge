@@ -24,7 +24,7 @@ function ChannelTalkProvider() {
     } else {
       ChannelTalk.hideChannelButton();
     }
-  }, [router.pathname, router.query]);
+  }, [router.pathname]);
 
   useEffect(() => {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);

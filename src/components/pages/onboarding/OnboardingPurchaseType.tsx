@@ -1,0 +1,67 @@
+import { useEffect } from 'react';
+
+import { useRecoilValue } from 'recoil';
+import { useMutation } from 'react-query';
+import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { find } from 'lodash-es';
+
+import PurchaseType from '@components/UI/organisms/PurchaseType';
+
+import { logEvent } from '@library/amplitude';
+
+import { postUserStyle } from '@api/user';
+
+import { purchaseType } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
+
+import { disabledState, purchaseTypeIdState } from '@recoil/onboarding';
+
+import OnboardingStep from './OnboardingStep';
+import OnboardingBottomCTA from './OnboardingBottomCTA';
+
+function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
+  const purchaseDisabledState = useRecoilValue(disabledState('purchase'));
+  const { mutate: styleMutate } = useMutation(postUserStyle);
+  const purchaseTypeId = useRecoilValue(purchaseTypeIdState);
+
+  useEffect(() => {
+    logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {
+      name: attrProperty.name.BUYINGTYPE
+    });
+  }, []);
+
+  const handleClick = () => {
+    logEvent(attrKeys.welcome.SUBMIT_PERSONAL_INPUT, {
+      name: attrProperty.name.BUYINGTYPE,
+      att: find(purchaseType, { value: purchaseTypeId })?.title
+    });
+
+    styleMutate({
+      purchaseTypeIds: purchaseTypeId ? [purchaseTypeId] : []
+    });
+    onClick();
+  };
+
+  return (
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite, height: '100%' }}>
+        <OnboardingStep />
+        <Box customStyle={{ marginTop: 50 }}>
+          <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
+            중고구매에서 가장 중요한 것은?
+          </Typography>
+          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
+            조건에 맞는 매물을 더 먼저 보여드릴게요
+          </Typography>
+        </Box>
+        <PurchaseType />
+      </Box>
+      <OnboardingBottomCTA onClick={handleClick} disabled={purchaseDisabledState.open}>
+        다음
+      </OnboardingBottomCTA>
+    </ThemeProvider>
+  );
+}
+
+export default OnboardingPurchaseType;

@@ -26,10 +26,11 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
@@ -40,13 +41,7 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
     <>
       <ProductsPageHead variant="brands" params={params} />
       <GeneralTemplate
-        header={
-          <Box>
-            <ProductsHeader variant="brands" />
-            <ProductsCategoryTags variant="brands" />
-            <ProductsFilter variant="brands" showDynamicFilter />
-          </Box>
-        }
+        header={<ProductsHeader variant="brands" />}
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -55,13 +50,15 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
         }
         disablePadding
       >
-        <>
-          <Gap height={8} />
-          <ProductsStatus />
-          <ProductsInfiniteGrid variant="brands" name={attrProperty.productName.BRAND_LIST} />
-          <Gap height={8} />
-          <ProductsRelated />
-        </>
+        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+          <ProductsCategoryTags variant="brands" />
+          <ProductsFilter variant="brands" showDynamicFilter />
+        </Box>
+        <Gap height={8} />
+        <ProductsStatus />
+        <ProductsInfiniteGrid variant="brands" name={attrProperty.productName.BRAND_LIST} />
+        <Gap height={8} />
+        <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="brands" />

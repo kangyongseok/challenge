@@ -23,8 +23,14 @@ import { fetchLegitProfile, fetchUserInfo } from '@api/user';
 import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
+  HEADER_HEIGHT
+} from '@constants/common';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -62,7 +68,10 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
 
   const triggered = useScrollTrigger({
     ref: opinionLegitListRef,
-    additionalOffsetTop: (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) - 52,
+    additionalOffsetTop:
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) +
+      (isExtendedLayoutIOSVersion() ? -APP_TOP_STATUS_HEIGHT : 0) +
+      -HEADER_HEIGHT,
     delay: 0
   });
 
@@ -97,7 +106,11 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
             <Header isTransparent={!isEdit && !triggered} isFixed />
           </ThemeProvider>
         }
-        customStyle={{ '& > main': { backgroundColor: common.bg03 } }}
+        customStyle={
+          isExtendedLayoutIOSVersion()
+            ? { paddingTop: 0, '& > main': { backgroundColor: common.bg03 } }
+            : { '& > main': { backgroundColor: common.bg03 } }
+        }
         disablePadding
       >
         {isEdit ? (
@@ -121,8 +134,15 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
               profile={profile}
               legitsBrands={legitsBrands}
               cntOpinion={cntOpinion}
-              customStyle={{ marginTop: -HEADER_HEIGHT }}
-              infoCustomStyle={{ paddingTop: HEADER_HEIGHT + 20 }}
+              customStyle={{
+                marginTop: -(
+                  HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
+                )
+              }}
+              infoCustomStyle={{
+                paddingTop:
+                  HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20
+              }}
               sellerId={roleSeller?.sellerId}
             />
             <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />

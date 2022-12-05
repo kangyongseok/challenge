@@ -42,8 +42,10 @@ function LegitRequestForm() {
     }
   } = useTheme();
 
-  const [{ categoryName, brandName, brandLogo, modelImage, isCompleted }, setLegitRequestState] =
-    useRecoilState(legitRequestState);
+  const [
+    { categoryName, brandName, brandLogo, modelImage, isCompleted, isViewedSampleGuide },
+    setLegitRequestState
+  ] = useRecoilState(legitRequestState);
   const [productLegitParams, setProductLegitParamsState] = useRecoilState(productLegitParamsState);
   const setDialogState = useSetRecoilState(dialogState);
 
@@ -53,17 +55,11 @@ function LegitRequestForm() {
 
   const { title, photoGuideImages, description, additionalIds = [] } = productLegitParams;
 
-  useEffect(() => {
-    logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, {
-      name: attrProperty.legitName.LEGIT_PROCESS
-    });
-  }, []);
-
   const photoGuideParams: PhotoGuideParams = useMemo(
     () => ({
       type: 1,
-      categoryId: productLegitParams.categoryIds[0],
-      brandId: productLegitParams.brandIds[0]
+      brandId: productLegitParams.brandIds[0],
+      categoryId: productLegitParams.categoryIds[0]
     }),
     [productLegitParams.brandIds, productLegitParams.categoryIds]
   );
@@ -183,6 +179,49 @@ function LegitRequestForm() {
 
     mutatePostProductLegit(productLegitParams);
   }, [isCompleted, isLoadingGetPhoto, isLoadingMutate, mutatePostProductLegit, productLegitParams]);
+
+  useEffect(() => {
+    if (isViewedSampleGuide || !photoGuideDetails.filter(({ imageSample }) => imageSample).length)
+      return;
+
+    setDialogState({
+      type: 'legitPhotoGuide',
+      theme: 'dark',
+      customStyleTitle: { minWidth: 269 },
+      secondButtonAction: () => {
+        logEvent(attrKeys.legit.CLICK_UPLOAD_GUIDE, {
+          name: attrProperty.name.LEGIT_UPLOAD,
+          title: attrProperty.title.POPUP
+        });
+        setLegitRequestState((prevState) => ({
+          ...prevState,
+          isViewedSampleGuide: true
+        }));
+        router.push({
+          pathname: '/legit/guide/sample',
+          query: { ...photoGuideParams }
+        });
+      },
+      onClose: () =>
+        setLegitRequestState((prevState) => ({
+          ...prevState,
+          isViewedSampleGuide: true
+        }))
+    });
+  }, [
+    setLegitRequestState,
+    setDialogState,
+    router,
+    photoGuideParams,
+    isViewedSampleGuide,
+    photoGuideDetails
+  ]);
+
+  useEffect(() => {
+    logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, {
+      name: attrProperty.legitName.LEGIT_PROCESS
+    });
+  }, []);
 
   useEffect(() => {
     window.getPhotoGuide = () => {

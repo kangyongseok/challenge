@@ -25,11 +25,13 @@ export const List = styled.ul<{ triggered: boolean }>`
       palette: { common }
     }
   }) => common.uiWhite};
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 60px;
+  transition: opacity 0.1s ease-in;
   ${({ triggered }): CSSObject =>
     triggered
       ? {
@@ -38,9 +40,7 @@ export const List = styled.ul<{ triggered: boolean }>`
       : {
           opacity: 0,
           pointerEvents: 'none'
-        }}
-
-  transition: opacity 0.1s ease-in;
+        }};
 `;
 
 export const ListItem = styled.li`

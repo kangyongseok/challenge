@@ -89,8 +89,11 @@ export type ToastType =
   | 'legitAdminOpinion'
   | 'legit'
   | 'legitProfile'
+  | 'legitStatus'
   | 'bottomSheetLogin'
-  | 'sellerProductState';
+  | 'sellerProductState'
+  | 'mypage'
+  | 'home';
 
 export type ToastStatus =
   | 'saved'
@@ -113,6 +116,7 @@ export type ToastStatus =
   | 'soldout'
   | 'successRequest'
   | 'loginSuccess'
+  | 'overFiveStyle'
   | 'successEdit'
   | 'selfCamelProduct';
 
@@ -128,7 +132,8 @@ export type DialogType =
   | 'legitRequestOnlyInIOS'
   | 'legitServiceNotice'
   | 'appUpdateNotice'
-  | 'appAuthCheck';
+  | 'appAuthCheck'
+  | 'legitPhotoGuide';
 
 export type ShareData = {
   title: string;
@@ -140,3 +145,15 @@ export type ShareData = {
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 export type LegitOpinionType = 'authentic' | 'fake' | 'impossible';
+
+export type AccessUserSettingValue = {
+  userId: number;
+  personalGuideBannerClose: boolean;
+};
+
+export interface LikeStyleSelectedModelDetail {
+  name: string;
+  id: number;
+  styleId?: number;
+  categoryId?: number;
+}

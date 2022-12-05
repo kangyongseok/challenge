@@ -1,17 +1,20 @@
-import { ReactElement, useEffect } from 'react';
+import type { ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image } from '@components/UI/atoms';
+import Image from '@components/UI/atoms/Image';
 
-// import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
-
-import { checkAgent } from '@utils/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  BOTTOM_NAVIGATION_HEIGHT,
+  HEADER_HEIGHT
+} from '@constants/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
+import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 interface WishesNoticeProps {
   message: string | ReactElement;
@@ -24,16 +27,9 @@ interface WishesNoticeProps {
 function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: WishesNoticeProps) {
   const router = useRouter();
   const { hiddenTab } = router.query;
-  // const [isHeightSmall, setIsHeightSmall] = useState(false);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
-  useEffect(() => {
-    // setIsHeightSmall(
-    //   (showAppDownloadBanner
-    //     ? window.innerHeight - APP_DOWNLOAD_BANNER_HEIGHT
-    //     : window.innerHeight) <= 667
-    // );
-  }, [showAppDownloadBanner]);
+  useViewportUnitsTrick();
 
   const handleClick = () => {
     if (onClickLog) onClickLog();
@@ -46,44 +42,76 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
   };
 
   return (
-    <Flexbox
+    <Wrapper
       direction="vertical"
       alignment="center"
       justifyContent="center"
-      customStyle={{
-        height: hiddenTab === 'legit' ? 'calc(100vh - 188px)' : 'calc(100vh) - 220px',
-        paddingBottom: 0,
-        marginTop: !(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) ? 30 : 50
-      }}
+      showAppDownloadBanner={showAppDownloadBanner}
+      isHiddenTab={hiddenTab === 'legit'}
     >
-      <Image
-        disableAspectRatio
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/wishes/${imgName}.png`}
-        width={240}
-        // height={isHeightSmall ? 250 : 288}
-        alt={imgName}
-      />
-      <Box customStyle={{ textAlign: 'center' }}>{message}</Box>
-      <PositionButton
-        fullWidth
+      <Flexbox
+        direction="vertical"
+        alignment="center"
+        justifyContent="center"
+        customStyle={{ flex: 1 }}
+      >
+        <NoticeImage
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/wishes/${imgName}.png`}
+          width={240}
+          alt={imgName}
+          disableAspectRatio
+        />
+        <Box customStyle={{ marginTop: 32, textAlign: 'center' }}>{message}</Box>
+      </Flexbox>
+      <Button
         variant="contained"
+        size="large"
         brandColor="primary"
+        fullWidth
         onClick={handleClick}
-        isApp={!!(checkAgent.isAndroidApp() || checkAgent.isIOSApp())}
+        customStyle={{ marginBottom: 20 }}
       >
         {buttonLabel}
-      </PositionButton>
-    </Flexbox>
+      </Button>
+    </Wrapper>
   );
 }
 
-const PositionButton = styled(Button)<{ isApp: boolean }>`
-  position: ${({ isApp }) => (isApp ? 'absolute' : 'block')};
-  margin-top: ${({ isApp }) => (isApp ? 0 : '20px')};
-  bottom: 83px;
-  height: 48px;
-  left: 20px;
-  width: calc(100vw - 40px);
+const Wrapper = styled(Flexbox)<{ showAppDownloadBanner: boolean; isHiddenTab: boolean }>`
+  height: calc(
+    100vh -
+      ${({ showAppDownloadBanner, isHiddenTab }) => {
+        let calcHeight =
+          HEADER_HEIGHT +
+          BOTTOM_NAVIGATION_HEIGHT +
+          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 45 : 45);
+
+        if (isHiddenTab) calcHeight += 25;
+        return `${calcHeight}px`;
+      }}
+  );
+  height: calc(
+    (var(--vh, 1vh) * 100) -
+      ${({ showAppDownloadBanner, isHiddenTab }) => {
+        let calcHeight =
+          HEADER_HEIGHT +
+          BOTTOM_NAVIGATION_HEIGHT +
+          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 45 : 45);
+
+        if (isHiddenTab) calcHeight += 25;
+        return `${calcHeight}px`;
+      }}
+  );
+`;
+
+const NoticeImage = styled(Image)`
+  max-width: 181px;
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 360px) {
+    max-width: 144px;
+  }
 `;
 
 export default WishesNotice;

@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 export const Content = styled.div<{ isRound: boolean }>`
   position: relative;
-  min-width: 134px;
-  max-width: 134px;
+  min-width: 122px;
+  max-width: 122px;
   border-radius: ${({ theme: { box }, isRound }) => (isRound ? box.round['8'] : 0)};
   overflow: hidden;
 `;

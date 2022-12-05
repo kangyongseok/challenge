@@ -90,7 +90,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -109,10 +109,14 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && isProduction) {
+        if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
           setDialogState({
-            type: 'legitRequestOnlyInIOS',
-            customStyleTitle: { minWidth: 270 }
+            type: 'appUpdateNotice',
+            customStyleTitle: { minWidth: 269 },
+            secondButtonAction: () => {
+              if (window.webview && window.webview.callExecuteApp)
+                window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+            }
           });
 
           return;
@@ -121,7 +125,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -140,10 +144,14 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && isProduction) {
+        if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
           setDialogState({
-            type: 'legitRequestOnlyInIOS',
-            customStyleTitle: { minWidth: 270 }
+            type: 'appUpdateNotice',
+            customStyleTitle: { minWidth: 269 },
+            secondButtonAction: () => {
+              if (window.webview && window.webview.callExecuteApp)
+                window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+            }
           });
 
           return;
@@ -207,7 +215,7 @@ function LegitMyPanel() {
             지금 바로 무료사진감정 신청해보세요 🕵️‍
           </Typography>
         </Flexbox>
-        <Box customStyle={{ margin: '74px 0 20px', padding: '0 20px' }}>
+        <Box customStyle={{ margin: '74px 0 55px', padding: '0 20px' }}>
           <Button
             variant="contained"
             brandColor="primary"

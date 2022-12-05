@@ -22,6 +22,7 @@ interface LegitUploadInfoPaperProps {
     imagSrc: string;
   };
   title: string;
+  subTitle?: string;
   additionalIds?: number[];
   description?: string;
   customStyle?: CustomStyle;
@@ -31,6 +32,7 @@ function LegitUploadInfoPaper({
   children,
   model: { name, imagSrc },
   title,
+  subTitle,
   additionalIds = [],
   description,
   customStyle
@@ -61,15 +63,22 @@ function LegitUploadInfoPaper({
         <Typography variant="h3" weight="medium">
           {title}
         </Typography>
-        <Typography variant="h4" customStyle={{ color: common.ui60 }}>
-          {name}
-        </Typography>
+        {!subTitle && (
+          <Typography variant="h4" customStyle={{ color: common.ui60 }}>
+            {name}
+          </Typography>
+        )}
+        {subTitle && (
+          <Typography variant="body2" customStyle={{ color: common.ui80 }}>
+            {subTitle}
+          </Typography>
+        )}
       </Flexbox>
       <Divider />
       <Box customStyle={{ padding: '0 20px 32px' }}>
         {children && (
           <Flexbox direction="vertical" gap={12}>
-            <Typography variant="h4" weight="medium" customStyle={{ marginBottom: 12 }}>
+            <Typography variant="h4" weight="medium">
               업로드 정보
             </Typography>
             {children}

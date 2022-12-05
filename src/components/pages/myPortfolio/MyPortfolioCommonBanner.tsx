@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -8,7 +8,12 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-function MyPortfolioCommonBanner({ name }: { name: string }) {
+interface MyPortfolioCommonBannerProps {
+  name: string;
+  customStyle?: CustomStyle;
+}
+
+function MyPortfolioCommonBanner({ name, customStyle }: MyPortfolioCommonBannerProps) {
   const {
     theme: {
       palette: { common }
@@ -25,6 +30,7 @@ function MyPortfolioCommonBanner({ name }: { name: string }) {
       }}
       alignment="center"
       justifyContent="center"
+      css={customStyle}
     >
       <Flexbox gap={1} direction="vertical">
         <Typography variant="h4" customStyle={{ color: common.cmnW }}>

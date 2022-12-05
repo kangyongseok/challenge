@@ -1,30 +1,28 @@
 import { MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { ChipProps } from 'mrcamel-ui/dist/components/Chip';
 import { Chip } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
+import { Skeleton } from '@components/UI/atoms';
+
 import type { CategoryValue } from '@dto/category';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { showAppDownloadBannerState } from '@recoil/common';
-
 interface WishesCategoriesProps {
+  isLoading: boolean;
   categories: CategoryValue[];
   selectedCategoryIds: number[];
 }
 
-function WishesCategories({ categories, selectedCategoryIds }: WishesCategoriesProps) {
+function WishesCategories({ isLoading, categories, selectedCategoryIds }: WishesCategoriesProps) {
   const router = useRouter();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const handleSetIds = (e: MouseEvent<HTMLButtonElement>) => {
     const target = e.currentTarget;
     const isActive = selectedCategoryIds.includes(Number(target.dataset.id));
@@ -71,55 +69,74 @@ function WishesCategories({ categories, selectedCategoryIds }: WishesCategoriesP
   }, 500);
 
   return (
-    <CategoriesWrapper
-      showAppDownloadBanner={showAppDownloadBanner}
-      onScroll={handleScrollCategory}
-    >
-      {categories.map((category, i) => {
-        const isActive = selectedCategoryIds.includes(Number(category.id));
-        const chipProps: ChipProps = isActive
-          ? {
-              brandColor: 'black',
-              variant: 'contained'
-            }
-          : {
-              variant: 'outlined'
-            };
+    <CategoriesWrapper>
+      <Categories onScroll={handleScrollCategory}>
+        {isLoading
+          ? Array.from({ length: 10 }, (_, index) => (
+              <Skeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={`wish-category-button-${index}`}
+                height="33px"
+                minWidth={`${(index % 2) * 47 + 81}px`}
+                disableAspectRatio
+                customStyle={{ borderRadius: 36, marginRight: index < 10 ? 6 : 0 }}
+              />
+            ))
+          : categories.map((category, i) => {
+              const isActive = selectedCategoryIds.includes(Number(category.id));
+              const chipProps: ChipProps = isActive
+                ? {
+                    brandColor: 'black',
+                    variant: 'contained'
+                  }
+                : {
+                    variant: 'outlined'
+                  };
 
-        return (
-          <Chip
-            key={`wish-category-button-${category.id}`}
-            size="small"
-            data-id={category.id}
-            data-index={i + 1}
-            data-name={category.name}
-            isRound={false}
-            {...chipProps}
-            onClick={handleSetIds}
-            customStyle={{
-              whiteSpace: 'nowrap',
-              height: 33,
-              borderRadius: 36,
-              padding: '6px 12px'
-            }}
-          >
-            {category.name.replace('(P)', '') || '없음'} {category.count}
-          </Chip>
-        );
-      })}
+              return (
+                <Chip
+                  key={`wish-category-button-${category.id}`}
+                  size="small"
+                  data-id={category.id}
+                  data-index={i + 1}
+                  data-name={category.name}
+                  isRound={false}
+                  {...chipProps}
+                  onClick={handleSetIds}
+                  customStyle={{
+                    whiteSpace: 'nowrap',
+                    height: 33,
+                    borderRadius: 36,
+                    padding: '6px 12px'
+                  }}
+                >
+                  {category.name.replace('(P)', '') || '없음'} {category.count}
+                </Chip>
+              );
+            })}
+      </Categories>
     </CategoriesWrapper>
   );
 }
 
-const CategoriesWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
+const CategoriesWrapper = styled.section`
+  position: relative;
+  min-height: 60px;
+  margin: 0 -20px;
+`;
+
+const Categories = styled.div`
   white-space: nowrap;
   overflow: auto;
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 97 + APP_DOWNLOAD_BANNER_HEIGHT : 97}px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
   width: 100%;
-  margin: 0 -20px;
-  padding: 20px 20px 8px 20px;
+  height: 60px;
+  min-height: 60px;
+  padding: 0 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   background-color: ${({
     theme: {

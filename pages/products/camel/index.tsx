@@ -1,5 +1,6 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticPropsContext } from 'next';
+import { Box } from 'mrcamel-ui';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
@@ -19,8 +20,10 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 function CamelProducts() {
   return (
@@ -35,8 +38,10 @@ function CamelProducts() {
         }
         disablePadding
       >
-        <ProductsCategoryTags variant="camel" />
-        <ProductsFilter variant="camel" />
+        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+          <ProductsCategoryTags variant="camel" />
+          <ProductsFilter variant="camel" />
+        </Box>
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="camel" name={attrProperty.productName.MAIN} />

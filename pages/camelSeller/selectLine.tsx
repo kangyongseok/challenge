@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { CustomSearchBar, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-import { Models } from '@dto/model';
+import type { Models } from '@dto/model';
 
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';

@@ -111,6 +111,7 @@ function WishesBottomCtaButton() {
             brandColor="primary"
             size="large"
             onClick={handleClick}
+            disabled={!userWishes.length}
           >
             <NewLabel variant="contained" text="무료" />
             모두 사진감정 해보기

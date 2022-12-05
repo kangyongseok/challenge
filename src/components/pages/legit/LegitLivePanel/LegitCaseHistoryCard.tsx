@@ -147,6 +147,7 @@ const CustomImage = styled.div<{ src: string }>`
   position: relative;
   height: 160px;
   border-radius: 8px;
+  overflow: hidden;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -162,7 +163,7 @@ const RankLabel = styled(Typography)`
   text-align: center;
   background-color: ${({ theme }) => theme.palette.common.uiBlack};
   opacity: 0.8;
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 8px 8px;
 `;
 
 const Title = styled(Typography)<{ line: number }>`

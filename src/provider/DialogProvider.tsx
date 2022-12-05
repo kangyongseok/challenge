@@ -32,6 +32,7 @@ function DialogProvider() {
     theme,
     firstButtonAction,
     secondButtonAction,
+    onClose,
     content,
     product,
     customStyleTitle,
@@ -59,6 +60,8 @@ function DialogProvider() {
         return 'textWithOneButton';
       case 'appAuthCheck':
         return 'textWithTwoVerticalButton';
+      case 'legitPhotoGuide':
+        return 'textWithOneButton';
       default:
         return 'text';
     }
@@ -76,9 +79,16 @@ function DialogProvider() {
     resetDialogState();
   };
 
+  const handleClose = () => {
+    if (onClose && typeof onClose === 'function') {
+      onClose();
+    }
+    resetDialogState();
+  };
+
   return (
     <ThemeProvider theme={theme || 'light'}>
-      <Dialog open={!!type} onClose={!disabledOnClose ? resetDialogState : noop}>
+      <Dialog open={!!type} onClose={!disabledOnClose ? handleClose : noop}>
         {type === 'legitServiceNotice' && (
           <Box
             customStyle={{

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { Avatar, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -10,10 +9,7 @@ import type { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
-
-import { showAppDownloadBannerState } from '@recoil/common';
 
 function MypageWelcome() {
   const {
@@ -25,20 +21,13 @@ function MypageWelcome() {
   useEffect(() => {
     setUserData(LocalStorage.get('accessUser') as AccessUser);
   }, []);
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+
   return (
     <>
-      <Box
-        customStyle={{
-          position: 'absolute',
-          top: showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56,
-          left: 0,
-          width: '100%'
-        }}
-      >
+      <Box customStyle={{ margin: '0 -20px' }}>
         <MyPortfolioCommonBanner name={attrProperty.productName.MY} />
       </Box>
-      <Flexbox alignment="center" customStyle={{ height: 80, marginTop: 84 }}>
+      <Flexbox alignment="center" customStyle={{ height: 80 }}>
         <AvatarArea>
           <Avatar
             src={userData?.image}

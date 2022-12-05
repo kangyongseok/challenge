@@ -63,7 +63,18 @@ function LegitRequestSelectModel() {
           att: title
         });
 
-        if (modelImage) setLegitRequestState((currVal) => ({ ...currVal, modelImage }));
+        if (modelImage) {
+          setLegitRequestState((currVal) => ({
+            ...currVal,
+            modelImage,
+            isViewedSampleGuide: false
+          }));
+        } else {
+          setLegitRequestState((currVal) => ({
+            ...currVal,
+            isViewedSampleGuide: false
+          }));
+        }
 
         const newProductLegitParamsState: PostProductLegitData = {
           title,

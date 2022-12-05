@@ -20,17 +20,23 @@ import type {
   SellerProductsParams
 } from '@dto/product';
 import type {
+  GuideProductsParams,
+  PersonalProductsParams,
+  RecommendProductsParams
+} from '@dto/personal';
+import type {
   LegitsBrandsParams,
   LegitsCategoriesParams,
   LegitsModelsParams,
   ModelSuggestParams
 } from '@dto/model';
-import type { PhotoGuideParams } from '@dto/common';
+import type { LegitDashboardParams } from '@dto/dashboard';
+import type { ContentProductsParams, PhotoGuideParams } from '@dto/common';
 import type { SuggestParams } from '@dto/brand';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
-import { SearcgRelatedKeywordsParams } from '@typings/products';
+import type { SearcgRelatedKeywordsParams } from '@typings/products';
 
 const brands = {
   all: ['brands'] as const,
@@ -50,7 +56,16 @@ const categories = {
 
 const personals = {
   all: ['personals'] as const,
-  baseInfo: (deviceId?: string | null) => compact([...personals.all, 'baseInfo', deviceId])
+  baseInfo: (deviceId?: string | null) => compact([...personals.all, 'baseInfo', deviceId]),
+  personalProducts: (params: PersonalProductsParams) =>
+    [...products.all, 'personalProducts', params] as const,
+  guideProducts: (params: GuideProductsParams) => [...personals.all, 'guideProducts', params],
+  recommendProducts: (params: RecommendProductsParams) => [
+    ...personals.all,
+    'recommendProducts',
+    params
+  ],
+  guideAllProducts: () => [...personals.all, 'guideAllProducts']
 };
 
 const products = {
@@ -107,12 +122,12 @@ const users = {
   userSuggest: () => [...users.all, 'userSuggest'] as const,
   categoryWishes: (params?: CategoryWishesParams) =>
     compact([...users.all, 'categoryWishes', params]),
-  userHistory: (pageNumber: number) => [...users.all, 'userHistory', pageNumber] as const,
+  userHistory: (value?: number | string) => [...users.all, 'userHistory', value] as const,
   userHoneyNoti: () => [...users.all, 'userHoneyNoti'] as const,
   userHistoryManages: (event: string) => [...users.all, 'userHistoryManages', event] as const,
   sizeMapping: () => [...users.all, 'sizeMapping'] as const,
   userProductKeywords: () => [...users.all, 'userProductKeywords'] as const,
-  userLegitTargets: () => [...users.all, 'userLegitTargets'] as const,
+  userLegitTargets: (userId?: number) => [...users.all, 'userLegitTargets', userId] as const,
   myProductLegits: () => [...users.all, 'myProductLegits'] as const,
   recommWishes: () => [...users.all, 'recommWishes'] as const,
   productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const,
@@ -140,10 +155,14 @@ const commons = {
   all: ['commons'] as const,
   codeDetails: (id: number) => [...commons.all, 'codeDetails', id] as const,
   photoGuide: (params: PhotoGuideParams) => [...commons.all, 'photoGuide', params] as const,
+  content: (id: number) => [...commons.all, 'content', id] as const,
+  contentProducts: (params: ContentProductsParams) =>
+    [...commons.all, 'contentProducts', params] as const,
   contentsProducts: (contentsId: number) =>
     [...commons.all, 'contentsProducts', contentsId] as const,
   announce: (id: number) => [...commons.all, 'announce', id] as const,
-  announces: () => [...commons.all, 'announces'] as const
+  announces: () => [...commons.all, 'announces'] as const,
+  styles: () => [...commons.all, 'styles'] as const
 };
 
 const userHistory = {
@@ -168,7 +187,7 @@ const client = {
 
 const dashboards = {
   all: ['dashboards'] as const,
-  legit: () => [...dashboards.all, 'legit'] as const
+  legit: (params?: LegitDashboardParams) => [...dashboards.all, 'legit', params] as const
 };
 
 const queryKeys = {

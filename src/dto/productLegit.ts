@@ -130,6 +130,8 @@ export type DeleteProductLegitOpinionData = {
 export type OpinionLegitsParams = {
   page: number;
   size: number;
+  results: number[];
+  status: number[];
   userIds: number[];
 };
 

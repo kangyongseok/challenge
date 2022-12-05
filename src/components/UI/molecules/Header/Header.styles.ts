@@ -1,37 +1,26 @@
 import styled from '@emotion/styled';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 export const StyledHeader = styled.header<{ minHeight: number; isTransparent: boolean }>`
   position: relative;
-  min-height: ${({ minHeight }) => minHeight}px;
+  min-height: ${({ minHeight }) => minHeight || HEADER_HEIGHT}px;
   background-color: ${({ isTransparent, theme: { palette } }) =>
     isTransparent ? 'transparent' : palette.common.uiWhite};
-  transition: all 0.2s;
+  transition: all 0.5s;
 `;
 
 export const Wrapper = styled.div<{
   isFixed?: boolean | undefined;
-  showAppDownloadBanner?: boolean;
 }>`
   width: 100%;
-  height: 56px;
+  height: ${HEADER_HEIGHT}px;
   background-color: inherit;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-  ${({ isFixed, showAppDownloadBanner }) =>
-    isFixed
-      ? {
-          position: 'fixed',
-          top: -60 - (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : -12),
-          padding: `${
-            APP_DOWNLOAD_BANNER_HEIGHT +
-            (showAppDownloadBanner ? 60 + APP_DOWNLOAD_BANNER_HEIGHT : 0)
-          }px 0 0`
-        }
-      : {
-          position: 'initial',
-          padding: 0
-        }};
+  position: ${({ isFixed }) => (isFixed ? 'fixed' : 'initial')};
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
 `;
 
 export const Title = styled.div<{ show: boolean; customHeight?: number }>`

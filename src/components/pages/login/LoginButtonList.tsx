@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
+import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, light, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Tooltip, Typography, light, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Image from '@components/UI/atoms/Image';
@@ -12,6 +13,7 @@ import type { FacebookAccount, FacebookLoginResponse } from '@dto/userAuth';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import queryKeys from '@constants/queryKeys';
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -43,14 +45,16 @@ function LoginButtonList({
   disabledRecentLogin
 }: LoginButtonListProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     theme: {
+      zIndex: { button },
       palette: { common }
     }
   } = useTheme();
   const [lastLoginType, setLastLoginType] = useState('');
 
-  const kakaoLoginButtonRef = useRef<HTMLButtonElement | null>(null);
+  const kakaoLoginButtonRef = useRef<HTMLButtonElement>(null);
 
   const { openLogin } = router.query;
 
@@ -59,7 +63,9 @@ function LoginButtonList({
       title: 'KAKAO',
       name: attName || attrProperty.name.GENERAL
     });
-
+    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
+      refetchInactive: true
+    });
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
       window.webview.callLoginKakao();
       return;
@@ -87,7 +93,9 @@ function LoginButtonList({
       title: 'FACEBOOK',
       name: attName || attrProperty.name.GENERAL
     });
-
+    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
+      refetchInactive: true
+    });
     const checkFacebookLoginState = (response: FacebookLoginResponse) => {
       const provider = 'facebook';
 
@@ -142,7 +150,9 @@ function LoginButtonList({
       title: 'APPLE',
       name: attName || attrProperty.name.GENERAL
     });
-
+    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
+      refetchInactive: true
+    });
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
       window.webview.callLoginApple();
     } else if (
@@ -171,53 +181,89 @@ function LoginButtonList({
     <Flexbox
       component="section"
       direction="vertical"
-      gap={8}
+      gap={12}
       customStyle={{ textAlign: 'center', paddingTop: disabledRecentLogin ? 32 : 0 }}
     >
-      {!disabledRecentLogin && (
-        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
-          {!disabledRecentLogin && lastLoginType.length > 0
-            ? `( 최근 로그인 : ${LOGIN_TYPE[lastLoginType as keyof typeof LOGIN_TYPE]} )`
-            : ''}
-        </Typography>
-      )}
-      <KakaoLoginButton ref={kakaoLoginButtonRef} onClick={handleClickKakaoLogin}>
-        <Image
-          width={20}
-          height={20}
-          disableAspectRatio
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
-          alt="Kakao Logo Img"
-        />
-        <Typography variant="h4" weight="medium" customStyle={{ color: light.palette.common.ui20 }}>
-          카카오톡으로 계속하기
-        </Typography>
-      </KakaoLoginButton>
-      <FacebookLoginButton onClick={handleClickFacebookLogin}>
-        <Image
-          width={20}
-          height={20}
-          disableAspectRatio
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-facebook-icon.png`}
-          alt="Kakao Logo Img"
-        />
-        <Typography variant="h4" weight="medium" customStyle={{ color: common.cmnW }}>
-          페이스북으로 계속하기
-        </Typography>
-      </FacebookLoginButton>
+      <TooltipWrapper>
+        {lastLoginType === 'kakao' ? (
+          <Tooltip
+            open
+            message="최근 로그인"
+            customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+          >
+            <Button
+              ref={kakaoLoginButtonRef}
+              fullWidth
+              startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
+              size="xlarge"
+              onClick={handleClickKakaoLogin}
+              customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+            >
+              카카오톡으로 계속하기
+            </Button>
+          </Tooltip>
+        ) : (
+          <QuickLoginTooltip open message="⚡가장빨리 카멜을 만나는 법!">
+            <Button
+              ref={kakaoLoginButtonRef}
+              fullWidth
+              startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
+              size="xlarge"
+              onClick={handleClickKakaoLogin}
+              customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+            >
+              카카오톡으로 계속하기
+            </Button>
+          </QuickLoginTooltip>
+        )}
+      </TooltipWrapper>
+      <TooltipWrapper>
+        <Tooltip
+          open={lastLoginType === 'facebook'}
+          message="최근 로그인"
+          customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+        >
+          <Button
+            fullWidth
+            startIcon={
+              <Image
+                width={24}
+                height={24}
+                disableAspectRatio
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-facebook-icon.png`}
+                alt="Facebook Logo Img"
+              />
+            }
+            size="xlarge"
+            onClick={handleClickFacebookLogin}
+            customStyle={{ backgroundColor: '#5890ff', color: common.cmnW }}
+          >
+            페이스북으로 계속하기
+          </Button>
+        </Tooltip>
+      </TooltipWrapper>
       {checkAgent.isIOSApp() && (
-        <AppleLoginButton onClick={handleClickAppleLogin}>
-          <Image
-            width={20}
-            height={20}
-            disableAspectRatio
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-apple-icon.png`}
-            alt="Kakao Logo Img"
-          />
-          <Typography variant="h4" weight="medium">
-            Apple로 계속하기
-          </Typography>
-        </AppleLoginButton>
+        <TooltipWrapper>
+          <Tooltip
+            open={lastLoginType === 'apple'}
+            message="최근 로그인"
+            customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+          >
+            <Button
+              fullWidth
+              variant="contained"
+              size="xlarge"
+              startIcon={<Icon name="BrandAppleFilled" color={common.cmnW} />}
+              onClick={handleClickAppleLogin}
+              customStyle={{
+                backgroundColor: light.palette.common.ui20,
+                color: common.cmnW
+              }}
+            >
+              Apple로 계속하기
+            </Button>
+          </Tooltip>
+        </TooltipWrapper>
       )}
       <Box
         customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
@@ -231,7 +277,7 @@ function LoginButtonList({
           setTimeout(() => router.replace(returnUrl || '/'), 300);
         }}
       >
-        <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
+        <Typography weight="medium" customStyle={{ color: common.ui80 }}>
           로그인하지 않고 둘러보기
         </Typography>
       </Box>
@@ -239,31 +285,27 @@ function LoginButtonList({
   );
 }
 
-const LoginButtonBase = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  height: 54px;
-  border-radius: 8px;
+const TooltipWrapper = styled.div`
+  & > div {
+    width: 100%;
+  }
 `;
 
-const KakaoLoginButton = styled(LoginButtonBase)`
-  background-color: #fee500;
-`;
-
-const FacebookLoginButton = styled(LoginButtonBase)`
-  background-color: #5890ff;
-`;
-
-const AppleLoginButton = styled(LoginButtonBase)`
-  border: 1px solid
-    ${({
+const QuickLoginTooltip = styled(Tooltip)`
+  & > div {
+    top: auto;
+    bottom: -2px;
+    background-color: ${light.palette.common.ui20};
+    color: ${({
       theme: {
         palette: { common }
       }
-    }) => common.uiBlack};
+    }) => common.cmnW};
+    z-index: ${({ theme: { zIndex } }) => zIndex.button};
+    & > svg {
+      color: ${light.palette.common.ui20};
+    }
+  }
 `;
 
 export default LoginButtonList;

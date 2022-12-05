@@ -151,6 +151,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={10}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               감정신청
             </Chip>
@@ -170,6 +173,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={21}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               작성완료
             </Chip>
@@ -189,6 +195,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={12}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               보완요청
             </Chip>
@@ -208,6 +217,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={13}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               보완완료
             </Chip>
@@ -227,6 +239,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={30}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               감정완료
             </Chip>
@@ -250,6 +265,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={20}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               감정신청
             </Chip>
@@ -269,6 +287,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={21}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               작성완료
             </Chip>
@@ -288,6 +309,9 @@ function LegitAdminRequestPanel() {
               }
               data-status={30}
               onClick={handleClickChip}
+              customStyle={{
+                alignItems: 'baseline'
+              }}
             >
               감정완료
             </Chip>

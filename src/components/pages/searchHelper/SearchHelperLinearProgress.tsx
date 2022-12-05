@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { commaNumber } from '@utils/common';
@@ -28,7 +28,7 @@ function SearchHelperLinearProgress({
   const { data: accessUser } = useQueryAccessUser();
 
   return (
-    <>
+    <Box component="section">
       <Flexbox justifyContent="space-between" customStyle={{ padding: '24px 20px 8px' }}>
         {!disabledText && (
           <Typography variant="body2" weight="medium">
@@ -51,7 +51,7 @@ function SearchHelperLinearProgress({
           <ActiveLinearProgressBar value={value} />
         </LinearProgressBar>
       </StyledLinearProgress>
-    </>
+    </Box>
   );
 }
 

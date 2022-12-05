@@ -2,10 +2,13 @@ import { Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
+import { TAB_HEIGHT } from '@constants/common';
+
 import { TabsProps } from '.';
 
 export const StyledTabs = styled.div`
   display: flex;
+  z-index: ${({ theme: { zIndex } }) => zIndex.header};
 `;
 
 export const Tab = styled.button<
@@ -36,7 +39,7 @@ export const Tab = styled.button<
   line-height: 21px;
   letter-spacing: -0.2px;
   text-align: center;
-  min-height: 45px;
+  min-height: ${TAB_HEIGHT}px;
   padding: 12px 10px;
   overflow: hidden;
   white-space: normal;

@@ -10,17 +10,17 @@ let identifier: Record<string, number> = {};
 
 const tasks: ABTestTask[] = [
   {
-    name: abTestTaskNameKeys.dynamicFilter2209,
+    name: abTestTaskNameKeys.WELCOME3_2211,
     slot: 'test_type_01',
     postfix: {
-      A: '2209_Filter',
-      B: '2209_DynamicFilter'
+      A: '2212_RECOMMEND_A',
+      B: '2212_RECOMMEND_B'
     },
     ratio: {
       A: 50,
       B: 50
     },
-    running: false,
+    running: true,
     defaultBelong: 'A'
   }
 ];
@@ -45,6 +45,10 @@ const ABTest = {
     const hasRunningTask = !!tasks.filter(({ running }) => running).length;
 
     setCookie('abTestIdentifier', JSON.stringify(identifier), hasRunningTask ? 365 : 0);
+  },
+  getPostfix(name: string) {
+    const findTask = tasks.find((task) => task.name === name);
+    return findTask?.postfix;
   },
   getIdentifier() {
     return identifier;

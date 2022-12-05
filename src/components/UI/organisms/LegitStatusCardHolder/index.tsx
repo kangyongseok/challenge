@@ -3,7 +3,7 @@ import { ReactElement, useMemo, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
-import { Avatar, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
@@ -31,6 +31,7 @@ export interface LegitStatusCardHolderProps {
   productLegit: ProductLegit;
   title?: ReactElement | string;
   simplify?: boolean;
+  name?: string;
 }
 
 function getLegitResultLabel(result: 0 | 1 | 2 | 3) {
@@ -66,11 +67,13 @@ function LegitStatusCardHolder({
       brand: { nameEng = '' },
       site,
       siteUrl,
-      postType
+      postType,
+      photoGuideDetails = []
     }
   },
   title,
-  simplify
+  simplify,
+  name
 }: LegitStatusCardHolderProps) {
   const {
     theme: {
@@ -83,6 +86,7 @@ function LegitStatusCardHolder({
   const [open, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
+  const [labelText, setLabelText] = useState('');
 
   const swiperRef = useRef<SwiperClass | null>();
 
@@ -140,6 +144,10 @@ function LegitStatusCardHolder({
   const handleImageDetailDialogSlideChange = ({ realIndex, slides }: SwiperClass) => {
     setCurrentIndex(realIndex);
 
+    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === realIndex);
+
+    if (findPhotoGuideDetail) setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
+
     const currentSlides = slides.filter((slide: HTMLDivElement) => {
       return realIndex === Number(slide.getAttribute('data-swiper-slide-index'));
     });
@@ -155,11 +163,16 @@ function LegitStatusCardHolder({
     }
   };
 
-  const handleClickSlide = () => {
+  const handleClickSlide = (dataIndex: number) => () => {
     logEvent(attrKeys.legitResult.CLICK_THUMBPIC, {
       name: attrProperty.legitName.LEGIT_INFO
     });
+
+    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === dataIndex);
+
     setOpen(true);
+
+    if (findPhotoGuideDetail) setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
   };
 
   const handleClose = () => {
@@ -285,7 +298,7 @@ function LegitStatusCardHolder({
                       height: 160,
                       borderRadius: 8
                     }}
-                    onClick={handleClickSlide}
+                    onClick={handleClickSlide(index)}
                   >
                     {({ isActive }) => (
                       <>
@@ -345,8 +358,14 @@ function LegitStatusCardHolder({
         onChange={handleImageDetailDialogSlideChange}
         onClose={handleClose}
         images={images}
-        label={getLegitResultLabel(result)}
+        label={
+          <Flexbox gap={4}>
+            {getLegitResultLabel(result)}
+            {labelText && <Label variant="ghost" brandColor="black" text={labelText} />}
+          </Flexbox>
+        }
         syncIndex={currentIndex}
+        name={name}
       />
     </>
   );

@@ -1,15 +1,16 @@
 import { Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 
-export const CustomHeader = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
+export const CustomHeader = styled(Flexbox)`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
   left: 0;
-  padding: 0 20px;
+  padding: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px 20px 0;
   width: 100%;
-  height: 56px;
+  height: ${HEADER_HEIGHT}px;
   background: ${({ theme: { palette } }) => palette.common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
 `;

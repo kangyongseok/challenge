@@ -28,7 +28,8 @@ export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
       <br />
       허용해주세요.
     </>
-  )
+  ),
+  legitPhotoGuide: '샘플사진을 확인해 주세요!'
 };
 
 export const dialogContent = {
@@ -65,7 +66,7 @@ export const dialogContent = {
   ),
   appUpdateNotice: (
     <Box customStyle={{ marginBottom: 12 }}>
-      사진으로 감정신청을 위해 최신
+      원활한 이용을 위해 최신
       <br />
       App으로 업데이트해주세요.
     </Box>
@@ -75,6 +76,12 @@ export const dialogContent = {
       내 물건의 사진을 등록하려면
       <br />
       권한이 필요해요
+    </Box>
+  ),
+  legitPhotoGuide: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      어떻게 등록해야 감정결과를
+      <br />더 빨리 받을 수 있는지 알아보세요.
     </Box>
   )
 };
@@ -115,6 +122,7 @@ export const secondButtonText: Record<
     | 'legitServiceNotice'
     | 'appUpdateNotice'
     | 'appAuthCheck'
+    | 'legitPhotoGuide'
   >,
   string | number | ReactElement
 > = {
@@ -128,7 +136,8 @@ export const secondButtonText: Record<
   legitRequestOnlyInIOS: '확인',
   legitServiceNotice: '확인',
   appUpdateNotice: '3초 업데이트',
-  appAuthCheck: '취소'
+  appAuthCheck: '취소',
+  legitPhotoGuide: '사진 샘플 보기'
 };
 
 const dialog = {

@@ -18,8 +18,10 @@ import { fetchUserInfo } from '@api/user';
 import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import categoryState from '@recoil/category';
 
@@ -63,7 +65,14 @@ function Category() {
         ogUrl="https://mrcamel.co.kr/category"
       />
       <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding>
-        <Flexbox direction="vertical" gap={12} customStyle={{ marginBottom: 12 }}>
+        <Flexbox
+          direction="vertical"
+          gap={12}
+          customStyle={{
+            marginBottom: 12,
+            paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+          }}
+        >
           <CategoryGenderTabs resetSelectedParentCategory={() => setSelectedParentCategory(0)} />
           <CategoryList
             selectedParentCategory={selectedParentCategory}

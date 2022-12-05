@@ -3,6 +3,7 @@ import { MouseEvent, useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -10,6 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { purchaseType } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
@@ -29,7 +31,7 @@ function MypageUserInfo() {
       size,
       area: { values: area = [] } = {},
       info: { value: { yearOfBirth = '', gender = '' } = {} } = {},
-      // personalStyle: { subParentCategories = [], brands = [] } = {},
+      personalStyle: { purchaseTypes = [], styles = [] } = {},
       maxMoney = -1
     } = {}
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
@@ -100,7 +102,12 @@ function MypageUserInfo() {
         borderBottom: `1px solid ${common.ui90}`
       }}
     >
-      <Typography variant="h4" weight="bold" customStyle={{ color: common.ui20, marginBottom: 16 }}>
+      <Typography
+        variant="h4"
+        weight="bold"
+        customStyle={{ color: common.ui20, marginBottom: 16 }}
+        onClick={() => router.push('/onboarding')}
+      >
         내 정보
       </Typography>
       <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
@@ -190,6 +197,37 @@ function MypageUserInfo() {
           <Typography variant="small1" customStyle={{ textAlign: 'left' }}>
             {returnBudget()}
           </Typography>
+        </MyInfoBox>
+        <MyInfoBox
+          variant="contained"
+          data-param="likeModelInput"
+          data-att="LIKEMODEL"
+          data-value={maxMoney}
+          onClick={handleClickRoute}
+        >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
+            관심모델
+          </Typography>
+          <ElipsisArea variant="small1">
+            {styles.length > 0
+              ? styles.map(({ name }) => name).join(' / ')
+              : '카멜에게 알려주세요.'}
+          </ElipsisArea>
+        </MyInfoBox>
+        <MyInfoBox
+          variant="contained"
+          data-param="purchaseInput"
+          data-att="PURCHASE"
+          data-value={maxMoney}
+          onClick={handleClickRoute}
+        >
+          <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
+            중고 구매 시 중요한 부분
+          </Typography>
+          <ElipsisArea variant="small1" customStyle={{ textAlign: 'left' }}>
+            {find(purchaseType, { value: purchaseTypes[0]?.id })?.subTitle ||
+              '카멜에게 알려주세요.'}
+          </ElipsisArea>
         </MyInfoBox>
       </Flexbox>
     </Box>

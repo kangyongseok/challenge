@@ -1,6 +1,14 @@
-import { Announce } from '@dto/user';
-import type { ProductContent } from '@dto/product';
-import type { CommonCode, GetAnnounces, PhotoGuide, PhotoGuideParams } from '@dto/common';
+import type { Announce } from '@dto/user';
+import type { PageProductResult, ProductContent } from '@dto/product';
+import type {
+  CommonCode,
+  Content,
+  ContentProductsParams,
+  GetAnnounces,
+  PhotoGuide,
+  PhotoGuideParams,
+  Styles
+} from '@dto/common';
 
 import Axios from '@library/axios';
 
@@ -40,5 +48,28 @@ export async function fetchAnnounce(id: number) {
 
 export async function fetchAnnounceBase() {
   const { data } = await Axios.getInstance().get<GetAnnounces>(`${BASE_PATH}/announces`);
+  return data;
+}
+
+export async function fetchContent(id: number) {
+  const { data } = await Axios.getInstance().get<Content>(`${BASE_PATH}/contents/${id}`);
+
+  return data;
+}
+
+export async function fetchContentProducts({ id, ...params }: ContentProductsParams) {
+  const { data } = await Axios.getInstance().get<PageProductResult>(
+    `${BASE_PATH}/contents/${id}/products`,
+    {
+      params
+    }
+  );
+
+  return data;
+}
+
+export async function fetchStyles() {
+  const { data } = await Axios.getInstance().get<Styles>(`${BASE_PATH}/styles`);
+
   return data;
 }

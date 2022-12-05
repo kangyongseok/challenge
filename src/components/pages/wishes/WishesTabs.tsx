@@ -1,19 +1,17 @@
 import { MouseEvent, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Box, Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import { Tabs } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { showAppDownloadBannerState } from '@recoil/common';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 const labels = [
   {
@@ -40,7 +38,11 @@ function WishesTabs() {
     selectedCategoryIds?: string | string[];
   } = router.query;
 
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const {
+    theme: {
+      zIndex: { header }
+    }
+  } = useTheme();
 
   const [open, setOpen] = useState(false);
 
@@ -118,9 +120,21 @@ function WishesTabs() {
 
   return (
     <>
-      <StyledWishTabs showAppDownloadBanner={showAppDownloadBanner}>
-        <Tabs value={tab} changeValue={changeSelectedValue} labels={labels} />
-      </StyledWishTabs>
+      <Box
+        component="section"
+        customStyle={{
+          minHeight: 45,
+          zIndex: header,
+          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+        }}
+      >
+        <Tabs
+          value={tab}
+          changeValue={changeSelectedValue}
+          labels={labels}
+          customStyle={{ position: 'fixed', width: '100%' }}
+        />
+      </Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
           실시간 사진감정을 중단하고
@@ -151,14 +165,5 @@ function WishesTabs() {
     </>
   );
 }
-
-const StyledWishTabs = styled(Box)<{ showAppDownloadBanner: boolean }>`
-  position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
-  width: 100%;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header + 1};
-  margin-left: -20px;
-`;
 
 export default WishesTabs;

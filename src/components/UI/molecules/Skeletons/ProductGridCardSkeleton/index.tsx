@@ -16,6 +16,8 @@ interface ProductGridCardSkeletonPros {
   hasAreaWithDateInfo?: boolean;
   hasMetaInfo?: boolean;
   isRound?: boolean;
+  compact?: boolean;
+  gap?: number;
   customStyle?: CustomStyle;
 }
 
@@ -26,6 +28,8 @@ function ProductGridCardSkeleton({
   hasAreaWithDateInfo = true,
   hasMetaInfo = true,
   isRound = false,
+  compact,
+  gap,
   customStyle
 }: ProductGridCardSkeletonPros) {
   const isSafe = useMemo(() => {
@@ -47,9 +51,9 @@ function ProductGridCardSkeleton({
     );
   }, [labels, productSeller, title]);
   return (
-    <Flexbox gap={18} direction="vertical" customStyle={customStyle}>
+    <Flexbox gap={gap || (compact ? 12 : 17)} direction="vertical" customStyle={customStyle}>
       <Skeleton isRound={isRound} />
-      <Box customStyle={{ padding: '0 12px' }}>
+      <Box customStyle={{ padding: compact ? 0 : '0 12px' }}>
         <Skeleton
           width="100%"
           maxWidth={!title ? '200px' : 'fit-content'}

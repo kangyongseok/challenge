@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Typography, useTheme } from 'mrcamel-ui';
+import { Box, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { SearchHelperFixedBottomCTAButton } from '@components/pages/searchHelper';
@@ -12,8 +12,11 @@ import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { allSelectedSearchOptionsSelector } from '@recoil/searchHelper';
 
@@ -68,7 +71,7 @@ function AllOptions() {
   }, []);
 
   return (
-    <>
+    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
       <SuccessLabelWrapper>
         <SuccessLabel variant="h4" weight="medium">
           100% 완료 👍
@@ -216,11 +219,11 @@ function AllOptions() {
         매물 찾는게 맞으세요?
       </CustomTypography>
       <SearchHelperFixedBottomCTAButton showEnableEdit onClickNext={handleClickNext} />
-    </>
+    </Box>
   );
 }
 
-const SuccessLabelWrapper = styled.div`
+const SuccessLabelWrapper = styled.section`
   padding: 24px 0 80px;
   position: relative;
   overflow-x: hidden;
@@ -269,7 +272,7 @@ const SuccessLabel = styled(Typography)`
   border-radius: 32px;
 `;
 
-const OptionBox = styled.div`
+const OptionBox = styled.section`
   display: flex;
   flex-wrap: wrap;
   padding: 0 20px;

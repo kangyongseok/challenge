@@ -18,10 +18,11 @@ import { fetchSizeMapping, postProductKeyword } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber } from '@utils/common';
+import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,
@@ -179,47 +180,45 @@ function Searching() {
   }, []);
 
   return (
-    <Wrapper>
-      <GeneralTemplate hideAppDownloadBanner>
-        <Typography variant="h2" weight="bold" customStyle={{ padding: '48px 0px 40px' }}>
-          검색 집사가
-          <br />
-          {accessUser?.userName || '회원'}님의 꿀매물을 찾고 있어요!
-        </Typography>
-        <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
-          {[
-            brandLabel,
-            lineLabel,
-            categoryLabel,
-            sizeLabel,
-            maxPriceLabel,
-            colorLabel,
-            seasonLabel,
-            materialLabel,
-            platformLabel
-          ].map(
-            (item) =>
-              !!item && <Label key={item} text={`${item}`} variant="ghost" brandColor="primary" />
-          )}
-        </Flexbox>
-        <Flexbox justifyContent="center" alignment="center" customStyle={{ flex: 1 }}>
-          <Round variant="h4" weight="bold">
-            득템까지 남은 매물
-            <animated.div className="number">
-              {props.val.to((val) => commaNumber(Math.floor(val)))}
-            </animated.div>
-          </Round>
-        </Flexbox>
-      </GeneralTemplate>
-    </Wrapper>
+    <GeneralTemplate hideAppDownloadBanner>
+      <Typography
+        variant="h2"
+        weight="bold"
+        customStyle={{
+          padding: `${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 48}px 0px 40px`
+        }}
+      >
+        검색 집사가
+        <br />
+        {accessUser?.userName || '회원'}님의 꿀매물을 찾고 있어요!
+      </Typography>
+      <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
+        {[
+          brandLabel,
+          lineLabel,
+          categoryLabel,
+          sizeLabel,
+          maxPriceLabel,
+          colorLabel,
+          seasonLabel,
+          materialLabel,
+          platformLabel
+        ].map(
+          (item) =>
+            !!item && <Label key={item} text={`${item}`} variant="ghost" brandColor="primary" />
+        )}
+      </Flexbox>
+      <Flexbox justifyContent="center" alignment="center" customStyle={{ flex: 1 }}>
+        <Round variant="h4" weight="bold">
+          득템까지 남은 매물
+          <animated.div className="number">
+            {props.val.to((val) => commaNumber(Math.floor(val)))}
+          </animated.div>
+        </Round>
+      </Flexbox>
+    </GeneralTemplate>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-`;
 
 const Round = styled(Typography)`
   display: flex;

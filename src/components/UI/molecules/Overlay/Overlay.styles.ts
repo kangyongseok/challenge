@@ -16,7 +16,7 @@ export const BaseOverlay = styled.div<{ variant?: TypographyVariant; isRound?: b
 
   ${({ theme: { typography }, variant }): CSSObject => ({
     fontSize: typography[variant || 'h2'].size,
-    fontWeight: typography[variant || 'h2'].weight.bold,
+    fontWeight: typography[variant || 'h2'].weight.medium,
     lineHeight: typography[variant || 'h2'].lineHeight,
     letterSpacing: typography[variant || 'h2'].letterSpacing
   })};

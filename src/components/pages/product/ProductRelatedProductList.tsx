@@ -20,6 +20,7 @@ interface ProductRelatedProductListProps {
   prevProduct?: Product;
   quoteTitle?: string;
   price?: number;
+  productId?: number;
 }
 
 function ProductRelatedProductList({
@@ -28,7 +29,8 @@ function ProductRelatedProductList({
   line,
   prevProduct,
   quoteTitle,
-  price
+  price,
+  productId
 }: ProductRelatedProductListProps) {
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchRelatedProductsParams>({
@@ -61,9 +63,10 @@ function ProductRelatedProductList({
       related: 1,
       size: 8,
       quoteTitle,
-      price
+      price,
+      productId
     });
-  }, [brandId, categoryId, line, price, quoteTitle]);
+  }, [brandId, categoryId, line, price, quoteTitle, productId]);
 
   const handleWishAtt = (product: Product, i: number) => {
     return {

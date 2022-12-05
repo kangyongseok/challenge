@@ -82,14 +82,21 @@ export type Detail = {
   parentId: number;
 };
 
+export type PurchaseTypes = {
+  name: string;
+  id: number;
+};
+
 export type PersonalStyle = {
   brands: Detail[];
   categories: Detail[];
   parentCategories: Detail[];
   personalBrands: Brand[];
+  // purchaseTypes: PurchaseTypes[];
   personalCategories: Category[];
   styles: Detail[];
   subParentCategories: Detail[];
+  purchaseTypes: { name: string; value?: 10 | 20 | 30; id?: number }[];
 };
 
 export type ProfileStep = {
@@ -123,6 +130,7 @@ export interface UserInfo {
   notProcessedLegitCount?: number;
   roles: Role['name'][];
   userProductInfo: UserProductInfo;
+  isNewUser: boolean;
   notViewedHistoryCount: number;
   notViewedAnnounceCount: number;
 }
@@ -151,6 +159,8 @@ export type UserRoleLegit = {
   imageBackground: string | null;
   targetBrandIds: number[];
   cntOpinion: number;
+  cntReal: number;
+  cntFake: number;
   dateActivated: string;
   dateCreated: string;
   dateUpdated: string;
@@ -311,6 +321,7 @@ export interface ProductKeywordData {
 export interface ProductKeywordsContent {
   filter: string;
   id: number;
+  imageThumbnail: string;
   images: [];
   isNew: boolean;
   keyword: string;
@@ -352,7 +363,7 @@ export interface ProductKeywords {
 export interface AgeAndGenderParams {
   age?: number; // 삭제예정
   birthday?: number;
-  gender: Gender;
+  gender: Gender | null;
 }
 
 export type AreaParams = {

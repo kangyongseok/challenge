@@ -17,7 +17,7 @@ function LegitCaseHistory() {
   const {
     isLoading,
     data: { caseHistories: [firstCaseHistory, secentCaseHistory, lastCaseHistory] = [] } = {}
-  } = useQuery(queryKeys.dashboards.legit(), fetchLegit);
+  } = useQuery(queryKeys.dashboards.legit(), () => fetchLegit());
 
   return (
     <Flexbox

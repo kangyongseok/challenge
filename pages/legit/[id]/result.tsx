@@ -93,7 +93,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
       <GeneralTemplate
         header={<LegitResultHeader />}
         footer={<LegitResultBottomCtaButton />}
-        customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg01 }}
+        customStyle={{ height: 'auto', minHeight: '100%' }}
       >
         <LegitResultRequestInfo />
         <LegitResultDetailAlert />

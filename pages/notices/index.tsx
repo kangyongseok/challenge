@@ -16,7 +16,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postManage, putNotiReadAll } from '@api/userHistory';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, locales } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -68,6 +68,7 @@ function Notices() {
 
   return (
     <GeneralTemplate
+      disablePadding
       header={
         <Header
           rightIcon={
@@ -86,7 +87,7 @@ function Notices() {
       }
       footer={<BottomNavigation />}
     >
-      <TabsWrapper showAppDownloadBanner={showAppDownloadBanner}>
+      <TabsWrapper showAppDownloadBanner={showAppDownloadBanner} minHeight={TAB_HEIGHT}>
         <Tabs
           value={tab}
           changeValue={changeSelectedValue}
@@ -102,13 +103,14 @@ function Notices() {
   );
 }
 
-const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
+const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean; minHeight: number }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) =>
     showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   width: 100%;
+  min-height: ${({ minHeight }) => minHeight}px;
   z-index: 2;
-  margin-left: -16px;
+  /* margin-left: -16px; */
 `;
 
 export async function getStaticProps({

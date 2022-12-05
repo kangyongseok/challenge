@@ -372,8 +372,9 @@ const StyledPhotoGuide = styled.div<{ isLongText: boolean }>`
     }
   }) => common.ui95};
   position: absolute;
-  top: 56px;
-  left: 0;
+  /* top: 56px;
+  left: 0; */
+  margin-left: -20px;
   padding: ${({ isLongText }) => (isLongText ? '10px 0' : '20px 0')};
 `;
 

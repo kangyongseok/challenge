@@ -342,7 +342,7 @@ export type ProductResult = {
     dateUpdated: string | null;
     depth: number | null;
     groupId: number | null;
-    id: number | null;
+    id: number;
     isAuthProduct: boolean;
     jobRulebaseDetail: JobRuleBaseDetail;
     name: string;
@@ -480,6 +480,7 @@ export interface Search {
   userWishProductIds: number[];
   userProductKeyword?: ProductKeyword;
   viewGoodPrice: boolean;
+  resultUseAI?: boolean;
 }
 
 export interface ProductDetail {
@@ -648,6 +649,7 @@ export interface SearchRelatedProductsParams {
   size?: number;
   quoteTitle?: string;
   price?: number;
+  productId?: number;
 }
 
 export interface SearchLowerProductsParams extends SearchRelatedProductsParams {
@@ -666,6 +668,13 @@ export interface CamelProductsParams {
   size?: number;
   sort?: string[];
   type?: string[]; // default "recomm"
+}
+
+export interface UserPersonalStyleParams {
+  parentCategoryIds?: number[];
+  purchaseTypeIds?: number[];
+  styleIds?: number[];
+  subParentCategoryIds?: number[];
 }
 
 export interface RecentSearchParams extends Omit<SearchParams, 'order'> {

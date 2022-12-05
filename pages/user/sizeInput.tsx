@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -18,12 +18,10 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo, postUserSize } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import type { SelectSize } from '@typings/user';
 import atom from '@recoil/users';
-import { showAppDownloadBannerState } from '@recoil/common';
 
 function SizeInput() {
   const router = useRouter();
@@ -32,7 +30,6 @@ function SizeInput() {
   const [selectedSizes, atomSelectedSize] = useRecoilState(atom.selectedSizeState);
   const [tempSelected, atomTempSelected] = useRecoilState(atom.tempSelectedState);
   const [searchModeDisabled] = useRecoilState(atom.searchModeDisabledState);
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useEffect(() => {
     logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, {
@@ -135,7 +132,7 @@ function SizeInput() {
               fullWidth
               variant="contained"
               brandColor="primary"
-              size="large"
+              size="xlarge"
               onClick={searchModeType.kind ? handleSelectSuccess : handleClickSave}
               disabled={buttonDisabled()}
             >
@@ -145,7 +142,7 @@ function SizeInput() {
         </Box>
       }
     >
-      <PageHaederFlex gap={6} direction="vertical" showAppDownloadBanner={showAppDownloadBanner}>
+      <PageHaederFlex gap={6} direction="vertical">
         <Typography variant="h3" weight="bold" brandColor="black">
           사이즈가 어떻게 되세요?
         </Typography>
@@ -157,7 +154,7 @@ function SizeInput() {
   );
 }
 
-const PageHaederFlex = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
+const PageHaederFlex = styled(Flexbox)`
   width: 100%;
   height: 90px;
   background: ${({
@@ -166,8 +163,6 @@ const PageHaederFlex = styled(Flexbox)<{ showAppDownloadBanner: boolean }>`
     }
   }) => common.uiWhite};
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   left: 0;
   padding-top: 18px;
   text-align: center;

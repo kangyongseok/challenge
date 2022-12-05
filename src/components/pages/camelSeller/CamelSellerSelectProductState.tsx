@@ -80,6 +80,12 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
   }, []);
 
   useEffect(() => {
+    if (data?.resultUseAI) {
+      logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (data?.searchOptions.colors.length === 0 && size.name && !color.name) {
       atomToggleBottomSheet('color');
     }
@@ -144,7 +150,7 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
 
   return (
     <Wrap>
-      <Header onClickLeft={close} showRight={false} disableAppDownloadBannerVariableTop />
+      <Header onClickLeft={close} showRight={false} />
       <Box
         customStyle={{
           margin: '32px 0',

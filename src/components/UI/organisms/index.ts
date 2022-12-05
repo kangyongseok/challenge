@@ -15,5 +15,6 @@ export { default as LegitStatusCardHolder } from './LegitStatusCardHolder';
 export { default as LegitContactBanner } from './LegitContactBanner';
 export { default as UserAvatar } from './UserAvatar';
 export { default as MyShopAppDownloadDialog } from './MyShopAppDownloadDialog';
+export { default as StylesCards } from './StylesCards';
 export { default as LoginBottomSheet } from './LoginBottomSheet';
 export { default as PageSkeleton } from './PageSkeleton';

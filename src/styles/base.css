@@ -49,6 +49,14 @@ body.legit-dark {
   background-color: #111214;
 }
 
+body.light {
+  background-color: #FFFFFF;
+}
+
+body.dark {
+  background-color: #000000;
+}
+
 #__next{
   height: 100%;
 }

@@ -59,7 +59,7 @@ function LegitCard({
         <ImageBox>
           <Image
             variant="backgroundImage"
-            src={imageMain || imageThumbnail}
+            src={imageThumbnail || imageMain}
             alt="Product Legit Img"
           />
           {!hidePlatformLogo && postType !== 2 && (
@@ -142,7 +142,7 @@ function LegitCard({
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
-      <Image variant="backgroundImage" src={imageMain || imageThumbnail} alt="Product Legit Img" />
+      <Image variant="backgroundImage" src={imageThumbnail || imageMain} alt="Product Legit Img" />
       <Flexbox
         direction="vertical"
         gap={2}

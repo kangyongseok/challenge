@@ -21,10 +21,12 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearchRelatedProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import ProductLastLowerPrice from './ProductLastLowerPrice';
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
@@ -91,7 +93,8 @@ function ProductImages({
         size: 8,
         idFilterIds: 30,
         scorePriceAvg: product.scorePriceAvg,
-        quoteTitle: product.quoteTitle
+        quoteTitle: product.quoteTitle,
+        productId: product.id
       });
     }
   }, [product]);
@@ -226,7 +229,13 @@ function ProductImages({
 
   return (
     <>
-      <Box ref={wrapperRef} customStyle={{ margin: '0 -20px' }}>
+      <Box
+        ref={wrapperRef}
+        customStyle={{
+          margin: '0 -20px',
+          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+        }}
+      >
         <Swiper
           lazy
           modules={[Lazy]}
@@ -385,6 +394,7 @@ function ProductImages({
         onChange={handleSlideChange}
         images={modalImages}
         syncIndex={currentSlide}
+        name={attrProperty.name.PRODUCT_DETAIL}
       />
     </>
   );

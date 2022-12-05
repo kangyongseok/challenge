@@ -7,7 +7,21 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 
-import { CloseIcon, Img, Pagination, RotateButton } from './ImageDetailDialog.styles';
+import { logEvent } from '@library/amplitude';
+
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
+import {
+  CloseIcon,
+  Img,
+  Pagination,
+  RotateButton,
+  ZoomInButton,
+  ZoomOutButton
+} from './ImageDetailDialog.styles';
 
 interface ImageDetailDialogProps {
   open: boolean;
@@ -16,6 +30,7 @@ interface ImageDetailDialogProps {
   images: string[];
   label?: ReactElement;
   syncIndex?: number;
+  name?: string;
 }
 
 function ImageDetailDialog({
@@ -24,11 +39,13 @@ function ImageDetailDialog({
   onClose,
   images = [],
   label,
-  syncIndex = 0
+  syncIndex = 0,
+  name
 }: ImageDetailDialogProps) {
   const {
     theme: {
-      zIndex: { button }
+      zIndex: { button },
+      palette: { common }
     }
   } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(syncIndex);
@@ -140,7 +157,6 @@ function ImageDetailDialog({
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     if (!dialogRef.current || currentScale !== 1 || slideMovingRef.current || pinchingRef.current)
       return;
-    e.preventDefault();
 
     if (swipeCloseTimerRef.current) {
       clearTimeout(swipeCloseTimerRef.current);
@@ -187,6 +203,79 @@ function ImageDetailDialog({
     };
   };
 
+  const handleClickZoomIn = () => {
+    if (name) {
+      logEvent(attrKeys.legitResult.CLICK_THUMBPIC_BTN, {
+        name,
+        att: 'ZOOMIN'
+      });
+    }
+
+    const currentTransformRef = transformsRef.current[currentIndex];
+
+    if (currentTransformRef) {
+      setShortSwipes(false);
+      setFollowFinger(false);
+      setPanningDisabled(false);
+      pinchingRef.current = true;
+      currentTransformRef.zoomIn();
+    }
+  };
+
+  const handleClickZoomOut = () => {
+    if (name) {
+      logEvent(attrKeys.legitResult.CLICK_THUMBPIC_BTN, {
+        name,
+        att: 'ZOOMOUT'
+      });
+    }
+
+    const currentTransformRef = transformsRef.current[currentIndex];
+
+    if (currentTransformRef) {
+      const { scale } = currentTransformRef.state;
+
+      currentTransformRef.zoomOut();
+
+      if (Math.floor(scale) <= 1) {
+        slideMovingRef.current = false;
+        pinchingRef.current = false;
+        setCurrentScale(1);
+        setShortSwipes(true);
+        setFollowFinger(true);
+        setPanningDisabled(true);
+      } else {
+        slideMovingRef.current = true;
+        pinchingRef.current = true;
+        setShortSwipes(false);
+        setFollowFinger(false);
+        setPanningDisabled(false);
+      }
+    }
+  };
+
+  const handleClickRotate = () => {
+    if (name) {
+      logEvent(attrKeys.legitResult.CLICK_THUMBPIC_BTN, {
+        name,
+        att: 'ROTATE'
+      });
+    }
+
+    setRotates((prevRotates) => {
+      return prevRotates.map((prevRotate, index) => {
+        if (currentIndex === index) {
+          const newRotate = prevRotate + 90;
+          if (newRotate >= 360) {
+            return 0;
+          }
+          return newRotate;
+        }
+        return prevRotate;
+      });
+    });
+  };
+
   useEffect(() => {
     if (currentScale > 1) {
       setShortSwipes(false);
@@ -196,12 +285,6 @@ function ImageDetailDialog({
       setShortSwipes(true);
       setFollowFinger(true);
       setPanningDisabled(true);
-    }
-  }, [currentScale]);
-
-  useEffect(() => {
-    if (currentScale === 0.6) {
-      setCurrentScale(1);
     }
   }, [currentScale]);
 
@@ -267,7 +350,7 @@ function ImageDetailDialog({
         <Box
           customStyle={{
             position: 'absolute',
-            top: 20,
+            top: (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20,
             left: 20,
             zIndex: button
           }}
@@ -320,6 +403,7 @@ function ImageDetailDialog({
                   doubleClick={{
                     mode: 'reset'
                   }}
+                  minScale={0.5}
                   centerOnInit
                 >
                   <TransformComponent
@@ -350,6 +434,22 @@ function ImageDetailDialog({
           </SwiperSlide>
         ))}
       </Swiper>
+      <ZoomOutButton
+        variant="contained"
+        brandColor="black"
+        size="large"
+        startIcon={<Icon name="MinusOutlined" />}
+        iconOnly
+        onClick={handleClickZoomOut}
+      />
+      <ZoomInButton
+        variant="contained"
+        brandColor="black"
+        size="large"
+        startIcon={<Icon name="PlusOutlined" />}
+        iconOnly
+        onClick={handleClickZoomIn}
+      />
       <Pagination>
         {currentIndex + 1}/{images.length}
       </Pagination>
@@ -357,22 +457,23 @@ function ImageDetailDialog({
         variant="contained"
         brandColor="black"
         size="large"
-        startIcon={<Icon name="RotateOutlined" />}
-        iconOnly
-        onClick={() =>
-          setRotates((prevRotates) => {
-            return prevRotates.map((prevRotate, index) => {
-              if (currentIndex === index) {
-                const newRotate = prevRotate + 90;
-                if (newRotate >= 360) {
-                  return 0;
-                }
-                return newRotate;
-              }
-              return prevRotate;
-            });
-          })
+        startIcon={
+          // TODO UI 라이브러리 아이콘 업데이트 필요
+          <svg
+            width="20"
+            height="18"
+            viewBox="0 0 20 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.000135422 4.96498C0.00846863 4.87488 0.0230522 4.7853 0.0246143 4.69519C0.0371151 3.72696 0.0433655 2.75926 0.0589905 1.79103C0.0673237 1.28061 0.331385 0.935298 0.774614 0.825402C1.31837 0.690506 1.86993 1.06134 1.91368 1.61915C1.94128 1.97384 1.9168 2.33321 1.91628 2.68999C1.91628 3.05874 1.91628 3.42748 1.91628 3.82436C1.97566 3.77592 2.01993 3.74415 2.05951 3.70717C3.7767 2.11759 5.79441 1.17905 8.11993 0.903006C13.3413 0.283735 18.2798 3.64728 19.6027 8.75092C20.3251 11.5369 19.9642 14.1962 18.5678 16.7134C18.2913 17.2119 17.7434 17.3837 17.2746 17.1259C16.8069 16.8686 16.6517 16.3103 16.9319 15.8119C17.6715 14.4952 18.0788 13.0863 18.0856 11.5754C18.1022 7.69207 15.7481 4.39728 12.0767 3.13946C8.85222 2.03478 5.16993 2.99259 2.88555 5.53009C2.86003 5.55821 2.83659 5.58842 2.78034 5.65613C2.89649 5.65613 2.97514 5.65717 3.0543 5.65613C3.98347 5.64571 4.91211 5.6254 5.84128 5.62696C6.49441 5.62801 6.93503 6.28582 6.69597 6.88894C6.54493 7.27019 6.24753 7.48374 5.84076 7.48998C4.19753 7.51551 2.55378 7.53061 0.910032 7.54259C0.519928 7.54519 0.201178 7.30457 0.0600319 6.93842C0.0418015 6.89103 0.0204468 6.84467 0.00117683 6.7978C0.00117683 6.18686 0.00117683 5.57644 0.00117683 4.96551L0.000135422 4.96498Z"
+              fill={common.uiWhite}
+            />
+          </svg>
         }
+        iconOnly
+        onClick={handleClickRotate}
       />
     </Dialog>
   );

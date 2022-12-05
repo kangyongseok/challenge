@@ -12,8 +12,11 @@ import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { CAMEL_SELLER } from '@constants/localStorage';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   camelSellerBooleanStateFamily,
@@ -149,10 +152,13 @@ function CamelSellerHeader({
   if (type === 'textarea') {
     return (
       <Header
-        disableAppDownloadBannerVariableTop
         customHeader={
           <>
-            <Box customStyle={{ height: 56 }} />
+            <Box
+              customStyle={{
+                height: 56
+              }}
+            />
             <Wrap alignment="center" customStyle={{ padding: '0 20px' }}>
               <Icon
                 onClick={onClickClose}
@@ -178,10 +184,13 @@ function CamelSellerHeader({
   return (
     <>
       <Header
-        disableAppDownloadBannerVariableTop
         customHeader={
           <>
-            <Box customStyle={{ height: 56 }} />
+            <Box
+              customStyle={{
+                height: 56 + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
+              }}
+            />
             <Wrap alignment="center">
               <IconBox show onClick={handleClickBack}>
                 <Icon name="CloseOutlined" size="medium" />
@@ -245,6 +254,7 @@ const Wrap = styled(Flexbox)`
   left: 0;
   z-index: 11;
   justify-content: space-between;
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT + 10 : 0}px;
 `;
 
 const CallFormButton = styled(Button)<{ disabled: boolean }>`

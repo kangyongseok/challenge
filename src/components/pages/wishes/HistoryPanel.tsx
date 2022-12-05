@@ -1,11 +1,13 @@
 import { Fragment, useMemo, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { entries, groupBy } from 'lodash-es';
 import dayjs from 'dayjs';
+import styled from '@emotion/styled';
 
-import { ProductListCardSkeleton } from '@components/UI/molecules';
+import { ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
 import { Skeleton } from '@components/UI/atoms';
 
 import type { UserHistory } from '@dto/user';
@@ -25,6 +27,8 @@ import WishesNotice from './WishesNotice';
 import HistoryDateItem from './HistoryDateItem';
 
 function HistoryPanel() {
+  const router = useRouter();
+  const { hiddenTab } = router.query;
   const {
     theme: {
       palette: { common }
@@ -87,45 +91,118 @@ function HistoryPanel() {
   if (isLoading) {
     return (
       <>
-        <Box
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
           customStyle={{
-            margin: '30px 0 8px'
+            margin: '25px 0 8px'
           }}
         >
           <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
-        </Box>
+          <Skeleton width="84px" height="36px" isRound disableAspectRatio />
+        </Flexbox>
         <Skeleton
-          width="50px"
-          height="18px"
+          width="74px"
+          height="20px"
           disableAspectRatio
           isRound
-          customStyle={{ margin: '28px 0 20px' }}
+          customStyle={{ margin: '39px 0 20px' }}
         />
-        <Flexbox direction="vertical" gap={20}>
+        <TimeLineWrap direction="vertical" gap={20}>
           {Array.from({ length: 3 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} isRound />
+            <ProductWishesCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`group-1-use-history-product-card-skeleton-${index}`}
+              isRound
+            />
           ))}
-        </Flexbox>
+          <Flexbox alignment="center" gap={24}>
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+          </Flexbox>
+          <ProductWishesCardSkeleton isRound />
+          <ProductWishesCardSkeleton isRound />
+        </TimeLineWrap>
         <Box
           customStyle={{
-            marginTop: 12,
-            borderTop: `1px solid ${common.ui90}`
+            borderTop: `8px solid ${common.ui98}`,
+            marginLeft: -20,
+            width: 'calc(100% + 40px)'
           }}
         />
         <Skeleton
-          width="50px"
-          height="18px"
+          width="74px"
+          height="20px"
           disableAspectRatio
           isRound
-          customStyle={{ margin: '20px 0' }}
+          customStyle={{ margin: '39px 0 20px' }}
         />
-        <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 12 }}>
-          {Array.from({ length: 7 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`use-history-product-card-skeleton-${index}`} isRound />
+        <TimeLineWrap direction="vertical" gap={20}>
+          {Array.from({ length: 2 }).map((_, index) => (
+            <ProductWishesCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`group-2-use-history-product-card-skeleton-${index}`}
+              isRound
+            />
           ))}
-        </Flexbox>
+          <Flexbox alignment="center" gap={24}>
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+          </Flexbox>
+          <ProductWishesCardSkeleton isRound />
+          <ProductWishesCardSkeleton isRound />
+          <Flexbox alignment="center" gap={24}>
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+          </Flexbox>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ProductWishesCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`group-3-use-history-product-card-skeleton-${index}`}
+              isRound
+            />
+          ))}
+        </TimeLineWrap>
+        <Box
+          customStyle={{
+            borderTop: `8px solid ${common.ui98}`,
+            marginLeft: -20,
+            width: 'calc(100% + 40px)'
+          }}
+        />
       </>
     );
   }
@@ -133,7 +210,7 @@ function HistoryPanel() {
   if (!data || !accessUser) {
     return (
       <WishesNotice
-        imgName="wishes_login_img"
+        imgName="login-img"
         moveTo="/login"
         message={
           <>
@@ -160,7 +237,7 @@ function HistoryPanel() {
   if (data.content.length === 0) {
     return (
       <WishesNotice
-        imgName="rencet_empty_img"
+        imgName="recent-empty-img"
         moveTo="/search"
         message={
           <>
@@ -190,12 +267,14 @@ function HistoryPanel() {
       <Flexbox
         alignment="center"
         justifyContent="space-between"
-        customStyle={{
-          margin: '25px 0 8px'
-        }}
+        customStyle={{ margin: '20px 0 32px' }}
       >
         <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
-        <Button startIcon={<Icon name="DeleteOutlined" />} onClick={handleClickAllDelete}>
+        <Button
+          size="small"
+          startIcon={<Icon name="DeleteOutlined" />}
+          onClick={handleClickAllDelete}
+        >
           <Typography weight="medium" variant="small1">
             전체삭제
           </Typography>
@@ -251,8 +330,14 @@ function HistoryPanel() {
       <Toast open={openSuccessToast} onClose={() => setOpenSuccessToast(false)}>
         최근 활동내역을 모두 삭제했어요.
       </Toast>
+      <TopButton show name="WISH_LIST" customStyle={{ bottom: hiddenTab === 'legit' ? 105 : 80 }} />
     </>
   );
 }
+
+const TimeLineWrap = styled(Flexbox)`
+  padding: 0 0 32px 14px;
+  border-left: 1px solid ${({ theme: { palette } }) => palette.common.ui90};
+`;
 
 export default HistoryPanel;

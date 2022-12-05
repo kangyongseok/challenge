@@ -3,34 +3,56 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import styled from '@emotion/styled';
 
-import GeneralTemplate from '@components/templates/GeneralTemplate';
-
 import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
 
-import { fetchArea, postAlarm, postArea, postStyle } from '@api/user';
+import { fetchArea, postAlarm, postArea } from '@api/user';
 
 import {
   IS_DONE_SIGN_IN_PERMISSION,
+  MODEL_CATEGORY_IDS,
+  SELECTED_MODEL_CARD,
   SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
 } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
 import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
+import { modelParentCategoryIdsState, selectedModelCardState } from '@recoil/onboarding';
 
 import OnboardingBottomCTA from './OnboardingBottomCTA';
+
+const permissionContents = [
+  {
+    icon: <PinIcon />,
+    title: '위치',
+    subTitle: '거래가능한 당근마켓 매물을 보여드리기 위해 필요해요!'
+  },
+  {
+    icon: <AlarmIcon />,
+    title: '알림',
+    subTitle: '찜한 매물의 가격하락, 꿀매물, 감정결과를 알려드려요!'
+  },
+  {
+    icon: '📷',
+    title: '사진 및 카메라',
+    subTitle: '내 물건 등록, 사진 감정을 하려면 필요해요!'
+  }
+];
 
 function OnboardingPermission() {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
   const router = useRouter();
@@ -50,10 +72,17 @@ function OnboardingPermission() {
     materialIds
   } = useRecoilValue(searchParamsState);
   const resetSearchParams = useResetRecoilState(searchParamsState);
-  const { mutate: mutatePostStyle } = useMutation(postStyle);
   const { mutate: mutatePostAlarm } = useMutation(postAlarm);
   const { mutate: mutatePostArea } = useMutation(postArea);
+  const removeModelParentCategoryId = useResetRecoilState(modelParentCategoryIdsState);
+  const removeModelCard = useResetRecoilState(selectedModelCardState);
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    logEvent(attrKeys.welcome.VIEW_AUTH_MODAL, {
+      name: attrProperty.name.PERSONAL_INPUT
+    });
+  }, []);
 
   const redirectPage = useCallback(() => {
     // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
@@ -83,7 +112,7 @@ function OnboardingPermission() {
       return;
     }
 
-    router.push('/');
+    router.replace('/');
   }, [
     brandIds,
     categorySizeIds,
@@ -105,9 +134,14 @@ function OnboardingPermission() {
   const handleClick = useCallback(() => {
     setPending(true);
 
-    mutatePostStyle({ parentCategoryIds: null, subParentCategoryIds: null });
+    // mutatePostStyle({ parentCategoryIds: null, subParentCategoryIds: null });
     LocalStorage.remove(SIGN_UP_STEP);
+    LocalStorage.remove(MODEL_CATEGORY_IDS);
+    // LocalStorage.remove(SELECTED_STYLE_CARD_IDS);
+    LocalStorage.remove(SELECTED_MODEL_CARD);
     LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
+    removeModelParentCategoryId();
+    removeModelCard();
 
     if (
       checkAgent.isAndroidApp() &&
@@ -117,6 +151,8 @@ function OnboardingPermission() {
     ) {
       window.webview.callAuthPush();
       window.webview.callAuthLocation();
+      window.webview.callAuthCamera();
+      window.webview.callAuthPhotoLibrary();
       return;
     }
 
@@ -129,6 +165,8 @@ function OnboardingPermission() {
     ) {
       window.webkit.messageHandlers.callAuthPush.postMessage(0);
       window.webkit.messageHandlers.callAuthLocation.postMessage(0);
+      window.webkit.messageHandlers.callAuthCamera.postMessage(0);
+      window.webkit.messageHandlers.callAuthPhotoLibrary.postMessage(0);
       return;
     }
 
@@ -154,7 +192,7 @@ function OnboardingPermission() {
         redirectPage();
       }
     );
-  }, [mutatePostArea, mutatePostStyle, redirectPage]);
+  }, [removeModelParentCategoryId, removeModelCard, mutatePostArea, redirectPage]);
 
   useEffect(() => {
     window.getAuthPush = (result: boolean) => {
@@ -179,55 +217,43 @@ function OnboardingPermission() {
   }, [mutatePostAlarm, mutatePostArea, router]);
 
   return (
-    <>
-      <GeneralTemplate hideAppDownloadBanner>
+    <ThemeProvider theme="dark">
+      <Box
+        customStyle={{
+          background: dark.palette.common.uiBlack,
+          borderRadius: '16px 16px 0 0',
+          padding: '32px 20px'
+        }}
+      >
         <Typography
-          variant="h2"
+          variant="h3"
           weight="bold"
-          customStyle={{ padding: '52px 0px', '& > span': { color: primary.main } }}
+          customStyle={{ color: dark.palette.common.ui98, marginBottom: 20 }}
         >
-          꿀매물 <span>득템 확률 2배</span> 상승!
+          카멜을 더 잘 즐기기 위해
           <br />
-          권한 허용하고 꿀매물 받아보세요
+          권한을 허용해주세요
         </Typography>
-        <Flexbox gap={32} direction="vertical" customStyle={{ paddingBottom: 32, flex: 1 }}>
-          <Flexbox gap={16}>
-            <IconBox>
-              <PinIcon />
-            </IconBox>
-            <Box>
-              <Typography variant="h4" weight="bold">
-                위치(선택)
-              </Typography>
-              <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
-                당근마켓 ‧ 직거래 매물만 골라 볼 수 있어요
-              </Typography>
-            </Box>
-          </Flexbox>
-          <Flexbox gap={16}>
-            <IconBox>
-              <AlarmIcon />
-            </IconBox>
-            <Box>
-              <Typography variant="h4" weight="bold">
-                알림(선택)
-              </Typography>
-              <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
-                꿀매물, 가격 변동 알림 등을 받아보실 수 있어요
-              </Typography>
-            </Box>
-          </Flexbox>
+        <Flexbox gap={20} direction="vertical" customStyle={{ paddingBottom: 20, flex: 1 }}>
+          {permissionContents.map((content) => (
+            <Flexbox gap={12} alignment="center" key={`permisstion-contents-${content.title}`}>
+              <IconBox>{content.icon}</IconBox>
+              <Box>
+                <Typography weight="bold" customStyle={{ color: dark.palette.common.ui98 }}>
+                  {content.title}
+                </Typography>
+                <Typography variant="small1" customStyle={{ color: common.ui60, marginTop: 2 }}>
+                  {content.subTitle}
+                </Typography>
+              </Box>
+            </Flexbox>
+          ))}
         </Flexbox>
-      </GeneralTemplate>
-      <Flexbox direction="vertical" alignment="center" customStyle={{ paddingTop: 20 }}>
-        <Label variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
-          단말 설정에서 언제든 변경할 수 있어요.
-        </Label>
-        <OnboardingBottomCTA onClick={handleClick} disabled={pending}>
-          시작하기
-        </OnboardingBottomCTA>
-      </Flexbox>
-    </>
+      </Box>
+      <OnboardingBottomCTA onClick={handleClick} disabled={pending} isResult>
+        시작하기
+      </OnboardingBottomCTA>
+    </ThemeProvider>
   );
 }
 
@@ -238,23 +264,8 @@ const IconBox = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  background-color: ${({
-    theme: {
-      palette: { primary }
-    }
-  }) => primary.highlight};
-`;
-
-const Label = styled(Typography)`
-  margin: 0 auto;
-  width: fit-content;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui95};
-  border-radius: 36px;
-  padding: 8px 16px;
+  background-color: ${dark.palette.common.ui20};
+  font-size: ${({ theme: { typography } }) => typography.h2.size};
 `;
 
 function AlarmIcon() {

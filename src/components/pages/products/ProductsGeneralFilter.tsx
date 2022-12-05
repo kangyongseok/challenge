@@ -25,9 +25,15 @@ import {
   productDynamicOptionCodeType,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
-import { APP_DOWNLOAD_BANNER_HEIGHT, GENERAL_FILTER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
+  GENERAL_FILTER_HEIGHT
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { pulse } from '@styles/transition';
 
@@ -348,15 +354,19 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     return (
       <Box
         component="section"
-        customStyle={{ minHeight: GENERAL_FILTER_HEIGHT, position: 'relative' }}
+        customStyle={{
+          minHeight: GENERAL_FILTER_HEIGHT,
+          position: 'relative'
+        }}
       >
         <Wrapper
           ref={ref}
           showAppDownloadBanner={showAppDownloadBanner}
+          layoutHeight={isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}
           defaultTop={
             customTop ||
             // eslint-disable-next-line no-nested-ternary
-            (variant === 'search' && isRelatedKeyword ? 118 : variant !== 'search' ? 104 : 56)
+            (variant === 'search' && isRelatedKeyword ? 116 : variant !== 'search' ? 104 : 56)
           }
         >
           <Flexbox gap={12} alignment="center" customStyle={{ padding: '0 16px', minHeight: 36 }}>
@@ -490,7 +500,11 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
   }
 );
 
-const Wrapper = styled.div<{ showAppDownloadBanner: boolean; defaultTop: number }>`
+const Wrapper = styled.div<{
+  showAppDownloadBanner: boolean;
+  defaultTop: number;
+  layoutHeight: number;
+}>`
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -499,8 +513,8 @@ const Wrapper = styled.div<{ showAppDownloadBanner: boolean; defaultTop: number 
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
-  top: ${({ showAppDownloadBanner, defaultTop }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + defaultTop : defaultTop}px;
+  top: ${({ showAppDownloadBanner, defaultTop, layoutHeight }) =>
+    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + defaultTop : defaultTop + layoutHeight}px;
 `;
 
 const IdFilterButton = styled.div<{ isLoading?: boolean }>`

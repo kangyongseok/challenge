@@ -1,3 +1,4 @@
+import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
@@ -12,6 +13,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
+import { accessUserSettingValuesState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ExitProps {
@@ -22,6 +24,7 @@ interface ExitProps {
 function ExitDialog({ status, setExtToggle }: ExitProps) {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
+  const setAccessUserSettingValuesState = useSetRecoilState(accessUserSettingValuesState);
 
   const { refetch } = useQuery(queryKeys.userAuth.withdraw(), postWithdraw, {
     enabled: false,
@@ -40,6 +43,9 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
           window.webkit.messageHandlers.callSetLogoutUser.postMessage(`${accessUser.userId}`);
         }
       }
+      setAccessUserSettingValuesState((prevState) =>
+        prevState.filter(({ userId }) => userId !== (accessUser || {}).userId)
+      );
       setExtToggle(false);
       router.push('/logout');
     }

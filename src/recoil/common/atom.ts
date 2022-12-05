@@ -7,9 +7,21 @@ import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
-import { DEVICE_ID, THEME, USER_ON_BOARDING_TRIGGER } from '@constants/localStorage';
+import {
+  ACCESS_USER_SETTING_VALUES,
+  DEVICE_ID,
+  THEME,
+  USER_ON_BOARDING_TRIGGER
+} from '@constants/localStorage';
 
-import type { DialogType, ShareData, ThemeMode, ToastStatus, ToastType } from '@typings/common';
+import type {
+  AccessUserSettingValue,
+  DialogType,
+  ShareData,
+  ThemeMode,
+  ToastStatus,
+  ToastType
+} from '@typings/common';
 
 export const userOnBoardingTriggerState = atom({
   key: 'common/userOnBoardingTriggerState',
@@ -73,6 +85,7 @@ export const showAppDownloadBannerState = atom<boolean>({
 export const toastState = atom<{
   type: ToastType | undefined;
   status: ToastStatus | undefined;
+  theme?: Exclude<ThemeMode, 'system'>;
   hideDuration?: number;
   customStyle?: CustomStyle;
   action?: () => void;
@@ -89,6 +102,7 @@ export const dialogState = atom<{
   theme?: Exclude<ThemeMode, 'system'>;
   firstButtonAction?: () => void;
   secondButtonAction?: () => void;
+  onClose?: () => void;
   content?: string | number | ReactElement;
   product?: Product | undefined;
   shareData?: ShareData;
@@ -142,4 +156,25 @@ export const historyState = atom<{
 export const isGoBackState = atom({
   key: 'common/isGoBackState',
   default: false
+});
+
+export const accessUserSettingValuesState = atom<AccessUserSettingValue[]>({
+  key: 'common/accessUserSettingValuesState',
+  default: [],
+  effects: [
+    ({ onSet, setSelf }) => {
+      const accessUserSettingValues =
+        LocalStorage.get<AccessUserSettingValue[]>(ACCESS_USER_SETTING_VALUES) || [];
+
+      setSelf(accessUserSettingValues);
+
+      onSet((newValue, _, isReset) => {
+        if (isReset) {
+          LocalStorage.remove(ACCESS_USER_SETTING_VALUES);
+        } else {
+          LocalStorage.set(ACCESS_USER_SETTING_VALUES, newValue);
+        }
+      });
+    }
+  ]
 });

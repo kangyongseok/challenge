@@ -32,7 +32,6 @@ import {
   ProductDetailFooter,
   ProductDetailLegitBanner,
   ProductDetailLegitBottomSheet,
-  // ProductFixedSummary,
   ProductImages,
   ProductInfo,
   ProductMowebAppContents,
@@ -64,7 +63,6 @@ import {
 } from '@constants/product';
 import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
 import { locales } from '@constants/common';
-// import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -91,7 +89,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
       palette: { common }
     }
   } = useTheme();
-  // const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const {
@@ -177,14 +174,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading && !isFetching ? data?.product : undefined;
-
-  // const triggered = useScrollTrigger({
-  //   ref: contentRef,
-  //   additionalOffsetTop: showAppDownloadBanner
-  //     ? -(HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT)
-  //     : -HEADER_HEIGHT,
-  //   delay: 300
-  // });
 
   const handleClickWish = useCallback(
     (isWish: boolean) => {
@@ -556,6 +545,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
               prevProduct={data?.product}
               quoteTitle={data?.product.quoteTitle}
               price={data?.product.price}
+              productId={data?.product.id}
             />
           </>
         )}

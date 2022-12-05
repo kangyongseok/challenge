@@ -1,16 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
+import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import { Header, TextInput } from '@components/UI/molecules';
+import GenderYearInput from '@components/UI/organisms/GenderYearInput';
+import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { AccessUser } from '@dto/userAuth';
-import type { Gender } from '@dto/user';
+import { Gender } from '@dto/user';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import { logEvent } from '@library/amplitude';
@@ -23,10 +26,12 @@ import attrKeys from '@constants/attrKeys';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function PersonalInput() {
-  const router = useRouter();
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
+  const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const { isLoading, mutate } = useMutation(postUserAgeAndGender, {
@@ -34,25 +39,12 @@ function PersonalInput() {
       router.back();
     }
   });
-  const [genderValue, setGenderValue] = useState<Gender>('N');
+  const [genderValue, setGenderValue] = useState<Gender | null>(null);
   const [yearOfBirthValue, setYearOfBirthValue] = useState('');
-  const yearOfBirthRef = useRef<HTMLInputElement>(null);
+  // const yearOfBirthRef = useRef<HTMLInputElement>(null);
   const isShowYearOfBirthError =
     Number(yearOfBirthValue || 0) < 1900 ||
     Number(yearOfBirthValue || 0) > Number(dayjs().format('YYYY'));
-
-  const handleClickGender = (selectedGender: Gender) => () => {
-    setGenderValue(selectedGender);
-    if (yearOfBirthValue.length === 0 && yearOfBirthRef.current) {
-      yearOfBirthRef.current.focus();
-    }
-
-    logEvent(attrKeys.userInput.SELECT_ITEM, {
-      name: 'INFO',
-      title: 'GENDER',
-      att: selectedGender === 'M' ? 'MALE' : 'FEMALE'
-    });
-  };
 
   useEffect(() => {
     logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, { name: 'INFO' });
@@ -80,11 +72,30 @@ function PersonalInput() {
 
     updateAccessUserOnBraze({
       ...(accessUser as AccessUser),
-      gender: genderValue
+      gender: String(genderValue)
     });
 
     mutate({ birthday: Number(yearOfBirthValue), gender: genderValue });
   };
+
+  const handleclickGender = (e: MouseEvent<HTMLDivElement>) => {
+    const target = e.currentTarget as HTMLDivElement;
+    const selectedGender = target.dataset.gender as 'M' | 'F' | null;
+    logEvent(attrKeys.userInput.SELECT_ITEM, {
+      name: 'INFO',
+      title: 'GENDER',
+      att: selectedGender === 'M' ? 'MALE' : 'FEMALE'
+    });
+    if (genderValue === selectedGender) {
+      setGenderValue(null);
+    } else {
+      setGenderValue(selectedGender);
+    }
+  };
+
+  const handleChangeYear = debounce((value: string) => {
+    setYearOfBirthValue(String(value));
+  }, 500);
 
   return (
     <GeneralTemplate
@@ -94,7 +105,7 @@ function PersonalInput() {
           <Button
             fullWidth
             variant="contained"
-            size="large"
+            size="xlarge"
             disabled={
               isLoading || !(genderValue === 'M' || genderValue === 'F') || isShowYearOfBirthError
             }
@@ -107,7 +118,21 @@ function PersonalInput() {
       }
     >
       <Box component="section" customStyle={{ marginTop: 20 }}>
-        <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
+        <Box customStyle={{ marginBottom: 32, textAlign: 'center' }}>
+          <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
+            {accessUser?.userName || '회원'}님에 대해 알려주세요.
+          </Typography>
+          <Typography customStyle={{ color: common.ui60 }}>
+            딱 맞는 매물을 저희가 추천해드릴게요.
+          </Typography>
+        </Box>
+        <GenderYearInput
+          onClickGender={handleclickGender}
+          onChangeYear={handleChangeYear}
+          genderValue={genderValue}
+          themeType="normal"
+        />
+        {/* <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
           <Typography variant="h3" weight="bold" brandColor="black">
             {accessUser?.userName}님에 대해 알려주세요.
           </Typography>
@@ -175,7 +200,7 @@ function PersonalInput() {
               )}
             </Box>
           </Flexbox>
-        </Flexbox>
+        </Flexbox> */}
       </Box>
     </GeneralTemplate>
   );

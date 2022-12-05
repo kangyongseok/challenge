@@ -24,8 +24,8 @@ function UserAvatar({ src, dateActivated, customStyle }: UserAvatarProps) {
             : `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
         }
         alt="User Profile Img"
-        width="96px"
-        height="96px"
+        width="80px"
+        height="80px"
         disableAspectRatio
         isActive={isActive}
       />

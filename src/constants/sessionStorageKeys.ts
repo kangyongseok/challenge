@@ -6,6 +6,7 @@ const legitGuideEventProperties = 'legitGuideEventProperties';
 const hideMyPortfolioReservationAd = 'hideMyPortfolioReservationAd';
 const hideCamelSellerRecentPriceTooltip = 'hideCamelSellerRecentPriceTooltip';
 const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
+const personalProductsCache = 'personalProductsCache';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -15,7 +16,8 @@ const sessionStorageKeys = {
   legitGuideEventProperties,
   hideMyPortfolioReservationAd,
   hideCamelSellerRecentPriceTooltip,
-  hideCrazyCurationEventBannerIds
+  hideCrazyCurationEventBannerIds,
+  personalProductsCache
 };
 
 export default sessionStorageKeys;

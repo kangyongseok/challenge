@@ -231,7 +231,7 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
   }, [data]);
 
   return (
-    <Flexbox direction="vertical" gap={32} customStyle={{ padding: '32px 0' }}>
+    <Flexbox direction="vertical" gap={32} customStyle={{ padding: '32px 20px' }}>
       {data?.pages.map((page, pageIndex) => {
         if (!page) {
           return (

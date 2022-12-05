@@ -1,6 +1,6 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon } from 'mrcamel-ui';
+import { Flexbox, Icon } from 'mrcamel-ui';
 
 import type { ProductDetail } from '@dto/product';
 
@@ -12,7 +12,7 @@ import attrKeys from '@constants/attrKeys';
 import { commaNumber } from '@utils/formats';
 import { checkAgent, executedShareURl } from '@utils/common';
 
-import { dialogState, showAppDownloadBannerState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 import Header from '../Header';
@@ -28,7 +28,6 @@ function ProductDetailHeader({ data, hideRightIcon }: ProductDetailHeaderProps) 
     query: { id: redirect, isCrm }
   } = useRouter();
 
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setDialogState = useSetRecoilState(dialogState);
 
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
@@ -71,14 +70,13 @@ function ProductDetailHeader({ data, hideRightIcon }: ProductDetailHeaderProps) 
     push('/search');
   };
 
-  if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
+  if (checkAgent.isMobileApp()) {
     return (
       <Header
         showRight={!isRedirectPage && !hideRightIcon}
         onClickLeft={
           isCrm ? () => push(`/products/search/${data?.product.quoteTitle || ''}`) : undefined
         }
-        disableAppDownloadBannerVariableTop={isRedirectPage}
       />
     );
   }
@@ -86,24 +84,17 @@ function ProductDetailHeader({ data, hideRightIcon }: ProductDetailHeaderProps) 
   return (
     <Header
       customHeader={
-        <>
-          <CustomHeader
-            justifyContent="space-between"
-            alignment="center"
-            showAppDownloadBanner={showAppDownloadBanner}
-          >
-            <Icon name="LogoText_96_20" onClick={handleClickLogo} />
-            <Flexbox alignment="center">
-              <IconBox show disablePadding="right" onClick={handleClickShare}>
-                <Icon name="ShareOutlined" />
-              </IconBox>
-              <IconBox show disablePadding="right" onClick={handleClickSearch}>
-                <Icon name="SearchOutlined" />
-              </IconBox>
-            </Flexbox>
-          </CustomHeader>
-          <Box customStyle={{ height: 56 }} />
-        </>
+        <CustomHeader justifyContent="space-between" alignment="center">
+          <Icon name="LogoText_96_20" onClick={handleClickLogo} />
+          <Flexbox alignment="center">
+            <IconBox show disablePadding="right" onClick={handleClickShare}>
+              <Icon name="ShareOutlined" />
+            </IconBox>
+            <IconBox show disablePadding="right" onClick={handleClickSearch}>
+              <Icon name="SearchOutlined" />
+            </IconBox>
+          </Flexbox>
+        </CustomHeader>
       }
     />
   );

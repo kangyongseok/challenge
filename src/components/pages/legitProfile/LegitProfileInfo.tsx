@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Chip, Flexbox, Icon, Label, Typography, dark, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -14,10 +14,16 @@ import type { LegitsBrand } from '@dto/model';
 
 import { logEvent } from '@library/amplitude';
 
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { executedShareURl, getRandomNumber } from '@utils/common';
+import {
+  commaNumber,
+  executedShareURl,
+  getRandomNumber,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 
@@ -51,7 +57,9 @@ function LegitProfileInfo({
     image = '',
     imageBackground = '',
     dateActivated = '',
-    targetBrandIds = []
+    targetBrandIds = [],
+    cntReal = 0,
+    cntFake = 0
     // urlShop
   } = profile || {};
   const {
@@ -133,15 +141,29 @@ function LegitProfileInfo({
       </BackgroundImage>
       {isLoading ? (
         <>
-          <Flexbox direction="vertical" gap={20} customStyle={{ flex: 1, padding: 20 }}>
+          <Flexbox
+            direction="vertical"
+            gap={20}
+            customStyle={{ flex: 1, padding: '32px 20px 20px' }}
+          >
             <Flexbox gap={8} customStyle={{ marginBottom: 9 }}>
               <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
                 <Skeleton width="100px" height="32px" disableAspectRatio isRound />
+                <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
+                  <Flexbox gap={4} alignment="center">
+                    <Skeleton width="58px" height="18px" isRound disableAspectRatio />
+                    <Skeleton width="32px" height="16px" isRound disableAspectRatio />
+                  </Flexbox>
+                  <Flexbox gap={4} alignment="center">
+                    <Skeleton width="58px" height="18px" isRound disableAspectRatio />
+                    <Skeleton width="32px" height="16px" isRound disableAspectRatio />
+                  </Flexbox>
+                </Flexbox>
                 <Skeleton width="100%" height="40px" disableAspectRatio isRound />
               </Flexbox>
               <Skeleton
-                width="96px"
-                height="96px"
+                width="80px"
+                height="80px"
                 disableAspectRatio
                 customStyle={{ borderRadius: '50%' }}
               />
@@ -172,17 +194,78 @@ function LegitProfileInfo({
           direction="vertical"
           customStyle={{ flex: 1, padding: '32px 20px 64px', ...infoCustomStyle }}
         >
-          <Flexbox direction="vertical" gap={20} customStyle={{ flex: 1 }}>
-            <Flexbox gap={8} customStyle={{ marginBottom: 9 }}>
+          <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1 }}>
+            <Flexbox gap={8}>
               <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
                 <Typography variant="h2" weight="bold" customStyle={{ color: common.cmnW }}>
                   {name}
                 </Typography>
+                <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
+                  <Flexbox alignment="center" gap={4}>
+                    <Label
+                      variant="darked"
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      text={
+                        <Flexbox alignment="center" gap={2}>
+                          <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
+                          <Typography
+                            variant="small2"
+                            weight="medium"
+                            customStyle={{ color: common.cmnW }}
+                          >
+                            정품의견
+                          </Typography>
+                        </Flexbox>
+                      }
+                      size="xsmall"
+                    />
+                    <Typography
+                      variant="body2"
+                      weight="bold"
+                      customStyle={{ color: dark.palette.primary.light }}
+                    >
+                      {commaNumber(cntReal)}건
+                    </Typography>
+                  </Flexbox>
+                  <Flexbox alignment="center" gap={4}>
+                    <Label
+                      variant="darked"
+                      brandColor="red"
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      text={
+                        <Flexbox alignment="center" gap={2}>
+                          <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
+                          <Typography
+                            variant="small2"
+                            weight="medium"
+                            customStyle={{ color: common.cmnW }}
+                          >
+                            가품의심
+                          </Typography>
+                        </Flexbox>
+                      }
+                      size="xsmall"
+                    />
+                    <Typography
+                      variant="body2"
+                      weight="bold"
+                      customStyle={{ color: dark.palette.secondary.red.light }}
+                    >
+                      {commaNumber(cntFake)}건
+                    </Typography>
+                  </Flexbox>
+                </Flexbox>
                 <Typography
                   variant="body1"
                   customStyle={{ color: common.cmnW }}
                   dangerouslySetInnerHTML={{
-                    __html: `${title.replaceAll(/\r?\n/gi, '<br />')}`
+                    __html: `${title
+                      .replaceAll(/\r?\n/gi, '<br />')
+                      .split('<br />')
+                      .map((text) => text.replace(/^-|^- /, ''))
+                      .join('<br />')}`
                   }}
                 />
               </Flexbox>
@@ -254,6 +337,7 @@ const Wrapper = styled.section`
   flex-direction: column;
   user-select: none;
   min-height: 520px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
 
   & > div {
     z-index: 1;

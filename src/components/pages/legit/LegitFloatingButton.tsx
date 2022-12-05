@@ -51,7 +51,19 @@ function LegitFloatingButton() {
       title: attrProperty.legitTitle.FLOATING
     });
 
-    if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+    if (!checkAgent.isMobileApp()) {
+      setDialogState({
+        type: 'legitRequestOnlyInApp',
+        customStyleTitle: { minWidth: 270 },
+        secondButtonAction() {
+          handleClickAppDownload({});
+        }
+      });
+
+      return;
+    }
+
+    if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
       setDialogState({
         type: 'appUpdateNotice',
         customStyleTitle: { minWidth: 269 },
@@ -70,22 +82,14 @@ function LegitFloatingButton() {
       return;
     }
 
-    if (!checkAgent.isMobileApp()) {
+    if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
       setDialogState({
-        type: 'legitRequestOnlyInApp',
-        customStyleTitle: { minWidth: 270 },
-        secondButtonAction() {
-          handleClickAppDownload({});
+        type: 'appUpdateNotice',
+        customStyleTitle: { minWidth: 269 },
+        secondButtonAction: () => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
         }
-      });
-
-      return;
-    }
-
-    if (checkAgent.isAndroidApp() && isProduction) {
-      setDialogState({
-        type: 'legitRequestOnlyInIOS',
-        customStyleTitle: { minWidth: 270 }
       });
 
       return;

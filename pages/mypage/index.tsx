@@ -10,16 +10,16 @@ import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   MypageEtc,
+  MypageIntro,
   MypageQnA,
   MypageSetting,
   MypageUserInfo,
   MypageUserShopCard,
-  MypageWelcome,
-  NonMemberContents,
-  NonMemberWelcome
+  MypageWelcome
 } from '@components/pages/mypage';
 
 import Initializer from '@library/initializer';
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo } from '@api/user';
@@ -66,11 +66,20 @@ function MyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!accessUser) {
+      ChannelTalk.moveChannelButtonPosition(-50);
+    }
+
+    return () => {
+      ChannelTalk.resetChannelButtonPosition();
+    };
+  }, [accessUser]);
+
   if (!accessUser || !userInfo) {
     return (
       <GeneralTemplate header={<Header isFixed={false} />} footer={<BottomNavigation />}>
-        <NonMemberWelcome />
-        <NonMemberContents />
+        <MypageIntro />
       </GeneralTemplate>
     );
   }

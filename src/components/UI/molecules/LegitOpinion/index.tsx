@@ -54,7 +54,11 @@ function LegitOpinion({
         <Typography
           variant="body2"
           dangerouslySetInnerHTML={{
-            __html: `${title.replaceAll(/\r?\n/gi, '<br />')}`
+            __html: `${title
+              .replaceAll(/\r?\n/gi, '<br />')
+              .split('<br />')
+              .map((text) => text.replace(/^-|^- /, ''))
+              .join('<br />')}}`
           }}
           customStyle={{ marginTop: 4, color: common.ui60 }}
         />

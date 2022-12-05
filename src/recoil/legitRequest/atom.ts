@@ -15,7 +15,8 @@ export const legitRequestState = atom({
     categoryId: 0,
     categoryName: '',
     modelImage: '',
-    isCompleted: false
+    isCompleted: false,
+    isViewedSampleGuide: false
   }
 });
 

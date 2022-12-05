@@ -380,6 +380,18 @@
   resolved "https://registry.yarnpkg.com/@datadog/browser-core/-/browser-core-4.24.0.tgz#a089deb20eafe6628199e94c41d1e59bcedb2c5a"
   integrity sha512-HTPrt+lOu7ineq3cWT91Lcsf3ihbu0I7YssT0bdt/4vjqmCW12fW3koGGq9B5MpcBwpp7uc1rg6vZiC9GRlGEw==
 
+"@datadog/browser-core@4.25.0":
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-core/-/browser-core-4.25.0.tgz#c3236f92a86dbd0f3f359d53afefdaf192520868"
+  integrity sha512-YWyap3wSOd8+JeT24h6pvHYgDIFJKaMXh+MBGL9xUV9NHkXhLW45YNuYdjGR8CQKJzIHEmqsZv6WuuGWD80E+g==
+
+"@datadog/browser-logs@^4.25.0":
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-logs/-/browser-logs-4.25.0.tgz#6a9699e80510731e822a5bd9fd033e0d2b6bab40"
+  integrity sha512-VnG82h9h/Bb/ET59RniKSj9W0tYtgTXvbMkl0Cs8Uf+OOwbkxPjaWdNNUt5FYCEnBQTRvfLtlIb7/NMPYdQ5eA==
+  dependencies:
+    "@datadog/browser-core" "4.25.0"
+
 "@datadog/browser-rum-core@4.24.0":
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@datadog/browser-rum-core/-/browser-rum-core-4.24.0.tgz#25d5eb34b5703fa4722c85ff4a30df7d16399937"
@@ -4147,6 +4159,11 @@ loose-envify@^1.1.0, loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+lottie-web@^5.9.6:
+  version "5.9.6"
+  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.9.6.tgz#62ae68563355d3e04aa75d53dec3dd4bea0e57c9"
+  integrity sha512-JFs7KsHwflugH5qIXBpB4905yC1Sub2MZWtl/elvO/QC6qj1ApqbUZJyjzJseJUtVpgiDaXQLjBlIJGS7UUUXA==
+
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
@@ -4238,10 +4255,10 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
-mrcamel-ui@^0.1.35:
-  version "0.1.35"
-  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.35.tgz#4c67d1ebdbab6f62d08fb82fa6b9f8dd512a8f69"
-  integrity sha512-ddypSWRYMCM45wRTQ7GAYSv+Eowhic/ozXcvYHBaebgRxdUbhzvKxo3nifNPiUB8r8K0nJPSJSXvElpCJZCNVQ==
+mrcamel-ui@^0.1.39:
+  version "0.1.39"
+  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.39.tgz#61f4e505a112f3e909fd2486734290eb8a36e191"
+  integrity sha512-lgjObmmer/zrQK5k5fcTErs6/Y8wX6y3jEKTOCvL91a6x9GZTU/i3HAaKlkzm74dVMgZHswfDbwJUa+my0KL7w==
 
 ms@2.0.0:
   version "2.0.0"
@@ -4816,10 +4833,10 @@ react@^18.0.0:
   dependencies:
     loose-envify "^1.1.0"
 
-recoil@^0.7.4:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.7.4.tgz#d6508fa656d9c93e66fdf334e1f723a9e98801cf"
-  integrity sha512-sCXvQGMfSprkNU4ZRkJV4B0qFQSURJMgsICqY1952WRlg66NMwYqi6n67vhnhn0qw4zHU1gHXJuMvRDaiRNFZw==
+recoil@^0.7.6:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.7.6.tgz#75297ecd70bbfeeb72e861aa6141a86bb6dfcd5e"
+  integrity sha512-hsBEw7jFdpBCY/tu2GweiyaqHKxVj6EqF2/SfrglbKvJHhpN57SANWvPW+gE90i3Awi+A5gssOd3u+vWlT+g7g==
   dependencies:
     hamt_plus "1.0.2"
 

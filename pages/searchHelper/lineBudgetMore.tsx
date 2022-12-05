@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
@@ -23,10 +24,11 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber } from '@utils/common';
+import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,
@@ -77,6 +79,12 @@ function LineBudgetMore() {
       );
     }, 500)
   ).current;
+
+  useEffect(() => {
+    if (data?.resultUseAI) {
+      logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+    }
+  }, [data]);
 
   const lineData = useMemo(
     () =>
@@ -262,7 +270,7 @@ function LineBudgetMore() {
   }, [budget, focusedBudget, isBudgetLow]);
 
   return (
-    <>
+    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
       <SearchHelperLinearProgress
         value={progress}
         showInfoText={
@@ -272,7 +280,7 @@ function LineBudgetMore() {
         }
         productTotal={productTotal}
       />
-      <Box customStyle={{ padding: '0 20px' }}>
+      <Box component="section" customStyle={{ padding: '0 20px' }}>
         <Flexbox gap={8} customStyle={{ marginTop: 40, flexWrap: 'wrap' }}>
           {historyLabels.map((item) => (
             <Label key={item} text={item} variant="ghost" brandColor="primary" size="small" />
@@ -373,7 +381,7 @@ function LineBudgetMore() {
         onClose={() => setOpenBottomSheet(null)}
         searchOptions={data?.searchOptions}
       />
-    </>
+    </Box>
   );
 }
 

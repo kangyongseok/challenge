@@ -40,6 +40,23 @@ function LegitResultBottomCtaButton() {
   );
 
   const handleClick = () => {
+    if ((productResult || {}).postType === 2) {
+      logEvent(attrKeys.legitResult.CLICK_LEGIT_INFO, {
+        name: attrProperty.name.AUTHORIZED
+      });
+
+      router.push({
+        pathname: '/legit/request',
+        query: {
+          id: productId
+        }
+      });
+      return;
+    }
+    router.push(`/products/${id}`);
+  };
+
+  const handleClickShare = () => {
     logEvent(attrKeys.legit.CLICK_SHARE, {
       name: attrProperty.legitName.LEGIT_INFO,
       title:
@@ -103,7 +120,7 @@ function LegitResultBottomCtaButton() {
     });
   };
 
-  if (commentWriterFocused || (productResult || {}).postType === 2) return null;
+  if (commentWriterFocused || ((productResult || {}).postType === 2 && status !== 30)) return null;
 
   return (
     <Box component="nav" customStyle={{ minHeight: 89 }}>
@@ -112,7 +129,7 @@ function LegitResultBottomCtaButton() {
           startIcon={<Icon name="ShareOutlined" />}
           size="large"
           iconOnly
-          onClick={handleClick}
+          onClick={handleClickShare}
           customStyle={{
             backgroundColor: status === 20 ? 'transparent' : common.uiWhite,
             borderColor: common.ui95
@@ -123,9 +140,9 @@ function LegitResultBottomCtaButton() {
           variant="contained"
           brandColor={status === 20 ? 'primary' : 'black'}
           size="large"
-          onClick={() => router.push(`/products/${id}`)}
+          onClick={handleClick}
         >
-          해당 매물로 돌아가기
+          {(productResult || {}).postType === 2 ? '해당 신청건 바로가기' : '해당 매물로 돌아가기'}
         </Button>
       </CtaButtonWrapper>
     </Box>

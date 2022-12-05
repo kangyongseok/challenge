@@ -98,7 +98,7 @@ function NoticeNotificationPanel() {
   };
 
   return (
-    <Flexbox customStyle={{ padding: '32px 0' }} direction="vertical">
+    <Flexbox customStyle={{ padding: '32px 20px' }} direction="vertical">
       {data?.content.map((notice, i) => (
         <>
           <Flexbox

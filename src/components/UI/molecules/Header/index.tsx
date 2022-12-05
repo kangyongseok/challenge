@@ -17,7 +17,6 @@ import {
   productsKeywordInduceTriggerState
 } from '@recoil/productsKeyword';
 import { homeSelectedTabStateFamily } from '@recoil/home';
-import { showAppDownloadBannerState } from '@recoil/common';
 
 import { IconBox, StyledHeader, Title, Wrapper } from './Header.styles';
 
@@ -35,7 +34,6 @@ interface HeaderProps {
   onClickRight?: (e?: MouseEvent<HTMLDivElement>) => void;
   disableProductsKeywordClickInterceptor?: boolean;
   customHeader?: JSX.Element;
-  disableAppDownloadBannerVariableTop?: boolean;
   leftIconCustomStyle?: CustomStyle;
   titleCustomStyle?: CustomStyle;
   rightIconCustomStyle?: CustomStyle;
@@ -56,7 +54,6 @@ function Header({
   onClickTitle,
   onClickRight,
   disableProductsKeywordClickInterceptor = true,
-  disableAppDownloadBannerVariableTop = false,
   leftIconCustomStyle,
   titleCustomStyle,
   rightIconCustomStyle,
@@ -67,7 +64,6 @@ function Header({
   const router = useRouter();
   const { isCrm } = router.query;
   const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
@@ -238,28 +234,17 @@ function Header({
   //   router.push('/wishes');
   // };
 
-  if (customHeader) {
-    return (
-      <StyledHeader minHeight={customHeight || HEADER_HEIGHT} isTransparent={isTransparent}>
-        {customHeader}
-      </StyledHeader>
-    );
-  }
-
   return (
     <StyledHeader
       minHeight={customHeight || HEADER_HEIGHT}
       isTransparent={isTransparent}
       css={{
-        backgroundColor: (customStyle || {}).backgroundColor
+        backgroundColor: (customStyle || {}).backgroundColor,
+        ...customStyle
       }}
     >
       {customHeader || (
-        <Wrapper
-          isFixed={isFixed}
-          showAppDownloadBanner={showAppDownloadBanner && !disableAppDownloadBannerVariableTop}
-          css={customStyle}
-        >
+        <Wrapper isFixed={isFixed}>
           <Flexbox
             alignment="center"
             customStyle={{

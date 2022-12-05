@@ -25,10 +25,11 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
@@ -39,13 +40,7 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
     <>
       <ProductsPageHead variant="search" params={params} />
       <GeneralTemplate
-        header={
-          <Box>
-            <ProductsHeader variant="search" />
-            <ProductsRelatedKeywords />
-            <ProductsFilter variant="search" showDynamicFilter />
-          </Box>
-        }
+        header={<ProductsHeader variant="search" />}
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -54,6 +49,10 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
         }
         disablePadding
       >
+        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+          <ProductsRelatedKeywords />
+          <ProductsFilter variant="search" showDynamicFilter />
+        </Box>
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" name={attrProperty.productName.SEARCH} />

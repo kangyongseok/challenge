@@ -502,5 +502,24 @@ export function getPathNameByAsPath(asPath: string) {
   return '/';
 }
 
+export function isExtendedLayoutIOSVersion() {
+  return checkAgent.isIOSApp() && getAppVersion() >= 1150;
+}
+
 export const isProduction = process.env.NEXT_JS_API_BASE_URL === 'https://mrcamel.co.kr/api';
 // export const isProduction = process.env.NODE_ENV === 'development';
+
+/**
+ *
+ * @param arr origin 객체가 갖고있는 키 배열
+ * @param origin 원본객체
+ * @returns origin 객체에서 value 값이 있는 객체만 리턴
+ */
+export const getOnlyObjectValue = (arr: string[], origin: { [propsName: string]: string }) => {
+  const obj: { [propsName: string]: string } = {};
+  arr.forEach((el) => {
+    obj[el] = origin[el];
+  });
+
+  return obj;
+};

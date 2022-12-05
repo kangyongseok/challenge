@@ -87,7 +87,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
 
   if (variant === 'search') {
     return (
-      <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT }}>
+      <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT, position: 'relative' }}>
         <SearchBar
           readOnly
           variant="innerOutlined"
@@ -112,26 +112,28 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
   }
 
   return (
-    <Header
-      isFixed
-      // 검색한 목록 자동으로 저장한 경우 검색 목록 저장 유도 팝업 노출하지 않음
-      disableProductsKeywordClickInterceptor={
-        !(
-          ['brands', 'categories', 'search'].includes(variant) && !productsKeywordAutoSaveTrigger
-        ) || false
-      }
-    >
-      <Flexbox gap={6} alignment="center">
-        {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
-        <Typography
-          variant="h3"
-          weight="bold"
-          customStyle={{ textAlign: 'center', whiteSpace: 'nowrap' }}
-        >
-          {title}
-        </Typography>
-      </Flexbox>
-    </Header>
+    <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT, position: 'relative' }}>
+      <Header
+        isFixed
+        // 검색한 목록 자동으로 저장한 경우 검색 목록 저장 유도 팝업 노출하지 않음
+        disableProductsKeywordClickInterceptor={
+          !(
+            ['brands', 'categories', 'search'].includes(variant) && !productsKeywordAutoSaveTrigger
+          ) || false
+        }
+      >
+        <Flexbox gap={6} alignment="center">
+          {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
+          <Typography
+            variant="h3"
+            weight="bold"
+            customStyle={{ textAlign: 'center', whiteSpace: 'nowrap' }}
+          >
+            {title}
+          </Typography>
+        </Flexbox>
+      </Header>
+    </Box>
   );
 }
 

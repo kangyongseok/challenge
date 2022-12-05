@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticPropsContext } from 'next';
-import { Box, Toast } from 'mrcamel-ui';
+import type { GetStaticPropsContext } from 'next';
+import { Toast } from 'mrcamel-ui';
 
-import { BottomNavigation, Header, TopButton } from '@components/UI/molecules';
+import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import type { OrderOptionKeys } from '@components/pages/wishes/WishesFilter';
 import {
   HistoryPanel,
   WishesBottomCtaButton,
@@ -15,22 +17,41 @@ import {
   WishesTabs
 } from '@components/pages/wishes';
 
-import ChannelTalk from '@library/channelTalk';
+import { CategoryValue } from '@dto/category';
+
 import { logEvent } from '@library/amplitude';
 
 import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { deviceIdState } from '@recoil/common';
+
 function WishesPage() {
   const router = useRouter();
   const {
     tab = 'wish',
+    order = 'updatedDesc',
     hiddenTab
   }: {
     tab?: 'wish' | 'history';
+    order?: OrderOptionKeys;
     hiddenTab?: 'legit';
   } = router.query;
 
+  const deviceId = useRecoilValue(deviceIdState);
+
+  const categoryWishesParam = useMemo(
+    () => ({
+      size: 200,
+      sort: [order],
+      isLegitProduct: hiddenTab === 'legit',
+      deviceId
+    }),
+    [deviceId, hiddenTab, order]
+  );
+
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [initialCategories, setInitialCategories] = useState<CategoryValue[]>([]);
   const [[showToast, toastMessage], setToast] = useState<[boolean, ReactElement | null]>([
     false,
     null
@@ -43,25 +64,30 @@ function WishesPage() {
   useEffect(() => {
     if (hiddenTab === 'legit') {
       logEvent(attrKeys.wishes.VIEW_WISHLEGIT);
-      ChannelTalk.moveChannelButtonPosition(-30);
     }
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
   }, [hiddenTab]);
 
   return (
     <>
       <GeneralTemplate
-        header={<Header />}
+        header={
+          <>
+            <Header />
+            <WishesTabs />
+          </>
+        }
         footer={hiddenTab === 'legit' ? <WishesBottomCtaButton /> : <BottomNavigation />}
       >
-        <WishesTabs />
-        <Box customStyle={{ marginTop: 45, minHeight: 'calc(100vh - 220px)' }}>
-          {tab === 'wish' && <WishesPanel />}
-          {tab === 'history' && <HistoryPanel />}
-        </Box>
+        {tab === 'wish' && (
+          <WishesPanel
+            categoryWishesParam={categoryWishesParam}
+            selectedCategoryIds={selectedCategoryIds}
+            setSelectedCategoryIds={setSelectedCategoryIds}
+            initialCategories={initialCategories}
+            setInitialCategories={setInitialCategories}
+          />
+        )}
+        {tab === 'history' && <HistoryPanel />}
       </GeneralTemplate>
       <Toast
         open={toastMessage !== null && showToast}
@@ -71,7 +97,6 @@ function WishesPage() {
       >
         {toastMessage}
       </Toast>
-      <TopButton show name="WISH_LIST" customStyle={{ bottom: hiddenTab === 'legit' ? 105 : 80 }} />
     </>
   );
 }

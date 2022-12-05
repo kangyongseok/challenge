@@ -1,4 +1,5 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 
 import throttle from 'lodash-es/throttle';
 
@@ -13,7 +14,7 @@ export default function useScrollTrigger<T extends HTMLElement>({
   additionalOffsetTop = 0,
   delay = 50
 }: UseScrollTriggerProps<T>) {
-  const [triggered, setTriggered] = useState<boolean>(false);
+  const [triggered, setTriggered] = useState(false);
   const triggeredRef = useRef(false);
   const triggeredTopRef = useRef(0);
 

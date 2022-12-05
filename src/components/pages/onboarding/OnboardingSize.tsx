@@ -1,9 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-
-import GeneralTemplate from '@components/templates/GeneralTemplate';
+import { Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -14,6 +13,9 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
+import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
 interface OnboardingSizeProps {
@@ -21,22 +23,35 @@ interface OnboardingSizeProps {
 }
 
 function OnboardingSize({ onClick }: OnboardingSizeProps) {
-  const {
-    theme: {
-      palette: { primary, common }
-    }
-  } = useTheme();
-  const { data: userInfo, refetch } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const { mutateAsync } = useMutation(postUserSize);
+  const { data: accessUser } = useQueryAccessUser();
 
   const [selectedTopList, setSelectedTopList] = useState<number[]>([]);
   const [selectedBottomList, setSelectedBottomList] = useState<number[]>([]);
   const [selectedShoesList, setSelectedShoesList] = useState<number[]>([]);
+
   const { info: { value: { gender = '' } = {} } = {} } = userInfo || {};
   const defaultSize =
     USER_DEFAULT_SIZE[(gender === 'F' ? 'female' : 'male') as keyof typeof USER_DEFAULT_SIZE];
   const hasSize =
-    selectedTopList.length > 0 || selectedBottomList.length > 0 || selectedShoesList.length > 0;
+    selectedTopList?.length > 0 || selectedBottomList?.length > 0 || selectedShoesList?.length > 0;
+
+  useEffect(() => {
+    logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {
+      name: attrProperty.name.SIZE
+    });
+  }, []);
+
+  useEffect(() => {
+    setSelectedBottomList(
+      userInfo?.size.value.bottoms.map((bottom) => bottom.categorySizeId) as number[]
+    );
+    setSelectedTopList(userInfo?.size.value.tops.map((tops) => tops.categorySizeId) as number[]);
+    setSelectedShoesList(
+      userInfo?.size.value.shoes.map((shoes) => shoes.categorySizeId) as number[]
+    );
+  }, [userInfo]);
 
   const handleClickSizeLabel =
     ({
@@ -106,6 +121,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
         att: 'SKIP'
       });
     }
+
     if (selectedTopList.length)
       mutates.push(mutateAsync({ sizeType: 'top', categorySizeIds: selectedTopList }));
 
@@ -118,128 +134,128 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
     if (mutates.length > 0) {
       Promise.all(mutates).then(() => {
         onClick();
-        refetch();
       });
     } else {
       onClick();
     }
-  }, [
-    hasSize,
-    mutateAsync,
-    onClick,
-    refetch,
-    selectedBottomList,
-    selectedShoesList,
-    selectedTopList
-  ]);
+  }, [hasSize, mutateAsync, onClick, selectedBottomList, selectedShoesList, selectedTopList]);
 
   return (
-    <>
-      <GeneralTemplate hideAppDownloadBanner>
-        <Typography
-          variant="h2"
-          weight="bold"
-          customStyle={{ padding: '48px 0px 40px', '& > span': { color: primary.main } }}
-        >
-          <span>사이즈 정보</span>를 알려주시면
-          <br />
-          맞춤 추천해드릴게요
-        </Typography>
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite }}>
+        <OnboardingStep />
+        <Box customStyle={{ marginTop: 50 }}>
+          <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
+            사이즈를 알려주세요!
+          </Typography>
+          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
+            {accessUser?.userName || '회원'}님 사이즈에 맞는 매물만 보여드릴게요
+          </Typography>
+        </Box>
         {gender.length > 0 && userInfo && (
           <Box customStyle={{ flex: 1 }}>
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
-              중복 선택 가능
-            </Typography>
-            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 24 }}>
+            <Typography
+              variant="h4"
+              weight="bold"
+              customStyle={{ marginTop: 24, color: dark.palette.common.ui60 }}
+            >
               👕 상의
             </Typography>
-            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
+            <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: 7 }}>
               {defaultSize.top.map(({ categorySizeId, viewSize }) => (
-                <Chip
+                <ChipStyle
                   key={`top-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant={selectedTopList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'}
-                  brandColor={selectedTopList.includes(categorySizeId) ? 'primary' : 'gray'}
+                  variant="contained"
                   onClick={handleClickSizeLabel({
                     type: 'top',
                     selectedValue: categorySizeId,
                     viewSize
                   })}
-                  customStyle={{
-                    padding: '10px 16px',
-                    height: 41
-                  }}
+                  isSelect={selectedTopList?.includes(categorySizeId)}
                 >
                   {viewSize}
-                </Chip>
+                </ChipStyle>
               ))}
             </Flexbox>
-            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
+            <Typography
+              variant="h4"
+              weight="bold"
+              customStyle={{ marginTop: 32, color: dark.palette.common.ui60 }}
+            >
               👖 하의
             </Typography>
             <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
               {defaultSize.bottom.map(({ categorySizeId, viewSize }) => (
-                <Chip
+                <ChipStyle
                   key={`bottom-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant={
-                    selectedBottomList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
-                  }
-                  brandColor={selectedBottomList.includes(categorySizeId) ? 'primary' : 'gray'}
+                  variant="contained"
                   onClick={handleClickSizeLabel({
                     type: 'bottom',
                     selectedValue: categorySizeId,
                     viewSize
                   })}
-                  customStyle={{
-                    padding: '10px 16px',
-                    height: 41
-                  }}
+                  isSelect={selectedBottomList?.includes(categorySizeId)}
                 >
                   {viewSize}
-                </Chip>
+                </ChipStyle>
               ))}
             </Flexbox>
-            <Typography variant="h4" weight="bold" customStyle={{ marginTop: 32 }}>
+            <Typography
+              variant="h4"
+              weight="bold"
+              customStyle={{ marginTop: 32, color: dark.palette.common.ui60 }}
+            >
               👟 신발
             </Typography>
             <Flexbox
-              customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px', paddingBottom: 32 }}
+              customStyle={{
+                flexWrap: 'wrap',
+                marginTop: 8,
+                gap: '8px 6px',
+                paddingBottom: 32
+              }}
             >
               {defaultSize.shoes.map(({ categorySizeId, viewSize }) => (
-                <Chip
+                <ChipStyle
                   key={`shoes-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant={
-                    selectedShoesList.includes(categorySizeId) ? 'outlinedGhost' : 'outlined'
-                  }
-                  brandColor={selectedShoesList.includes(categorySizeId) ? 'primary' : 'gray'}
+                  variant="contained"
                   onClick={handleClickSizeLabel({
                     type: 'shoes',
                     selectedValue: categorySizeId,
                     viewSize
                   })}
-                  customStyle={{
-                    padding: '10px 16px',
-                    height: 41
-                  }}
+                  isSelect={selectedShoesList?.includes(categorySizeId)}
                 >
                   {viewSize}
-                </Chip>
+                </ChipStyle>
               ))}
             </Flexbox>
           </Box>
         )}
-      </GeneralTemplate>
+      </Box>
       <OnboardingBottomCTA
         variant={hasSize ? 'contained' : 'outlined'}
         onClick={handleClickCTAButton}
-        showBorder
+        disabled={
+          !(selectedBottomList?.length && selectedShoesList?.length && selectedTopList?.length)
+        }
       >
-        {hasSize ? '시작하기' : '건너뛰기'}
+        다음
       </OnboardingBottomCTA>
-    </>
+    </ThemeProvider>
   );
 }
+
+const ChipStyle = styled(Chip)<{ isSelect: boolean }>`
+  width: 72px;
+  height: 41px;
+  border-radius: 36px;
+  background: ${({ isSelect }) =>
+    isSelect ? dark.palette.common.uiBlack : dark.palette.common.ui90};
+  color: ${({ isSelect }) => (isSelect ? dark.palette.common.ui98 : dark.palette.common.uiBlack)};
+`;
 
 export default OnboardingSize;

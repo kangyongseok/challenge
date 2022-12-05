@@ -67,7 +67,7 @@ function AddressInput() {
           <Button
             fullWidth
             variant="contained"
-            size="large"
+            size="xlarge"
             disabled={!isSubmittable || isLoading || searchMode}
             brandColor="primary"
             onClick={handleClickSave}

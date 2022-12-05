@@ -138,7 +138,7 @@ function LegitStatusCard({
       <ImageBox>
         <Image
           variant="backgroundImage"
-          src={imageMain || imageThumbnail}
+          src={imageThumbnail || imageMain}
           alt="Product Legit Img"
           disableAspectRatio
           customStyle={{ borderRadius: round['8'] }}

@@ -1,44 +1,27 @@
 import { useEffect, useState } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
+import { LegitPhotoGuideCard } from '@components/UI/molecules';
+
+import { logEvent } from '@library/amplitude';
+
 import { fetchProductLegit } from '@api/productLegit';
+import { fetchPhotoGuide } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import authInfoIcon from '@constants/authInfoIcon';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
+import { copyToClipboard } from '@utils/common';
+
+import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-const guidCardData = [
-  {
-    text: '내부 브랜드 각인',
-    Icon: authInfoIcon.ImportantIconBrand
-  },
-  {
-    text: '내부 숫자,영문 각인',
-    Icon: authInfoIcon.ImportantIconEngrave
-  },
-  {
-    text: '프린팅 디테일',
-    Icon: authInfoIcon.ImportantIconDetail
-  },
-  {
-    text: '영수증 및 개런티카드',
-    Icon: authInfoIcon.ImportantIconReceipt
-  },
-  {
-    text: '지퍼 앞뒷면',
-    Icon: authInfoIcon.ImportantIconZipper
-  },
-  {
-    text: '금속 부속품',
-    Icon: authInfoIcon.ImportantIconPart
-  }
-];
 
 function LegitStatusFailContents() {
   const router = useRouter();
@@ -53,21 +36,80 @@ function LegitStatusFailContents() {
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const [isAuthUser, setIsAuthUser] = useState(false);
+  const setToastState = useSetRecoilState(toastState);
 
-  const { data: { status = 0, userId, legitOpinions = [], canModified } = {} } = useQuery(
-    queryKeys.productLegits.legit(productId),
-    () => fetchProductLegit(productId),
+  const [isAuthUser, setIsAuthUser] = useState(false);
+  const [description, setDescription] = useState('');
+
+  const {
+    data: {
+      status = 0,
+      userId,
+      legitOpinions = [],
+      canModified,
+      productResult: { brand: { id: brandId = 0 } = {}, category: { id: categoryId = 0 } = {} } = {}
+    } = {},
+    isSuccess
+  } = useQuery(queryKeys.productLegits.legit(productId), () => fetchProductLegit(productId), {
+    enabled: !!router.query.id
+  });
+
+  const { data: { photoGuideDetails = [] } = {} } = useQuery(
+    queryKeys.commons.photoGuide({
+      type: 1,
+      brandId,
+      categoryId
+    }),
+    () =>
+      fetchPhotoGuide({
+        type: 1,
+        brandId,
+        categoryId
+      }),
     {
-      enabled: !!router.query.id
+      enabled: isSuccess && !!brandId && !!categoryId
     }
   );
+
+  const handleClick = () => {
+    logEvent(attrKeys.legit.CLICK_LEGIT_COPY, {
+      name: attrProperty.name.PRE_CONFIRM_EDIT
+    });
+    setToastState({
+      type: 'legitStatus',
+      status: 'successCopy',
+      theme: 'dark'
+    });
+    copyToClipboard(description);
+  };
+
+  const handleClickPhotoGuideDetail = (id: number) => () => {
+    logEvent(attrKeys.legit.CLICK_UPLOAD_GUIDE, {
+      name: attrProperty.name.PRE_CONFIRM_EDIT,
+      title: 'CRAWLING'
+    });
+
+    router.push({
+      pathname: '/legit/guide/sample',
+      query: {
+        brandId,
+        categoryId,
+        scrollToElementId: id
+      }
+    });
+  };
 
   useEffect(() => {
     if ((accessUser || {}).userId === userId) {
       setIsAuthUser(true);
     }
   }, [userId, accessUser]);
+
+  useEffect(() => {
+    if (!isEmpty(legitOpinions) && legitOpinions[0]) {
+      setDescription(legitOpinions[0].description);
+    }
+  }, [legitOpinions]);
 
   if (status !== 11 && status !== 12) return null;
 
@@ -83,10 +125,12 @@ function LegitStatusFailContents() {
         (status === 12 && canModified && !isAuthUser)) && (
         <Typography weight="bold" variant="h3">
           판매자의 현재 사진들로는
-          <Flexbox alignment="center" justifyContent="center">
-            <Typography brandColor="red" weight="bold" variant="h3">
-              사진감정이 불가
-            </Typography>
+          <Flexbox
+            alignment="center"
+            justifyContent="center"
+            customStyle={{ '& > strong': { color: secondary.red.light } }}
+          >
+            <strong>사진감정이 불가</strong>
             해요
           </Flexbox>
         </Typography>
@@ -114,28 +158,51 @@ function LegitStatusFailContents() {
           <Typography
             customStyle={{ marginTop: 8 }}
             dangerouslySetInnerHTML={{
-              __html: !isEmpty(legitOpinions)
-                ? legitOpinions[0].description.replaceAll(/\r?\n/gi, '<br />') || ''
-                : ''
+              __html: description.replaceAll(/\r?\n/gi, '<br />')
             }}
           />
+          {(status === 11 ||
+            (status === 12 && !canModified) ||
+            (status === 12 && canModified && !isAuthUser)) && (
+            <Button
+              variant="contained"
+              size="medium"
+              brandColor="black"
+              fullWidth
+              onClick={handleClick}
+              customStyle={{ marginTop: 8 }}
+            >
+              문구 복사하기
+            </Button>
+          )}
         </OpinionCard>
       )}
-      {(status === 11 ||
-        (status === 12 && !canModified) ||
-        (status === 12 && canModified && !isAuthUser)) && (
-        <Box>
-          <Typography customStyle={{ marginBottom: 11 }}>사진감정시 필요사진</Typography>
-          <GuidImage alignment="center" justifyContent="center">
-            {guidCardData.map(({ text, Icon }) => (
-              <GuidCard key={`guid-card-${text}`}>
-                <Icon />
-                <Typography variant="small2">{text}</Typography>
-              </GuidCard>
-            ))}
-          </GuidImage>
-        </Box>
-      )}
+      {(status === 11 || status === 12) &&
+        photoGuideDetails.filter(({ imageSample }) => imageSample).length > 0 && (
+          <Box customStyle={{ margin: '0 20px' }}>
+            <Typography
+              variant="h4"
+              weight="medium"
+              customStyle={{ textAlign: 'left', marginBottom: 12 }}
+            >
+              필요사진 가이드라인
+            </Typography>
+            <Grid container columnGap={8} rowGap={8}>
+              {photoGuideDetails
+                .filter(({ imageSample }) => imageSample)
+                .map((photoGuideDetail) => (
+                  <Grid
+                    key={`legit-status-photo-guide-detail-${photoGuideDetail.id}`}
+                    item
+                    xs={3}
+                    onClick={handleClickPhotoGuideDetail(photoGuideDetail.id)}
+                  >
+                    <LegitPhotoGuideCard photoGuideDetail={photoGuideDetail} isDark hideLabel />
+                  </Grid>
+                ))}
+            </Grid>
+          </Box>
+        )}
     </Box>
   );
 }
@@ -152,27 +219,6 @@ const OpinionCard = styled.div`
   padding: 20px;
   margin: 24px 0 32px;
   text-align: left;
-`;
-
-const GuidImage = styled(Flexbox)`
-  flex-wrap: wrap;
-`;
-
-const GuidCard = styled.div`
-  min-width: 96px;
-  height: 96px;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-left: -1px;
-  margin-top: -1px;
 `;
 
 export default LegitStatusFailContents;

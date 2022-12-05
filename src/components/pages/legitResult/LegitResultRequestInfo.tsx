@@ -16,6 +16,7 @@ import LegitPhotoGuideCard from '@components/UI/molecules/LegitPhotoGuideCard';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 
 function LegitResultRequestInfo() {
   const router = useRouter();
@@ -111,12 +112,19 @@ function LegitResultRequestInfo() {
           images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
           label={<Label variant="ghost" brandColor="black" text={labelText} />}
           syncIndex={syncIndex}
+          name={attrProperty.name.LEGIT_INFO}
         />
       </>
     );
   }
 
-  return <LegitStatusCardHolder productLegit={productLegit} simplify={status === 20} />;
+  return (
+    <LegitStatusCardHolder
+      productLegit={productLegit}
+      simplify={status === 20}
+      name={attrProperty.name.LEGIT_INFO}
+    />
+  );
 }
 
 export default LegitResultRequestInfo;

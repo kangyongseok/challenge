@@ -6,9 +6,14 @@ import Image from 'next/image';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import GeneralTemplate from '@components/templates/GeneralTemplate';
+
 import { logEvent } from '@library/amplitude';
 
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { searchParamsState, selectedSearchOptionsState } from '@recoil/searchHelper';
 import { PortalConsumer } from '@provider/PortalProvider';
@@ -78,21 +83,33 @@ function Onboarding() {
 
   return (
     <>
-      <Box customStyle={{ padding: '48px 20px 116px' }}>
-        <Typography
-          variant="h2"
-          weight="bold"
-          customStyle={{ '& > span': { color: primary.main } }}
+      <GeneralTemplate disablePadding hideAppDownloadBanner>
+        <Box
+          customStyle={{
+            padding: `${
+              (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 48
+            }px 20px 116px`
+          }}
         >
-          득템까지 책임질 <span>검색집사</span>
-        </Typography>
-        <Typography variant="h4" weight="medium" customStyle={{ color: common.ui60, marginTop: 4 }}>
-          알려주신 조건에 맞게 집사처럼 꿀매물
-          <br />
-          대신 찾아다 드릴거에요!
-        </Typography>
-      </Box>
-      <Image src="/images/searchHelperWelcome.png" width={375} height={360} layout="responsive" />
+          <Typography
+            variant="h2"
+            weight="bold"
+            customStyle={{ '& > span': { color: primary.main } }}
+          >
+            득템까지 책임질 <span>검색집사</span>
+          </Typography>
+          <Typography
+            variant="h4"
+            weight="medium"
+            customStyle={{ color: common.ui60, marginTop: 4 }}
+          >
+            알려주신 조건에 맞게 집사처럼 꿀매물
+            <br />
+            대신 찾아다 드릴거에요!
+          </Typography>
+        </Box>
+        <Image src="/images/searchHelperWelcome.png" width={375} height={360} layout="responsive" />
+      </GeneralTemplate>
       <PortalConsumer>
         <ButtonGroups>
           <Button

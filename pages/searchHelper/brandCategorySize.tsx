@@ -25,10 +25,11 @@ import { fetchSearch } from '@api/product';
 import { fetchBrandsSuggest } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import { PARENT_CATEGORY_NEED_SIZE } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber } from '@utils/common';
+import { checkAgent, commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   allSelectedSearchOptionsSelector,
@@ -75,6 +76,12 @@ function BrandCategorySize() {
   const debounceBrandsSuggestParams = useRef(
     debounce((keyword: string) => setBrandsSuggestParams({ keyword }), 500)
   ).current;
+
+  useEffect(() => {
+    if (data?.resultUseAI) {
+      logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+    }
+  }, [data]);
 
   const sizeData = useMemo(
     () =>
@@ -359,7 +366,14 @@ function BrandCategorySize() {
   }, []);
 
   return (
-    <Flexbox direction="vertical" customStyle={{ height: '100vh' }}>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      customStyle={{
+        paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0,
+        height: '100%'
+      }}
+    >
       <SearchHelperLinearProgress
         value={
           3 +

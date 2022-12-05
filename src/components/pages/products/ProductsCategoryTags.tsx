@@ -9,13 +9,18 @@ import { Gap, Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
+  CATEGORY_TAGS_HEIGHT,
+  HEADER_HEIGHT
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCenterScrollLeft } from '@utils/scroll';
 import { convertSearchParamsByQuery } from '@utils/products';
-import { convertStringToArray } from '@utils/common';
+import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import { searchOptionsStateFamily } from '@recoil/productsFilter';
@@ -309,7 +314,9 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
           position: 'fixed',
           marginTop: CATEGORY_TAGS_HEIGHT,
           zIndex: zIndex.header,
-          top: showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT
+          top: showAppDownloadBanner
+            ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
+            : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
         }}
       />
     </Box>
@@ -325,7 +332,9 @@ const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   width: 100%;
   overflow-x: auto;
   top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px;
+    showAppDownloadBanner
+      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
+      : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
 `;
 
 const CategoryTags = styled.div`

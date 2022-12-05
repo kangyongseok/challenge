@@ -6,6 +6,10 @@ import { Divider, ProductDetailHeader } from '@components/UI/molecules';
 import Skeleton from '@components/UI/atoms/Skeleton';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 function ProductDetail() {
   const router = useRouter();
   const { redirect } = router.query;
@@ -33,7 +37,12 @@ function ProductDetail() {
       }
       hideAppDownloadBanner={isRedirectPage}
     >
-      <Box customStyle={{ margin: '0 -20px' }}>
+      <Box
+        customStyle={{
+          margin: '0 -20px',
+          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+        }}
+      >
         <Skeleton />
       </Box>
       <Box customStyle={{ marginTop: 20 }}>

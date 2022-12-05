@@ -39,7 +39,8 @@ import attrKeys from '@constants/attrKeys';
 import {
   convertSearchParamsByQuery,
   getEventPropertySortValue,
-  getEventPropertyViewType
+  getEventPropertyViewType,
+  groupingProducts
 } from '@utils/products';
 import { getUtmParams } from '@utils/common';
 
@@ -64,20 +65,6 @@ import { ProductsKeywordAlert } from '.';
 const cache = new CellMeasurerCache({
   fixedWidth: true
 });
-
-function groupingProducts(products: Product[]) {
-  const productsLength = products.length;
-  const newProducts = products.map((product, index) => ({ ...product, index }));
-  const newGroupingProducts = [];
-  const newGroupingProductsLength =
-    Math.floor(productsLength / 2) + (Math.floor(productsLength % 2) > 0 ? 1 : 0);
-
-  for (let i = 0; i <= newGroupingProductsLength; i += 1) {
-    newGroupingProducts.push(newProducts.splice(0, 2));
-  }
-
-  return newGroupingProducts.filter((newProduct) => newProduct.length);
-}
 
 interface ProductsInfiniteGridProps {
   variant: ProductsVariant;
@@ -193,6 +180,14 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       staleTime: 5 * 60 * 1000
     }
   );
+
+  useEffect(() => {
+    pages.forEach((page) => {
+      if (page.resultUseAI) {
+        logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+      }
+    });
+  }, [pages]);
 
   const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
 

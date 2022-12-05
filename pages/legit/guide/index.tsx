@@ -13,7 +13,6 @@ import {
   LegitGuideUploadPanel
 } from '@components/pages/legitGuide';
 
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
@@ -31,22 +30,6 @@ function LegitGuide() {
 
     return () => {
       document.body.removeAttribute('class');
-    };
-  }, []);
-
-  useEffect(() => {
-    ChannelTalk.moveChannelButtonPosition(-30);
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
-  }, []);
-
-  useEffect(() => {
-    ChannelTalk.moveChannelButtonPosition(-30);
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
     };
   }, []);
 

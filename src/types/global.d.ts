@@ -25,6 +25,7 @@ export declare global {
     chrome: any;
     getAuthPhotoLibrary: any;
     getAuthCamera: any;
+    opera: any;
   }
 
   namespace NodeJS {

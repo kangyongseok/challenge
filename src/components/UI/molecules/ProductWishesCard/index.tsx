@@ -242,7 +242,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
               alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
               disableLazyLoad={false}
               disableSkeletonRender={false}
-              customStyle={{ borderRadius: 8 }}
+              isRound
             />
             <Avatar
               width={20}

@@ -15,7 +15,15 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { checkAgent, getAppVersion, handleClickAppDownload, isProduction } from '@utils/common';
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+
+import {
+  checkAgent,
+  getAppVersion,
+  handleClickAppDownload,
+  isExtendedLayoutIOSVersion,
+  isProduction
+} from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
 
@@ -67,7 +75,17 @@ function LegitProfileEditInfo({
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1143 && isProduction) {
+      if (!checkAgent.isMobileApp()) {
+        setToastState({
+          type: 'legitProfile',
+          status: 'disableUpload',
+          action() {
+            handleClickAppDownload({});
+          }
+        });
+      }
+
+      if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -86,22 +104,15 @@ function LegitProfileEditInfo({
         return;
       }
 
-      if (!checkAgent.isMobileApp()) {
-        setToastState({
-          type: 'legitProfile',
-          status: 'disableUpload',
-          action() {
-            handleClickAppDownload({});
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
+        setDialogState({
+          type: 'appUpdateNotice',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (window.webview && window.webview.callExecuteApp)
+              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
           }
         });
-      }
-
-      if (checkAgent.isAndroidApp() && isProduction) {
-        setDialogState({
-          type: 'legitRequestOnlyInIOS',
-          customStyleTitle: { minWidth: 270 }
-        });
-
         return;
       }
 
@@ -121,7 +132,7 @@ function LegitProfileEditInfo({
             guideId: isBackground ? 25 : 24,
             viewMode: 'ALBUM',
             type: 2,
-            imageType: 3
+            imageType: 4
           })
         );
       }
@@ -132,7 +143,7 @@ function LegitProfileEditInfo({
           JSON.stringify({
             viewMode: 'ALBUM',
             type: 2,
-            imageType: 3
+            imageType: 4
           })
         );
       }
@@ -216,7 +227,7 @@ function LegitProfileEditInfo({
                 <Typography
                   variant="small2"
                   weight="medium"
-                  customStyle={{ color: dark.palette.common.ui20 }}
+                  customStyle={{ marginLeft: 12, color: dark.palette.common.ui20 }}
                 >
                   {`${putLegitProfileParams.name.length}/16자`}
                 </Typography>
@@ -225,8 +236,8 @@ function LegitProfileEditInfo({
             <Box customStyle={{ position: 'relative' }} onClick={handleChangeImage(false)}>
               {isLoadingGetPhoto && imageType === 'profile' ? (
                 <Skeleton
-                  width="96px"
-                  height="96px"
+                  width="80px"
+                  height="80px"
                   disableAspectRatio
                   customStyle={{ borderRadius: '50%' }}
                 />
@@ -236,8 +247,8 @@ function LegitProfileEditInfo({
                     putLegitProfileParams.image ||
                     `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
                   }
-                  width="96px"
-                  height="96px"
+                  width="80px"
+                  height="80px"
                   disableAspectRatio
                   customStyle={{ borderRadius: '50%' }}
                 />
@@ -375,6 +386,7 @@ const Wrapper = styled.section<{ backgroundImage: string }>`
   background-size: cover;
   background-position: center;
   background-image: url(${({ backgroundImage }) => backgroundImage});
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
 `;
 
 const Blur = styled.div`
@@ -386,6 +398,7 @@ const Blur = styled.div`
   position: absolute;
   margin: -20px;
   backdrop-filter: blur(6px);
+  z-index: -1;
 `;
 
 const IconBox = styled.div`

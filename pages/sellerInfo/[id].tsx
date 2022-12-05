@@ -1,13 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSidePropsContext } from 'next';
-import { Box, Typography } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Box, Typography, useTheme } from 'mrcamel-ui';
 
 import Header from '@components/UI/molecules/Header';
 import { BottomNavigation, Tabs } from '@components/UI/molecules';
@@ -24,17 +22,19 @@ import { logEvent } from '@library/amplitude';
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
-import { showAppDownloadBannerState } from '@recoil/common';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 function SellerInfo() {
   const {
-    query: { id, tab },
+    theme: { zIndex }
+  } = useTheme();
+  const {
+    query: { id, tab = 'products' },
     replace
   } = useRouter();
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useEffect(() => {
     if (tab === 'products') {
@@ -119,11 +119,29 @@ function SellerInfo() {
           </Header>
         }
         footer={<BottomNavigation />}
+        disablePadding
       >
-        <TabsWrapper showAppDownloadBanner={showAppDownloadBanner}>
-          <Tabs value={tab as string} changeValue={changeSelectedValue} labels={Labels} />
-        </TabsWrapper>
-        <Box customStyle={{ marginTop: 41 }}>
+        <Box
+          component="section"
+          customStyle={{
+            minHeight: TAB_HEIGHT,
+            zIndex: zIndex.header,
+            paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+          }}
+        >
+          <Tabs
+            value={tab as string}
+            changeValue={changeSelectedValue}
+            labels={Labels}
+            customStyle={{ position: 'fixed', width: '100%' }}
+          />
+        </Box>
+        <Box
+          customStyle={{
+            padding: '0 20px',
+            paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+          }}
+        >
           {tab === Labels[0].key && <SellerInfoProductsPanel />}
           {tab === Labels[1].key && <SellerInfoReviewsPanel />}
         </Box>
@@ -173,14 +191,5 @@ export async function getServerSideProps({
     };
   }
 }
-
-const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
-  position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT}px;
-  width: 100%;
-  z-index: 11;
-  margin-left: -20px;
-`;
 
 export default SellerInfo;

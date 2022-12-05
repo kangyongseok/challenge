@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef, memo, useEffect, useRef, useState } from 'react';
+import { HTMLAttributes, ReactElement, forwardRef, memo, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -41,14 +41,19 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   hideProductLabel?: boolean;
   hideAreaWithDateInfo?: boolean;
   hideMetaCamelInfo?: boolean;
+  hidePrice?: boolean;
   showNewLabel?: boolean;
   hideLegitStatusLabel?: boolean;
+  hidePriceDownCountLabel?: boolean;
+  hideUpdatedCountLabel?: boolean;
   showTodayWishViewLabel?: boolean;
+  hideOverlay?: boolean;
   showCountLabel?: boolean;
   hideWishButton?: boolean;
   hidePlatformLogo?: boolean;
   productAtt?: object;
   customStyle?: CustomStyle;
+  customLabel?: ReactElement;
   wishAtt?: WishAtt;
   name?: string;
   source?: string;
@@ -69,14 +74,19 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     hideProductLabel,
     hideAreaWithDateInfo,
     hideMetaCamelInfo,
+    hidePrice,
     showNewLabel = false,
     hideLegitStatusLabel = false,
+    hidePriceDownCountLabel = true,
+    hideUpdatedCountLabel = true,
     showTodayWishViewLabel = false,
+    hideOverlay = false,
     showCountLabel = false,
     hideWishButton = false,
     hidePlatformLogo = false,
     productAtt,
     customStyle,
+    customLabel,
     wishAtt,
     name,
     source,
@@ -296,7 +306,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             customStyle={{ position: 'absolute', top: 10, left: 10 }}
           />
         )}
-        {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+        {!hideOverlay &&
+          PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
           (status === 4 ? (
             <ReservingOverlay variant="h4" isRound={isRound} />
           ) : (
@@ -308,10 +319,20 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           {isSafe && <span>안전결제 </span>}
           {title}
         </Title>
-        <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4, flexWrap: 'wrap' }}>
-          <Typography variant="h4" weight="bold" customStyle={titlePriceStyle}>
-            {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-          </Typography>
+        <Flexbox
+          alignment="center"
+          gap={6}
+          customStyle={{
+            marginBottom: 4,
+            flexWrap: 'wrap',
+            display: !hidePrice ? 'flex' : 'none'
+          }}
+        >
+          {!hidePrice && (
+            <Typography variant="h4" weight="bold" customStyle={titlePriceStyle}>
+              {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+            </Typography>
+          )}
           {!hideLegitStatusLabel && productLegitStatusText && (
             <Label
               variant="outlined"
@@ -338,6 +359,22 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
               NEW
             </Typography>
           )}
+          {!hideUpdatedCountLabel && updatedCount > 0 && (
+            <Label
+              variant="ghost"
+              brandColor="primary-light"
+              size="xsmall"
+              text={`끌올 ${commaNumber(updatedCount || 0)}회`}
+            />
+          )}
+          {!hidePriceDownCountLabel && priceDownCount > 0 && (
+            <Label
+              variant="ghost"
+              brandColor="primary-light"
+              size="xsmall"
+              text={`가격 ${commaNumber(priceDownCount || 0)}번 내림`}
+            />
+          )}
         </Flexbox>
         {!hideAreaWithDateInfo && (
           <Area variant="small2" weight="medium">
@@ -353,7 +390,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {wishCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />
-                <Typography variant="small2" weight="medium" color={common.ui60}>
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                   {wishCount}
                 </Typography>
               </Flexbox>
@@ -361,13 +398,14 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {purchaseCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="MessageOutlined" width={14} height={14} color={common.ui60} />
-                <Typography variant="small2" weight="medium" color={common.ui60}>
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                   {purchaseCount}
                 </Typography>
               </Flexbox>
             )}
           </MetaSocial>
         )}
+        {customLabel}
       </Flexbox>
     </Flexbox>
   );

@@ -1,8 +1,8 @@
 import type { PropsWithChildren, ReactElement } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { CustomStyle } from 'mrcamel-ui';
-import { Box } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import MowebFooter from '@components/UI/organisms/MowebFooter';
@@ -11,6 +11,9 @@ import { AppDownloadBanner } from '@components/UI/organisms';
 import { APP_DOWNLOAD_BANNER_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
+
+import { showAppDownloadBannerState } from '@recoil/common';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 interface GeneralTemplateProps {
   header?: ReactElement;
@@ -37,18 +40,32 @@ function GeneralTemplate({
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
 
+  const triggered = useReverseScrollTrigger(true);
+  const isAppdownBannerState = useRecoilValue(showAppDownloadBannerState);
+
   const showMowebFooterCase = ['/', '/products/[id]', '/mypage', '/wishes'].includes(
     router.pathname
   );
 
+  const paddingTopParser = () => {
+    if (!checkAgent.isMobileApp() && triggered && !hideAppDownloadBanner && isAppdownBannerState) {
+      return APP_DOWNLOAD_BANNER_HEIGHT;
+    }
+
+    return 0;
+  };
+
   return (
-    <Wrapper css={customStyle} subset={subset}>
-      {!hideAppDownloadBanner && !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && (
-        <>
-          <AppDownloadBanner />
-          <Box customStyle={{ minHeight: APP_DOWNLOAD_BANNER_HEIGHT }} />
-        </>
-      )}
+    <Wrapper
+      subset={subset}
+      css={{
+        position: 'relative',
+        paddingTop: paddingTopParser(),
+        transition: 'all 0.5s',
+        ...customStyle
+      }}
+    >
+      {!hideAppDownloadBanner && !checkAgent.isMobileApp() && <AppDownloadBanner />}
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>
       {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) &&
@@ -69,7 +86,7 @@ const Wrapper = styled.div<{ subset?: boolean }>`
     theme: {
       palette: { common }
     }
-  }) => common.uiWhite};
+  }) => common.bg01};
   font-family: ${({ subset }) => (subset ? CAMEL_SUBSET_FONTFAMILY : 'inherit')};
 `;
 

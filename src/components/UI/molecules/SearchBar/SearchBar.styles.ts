@@ -1,25 +1,23 @@
 import styled from '@emotion/styled';
 
 import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
   CAMEL_SUBSET_FONTFAMILY,
   SEARCH_BAR_HEIGHT
 } from '@constants/common';
 
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 import { SearchBarProps } from '.';
 
-export const StyledSearchBar = styled.div<
-  Pick<SearchBarProps, 'variant' | 'isFixed'> & {
-    showAppDownloadBanner: boolean;
-  }
->`
+export const StyledSearchBar = styled.div<Pick<SearchBarProps, 'variant' | 'isFixed'>>`
   display: flex;
   align-items: center;
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
 
   ${({
     isFixed,
     variant,
-    showAppDownloadBanner,
     theme: {
       palette: { common },
       zIndex
@@ -27,13 +25,11 @@ export const StyledSearchBar = styled.div<
   }) =>
     isFixed && {
       position: 'fixed',
-      top: showAppDownloadBanner ? -60 - APP_DOWNLOAD_BANNER_HEIGHT : -60,
       left: 0,
       right: 0,
       background: common.uiWhite,
       zIndex: zIndex.header,
-      animation: variant !== 'innerOutlined' ? 'smoothFixed .2s forwards' : '',
-      padding: `${showAppDownloadBanner ? 110 + APP_DOWNLOAD_BANNER_HEIGHT : 60}px 0px 0px`
+      animation: variant !== 'innerOutlined' ? 'smoothFixed .2s forwards' : ''
     }};
 
   @keyframes smoothFixed {
@@ -59,14 +55,10 @@ export const InputBox = styled.div<
       ? `0 ${hasEndIcon ? 0 : 20}px 0 ${hasStartIcon ? 0 : 20}px`
       : `6px ${hasEndIcon ? 0 : 16}px 6px ${hasStartIcon ? 0 : 16}px`};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'fit-content')};
-  max-height: ${SEARCH_BAR_HEIGHT}px;
+  max-height: ${SEARCH_BAR_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
 `;
 
-export const Wrapper = styled.div<
-  Pick<SearchBarProps, 'variant' | 'fullWidth'> & {
-    showAppDownloadBanner: boolean;
-  }
->`
+export const Wrapper = styled.div<Pick<SearchBarProps, 'variant' | 'fullWidth'>>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'fit-content')};
   height: 44px;
   display: flex;

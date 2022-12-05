@@ -25,10 +25,11 @@ import { logEvent } from '@library/amplitude';
 
 import { postPreReserve } from '@api/user';
 
+import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { SuccessDialogState } from '@recoil/myPortfolio';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -356,8 +357,8 @@ const LandingHeader = styled(Flexbox)<{
   top: 0;
   left: 0;
   width: 100%;
-  height: 66px;
-  padding: 0 20px;
+  height: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 66}px;
+  padding: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px 20px 0;
   z-index: 10;
   background: ${({ bgColor }) => bgColor};
   border-bottom: ${({ isBorder, borderColor }) =>

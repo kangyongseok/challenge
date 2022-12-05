@@ -17,35 +17,26 @@ function ProductWishesCardSkeleton({
         <Skeleton isRound={isRound} />
       </Box>
       <Box customStyle={{ flex: 1 }}>
-        <Skeleton width="100%" maxWidth="46px" height="20px" disableAspectRatio isRound={isRound} />
         <Skeleton
           width="100%"
-          maxWidth="200px"
-          height="18px"
+          maxWidth="120px"
+          height="16px"
+          disableAspectRatio
+          isRound={isRound}
+        />
+        <Skeleton
+          width="100%"
+          maxWidth="55px"
+          height="20px"
           disableAspectRatio
           isRound={isRound}
           customStyle={{ marginTop: 8 }}
         />
-        <Skeleton
-          width="41px"
-          height="16.8px"
-          disableAspectRatio
-          isRound={isRound}
-          customStyle={{ margin: '5px 0' }}
-        />
-        <Skeleton
-          width="100%"
-          maxWidth="120px"
-          height="15px"
-          disableAspectRatio
-          isRound={isRound}
-          customStyle={{ marginTop: 3 }}
-        />
-        <Flexbox gap={3}>
+        <Flexbox gap={6}>
           <Skeleton
             width="100%"
             maxWidth="30px"
-            height="15px"
+            height="14px"
             disableAspectRatio
             isRound={isRound}
             customStyle={{ marginTop: 4 }}
@@ -53,13 +44,19 @@ function ProductWishesCardSkeleton({
           <Skeleton
             width="100%"
             maxWidth="30px"
-            height="15px"
+            height="14px"
             disableAspectRatio
             isRound={isRound}
             customStyle={{ marginTop: 4 }}
           />
         </Flexbox>
       </Box>
+      <Skeleton
+        width="16px"
+        height="16px"
+        disableAspectRatio
+        customStyle={{ marginTop: 10, borderRadius: 4 }}
+      />
     </Flexbox>
   );
 }

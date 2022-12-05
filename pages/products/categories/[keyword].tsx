@@ -25,27 +25,21 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
 function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useProductKeywordAutoSave('categories');
-
   return (
     <>
       <ProductsPageHead variant="categories" params={params} />
       <GeneralTemplate
-        header={
-          <Box>
-            <ProductsHeader variant="categories" />
-            <ProductsCategoryTags variant="categories" />
-            <ProductsFilter variant="categories" showDynamicFilter />
-          </Box>
-        }
+        header={<ProductsHeader variant="categories" />}
         footer={
           <BottomNavigation
             disableHideOnScroll={false}
@@ -54,6 +48,10 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
         }
         disablePadding
       >
+        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+          <ProductsCategoryTags variant="categories" />
+          <ProductsFilter variant="categories" showDynamicFilter />
+        </Box>
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="categories" name={attrProperty.productName.CATEGORY} />

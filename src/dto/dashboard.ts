@@ -18,3 +18,7 @@ export interface LegitDashboard {
   caseHistories: ProductLegit[];
   targetBrands: Brand[];
 }
+
+export interface LegitDashboardParams {
+  result?: number;
+}

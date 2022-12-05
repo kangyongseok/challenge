@@ -4,6 +4,7 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import Script from 'next/script';
 import { useRouter } from 'next/router';
+import { ThemeProvider } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
@@ -390,6 +391,14 @@ function Login() {
   }, [authLogin, mutatePostAlarm, mutatePostArea, returnUrl, router, state]);
 
   useEffect(() => {
+    document.body.className = 'dark';
+
+    return () => {
+      document.body.removeAttribute('class');
+    };
+  }, []);
+
+  useEffect(() => {
     logEvent(attrKeys.login.VIEW_LOGIN);
 
     if (window.Kakao && !window.Kakao.isInitialized()) {
@@ -406,33 +415,34 @@ function Login() {
         }}
       />
       <Script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js" />
-      {(code || loading) && <PuffLoader />}
-      {transitions(
-        (styles, item) =>
-          item && (
-            <animated.div style={styles}>
-              <Wrapper>
-                <GeneralTemplate>
-                  <LoginMainContent />
-                  <LoginButtonList
-                    authLogin={authLogin}
-                    returnUrl={returnUrl as string}
-                    setErrorPopup={setErrorPopup}
-                    setShow={setShow}
-                    setLoading={setLoading}
-                  />
-                  <LoginUserAgreement />
-                </GeneralTemplate>
-              </Wrapper>
-              ️
-            </animated.div>
-          )
-      )}
-      <LoginErrorDialog
-        open={errorPopup.open}
-        onClose={handleCloseLoginErrorDialog}
-        provider={errorPopup.provider ?? undefined}
-      />
+      <ThemeProvider theme="dark">
+        {(code || loading) && <PuffLoader />}
+        {transitions(
+          (styles, item) =>
+            item && (
+              <animated.div style={styles}>
+                <Wrapper>
+                  <GeneralTemplate>
+                    <LoginMainContent />
+                    <LoginButtonList
+                      authLogin={authLogin}
+                      returnUrl={returnUrl as string}
+                      setErrorPopup={setErrorPopup}
+                      setShow={setShow}
+                      setLoading={setLoading}
+                    />
+                    <LoginUserAgreement />
+                  </GeneralTemplate>
+                </Wrapper>
+              </animated.div>
+            )
+        )}
+        <LoginErrorDialog
+          open={errorPopup.open}
+          onClose={handleCloseLoginErrorDialog}
+          provider={errorPopup.provider ?? undefined}
+        />
+      </ThemeProvider>
     </>
   );
 }

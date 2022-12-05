@@ -625,8 +625,10 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
           baseSearchParams
         })
       ).then((response) => {
-        const { productTotal: newProductTotal } = response;
-
+        const { productTotal: newProductTotal, resultUseAI } = response;
+        if (resultUseAI) {
+          logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+        }
         if (newProductTotal && newProductTotal > 0) {
           logEvent(attrKeys.products.viewMyFilterTooltip, {
             name: attrProperty.name.productList

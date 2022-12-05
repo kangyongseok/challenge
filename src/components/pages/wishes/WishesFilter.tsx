@@ -70,31 +70,32 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
   return (
     <Flexbox justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
       <Flexbox alignment="center" gap={3}>
-        <Typography weight="medium" customStyle={{ color: common.ui60 }}>
-          찜한 매물
-        </Typography>
+        <Typography customStyle={{ color: common.ui60 }}>찜한 매물</Typography>
         <Typography weight="bold"> {userWishCount}</Typography>
       </Flexbox>
       {!hiddenTab && (
-        <Flexbox alignment="center" gap={2}>
-          <Typography
-            weight="medium"
-            onClick={() => {
-              logEvent(attrKeys.wishes.CLICK_SORT, {
-                name: 'WISH_LIST'
-              });
+        <Flexbox alignment="center" gap={12}>
+          <Flexbox alignment="center">
+            <Typography
+              onClick={() => {
+                logEvent(attrKeys.wishes.CLICK_SORT, {
+                  name: 'WISH_LIST'
+                });
 
-              setOpen(true);
-            }}
-            customStyle={{ cursor: 'pointer' }}
-          >
-            {selectedOrderOption?.[1]}
-          </Typography>
-          <Icon name="DropdownFilled" size="large" />
-          <Button startIcon={<Icon name="DeleteOutlined" />} onClick={handleClickSoldOutDelete}>
-            <Typography weight="medium" variant="small1">
-              판매완료 삭제
+                setOpen(true);
+              }}
+              customStyle={{ cursor: 'pointer' }}
+            >
+              {selectedOrderOption?.[1]}
             </Typography>
+            <Icon name="DropdownFilled" viewBox="0 0 12 24" width="10px" height="20px" />
+          </Flexbox>
+          <Button
+            size="small"
+            startIcon={<Icon name="DeleteOutlined" />}
+            onClick={handleClickSoldOutDelete}
+          >
+            판매완료 삭제
           </Button>
         </Flexbox>
       )}

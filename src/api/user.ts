@@ -23,7 +23,7 @@ import type {
   UserRoleLegit,
   UserSizeSuggestParams
 } from '@dto/user';
-import type { PageProduct, ProductResult } from '@dto/product';
+import type { PageProduct, ProductResult, UserPersonalStyleParams } from '@dto/product';
 
 import Axios from '@library/axios';
 
@@ -33,6 +33,7 @@ const BASE_PATH = '/users';
 
 export async function fetchUserInfo() {
   const { data } = await Axios.getInstance().get<UserInfo>(`${BASE_PATH}/userInfo`);
+
   return data;
 }
 
@@ -102,10 +103,15 @@ export async function postArea(params: PostAreaParams) {
   await Axios.getInstance().post(`${BASE_PATH}/area`, params);
 }
 
-export async function fetchUserHistory(parameter: { page: number }) {
-  const { data } = await Axios.getInstance().get<PageUserHistory>(
-    `/userhistory?page=${parameter.page}&size=100&sort=dateCreated,DESC&type=SE,PV`
-  );
+export async function fetchUserHistory(params: { page: number; size?: number; type?: string }) {
+  const { data } = await Axios.getInstance().get<PageUserHistory>('/userhistory', {
+    params: {
+      ...params,
+      sort: 'dateCreated,DESC',
+      size: params.size || 100,
+      type: params.type || 'SE,PV'
+    }
+  });
 
   return data;
 }
@@ -221,4 +227,8 @@ export async function putLegitProfile({ userId, ...data }: PutUserLegitProfileDa
 
 export async function deleteWishSoldout() {
   await Axios.getInstance().delete(`${BASE_PATH}/wishes/undisplayed`);
+}
+
+export async function postUserStyle(params: UserPersonalStyleParams) {
+  await Axios.getInstance().post(`${BASE_PATH}/style`, { ...params });
 }

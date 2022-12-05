@@ -12,7 +12,14 @@ import { Gap, Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { ProductsFilter } from '@components/pages/products';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  APP_TOP_STATUS_HEIGHT,
+  CATEGORY_TAGS_HEIGHT,
+  HEADER_HEIGHT
+} from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 
@@ -80,7 +87,7 @@ function BrandProducts() {
                 zIndex: zIndex.header,
                 top: showAppDownloadBanner
                   ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
-                  : HEADER_HEIGHT
+                  : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
               }}
             />
           </Box>
@@ -130,7 +137,9 @@ const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   width: 100%;
   overflow-x: auto;
   top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px;
+    showAppDownloadBanner
+      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
+      : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
 `;
 
 const CategoryTags = styled.div`

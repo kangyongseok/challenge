@@ -5,12 +5,16 @@ import { Box, Flexbox, Tab, Tabs, useTheme } from 'mrcamel-ui';
 import Badge from '@components/UI/atoms/Badge';
 
 import { legitRequestParamsState } from '@recoil/legitRequest';
+import { legitProfileOpinionLegitsParamsState } from '@recoil/legitProfile';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function LegitAdminTabs() {
   const router = useRouter();
   const { tab = 'home' } = router.query;
 
+  const resetLegitProfileOpinionLegitsParamsState = useResetRecoilState(
+    legitProfileOpinionLegitsParamsState
+  );
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
 
   const { data: { notProcessedLegitCount = 0 } = {} } = useQueryUserInfo();
@@ -22,6 +26,8 @@ function LegitAdminTabs() {
   } = useTheme();
 
   const handleChange = (newValue: string | number) => {
+    resetLegitProfileOpinionLegitsParamsState();
+
     if (newValue === 'request') {
       resetLegitRequestParamsState();
     }

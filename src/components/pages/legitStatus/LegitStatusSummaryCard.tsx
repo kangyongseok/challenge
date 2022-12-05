@@ -20,14 +20,12 @@ import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { ID_FILTER, LABELS, PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
-import { deviceIdState, showAppDownloadBannerState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 
 function LegitStatusSummaryCard() {
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const deviceId = useRecoilValue(deviceIdState);
   const router = useRouter();
   const splitIds = String(router.query.id || '').split('-');
@@ -104,11 +102,7 @@ function LegitStatusSummaryCard() {
   );
 
   return (
-    <ProductFixedSummaryCard
-      isOpen
-      showAppDownloadBanner={showAppDownloadBanner}
-      onClick={() => router.push(`/products/${router.query.id}`)}
-    >
+    <ProductFixedSummaryCard isOpen onClick={() => router.push(`/products/${router.query.id}`)}>
       {data?.product && (
         <ProductFixedSummary
           isSafe={isSafe}
@@ -123,12 +117,10 @@ function LegitStatusSummaryCard() {
   );
 }
 
-const ProductFixedSummaryCard = styled.div<{ isOpen: boolean; showAppDownloadBanner: boolean }>`
+const ProductFixedSummaryCard = styled.div<{ isOpen: boolean }>`
   position: fixed;
   display: grid;
   grid-template-columns: 64px auto;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   opacity: ${({ isOpen }) => Number(isOpen)};
   transition: opacity 0.3s ease-in 0s;

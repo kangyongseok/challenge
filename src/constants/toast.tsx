@@ -53,7 +53,19 @@ const legit = {
 };
 
 const legitProfile = {
-  disableUpload: '사진업로드는 앱에서만 할 수 있어요!'
+  disableUpload: '사진 업로드는 앱에서만 할 수 있어요!'
+};
+
+const legitStatus = {
+  successCopy: '문구가 복사되었습니다!'
+};
+
+const home = {
+  saved: '실시간 사진감정이 신청되었어요!'
+};
+
+const mypage = {
+  overFiveStyle: '최대 5개까지 고를 수 있어요!'
 };
 
 export const toastText: Record<
@@ -67,7 +79,10 @@ export const toastText: Record<
   legitAdminOpinion,
   legit,
   legitProfile,
-  bottomSheetLogin
+  legitStatus,
+  bottomSheetLogin,
+  home,
+  mypage
 };
 
 const productsKeywordActionButton = {
