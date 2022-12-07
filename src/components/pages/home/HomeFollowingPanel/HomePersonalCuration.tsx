@@ -1,10 +1,10 @@
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Typography } from 'mrcamel-ui';
-import { debounce } from 'lodash-es';
+import { debounce, findIndex } from 'lodash-es';
 
 import ProductGridCardSkeleton from '@components/UI/molecules/Skeletons/ProductGridCardSkeleton';
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
@@ -18,42 +18,16 @@ import { fetchPersonalProducts } from '@api/personal';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { defaultBanners, femaleBanners, maleBanners } from '@constants/home';
 import { BOTTOM_NAVIGATION_HEIGHT, MOBILE_WEB_FOOTER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
+import { HomeSeasonBannerData } from '@typings/common';
 import { homePersonalCurationBannersState } from '@recoil/home';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-const defaultBanners = [
-  {
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/season-banner.png`,
-    pathname: '/products/search/파라점퍼스 고비',
-    backgroundColor: '#1C2433'
-  },
-  {
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/my-portfolio-main-banner.png`,
-    pathname: '/myPortfolio',
-    backgroundColor: '#402877'
-  },
-  {
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-1-banner.png`,
-    pathname: '/events/급처-매물-13',
-    backgroundColor: '#134B3B'
-  },
-  {
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/announce-banner.png`,
-    pathname: '/announces/5',
-    backgroundColor: '#095B84'
-  },
-  {
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-2-banner.png`,
-    pathname: '/events/명품-14',
-    backgroundColor: '#9F2240'
-  }
-];
 
 function HomePersonalCuration() {
   const router = useRouter();
@@ -62,6 +36,9 @@ function HomePersonalCuration() {
   const [banners, setHomePersonalCurationBannersState] = useRecoilState(
     homePersonalCurationBannersState
   );
+
+  const [bannerGroup, setBannerGroup] = useState<HomeSeasonBannerData[]>([]);
+  const prevIndexRef = useRef<number>();
 
   const {
     data: { pages = [] } = {},
@@ -87,6 +64,23 @@ function HomePersonalCuration() {
   );
 
   const products = useMemo(() => pages.map(({ content }) => content).flat(), [pages]);
+
+  // useEffect(() => {
+  //   const bannerGroup: HomeSeasonBannerData[] =
+  //     accessUser?.gender === 'F'
+  //       ? [...defaultBanners, ...femaleBanners]
+  //       : [...defaultBanners, ...maleBanners];
+
+  //   if (Math.floor(products.length / 16) % 9 === 0) {
+  //     setShuffleBanner([...shuffleBanner, ...shuffle(bannerGroup)]);
+  //     return;
+  //   }
+
+  //   if (shuffleBanner.length === 0) {
+  //     setShuffleBanner(shuffle(bannerGroup));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [accessUser?.gender, products]);
 
   const handleClickBanner = (pathname: string) => () => {
     const getClickBannerTitle = () => {
@@ -163,17 +157,32 @@ function HomePersonalCuration() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    products.forEach((_, index) => {
-      const randomBanner = defaultBanners[Math.floor(Math.random() * defaultBanners.length)];
-      setHomePersonalCurationBannersState((prevState) => {
-        const newBanners = [...prevState];
-        if ((index + 1) % 8 === 0 && !prevState[index]) {
-          newBanners[index] = randomBanner;
-        }
-        return newBanners;
+    if (products.length) {
+      products.forEach((_, index) => {
+        const randomBanner = bannerGroup[Math.floor(Math.random() * bannerGroup.length)];
+        setHomePersonalCurationBannersState((prevState) => {
+          const newBanners = [...prevState];
+          if ((index + 1) % 16 === 0 && !prevState[index]) {
+            if (prevIndexRef.current === findIndex(bannerGroup, randomBanner)) {
+              newBanners[index] = bannerGroup[Math.abs(prevIndexRef.current - 2)];
+            } else {
+              newBanners[index] = randomBanner;
+            }
+            prevIndexRef.current = findIndex(bannerGroup, randomBanner);
+          }
+          return newBanners;
+        });
       });
-    });
-  }, [setHomePersonalCurationBannersState, products]);
+    }
+  }, [setHomePersonalCurationBannersState, products, bannerGroup]);
+
+  useEffect(() => {
+    setBannerGroup(
+      accessUser?.gender === 'F'
+        ? [...defaultBanners, ...femaleBanners]
+        : [...defaultBanners, ...maleBanners]
+    );
+  }, [accessUser?.gender]);
 
   return (
     <Box customStyle={{ padding: '32px 0', overflowX: 'hidden' }}>
@@ -242,16 +251,37 @@ function HomePersonalCuration() {
                     compact
                   />
                 </Grid>
-                {banners[index] && (
-                  <Grid item xs={1} onClick={handleClickBanner(banners[index].pathname)}>
+                {/* {(index + 1) % 16 === 0 && (
+                  <Grid
+                    item
+                    xs={1}
+                    onClick={handleClickBanner(shuffleBanner[(index + 1) / 16 - 1]?.pathname)}
+                  >
                     <Box
                       customStyle={{
                         margin: '0 -20px',
                         textAlign: 'center',
-                        backgroundColor: banners[index].backgroundColor
+                        backgroundColor: shuffleBanner[(index + 1) / 16 - 1]?.backgroundColor
                       }}
                     >
-                      <Image height="104px" src={banners[index].src} disableAspectRatio />
+                      <Image
+                        height="104px"
+                        src={shuffleBanner[(index + 1) / 16 - 1]?.src}
+                        disableAspectRatio
+                      />
+                    </Box>
+                  </Grid>
+                )} */}
+                {(index + 1) % 16 === 0 && (
+                  <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
+                    <Box
+                      customStyle={{
+                        margin: '0 -20px',
+                        textAlign: 'center',
+                        backgroundColor: banners[index]?.backgroundColor
+                      }}
+                    >
+                      <Image height="104px" src={banners[index]?.src} disableAspectRatio />
                     </Box>
                   </Grid>
                 )}

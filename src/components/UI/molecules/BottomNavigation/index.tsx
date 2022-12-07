@@ -280,9 +280,9 @@ function BottomNavigation({
     if (href === '/') {
       if (!router.query.tab) {
         if (isNewUser || isNewUser === undefined) {
-          return { tab: 'following' };
+          return { tab: 'recommend' };
         }
-        return { tab: 'recommend' };
+        return { tab: 'following' };
       }
       if (router.query.tab === 'recommend') {
         return { tab: 'following' };

@@ -157,3 +157,9 @@ export interface LikeStyleSelectedModelDetail {
   styleId?: number;
   categoryId?: number;
 }
+
+export interface HomeSeasonBannerData {
+  src: string;
+  pathname: string;
+  backgroundColor: string;
+}

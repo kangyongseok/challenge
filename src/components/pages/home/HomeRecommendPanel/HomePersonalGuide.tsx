@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
@@ -21,6 +21,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { activeMyFilterState } from '@recoil/productsFilter';
 import { accessUserSettingValuesState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -39,7 +40,7 @@ function HomePersonalGuide() {
     }
   } = useTheme();
   const [openBanner, setOpenBanner] = useState(false);
-
+  const setActiveMyFilterState = useSetRecoilState(activeMyFilterState);
   // TODO 일단 지금은 개인화 가이드 배너 close 여부 확인에만 활용, 추후 로그인 계정 별 설정 값 저장이 필요한 경우가 생기면 리팩터링하여 확대 적용
   const [accessUserSettingValues, setAccessUserSettingValuesState] = useRecoilState(
     accessUserSettingValuesState
@@ -200,6 +201,7 @@ function HomePersonalGuide() {
         const categorySizeIds = sizes
           .filter(({ parentCategoryId }) => parentCategoryId === parentId)
           .map(({ categorySizeId }) => categorySizeId);
+        setActiveMyFilterState(true);
         router.push({
           pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
           query: {
