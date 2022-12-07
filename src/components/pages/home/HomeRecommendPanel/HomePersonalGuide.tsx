@@ -100,7 +100,7 @@ function HomePersonalGuide() {
                 mode === 'light' ? 'white' : 'black'
               }/${(guide.nameEng || '').toLowerCase().replace(/\s/g, '')}.jpg`
             : `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_${
-                (guide || {}).parentId
+                (guide || {}).id
               }_${(gender || 'm').toLowerCase()}.png`
       }))
       .slice(0, 8);
