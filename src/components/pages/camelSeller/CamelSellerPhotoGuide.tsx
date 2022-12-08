@@ -69,7 +69,7 @@ function CamelSellerPhotoGuide() {
   );
 
   useEffect(() => {
-    setPhotoImages(tempData.photoGuideImages);
+    // setPhotoImages(tempData.photoGuideImages);
     if (query?.brandIds) {
       setPhotoGuideParams({
         brandId:
@@ -189,6 +189,10 @@ function CamelSellerPhotoGuide() {
   }, [mergePhotoResult, photoImages]);
 
   const isAllRequiredPhotoValid = useCallback(() => {
+    const isLegitRequire = guideImages?.photoGuideDetails.filter(
+      (details) => details.imageType !== 1
+    ).length;
+    if (!isLegitRequire) return false;
     if (mergePhotoResult && photoImages) {
       return !mergePhotoResult()
         ?.map((result) => {
@@ -203,7 +207,7 @@ function CamelSellerPhotoGuide() {
         .includes(false as boolean);
     }
     return false;
-  }, [mergePhotoResult, photoImages]);
+  }, [guideImages?.photoGuideDetails, mergePhotoResult, photoImages]);
 
   const photoRegisterStateText = useMemo(() => {
     if (isRequiredPhotoValid() && isAllRequiredPhotoValid())
@@ -291,6 +295,7 @@ function CamelSellerPhotoGuide() {
               </GuideBox>
             )
           )}
+        {/* {alert(JSON.stringify(mergePhotoResult()))} */}
         {mergePhotoResult() &&
           mergePhotoResult()?.map(
             ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (
@@ -308,7 +313,9 @@ function CamelSellerPhotoGuide() {
                   />
                 ) : (
                   <>
-                    <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                    {imageUrl && (
+                      <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                    )}
                     <OverlayWarterMark>
                       <CenterImage
                         isImage={!!imageUrl}

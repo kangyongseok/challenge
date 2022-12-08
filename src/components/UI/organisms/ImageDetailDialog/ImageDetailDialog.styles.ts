@@ -14,6 +14,7 @@ export const CloseIcon = styled(Icon)`
   top: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20}px;
   right: 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+  cursor: pointer;
 `;
 
 export const Pagination = styled.div`

@@ -2,7 +2,7 @@ import type { PropsWithChildren, ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import type { CustomStyle } from 'mrcamel-ui';
+import { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import MowebFooter from '@components/UI/organisms/MowebFooter';
@@ -60,8 +60,8 @@ function GeneralTemplate({
       subset={subset}
       css={{
         position: 'relative',
-        paddingTop: paddingTopParser(),
         transition: 'all 0.5s',
+        paddingTop: paddingTopParser(),
         ...customStyle
       }}
     >

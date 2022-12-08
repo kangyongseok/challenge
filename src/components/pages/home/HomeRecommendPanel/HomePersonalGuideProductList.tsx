@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
@@ -30,6 +31,11 @@ import { personalGuideListCurrentThemeState } from '@recoil/home';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function HomePersonalGuideProductList() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   const router = useRouter();
   const listScrollRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
@@ -42,7 +48,9 @@ function HomePersonalGuideProductList() {
     data: products,
     isLoading,
     refetch
-  } = useQuery(queryKeys.personals.guideAllProducts(), () => fetchGuideAllProducts());
+  } = useQuery(queryKeys.personals.guideAllProducts(), () => fetchGuideAllProducts(), {
+    staleTime: 5 * 60 * 1000
+  });
   const [filterData, setFilterData] = useState<GuideProducts[]>([]);
 
   useEffect(() => {
@@ -50,6 +58,10 @@ function HomePersonalGuideProductList() {
       const initTime = SessionStorage.get(sessionStorageKeys.personalProductsCache);
       if (initTime) {
         if (dayjs().diff(dayjs(initTime as string), 'minute') > 30) {
+          SessionStorage.set(
+            sessionStorageKeys.personalProductsCache,
+            dayjs().format('YYYY-MM-DD HH:mm')
+          );
           refetch();
         }
       }
@@ -63,7 +75,8 @@ function HomePersonalGuideProductList() {
     }
   }, [products]);
 
-  const handleClick = () => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const target = e.currentTarget;
     logEvent(attrKeys.home.CLICK_REFRESH_PRODUCT, {
       name: attrProperty.name.MAIN,
       title: attrProperty.title.PERSONAL_GUIDE
@@ -71,12 +84,22 @@ function HomePersonalGuideProductList() {
 
     (listScrollRef.current as HTMLDivElement).scrollTo(0, 0);
 
-    if (guideProductsNum === filterData.length - 1) {
-      setGuideProductsNum(0);
+    if (target.dataset.left) {
+      if (guideProductsNum === 0) {
+        setGuideProductsNum(filterData.length - 1);
+        return;
+      }
+      setGuideProductsNum((props) => props - 1);
       return;
     }
 
-    setGuideProductsNum((props) => props + 1);
+    if (target.dataset.right) {
+      if (guideProductsNum === filterData.length - 1) {
+        setGuideProductsNum(0);
+        return;
+      }
+      setGuideProductsNum((props) => props + 1);
+    }
   };
 
   const handleClickAll = () => {
@@ -209,14 +232,30 @@ function HomePersonalGuideProductList() {
             />
           ))}
       </List>
-      <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: 32 }}>
-        <AnotherProductsButton
-          variant="outlined"
-          startIcon={<Icon name="RotateOutlined" />}
+      <Flexbox alignment="center" justifyContent="center" customStyle={{ marginTop: 32 }}>
+        <Button
+          customStyle={{ borderRadius: 36, width: 44, outline: 'none' }}
+          data-left="-1"
           onClick={handleClick}
         >
-          다른 매물
-        </AnotherProductsButton>
+          <Icon name="CaretLeftOutlined" />
+        </Button>
+        <Typography
+          weight="medium"
+          customStyle={{ color: common.ui80, padding: '0 20px', textAlign: 'center' }}
+        >
+          <span style={{ color: common.ui20, minWidth: 9, display: 'inline-block' }}>
+            {guideProductsNum + 1}
+          </span>{' '}
+          / {filterData.length}
+        </Typography>
+        <Button
+          customStyle={{ borderRadius: 36, width: 44, outline: 'none' }}
+          data-right="1"
+          onClick={handleClick}
+        >
+          <Icon name="CaretRightOutlined" />
+        </Button>
       </Flexbox>
     </section>
   );
@@ -234,13 +273,6 @@ const List = styled.div`
   & > div {
     width: 120px;
   }
-`;
-
-const AnotherProductsButton = styled(Button)`
-  width: 108px;
-  height: 36px;
-  margin: 0 auto;
-  border-radius: 36px;
 `;
 
 export default HomePersonalGuideProductList;

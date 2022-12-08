@@ -1,3 +1,4 @@
+import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { Box, Grid, Typography, useTheme } from 'mrcamel-ui';
 
@@ -8,6 +9,7 @@ import { fetchRecommendProducts } from '@api/personal';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 
+import { hasHomeTabChangeState } from '@recoil/home';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeStyleRecommendProductList() {
@@ -16,6 +18,7 @@ function HomeStyleRecommendProductList() {
     useStyle: true
   };
   const { data: accessUser } = useQueryAccessUser();
+  const hasHomeTab = useRecoilValue(hasHomeTabChangeState);
 
   const {
     theme: {
@@ -23,53 +26,19 @@ function HomeStyleRecommendProductList() {
     }
   } = useTheme();
 
-  const { data, isLoading } = useQuery(queryKeys.personals.recommendProducts(params), () =>
-    fetchRecommendProducts(params)
+  const { data, isFetching } = useQuery(
+    queryKeys.personals.recommendProducts(params),
+    () => fetchRecommendProducts(params),
+    {
+      refetchOnMount: hasHomeTab
+    }
   );
 
-  // const {
-  //   data: { pages = [] } = {},
-  //   isLoading,
-  //   isFetchingNextPage,
-  //   hasNextPage,
-  //   fetchNextPage
-  // } = useInfiniteQuery(
-  //   queryKeys.personals.recommendProducts(params),
-  //   ({ pageParam = 0 }) => fetchRecommendProducts({ ...params, page: pageParam }),
-  //   {
-  //     keepPreviousData: true,
-  //     getNextPageParam: ({ products: { number = 0 } = {} }, allPages) =>
-  //       allPages.length <= 5 ? number + 1 : undefined
-  //   }
-  // );
-
-  // const styleRecommendProducts = useMemo(
-  //   () => pages.flatMap(({ products: { content = [] } = {} }) => content),
-  //   [pages]
-  // );
-
   // useEffect(() => {
-  //   const handleScroll = debounce(async () => {
-  //     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-  //     const isFloor =
-  //       scrollTop + clientHeight >=
-  //       scrollHeight -
-  //         (!checkAgent.isIOSApp() || !checkAgent.isAndroidApp()
-  //           ? MOBILE_WEB_FOOTER_HEIGHT + BOTTOM_NAVIGATION_HEIGHT
-  //           : 0);
-
-  //     if (hasNextPage && !isFetchingNextPage && isFloor) {
-  //       await fetchNextPage();
-  //     }
-  //   }, 100);
-
-  //   window.addEventListener('scroll', handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  //   setTimeout(() => {
+  //     setTest(true);
+  //   }, 3000);
+  // }, []);
 
   return (
     <Box
@@ -85,14 +54,14 @@ function HomeStyleRecommendProductList() {
         {(accessUser || {}).userName || '회원'}님을 위한 추천
       </Typography>
       <Grid container rowGap={32} columnGap={12}>
-        {isLoading &&
-          Array.from({ length: 8 }, (_, index) => (
+        {isFetching &&
+          Array.from({ length: 4 }, (_, index) => (
             <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
               <ProductGridCardSkeleton isRound />
             </Grid>
           ))}
-        {!isLoading &&
-          data?.products.content.map((product, i) => (
+        {!isFetching &&
+          data?.products?.content.map((product, i) => (
             <Grid key={`home-style-recommend-product-${product.id}`} item xs={2}>
               <ProductGridCard
                 product={product}

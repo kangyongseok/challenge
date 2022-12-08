@@ -197,6 +197,10 @@ function CamelSellerPhotoGuideEdit() {
   }, [mergePhotoResult, photoImages]);
 
   const isAllRequiredPhotoValid = useCallback(() => {
+    const isLegitRequire = guideImages?.photoGuideDetails.filter(
+      (details) => details.imageType !== 1
+    ).length;
+    if (!isLegitRequire) return false;
     if (mergePhotoResult && photoImages) {
       return !mergePhotoResult()
         ?.map((result) => {
@@ -211,7 +215,7 @@ function CamelSellerPhotoGuideEdit() {
         .includes(false as boolean);
     }
     return false;
-  }, [mergePhotoResult, photoImages]);
+  }, [guideImages?.photoGuideDetails, mergePhotoResult, photoImages]);
 
   const photoRegisterStateText = useMemo(() => {
     if (isRequiredPhotoValid() && isAllRequiredPhotoValid())
@@ -317,7 +321,9 @@ function CamelSellerPhotoGuideEdit() {
                   />
                 ) : (
                   <>
-                    <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                    {imageUrl && (
+                      <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                    )}
                     <OverlayWarterMark>
                       <CenterImage
                         isImage={!!imageUrl}

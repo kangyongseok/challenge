@@ -214,7 +214,7 @@ function Search() {
             variant="innerOutlined"
             fullWidth
             isFixed
-            placeholder="샤넬 클미, 나이키 범고래, 스톤 맨투맨"
+            placeholder="어떤 명품을 득템해 볼까요?"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}

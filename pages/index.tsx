@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { QueryClient, dehydrate, useMutation } from 'react-query';
+import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
@@ -25,26 +25,32 @@ import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 
 import { postManage } from '@api/userHistory';
-import { fetchRecommWishes, fetchUserInfo } from '@api/user';
-import { fetchProductDealInfos } from '@api/nextJs';
-import { fetchParentCategories } from '@api/category';
+// import { fetchRecommWishes, fetchSimpleUserInfo, fetchUserInfo } from '@api/user';
+import { fetchSimpleUserInfo } from '@api/user';
+// import { fetchProductDealInfos } from '@api/nextJs';
+// import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+// import queryKeys from '@constants/queryKeys';
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
+// import { locales } from '@constants/common';
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { checkAgent } from '@utils/common';
 
-import useQueryUserInfo from '@hooks/useQueryUserInfo';
+// import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Home() {
   const router = useRouter();
   const { tab } = router.query;
 
-  const { data: { isNewUser } = {} } = useQueryUserInfo();
+  const { data: { isNewUser } = {} } = useQuery(
+    queryKeys.users.simpleUserInfo(),
+    fetchSimpleUserInfo
+  );
   const { data: accessUser } = useQueryAccessUser();
 
   const { mutate } = useMutation(postManage);
@@ -132,13 +138,13 @@ export async function getServerSideProps({
   Initializer.initABTestIdentifierByCookie(req.cookies);
 
   if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-    await queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes);
+    await queryClient.prefetchQuery(queryKeys.users.simpleUserInfo(), fetchSimpleUserInfo);
+    // await queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes);
   }
 
   queryClientList.concat([
-    queryClient.prefetchQuery(queryKeys.nextJs.productDealInfos(), fetchProductDealInfos),
-    queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
+    // queryClient.prefetchQuery(queryKeys.nextJs.productDealInfos(), fetchProductDealInfos),
+    // queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
   ]);
 
   await Promise.allSettled(queryClientList);

@@ -37,6 +37,12 @@ export async function fetchUserInfo() {
   return data;
 }
 
+export async function fetchSimpleUserInfo() {
+  const { data } = await Axios.getInstance().get<UserInfo>(`${BASE_PATH}/simpleUserInfo`);
+
+  return data;
+}
+
 export async function fetchCategoryWishes(params?: CategoryWishesParams) {
   const { data } = await Axios.getInstance().get<CategoryWish>(`${BASE_PATH}/categoryWishes`, {
     params

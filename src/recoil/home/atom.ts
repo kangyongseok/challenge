@@ -51,3 +51,8 @@ export const personalGuideListCurrentThemeState = atom({
   key: 'home/personalGuideListCurrentThemeState',
   default: 0
 });
+
+export const hasHomeTabChangeState = atom({
+  key: 'home/hasHomeTabChangeState',
+  default: false
+});

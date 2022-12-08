@@ -160,6 +160,7 @@ function CamelSellerFloatingButton() {
         size="large"
         onClick={handleClickMoveToCamelSeller}
         isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
+        isUserShop={router.pathname === '/user/shop'}
       >
         <Icon name="PlusOutlined" />
         판매하기

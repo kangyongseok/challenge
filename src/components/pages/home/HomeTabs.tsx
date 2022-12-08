@@ -1,5 +1,9 @@
-import { useMemo } from 'react';
+// import { useMemo } from 'react';
 
+import { useEffect, useMemo } from 'react';
+
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
@@ -7,12 +11,16 @@ import Badge from '@components/UI/atoms/Badge';
 
 import { logEvent } from '@library/amplitude';
 
+import { fetchSimpleUserInfo } from '@api/user';
+
+import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import { hasHomeTabChangeState } from '@recoil/home';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -20,8 +28,18 @@ function HomeTabs() {
   const router = useRouter();
   const { tab } = router.query;
 
-  const { data: { notViewedHistoryCount = 0, isNewUser } = {} } = useQueryUserInfo();
+  const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
+  const { data: { isNewUser } = {} } = useQuery(
+    queryKeys.users.simpleUserInfo(),
+    fetchSimpleUserInfo
+  );
   const { data: accessUser } = useQueryAccessUser();
+  const setHasHomeTab = useSetRecoilState(hasHomeTabChangeState);
+  const resetHasHomeTab = useResetRecoilState(hasHomeTabChangeState);
+
+  useEffect(() => {
+    return () => resetHasHomeTab();
+  }, [resetHasHomeTab]);
 
   const currentTab = useMemo(() => {
     if (!tab) {
@@ -43,13 +61,20 @@ function HomeTabs() {
     logEvent(attrKeys.home.CLICK_MAIN_TAB, {
       att: newTab === 'recommend' ? 'RECOMM' : 'FOLLOWING'
     });
+    setHasHomeTab(true);
 
-    router.push({
-      pathname: '/',
-      query: {
-        tab: newTab
+    router.replace(
+      {
+        pathname: '/',
+        query: {
+          tab: newTab
+        }
+      },
+      undefined,
+      {
+        shallow: false
       }
-    });
+    );
   };
 
   const handleClickAlarm = () => {
@@ -88,7 +113,8 @@ function HomeTabs() {
           onClick={handleClick('recommend')}
           customStyle={{
             color: currentTab !== 'recommend' ? common.ui80 : undefined,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            userSelect: 'none'
           }}
         >
           추천
@@ -99,7 +125,8 @@ function HomeTabs() {
           onClick={handleClick('following')}
           customStyle={{
             color: currentTab !== 'following' ? common.ui80 : undefined,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            userSelect: 'none'
           }}
         >
           팔로잉

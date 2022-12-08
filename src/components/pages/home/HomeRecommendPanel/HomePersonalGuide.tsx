@@ -4,6 +4,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { uniqBy } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { Skeleton } from '@components/UI/atoms';
@@ -18,6 +19,7 @@ import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { defaultNonMemberPersonalGuideList } from '@constants/home';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -57,13 +59,35 @@ function HomePersonalGuide() {
   const {
     data: {
       info: { value: { gender = 'M' } = {} } = {},
-      personalStyle: { personalBrands = [], personalCategories = [], styles = [] } = {},
+      personalStyle: { styles = [], defaultStyles = [] } = {},
       size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
     } = {},
     isLoading
   } = useQueryUserInfo();
 
   const sizes = useMemo(() => [tops, bottoms, shoes].flat(), [tops, bottoms, shoes]);
+  const defaultStylesResult = defaultStyles.map((defaultStyle) => {
+    if (defaultStyle.brand) {
+      return {
+        ...defaultStyle.brand,
+        type: 'brand',
+        src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
+          mode === 'light' ? 'white' : 'black'
+        }/${(defaultStyle.brand.nameEng || '').toLowerCase().replace(/\s/g, '')}.jpg`
+      };
+    }
+
+    if (defaultStyle.category) {
+      return {
+        ...defaultStyle.category,
+        type: 'category',
+        src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_${
+          (defaultStyle.category || {}).subParentId || (defaultStyle.category || {}).id
+        }_${(gender || 'm').toLowerCase()}.png`
+      };
+    }
+    return {};
+  });
 
   const guides = useMemo(() => {
     let newGuides: Array<
@@ -72,23 +96,23 @@ function HomePersonalGuide() {
         src?: string;
       }
     > = Array.from({
-      length: personalBrands.length + personalCategories.length
+      length: styles.length
     })
       .map((_, index) => [
-        personalBrands[index]
+        styles[index].brand
           ? {
-              ...personalBrands[index],
+              ...styles[index].brand,
               src: '',
               type: 'brand'
             }
-          : personalBrands[index],
-        personalCategories[index]
+          : styles[index].brand,
+        styles[index].category
           ? {
-              ...personalCategories[index],
+              ...styles[index].category,
               src: '',
               type: 'category'
             }
-          : personalCategories[index]
+          : styles[index].category
       ])
       .flat()
       .filter((guide) => guide)
@@ -100,76 +124,24 @@ function HomePersonalGuide() {
                 mode === 'light' ? 'white' : 'black'
               }/${(guide.nameEng || '').toLowerCase().replace(/\s/g, '')}.jpg`
             : `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_${
-                (guide || {}).id
+                (guide || {}).subParentId || (guide || {}).id
               }_${(gender || 'm').toLowerCase()}.png`
       }))
       .slice(0, 8);
 
-    if (!newGuides.length)
-      newGuides = [
-        {
-          type: 'brand',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-            mode === 'light' ? 'white' : 'black'
-          }/stoneisland.jpg`,
-          name: '스톤아일랜드'
-        },
-        {
-          type: 'category',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_97_m.png`,
-          name: '맨투맨',
-          parentId: 97,
-          id: 366
-        },
-        {
-          type: 'brand',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-            mode === 'light' ? 'white' : 'black'
-          }/chanel.jpg`,
-          name: '샤넬'
-        },
-        {
-          type: 'category',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_45_m.png`,
-          name: '숄더백/크로스백',
-          parentId: 45,
-          id: 327
-        },
-        {
-          type: 'brand',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-            mode === 'light' ? 'white' : 'black'
-          }/freitag.jpg`,
-          name: '프라이탁'
-        },
-        {
-          type: 'category',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_98_m.png`,
-          name: '카드지갑',
-          parentId: 98,
-          id: 393
-        },
-        {
-          type: 'brand',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-            mode === 'light' ? 'white' : 'black'
-          }/dior.jpg`,
-          name: '디올'
-        },
-        {
-          type: 'brand',
-          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-            mode === 'light' ? 'white' : 'black'
-          }/iapstudio.jpg`,
-          name: '아이앱'
-        }
-      ];
+    if (newGuides.length && newGuides.length < 8) {
+      newGuides = uniqBy([...newGuides, ...defaultStylesResult], 'id').slice(0, 8);
+    }
+
+    if (!newGuides.length) {
+      newGuides = defaultNonMemberPersonalGuideList;
+    }
 
     return newGuides;
-  }, [personalBrands, personalCategories, gender, mode]);
+  }, [styles, mode, gender, defaultStylesResult]);
 
   const handleClick =
-    ({ id, parentId, type, name }: Partial<HomePersonalGuide>) =>
+    ({ id, parentId, type, name, subParentId }: Partial<HomePersonalGuide>) =>
     () => {
       if (type === 'brand') {
         logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
@@ -182,7 +154,12 @@ function HomePersonalGuide() {
           title: attrProperty.title.BRAND,
           type: attrProperty.type.INPUT
         });
-        router.push(`/products/brands/${name}`);
+        router.push({
+          pathname: `/products/brands/${name}`,
+          query: {
+            genders: gender === 'F' ? 'female' : 'male'
+          }
+        });
       } else {
         const { name: parentCategoryName } =
           parentCategories.find(({ id: parentCategoryId }) => parentCategoryId === parentId) || {};
@@ -205,9 +182,10 @@ function HomePersonalGuide() {
         router.push({
           pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
           query: {
-            subParentIds: [Number(id || 0)],
+            subParentIds: [Number(subParentId || id || 0)],
             genders: gender === 'F' ? 'female' : 'male',
-            categorySizeIds
+            categorySizeIds,
+            parentId
           }
         });
       }
@@ -228,7 +206,7 @@ function HomePersonalGuide() {
   };
 
   useEffect(() => {
-    if (accessUser && styles && styles.length > 0) {
+    if (accessUser && styles.length > 0) {
       const accessUserSettingValue = accessUserSettingValues.find(
         ({ userId }) => userId === (accessUser || {}).userId
       );
@@ -239,7 +217,7 @@ function HomePersonalGuide() {
         setOpenBanner(true);
       }
     }
-  }, [styles, accessUser, accessUserSettingValues]);
+  }, [accessUser, accessUserSettingValues, styles]);
 
   useEffect(() => {
     if (openBanner) {
@@ -285,14 +263,14 @@ function HomePersonalGuide() {
             ))}
           {!isLoadingParentCategories &&
             !isLoading &&
-            guides.map(({ id, parentId, src, type, name }) => (
+            guides.map(({ id, parentId, src, type, name, subParentId }) => (
               <Flexbox
                 key={`home-personal-guide-${name}`}
                 direction="vertical"
                 gap={8}
                 alignment="center"
                 justifyContent="center"
-                onClick={handleClick({ id, parentId, type, name })}
+                onClick={handleClick({ id, parentId, type, name, subParentId })}
                 customStyle={{ minWidth: 72, maxWidth: 72 }}
               >
                 <AvatarStyle src={src} alt="Personal Guide Img" />

@@ -80,6 +80,8 @@ export type Detail = {
   image: string;
   name: string;
   parentId: number;
+  brand: Brand;
+  category: Category;
 };
 
 export type PurchaseTypes = {
@@ -97,6 +99,7 @@ export type PersonalStyle = {
   styles: Detail[];
   subParentCategories: Detail[];
   purchaseTypes: { name: string; value?: 10 | 20 | 30; id?: number }[];
+  defaultStyles: Detail[];
 };
 
 export type ProfileStep = {

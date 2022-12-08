@@ -81,3 +81,62 @@ export const femaleBanners = [
     backgroundColor: '#AFA382'
   }
 ];
+
+export const defaultNonMemberPersonalGuideList = [
+  {
+    id: 25,
+    name: '스톤아일랜드',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/stoneisland.jpg`
+  },
+  {
+    id: 366,
+    name: '맨투맨',
+    parentId: 97,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_366_m.png`
+  },
+  {
+    id: 44,
+    name: '샤넬',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/chanel.jpg`
+  },
+  {
+    id: 327,
+    name: '숄더백/크로스백',
+    parentId: 45,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_327_m.png`
+  },
+  {
+    id: 125,
+    name: '프라이탁',
+    parentId: 98,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/freitag.jpg`
+  },
+  {
+    id: 393,
+    name: '카드지갑',
+    parentId: 98,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_393_m.png`
+  },
+  {
+    id: 34,
+    name: '디올',
+    parentId: 97,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/dior.jpg`
+  },
+  {
+    id: 26,
+    name: '아이앱',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/iapstudio.jpg`
+  }
+];

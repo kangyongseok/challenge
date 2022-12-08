@@ -33,8 +33,7 @@ interface LegitProfileOpinionLegitListProps {
 
 const legitFilters = [
   { result: 1, status: 30, label: '정품의견' },
-  { result: 2, status: 30, label: '가품의심' },
-  { result: 0, status: 20, label: '감정진행중' }
+  { result: 2, status: 30, label: '가품의심' }
 ];
 
 const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinionLegitListProps>(
@@ -185,12 +184,6 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
               disableAspectRatio
               customStyle={{ borderRadius: 16 }}
             />
-            <Skeleton
-              width="80px"
-              height="32px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 16 }}
-            />
           </Flexbox>
         )}
         {!isLoading && legitProducts.length > 0 && (
@@ -258,7 +251,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                     />
                   </Box>
                   <div>
-                    {opinionResult === 1 && (
+                    {status === 30 && opinionResult === 1 && (
                       <Label
                         variant="darked"
                         // TODO UI 라이브러리 업데이트 필요
@@ -281,7 +274,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                         size="xsmall"
                       />
                     )}
-                    {opinionResult === 2 && (
+                    {status === 30 && opinionResult === 2 && (
                       <Label
                         variant="darked"
                         brandColor="red"

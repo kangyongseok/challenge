@@ -132,7 +132,8 @@ const users = {
   recommWishes: () => [...users.all, 'recommWishes'] as const,
   productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const,
   products: (params?: UserProductsParams) => [...users.all, 'products', params] as const,
-  legitProfile: (userId: number) => [...users.all, 'legitProfile', userId] as const
+  legitProfile: (userId: number) => [...users.all, 'legitProfile', userId] as const,
+  simpleUserInfo: () => [...users.all, 'simpleUserInfo'] as const
 };
 
 const userAuth = {

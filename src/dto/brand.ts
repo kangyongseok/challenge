@@ -15,6 +15,7 @@ export type Brand = {
   usePriceAvgGroups: string;
   viewName: string | null;
   count: number;
+  subParentId: number | null;
 };
 
 export interface AllBrand {
