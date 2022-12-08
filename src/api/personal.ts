@@ -49,6 +49,12 @@ export async function fetchPersonalProducts(params: PersonalProductsParams) {
   return data;
 }
 
+export async function fetchPersonalsSellerProducts() {
+  const { data } = await Axios.getInstance().get<PageProductResult>(`${BASE_PATH}/sellerProducts`);
+
+  return data;
+}
+
 export async function fetchGuideAllProducts() {
   const { data } = await Axios.getInstance().get<GuideProducts[]>(`${BASE_PATH}/guideAllProducts`);
 

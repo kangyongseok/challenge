@@ -187,6 +187,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const imageBoxRef = useRef<HTMLDivElement>(null);
 
+  const isNormalseller =
+    (product?.site.id === 34 || product?.productSeller.type === 4) &&
+    product?.productSeller.type !== 3;
+
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
       ...productAtt,
@@ -300,7 +304,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             width={20}
             height={20}
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+              product.productSeller.type === 4
+                ? 161
+                : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
             }.png`}
             alt={`${siteUrlName || 'Platform'} Logo Img`}
             customStyle={{ position: 'absolute', top: 10, left: 10 }}
@@ -316,7 +322,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       </Box>
       <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
         <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
-          {isSafe && <span>안전결제 </span>}
+          {!isNormalseller && isSafe && <span>안전결제 </span>}
           {title}
         </Title>
         <Flexbox

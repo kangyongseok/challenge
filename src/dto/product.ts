@@ -2,6 +2,7 @@ import type { ProductLegit } from '@dto/productLegit';
 
 import type { PhotoGuideImages } from '@typings/camelSeller';
 
+import { SellerRole } from './user';
 import type {
   CategoryCode,
   CommonCode,
@@ -492,6 +493,7 @@ export interface ProductDetail {
   reportCount: number;
   showReviewPrompt: boolean;
   wish: boolean;
+  roleSeller: SellerRole;
 }
 
 export type ProductSellerReview = {

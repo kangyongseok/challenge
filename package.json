@@ -30,7 +30,7 @@
     "chart.js": "^3.8.0",
     "dayjs": "^1.11.2",
     "lodash-es": "^4.17.21",
-    "lottie-web": "^5.9.6",
+    "lottie-web": "^5.10.0",
     "mrcamel-ui": "^0.1.39",
     "next": "^12.2.2",
     "next-i18next": "^12.1.0",

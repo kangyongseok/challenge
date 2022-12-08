@@ -3,9 +3,7 @@ import { Box, Typography, useTheme } from 'mrcamel-ui';
 
 import FormattedText from '@library/FormattedText';
 
-import { checkAgent } from '@utils/common';
-
-function HomeFooter() {
+function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
   const {
     theme: {
       palette: { common }
@@ -17,7 +15,7 @@ function HomeFooter() {
       component="footer"
       draggable={false}
       customStyle={{
-        padding: !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) ? '0 0 32px 0' : '24px 20px',
+        padding: isMoweb ? '0 0 24px 0' : '24px 20px',
         backgroundColor: common.ui95,
         userSelect: 'none'
       }}

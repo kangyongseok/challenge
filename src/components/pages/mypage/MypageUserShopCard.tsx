@@ -52,6 +52,7 @@ function MypageUserShopCard() {
       });
 
       router.push('/user/shop');
+      // router.push('/camelSeller/registerConfirm/35945662');
     } else {
       logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
         name: attrProperty.name.MAIN

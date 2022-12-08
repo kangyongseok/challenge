@@ -121,6 +121,10 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       status
     } = product as Product;
 
+    const isNormalseller =
+      (product?.site.id === 34 || product?.productSeller.type === 4) &&
+      product?.productSeller.type !== 3;
+
     useEffect(() => {
       setIsWish(userWishIds.includes(id));
     }, [id, userWishIds]);
@@ -248,7 +252,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
               width={20}
               height={20}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                (siteUrl || {}).id || siteId
+                isNormalseller ? 161 : (siteUrl || {}).id || siteId
               }.png`}
               alt="Platform Img"
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
@@ -268,7 +272,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
           >
             <Box>
               <Title variant="body2" weight="medium" customStyle={{ marginBottom: 4 }}>
-                {isSafe && <span>안전결제 </span>}
+                {!isNormalseller && isSafe && <span>안전결제 </span>}
                 {title}
               </Title>
               <Flexbox

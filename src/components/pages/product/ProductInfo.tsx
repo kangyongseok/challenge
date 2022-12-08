@@ -47,6 +47,9 @@ function ProductInfo({
   const [hoistingState, setHoistingState] = useState(false);
   const [getToastState] = useRecoilState(toastState);
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
+  const isNormalseller =
+    (product?.siteId === 34 || product?.productSeller.type === 4) &&
+    product?.productSeller.type !== 3;
   const isCamelSeller =
     product &&
     SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
@@ -93,8 +96,7 @@ ${newDescription}
           label.codeId === ID_FILTER &&
           LABELS[ID_FILTER].some(
             ({ description: labelDescription, name: labelName }) =>
-              ['카멜인증', '새상품급', '시세이하'].includes(labelDescription) &&
-              labelName === label.name
+              ['새상품급', '시세이하'].includes(labelDescription) && labelName === label.name
           )
       )
       .map(({ id, name, description: labelDescription }) => ({
@@ -132,7 +134,7 @@ ${newDescription}
     <ProductInfoSkeleton />
   ) : (
     <Box customStyle={{ marginTop: isCamelSeller ? 16 : 20 }}>
-      {(isCamelProduct || isCamelSeller) && (
+      {(isCamelProduct || isCamelSeller) && !isNormalseller && (
         <Flexbox customStyle={{ marginBottom: 8 }}>
           <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
           <Typography variant="small2" weight="bold">
@@ -153,7 +155,7 @@ ${newDescription}
             />
           ))}
         </Flexbox>
-        {isCamelSeller && (
+        {isCamelSeller && !isNormalseller && (
           <Label
             text="가품 시, 100%환불"
             size="xsmall"
@@ -164,7 +166,7 @@ ${newDescription}
         )}
       </Flexbox>
       <Title component="h1" variant="h4" weight="medium">
-        {isSafe && <strong>안전결제 </strong>}
+        {!isNormalseller && isSafe && <strong>안전결제 </strong>}
         {product?.title}
       </Title>
       <Typography component="h2" variant="h3" weight="bold">

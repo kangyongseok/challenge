@@ -94,9 +94,9 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
         ),
         categoryIds: [editData.product.category.id || 0],
         keyword: editData.product.title,
-        conditionIds: [editData.product.labels[0].id],
-        colorIds: [editData.product.colors[0].id],
-        sizeIds: editData.product.categorySizes[0] ? [editData.product.categorySizes[0].id] : [0],
+        conditionIds: editData.product.labels?.map((label) => label.id),
+        colorIds: editData.product.colors?.map((color) => color.id),
+        sizeIds: editData.product.categorySizes?.map((size) => size.id),
         order: 'postedAllDesc' // updatedDesc
       });
 

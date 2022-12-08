@@ -141,6 +141,10 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     };
   }, [chainPrice, data]);
 
+  const isNormalseller =
+    (data?.product.siteId === 34 || data?.product.productSeller.type === 4) &&
+    data?.product.productSeller.type !== 3;
+
   useEffect(() => {
     scrollEnable();
   }, [data]);
@@ -224,7 +228,8 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
       if (
         siteId === PRODUCT_SITE.CAMEL.id ||
         (sellerType &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'])
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) ||
+        isNormalseller
       ) {
         const { protocol, host } = window.location;
         const newConversionId =
@@ -253,7 +258,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
         checkAgent.isAndroid() ? '?' : '&'
       }body=${message}`;
     },
-    [data, mutateMetaInfo]
+    [data, mutateMetaInfo, isNormalseller]
   );
 
   const getProductImageOverlay = useCallback(
@@ -291,7 +296,9 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   }, []);
 
   useEffect(() => {
-    setCamelSellerProduct(data?.product.productSeller.account === String(accessUser?.userId));
+    if (data?.roleSeller?.userId && accessUser?.userId) {
+      setCamelSellerProduct(data?.roleSeller?.userId === accessUser?.userId);
+    }
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {
         if (window.webview && window.webview.callReviewRequest) {

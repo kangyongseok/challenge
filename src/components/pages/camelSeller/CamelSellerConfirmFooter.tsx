@@ -2,7 +2,7 @@ import type { FormEvent, RefObject } from 'react';
 import { useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Toast, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -10,13 +10,15 @@ import styled from '@emotion/styled';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { postProducts, putProductEdit } from '@api/product';
+import { fetchProduct, postProducts, putProductEdit } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { SubmitType } from '@typings/camelSeller';
+import { deviceIdState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerIsImageLoadingState,
@@ -35,6 +37,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
     theme: { typography }
   } = useTheme();
   const { query, replace } = useRouter();
+  const deviceId = useRecoilValue(deviceIdState);
   const productId = Number(query.id || 0);
   const [open, setOpen] = useState(false);
   const validatorResult = useRecoilValue(submitValidatorState);
@@ -58,6 +61,16 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
   );
   const { mutate: mutatePutEdit } = useMutation(putProductEdit);
   const { mutate: mutatePostRegister } = useMutation(postProducts);
+  const { data: editData } = useQuery(
+    queryKeys.products.sellerEditProducs({ productId, deviceId }),
+    () => fetchProduct({ productId, deviceId }),
+    {
+      enabled: !!productId,
+      refetchOnMount: 'always'
+    }
+  );
+
+  const isExternalNormalSeller = editData?.product.productSeller.type === 4;
 
   const handleClickEditTitle = () => {
     setIsModify(({ type }) => ({
@@ -80,7 +93,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       setOpen(true);
       return;
     }
-    if (!validatorResult || !validatorPhoto.isState) {
+    if (!validatorResult || (!validatorPhoto.isState && !isExternalNormalSeller)) {
       setSubmitClickState(({ type }) => ({ type, isState: true }));
       setOpenValidateToast(({ type }) => ({
         type,
@@ -97,7 +110,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
   };
 
   const editSubmit = () => {
-    const editData = {
+    const submitPutData = {
       title: tempData.title,
       price: tempData.price,
       brandIds: tempData.brandIds,
@@ -113,7 +126,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
     mutatePutEdit(
       {
         productId,
-        parameter: editData as SubmitType
+        parameter: submitPutData as SubmitType
       },
       {
         onSuccess() {
@@ -165,7 +178,11 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       <RegisterButtonBox
         ref={footerRef}
         isEditTitle={modify.isState}
-        registerActive={!!validatorResult && !!validatorPhoto.isState && !isImageLoading}
+        registerActive={
+          !!validatorResult &&
+          (!!validatorPhoto.isState || isExternalNormalSeller) &&
+          !isImageLoading
+        }
         onMouseDown={handleBlurBlock}
       >
         <Button

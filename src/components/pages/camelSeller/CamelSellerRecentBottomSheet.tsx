@@ -174,9 +174,9 @@ function CamelSellerRecentBottomSheet() {
           ),
           categoryIds: [editData.product.category.id || 0],
           keyword: editData.product.quoteTitle,
-          conditionIds: [editData.product.labels[0].id],
-          colorIds: [editData.product.colors[0].id],
-          sizeIds: [editData.product.categorySizes[0].id],
+          conditionIds: editData.product.labels?.map((label) => label.id),
+          colorIds: editData.product.colors?.map((color) => color.id),
+          sizeIds: editData.product.categorySizes?.map((size) => size.id),
           order: 'postedAllDesc' // updatedDesc
         });
       } else if (query.title) {

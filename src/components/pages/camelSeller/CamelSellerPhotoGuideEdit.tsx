@@ -64,16 +64,16 @@ function CamelSellerPhotoGuideEdit() {
       enabled: !!photoGuideParams.brandId
     }
   );
-  const { data: editData } = useQuery(
+  const { data: editData, isLoading } = useQuery(
     queryKeys.products.sellerEditProducs({ productId, deviceId }),
     () => fetchProduct({ productId, deviceId }),
     {
       enabled: !!productId
     }
   );
-
+  const isExternalNormalSeller = editData?.product.productSeller.type === 4;
   useEffect(() => {
-    if (editData && photoImages.length === 0) {
+    if (editData && photoImages?.length === 0) {
       setPhotoImages(editData.product.photoGuideImages);
       setPhotoGuideParams({
         brandId: editData.product.brand.id || 0,
@@ -162,8 +162,8 @@ function CamelSellerPhotoGuideEdit() {
   };
 
   const mergePhotoResult = useCallback(() => {
-    if (photoImages.length > 0 && guideImages) {
-      return guideImages.photoGuideDetails.map((photoGuide) => {
+    if (photoImages?.length > 0 && guideImages) {
+      const result = guideImages.photoGuideDetails.map((photoGuide) => {
         if (find(photoImages, { commonPhotoGuideDetail: { id: photoGuide.id } })) {
           return {
             ...find(photoImages, { commonPhotoGuideDetail: { id: photoGuide.id } }),
@@ -175,9 +175,14 @@ function CamelSellerPhotoGuideEdit() {
         }
         return photoGuide as MergePhotoImages;
       });
+
+      if (isExternalNormalSeller) {
+        return result.filter((imageData) => !!imageData.imageUrl);
+      }
+      return result;
     }
     return null;
-  }, [guideImages, photoImages]);
+  }, [guideImages, photoImages, isExternalNormalSeller]);
 
   const isRequiredPhotoValid = useCallback(() => {
     if (mergePhotoResult() && photoImages) {
@@ -218,6 +223,7 @@ function CamelSellerPhotoGuideEdit() {
   }, [guideImages?.photoGuideDetails, mergePhotoResult, photoImages]);
 
   const photoRegisterStateText = useMemo(() => {
+    if (isExternalNormalSeller) return '타 플랫폼 매물은 사진을 수정할 수 없습니다.';
     if (isRequiredPhotoValid() && isAllRequiredPhotoValid())
       return (
         <p>
@@ -231,16 +237,16 @@ function CamelSellerPhotoGuideEdit() {
     if (!isState && !isRequiredPhotoValid())
       return '가이드에 맞춰 사진을 등록하면 더 빠르게 판매할 수 있어요!';
     return '';
-  }, [isRequiredPhotoValid, isAllRequiredPhotoValid, isState]);
+  }, [isRequiredPhotoValid, isAllRequiredPhotoValid, isState, isExternalNormalSeller]);
 
-  const isPhotoUrl = useMemo(() => photoImages.filter((img) => !!img.imageUrl), [photoImages]);
+  const isPhotoUrl = useMemo(() => photoImages?.filter((img) => !!img.imageUrl), [photoImages]);
 
   const count = useMemo(() => {
     if (photoImages) {
       return isPhotoUrl.length;
     }
     return 0;
-  }, [isPhotoUrl.length, photoImages]);
+  }, [isPhotoUrl?.length, photoImages]);
 
   useEffect(() => {
     setRequirePhotoValid(({ type }) => ({
@@ -262,22 +268,54 @@ function CamelSellerPhotoGuideEdit() {
       index: target.dataset.index,
       att: 'SAVE'
     });
-
     setCurrentIndex(Number(target.dataset.index));
     setOpenModal(true);
+  };
+
+  const iconColorParser = () => {
+    if (isExternalNormalSeller) return common.ui80;
+    if (isState && !isRequiredPhotoValid()) {
+      return secondary.red.main;
+    }
+    return primary.light;
+  };
+  const externalNormalSellerImage = () => {
+    const base = [editData?.product.imageMain];
+    if (editData?.product.imageDetails) {
+      return [...base, ...editData.product.imageDetails.split('|')];
+    }
+    return base;
   };
 
   return (
     <StyledPhotoGuide isLongText={isRequiredPhotoValid() && isAllRequiredPhotoValid()}>
       <PhotoGuideArea gap={8}>
-        <PhotoIconBox
-          onClick={handleClickCallPhotoGuide}
-          count={count}
-          totalImageCount={guideImages?.photoGuideDetails.length as number}
-        />
+        {!isExternalNormalSeller ? (
+          <PhotoIconBox
+            onClick={handleClickCallPhotoGuide}
+            count={count}
+            totalImageCount={guideImages?.photoGuideDetails.length as number}
+          />
+        ) : (
+          ''
+        )}
         {!isSuccess && <SkeletonPhotoGuideBox />}
         {isSuccess &&
           !mergePhotoResult() &&
+          isExternalNormalSeller &&
+          externalNormalSellerImage().map((imageUrl, i) => (
+            <GuideBox
+              key={`photo-guide-${imageUrl?.split('/')[imageUrl.split('/').length - 1]}`}
+              data-index={i}
+              // data-type={imageType}
+              onClick={handleClickDetailModal}
+            >
+              <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+            </GuideBox>
+          ))}
+        {isSuccess &&
+          !mergePhotoResult() &&
+          !isExternalNormalSeller &&
           guideImages?.photoGuideDetails?.map(
             ({ imageWatermark, isRequired, imageType, sort }, i) => (
               <GuideBox
@@ -295,7 +333,7 @@ function CamelSellerPhotoGuideEdit() {
                 ) : (
                   <CenterImage src={imageWatermark} disableAspectRatio />
                 )}
-                {isRequired && (
+                {isRequired && !isExternalNormalSeller && (
                   <RequireText weight="medium" variant="small2">
                     {imageType === 1 ? '필수' : '감정'}
                   </RequireText>
@@ -303,7 +341,6 @@ function CamelSellerPhotoGuideEdit() {
               </GuideBox>
             )
           )}
-
         {mergePhotoResult() &&
           mergePhotoResult()?.map(
             ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (
@@ -324,7 +361,7 @@ function CamelSellerPhotoGuideEdit() {
                     {imageUrl && (
                       <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
                     )}
-                    <OverlayWarterMark>
+                    <OverlayWarterMark isNormalSeller={isExternalNormalSeller}>
                       <CenterImage
                         isImage={!!imageUrl}
                         src={imageUrl ? imageWatermarkDark : imageWatermark}
@@ -333,7 +370,7 @@ function CamelSellerPhotoGuideEdit() {
                     </OverlayWarterMark>
                   </>
                 )}
-                {isRequired && (
+                {isRequired && !isExternalNormalSeller && (
                   <RequireText weight="medium" variant="small2">
                     {imageType === 1 ? '필수' : '감정'}
                   </RequireText>
@@ -345,10 +382,14 @@ function CamelSellerPhotoGuideEdit() {
       <Flexbox alignment="center" customStyle={{ width: 'calc(100% - 20px)', marginLeft: 20 }}>
         <Flexbox alignment="flex-start">
           <Icon
-            name={isRequiredPhotoValid() ? 'CheckCircleFilled' : 'BangCircleFilled'}
+            name={
+              isRequiredPhotoValid() && !isExternalNormalSeller
+                ? 'CheckCircleFilled'
+                : 'BangCircleFilled'
+            }
             size="small"
             customStyle={{
-              color: isState && !isRequiredPhotoValid() ? secondary.red.main : primary.light
+              color: iconColorParser()
             }}
           />
           <Typography
@@ -363,14 +404,19 @@ function CamelSellerPhotoGuideEdit() {
           </Typography>
         </Flexbox>
       </Flexbox>
-      {mergePhotoResult() && (
+      {(mergePhotoResult() || isExternalNormalSeller) && !isLoading && (
         <ImageDetailDialog
           open={openModal}
           onClose={() => setOpenModal(false)}
           images={
             mergePhotoResult()
-              ?.filter((result) => result.imageUrl)
-              .map((item) => item.imageUrl) as string[]
+              ? (mergePhotoResult()
+                  ?.filter((result) => result.imageUrl)
+                  .map((item) => item.imageUrl) as string[])
+              : ([
+                  editData?.product.imageMain,
+                  ...(editData?.product.imageDetails?.split('|') || [])
+                ] as string[])
           }
           syncIndex={currentIndex}
         />
@@ -445,13 +491,13 @@ const AnimationLoading = styled(Image)`
   }
 `;
 
-const OverlayWarterMark = styled.div`
+const OverlayWarterMark = styled.div<{ isNormalSeller: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  display: flex;
+  display: ${({ isNormalSeller }) => (isNormalSeller ? 'none' : 'flex')};
   align-items: center;
   justify-content: center;
 `;

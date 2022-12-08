@@ -114,7 +114,7 @@ function MowebFooter() {
           marginBottom: 32
         }}
       />
-      <HomeFooter />
+      <HomeFooter isMoweb />
     </FooterWrap>
   );
 }

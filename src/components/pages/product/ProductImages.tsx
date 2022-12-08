@@ -75,6 +75,10 @@ function ProductImages({
     }
   );
 
+  const isNormalseller =
+    (product?.siteId === 34 || product?.productSeller.type === 4) &&
+    product?.productSeller.type !== 3;
+
   useEffect(() => {
     if (searchRelatedProducts && !isLoading) {
       if (searchRelatedProducts.page.content.length < 8) {
@@ -244,7 +248,7 @@ function ProductImages({
           onSlideChange={handleSlideChange}
           preventClicks
         >
-          {product && !lowerPriceDisplay() && (
+          {product && !lowerPriceDisplay() && !isNormalseller && (
             <>
               {getProductImageOverlay({ status: product.status })}
               {!isCamelSellerProduct && (

@@ -1,6 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
-import { useRouter } from 'next/router';
 import { Chip } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
@@ -19,22 +18,16 @@ import attrKeys from '@constants/attrKeys';
 import { eventContentProductsParamsState } from '@recoil/eventFilter/atom';
 import { showAppDownloadBannerState } from '@recoil/common';
 
-function EventFilter() {
-  const router = useRouter();
-  const { id } = router.query;
-  const splitIds = String(id).split('-');
-  const eventId = Number(splitIds[splitIds.length - 1] || 0);
-
+function QuickFilter() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [{ brandIds = [] }, setEventContentProductsParamsState] = useRecoilState(
     eventContentProductsParamsState
   );
 
   const { data: { brands = [] } = {}, isLoading } = useQuery(
-    queryKeys.commons.content(Number(eventId)),
-    () => fetchContent(Number(eventId)),
+    queryKeys.commons.content(15),
+    () => fetchContent(15),
     {
-      enabled: !!id,
       keepPreviousData: true,
       staleTime: 5 * 60 * 1000
     }
@@ -43,7 +36,7 @@ function EventFilter() {
   const handleClick = (newBrandId: number, name: string) => () => {
     logEvent(attrKeys.events.CLICK_TAG, {
       name: attrProperty.name.CRAZY_WEEK,
-      title: eventId === 13 ? 'QUICK' : 'LOWPRICE',
+      title: attrProperty.title.GENERAL_SELLER,
       att: name,
       on: brandIds.includes(newBrandId) ? 'N' : 'Y'
     });
@@ -119,7 +112,7 @@ const List = styled.section<{ showAppDownloadBanner: boolean }>`
   grid-auto-columns: max-content;
   column-gap: 8px;
   margin: 0 -20px;
-  padding: 12px 20px;
+  padding: 0 20px 12px;
   overflow-x: auto;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   background-color: ${({
@@ -129,4 +122,4 @@ const List = styled.section<{ showAppDownloadBanner: boolean }>`
   }) => common.bg01};
 `;
 
-export default EventFilter;
+export default QuickFilter;

@@ -43,8 +43,10 @@ function CamelSellerRegisterState() {
     if (editData && !tempData.color.name) {
       setTempData({
         ...tempData,
-        color: editData.product.colors[0],
-        size: editData.product.categorySizes[0]
+        color: editData.product.colors ? editData.product.colors[0] : { id: 0, name: '' },
+        size: editData.product.categorySizes
+          ? editData.product.categorySizes[0]
+          : { id: 0, name: '' }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

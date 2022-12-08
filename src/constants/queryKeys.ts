@@ -65,6 +65,7 @@ const personals = {
     'recommendProducts',
     params
   ],
+  sellerProducts: () => [...personals.all, 'sellerProducts'],
   guideAllProducts: () => [...personals.all, 'guideAllProducts']
 };
 

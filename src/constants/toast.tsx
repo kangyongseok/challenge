@@ -1,5 +1,7 @@
 import { ReactElement } from 'react';
 
+import dayjs from 'dayjs';
+
 import { ToastStatus, ToastType } from '@typings/common';
 
 const bottomSheetLogin = {
@@ -61,7 +63,14 @@ const legitStatus = {
 };
 
 const home = {
-  saved: '실시간 사진감정이 신청되었어요!'
+  saved: '실시간 사진감정이 신청되었어요!',
+  isAgree: '이미 동의 중 입니다.',
+  disAgree: (
+    <>
+      <p>{dayjs().format('YYYY-MM-DD')} 마케팅 수신 동의 처리 되었습니다.</p>
+      <p>(재설정: 마이 -{'>'} 해제)</p>
+    </>
+  )
 };
 
 const mypage = {

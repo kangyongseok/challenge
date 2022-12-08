@@ -11,7 +11,8 @@ export const SELLER_STATUS = {
   0: '진열',
   1: '미진열',
   2: '신용판매자',
-  3: '카멜판매자'
+  3: '카멜판매자',
+  4: '일반판매자'
 };
 
 export const USER_DEFAULT_SIZE = {

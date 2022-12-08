@@ -165,6 +165,10 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
 
   const hasTarget = useMemo(() => !!product.targetProductId, [product.targetProductId]);
 
+  const isNormalseller =
+    (product?.site.id === 34 || product?.productSeller.type === 4) &&
+    product?.productSeller.type !== 3;
+
   useEffect(() => {
     if (showPriceDown) return;
     if (isPopular && name === 'WISH_LIST') {
@@ -355,7 +359,9 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               width={20}
               height={20}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+                isNormalseller
+                  ? 161
+                  : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
               }.png`}
               alt={`${siteUrlName || 'Platform'} Logo Img`}
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
@@ -382,7 +388,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             )}
             <Flexbox direction="vertical" gap={4}>
               <Title variant="body2" weight="medium">
-                {isSafe && <span>안전결제 </span>}
+                {!isNormalseller && isSafe && <span>안전결제 </span>}
                 {title}
               </Title>
               <Flexbox

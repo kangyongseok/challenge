@@ -61,11 +61,16 @@ function RegisterConfirmEdit() {
 
   useEffect(() => {
     if (editData) {
-      const result = editData.product.photoGuideImages.map((images) => ({
+      const result = editData.product.photoGuideImages?.map((images) => ({
         ...images,
         photoGuideId: images.commonPhotoGuideDetail.id
       }));
-
+      const size = () => {
+        if (editData.product.categorySizes) {
+          return editData.product.categorySizes[0] || { id: 0, name: 'ONE SIZE' };
+        }
+        return { id: 0, name: '' };
+      };
       setTempData({
         title: editData.product.title,
         price: editData.product.price,
@@ -77,10 +82,8 @@ function RegisterConfirmEdit() {
         condition: find(editData?.product.labels, {
           codeId: 14
         }) as CamelSellerTempData['condition'],
-        color: editData.product.colors[0],
-        size: editData.product.categorySizes[0]
-          ? editData.product.categorySizes[0]
-          : { id: 0, name: 'ONE SIZE' },
+        color: editData.product.colors ? editData.product.colors[0] : { id: 0, name: '' },
+        size: size(),
         photoGuideImages: result,
         description: editData.product.description || '',
         quoteTitle: editData.product.quoteTitle || ''

@@ -26,7 +26,13 @@ import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
 
-function ProductSellerProductList({ product }: { product?: Product }) {
+function ProductSellerProductList({
+  product,
+  roleSellerId
+}: {
+  product?: Product;
+  roleSellerId?: number;
+}) {
   const router = useRouter();
   const {
     theme: {
@@ -90,6 +96,10 @@ function ProductSellerProductList({ product }: { product?: Product }) {
     SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
 
+  const isNormalseller =
+    (reviewInfo?.site.id === 34 || reviewInfo?.productSeller.type === 4) &&
+    reviewInfo?.productSeller.type !== 3;
+
   return sellerProductsIsLoading ||
     reviewInfoIsLoading ||
     sellerProductsIsFetching ||
@@ -149,15 +159,16 @@ function ProductSellerProductList({ product }: { product?: Product }) {
                 weight="bold"
                 hasName={!!reviewInfo?.productSeller?.name}
                 isCamelSeller={!!isCamelSeller}
+                isNormalSeller={isNormalseller}
               >
                 {reviewInfo?.productSeller?.name}
               </ProductSellerName>
-              {isCamelSeller && (
+              {isCamelSeller && !isNormalseller && (
                 <Icon name="SafeFilled" size="large" customStyle={{ color: primary.main }} />
               )}
             </Flexbox>
             <Typography customStyle={{ color: common.ui60 }}>
-              {isCamelSeller ? '카멜인증판매자 ∙ ' : ''}
+              {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''}
               {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
             </Typography>
           </Flexbox>
@@ -187,7 +198,7 @@ function ProductSellerProductList({ product }: { product?: Product }) {
                   source={attrProperty.productSource.LIST_RELATED}
                   hideProductLabel
                   hideAreaWithDateInfo
-                  hideWishButton={Number(product?.productSeller.account) === accessUser?.userId}
+                  hideWishButton={roleSellerId === accessUser?.userId}
                 />
               </Box>
             ))}
@@ -223,14 +234,18 @@ const ImageSkeleton = styled.div`
   border-radius: 8px;
 `;
 
-const ProductSellerName = styled(Typography)<{ hasName: boolean; isCamelSeller: boolean }>`
+const ProductSellerName = styled(Typography)<{
+  hasName: boolean;
+  isCamelSeller: boolean;
+  isNormalSeller: boolean;
+}>`
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow-wrap: anywhere;
-  color: ${({ isCamelSeller, theme: { palette } }) =>
-    isCamelSeller ? palette.primary.main : palette.common.ui20};
+  color: ${({ isCamelSeller, isNormalSeller, theme: { palette } }) =>
+    isCamelSeller && !isNormalSeller ? palette.primary.main : palette.common.ui20};
   ${({
     theme: {
       box,

@@ -131,6 +131,9 @@ function ProductCTAButton({
   const isCamelSeller =
     product &&
     SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
+  const isNormalSeller =
+    product &&
+    SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['4'];
   const isSoldOut =
     product &&
     PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'];
@@ -158,7 +161,7 @@ function ProductCTAButton({
       return '판매완료';
     }
 
-    if (isCamelProduct || isCamelSeller || isCamelSelfSeller) {
+    if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) {
       return '판매자에게 문자 보내기';
     }
 
@@ -171,7 +174,8 @@ function ProductCTAButton({
     isReserving,
     isSoldOut,
     product,
-    isCamelSelfSeller
+    isCamelSelfSeller,
+    isNormalSeller
   ]);
 
   const sessionId = amplitude.getInstance().getSessionId();
@@ -296,7 +300,7 @@ function ProductCTAButton({
       return;
     }
 
-    if (product && (isCamelProduct || isCamelSeller || isCamelSelfSeller)) {
+    if (product && (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)) {
       onClickSMS({
         siteId: product.site?.id,
         sellerType: product.productSeller?.type,
@@ -481,21 +485,25 @@ function ProductCTAButton({
           }}
         >
           <Typography variant="body1" weight="bold" customStyle={{ color: common.uiWhite }}>
-            {(isCamelProduct || isCamelSeller || isCamelSelfSeller) && (
+            {(isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) && (
               <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
             )}
-            {!isCamelProduct && !isCamelSeller && !isCamelSelfSeller && platformId && (
-              <Avatar
-                src={
-                  isCamelProduct || isCamelSeller || isCamelSelfSeller
-                    ? `https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/message-white.png`
-                    : `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`
-                }
-                alt="Platform Logo Img"
-                customStyle={{ marginRight: 8 }}
-                width={20}
-              />
-            )}
+            {!isCamelProduct &&
+              !isCamelSeller &&
+              !isCamelSelfSeller &&
+              !isNormalSeller &&
+              platformId && (
+                <Avatar
+                  src={
+                    isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller
+                      ? `https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/message-white.png`
+                      : `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`
+                  }
+                  alt="Platform Logo Img"
+                  customStyle={{ marginRight: 8 }}
+                  width={20}
+                />
+              )}
             {ctaText}
           </Typography>
           <Tooltip

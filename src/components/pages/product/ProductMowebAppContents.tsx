@@ -60,7 +60,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         <ErrorBoundary disableFallback>
           <ProductAveragePriceChart product={data?.product} />
         </ErrorBoundary>
-        <ProductSellerProductList product={data?.product} />
+        <ProductSellerProductList product={data?.product} roleSellerId={data?.roleSeller?.userId} />
         <ProductSellerReviews product={data?.product} />
         <Box customStyle={{ paddingTop: 20 }} />
         <ProductLastLowerPrice />
@@ -92,7 +92,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         <ProductAveragePriceChart product={data?.product} />
       </ErrorBoundary>
       {!isShowChart && <Box customStyle={{ paddingTop: 32 }} />}
-      <ProductSellerProductList product={data?.product} />
+      <ProductSellerProductList product={data?.product} roleSellerId={data?.roleSeller?.userId} />
       <ProductSellerReviews product={data?.product} />
     </>
   );

@@ -118,6 +118,8 @@ export type ToastStatus =
   | 'loginSuccess'
   | 'overFiveStyle'
   | 'successEdit'
+  | 'isAgree'
+  | 'disAgree'
   | 'selfCamelProduct';
 
 export type DialogType =
