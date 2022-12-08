@@ -57,6 +57,12 @@ const FIRST_CATEGORIES: FirstCategorys = {
   283: '기타의류',
   284: '잡화'
 };
+const BLACK_USER_AGENT_LIST = ['petalbot'];
+
+const isBlackUserAgent = () =>
+  BLACK_USER_AGENT_LIST.some((blackUserAgent) =>
+    window.navigator.userAgent.toLowerCase().includes(blackUserAgent)
+  );
 
 const channelID = (eventName: string, eventParams: object) => {
   // 임시처리, 조만간 제거 예정
@@ -293,6 +299,8 @@ const initAmplitude = () => {
 const errorCode = [403, 404, 500, 502, 503, 504];
 
 export const logEvent = (eventName: string, eventParams?: object) => {
+  if (isBlackUserAgent()) return;
+
   try {
     amplitude.getInstance().logEvent(eventName, eventParams);
     datadogLogs.logger.log(
@@ -325,6 +333,10 @@ export const logEvent = (eventName: string, eventParams?: object) => {
 
 const Amplitude = {
   init() {
+    const { userAgent } = window.navigator;
+
+    if (isBlackUserAgent()) return;
+
     amplitude.getInstance().init(
       process.env.AMPLITUDE_API_KEY,
       undefined,
@@ -345,7 +357,7 @@ const Amplitude = {
           logEvent('INIT_CONFIG');
           initAmplitude();
           logEvent('INIT_CONFIG_SUCCESS', {
-            userAgent: window.navigator.userAgent
+            userAgent
           });
         } catch (error) {
           logEvent('INIT_CONFIG_FAIL', {
