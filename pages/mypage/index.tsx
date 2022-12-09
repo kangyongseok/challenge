@@ -30,7 +30,7 @@ import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, isProduction } from '@utils/common';
+import { isProduction } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -42,14 +42,9 @@ function MyPage() {
   useEffect(() => {
     // beta 일땐 모든 판매하기 접근경로 오픈
     // 운영에서 노출 조건
-    // IOS + 로그인 + PRODUCT_CREATE 권한 보유자
-    // 운영에서 안드로이드는 비노출
+    // 로그인 + PRODUCT_CREATE 권한 보유자
     if (isProduction) {
-      if (
-        accessUser &&
-        userInfo?.roles?.includes(PRODUCT_CREATE as never) &&
-        checkAgent.isIOSApp()
-      ) {
+      if (accessUser && userInfo?.roles?.includes(PRODUCT_CREATE as never)) {
         setAuthProductSeller(true);
       } else {
         setAuthProductSeller(false);
