@@ -182,6 +182,7 @@ function HomeProductKeywordList() {
           let splitFilter: string | string[] = filter.split(',');
 
           if (splitFilter.length >= 3) {
+            splitFilter = splitFilter.join(', ');
             // splitFilter = `${splitFilter.slice(0, 5).join(',')}...`;
           } else {
             splitFilter = splitFilter.join(',');
@@ -380,7 +381,7 @@ const Description = styled(Typography)`
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-align: center;
-  word-break: break-all;
+  word-break: keep-all;
   color: ${({
     theme: {
       palette: { common }
