@@ -47,7 +47,7 @@ function MyPage() {
     if (isProduction) {
       if (
         accessUser &&
-        userInfo?.roles.includes(PRODUCT_CREATE as never) &&
+        userInfo?.roles?.includes(PRODUCT_CREATE as never) &&
         checkAgent.isIOSApp()
       ) {
         setAuthProductSeller(true);

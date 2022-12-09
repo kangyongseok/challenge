@@ -129,7 +129,7 @@ function HomePersonalGuide() {
       }))
       .slice(0, 8);
 
-    if (newGuides.length && newGuides.length < 8) {
+    if (newGuides.length && newGuides.length <= 8) {
       newGuides = uniqBy([...newGuides, ...defaultStylesResult], 'id').slice(0, 8);
     }
 
