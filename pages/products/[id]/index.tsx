@@ -142,7 +142,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   }, [chainPrice, data]);
 
   const isNormalseller =
-    (data?.product.siteId === 34 || data?.product.productSeller.type === 4) &&
+    (data?.product.site.id === 34 || data?.product.productSeller.type === 4) &&
     data?.product.productSeller.type !== 3;
 
   useEffect(() => {

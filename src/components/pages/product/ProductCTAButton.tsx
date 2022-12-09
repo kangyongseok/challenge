@@ -133,7 +133,8 @@ function ProductCTAButton({
     SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
   const isNormalSeller =
     product &&
-    SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['4'];
+    (product.site.id === 34 || product.productSeller.type === 4) &&
+    product.productSeller.type !== 3;
   const isSoldOut =
     product &&
     PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'];
