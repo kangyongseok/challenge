@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Pagination } from 'swiper';
+import type { Swiper as SwiperClass } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
@@ -29,7 +30,10 @@ function LegitDashboardBanner() {
       palette: { common }
     }
   } = useTheme();
+
   const [initLoad, setInitLoad] = useState(false);
+
+  const startXRef = useRef(0);
 
   useEffect(() => {
     setInitLoad(true);
@@ -108,12 +112,17 @@ function LegitDashboardBanner() {
     router.push(target.dataset.path as string);
   };
 
-  const handleSwiperBanner = () => {
+  const handleSwiperBanner = ({ realIndex, touches }: SwiperClass) => {
     if (initLoad) {
-      logEvent(attrKeys.legit.SWIPE_X_BANNER, {
-        name: attrProperty.legitName.LEGIT_MAIN,
-        title: attrProperty.legitTitle.LEGITDASHBOARD
-      });
+      const { startX } = touches;
+
+      if (startX !== startXRef.current) {
+        logEvent(attrKeys.home.SWIPE_X_BANNER, {
+          name: attrProperty.name.MAIN,
+          index: realIndex
+        });
+        startXRef.current = startX;
+      }
     }
   };
 
@@ -135,7 +144,7 @@ function LegitDashboardBanner() {
         style={{ padding: '0 20px' }}
         onSlideChange={handleSwiperBanner}
         loop
-        // loopedSlides={1}
+        loopedSlides={2}
       >
         {isLoading
           ? Array.from({ length: 3 }, (_, index) => (
