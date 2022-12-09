@@ -200,8 +200,8 @@ function HomePersonalGuideProductList() {
               compact
               gap={8}
               hideProductLabel
-              hideMetaCamelInfo
-              hideAreaWithDateInfo
+              // hideMetaCamelInfo
+              // hideAreaWithDateInfo
               productAtt={{
                 name: attrProperty.name.MAIN,
                 title: attrProperty.title.PERSONAL_GUIDE,
@@ -269,6 +269,7 @@ const List = styled.div`
   margin-top: 20px;
   padding: 0 20px;
   overflow-x: auto;
+  min-height: 222px;
 
   & > div {
     width: 120px;
