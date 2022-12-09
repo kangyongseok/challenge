@@ -222,3 +222,5 @@ export const PRODUCT_SOURCE = {
   HONEYNOTI_LIST: 'HONEYNOTI_LIST',
   API: 'API'
 };
+
+export const productInfoLabels = ['카멜인증', '새상품급', '시세이하'];

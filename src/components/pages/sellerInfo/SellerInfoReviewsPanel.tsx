@@ -86,6 +86,10 @@ function SellerInfoReviewsPanel() {
     SELLER_STATUS[firstReviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
 
+  const isNormalseller =
+    (firstReviewInfo?.site.id === 34 || firstReviewInfo?.productSeller.type === 4) &&
+    firstReviewInfo?.productSeller.type !== 3;
+
   const handleClickCard = () => {
     setReviewBlockState(true);
     queryClient.invalidateQueries(id);
@@ -114,14 +118,14 @@ function SellerInfoReviewsPanel() {
             {(firstReviewInfo.siteUrl?.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
           </Typography>
           <Flexbox gap={12} alignment="center">
-            {isCamelProduct && (
+            {isCamelProduct && !isNormalseller && (
               <Flexbox alignment="center">
                 <Typography variant="h4" weight="bold">
                   카멜우수판매자
                 </Typography>
               </Flexbox>
             )}
-            {isCamelSeller && (
+            {isCamelSeller && !isNormalseller && (
               <Flexbox alignment="center">
                 <Icon name="SafeFilled" customStyle={{ color: primary.main }} />
                 <Typography variant="h4" weight="bold">

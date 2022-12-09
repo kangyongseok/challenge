@@ -13,12 +13,14 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { Models } from '@dto/model';
 
+import LocalStorage from '@library/localStorage';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchModelSuggest } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
+import { SELLER_PROCESS_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -86,7 +88,7 @@ function SelectLine() {
       title: attrProperty.title.MODEL,
       att: model.name
     });
-
+    LocalStorage.remove(SELLER_PROCESS_TYPE);
     setTempData({
       ...tempData,
       title: model.name as string,
@@ -114,12 +116,12 @@ function SelectLine() {
       name: attrProperty.name.DONTKNOW_MODEL,
       title: attrProperty.title.SKIP
     });
-
+    LocalStorage.set(SELLER_PROCESS_TYPE, 'true');
     push({
       pathname: '/camelSeller/registerConfirm',
       query: {
         ...query,
-        title: query.brandName
+        title: `${query.brandName} ${query.categoryName}`
       }
     });
   };

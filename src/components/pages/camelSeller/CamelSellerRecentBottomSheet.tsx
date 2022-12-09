@@ -12,11 +12,13 @@ import { Skeleton } from '@components/UI/atoms';
 
 import { RecentSearchParams } from '@dto/product';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct, fetchSearchHistory } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { SELLER_PROCESS_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -165,6 +167,16 @@ function CamelSellerRecentBottomSheet() {
     }
   }, [getScrollTop, recentPriceCardTabNum, viewRecentPriceList]);
 
+  const getKeyword = useCallback(() => {
+    if (LocalStorage.get(SELLER_PROCESS_TYPE)) {
+      return `${query.brandName} ${query.categoryName}`;
+    }
+    if (!tempData.quoteTitle) {
+      return query.brandName;
+    }
+    return tempData.quoteTitle;
+  }, [query.brandName, query.categoryName, tempData.quoteTitle]);
+
   useEffect(() => {
     if (viewRecentPriceList.open) {
       if (editData) {
@@ -186,7 +198,8 @@ function CamelSellerRecentBottomSheet() {
               ? [Number(query.brandIds)]
               : (query.brandIds?.map((id) => Number(id)) as number[]),
           categoryIds: [Number(query.categoryIds)],
-          keyword: tempData.quoteTitle || `${String(query.brandName)} ${query.categoryName}`,
+          // keyword: tempData.quoteTitle || `${String(query.brandName)} ${query.categoryName}`,
+          keyword: getKeyword() as string,
           conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
           colorIds: tempData.color.id ? [tempData.color.id] : [],
           sizeIds: tempData.size.id ? [tempData.size.id] : [],
@@ -196,6 +209,7 @@ function CamelSellerRecentBottomSheet() {
     }
   }, [
     editData,
+    getKeyword,
     query.brandIds,
     query.brandName,
     query.categoryIds,
@@ -261,9 +275,10 @@ function CamelSellerRecentBottomSheet() {
       <FilterHeaderFix ref={bottomSheetRef}>
         <Flexbox>
           <Typography brandColor="primary" weight="bold" variant="h3">
-            {tempData.quoteTitle ||
+            {getKeyword()}
+            {/* {tempData.quoteTitle ||
               `${String(query.brandName)} ${query.categoryName}` ||
-              query.brandName}
+              query.brandName} */}
             <Typography weight="bold" variant="h3" customStyle={{ display: 'inline-block' }}>
               의 최근 거래가
             </Typography>

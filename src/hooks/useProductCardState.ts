@@ -4,7 +4,7 @@ import { useTheme } from 'mrcamel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
-import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
+import { ID_FILTER, LABELS, PRODUCT_SITE, productInfoLabels } from '@constants/product';
 
 import { getProductLabelColor } from '@utils/products';
 
@@ -27,18 +27,23 @@ export default function useProductCardState({
   const { theme } = useTheme();
   const imageUrl = imageMain || imageThumbnail;
 
+  const isNormalseller =
+    (props.site.id === 34 || productSeller.type === 4) && productSeller.type !== 3;
+
   const productLabels = useMemo(() => {
     const { site } = productSeller || {};
     if (!site || !labels || !labels.length) return [];
-
+    let constantsProductLabels = productInfoLabels;
+    if (isNormalseller) {
+      constantsProductLabels = productInfoLabels.filter((label) => label !== '카멜인증');
+    }
     const newLabels = labels
       .filter(
         (label) =>
           label.codeId === ID_FILTER &&
           LABELS[ID_FILTER].some(
             ({ description: labelDescription, name: labelName }) =>
-              ['카멜인증', '새상품급', '시세이하'].includes(labelDescription) &&
-              labelName === label.name
+              constantsProductLabels.includes(labelDescription) && labelName === label.name
           )
       )
       .map(({ id: labelId, name, description: labelDescription }) => ({
@@ -49,7 +54,7 @@ export default function useProductCardState({
       }));
 
     return newLabels;
-  }, [labels, productSeller, theme]);
+  }, [isNormalseller, labels, productSeller, theme]);
 
   const discountedPrice = useMemo(() => {
     if (!priceBefore) {

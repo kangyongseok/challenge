@@ -22,7 +22,7 @@ import {
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
+import { CAMEL_SELLER, SELLER_PROCESS_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -38,12 +38,13 @@ function RegisterConfirm() {
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
       title: attrProperty.title.NEW
     });
+    return () => LocalStorage.remove(SELLER_PROCESS_TYPE);
   }, []);
 
   useEffect(() => {
     setTempData({
       ...tempData,
-      title: (tempData.title || query.brandName) as string,
+      title: (tempData.title || `${query.brandName} ${query.categoryName}`) as string,
       quoteTitle: (tempData.quoteTitle || query.title || query.brandName) as string
     });
     LocalStorage.remove(CAMEL_SELLER);

@@ -14,7 +14,7 @@ import { Product } from '@dto/product';
 import { logEvent } from '@library/amplitude';
 
 import { SELLER_STATUS } from '@constants/user';
-import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
+import { ID_FILTER, LABELS, PRODUCT_SITE, productInfoLabels } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -47,8 +47,9 @@ function ProductInfo({
   const [hoistingState, setHoistingState] = useState(false);
   const [getToastState] = useRecoilState(toastState);
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
+
   const isNormalseller =
-    (product?.siteId === 34 || product?.productSeller.type === 4) &&
+    (product?.site.id === 34 || product?.productSeller.type === 4) &&
     product?.productSeller.type !== 3;
   const isCamelSeller =
     product &&
@@ -89,14 +90,18 @@ ${newDescription}
 
   const productLabels = useMemo(() => {
     if (!product?.productSeller.site || !product?.labels) return [];
+    let labels = productInfoLabels;
 
+    if (isNormalseller) {
+      labels = productInfoLabels.filter((label) => label !== '카멜인증');
+    }
     return product.labels
       .filter(
         (label) =>
           label.codeId === ID_FILTER &&
           LABELS[ID_FILTER].some(
             ({ description: labelDescription, name: labelName }) =>
-              ['새상품급', '시세이하'].includes(labelDescription) && labelName === label.name
+              labels.includes(labelDescription) && labelName === label.name
           )
       )
       .map(({ id, name, description: labelDescription }) => ({
@@ -104,7 +109,7 @@ ${newDescription}
         name,
         description: labelDescription
       }));
-  }, [product?.labels, product?.productSeller.site]);
+  }, [isNormalseller, product?.labels, product?.productSeller.site]);
 
   const handleClickMoreInfo = () => {
     if (product) {

@@ -13,12 +13,14 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { AllBrand, Brand } from '@dto/brand';
 
+import LocalStorage from '@library/localStorage';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchBrandsSuggest, fetchHotBrands } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
+import { SELLER_PROCESS_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -120,6 +122,8 @@ function SelectBrand() {
       title: attTitle,
       att: target.dataset.brandName
     });
+
+    LocalStorage.set(SELLER_PROCESS_TYPE, 'true');
 
     if (query.title) {
       setTempData({

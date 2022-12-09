@@ -6,7 +6,7 @@ export const FloatingButton = styled(Button)<{ isLegitTooltip: boolean; isUserSh
   position: fixed;
   bottom: ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 12 : isLegitTooltip ? 110 : 72)}px;
   right: 14px;
-  z-index: ${({ theme: { zIndex } }) => zIndex.button + 2};
+  z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
   border-radius: 50px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 `;

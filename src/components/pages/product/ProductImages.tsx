@@ -76,7 +76,7 @@ function ProductImages({
   );
 
   const isNormalseller =
-    (product?.siteId === 34 || product?.productSeller.type === 4) &&
+    (product?.site.id === 34 || product?.productSeller.type === 4) &&
     product?.productSeller.type !== 3;
 
   useEffect(() => {
@@ -227,7 +227,7 @@ function ProductImages({
   }, [router.query.id, imageSwiper]);
 
   const lowerPriceDisplay = () => {
-    if (isDisplay && currentSlide === detailImages.length) return true;
+    if (isDisplay && detailImages.length && currentSlide === detailImages.length) return true;
     return false;
   };
 
