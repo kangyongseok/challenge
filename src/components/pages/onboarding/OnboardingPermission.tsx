@@ -147,7 +147,9 @@ function OnboardingPermission() {
       checkAgent.isAndroidApp() &&
       window.webview &&
       window.webview.callAuthPush &&
-      window.webview.callAuthLocation
+      window.webview.callAuthLocation &&
+      window.webview.callAuthCamera &&
+      window.webview.callAuthPhotoLibrary
     ) {
       window.webview.callAuthPush();
       window.webview.callAuthLocation();
@@ -161,7 +163,9 @@ function OnboardingPermission() {
       window.webkit &&
       window.webkit.messageHandlers &&
       window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthLocation
+      window.webkit.messageHandlers.callAuthLocation &&
+      window.webkit.messageHandlers.callAuthCamera &&
+      window.webkit.messageHandlers.callAuthPhotoLibrary
     ) {
       window.webkit.messageHandlers.callAuthPush.postMessage(0);
       window.webkit.messageHandlers.callAuthLocation.postMessage(0);

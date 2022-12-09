@@ -46,6 +46,8 @@ export declare global {
       DATADOG_RUM_APP_ID: string;
       DATADOG_RUM_CLIENT_TOKEN: string;
       DATADOG_RUM_ENV: string;
+      DATADOG_RUM_SERVICE: string;
+      DATADOG_ALLOWED_TRACING_ORIGIN: string;
     }
   }
 }

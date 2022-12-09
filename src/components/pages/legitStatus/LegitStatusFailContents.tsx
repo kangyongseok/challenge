@@ -179,7 +179,7 @@ function LegitStatusFailContents() {
       )}
       {(status === 11 || status === 12) &&
         photoGuideDetails.filter(({ imageSample }) => imageSample).length > 0 && (
-          <Box customStyle={{ margin: '0 20px' }}>
+          <Box customStyle={{ margin: '32px 20px 0' }}>
             <Typography
               variant="h4"
               weight="medium"
@@ -216,8 +216,8 @@ const OpinionCard = styled.div`
     }
   }) => common.bg02};
   border-radius: 8px;
+  margin-top: 24px;
   padding: 20px;
-  margin: 24px 0 32px;
   text-align: left;
 `;
 

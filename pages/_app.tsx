@@ -66,7 +66,8 @@ datadogRum.init({
   trackFrustrations: true,
   trackResources: true,
   trackLongTasks: true,
-  defaultPrivacyLevel: 'mask-user-input'
+  defaultPrivacyLevel: 'mask-user-input',
+  allowedTracingOrigins: [process.env.DATADOG_ALLOWED_TRACING_ORIGIN]
 });
 
 datadogLogs.init({

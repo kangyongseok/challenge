@@ -215,12 +215,15 @@ function LegitStatusCardHolder({
           <Image
             width={80}
             height={80}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/black/${nameEng
               .toLocaleLowerCase()
               .split(' ')
-              .join('')}.png`}
+              .join('')}.jpg`}
             alt="Brand Logo Img"
             disableAspectRatio
+            customStyle={{
+              mixBlendMode: 'screen'
+            }}
           />
         </Flexbox>
         <BackgroundImage src={backgroundImageSrc} simplify={simplify}>
