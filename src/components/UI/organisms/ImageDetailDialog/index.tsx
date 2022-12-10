@@ -3,7 +3,6 @@ import type { ReactElement, TouchEvent } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 
@@ -14,9 +13,9 @@ import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import ImageTransform from './ImageTransform';
 import {
   CloseIcon,
-  Img,
   Pagination,
   RotateButton,
   ZoomInButton,
@@ -44,27 +43,22 @@ function ImageDetailDialog({
 }: ImageDetailDialogProps) {
   const {
     theme: {
-      zIndex: { button },
-      palette: { common }
+      palette: { common },
+      zIndex: { button }
     }
   } = useTheme();
+
   const [currentIndex, setCurrentIndex] = useState(syncIndex);
-  const [currentScale, setCurrentScale] = useState(1);
+  const [rotates, setRotates] = useState<number[]>([]);
   const [shortSwipes, setShortSwipes] = useState(true);
   const [followFinger, setFollowFinger] = useState(true);
-  const [panningDisabled, setPanningDisabled] = useState(true);
-  const [rotates, setRotates] = useState<number[]>([]);
-  const [imagesLoadStatus, setImagesLoadStatus] = useState<number[]>([]);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperClass>();
   const transformsRef = useRef<(ReactZoomPanPinchRef | null)[]>([]);
-  const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
-  const isFirstChangeRef = useRef(false);
   const swipeCloseTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const zoomStopTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const slideMovingRef = useRef(false);
-  const pinchingRef = useRef(false);
+  const zoomStatusRef = useRef(false);
   const metrics = useRef({
     touchStart: {
       dialogY: 0,
@@ -75,43 +69,6 @@ function ImageDetailDialog({
     }
   });
 
-  const handleScale = ({ state: { scale } }: ReactZoomPanPinchRef) => {
-    setCurrentScale(scale);
-    pinchingRef.current = true;
-  };
-
-  const handleZoomStop = ({ state: { scale } }: ReactZoomPanPinchRef) => {
-    zoomStopTimerRef.current = setTimeout(() => {
-      setCurrentScale(scale < 1 ? 1 : scale);
-      slideMovingRef.current = false;
-      pinchingRef.current = false;
-      zoomStopTimerRef.current = undefined;
-    }, 200);
-  };
-
-  const handlePinching = () => {
-    pinchingRef.current = true;
-  };
-
-  const handleLoad = (index: number) => () => {
-    const currentTransformRef = transformsRef.current[index];
-
-    setImagesLoadStatus((prevState) => [...prevState, index]);
-
-    if (currentTransformRef) {
-      currentTransformRef.resetTransform();
-    }
-  };
-
-  const handleSlideNextTransitionStart = () => {
-    slideMovingRef.current = true;
-    transformsRef.current.forEach((ref) => {
-      if (ref) {
-        ref.resetTransform();
-      }
-    });
-  };
-
   const handleSlideMove = () => {
     slideMovingRef.current = true;
   };
@@ -121,30 +78,39 @@ function ImageDetailDialog({
   };
 
   const handleSlideChange = (swiper: SwiperClass) => {
-    const { realIndex } = swiper;
-
-    isFirstChangeRef.current = true;
+    const { realIndex, previousIndex } = swiper;
 
     setCurrentIndex(realIndex);
-    setCurrentScale(1);
+    setShortSwipes(true);
+    setFollowFinger(true);
     slideMovingRef.current = false;
-    pinchingRef.current = false;
+    zoomStatusRef.current = false;
+
+    const previousTransformRef = transformsRef.current[previousIndex];
+
+    if (previousTransformRef) previousTransformRef.resetTransform();
 
     if (typeof onChange === 'function') {
       onChange(swiper);
     }
   };
 
-  // https://blog.mathpresso.com/bottom-sheet-for-web-55ed6cc78c00
+  const handleZoomStart = () => {
+    zoomStatusRef.current = true;
+  };
+
+  const handleZoomStop = () => {
+    slideMovingRef.current = false;
+    zoomStatusRef.current = false;
+  };
+
+  const handleChangeSwiperOption = (active: boolean) => {
+    setShortSwipes(active);
+    setFollowFinger(active);
+  };
+
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-    if (
-      zoomStopTimerRef.current ||
-      !dialogRef.current ||
-      currentScale !== 1 ||
-      slideMovingRef.current ||
-      pinchingRef.current
-    )
-      return;
+    if (!dialogRef.current || slideMovingRef.current || zoomStatusRef.current) return;
 
     if (swipeCloseTimerRef.current) {
       clearTimeout(swipeCloseTimerRef.current);
@@ -157,14 +123,7 @@ function ImageDetailDialog({
   };
 
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
-    if (
-      zoomStopTimerRef.current ||
-      !dialogRef.current ||
-      currentScale !== 1 ||
-      slideMovingRef.current ||
-      pinchingRef.current
-    )
-      return;
+    if (!dialogRef.current || slideMovingRef.current || zoomStatusRef.current) return;
 
     if (swipeCloseTimerRef.current) {
       clearTimeout(swipeCloseTimerRef.current);
@@ -189,20 +148,13 @@ function ImageDetailDialog({
   };
 
   const handleTouchEnd = () => {
-    if (
-      zoomStopTimerRef.current ||
-      !dialogRef.current ||
-      currentScale !== 1 ||
-      slideMovingRef.current ||
-      pinchingRef.current
-    )
-      return;
+    if (!dialogRef.current || slideMovingRef.current || zoomStatusRef.current) return;
 
     const currentDialogY = dialogRef.current.getBoundingClientRect().y;
 
     if (currentDialogY > 10) {
       dialogRef.current.style.setProperty('transform', 'translateY(120%)');
-      swipeCloseTimerRef.current = setTimeout(() => onClose(), 150);
+      swipeCloseTimerRef.current = setTimeout(() => onClose(), 50);
     } else {
       dialogRef.current.removeAttribute('style');
     }
@@ -231,8 +183,8 @@ function ImageDetailDialog({
     if (currentTransformRef) {
       setShortSwipes(false);
       setFollowFinger(false);
-      setPanningDisabled(false);
-      pinchingRef.current = true;
+      slideMovingRef.current = true;
+      zoomStatusRef.current = true;
       currentTransformRef.zoomIn();
     }
   };
@@ -254,17 +206,14 @@ function ImageDetailDialog({
 
       if (Math.floor(scale) <= 1) {
         slideMovingRef.current = false;
-        pinchingRef.current = false;
-        setCurrentScale(1);
+        zoomStatusRef.current = false;
         setShortSwipes(true);
         setFollowFinger(true);
-        setPanningDisabled(true);
       } else {
         slideMovingRef.current = true;
-        pinchingRef.current = true;
+        zoomStatusRef.current = true;
         setShortSwipes(false);
         setFollowFinger(false);
-        setPanningDisabled(false);
       }
     }
   };
@@ -291,45 +240,13 @@ function ImageDetailDialog({
     });
   };
 
-  useEffect(() => {
-    if (currentScale > 1) {
-      setShortSwipes(false);
-      setFollowFinger(false);
-      setPanningDisabled(false);
-    } else if (currentScale === 1) {
-      setShortSwipes(true);
-      setFollowFinger(true);
-      setPanningDisabled(true);
-    }
-  }, [currentScale]);
+  const handleLoad = (index: number) => () => {
+    const currentTransformRef = transformsRef.current[index];
 
-  useEffect(() => {
-    if (!rotates.length) {
-      setRotates(new Array(images.length).fill(0));
+    if (currentTransformRef) {
+      currentTransformRef.resetTransform();
     }
-  }, [rotates, images]);
-
-  useEffect(() => {
-    if (!open) {
-      setRotates([]);
-      setImagesLoadStatus([]);
-      setCurrentScale(1);
-      setCurrentIndex(0);
-      transformsRef.current = [];
-      imagesRef.current = [];
-      isFirstChangeRef.current = false;
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (open && imagesLoadStatus.length === images.length) {
-      transformsRef.current.forEach((ref) => {
-        if (ref) {
-          ref.resetTransform();
-        }
-      });
-    }
-  }, [open, imagesLoadStatus, images, currentIndex, syncIndex]);
+  };
 
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
@@ -344,12 +261,27 @@ function ImageDetailDialog({
   }, [open]);
 
   useEffect(() => {
+    if (open && !rotates.length) {
+      setRotates(new Array(images.length).fill(0));
+    }
+  }, [rotates, images, open]);
+
+  useEffect(() => {
+    if (!open) {
+      setRotates([]);
+      setCurrentIndex(0);
+      setShortSwipes(true);
+      setFollowFinger(true);
+      transformsRef.current = [];
+      slideMovingRef.current = false;
+      zoomStatusRef.current = false;
+    }
+  }, [open]);
+
+  useEffect(() => {
     return () => {
       if (swipeCloseTimerRef.current) {
         clearTimeout(swipeCloseTimerRef.current);
-      }
-      if (zoomStopTimerRef.current) {
-        clearTimeout(zoomStopTimerRef.current);
       }
     };
   }, []);
@@ -392,7 +324,7 @@ function ImageDetailDialog({
         nested
         shortSwipes={shortSwipes}
         followFinger={followFinger}
-        onSlideNextTransitionStart={handleSlideNextTransitionStart}
+        onSlideNextTransitionStart={handleSlideMove}
         onSlideNextTransitionEnd={handleSlideMoveEnd}
         onSlideResetTransitionEnd={handleSlideMoveEnd}
         onSliderMove={handleSlideMove}
@@ -403,51 +335,28 @@ function ImageDetailDialog({
         }}
       >
         {images.map((image, index) => (
-          <SwiperSlide key={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}>
-            <TransformWrapper
-              ref={(ref) => {
-                if (ref) {
-                  transformsRef.current[index] = ref;
-                }
-              }}
-              panning={{ disabled: panningDisabled }}
-              onPanning={handleScale}
-              onWheel={handleScale}
-              onPinching={handleScale}
+          <SwiperSlide
+            key={`image-detail-${image.slice(image.lastIndexOf('/') + 1)}`}
+            style={{
+              position: 'relative'
+            }}
+          >
+            <ImageTransform
+              transformsRef={transformsRef}
+              src={image}
+              rotate={rotates[index]}
+              index={index}
+              onZoomStart={handleZoomStart}
               onZoomStop={handleZoomStop}
-              onZoom={handlePinching}
-              onZoomStart={handlePinching}
-              doubleClick={{
-                mode: 'reset'
-              }}
-              centerOnInit
-            >
-              <TransformComponent
-                wrapperStyle={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                contentStyle={{
-                  width: '100%',
-                  justifyContent: 'center'
-                }}
-              >
-                <Img
-                  ref={(ref) => {
-                    if (ref) {
-                      imagesRef.current[index] = ref;
-                    }
-                  }}
-                  src={image}
-                  alt={`product-image-${image.slice(image.lastIndexOf('/') + 1)}`}
-                  rotate={rotates[index]}
-                  onLoad={handleLoad(index)}
-                />
-              </TransformComponent>
-            </TransformWrapper>
+              onChangeSwiperOption={handleChangeSwiperOption}
+              onImageLoad={handleLoad(index)}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
+      <Pagination>
+        {currentIndex + 1}/{images.length}
+      </Pagination>
       <ZoomOutButton
         variant="contained"
         brandColor="black"
@@ -464,9 +373,6 @@ function ImageDetailDialog({
         iconOnly
         onClick={handleClickZoomIn}
       />
-      <Pagination>
-        {currentIndex + 1}/{images.length}
-      </Pagination>
       <RotateButton
         variant="contained"
         brandColor="black"

@@ -60,7 +60,7 @@ function GeneralTemplate({
       subset={subset}
       css={{
         position: 'relative',
-        transition: 'all 0.5s',
+        transition: 'padding-top 0.5s',
         paddingTop: paddingTopParser(),
         ...customStyle
       }}

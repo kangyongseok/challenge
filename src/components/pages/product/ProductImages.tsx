@@ -25,7 +25,6 @@ import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import ProductLastLowerPrice from './ProductLastLowerPrice';
@@ -57,13 +56,14 @@ function ProductImages({
   const [loadedImageMain, setLoadedImageMain] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [syncIndex, setSyncIndex] = useState(0);
   const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isDisplay, setIsDisplay] = useState(true);
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchLowerProductsParams | null>(null);
-  const { data: searchRelatedProducts } = useQuery(
+  const { data: searchRelatedProducts, isFetched } = useQuery(
     queryKeys.products.searchRelatedProducts(
       searchRelatedProductsParams as SearchLowerProductsParams
     ),
@@ -80,12 +80,14 @@ function ProductImages({
     product?.productSeller.type !== 3;
 
   useEffect(() => {
-    if (searchRelatedProducts && !isLoading) {
+    if (searchRelatedProducts && !isLoading && isFetched) {
       if (searchRelatedProducts.page.content.length < 8) {
         setIsDisplay(false);
+      } else {
+        setIsDisplay(true);
       }
     }
-  }, [isLoading, searchRelatedProducts]);
+  }, [isLoading, searchRelatedProducts, isFetched]);
 
   useEffect(() => {
     if (product) {
@@ -181,6 +183,7 @@ function ProductImages({
         att: target.dataset.index
       });
     }
+    setSyncIndex(currentSlide);
     setOpenModal(true);
   };
 
@@ -212,17 +215,12 @@ function ProductImages({
       logEvent(attrKeys.products.VIEW_PICGALLERY, {
         name: attrProperty.productName.PRODUCT_DETAIL
       });
-      scrollDisable();
-    } else {
-      scrollEnable();
     }
-
-    return () => scrollEnable();
   }, [openModal]);
 
   useEffect(() => {
     if (imageSwiper) {
-      imageSwiper.slideTo(0);
+      imageSwiper.slideTo(0, 0);
     }
   }, [router.query.id, imageSwiper]);
 
@@ -389,15 +387,12 @@ function ProductImages({
           />
         )}
       </Box>
-      {/* {console.log(detailImages, 'detail')} */}
-      {/* {console.log(modalImages, 'modal')} */}
-      {/* {console.log(currentSlide)} */}
       <ImageDetailDialog
         open={openModal}
         onClose={handleClickCloseIcon}
         onChange={handleSlideChange}
         images={modalImages}
-        syncIndex={currentSlide}
+        syncIndex={syncIndex}
         name={attrProperty.name.PRODUCT_DETAIL}
       />
     </>

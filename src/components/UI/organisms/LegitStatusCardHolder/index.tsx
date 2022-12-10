@@ -85,6 +85,7 @@ function LegitStatusCardHolder({
 
   const [open, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [syncIndex, setSyncIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
   const [labelText, setLabelText] = useState('');
 
@@ -171,6 +172,7 @@ function LegitStatusCardHolder({
     const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === dataIndex);
 
     setOpen(true);
+    setSyncIndex(dataIndex);
 
     if (findPhotoGuideDetail) setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
   };
@@ -367,7 +369,7 @@ function LegitStatusCardHolder({
             {labelText && <Label variant="ghost" brandColor="black" text={labelText} />}
           </Flexbox>
         }
-        syncIndex={currentIndex}
+        syncIndex={syncIndex}
         name={name}
       />
     </>

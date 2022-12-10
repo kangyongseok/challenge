@@ -71,7 +71,7 @@ function EventProductList() {
         Array.from({ length: 8 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`event-product-skeleton-${index}`} item xs={2}>
-            <ProductGridCardSkeleton isRound />
+            <ProductGridCardSkeleton isRound compact />
           </Grid>
         ))}
       {!isLoading &&
@@ -122,6 +122,7 @@ function EventProductList() {
                 hidePriceDownCountLabel={hidePriceDownCountLabel}
                 hideUpdatedCountLabel={hideUpdatedCountLabel}
                 isRound
+                compact
               />
             </Grid>
           );
