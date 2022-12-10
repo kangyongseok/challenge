@@ -144,6 +144,13 @@ function ProductSellerProductList({
                 customStyle={{ borderRadius: '50%', marginRight: 12 }}
                 width={44}
               />
+            )) ||
+            (reviewInfo.productSeller.image && (
+              <Avatar
+                src={`${reviewInfo.productSeller.image}`}
+                customStyle={{ borderRadius: '50%', marginRight: 12 }}
+                width={44}
+              />
             )) || (
               <EmptyAvatar justifyContent="center" alignment="center">
                 <Icon name="UserFilled" size="large" />

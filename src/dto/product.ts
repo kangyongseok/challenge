@@ -211,6 +211,7 @@ export type ProductSeller = {
   dateUpdated: string;
   grade: string | null;
   id: number;
+  image: string;
   isDeleted: boolean;
   maxScore: string;
   name: string;

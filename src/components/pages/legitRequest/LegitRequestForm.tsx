@@ -91,7 +91,7 @@ function LegitRequestForm() {
         name: attrProperty.legitName.LEGIT_PROCESS
       });
 
-      if (isProduction && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
+      if (isProduction && !checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
         setDialogState({
           type: 'appAuthCheck',
           theme: 'dark',
@@ -105,6 +105,10 @@ function LegitRequestForm() {
               window.webkit.messageHandlers.callMoveToSetting.postMessage
             ) {
               window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
+            }
+
+            if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
+              window.webview.moveToSetting();
             }
           }
         });
