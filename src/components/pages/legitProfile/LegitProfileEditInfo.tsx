@@ -15,7 +15,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 import {
   checkAgent,
@@ -272,6 +272,7 @@ function LegitProfileEditInfo({
                     title: e.target.value.trim().substring(0, 100)
                   }))
                 }
+                style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
               />
               <TitleInfo variant="small2" weight="medium">
                 {`${putLegitProfileParams.title.length || 0}/ 100자`}

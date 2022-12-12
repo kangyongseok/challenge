@@ -114,13 +114,15 @@ function SizeInputSearch() {
                 data-size-id={list.categorySizeId}
                 data-view-size={list.viewSize}
                 onClick={handleClickSize}
+                customStyle={{ position: 'relative' }}
               >
                 <Checkbox
                   id={String(list.categorySizeId)}
-                  customStyle={{
-                    background: isChecked ? 'black' : 'white'
-                  }}
+                  // customStyle={{
+                  //   background: isChecked ? primary.main : 'white'
+                  // }}
                 />
+                {isChecked && <CheckIcon name="CheckOutlined" size="small" />}
                 <label htmlFor={String(list.categorySizeId)}>{list.viewSize}</label>
               </Flexbox>
             );
@@ -131,13 +133,24 @@ function SizeInputSearch() {
   );
 }
 
+const CheckIcon = styled(Icon)`
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  margin-top: -7px;
+  background: ${({ theme: { palette } }) => palette.primary.main};
+  border-radius: 3px;
+  color: white;
+  width: 18px;
+  height: 18px;
+`;
+
 const SearchBarArea = styled.div<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) =>
     showAppDownloadBanner ? 146 + APP_DOWNLOAD_BANNER_HEIGHT : 146}px;
   left: 0;
   width: 100%;
-  padding: 0 20px;
   z-index: 100;
 `;
 

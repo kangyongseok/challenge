@@ -1,5 +1,4 @@
-import type { FormEvent, RefObject } from 'react';
-import { useState } from 'react';
+import { FormEvent, RefObject, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
@@ -18,7 +17,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { SubmitType } from '@typings/camelSeller';
-import { deviceIdState } from '@recoil/common';
+import { deviceIdState, toastState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerIsImageLoadingState,
@@ -40,6 +39,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
   const deviceId = useRecoilValue(deviceIdState);
   const productId = Number(query.id || 0);
   const [open, setOpen] = useState(false);
+  const setToastState = useSetRecoilState(toastState);
   const validatorResult = useRecoilValue(submitValidatorState);
   const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
   const [modify, setIsModify] = useRecoilState(camelSellerBooleanStateFamily('modifyName'));
@@ -162,8 +162,13 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
           name: attrProperty.name.NEWPRODUCT_MAIN,
           value: id
         });
-        // alert(id);
-        // alert(JSON.stringify(data))
+
+        setToastState({
+          type: 'product',
+          status: 'saleSuccess',
+          hideDuration: 3000
+        });
+
         resetTempData();
         resetSubmitData();
         resetValidatorPhoto();

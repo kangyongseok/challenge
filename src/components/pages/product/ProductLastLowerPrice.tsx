@@ -33,7 +33,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchLowerProductsParams | null>(null);
   const { data: searchRelatedProducts, isLoading } = useQuery(
-    queryKeys.products.searchLowerProducts(
+    queryKeys.products.searchRelatedProducts(
       searchRelatedProductsParams as SearchLowerProductsParams
     ),
     () => fetchSearchRelatedProducts(searchRelatedProductsParams as SearchLowerProductsParams),

@@ -14,6 +14,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchRecommWishes, fetchUserHistory } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -57,6 +58,14 @@ function HomeRecommendWishes() {
 
   const recommendWishes = useMemo(() => groupingProducts(data || []), [data]);
 
+  const notSoldoutProducts = useMemo(() => {
+    return content.filter(
+      ({ product }) =>
+        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['0'] ||
+        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']
+    );
+  }, [content]);
+
   const handleClickMore = () => {
     logEvent(attrKeys.home.CLICK_WISH_LIST, {
       name: attrProperty.name.MAIN,
@@ -89,7 +98,7 @@ function HomeRecommendWishes() {
     !isLoading &&
     !isLoadingUserHistory &&
     enabledUserHistories &&
-    (!content || !content.length)
+    (!content || !content.length || !notSoldoutProducts.length)
   ) {
     return (
       <>
@@ -174,7 +183,7 @@ function HomeRecommendWishes() {
             </Button>
           </>
         )}
-        {!isLoadingUserHistory && enabledUserHistories && (
+        {!isLoadingUserHistory && enabledUserHistories && notSoldoutProducts.length && (
           <>
             <Typography
               variant="h3"
@@ -262,9 +271,9 @@ function HomeRecommendWishes() {
           ))}
         </Swiper>
       )}
-      {!isLoadingUserHistory && enabledUserHistories && (
+      {!isLoadingUserHistory && enabledUserHistories && notSoldoutProducts.length && (
         <List>
-          {content.map(({ product }, index) => (
+          {notSoldoutProducts.map(({ product }, index) => (
             <ProductGridCard
               key={`home-user-history-product-${product.id}`}
               product={product}

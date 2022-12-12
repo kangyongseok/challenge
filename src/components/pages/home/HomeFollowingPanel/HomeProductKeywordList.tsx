@@ -178,7 +178,7 @@ function HomeProductKeywordList() {
         ))}
       {!isLoading &&
         accessUser &&
-        content.slice(0, 12).map(({ id, keyword, filter, imageThumbnail, isNew }) => {
+        content.map(({ id, keyword, filter, imageThumbnail, isNew }) => {
           let splitFilter: string | string[] = filter.split(',');
 
           if (splitFilter.length >= 3) {

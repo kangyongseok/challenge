@@ -39,7 +39,13 @@ const product = {
   successReport: '감사합니다! 신고 접수 완료되었습니다 😇',
   successRemoveWish: '찜목록에서 삭제했어요.',
   successAddWish: '찜목록에 추가했어요!',
-  selfCamelProduct: '내 매물은 찜할 수 없어요.'
+  selfCamelProduct: '내 매물은 찜할 수 없어요.',
+  saleSuccess: (
+    <>
+      <p>내 매물이 등록되었어요! 판매시작!</p>
+      <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+    </>
+  )
 };
 
 const legitAdminOpinion = {

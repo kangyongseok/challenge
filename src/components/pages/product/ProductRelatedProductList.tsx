@@ -50,7 +50,9 @@ function ProductRelatedProductList({
       keepPreviousData: true,
       staleTime: 5 * 60 * 1000,
       enabled:
-        (!!searchRelatedProductsParams.brandIds && !!searchRelatedProductsParams.line) ||
+        (searchRelatedProductsParams.productId &&
+          !!searchRelatedProductsParams.brandIds &&
+          !!searchRelatedProductsParams.line) ||
         (!!searchRelatedProductsParams.brandIds && !searchRelatedProductsParams.line)
     }
   );

@@ -120,6 +120,7 @@ export type ToastStatus =
   | 'successEdit'
   | 'isAgree'
   | 'disAgree'
+  | 'saleSuccess'
   | 'selfCamelProduct';
 
 export type DialogType =

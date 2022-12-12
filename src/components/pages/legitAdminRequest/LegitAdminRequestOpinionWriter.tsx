@@ -12,6 +12,7 @@ import LegitOpinionButton from '@components/UI/molecules/LegitOpinionButton';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
+import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 import {
   legitAdminOpinionDataState,
@@ -272,6 +273,7 @@ const TextArea = styled.textarea`
   outline: 0;
   width: 100%;
   height: 100%;
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   ${({
     theme: {
       palette: { common },
