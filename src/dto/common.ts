@@ -145,6 +145,7 @@ export type CommonPhotoGuideDetail = {
 export interface PhotoGuide {
   groupId: number;
   photoGuideDetails: CommonPhotoGuideDetail[];
+  isLegitModel: boolean;
 }
 
 export interface Styles {

@@ -136,6 +136,7 @@ function CamelSellerPhotoGuideEdit() {
         JSON.stringify({
           guideId: guideImages?.groupId,
           viewMode: 'ALBUM',
+          isLegitModel: guideImages?.isLegitModel,
           startId: Number(target.dataset.index),
           imageType: Number(target.dataset.type),
           images: photoImages.map((imageInfo) => ({
@@ -151,6 +152,7 @@ function CamelSellerPhotoGuideEdit() {
         JSON.stringify({
           viewMode: 'ALBUM',
           startId: Number(target.dataset.index),
+          isLegitModel: guideImages?.isLegitModel,
           imageType: Number(target.dataset.type),
           images: photoImages.map((imageInfo) => ({
             photoGuideId: imageInfo.commonPhotoGuideDetail.id,
