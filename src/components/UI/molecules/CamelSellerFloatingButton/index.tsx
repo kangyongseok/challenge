@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Icon } from 'mrcamel-ui';
+import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import LocalStorage from '@library/localStorage';
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo } from '@api/user';
@@ -22,11 +21,17 @@ import { checkAgent, getAppVersion, isProduction } from '@utils/common';
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-import { FloatingButton } from './CamelSellerFloatingButton.style';
+import { FloatingButton, Wrapper } from './CamelSellerFloatingButton.style';
 
 function CamelSellerFloatingButton() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
@@ -36,7 +41,7 @@ function CamelSellerFloatingButton() {
     queryKeys.users.userInfo(),
     fetchUserInfo
   );
-
+  const triggered = useReverseScrollTrigger();
   const [authProductSeller, setAuthProductSeller] = useState(false);
 
   useEffect(() => {
@@ -141,29 +146,33 @@ function CamelSellerFloatingButton() {
     router.push('/camelSeller');
   };
 
-  useEffect(() => {
-    if (authProductSeller) ChannelTalk.moveChannelButtonPosition(-40);
-
-    return () => {
-      ChannelTalk.moveChannelButtonPosition(0);
-    };
-  }, [authProductSeller]);
-
   // eslint-disable-next-line no-constant-condition
   if (authProductSeller) {
     // authProductSeller
     return (
-      <FloatingButton
-        variant="contained"
-        brandColor="primary"
-        size="large"
-        onClick={handleClickMoveToCamelSeller}
-        isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
-        isUserShop={router.pathname === '/user/shop'}
-      >
-        <Icon name="PlusOutlined" />
-        판매하기
-      </FloatingButton>
+      <>
+        <Wrapper
+          onClick={handleClickMoveToCamelSeller}
+          isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
+          isUserShop={router.pathname === '/user/shop'}
+        >
+          <FloatingButton triggered={triggered}>
+            <Icon name="PlusOutlined" color={common.uiWhite} />
+            <Typography variant="h3" weight="medium" customStyle={{ color: common.uiWhite }}>
+              판매하기
+            </Typography>
+          </FloatingButton>
+        </Wrapper>
+        <Wrapper
+          onClick={handleClickMoveToCamelSeller}
+          isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
+          isUserShop={router.pathname === '/user/shop'}
+        >
+          <FloatingButton triggered={triggered} onlyIcon>
+            <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
+          </FloatingButton>
+        </Wrapper>
+      </>
     );
   }
   return <Box />;

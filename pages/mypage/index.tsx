@@ -62,14 +62,12 @@ function MyPage() {
   }, []);
 
   useEffect(() => {
-    if (!accessUser) {
-      ChannelTalk.moveChannelButtonPosition(-50);
-    }
+    ChannelTalk.hideChannelButton();
 
     return () => {
-      ChannelTalk.resetChannelButtonPosition();
+      ChannelTalk.showChannelButton();
     };
-  }, [accessUser]);
+  }, []);
 
   if (!accessUser || !userInfo) {
     return (
