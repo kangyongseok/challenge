@@ -76,7 +76,7 @@ datadogLogs.init({
   forwardErrorsToLogs: true,
   sampleRate: 100,
   env: process.env.DATADOG_RUM_ENV,
-  service: 'camel'
+  service: process.env.DATADOG_RUM_SERVICE
 });
 
 datadogRum.startSessionReplayRecording();

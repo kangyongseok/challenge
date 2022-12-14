@@ -52,7 +52,7 @@ function HomeQuickSaleProducts() {
       />
       <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
         <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 20 }}>
-          급처템 가격은 언제나 매력적이죠 😎
+          언제나 매력적인 새로 올라온 매물! 😎
         </Typography>
         <Grid container rowGap={32} columnGap={12}>
           {isLoading || isFetching || !camelProducts
