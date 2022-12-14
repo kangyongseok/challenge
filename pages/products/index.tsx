@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticPropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
@@ -18,9 +19,16 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import { HEADER_HEIGHT, PRODUCTS_LANDING_INFO_HEIGHT, locales } from '@constants/common';
+import {
+  HEADER_HEIGHT,
+  PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT,
+  PRODUCTS_LANDING_INFO_HEIGHT,
+  locales
+} from '@constants/common';
 
 function Products() {
+  const router = useRouter();
+  const { keyword } = router.query;
   return (
     <>
       <GeneralTemplate
@@ -31,7 +39,10 @@ function Products() {
             <ProductsFilter
               variant="search"
               showDynamicFilter
-              customTop={HEADER_HEIGHT + PRODUCTS_LANDING_INFO_HEIGHT}
+              customTop={
+                HEADER_HEIGHT +
+                (keyword ? PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT : PRODUCTS_LANDING_INFO_HEIGHT)
+              }
             />
           </Box>
         }

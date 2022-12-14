@@ -10,7 +10,8 @@ export const RELATED_KEYWORDS_HEIGHT = 52;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
 export const APP_TOP_STATUS_HEIGHT = 44;
 export const TAB_HEIGHT = 45;
-export const PRODUCTS_LANDING_INFO_HEIGHT = 102;
+export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
+export const PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT = 102;
 export const CMR_LANDING_INFO_HEIGHT = 72;
 
 export const locales = {
