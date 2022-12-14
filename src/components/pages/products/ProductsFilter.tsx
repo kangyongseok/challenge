@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
+import { uniqBy } from 'lodash-es';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
 import {
@@ -151,19 +152,25 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
     if (!gender) return [];
     if (!categorySizes.length) return [];
 
-    return [...tops, ...bottoms, ...shoes]
-      .map(({ parentCategoryId, viewSize }) =>
-        (categorySizes || [])
-          .filter(
-            ({ parentCategoryId: categorySizeParentCategoryId, viewSize: categorySizeViewSize }) =>
-              viewSize === categorySizeViewSize &&
-              myFilterRelatedParentCategoryIds[
-                parentCategoryId as keyof typeof myFilterRelatedParentCategoryIds
-              ].genders[gender as 'M' | 'F' | 'N'].includes(categorySizeParentCategoryId)
-          )
-          .filter(({ count }) => count)
-      )
-      .flat();
+    return uniqBy(
+      [...tops, ...bottoms, ...shoes]
+        .map(({ parentCategoryId, viewSize }) =>
+          (categorySizes || [])
+            .filter(
+              ({
+                parentCategoryId: categorySizeParentCategoryId,
+                viewSize: categorySizeViewSize
+              }) =>
+                viewSize === categorySizeViewSize &&
+                myFilterRelatedParentCategoryIds[
+                  parentCategoryId as keyof typeof myFilterRelatedParentCategoryIds
+                ].genders[gender as 'M' | 'F' | 'N'].includes(categorySizeParentCategoryId)
+            )
+            .filter(({ count }) => count)
+        )
+        .flat(),
+      'categorySizeId'
+    );
   }, [tops, bottoms, shoes, categorySizes, gender]);
   const showProductKeywordSaveChip = useMemo(() => {
     const allowPathNames = [

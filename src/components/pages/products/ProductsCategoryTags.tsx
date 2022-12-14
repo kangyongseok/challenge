@@ -226,40 +226,18 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
               전체
             </Text>
           )}
-          {parentCategories.length === 0 && subParentCategories.length === 0 && (
-            <>
+          {parentCategories.length === 0 &&
+            subParentCategories.length === 0 &&
+            Array.from({ length: 12 }).map((_, index) => (
               <Skeleton
-                width="24px"
+                // eslint-disable-next-line react/no-array-index-key
+                key={`category-tag-skeleton-${index}`}
+                width={index === 0 ? '37px' : '33px'}
                 height="24px"
                 disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
+                isRound
               />
-              <Skeleton
-                width="37px"
-                height="24px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
-              />
-              <Skeleton
-                width="33px"
-                height="24px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
-              />
-              <Skeleton
-                width="37px"
-                height="24px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
-              />
-              <Skeleton
-                width="37px"
-                height="24px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
-              />
-            </>
-          )}
+            ))}
           {showParentCategories &&
             parentCategories.map(({ id, name }, index) => (
               <Text
