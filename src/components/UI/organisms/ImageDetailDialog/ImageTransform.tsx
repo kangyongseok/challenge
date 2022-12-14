@@ -11,6 +11,7 @@ interface ImageTransformProps {
   src: string;
   rotate: number;
   index: number;
+  disablePanning: boolean;
   onZoomStart: () => void;
   onZoomStop: () => void;
   onChangeSwiperOption: (active: boolean) => void;
@@ -22,6 +23,7 @@ function ImageTransform({
   src,
   rotate,
   index,
+  disablePanning,
   onZoomStart,
   onZoomStop,
   onChangeSwiperOption,
@@ -65,6 +67,10 @@ function ImageTransform({
       setPanningDisabled(true);
     }
   }, [currentScale]);
+
+  useEffect(() => {
+    setPanningDisabled(disablePanning);
+  }, [disablePanning]);
 
   useEffect(() => {
     return () => {

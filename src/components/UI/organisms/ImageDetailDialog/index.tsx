@@ -52,6 +52,7 @@ function ImageDetailDialog({
   const [rotates, setRotates] = useState<number[]>([]);
   const [shortSwipes, setShortSwipes] = useState(true);
   const [followFinger, setFollowFinger] = useState(true);
+  const [panningDisabled, setPanningDisabled] = useState(true);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperClass>();
@@ -83,13 +84,13 @@ function ImageDetailDialog({
     setCurrentIndex(realIndex);
     setShortSwipes(true);
     setFollowFinger(true);
+    setPanningDisabled(true);
     slideMovingRef.current = false;
     zoomStatusRef.current = false;
 
     const previousTransformRef = transformsRef.current[previousIndex];
 
     if (previousTransformRef) previousTransformRef.resetTransform();
-
     if (typeof onChange === 'function') {
       onChange(swiper);
     }
@@ -183,6 +184,7 @@ function ImageDetailDialog({
     if (currentTransformRef) {
       setShortSwipes(false);
       setFollowFinger(false);
+      setPanningDisabled(false);
       slideMovingRef.current = true;
       zoomStatusRef.current = true;
       currentTransformRef.zoomIn();
@@ -209,11 +211,13 @@ function ImageDetailDialog({
         zoomStatusRef.current = false;
         setShortSwipes(true);
         setFollowFinger(true);
+        setPanningDisabled(true);
       } else {
         slideMovingRef.current = true;
         zoomStatusRef.current = true;
         setShortSwipes(false);
         setFollowFinger(false);
+        setPanningDisabled(false);
       }
     }
   };
@@ -246,6 +250,14 @@ function ImageDetailDialog({
     if (currentTransformRef) {
       currentTransformRef.resetTransform();
     }
+  };
+
+  const handleDoubleClick = () => {
+    setShortSwipes(true);
+    setFollowFinger(true);
+    setPanningDisabled(true);
+    slideMovingRef.current = false;
+    zoomStatusRef.current = false;
   };
 
   useEffect(() => {
@@ -329,6 +341,7 @@ function ImageDetailDialog({
         onSlideResetTransitionEnd={handleSlideMoveEnd}
         onSliderMove={handleSlideMove}
         onSlideChange={handleSlideChange}
+        onDoubleClick={handleDoubleClick}
         initialSlide={syncIndex}
         style={{
           height: '100%'
@@ -346,6 +359,7 @@ function ImageDetailDialog({
               src={image}
               rotate={rotates[index]}
               index={index}
+              disablePanning={panningDisabled}
               onZoomStart={handleZoomStart}
               onZoomStop={handleZoomStop}
               onChangeSwiperOption={handleChangeSwiperOption}
