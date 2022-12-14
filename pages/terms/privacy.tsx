@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Icon } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -13,12 +13,14 @@ function Privacy() {
   }, []);
   return (
     <div className="container" style={{ background: '#fff', padding: '24px' }}>
-      <Flexbox customStyle={{ justifyContent: 'flex-end' }}>
+      <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginBottom: 36 }}>
+        <Typography variant="h3" weight="bold" component="h1">
+          개인정보처리방침
+        </Typography>
         <Button customStyle={{ border: 'none' }} onClick={() => router.back()}>
           <Icon name="CloseOutlined" />
         </Button>
       </Flexbox>
-      <Title className="faq-main-tit">개인정보처리방침</Title>
       <IntroDes>
         ㈜미스터카멜(mrcamel.co.kr 이하 &quot;회사&quot;라 함)는 통신비밀보호법, 전기통신사업법,
         정보통신망 이용촉진 및 정i보보호 등에 관한 법률 등 정보통신서비스제공자가 준수하여야 할 관련
@@ -27,7 +29,7 @@ function Privacy() {
         지침의 변경 및 회사 정책의 변화에 따라 변경될 수 있으니 회원께서는 당사 사이트를 방문 시
         수시로 확인하여 주시기 바랍니다. 미스터카멜의 개인정보처리방침은 다음과 같습니다.
       </IntroDes>
-      <IntroDes>
+      <ListContents>
         가. &quot;개인정보&quot;라 함은 생존하는 개인에 관한 정보로서 성명/휴대폰번호 등에 의하여
         특정한 개인을 알아볼 수 있는 부호/문자/음성/음향 및 영상 등의 정보(해당 정보만으로는 특정
         개인을 알아볼 수 없어도 다른 정보와 쉽게 결합하여 알아볼 수 있는 경우는 그 정보를 포함)를
@@ -41,20 +43,17 @@ function Privacy() {
         라. &quot;비회원&quot;이라 함은 회원에 가입하지 않고 회사가 제공하는 서비스를 이용하는 자를
         말합니다.
         <br />
-      </IntroDes>
-      <IntroDes>
-        2. 개인정보 수집에 대한 동의
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>2. 개인정보 수집에 대한 동의</ListTitle>
+      <ListContents>
         회사는 이용자가 회사의 개인정보처리방침 또는 이용약관의 내용에 대해 &quot;동의함&quot; 버튼
         또는 &quot;동의하지 않음&quot; 버튼을 클릭(Click)할 수 있는 절차를 마련하였습니다. 이에
         이용자가 동의의 의사표시가 있는 경우 개인정보의 수집에 동의한 것으로 봅니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        3. 수집하는 개인정보의 항목 및 수집방법
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>3. 수집하는 개인정보의 항목 및 수집방법</ListTitle>
+      <ListContents>
         가. 수집하는 개인정보의 항목
         <br />
         회사는 회원가입, 원활한 고객상담, 각종 서비스의 제공 등을 위해 아래와 같은 개인정보를
@@ -115,14 +114,11 @@ function Privacy() {
         <br />
         - 홈페이지, 모바일 어플리케이션, 모바일 웹페이지, 서면양식, 팩스, 전화, 상담 게시판,
         전자우편, 이벤트 응모, 배송요청
-        <br />
-        - 협력회사로부터의 제공
-        <br />
-      </IntroDes>
-      <IntroDes>
-        4. 개인정보의 수집 및 이용목적
-        <br />
-        <br />
+        <br />- 협력회사로부터의 제공
+      </ListContents>
+
+      <ListTitle>4. 개인정보의 수집 및 이용목적</ListTitle>
+      <ListContents>
         가. 회사는 기본적인 서비스 제공을 위한 필수 정보만을 수집하고 있으며 서비스에 맞는 별도의
         개인 정보를 제공받기 위해서는 정보 수집 시 별도 동의를 얻고 있습니다. 선택 정보를 입력하지
         않은 경우에도 서비스 이용 제한은 없습니다.
@@ -150,11 +146,10 @@ function Privacy() {
         서비스의 유효성 확인, 이벤트 및 광고성 정보 제공 및 참여기회 제공, 회원의 서비스 이용에 대한
         통계
         <br />
-      </IntroDes>
-      <IntroDes>
-        5. 개인정보의 보유 및 이용기간
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>5. 개인정보의 보유 및 이용기간</ListTitle>
+      <ListContents>
         이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.
         단, 아래의 경우에는 예외로 합니다.
         <br />
@@ -180,11 +175,10 @@ function Privacy() {
         &apos;정보통신망 이용촉진 및 정보보호등에 관한 법률 제29조&apos; 에 근거하여 이용자에게
         사전통지하고 개인정보를 별도로 분리하여 저장 관리하며, 분리 보관된 개인정보는 4년 간 보관 후
         지체없이 파기합니다.
-      </IntroDes>
-      <IntroDes>
-        6. 개인정보 파기절차 및 그 방법
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>6. 개인정보 파기절차 및 그 방법</ListTitle>
+      <ListContents>
         이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.
         회사의 개인정보 파기절차 및 방법은 다음과 같습니다.
         <br />
@@ -202,14 +196,11 @@ function Privacy() {
         <br />
         - 전자적 파일 형태로 저장된 개인정보는 기록을 재생할 수 없는 기술적 방법을 사용하여
         삭제합니다.
-        <br />
-        - 종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통하여 파기합니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        7. 개인정보의 제공 및 공유
-        <br />
-        <br />
+        <br />- 종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통하여 파기합니다.
+      </ListContents>
+
+      <ListTitle>7. 개인정보의 제공 및 공유</ListTitle>
+      <ListContents>
         회사는 이용자들의 개인정보를 &quot;4. 개인정보의 수집 및 이용목적&quot;에서 고지한 범위
         내에서 사용하며, 이용자의 사전 동의 없이는 동 범위를 초과하여 이용하거나 원칙적으로 이용자의
         개인정보를 외부에 공개하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.
@@ -239,23 +230,19 @@ function Privacy() {
         사이트(해당 쇼핑몰, 웹페이지 포함)로 이동할 경우 개인정보처리방침은 해당 사이트의 운영기관이
         게시(揭示)한 방침이 적용되오니 새로 방문한 사이트의 개인정보처리방침을 반드시 확인하시기
         바랍니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        8. 개인정보 제3자 제공 관련 안내
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>8. 개인정보 제3자 제공 관련 안내</ListTitle>
+      <ListContents>
         회사는 원칙적으로 회원의 동의 없이 제3자에게 개인정보를 제공하지 않습니다. 단, 회사에서
         이루어지는 물품구매, 물품배송, 컴퓨터 방문출장 A/S 서비스 등의
         <br />
         각종 서비스 이용, 사용자 리서치 및 이벤트에 참여할 경우 주관사 혹은 서비스 대행업체에
         개인정보를 제공하는데 대해 별도로 동의절차를 거치게 됩니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        9. 개인정보의 처리위탁
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>9. 개인정보의 처리위탁</ListTitle>
+      <ListContents>
         회사는 관계 법령에 따라 위탁계약 시 개인정보가 안전하게 관리될 수 있도록 필요한 사항을
         규정하고 있습니다. 회사의 개인정보 위탁처리 기관, 위탁업무 내용 및 개인정보의 보유 및
         이용기간은 아래와 같습니다.
@@ -270,16 +257,13 @@ function Privacy() {
         <br />
         - 만약 추가로 개인정보의 처리를 위탁하는 경우에는 수탁자, 수탁범위, 공유 정보의 범위 등에
         관한 사항을 서면, 전자우편, 전화 또는 홈페이지를 통해 사전에 고지하도록 하겠습니다.
-        <br />
-        - 위탁계약 시 서비스제공자의 개인정보보호 관련 지시엄수, 개인정보에 관한 비밀유지, 제3자
-        제공의 금지 및 사고시의 책임부담, 위탁기간, 처리 종료 후의 개인정 보의 반환 또는 파기 등을
-        규정하고 당해 계약내용을 서면 또는 전자적으로 보관합니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        10. 이용자 권리와 그 행사방법
-        <br />
-        <br />
+        <br />- 위탁계약 시 서비스제공자의 개인정보보호 관련 지시엄수, 개인정보에 관한 비밀유지,
+        제3자 제공의 금지 및 사고시의 책임부담, 위탁기간, 처리 종료 후의 개인정 보의 반환 또는 파기
+        등을 규정하고 당해 계약내용을 서면 또는 전자적으로 보관합니다.
+      </ListContents>
+
+      <ListTitle>10. 이용자 권리와 그 행사방법</ListTitle>
+      <ListContents>
         가. 이용자는 언제든지 등록되어 있는 자신의 개인정보를 조회하거나 수정할 수 있으며, 가입
         해지를 요청할 수도 있습니다.
         <br />
@@ -298,12 +282,10 @@ function Privacy() {
         <br />
         마. 회사는 만 14세 미만 아동의 개인정보를 보호하기 위하여 회원가입은 만14세 이상에만
         허용하여 아동의 개인정보를 수집하지 않습니다.
-        <br />
-      </IntroDes>
-      <IntroDes>
-        11. 쿠키(cookie)의 설치/운영 및 거부에 관한 사항
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>11. 쿠키(cookie)의 설치/운영 및 거부에 관한 사항</ListTitle>
+      <ListContents>
         쿠키(cookie)는 웹 사이트 서버가 회원의 컴퓨터로 전송하는 소량의 정보이며, 여기에는 방문한 웹
         사이트의 정보 및 서비스 제공 시 확인에 필요한 회원의 개인정보 등이 담겨 있습니다. 회원은
         쿠키의 수신을 거부하거나 쿠키의 수신에 대하여 경고하도록 사용하는 컴퓨터의 웹 브라우저
@@ -325,12 +307,10 @@ function Privacy() {
         <br />
         다만, 쿠키의 저장을 거부할 경우에는 로그인이 필요한 회사의 일부 서비스는 이용에 어려움이
         있을 수 있습니다
-        <br />
-      </IntroDes>
-      <IntroDes>
-        12. 개인정보의 기술적/관리적 보호 대책
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>12. 개인정보의 기술적/관리적 보호 대책</ListTitle>
+      <ListContents>
         회사는 이용자들의 개인정보를 취급함에 있어 개인정보가 분실, 도난, 유출, 변조 또는 훼손되지
         않도록 안전성 확보를 위하여 다음과 같은 기술적/관리적 대책을 강구하고 있습니다.
         <br />
@@ -363,11 +343,10 @@ function Privacy() {
         있도록 노력하고 있습니다. 단, 이용자 본인의 부주의나 인터넷상의 문제로 ID,비밀번호,
         휴대폰번호 등 개인정보가 유출해 발생한 문제에 대해 회사는 일체의 책임을 지지 않습니다.
         <br />
-      </IntroDes>
-      <IntroDes>
-        13. 개인정보보호책임자 및 담당자의 연락처
-        <br />
-        <br />
+      </ListContents>
+
+      <ListTitle>13. 개인정보보호책임자 및 담당자의 연락처</ListTitle>
+      <ListContents>
         이용자는 회사의 서비스를 이용하시면 발생하는 모든 개인정보보호 관련 민원을 개인정보호책임자
         혹은 담당부서로 신고하실 수 있습니다. 회사는 이용자들의 신고사항에 대해 신속하게 충분한
         답변을 드릴 것입니다.
@@ -387,15 +366,12 @@ function Privacy() {
         - 대검찰청 사이버수사과 (www.spo.go.kr (국번없이) / 1301)
         <br />
         - 경찰청 사이버안전국(cyberbureau.police.go.kr (국번없이) / 182)
-        <br />
-        - 개인정보 분쟁조정위원회(한국인터넷진흥원 운영)(www.kopico.go.kr / (국번없이) 118 (내선
-        2번)
-        <br />
-      </IntroDes>
-      <IntroDes>
-        14. 고지의 의무
-        <br />
-        <br />
+        <br />- 개인정보 분쟁조정위원회(한국인터넷진흥원 운영)(www.kopico.go.kr / (국번없이) 118
+        (내선 2번)
+      </ListContents>
+
+      <ListTitle>14. 고지의 의무</ListTitle>
+      <ListContents>
         현 개인정보처리방침이 법령, 정책 또는 보안기술의 변경에 따라 내용이 추가, 삭제 및 수정될
         경우에는 개정의 시행일의 최소 7일전부터 회사 사이트의 공지사항을 통하여 고지할 것입니다.
         <br />
@@ -403,27 +379,31 @@ function Privacy() {
         <br />
         - 시행일자: 2020년 6월 25일
         <br />
-      </IntroDes>
+      </ListContents>
     </div>
   );
 }
 
 const IntroDes = styled.p`
-  font-size: ${({ theme }) => theme.typography.h3};
-  font-weight: normal;
-  letter-spacing: -0.8px;
-  text-align: left;
-  color: #202020;
-  margin-bottom: 24px;
+  color: ${({ theme: { palette } }) => palette.common.ui20};
+  font-weight: 500;
+  font-size: ${({ theme: { typography } }) => typography.body1.size};
+  margin-bottom: 12px;
+  line-height: 20px;
 `;
 
-const Title = styled.h1`
-  margin: 0 0 20px;
-  font-size: 20px;
-  font-weight: normal;
-  letter-spacing: -0.4px;
-  text-align: left;
-  color: #202020;
+const ListTitle = styled.h2`
+  font-weight: 700;
+  color: ${({ theme: { palette } }) => palette.common.ui20};
+  font-size: ${({ theme: { typography } }) => typography.h4.size};
+  margin-bottom: 12px;
+`;
+
+const ListContents = styled.p`
+  font-size: ${({ theme: { typography } }) => typography.body1.size};
+  color: ${({ theme: { palette } }) => palette.common.ui60};
+  line-height: 20px;
+  margin-bottom: 32px;
 `;
 
 export default Privacy;
