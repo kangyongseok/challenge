@@ -104,14 +104,15 @@ function OnboardingResult() {
               {userNameParse()}, {userInfo?.info.value.yearOfBirth}
             </Typography>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
-              👕 상의 : {userInfo?.size.value.tops.map((top) => top.viewSize).join(',')}
+              👕 상의 : {userInfo?.size.value?.tops.map((top) => top.viewSize).join(',')}
             </ElipsisArea>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60, margin: '4px 0' }}>
               👖 하의 :{' '}
-              {sortBy(userInfo?.size.value.bottoms.map((bottom) => bottom.size)).join(',')}
+              {sortBy(userInfo?.size.value?.bottoms.map((bottom) => bottom.size)).join(',')}
             </ElipsisArea>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
-              👟 신발 : {sortBy(userInfo?.size.value.shoes.map((shoe) => shoe.viewSize)).join(',')}
+              👟 신발 :{' '}
+              {sortBy(userInfo?.size?.value?.shoes.map((shoe) => shoe.viewSize)).join(',')}
             </ElipsisArea>
             {userInfo?.personalStyle.purchaseTypes[0] && (
               <Flexbox alignment="center" justifyContent="center" gap={2}>

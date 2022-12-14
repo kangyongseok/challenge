@@ -44,13 +44,15 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
   }, []);
 
   useEffect(() => {
-    setSelectedBottomList(
-      userInfo?.size.value.bottoms.map((bottom) => bottom.categorySizeId) as number[]
-    );
-    setSelectedTopList(userInfo?.size.value.tops.map((tops) => tops.categorySizeId) as number[]);
-    setSelectedShoesList(
-      userInfo?.size.value.shoes.map((shoes) => shoes.categorySizeId) as number[]
-    );
+    if (userInfo && userInfo.size.value) {
+      setSelectedBottomList(
+        userInfo.size.value.bottoms.map((bottom) => bottom.categorySizeId) as number[]
+      );
+      setSelectedTopList(userInfo.size.value.tops.map((tops) => tops.categorySizeId) as number[]);
+      setSelectedShoesList(
+        userInfo.size.value.shoes.map((shoes) => shoes.categorySizeId) as number[]
+      );
+    }
   }, [userInfo]);
 
   const handleClickSizeLabel =

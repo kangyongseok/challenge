@@ -108,7 +108,7 @@ export type ProfileStep = {
 };
 
 export type Size = {
-  value: SizeValue;
+  value?: SizeValue;
 };
 
 export interface UserInfo {

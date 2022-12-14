@@ -8,7 +8,7 @@ import attrKeys from '@constants/attrKeys';
 
 import HomeStyleRecommendProductList from './HomeStyleRecommendProductList';
 import HomeRecommendProductList from './HomeRecommendProductList';
-// import HomeQuickSaleProducts from './HomeQuickSaleProducts';
+import HomeQuickSaleProducts from './HomeQuickSaleProducts';
 import HomePersonalGuideProductList from './HomePersonalGuideProductList';
 import HomePersonalGuide from './HomePersonalGuide';
 import HomeMainBanner from './HomeMainBanner';
@@ -42,7 +42,7 @@ function HomeRecommendPanel() {
       <HomePersonalGuideProductList />
       <HomeLegitAuthenticProductList />
       <HomeAuthSellerProducts />
-      {/* <HomeQuickSaleProducts /> 임시로 주석 추후 오픈 */}
+      <HomeQuickSaleProducts />
       <HomeRecommendProductList />
       {/* 정품 가품 판단 컴포넌트 자리 */}
       <HomeStyleRecommendProductList />

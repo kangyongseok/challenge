@@ -65,8 +65,9 @@ function HomeQuickSaleProducts() {
                 <Grid key={`home-camel-auth-product-${product.id}`} item xs={2}>
                   <ProductGridCard
                     product={product}
-                    hideAreaWithDateInfo
                     hideLegitStatusLabel
+                    hideProductLabel
+                    hideSafePayment
                     wishAtt={{
                       name: attrProperty.name.MAIN,
                       title: attrProperty.title.GENERAL_SELLER,

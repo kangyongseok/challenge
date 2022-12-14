@@ -243,7 +243,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
             <Image
               variant="backgroundImage"
               src={imageUrl}
-              alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
+              alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
               disableLazyLoad={false}
               disableSkeletonRender={false}
               isRound

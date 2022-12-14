@@ -65,6 +65,7 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   areaWithDateInfoCustomStyle?: CustomStyle;
   metaCamelInfoCustomStyle?: CustomStyle;
   todayWishViewLabelCustomStyle?: CustomStyle;
+  hideSafePayment?: boolean;
 }
 
 const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(function ProductGridCard(
@@ -84,6 +85,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     showCountLabel = false,
     hideWishButton = false,
     hidePlatformLogo = false,
+    hideSafePayment = false,
     productAtt,
     customStyle,
     customLabel,
@@ -322,7 +324,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       </Box>
       <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
         <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
-          {!isNormalseller && isSafe && <span>안전결제 </span>}
+          {!isNormalseller && isSafe && !hideSafePayment && <span>안전결제 </span>}
           {title}
         </Title>
         <Flexbox

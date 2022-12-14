@@ -70,9 +70,9 @@ function SizeInputType() {
 
   useEffect(() => {
     if (data && selectedSizes.length === 0) {
-      const types = Object.keys(data.size.value);
+      const types = Object.keys(data.size.value as SizeValue);
       types.forEach((type) => {
-        data.size.value[type].forEach((info) => {
+        (data.size.value as SizeValue)[type].forEach((info) => {
           const obj = {
             kind: type as Kind,
             categorySizeId: info.categorySizeId,
@@ -131,7 +131,7 @@ function SizeInputType() {
   return (
     <Box customStyle={{ marginTop: 110 }}>
       {data &&
-        Object.keys((data as UserInfo).size.value).map((kinds) => (
+        Object.keys((data as UserInfo).size.value as SizeValue).map((kinds) => (
           <Box customStyle={{ marginBottom: 32 }} key={`kinds-${kinds}`}>
             <Flexbox gap={6} alignment="center">
               <Icon name={parseKindText(kinds).icon} width={30} height={25} />

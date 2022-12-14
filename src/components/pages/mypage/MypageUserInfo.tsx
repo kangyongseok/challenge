@@ -45,16 +45,18 @@ function MypageUserInfo() {
   const sizeParser = () => {
     let result = '';
 
-    if (size) {
-      const {
-        value: { tops = [], bottoms = [], shoes = [] }
-      } = size;
+    if (size?.value) {
+      const { value } = size;
       // TODO 추후 로직 재작성
-      result = `${tops[0] ? tops[0].viewSize : ''} ${tops.length > 1 ? '(...)' : ''} ${
-        tops[0] && bottoms[0] ? ' / ' : ''
-      } ${bottoms[0] ? bottoms[0].viewSize : ''} ${bottoms.length > 1 ? '(...)' : ''} ${
-        (tops[0] || bottoms[0]) && shoes[0] ? ' / ' : ''
-      } ${shoes[0] ? shoes[0].viewSize : ''} ${shoes.length > 1 ? '(...)' : ''}`;
+      result = `${value?.tops[0] ? value?.tops[0].viewSize : ''} ${
+        value?.tops.length > 1 ? '(...)' : ''
+      } ${value?.tops[0] && value?.bottoms[0] ? ' / ' : ''} ${
+        value?.bottoms[0] ? value?.bottoms[0].viewSize : ''
+      } ${value?.bottoms.length > 1 ? '(...)' : ''} ${
+        (value?.tops[0] || value?.bottoms[0]) && value?.shoes[0] ? ' / ' : ''
+      } ${value?.shoes[0] ? value?.shoes[0].viewSize : ''} ${
+        value?.shoes.length > 1 ? '(...)' : ''
+      }`;
     }
 
     return result.trim() ? result : '사이즈가 어떻게 되세요?';
@@ -81,7 +83,11 @@ function MypageUserInfo() {
   const handleClickRoute = (e: MouseEvent<HTMLButtonElement>) => {
     const target = e.currentTarget;
     if (size) {
-      const sizeArr = [...size.value.bottoms, ...size.value.tops, ...size.value.shoes];
+      const sizeArr = [
+        ...(size.value?.bottoms || []),
+        ...(size.value?.tops || []),
+        ...(size.value?.shoes || [])
+      ];
       logEvent(attrKeys.mypage.CLICK_PERSONAL_INPUT, {
         name: 'MY',
         att: target.dataset.att,
