@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 
@@ -9,8 +9,9 @@ import PurchaseType from '@components/UI/organisms/PurchaseType';
 
 import { logEvent } from '@library/amplitude';
 
-import { postUserStyle } from '@api/user';
+import { fetchUserInfo, postUserStyle } from '@api/user';
 
+import queryKeys from '@constants/queryKeys';
 import { purchaseType } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -24,6 +25,10 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
   const purchaseDisabledState = useRecoilValue(disabledState('purchase'));
   const { mutate: styleMutate } = useMutation(postUserStyle);
   const purchaseTypeId = useRecoilValue(purchaseTypeIdState);
+  const { data: { personalStyle: { purchaseTypes = [] } = {} } = {} } = useQuery(
+    queryKeys.users.userInfo(),
+    fetchUserInfo
+  );
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {
@@ -38,7 +43,7 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
     });
 
     styleMutate({
-      purchaseTypeIds: purchaseTypeId ? [purchaseTypeId] : []
+      purchaseTypeIds: purchaseTypeId ? [purchaseTypeId] : [purchaseTypes[0].id as number]
     });
     onClick();
   };

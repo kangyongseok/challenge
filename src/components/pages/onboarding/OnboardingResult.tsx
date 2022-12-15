@@ -114,17 +114,28 @@ function OnboardingResult() {
               👟 신발 :{' '}
               {sortBy(userInfo?.size?.value?.shoes.map((shoe) => shoe.viewSize)).join(',')}
             </ElipsisArea>
+
             {userInfo?.personalStyle.purchaseTypes[0] && (
               <Flexbox alignment="center" justifyContent="center" gap={2}>
                 <Image
                   disableAspectRatio
                   src={`${BASE_URL}/${
-                    purchaseType.filter((type) => type.value === purchaseTypeId)[0].icon
+                    purchaseType.filter(
+                      (type) =>
+                        type.value ===
+                        (purchaseTypeId || userInfo?.personalStyle.purchaseTypes[0].id)
+                    )[0].icon
                   }.png`}
                   width={20}
                 />
                 <Typography customStyle={{ color: dark.palette.common.ui60, marginTop: 4 }}>
-                  {purchaseType.filter((type) => type.value === purchaseTypeId)[0].subTitle}
+                  {
+                    purchaseType.filter(
+                      (type) =>
+                        type.value ===
+                        (purchaseTypeId || userInfo?.personalStyle.purchaseTypes[0].id)
+                    )[0].subTitle
+                  }
                 </Typography>
               </Flexbox>
             )}

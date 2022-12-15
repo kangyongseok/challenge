@@ -34,6 +34,10 @@ function PageHead({
     brand: { name: brandName = '', nameEng: brandNameEng = '' } = {}
   } = product || {};
 
+  const isNormalseller =
+    (product?.site.id === 34 || product?.productSeller.type === 4) &&
+    product?.productSeller.type !== 3;
+
   return (
     <Head>
       {description && <meta name="description" content={description} />}
@@ -56,7 +60,7 @@ function PageHead({
           <meta name="twitter:label1" content="가격" />
           <meta name="twitter:data1" content={`${getTenThousandUnitPrice(price)}만원`} />
           <meta name="twitter:label2" content="플랫폼" />
-          <meta name="twitter:data2" content={name} />
+          <meta name="twitter:data2" content={isNormalseller ? '카멜' : name} />
           <meta property="product:brand" content={brandName || brandNameEng} />
           <meta property="product:category" content={categoryName} />
           <meta property="product:availability" content="in stock" />

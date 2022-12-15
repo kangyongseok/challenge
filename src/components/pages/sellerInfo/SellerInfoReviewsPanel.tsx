@@ -115,7 +115,12 @@ function SellerInfoReviewsPanel() {
           }}
         >
           <Typography variant="h4" weight="bold">
-            {(firstReviewInfo.siteUrl?.name || firstReviewInfo.site.name) ?? ''}에서 받은 후기
+            {firstReviewInfo.productSeller.name} 님이 받은 후기
+            {/* {isNormalseller
+              ? `$`
+              : `${
+                  (firstReviewInfo.siteUrl?.name || firstReviewInfo.site.name) ?? ''
+                }에서 받은 후기`} */}
           </Typography>
           <Flexbox gap={12} alignment="center">
             {isCamelProduct && !isNormalseller && (
