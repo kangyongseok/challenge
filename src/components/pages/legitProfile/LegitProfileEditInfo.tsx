@@ -85,7 +85,7 @@ function LegitProfileEditInfo({
         });
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -104,7 +104,7 @@ function LegitProfileEditInfo({
         return;
       }
 
-      if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

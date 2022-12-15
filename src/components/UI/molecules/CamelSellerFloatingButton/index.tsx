@@ -80,7 +80,7 @@ function CamelSellerFloatingButton() {
         return;
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1144) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -99,7 +99,7 @@ function CamelSellerFloatingButton() {
         return;
       }
 
-      if (checkAgent.isAndroidApp() && getAppVersion() < 1140) {
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

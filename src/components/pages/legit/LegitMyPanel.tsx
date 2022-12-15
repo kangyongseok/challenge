@@ -90,7 +90,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -109,7 +109,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
+        if (checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -125,7 +125,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1144 && isProduction) {
+        if (checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -144,7 +144,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && getAppVersion() < 1140 && isProduction) {
+        if (checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
