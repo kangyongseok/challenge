@@ -8,6 +8,11 @@ const routers = [
     permanent: true
   },
   {
+    source: '/privacy',
+    destination: '/terms/privacy',
+    permanent: true
+  },
+  {
     source: '/product/:id/:conversionId',
     destination: '/products/:id?conversionId=:conversionId',
     permanent: true
