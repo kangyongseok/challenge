@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQuery, useQueryClient } from 'react-query';
 import { BottomSheet, Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
@@ -19,7 +19,7 @@ import { purchaseType } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { modelParentCategoryIdsState, purchaseTypeIdState } from '@recoil/onboarding';
+import { modelParentCategoryIdsState } from '@recoil/onboarding';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import OnboardingPermission from './OnboardingPermission';
@@ -35,7 +35,7 @@ function OnboardingResult() {
   const [modelParentCategoryIds, setModelParentCategoryId] = useRecoilState(
     modelParentCategoryIdsState
   );
-  const purchaseTypeId = useRecoilValue(purchaseTypeIdState);
+
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
     refetchOnMount: true
   });
@@ -104,41 +104,38 @@ function OnboardingResult() {
               {userNameParse()}, {userInfo?.info.value.yearOfBirth}
             </Typography>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
-              👕 상의 : {userInfo?.size.value?.tops.map((top) => top.viewSize).join(',')}
+              👕 상의 : {userInfo?.size.value?.tops.map((top) => top.viewSize)?.join(',')}
             </ElipsisArea>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60, margin: '4px 0' }}>
               👖 하의 :{' '}
-              {sortBy(userInfo?.size.value?.bottoms.map((bottom) => bottom.size)).join(',')}
+              {sortBy(userInfo?.size.value?.bottoms.map((bottom) => bottom.size))?.join(',')}
             </ElipsisArea>
             <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
               👟 신발 :{' '}
-              {sortBy(userInfo?.size?.value?.shoes.map((shoe) => shoe.viewSize)).join(',')}
+              {sortBy(userInfo?.size?.value?.shoes.map((shoe) => shoe.viewSize))?.join(',')}
             </ElipsisArea>
 
-            {userInfo?.personalStyle.purchaseTypes[0] && (
-              <Flexbox alignment="center" justifyContent="center" gap={2}>
-                <Image
-                  disableAspectRatio
-                  src={`${BASE_URL}/${
-                    purchaseType.filter(
-                      (type) =>
-                        type.value ===
-                        (purchaseTypeId || userInfo?.personalStyle.purchaseTypes[0].id)
-                    )[0].icon
-                  }.png`}
-                  width={20}
-                />
-                <Typography customStyle={{ color: dark.palette.common.ui60, marginTop: 4 }}>
-                  {
-                    purchaseType.filter(
-                      (type) =>
-                        type.value ===
-                        (purchaseTypeId || userInfo?.personalStyle.purchaseTypes[0].id)
-                    )[0].subTitle
-                  }
-                </Typography>
-              </Flexbox>
-            )}
+            {userInfo?.personalStyle?.purchaseTypes[0] &&
+              userInfo.personalStyle.purchaseTypes[0].id && (
+                <Flexbox alignment="center" justifyContent="center" gap={2}>
+                  <Image
+                    disableAspectRatio
+                    src={`${BASE_URL}/${
+                      purchaseType.filter(
+                        (type) => type.value === userInfo?.personalStyle.purchaseTypes[0].id
+                      )[0].icon
+                    }.png`}
+                    width={20}
+                  />
+                  <Typography customStyle={{ color: dark.palette.common.ui60, marginTop: 4 }}>
+                    {
+                      purchaseType.filter(
+                        (type) => type.value === userInfo?.personalStyle.purchaseTypes[0].id
+                      )[0].subTitle
+                    }
+                  </Typography>
+                </Flexbox>
+              )}
             <DotLine />
             <Flexbox
               gap={4}
