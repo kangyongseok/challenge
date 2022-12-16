@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticPropsContext } from 'next';
 import { Box, Button } from 'mrcamel-ui';
@@ -16,11 +16,13 @@ import { logEvent } from '@library/amplitude';
 
 import { postManage, putNotiReadAll } from '@api/userHistory';
 
+import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const labels = [
   {
@@ -37,12 +39,20 @@ const labels = [
 //  router.push(`/announces/${id}`);
 
 function Notices() {
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState(labels[0].value);
-  const [allRead, setAllRead] = useState(false);
+  const { data: accessUser } = useQueryAccessUser();
+  const params = {
+    size: 20,
+    sort: 'dateCreated,DESC',
+    type: 0
+  };
   const { data: { notViewedAnnounceCount = 0 } = {} } = useQueryUserInfo();
   const { mutate: productNotiReadAllMutate } = useMutation(putNotiReadAll, {
     onSuccess() {
-      setAllRead(false);
+      queryClient.invalidateQueries(queryKeys.userHistory.userNoti(params, accessUser?.userId), {
+        refetchInactive: true
+      });
     }
   });
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -62,7 +72,6 @@ function Notices() {
   };
 
   const handleClickAllRead = () => {
-    setAllRead(true);
     productNotiReadAllMutate();
   };
 
@@ -96,7 +105,7 @@ function Notices() {
         />
       </TabsWrapper>
       <Box customStyle={{ marginTop: 41 }}>
-        {tab === labels[0].value && <ActivityNotificationPanel allRead={allRead} />}
+        {tab === labels[0].value && <ActivityNotificationPanel />}
         {tab === labels[1].value && <NoticeNotificationPanel />}
       </Box>
     </GeneralTemplate>

@@ -170,7 +170,8 @@ const commons = {
 const userHistory = {
   all: ['userhistory'] as const,
   manage: (params: ManageParams) => [...userHistory.all, 'manage', params] as const,
-  userNoti: (params: ActivityNotiParams) => [...users.all, 'userNoti', params] as const
+  userNoti: (params: ActivityNotiParams, userId?: number) =>
+    [...users.all, 'userNoti', params, userId] as const
 };
 
 const logs = {

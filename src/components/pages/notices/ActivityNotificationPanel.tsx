@@ -34,7 +34,7 @@ interface LabelData {
   color: string;
 }
 
-function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
+function ActivityNotificationPanel() {
   const router = useRouter();
   const {
     theme: {
@@ -84,13 +84,14 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
   const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
   const { mutate: productNotiReadMutate } = useMutation(postNotiRead);
   const { data, fetchNextPage, refetch } = useInfiniteQuery(
-    queryKeys.userHistory.userNoti(params),
+    queryKeys.userHistory.userNoti(params, accessUser?.userId),
     ({ pageParam = 0 }) => fetchUserNoti({ ...params, page: pageParam as number }),
     {
       getNextPageParam: (nextData) => {
         const { number = 0 } = nextData || {};
         return number < 4 ? number + 1 : undefined;
-      }
+      },
+      enabled: !!accessUser
     }
   );
   const { data: { content: productKeywords = [] } = {} } = useQuery(
@@ -104,12 +105,6 @@ function ActivityNotificationPanel({ allRead }: { allRead: boolean }) {
   useEffect(() => {
     logEvent(attrKeys.noti.VIEW_BEHAVIOR_LIST);
   }, []);
-
-  useEffect(() => {
-    if (allRead) {
-      refetch();
-    }
-  }, [allRead, refetch]);
 
   // 이 함수를 살려서 써야하는건지 제거해도 되는건지??
   const isProductKeywordProcess = (activityInfo: UserNoti) => {
