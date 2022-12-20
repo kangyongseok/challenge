@@ -2,6 +2,7 @@ import type { QueryClient } from 'react-query';
 import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import type { AmplitudeClient } from 'amplitude-js';
 import { datadogRum } from '@datadog/browser-rum';
+import { datadogLogs } from '@datadog/browser-logs';
 
 import type { AccessUser } from '@dto/userAuth';
 
@@ -80,13 +81,40 @@ const Initializer = {
       window.webkit.messageHandlers.callSetLoginUser.postMessage(JSON.stringify(accessUser));
     }
   },
-  initAccessUserInRum() {
+  initRum() {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
 
     if (!accessUser) return;
 
+    datadogRum.init({
+      applicationId: process.env.DATADOG_RUM_APP_ID,
+      clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
+      site: 'datadoghq.com',
+      service: process.env.DATADOG_RUM_SERVICE,
+      env: process.env.DATADOG_RUM_ENV,
+      sampleRate: 100,
+      sessionReplaySampleRate: 20,
+      trackInteractions: true,
+      trackFrustrations: true,
+      trackResources: true,
+      trackLongTasks: true,
+      defaultPrivacyLevel: 'allow',
+      allowedTracingOrigins: [process.env.DATADOG_ALLOWED_TRACING_ORIGIN]
+    });
+
     const { userId, email, userName, snsType, area, gender, birthday, alarmAgree, adAgree } =
       accessUser;
+
+    datadogLogs.init({
+      clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
+      site: 'datadoghq.com',
+      forwardErrorsToLogs: true,
+      sampleRate: 100,
+      env: process.env.DATADOG_RUM_ENV,
+      service: process.env.DATADOG_RUM_SERVICE
+    });
+
+    datadogRum.startSessionReplayRecording();
 
     datadogRum.setUser({
       id: String(userId),

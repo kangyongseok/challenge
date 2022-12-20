@@ -8,8 +8,6 @@ import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
-import { datadogRum } from '@datadog/browser-rum';
-import { datadogLogs } from '@datadog/browser-logs';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
@@ -53,33 +51,6 @@ import 'swiper/css/effect-cards';
 if (global.navigator) {
   Amplitude.init();
 }
-
-datadogRum.init({
-  applicationId: process.env.DATADOG_RUM_APP_ID,
-  clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
-  site: 'datadoghq.com',
-  service: process.env.DATADOG_RUM_SERVICE,
-  env: process.env.DATADOG_RUM_ENV,
-  sampleRate: 100,
-  sessionReplaySampleRate: 20,
-  trackInteractions: true,
-  trackFrustrations: true,
-  trackResources: true,
-  trackLongTasks: true,
-  defaultPrivacyLevel: 'mask-user-input',
-  allowedTracingOrigins: [process.env.DATADOG_ALLOWED_TRACING_ORIGIN]
-});
-
-datadogLogs.init({
-  clientToken: process.env.DATADOG_RUM_CLIENT_TOKEN,
-  site: 'datadoghq.com',
-  forwardErrorsToLogs: true,
-  sampleRate: 100,
-  env: process.env.DATADOG_RUM_ENV,
-  service: process.env.DATADOG_RUM_SERVICE
-});
-
-datadogRum.startSessionReplayRecording();
 
 const originUrl = 'https://mrcamel.co.kr';
 
@@ -152,7 +123,7 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
-    Initializer.initAccessUserInRum();
+    Initializer.initRum();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

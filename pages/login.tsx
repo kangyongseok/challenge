@@ -150,6 +150,7 @@ function Login() {
         amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
         Initializer.initAccessUserInAmplitude(amplitude.getInstance());
         Initializer.initAccessUserInBraze();
+        Initializer.initRum();
 
         fetchUserInfo().then((userInfo) => {
           const { personalStyle: { styles = [] } = {} } = userInfo || {};
