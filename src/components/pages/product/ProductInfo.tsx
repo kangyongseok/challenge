@@ -241,13 +241,15 @@ ${newDescription}
       {isExpended ? (
         <Typography
           variant="body1"
-          dangerouslySetInnerHTML={{ __html: convertedDescription }}
+          dangerouslySetInnerHTML={{
+            __html: convertedDescription !== 'null' ? convertedDescription : ''
+          }}
           customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         />
       ) : (
         <Content variant="body1" isClamped={isClamped}>
           <LinesEllipsis
-            text={convertedDescription}
+            text={convertedDescription !== 'null' ? convertedDescription : ''}
             maxLine="20"
             ellipsis="..."
             basedOn="letters"

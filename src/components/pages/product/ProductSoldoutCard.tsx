@@ -35,6 +35,8 @@ function ProductSoldoutCard({
     });
   }, []);
 
+  const isNormalSeller = product?.productSeller.type === 4 || product?.site.id === 34;
+
   return (
     <StyledWrap justifyContent="space-between" alignment="center" onClick={onClick}>
       <Box customStyle={{ width: 'calc(100% - 92px)' }}>
@@ -42,7 +44,7 @@ function ProductSoldoutCard({
           판매 완료된 매물이에요
         </Typography>
         <EllipsisTitle variant="small1" weight="medium">
-          {isSafe && <span>안전결제 </span>}
+          {!isNormalSeller && isSafe && <span>안전결제 </span>}
           {product?.title}
         </EllipsisTitle>
         <Typography variant="h4" weight="bold" customStyle={{ color: common.ui60 }}>

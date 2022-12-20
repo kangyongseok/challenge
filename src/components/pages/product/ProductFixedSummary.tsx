@@ -16,6 +16,7 @@ interface ProductFixedSummaryProps {
   title: string;
   price: number;
   status: number;
+  isNormalSeller?: boolean;
   getProductImageOverlay: ({
     status,
     variant
@@ -31,6 +32,7 @@ function ProductFixedSummary({
   title,
   price,
   status,
+  isNormalSeller,
   getProductImageOverlay
 }: ProductFixedSummaryProps) {
   return (
@@ -43,7 +45,7 @@ function ProductFixedSummary({
         customStyle={{ padding: '11px 16px 10px' }}
       >
         <Title variant="body2" weight="medium">
-          {isSafe && <strong>안전결제 </strong>}
+          {!isNormalSeller && isSafe && <strong>안전결제 </strong>}
           {title}
         </Title>
         <Typography variant="body1" weight="bold" customStyle={{ marginTop: 4 }}>

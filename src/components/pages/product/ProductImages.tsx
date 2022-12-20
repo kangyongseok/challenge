@@ -246,10 +246,10 @@ function ProductImages({
           onSlideChange={handleSlideChange}
           preventClicks
         >
-          {product && !lowerPriceDisplay() && !isNormalseller && (
+          {product && !lowerPriceDisplay() && (
             <>
               {getProductImageOverlay({ status: product.status })}
-              {!isCamelSellerProduct && (
+              {!isCamelSellerProduct && !isNormalseller && (
                 <Platform>
                   <Avatar
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${

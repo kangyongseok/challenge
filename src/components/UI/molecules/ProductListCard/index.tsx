@@ -31,6 +31,7 @@ import { postProductsAdd, postProductsRemove } from '@api/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -360,7 +361,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               height={20}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
                 isNormalseller
-                  ? 161
+                  ? IMG_CAMEL_PLATFORM_NUMBER
                   : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
               }.png`}
               alt={`${siteUrlName || 'Platform'} Logo Img`}

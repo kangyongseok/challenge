@@ -20,6 +20,7 @@ import { fetchProduct, fetchSearchHistory } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -275,7 +276,11 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
               <Flexbox alignment="center" gap={4}>
                 <Image
                   disableAspectRatio
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${product.site.id}.png`}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                    product.productSeller.type === 4 || product.site.id === 34
+                      ? IMG_CAMEL_PLATFORM_NUMBER
+                      : product.site.id
+                  }.png`}
                   width={15}
                 />
                 <Typography variant="small1" customStyle={{ color: common.ui60 }}>

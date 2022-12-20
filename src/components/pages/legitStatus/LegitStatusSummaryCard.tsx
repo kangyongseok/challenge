@@ -110,6 +110,7 @@ function LegitStatusSummaryCard() {
           title={data.product.title}
           price={data.product.price}
           status={data.product.status}
+          isNormalSeller={!!(data.product.productSeller.type === 4 || data.product.site.id === 34)}
           getProductImageOverlay={getProductImageOverlay}
         />
       )}

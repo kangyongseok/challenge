@@ -13,6 +13,7 @@ import type { ProductLegit } from '@dto/productLegit';
 
 import { logEvent } from '@library/amplitude';
 
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -68,7 +69,8 @@ function LegitStatusCardHolder({
       site,
       siteUrl,
       postType,
-      photoGuideDetails = []
+      photoGuideDetails = [],
+      productSeller
     }
   },
   title,
@@ -90,6 +92,8 @@ function LegitStatusCardHolder({
   const [labelText, setLabelText] = useState('');
 
   const swiperRef = useRef<SwiperClass | null>();
+
+  const isNormalseller = (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3;
 
   const images = useMemo(() => {
     let newImages: string[] = [];
@@ -343,7 +347,9 @@ function LegitStatusCardHolder({
                     width={20}
                     height={20}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                      (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
+                      isNormalseller
+                        ? IMG_CAMEL_PLATFORM_NUMBER
+                        : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
                     }.png`}
                     alt="Platform Logo Img"
                     customStyle={{ maxWidth: 20, maxHeight: 20 }}

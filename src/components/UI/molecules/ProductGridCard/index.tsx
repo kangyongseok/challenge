@@ -21,6 +21,7 @@ import { postProductsAdd, postProductsRemove } from '@api/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
@@ -306,8 +307,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             width={20}
             height={20}
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              product.productSeller.type === 4
-                ? 161
+              product.productSeller.type === 4 || siteId === 34
+                ? IMG_CAMEL_PLATFORM_NUMBER
                 : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
             }.png`}
             alt={`${siteUrlName || 'Platform'} Logo Img`}

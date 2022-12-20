@@ -7,6 +7,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -31,6 +32,8 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
   const setModifyProductPrice = useSetRecoilState(setModifyProductPriceState);
   const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const isNormalseller =
+    (data.site.id === 34 || data.productSeller.type === 4) && data.productSeller.type !== 3;
 
   const handleClickSellPrice = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {
@@ -90,7 +93,7 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
               {(data.siteUrl.id || data.site.id) && (
                 <Img
                   src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                    data.siteUrl.id || data.site.id
+                    isNormalseller ? IMG_CAMEL_PLATFORM_NUMBER : data.siteUrl.id || data.site.id
                   }.png`}
                   width="20px"
                   alt={data.siteUrl.name || data.site.name}

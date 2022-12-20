@@ -32,6 +32,7 @@ function ProductGridCardSkeleton({
   gap,
   customStyle
 }: ProductGridCardSkeletonPros) {
+  const isNormalSeller = productSeller?.type === 4 || productSeller?.site.id === 34;
   const isSafe = useMemo(() => {
     const { site } = productSeller || {};
 
@@ -50,6 +51,7 @@ function ProductGridCardSkeleton({
       )
     );
   }, [labels, productSeller, title]);
+
   return (
     <Flexbox gap={gap || (compact ? 12 : 17)} direction="vertical" customStyle={customStyle}>
       <Skeleton isRound={isRound} />
@@ -64,7 +66,7 @@ function ProductGridCardSkeleton({
         >
           {title && (
             <Typography variant="body2" weight="medium" customStyle={{ visibility: 'hidden' }}>
-              {isSafe && <strong>안전결제</strong>}&nbsp;{title}
+              {!isNormalSeller && isSafe && <strong>안전결제</strong>}&nbsp;{title}
             </Typography>
           )}
         </Skeleton>

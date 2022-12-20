@@ -8,6 +8,8 @@ import { Badge, Image } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
+
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
@@ -29,7 +31,16 @@ function LegitStatusCard({
     dateCreated,
     dateCompleted,
     isViewed,
-    productResult: { title, imageMain, imageThumbnail, site, siteUrl, price, postType }
+    productResult: {
+      title,
+      imageMain,
+      imageThumbnail,
+      site,
+      siteUrl,
+      price,
+      postType,
+      productSeller
+    }
   },
   useInAdmin = false,
   ...props
@@ -47,6 +58,7 @@ function LegitStatusCard({
   const isMine = accessUser && accessUser.userId === userId;
   const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
+  const isNormalseller = (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3;
 
   const role = useMemo(() => {
     if ((roles as string[]).includes('PRODUCT_LEGIT_HEAD')) {
@@ -149,7 +161,9 @@ function LegitStatusCard({
             height="20px"
             alt="Platform Logo Img"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
+              isNormalseller
+                ? IMG_CAMEL_PLATFORM_NUMBER
+                : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
             }.png`}
             round="4"
             customStyle={{

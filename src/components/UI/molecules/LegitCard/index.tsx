@@ -8,6 +8,8 @@ import { Image, LegitLabel } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
+
 import { Content, ImageBox, Title } from './LegitCard.styles';
 
 interface LegitCardProps extends HTMLAttributes<HTMLDivElement> {
@@ -38,11 +40,13 @@ function LegitCard({
       imageThumbnail = '',
       site,
       siteUrl,
-      postType = 0
+      postType = 0,
+      productSeller
     } = {}
   } = productLegit;
   const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
+  const isNormalseller = (siteId === 34 || productSeller?.type === 4) && productSeller?.type !== 3;
 
   const {
     theme: { box }
@@ -67,7 +71,9 @@ function LegitCard({
               width={15}
               height={15}
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
+                isNormalseller
+                  ? IMG_CAMEL_PLATFORM_NUMBER
+                  : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
               }.png`}
               alt="Platform Logo Img"
               customStyle={{

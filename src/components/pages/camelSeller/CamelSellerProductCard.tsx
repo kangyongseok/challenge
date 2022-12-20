@@ -8,6 +8,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -23,6 +24,8 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
     }
   } = useTheme();
   const [openDetail, setOpenDetail] = useState(false);
+  const isNormalseller =
+    (data.site.id === 34 || data.productSeller.type === 4) && data.productSeller.type !== 3;
 
   const handleClickRecentProduct = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {
@@ -69,7 +72,9 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
           <Flexbox alignment="center" gap={3}>
             {data.site.id && (
               <Img
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${data.site.id}.png`}
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                  isNormalseller ? IMG_CAMEL_PLATFORM_NUMBER : data.site.id
+                }.png`}
                 width="20px"
                 alt={data.site.name}
               />
