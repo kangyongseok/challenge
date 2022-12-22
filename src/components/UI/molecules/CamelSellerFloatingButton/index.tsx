@@ -11,7 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER } from '@constants/localStorage';
+import { CAMEL_SELLER, SOURCE } from '@constants/localStorage';
 import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -26,7 +26,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import { FloatingButton, Wrapper } from './CamelSellerFloatingButton.style';
 
-function CamelSellerFloatingButton() {
+function CamelSellerFloatingButton({ source }: { source?: string }) {
   const {
     theme: {
       palette: { common }
@@ -67,6 +67,7 @@ function CamelSellerFloatingButton() {
 
   const handleClickMoveToCamelSeller = () => {
     const prevStep = LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage;
+    LocalStorage.set(SOURCE, source);
     logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
       name: getAttName()
     });

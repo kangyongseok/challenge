@@ -36,7 +36,7 @@ function UserShop() {
       <UserShopProductSoldOutConfirmBottomSheet />
       <UserShopProductDeleteConfirmDialog />
       <MyShopAppDownloadDialog />
-      <CamelSellerFloatingButton />
+      <CamelSellerFloatingButton source="MYSHOP" />
     </>
   );
 }

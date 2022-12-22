@@ -120,7 +120,7 @@ function EventProductList() {
                 }}
                 wishAtt={{
                   name: attrProperty.name.CRAZY_WEEK,
-                  title: eventId === 13 ? 'QUICK' : 'LOWPRICE',
+                  title: attParser,
                   att,
                   id: product.id,
                   index: index + 1,

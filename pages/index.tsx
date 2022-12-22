@@ -120,7 +120,7 @@ function Home() {
         channelTalkPosition={-60}
         name={attrProperty.productName.MAIN}
       />
-      <CamelSellerFloatingButton />
+      <CamelSellerFloatingButton source="MAIN" />
     </>
   );
 }

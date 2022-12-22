@@ -8,12 +8,14 @@ import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchAnnounceBase } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 import { filterGenders } from '@constants/productsFilter';
+import { NOTI, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -76,7 +78,7 @@ function NoticeNotificationPanel() {
 
   const handleClickCtaButton = (event: MouseEvent<HTMLButtonElement>) => {
     const pathname = event.currentTarget.getAttribute('data-pathname');
-
+    LocalStorage.set(SOURCE, NOTI);
     if (pathname) {
       if (pathname.includes('/searchHelper')) {
         const genderName = gender === 'F' ? 'female' : 'male';

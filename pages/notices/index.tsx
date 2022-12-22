@@ -60,9 +60,9 @@ function Notices() {
 
   const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
     if (newValue === '공지사항') {
-      logEvent(attrKeys.noti.CLICK_ALARM_LIST);
-    } else {
       logEvent(attrKeys.noti.CLICK_ANNOUNCE_LIST);
+    } else {
+      logEvent(attrKeys.noti.CLICK_BEHAVIOR_LIST);
     }
 
     if (notViewedAnnounceCount > 0 && newValue === '공지사항') {

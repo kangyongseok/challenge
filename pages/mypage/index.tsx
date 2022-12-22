@@ -95,7 +95,7 @@ function MyPage() {
         channelTalkPosition={-50}
         name={attrProperty.productName.MY}
       />
-      <CamelSellerFloatingButton />
+      <CamelSellerFloatingButton source="MYPAGE" />
     </>
   );
 }

@@ -30,3 +30,5 @@ export const MODEL_CATEGORY_IDS = 'modelCategoryIds';
 export const SELECTED_STYLE_CARD_IDS = 'selectedStyleCardIds';
 export const SELECTED_MODEL_CARD = 'selectedModelCard';
 export const SELLER_PROCESS_TYPE = 'sellerProcessType';
+export const NOTI = 'NOTI';
+export const SOURCE = 'SOURCE';

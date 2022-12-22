@@ -288,7 +288,8 @@ function HistoryPanel() {
               customStyle={{
                 borderTop: `8px solid ${common.ui98}`,
                 marginLeft: -20,
-                width: 'calc(100% + 40px)'
+                width: 'calc(100% + 40px)',
+                marginBottom: 20
               }}
             />
           )}
