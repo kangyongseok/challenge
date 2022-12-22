@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
@@ -40,10 +42,23 @@ function EventFilter() {
     }
   );
 
+  const attParser = useMemo(() => {
+    if (String(id).split('-').includes('13')) {
+      return 'QUICK';
+    }
+    if (String(id).split('-').includes('14')) {
+      return 'LOWPRICE';
+    }
+    if (String(id).split('-').includes('16')) {
+      return 'TOP_DEALS_PRODUCT';
+    }
+    return 'NUMBER_NULL';
+  }, [id]);
+
   const handleClick = (newBrandId: number, name: string) => () => {
     logEvent(attrKeys.events.CLICK_TAG, {
       name: attrProperty.name.CRAZY_WEEK,
-      title: eventId === 13 ? 'QUICK' : 'LOWPRICE',
+      title: attParser,
       att: name,
       on: brandIds.includes(newBrandId) ? 'N' : 'Y'
     });

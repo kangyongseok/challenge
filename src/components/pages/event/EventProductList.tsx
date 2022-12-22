@@ -65,6 +65,19 @@ function EventProductList() {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+  const attParser = useMemo(() => {
+    if (String(id).split('-').includes('13')) {
+      return 'QUICK';
+    }
+    if (String(id).split('-').includes('14')) {
+      return 'LOWPRICE';
+    }
+    if (String(id).split('-').includes('16')) {
+      return 'TOP_DEALS_PRODUCT';
+    }
+    return 'NUMBER_NULL';
+  }, [id]);
+
   return (
     <Grid component="section" container columnGap={16} rowGap={48} customStyle={{ marginTop: -2 }}>
       {isLoading &&
@@ -94,7 +107,7 @@ function EventProductList() {
                 product={product}
                 productAtt={{
                   name: attrProperty.name.CRAZY_WEEK,
-                  title: eventId === 13 ? 'QUICK' : 'LOWPRICE',
+                  title: attParser,
                   att,
                   id: product.id,
                   index: index + 1,
