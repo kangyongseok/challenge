@@ -18,7 +18,7 @@ const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
 
 const bannerData = [
   {
-    imageName: 'main-banner06',
+    imageName: 'main-banner06-1',
     pathname: '/events/인기-특가-매물-16'
   },
   {

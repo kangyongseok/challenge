@@ -23,6 +23,11 @@ export const defaultBanners = [
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-2-banner.png`,
     pathname: '/events/명품-14',
     backgroundColor: '#9F2240'
+  },
+  {
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-3-banner.png`,
+    pathname: '/events/인기-특가-매물-16',
+    backgroundColor: '#5A2B08'
   }
 ];
 
