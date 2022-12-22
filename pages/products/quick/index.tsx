@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { QuickFilter, QuickHeader, QuickProductList } from '@components/pages/quick';
-// import { EventMarketingAgree } from '@components/pages/event';
 
 import { logEvent } from '@library/amplitude';
 
@@ -15,7 +14,6 @@ function QuickProducts() {
 
   return (
     <GeneralTemplate header={<QuickHeader />}>
-      {/* <EventMarketingAgree /> */}
       <QuickFilter />
       <QuickProductList />
     </GeneralTemplate>

@@ -58,10 +58,10 @@ function EventMarketingAgree() {
   return (
     <Wrap>
       <Typography variant="h4" weight="bold">
-        매주 오전 11시 업데이트!
+        매주 (목) 오전 11시 업데이트!
       </Typography>
       <Typography customStyle={{ marginTop: 4 }}>
-        내가 원하는 급처템, 놓치고 싶지 않다면?
+        내가 원하는 특가 매물, 놓치고 싶지 않다면?
       </Typography>
       <Button
         variant="contained"

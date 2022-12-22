@@ -18,6 +18,10 @@ const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
 
 const bannerData = [
   {
+    imageName: 'main-banner06',
+    pathname: '/events/인기-특가-매물-16'
+  },
+  {
     imageName: 'main-banner01',
     pathname: `/products/search/${encodeURIComponent('파라점퍼스 고비 패딩')}`,
     title: 'PRODUCT_LIST'
