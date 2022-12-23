@@ -72,6 +72,9 @@ function EventProductList() {
     if (String(id).split('-').includes('14')) {
       return 'LOWPRICE';
     }
+    if (String(id).split('-').includes('15')) {
+      return 'GENERAL_SELLER';
+    }
     if (String(id).split('-').includes('16')) {
       return 'TOP_DEALS_PRODUCT';
     }

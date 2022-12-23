@@ -37,7 +37,7 @@ function HomeQuickSaleProducts() {
       type: attrProperty.type.GUIDED
     });
 
-    router.push('/products/quick');
+    router.push('/events/신선한-매물-15');
   };
 
   return (

@@ -1,14 +1,10 @@
 import { Box, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import {
-  BottomNavigation,
-  Header,
-  LinearProgress,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { LinearProgress, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { Gap, Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import { ProductsHeader } from '@components/pages/products';
 
 function SearchProducts() {
   const {
@@ -21,9 +17,7 @@ function SearchProducts() {
     <GeneralTemplate
       header={
         <div>
-          <Header>
-            <Skeleton width="45px" height="24px" isRound disableAspectRatio />
-          </Header>
+          <ProductsHeader variant="search" />
           <Box component="section" customStyle={{ position: 'relative' }}>
             <Wrapper>
               <List
@@ -88,12 +82,6 @@ function SearchProducts() {
             </List>
           </Box>
         </div>
-      }
-      footer={
-        <BottomNavigation
-          disableHideOnScroll={false}
-          disableProductsKeywordClickInterceptor={false}
-        />
       }
       disablePadding
     >

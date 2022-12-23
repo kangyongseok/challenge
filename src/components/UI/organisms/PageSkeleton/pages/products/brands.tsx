@@ -1,12 +1,7 @@
 import { Box, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import {
-  BottomNavigation,
-  Header,
-  LinearProgress,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { Header, LinearProgress, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { Gap, Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -88,12 +83,6 @@ function BrandProducts() {
             </List>
           </Box>
         </div>
-      }
-      footer={
-        <BottomNavigation
-          disableHideOnScroll={false}
-          disableProductsKeywordClickInterceptor={false}
-        />
       }
       disablePadding
     >

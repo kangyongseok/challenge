@@ -33,9 +33,13 @@ function Event() {
   }, [id]);
 
   useEffect(() => {
-    logEvent(attrKeys.events.VIEW_CRAZYWEEK, {
-      att: attParser
-    });
+    if (String(id).split('-').includes('15')) {
+      logEvent(attrKeys.events.VIEW_FEATURED_PRODUCT_LIST);
+    } else {
+      logEvent(attrKeys.events.VIEW_CRAZYWEEK, {
+        att: attParser
+      });
+    }
   }, [attParser, id]);
 
   return (

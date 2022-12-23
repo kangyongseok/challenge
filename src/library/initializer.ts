@@ -92,7 +92,7 @@ const Initializer = {
       site: 'datadoghq.com',
       service: process.env.DATADOG_RUM_SERVICE,
       env: process.env.DATADOG_RUM_ENV,
-      sampleRate: 100,
+      sampleRate: 50,
       sessionReplaySampleRate: 20,
       trackInteractions: true,
       trackFrustrations: true,
@@ -114,8 +114,6 @@ const Initializer = {
       service: process.env.DATADOG_RUM_SERVICE
     });
 
-    datadogRum.startSessionReplayRecording();
-
     datadogRum.setUser({
       id: String(userId),
       name: userName,
@@ -127,6 +125,8 @@ const Initializer = {
       alarmAgree,
       adAgree
     });
+
+    datadogRum.startSessionReplayRecording();
   },
   initABTestIdentifierByCookie({ abTestIdentifier }: NextApiRequestCookies) {
     if (abTestIdentifier) {

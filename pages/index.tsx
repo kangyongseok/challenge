@@ -131,7 +131,6 @@ export async function getServerSideProps({
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
-  const queryClientList: Promise<void>[] = [];
 
   Initializer.initAccessTokenByCookies(req.cookies);
   Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
@@ -139,15 +138,7 @@ export async function getServerSideProps({
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.simpleUserInfo(), fetchSimpleUserInfo);
-    // await queryClient.prefetchQuery(queryKeys.users.recommWishes(), fetchRecommWishes);
   }
-
-  queryClientList.concat([
-    // queryClient.prefetchQuery(queryKeys.nextJs.productDealInfos(), fetchProductDealInfos),
-    // queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
-  ]);
-
-  await Promise.allSettled(queryClientList);
 
   return {
     props: {
