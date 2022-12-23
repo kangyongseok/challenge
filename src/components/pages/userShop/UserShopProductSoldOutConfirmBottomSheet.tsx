@@ -10,6 +10,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
 
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -21,7 +22,7 @@ function UserShopProductSoldOutConfirmBottomSheet() {
   const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
   const setToastState = useSetRecoilState(toastState);
 
-  const { id, imageMain, imageThumbnail } = useRecoilValue(userShopSelectedProductState);
+  const product = useRecoilValue(userShopSelectedProductState);
 
   const { mutate: updateStatusMutate } = useMutation(putProductUpdateStatus, {
     onSuccess: () => {
@@ -43,15 +44,33 @@ function UserShopProductSoldOutConfirmBottomSheet() {
     }
   });
 
+  const getAttProperty = {
+    id: product.id,
+    brand: product.brand?.name,
+    category: product.category?.name,
+    parentCategory: FIRST_CATEGORIES[product.category?.id as number],
+    line: product.line,
+    site: product.site?.name,
+    price: product.price,
+    scoreTotal: product.scoreTotal,
+    scoreStatus: product.scoreStatus,
+    scoreSeller: product.scoreSeller,
+    scorePrice: product.scorePrice,
+    scorePriceAvg: product.scorePriceAvg,
+    scorePriceCount: product.scorePriceCount,
+    scorePriceRate: product.scorePriceRate
+  };
+
   const handleClick = (option?: string) => {
-    if (!id) return;
+    if (!product.id) return;
     logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: attrProperty.title.SOLD_SURVEY,
-      att: option === 'other' ? 'OTHER' : 'CAMEL'
+      att: option === 'other' ? 'OTHER' : 'CAMEL',
+      ...getAttProperty
     });
 
-    updateStatusMutate({ productId: id, status: 1, soldType: option === 'other' ? 1 : 0 });
+    updateStatusMutate({ productId: product.id, status: 1, soldType: option === 'other' ? 1 : 0 });
   };
 
   useEffect(() => {
@@ -78,7 +97,7 @@ function UserShopProductSoldOutConfirmBottomSheet() {
         <Box customStyle={{ width: 72, height: 72, margin: 'auto' }}>
           <Image
             variant="backgroundImage"
-            src={imageMain || imageThumbnail}
+            src={product.imageMain || product.imageThumbnail}
             alt="SoldOut Product Img"
             customStyle={{ borderRadius: 12 }}
           />

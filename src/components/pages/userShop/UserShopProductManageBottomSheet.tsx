@@ -9,6 +9,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -31,7 +32,7 @@ function UserShopProductManageBottomSheet() {
   } = useTheme();
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('manage'));
   const setOpenSoldoutState = useSetRecoilState(userShopOpenStateFamily('soldOutConfirm'));
-  const { id, status } = useRecoilValue(userShopSelectedProductState);
+  const product = useRecoilValue(userShopSelectedProductState);
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
   const setToastState = useSetRecoilState(toastState);
@@ -40,18 +41,35 @@ function UserShopProductManageBottomSheet() {
 
   const { isSale, isSoldOut, isReserving } = useMemo(
     () => ({
-      isSale: status === 0,
-      isSoldOut: status === 1,
-      isReserving: status === 4
+      isSale: product.status === 0,
+      isSoldOut: product.status === 1,
+      isReserving: product.status === 4
     }),
-    [status]
+    [product.status]
   );
 
+  const getAttProperty = {
+    id: product.id,
+    brand: product?.brand?.name,
+    category: product?.category?.name,
+    parentCategory: FIRST_CATEGORIES[product.category?.id as number],
+    line: product.line,
+    site: product.site?.name,
+    price: product.price,
+    scoreTotal: product.scoreTotal,
+    scoreStatus: product.scoreStatus,
+    scoreSeller: product.scoreSeller,
+    scorePrice: product.scorePrice,
+    scorePriceAvg: product.scorePriceAvg,
+    scorePriceCount: product.scorePriceCount,
+    scorePriceRate: product.scorePriceRate
+  };
+
   const getTitle = useMemo(() => {
-    if (status === 0) return attrProperty.title.SALE;
-    if (status === 4) return attrProperty.title.RESERVED;
+    if (product.status === 0) return attrProperty.title.SALE;
+    if (product.status === 4) return attrProperty.title.RESERVED;
     return attrProperty.title.SOLD;
-  }, [status]);
+  }, [product.status]);
 
   const getAtt = useCallback((dataStatus: number) => {
     switch (dataStatus) {
@@ -74,15 +92,16 @@ function UserShopProductManageBottomSheet() {
   }, [getTitle, open]);
 
   const handleClickUpdatePosted = () => {
-    if (!id) return;
+    if (!product.id) return;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'UP'
+      att: 'UP',
+      ...getAttProperty
     });
 
     hoistingMutation(
-      { productId: id },
+      { productId: product.id },
       {
         onSuccess() {
           setToastState({
@@ -100,12 +119,13 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickUpdateStatus = (e: MouseEvent<HTMLDivElement>) => {
-    if (!id) return;
+    if (!product.id) return;
     const dataStatus = Number(e.currentTarget.getAttribute('data-status'));
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: getAtt(dataStatus)
+      att: getAtt(dataStatus),
+      ...getAttProperty
     });
     if (dataStatus === 1) {
       setOpenState(({ type }) => ({
@@ -118,7 +138,7 @@ function UserShopProductManageBottomSheet() {
       return;
     }
     updateMutation(
-      { productId: id, status: dataStatus },
+      { productId: product.id, status: dataStatus },
       {
         onSettled: () => {
           // if (dataStatus === 1) {
@@ -152,11 +172,12 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickDelete = () => {
-    if (!id) return;
+    if (!product.id) return;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'DELETE'
+      att: 'DELETE',
+      ...getAttProperty
     });
     setOpenState(({ type }) => ({
       type,
@@ -170,12 +191,7 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickEdit = () => {
-    if (!id) return;
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
-      name: attrProperty.name.MY_STORE,
-      title: getTitle,
-      att: 'EDIT'
-    });
+    if (!product.id) return;
 
     setOpenState(({ type }) => ({
       type,
@@ -192,8 +208,15 @@ function UserShopProductManageBottomSheet() {
       }
     }
 
+    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
+      name: attrProperty.name.MY_STORE,
+      title: getTitle,
+      att: 'EDIT',
+      ...getAttProperty
+    });
+
     // LocalStorage.remove(CAMEL_SELLER);
-    router.push(`/camelSeller/registerConfirm/${id}`);
+    router.push(`/camelSeller/registerConfirm/${product.id}`);
   };
 
   return (

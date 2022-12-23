@@ -13,6 +13,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -70,12 +71,30 @@ function ProductSellerBottomMenu({
     }
   }, []);
 
+  const getAttProperty = {
+    id: product.id,
+    brand: product.brand.name,
+    category: product.category.name,
+    parentCategory: FIRST_CATEGORIES[product.category.id as number],
+    line: product.line,
+    site: product.site.name,
+    price: product.price,
+    scoreTotal: product.scoreTotal,
+    scoreStatus: product.scoreStatus,
+    scoreSeller: product.scoreSeller,
+    scorePrice: product.scorePrice,
+    scorePriceAvg: product.scorePriceAvg,
+    scorePriceCount: product.scorePriceCount,
+    scorePriceRate: product.scorePriceRate
+  };
+
   const handleClickStatus = (e: MouseEvent<HTMLDivElement>) => {
     const { dataset } = e.currentTarget as HTMLDivElement;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: getTitle,
-      att: getAtt(Number(dataset.statusId))
+      att: getAtt(Number(dataset.statusId)),
+      ...getAttProperty
     });
     if (Number(dataset.statusId) === 1) {
       setOpenChangeStatus(false);
@@ -120,6 +139,12 @@ function ProductSellerBottomMenu({
         return;
       }
     }
+
+    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      ...getAttProperty
+    });
+
     router.push(`/camelSeller/registerConfirm/${parameter.productId}`);
   };
 
@@ -127,7 +152,8 @@ function ProductSellerBottomMenu({
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: getTitle,
-      att: 'UP'
+      att: 'UP',
+      ...getAttProperty
     });
 
     hoistingMutation(parameter, {
@@ -146,7 +172,8 @@ function ProductSellerBottomMenu({
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: getTitle,
-      att: 'DELETE'
+      att: 'DELETE',
+      ...getAttProperty
     });
 
     setOpenDelete(({ type }) => ({

@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image } from '@components/UI/atoms';
-
 import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
@@ -51,9 +49,7 @@ function ProductSoldoutCard({
           {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
         </Typography>
       </Box>
-      <Box customStyle={{ marginLeft: 20, width: 72, height: 72 }}>
-        <Image src={product?.imageMain} disableAspectRatio customStyle={{ borderRadius: 8 }} />
-      </Box>
+      <ImageWrap imageUrl={product?.imageMain} />
     </StyledWrap>
   );
 }
@@ -68,6 +64,15 @@ const StyledWrap = styled(Flexbox)`
       palette: { common }
     }
   }) => common.bg02};
+`;
+
+const ImageWrap = styled.div<{ imageUrl?: string }>`
+  margin-left: 20px;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: url(${({ imageUrl }) => imageUrl}) no-repeat 50% 50%;
+  background-size: cover;
 `;
 
 const EllipsisTitle = styled(Typography)`
