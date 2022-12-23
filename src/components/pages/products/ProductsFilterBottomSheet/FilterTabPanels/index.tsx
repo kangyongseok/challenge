@@ -25,6 +25,7 @@ import PlatformTabPanel from './PlatformTabPanel';
 import LineTabPanel from './LineTabPanel';
 import GenderTabPanel from './GenderTabPanel';
 import DetailOptionTabPanel from './DetailOptionTabPanel';
+import ColorTabPanel from './ColorTabPanel';
 import CategoryTabPanel from './CategoryTabPanel';
 import BrandTabPanel from './BrandTabPanel';
 
@@ -32,7 +33,7 @@ interface FilterTabPanelsProps {
   variant: ProductsVariant;
 }
 
-const { gender, size, price, brand, category, line, platform, detailOption } = filterCodeIds;
+const { gender, size, price, brand, category, line, platform, detailOption, color } = filterCodeIds;
 
 function FilterTabPanels({ variant }: FilterTabPanelsProps) {
   const router = useRouter();
@@ -113,7 +114,7 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
         </SwiperSlide>
       )}
       <SwiperSlide data-code-id={size}>
-        <SizeTabPanel />
+        <SizeTabPanel variant={variant} />
       </SwiperSlide>
       <SwiperSlide data-code-id={price}>
         <PriceTabPanel />
@@ -128,11 +129,14 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
           <CategoryTabPanel />
         </SwiperSlide>
       )}
-      <SwiperSlide data-code-id={platform}>
-        <PlatformTabPanel />
-      </SwiperSlide>
       <SwiperSlide data-code-id={line}>
         <LineTabPanel />
+      </SwiperSlide>
+      <SwiperSlide data-code-id={color}>
+        <ColorTabPanel />
+      </SwiperSlide>
+      <SwiperSlide data-code-id={platform}>
+        <PlatformTabPanel />
       </SwiperSlide>
       <SwiperSlide data-code-id={detailOption}>
         <DetailOptionTabPanel />

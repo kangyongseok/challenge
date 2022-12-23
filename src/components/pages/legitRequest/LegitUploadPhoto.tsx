@@ -55,7 +55,7 @@ function LegitUploadPhoto({
       </Title>
       {photoGuideDetails.filter(({ imageSample }) => imageSample).length > 0 && (
         <Button
-          brandColor="primary"
+          brandColor="primary-light"
           startIcon={<Icon name="BangCircleFilled" />}
           fullWidth
           onClick={handleClick}

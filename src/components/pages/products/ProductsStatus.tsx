@@ -13,13 +13,16 @@ import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { orderFilterOptions } from '@constants/productsFilter';
+import { CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import {
   productsFilterProgressDoneState,
   productsFilterStateFamily,
+  productsStatusTriggeredStateFamily,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
+import useScrollTrigger from '@hooks/useScrollTrigger';
 
 function getRandomCount(minCount: number, maxCount: number) {
   return Math.floor(Math.random() * (Math.ceil(minCount) - Math.floor(maxCount)) + minCount);
@@ -28,12 +31,22 @@ function getRandomCount(minCount: number, maxCount: number) {
 function ProductsStatus() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
+
+  const {
+    theme: {
+      palette: { primary }
+    }
+  } = useTheme();
+
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const [progressDone, setProductsFilterProgressDoneState] = useRecoilState(
     productsFilterProgressDoneState
   );
   const setProductsOrderFilterState = useSetRecoilState(
     productsFilterStateFamily(`order-${atomParam}`)
+  );
+  const setProductsStatusTriggeredState = useSetRecoilState(
+    productsStatusTriggeredStateFamily(atomParam)
   );
 
   const {
@@ -76,6 +89,7 @@ function ProductsStatus() {
   const [value, setValue] = useState(0);
   const [progressCount, setProgressCount] = useState(0);
 
+  const ref = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const updatedFirstAnalysisCountRef = useRef(false);
   const updatedSecondAnalysisCountRef = useRef(false);
@@ -83,6 +97,18 @@ function ProductsStatus() {
     () => orderFilterOptions.find(({ order }) => order === searchParams.order),
     [searchParams]
   );
+
+  const triggered = useScrollTrigger({
+    ref,
+    additionalOffsetTop: -(HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT)
+  });
+
+  useEffect(() => {
+    setProductsStatusTriggeredState(({ type }) => ({
+      type,
+      triggered
+    }));
+  }, [setProductsStatusTriggeredState, triggered]);
 
   useEffect(() => {
     if (!progressDone && isLoading) {
@@ -156,6 +182,7 @@ function ProductsStatus() {
 
   return (
     <Flexbox
+      ref={ref}
       justifyContent="space-between"
       customStyle={{
         position: 'relative',
@@ -169,9 +196,13 @@ function ProductsStatus() {
         />
       )}
       {!progressDone && (
-        <Typography variant="body2" weight="medium">
+        <Typography
+          variant="body2"
+          weight="medium"
+          customStyle={{ '& > b': { color: primary.main, weight: 700 } }}
+        >
           {value === 0 && '매물 검색 중...'}
-          {value >= 1 && `${Math.floor(value)}%`}&nbsp;
+          {value >= 1 && <b>{`${Math.floor(value)}%`}</b>}&nbsp;
           {value >= 1 && value < 50 && (
             <>
               <strong>{newPages[0][0].toLocaleString()}</strong>개 플랫폼에서 수집 중...&nbsp;

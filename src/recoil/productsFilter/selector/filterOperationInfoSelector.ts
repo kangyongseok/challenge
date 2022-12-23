@@ -5,11 +5,12 @@ import { filterCodeIds, filterGenders, idFilterOptions } from '@constants/produc
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
-import { SelectedSearchOptionHistory } from '@typings/products';
+import type { SelectedSearchOptionHistory } from '@typings/products';
 
 import {
   activeTabCodeIdState,
   brandFilterOptionsSelector,
+  colorFilterOptionsSelector,
   genderFilterOptionsSelector,
   lineFilterOptionsSelector,
   platformFilterOptionsSelector,
@@ -42,9 +43,9 @@ const filterOperationInfoSelector = selector({
     const sizeFilterOptions = get(sizeFilterOptionsSelector);
     const platformFilterOptions = get(platformFilterOptionsSelector);
     const lineFilterOptions = get(lineFilterOptionsSelector);
+    const colorFilterOptions = get(colorFilterOptionsSelector);
     const {
       season: { checkedAll: seasonCheckedAll, filterOptions: seasonFilterOptions },
-      color: { checkedAll: colorCheckedAll, filterOptions: colorFilterOptions },
       material: { checkedAll: materialCheckedAll, filterOptions: materialFilterOptions }
     } = get(detailFilterOptionsSelector);
     const genderFilterOptions = get(genderFilterOptionsSelector);
@@ -61,11 +62,13 @@ const filterOperationInfoSelector = selector({
             categorySizeId,
             name,
             viewName,
+            viewSize,
             genderIds = [],
             minPrice = 0,
             maxPrice = 0,
             count,
-            gender
+            gender,
+            description
           },
           index
         ) => {
@@ -103,8 +106,8 @@ const filterOperationInfoSelector = selector({
             }
 
             displayName = prefixDisplayName
-              ? `${prefixDisplayName}, ${viewName || name}`
-              : viewName || name || '알 수 없음';
+              ? `${prefixDisplayName}, ${viewSize || viewName || name}`
+              : viewSize || viewName || name || '알 수 없음';
           }
 
           return {
@@ -118,7 +121,8 @@ const filterOperationInfoSelector = selector({
             grouping: false,
             count,
             index,
-            gender
+            gender,
+            description
           };
         }
       );
@@ -257,32 +261,6 @@ const filterOperationInfoSelector = selector({
       });
     }
 
-    if (colorCheckedAll) {
-      const currentFilterOptions = selectedSearchOptionsHistory.filter(
-        ({ codeId }) => codeId === filterCodeIds.color
-      );
-      const startIndex = selectedSearchOptionsHistory.findIndex(
-        ({ codeId }) => codeId === filterCodeIds.color
-      );
-      const endIndex = startIndex + currentFilterOptions.length - 1;
-
-      selectedSearchOptionsHistory[endIndex] = {
-        codeId: filterCodeIds.color,
-        displayName: '색상, 전체',
-        grouping: true,
-        groupingDepth: 1,
-        count: currentFilterOptions
-          .map(({ count }) => count)
-          .reduce((a, b) => (a as number) + (b as number), 0)
-      };
-
-      selectedSearchOptionsHistory = selectedSearchOptionsHistory.filter(({ codeId }, index) => {
-        if (codeId !== filterCodeIds.color) return true;
-
-        return !(index >= startIndex && index < endIndex);
-      });
-    }
-
     if (materialCheckedAll) {
       const currentFilterOptions = selectedSearchOptionsHistory.filter(
         ({ codeId }) => codeId === filterCodeIds.material
@@ -358,26 +336,16 @@ const filterOperationInfoSelector = selector({
         .filter((counts) => counts[0] === filterCodeIds.season)
         .map((counts) => counts[1])
         .reduce((a, b) => a + b, 0);
-      const selectedColorFilterOptionsCount = selectedTotalCounts
-        .filter((counts) => counts[0] === filterCodeIds.color)
-        .map((counts) => counts[1])
-        .reduce((a, b) => a + b, 0);
       const selectedMaterialFilterOptionsCount = selectedTotalCounts
         .filter((counts) => counts[0] === filterCodeIds.material)
         .map((counts) => counts[1])
         .reduce((a, b) => a + b, 0);
 
-      if (
-        selectedSeasonFilterOptionsCount ||
-        selectedColorFilterOptionsCount ||
-        selectedMaterialFilterOptionsCount
-      ) {
+      if (selectedSeasonFilterOptionsCount || selectedMaterialFilterOptionsCount) {
         selectedTotalCount = Math.min(
-          ...[
-            selectedSeasonFilterOptionsCount,
-            selectedColorFilterOptionsCount,
-            selectedMaterialFilterOptionsCount
-          ].filter((count) => count)
+          ...[selectedSeasonFilterOptionsCount, selectedMaterialFilterOptionsCount].filter(
+            (count) => count
+          )
         );
       }
     } else if (activeTabCodeId === filterCodeIds.gender) {

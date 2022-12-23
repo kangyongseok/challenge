@@ -1,7 +1,7 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 
 import type { CustomStyle } from 'mrcamel-ui';
-import styled, { CSSObject } from '@emotion/styled';
+import { Button, Flexbox } from 'mrcamel-ui';
 
 interface FilterSorterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick' | 'onChange'> {
   options: {
@@ -21,60 +21,24 @@ function FilterSorter({ options, value, onChange, customStyle, ...props }: Filte
   };
 
   return (
-    <StyledFilterSorter css={customStyle} {...props}>
+    <Flexbox gap={12} {...props} customStyle={customStyle}>
       {options.map((option) => (
-        <SorterItem
+        <Button
           key={`sorter-option-${option.value}`}
-          isActive={option.value === value}
+          variant="inline"
+          brandColor={option.value === value ? 'primary-light' : 'gray'}
           data-value={option.value}
           onClick={handleClick}
+          customStyle={{
+            paddingLeft: 0,
+            paddingRight: 0
+          }}
         >
           {option.name}
-        </SorterItem>
+        </Button>
       ))}
-    </StyledFilterSorter>
+    </Flexbox>
   );
 }
-
-const StyledFilterSorter = styled.div`
-  & > span:after {
-    content: '';
-    display: inline-block;
-    width: 1px;
-    height: 10px;
-    margin: 0 8px;
-    vertical-align: middle;
-    background-color: ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui80};
-  }
-  & > span:last-child:after {
-    display: none;
-  }
-`;
-
-const SorterItem = styled.span<{
-  isActive?: boolean;
-}>`
-  cursor: pointer;
-
-  ${({
-    theme: {
-      palette: { common },
-      typography: {
-        body2: { size, weight, lineHeight, letterSpacing }
-      }
-    },
-    isActive
-  }): CSSObject => ({
-    fontSize: size,
-    fontWeight: isActive ? weight.bold : weight.medium,
-    lineHeight,
-    letterSpacing,
-    color: isActive ? common.ui20 : common.ui80
-  })};
-`;
 
 export default FilterSorter;

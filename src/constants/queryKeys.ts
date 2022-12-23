@@ -109,6 +109,8 @@ const products = {
 const productLegits = {
   all: ['productLegits'] as const,
   legits: (params?: ProductLegitsParams) => [...products.all, 'legits', params] as const,
+  searchLegits: (params?: ProductLegitsParams) =>
+    [...products.all, 'searchLegits', params] as const,
   legit: (productId: number) => [...products.all, 'legit', productId] as const,
   requestLegits: (params?: ProductLegitsParams) =>
     [...products.all, 'requestLegits', params] as const,

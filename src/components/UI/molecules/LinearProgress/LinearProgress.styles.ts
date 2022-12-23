@@ -4,12 +4,12 @@ import { LinearProgressProps } from '.';
 
 export const StyledLinearProgress = styled.div`
   width: 100%;
-  height: 2px;
+  height: 4px;
   background-color: ${({
     theme: {
       palette: { common }
     }
-  }) => common.ui90};
+  }) => common.line01};
 `;
 
 export const ProgressBar = styled.div<Pick<LinearProgressProps, 'value'>>`

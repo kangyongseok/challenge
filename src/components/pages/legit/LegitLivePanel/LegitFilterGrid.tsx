@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Grid, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Button, Chip, Flexbox, Grid, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
@@ -18,9 +18,9 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { commaNumber } from '@utils/formats';
 import { getProductDetailUrl } from '@utils/common';
 
+import { legitSearchFilterParamsState } from '@recoil/legitSearchFilter';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
 
 function LegitFilterGrid() {
@@ -35,8 +35,11 @@ function LegitFilterGrid() {
   const [legitFilterGridParams, setLegitFilterGridParams] = useRecoilState(
     legitFilterGridParamsState
   );
-  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const [{ initialized, legitFilters }, setLegitFilters] = useRecoilState(legitFiltersState);
+  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
+  const resetLegitSearchFilterParamsState = useResetRecoilState(legitSearchFilterParamsState);
+
+  const queryClient = useQueryClient();
 
   const {
     data: { pages = [] } = {},
@@ -64,6 +67,22 @@ function LegitFilterGrid() {
     return legitProducts.length >= 80 || lastPage?.productLegits?.last;
   }, [pages, legitProducts]);
 
+  const handleClick = () => {
+    logEvent(attrKeys.legit.CLICK_LEGIT_HISTORY, {
+      name: attrProperty.name.LEGIT_MAIN
+    });
+    resetLegitSearchFilterParamsState();
+    queryClient
+      .getQueryCache()
+      .getAll()
+      .forEach(({ queryKey }) => {
+        if (queryKey.includes('searchLegits') && queryKey.length >= 3) {
+          queryClient.resetQueries(queryKey);
+        }
+      });
+    router.push('/legit/search');
+  };
+
   const handleClickCard =
     ({ product }: { product: ProductResult }) =>
     () => {
@@ -89,7 +108,7 @@ function LegitFilterGrid() {
           : legitFilter
       );
       const activeLegitFilters = newLegitFilters.filter(({ isActive }) => isActive);
-      let att = '감정진행중';
+      let att = '감정중';
 
       if (selectResult === 1) att = '정품의견';
 
@@ -148,32 +167,35 @@ function LegitFilterGrid() {
 
   return (
     <Flexbox component="section" direction="vertical" customStyle={{ padding: '0 20px' }}>
-      <Flexbox gap={6}>
-        {legitFilters.map(
-          ({ label, count, isActive, result: selectResult, status: selectStatus }) => (
+      <Flexbox gap={8} alignment="center" justifyContent="space-between">
+        <Flexbox gap={6}>
+          {legitFilters.map(({ label, isActive, result: selectResult, status: selectStatus }) => (
             <Chip
               key={`legit-select-label-${label}`}
-              weight="regular"
-              variant={isActive ? 'contained' : 'outlined'}
-              brandColor={isActive ? 'black' : 'gray'}
-              disabled={isLoading && !initialized}
+              variant={isActive ? 'ghost' : 'outlinedGhost'}
+              brandColor={isActive ? 'primary-light' : 'black'}
+              size="large"
+              disabled={isLoading || !initialized}
+              isRound={false}
               onClick={handleClickChip({ selectResult, selectStatus })}
             >
-              <Flexbox gap={2} customStyle={{ alignItems: 'baseline' }}>
-                <Typography variant="body1" customStyle={{ color: 'inherit' }}>
-                  {label}
-                </Typography>
-                <Typography
-                  variant="small2"
-                  weight="medium"
-                  customStyle={{ color: dark.palette.common.ui60 }}
-                >
-                  {commaNumber(count)}
-                </Typography>
-              </Flexbox>
+              {label}
             </Chip>
-          )
-        )}
+          ))}
+        </Flexbox>
+        <Button
+          variant="inline"
+          brandColor="black"
+          size="small"
+          endIcon={<Icon name="CaretRightOutlined" />}
+          onClick={handleClick}
+          customStyle={{
+            padding: 0,
+            gap: 0
+          }}
+        >
+          전체보기
+        </Button>
       </Flexbox>
       <ProductGrid container>
         {isLoading
@@ -208,7 +230,7 @@ function LegitFilterGrid() {
 }
 
 const ProductGrid = styled(Grid)`
-  margin-top: 17px;
+  margin-top: 25px;
   overflow: hidden;
   border: 1px solid
     ${({
@@ -217,6 +239,7 @@ const ProductGrid = styled(Grid)`
       }
     }) => common.line02};
   border-right: none;
+  border-radius: 8px 8px 0 0;
   background-color: ${({
     theme: {
       palette: { common }

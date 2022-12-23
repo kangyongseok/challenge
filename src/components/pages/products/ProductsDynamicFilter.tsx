@@ -1,22 +1,32 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Flexbox,
+  Icon,
+  Input,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
-import { ProductDynamicOptionCodeDetail, ProductDynamicOptionCodeType } from '@dto/product';
-import { CategoryCode, CommonCode, PriceCode, SizeCode } from '@dto/common';
+import type { ProductDynamicOptionCodeDetail, ProductDynamicOptionCodeType } from '@dto/product';
+import type { CategoryCode, CommonCode, PriceCode, SizeCode } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
 import {
   filterCodeIds,
-  filterColorImagePositions,
-  filterColorImagesInfoLarge,
   filterColors,
+  filterImageColorNames,
   idFilterIds,
   productDynamicFilterEventPropertyTitle,
   productDynamicOptionCodeType
@@ -25,20 +35,28 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
+import { getTenThousandUnitPrice } from '@utils/formats';
+import { commaNumber } from '@utils/common';
 
-import { SelectedSearchOption } from '@typings/products';
+import type { SelectedSearchOption } from '@typings/products';
 import {
   brandFilterOptionsSelector,
   categoryFilterOptionsSelector,
   dynamicOptionsStateFamily,
+  priceFilterOptionsSelector,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 
+const specifyProductDynamicOptionCodeTypes = [
+  productDynamicOptionCodeType.color,
+  productDynamicOptionCodeType.price
+];
+
 function ProductsDynamicFilter() {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
   const router = useRouter();
@@ -47,6 +65,7 @@ function ProductsDynamicFilter() {
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
   );
+  const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
   const setSearchOptionsParamsState = useSetRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
@@ -57,6 +76,21 @@ function ProductsDynamicFilter() {
   const dynamicOptions = useRecoilValue(dynamicOptionsStateFamily(atomParam));
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const categories = useRecoilValue(categoryFilterOptionsSelector);
+  const { maxPrice: filterMaxPrice = 0 } = useRecoilValue(priceFilterOptionsSelector);
+
+  const [value, setValue] = useState<string | number>('');
+
+  const isInitRef = useRef(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.currentTarget.value;
+
+    if (Number(newValue) > getTenThousandUnitPrice(filterMaxPrice)) {
+      setValue(getTenThousandUnitPrice(filterMaxPrice));
+    } else {
+      setValue(newValue);
+    }
+  };
 
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXDynamicFilter);
@@ -89,26 +123,40 @@ function ProductsDynamicFilter() {
         })
       );
       setSearchParamsState(
-        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => ({
-          type,
-          searchParams: {
+        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => {
+          const newSearchParams = {
             ...prevSearchParams,
             idFilterIds: prevIdFilterIds.includes(idFilterIds.lowPrice)
-              ? prevIdFilterIds.filter((idFilterId) => idFilterId === idFilterIds.lowPrice)
+              ? prevIdFilterIds.filter((idFilterId) => idFilterId !== idFilterIds.lowPrice)
               : prevIdFilterIds?.concat([idFilterIds.lowPrice])
-          }
-        })
+          };
+
+          delete newSearchParams.maxPrice;
+          delete newSearchParams.minPrice;
+
+          return {
+            type,
+            searchParams: newSearchParams
+          };
+        }
       );
       setSearchOptionsParamsState(
-        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => ({
-          type,
-          searchParams: {
+        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => {
+          const newSearchParams = {
             ...prevSearchParams,
             idFilterIds: prevIdFilterIds.includes(idFilterIds.lowPrice)
-              ? prevIdFilterIds.filter((idFilterId) => idFilterId === idFilterIds.lowPrice)
+              ? prevIdFilterIds.filter((idFilterId) => idFilterId !== idFilterIds.lowPrice)
               : prevIdFilterIds?.concat([idFilterIds.lowPrice])
-          }
-        })
+          };
+
+          delete newSearchParams.maxPrice;
+          delete newSearchParams.minPrice;
+
+          return {
+            type,
+            searchParams: newSearchParams
+          };
+        }
       );
     },
     [setSearchOptionsParamsState, setSearchParamsState, setSelectedSearchOptionsState]
@@ -251,14 +299,16 @@ function ProductsDynamicFilter() {
             break;
           }
           case productDynamicOptionCodeType.category: {
-            const { parentId, subParentId } = codeDetail as CategoryCode;
+            const { parentId, subParentId, genderId } = codeDetail as CategoryCode;
             const selectedCategories: SelectedSearchOption[] = [];
 
             categories.forEach((category) => {
               const selectedCategory = category.parentCategories
                 .find((parentCategory) => parentCategory.id === parentId)
                 ?.subParentCategories.find(
-                  (subParentCategory) => subParentCategory.id === subParentId
+                  (subParentCategory) =>
+                    subParentCategory.id === subParentId &&
+                    (genderId ? subParentCategory.genderIds.includes(genderId) : true)
                 );
 
               if (selectedCategory) selectedCategories.push(selectedCategory);
@@ -268,14 +318,16 @@ function ProductsDynamicFilter() {
               (prevSelectedSearchOption) =>
                 prevSelectedSearchOption.codeId === filterCodeIds.category &&
                 prevSelectedSearchOption.parentId === parentId &&
-                prevSelectedSearchOption.id === subParentId
+                prevSelectedSearchOption.id === subParentId &&
+                (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
             )
               ? selectedSearchOptions.filter(
                   (prevSelectedSearchOption) =>
                     !(
                       prevSelectedSearchOption.codeId === filterCodeIds.category &&
                       prevSelectedSearchOption.parentId === parentId &&
-                      prevSelectedSearchOption.id === subParentId
+                      prevSelectedSearchOption.id === subParentId &&
+                      (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
                     )
                 )
               : selectedSearchOptions.concat(selectedCategories);
@@ -317,6 +369,108 @@ function ProductsDynamicFilter() {
       setSelectedSearchOptionsState
     ]
   );
+  const handleClickApplyLowerPriceFilter = useCallback(() => {
+    if (!value) return;
+
+    let newValue = Number(value);
+
+    if (newValue < 3) {
+      newValue = 3;
+      setValue(3);
+    }
+
+    logEvent(attrKeys.products.clickDynamicFilter, {
+      name: attrProperty.name.productList,
+      title: attrProperty.title.price,
+      att: commaNumber(newValue)
+    });
+    logEvent(attrKeys.products.clickApplyFilter, {
+      name: attrProperty.name.productList,
+      title: attrProperty.title.dynamicFilter,
+      keyword: router.query?.keyword
+    });
+
+    setSelectedSearchOptionsState(({ type, selectedSearchOptions: prevSelectedSearchOptions }) => {
+      const findPriceFilter = prevSelectedSearchOptions.find(
+        ({ codeId }) => codeId === filterCodeIds.price
+      );
+
+      return {
+        type,
+        selectedSearchOptions: findPriceFilter
+          ? prevSelectedSearchOptions
+              .filter(({ codeId }) => codeId !== filterCodeIds.price)
+              .concat({
+                codeId: filterCodeIds.price,
+                minPrice: 30000,
+                maxPrice: newValue * 10000
+              })
+          : prevSelectedSearchOptions.concat({
+              codeId: filterCodeIds.price,
+              minPrice: 30000,
+              maxPrice: newValue * 10000
+            })
+      };
+    });
+    setSearchParamsState(({ type, searchParams: prevSearchParams }) => {
+      const newSearchParams = { ...prevSearchParams };
+
+      delete newSearchParams.minPrice;
+      delete newSearchParams.maxPrice;
+
+      newSearchParams.minPrice = 30000;
+      newSearchParams.maxPrice = newValue * 10000;
+
+      return {
+        type,
+        searchParams: newSearchParams
+      };
+    });
+    setSearchOptionsParamsState(({ type, searchParams: prevSearchParams }) => {
+      const newSearchParams = { ...prevSearchParams };
+
+      delete newSearchParams.minPrice;
+      delete newSearchParams.maxPrice;
+
+      newSearchParams.minPrice = 30000;
+      newSearchParams.maxPrice = newValue * 10000;
+
+      return {
+        type,
+        searchParams: newSearchParams
+      };
+    });
+    isInitRef.current = true;
+  }, [
+    setSelectedSearchOptionsState,
+    setSearchParamsState,
+    setSearchOptionsParamsState,
+    value,
+    router.query?.keyword
+  ]);
+
+  useEffect(() => {
+    const hasLowerPriceIdFilter = searchParams.idFilterIds?.some(
+      (id) => id === idFilterIds.lowPrice
+    );
+    if (hasLowerPriceIdFilter) {
+      setValue(getTenThousandUnitPrice(filterMaxPrice));
+    }
+  }, [searchParams, filterMaxPrice]);
+
+  useEffect(() => {
+    if (searchParams.maxPrice && !isInitRef.current) {
+      isInitRef.current = true;
+      setValue(getTenThousandUnitPrice(searchParams.maxPrice));
+    }
+  }, [value, searchParams.maxPrice]);
+
+  useEffect(() => {
+    if (isInitRef.current && !searchParams.maxPrice) {
+      isInitRef.current = false;
+      setValue('');
+    }
+  }, [searchParams.maxPrice]);
 
   return (
     <Flexbox
@@ -324,9 +478,7 @@ function ProductsDynamicFilter() {
       direction="vertical"
       gap={1}
       customStyle={{
-        backgroundColor: common.ui95,
-        borderTop: `1px solid ${common.ui95}`,
-        marginTop: 10
+        backgroundColor: common.ui95
       }}
     >
       {dynamicOptions
@@ -340,20 +492,17 @@ function ProductsDynamicFilter() {
             <Title variant="body1" weight="bold">
               {title}
             </Title>
-            {codeType === productDynamicOptionCodeType.color ? (
+            {codeType === productDynamicOptionCodeType.color && (
               <Box customStyle={{ minHeight: 52, width: '100%', overflowX: 'auto' }}>
                 <Flexbox
                   alignment="center"
-                  gap={4}
+                  gap={8}
                   customStyle={{ padding: '12px 20px 12px 0', width: 'fit-content' }}
                   onScroll={handleScroll}
                 >
                   {codeDetails.map((codeDetail) => {
                     const { codeId, id, description } = codeDetail;
-                    const getColorImageInfo =
-                      filterColorImagesInfoLarge[
-                        description as keyof typeof filterColorImagePositions
-                      ];
+                    const needImage = filterImageColorNames.includes(description);
                     const getColorCode = filterColors[description as keyof typeof filterColors];
                     const checked = selectedSearchOptions.some(
                       (selectedSearchOption) =>
@@ -367,7 +516,11 @@ function ProductsDynamicFilter() {
                         customStyle={{ cursor: 'pointer' }}
                       >
                         <Box
-                          customStyle={{ position: 'relative' }}
+                          customStyle={{
+                            position: 'relative',
+                            width: 28,
+                            height: 28
+                          }}
                           onClick={handleClickDynamicFilter({
                             codeType,
                             codeDetail,
@@ -375,20 +528,29 @@ function ProductsDynamicFilter() {
                             active: checked
                           })}
                         >
-                          {getColorImageInfo && (
-                            <ColorImageSample
-                              name={description}
-                              colorImageInfo={getColorImageInfo}
+                          {needImage && (
+                            <Avatar
+                              width="28px"
+                              height="28px"
+                              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                              alt="Color Img"
+                              customStyle={{
+                                borderRadius: '50%'
+                              }}
                             />
                           )}
-                          {!getColorImageInfo && getColorCode && (
-                            <ColorSample colorCode={getColorCode} />
+                          {!needImage && getColorCode && (
+                            <ColorSample colorName={description} colorCode={getColorCode} />
                           )}
                           <CheckIcon
                             name="CheckOutlined"
                             size="medium"
                             checked={checked}
-                            color={description === 'white' ? primary.main : common.uiWhite}
+                            color={
+                              description === 'white' || description === 'ivory'
+                                ? common.uiBlack
+                                : common.uiWhite
+                            }
                           />
                         </Box>
                       </Flexbox>
@@ -396,7 +558,8 @@ function ProductsDynamicFilter() {
                   })}
                 </Flexbox>
               </Box>
-            ) : (
+            )}
+            {!specifyProductDynamicOptionCodeTypes.includes(codeType) && (
               <Box customStyle={{ minHeight: 44, width: '100%', overflowX: 'auto' }}>
                 <Flexbox
                   gap={4}
@@ -404,24 +567,6 @@ function ProductsDynamicFilter() {
                   customStyle={{ padding: '4px 20px 4px 0', width: 'fit-content' }}
                   onScroll={handleScroll}
                 >
-                  {codeType === productDynamicOptionCodeType.price && (
-                    <FilterItem
-                      active={selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === filterCodeIds.id &&
-                          selectedSearchOption.id === idFilterIds.lowPrice
-                      )}
-                      onClick={handleClickLowPriceFilter(
-                        selectedSearchOptions.some(
-                          (selectedSearchOption) =>
-                            selectedSearchOption.codeId === filterCodeIds.id &&
-                            selectedSearchOption.id === idFilterIds.lowPrice
-                        )
-                      )}
-                    >
-                      시세이하
-                    </FilterItem>
-                  )}
                   {codeDetails.map((codeDetail) => {
                     let active = false;
 
@@ -468,13 +613,14 @@ function ProductsDynamicFilter() {
                         break;
                       }
                       case productDynamicOptionCodeType.category: {
-                        const { parentId, subParentId } = codeDetail as CategoryCode;
+                        const { parentId, subParentId, genderId } = codeDetail as CategoryCode;
 
                         active = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.codeId === filterCodeIds.category &&
                             selectedSearchOption.parentId === parentId &&
-                            selectedSearchOption.id === subParentId
+                            selectedSearchOption.id === subParentId &&
+                            (genderId ? selectedSearchOption.genderIds?.includes(genderId) : true)
                         );
 
                         break;
@@ -505,6 +651,90 @@ function ProductsDynamicFilter() {
                 </Flexbox>
               </Box>
             )}
+            {codeType === productDynamicOptionCodeType.price && (
+              <Flexbox
+                alignment="center"
+                gap={8}
+                customStyle={{
+                  minHeight: 52,
+                  width: '100%',
+                  overflowX: 'auto',
+                  paddingRight: 16
+                }}
+              >
+                {/* TODO UI 라이브러리 업데이트 필요 */}
+                <Input
+                  type="number"
+                  unit="만원 이하"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  fullWidth
+                  onChange={handleChange}
+                  value={value}
+                  disabled={selectedSearchOptions.some(
+                    ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
+                  )}
+                  customStyle={{
+                    whiteSpace: 'nowrap',
+                    // TODO UI 라이브러리 업데이트 후 제거
+                    backgroundColor: selectedSearchOptions.some(
+                      ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
+                    )
+                      ? common.ui95
+                      : 'none',
+                    color: selectedSearchOptions.some(
+                      ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
+                    )
+                      ? common.ui80
+                      : 'inherit'
+                  }}
+                  inputCustomStyle={{
+                    width: '100%'
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  brandColor="black"
+                  disabled={
+                    selectedSearchOptions.some(
+                      ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
+                    ) || !value
+                  }
+                  onClick={handleClickApplyLowerPriceFilter}
+                  customStyle={{ whiteSpace: 'nowrap' }}
+                >
+                  적용
+                </Button>
+                <Flexbox gap={4} alignment="center">
+                  <Checkbox
+                    onChange={handleClickLowPriceFilter(
+                      selectedSearchOptions.some(
+                        (selectedSearchOption) =>
+                          selectedSearchOption.codeId === filterCodeIds.id &&
+                          selectedSearchOption.id === idFilterIds.lowPrice
+                      )
+                    )}
+                    checked={selectedSearchOptions.some(
+                      (selectedSearchOption) =>
+                        selectedSearchOption.codeId === filterCodeIds.id &&
+                        selectedSearchOption.id === idFilterIds.lowPrice
+                    )}
+                  />
+                  <Typography
+                    onClick={handleClickLowPriceFilter(
+                      selectedSearchOptions.some(
+                        (selectedSearchOption) =>
+                          selectedSearchOption.codeId === filterCodeIds.id &&
+                          selectedSearchOption.id === idFilterIds.lowPrice
+                      )
+                    )}
+                    customStyle={{ whiteSpace: 'nowrap' }}
+                  >
+                    시세이하
+                  </Typography>
+                </Flexbox>
+              </Flexbox>
+            )}
           </Flexbox>
         ))}
     </Flexbox>
@@ -527,35 +757,34 @@ const FilterItem = styled(Typography)<{ active?: boolean }>`
 `;
 
 const ColorSample = styled.div<{
+  colorName: string;
   colorCode: string;
 }>`
   width: 28px;
   height: 28px;
+  border: 1px solid transparent;
   border-radius: 50%;
   background-color: ${({ colorCode }) => colorCode};
-  margin: 0 4px;
-`;
 
-const ColorImageSample = styled.div<{
-  name: string;
-  colorImageInfo: { size: number; position: number[] };
-}>`
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: ${({ name, theme: { palette } }) =>
-    name === 'white' && `1px solid ${palette.common.ui90}`};
-  background-size: ${({ colorImageInfo: { size } }) => size}px;
-  background-image: url('https://${process.env
-    .IMAGE_DOMAIN}/assets/images/ico/filter_color_ico.png');
-  background-position: ${({ colorImageInfo: { position } }) => `${position[0]}px ${position[1]}px`};
-  margin: 0 4px;
+  ${({
+    theme: {
+      palette: { common }
+    },
+    colorName
+  }) =>
+    colorName === 'white'
+      ? {
+          border: `1px solid ${common.line01}`
+        }
+      : {}};
 `;
 
 const CheckIcon = styled(Icon)<{ checked: boolean }>`
   position: absolute;
+  top: 50%;
+  left: 50%;
   opacity: ${({ checked }) => Number(checked)};
-  transform: translate(41%, -122%);
+  transform: translate(-50%, -50%);
   transition: opacity 0.1s ease-in 0s;
 `;
 

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 
-import { ProductKeywordSourceType } from '@dto/user';
+import type { ProductKeywordSourceType } from '@dto/user';
 
 import { logEvent } from '@library/amplitude';
 
@@ -16,7 +16,7 @@ import { orderFilterOptions } from '@constants/productsFilter';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { ProductsVariant } from '@typings/products';
+import type { ProductsVariant } from '@typings/products';
 import { productsKeywordAutoSaveTriggerState } from '@recoil/productsKeyword';
 import { filterOperationInfoSelector, searchParamsStateFamily } from '@recoil/productsFilter';
 import { homeSelectedTabStateFamily } from '@recoil/home';
@@ -73,66 +73,69 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
     }
   });
-  const handleRouteChange = useCallback(() => {
-    if (
-      !!accessUser &&
-      !isLoadingSearchOptions &&
-      isFetchedSearchOptions &&
-      !userProductKeyword &&
-      productKeywords.length === 0 &&
-      productsKeywordAutoSaveTrigger &&
-      selectedSearchOptionsHistory.length > 0
-    ) {
-      logEvent(attrKeys.products.loadMyListSave, {
-        name: attrProperty.productName.AUTO
-      });
+  const handleRouteChange = useCallback(
+    (url: string) => {
+      if (
+        !!accessUser &&
+        !isLoadingSearchOptions &&
+        isFetchedSearchOptions &&
+        !userProductKeyword &&
+        productsKeywordAutoSaveTrigger &&
+        selectedSearchOptionsHistory.length > 0 &&
+        url.indexOf('/products') === -1
+      ) {
+        logEvent(attrKeys.products.loadMyListSave, {
+          name: attrProperty.productName.AUTO
+        });
 
-      let sourceType: ProductKeywordSourceType = 0;
+        let sourceType: ProductKeywordSourceType = 0;
 
-      switch (variant) {
-        case 'brands': {
-          sourceType = 1;
-          break;
+        switch (variant) {
+          case 'brands': {
+            sourceType = 1;
+            break;
+          }
+          case 'categories': {
+            sourceType = 3;
+            break;
+          }
+          case 'search':
+          default:
+            break;
         }
-        case 'categories': {
-          sourceType = 3;
-          break;
-        }
-        case 'search':
-        default:
-          break;
+
+        mutate({
+          productSearch: { ...searchParams, deviceId, order: orderFilterOptions[1].order },
+          sourceType
+        });
       }
 
-      mutate({
-        productSearch: { ...searchParams, deviceId, order: orderFilterOptions[1].order },
-        sourceType
-      });
-    }
-
-    if (
-      !!accessUser &&
-      !isLoadingSearchOptions &&
-      isFetchedSearchOptions &&
-      productKeywords.length > 0 &&
-      productsKeywordAutoSaveTrigger &&
-      selectedSearchOptionsHistory.length > 0
-    ) {
-      setProductsKeywordAutoSaveTrigger(false);
-    }
-  }, [
-    accessUser,
-    deviceId,
-    isFetchedSearchOptions,
-    isLoadingSearchOptions,
-    mutate,
-    productKeywords.length,
-    productsKeywordAutoSaveTrigger,
-    searchParams,
-    selectedSearchOptionsHistory.length,
-    setProductsKeywordAutoSaveTrigger,
-    userProductKeyword,
-    variant
-  ]);
+      if (
+        !!accessUser &&
+        !isLoadingSearchOptions &&
+        isFetchedSearchOptions &&
+        productKeywords.length > 0 &&
+        productsKeywordAutoSaveTrigger &&
+        selectedSearchOptionsHistory.length > 0
+      ) {
+        setProductsKeywordAutoSaveTrigger(false);
+      }
+    },
+    [
+      accessUser,
+      deviceId,
+      isFetchedSearchOptions,
+      isLoadingSearchOptions,
+      mutate,
+      productKeywords.length,
+      productsKeywordAutoSaveTrigger,
+      searchParams,
+      selectedSearchOptionsHistory.length,
+      setProductsKeywordAutoSaveTrigger,
+      userProductKeyword,
+      variant
+    ]
+  );
 
   useEffect(() => {
     router.events.on('routeChangeStart', handleRouteChange);
@@ -141,6 +144,10 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [handleRouteChange, router.events]);
+
+  useEffect(() => {
+    setProductsKeywordAutoSaveTrigger(true);
+  }, [setProductsKeywordAutoSaveTrigger]);
 }
 
 export default useProductKeywordAutoSave;

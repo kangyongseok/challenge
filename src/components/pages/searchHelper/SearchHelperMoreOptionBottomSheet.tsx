@@ -14,11 +14,7 @@ import type { ProductSearchOption } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import {
-  filterColorImagePositions,
-  filterColorImagesInfo,
-  filterColors
-} from '@constants/productsFilter';
+import { filterColors, filterImageColorNames } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
@@ -356,10 +352,7 @@ function SearchHelperMoreOptionBottomSheet({
                         : (searchOptions?.colors || [])
                             .filter((item) => item.count > 0)
                             .map(({ id, name, description, count }) => {
-                              const getColorImageInfo =
-                                filterColorImagesInfo[
-                                  description as keyof typeof filterColorImagePositions
-                                ];
+                              const needImage = filterImageColorNames.includes(description);
                               const getColorCode =
                                 filterColors[description as keyof typeof filterColors];
                               const isSelected = selectedOptions.colors.some(
@@ -388,10 +381,19 @@ function SearchHelperMoreOptionBottomSheet({
                                       color: isSelected ? primary.main : common.ui90
                                     }}
                                   />
-                                  {getColorImageInfo && (
-                                    <ColorImageSample colorImageInfo={getColorImageInfo} />
+                                  {needImage && (
+                                    <Avatar
+                                      width="20px"
+                                      height="20px"
+                                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                                      alt="Color Img"
+                                      customStyle={{
+                                        marginRight: 6,
+                                        borderRadius: '50%'
+                                      }}
+                                    />
                                   )}
-                                  {!getColorImageInfo && getColorCode && (
+                                  {!needImage && getColorCode && (
                                     <ColorSample colorCode={getColorCode} />
                                   )}
                                   <Typography
@@ -608,28 +610,9 @@ const ColorSample = styled.div<{
       theme: {
         palette: { common }
       }
-    }) => common.ui90};
+    }) => common.line01};
   border-radius: 50%;
   background-color: ${({ colorCode }) => colorCode};
-  margin-right: 6px;
-`;
-
-const ColorImageSample = styled.div<{
-  colorImageInfo: { size: number; position: number[] };
-}>`
-  width: 20px;
-  height: 20px;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-  border-radius: 50%;
-  background-size: ${({ colorImageInfo: { size } }) => size}px;
-  background-image: url('https://${process.env
-    .IMAGE_DOMAIN}/assets/images/ico/filter_color_ico.png');
-  background-position: ${({ colorImageInfo: { position } }) => `${position[0]}px ${position[1]}px`};
   margin-right: 6px;
 `;
 

@@ -5,15 +5,15 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
-import sortBy from 'lodash-es/sortBy';
-import { uniqBy } from 'lodash-es';
+import { sortBy, uniqBy } from 'lodash-es';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
+import { Gap } from '@components/UI/atoms';
 import {
   ProductsDynamicFilter,
   ProductsFilterHistory,
   ProductsGeneralFilter
-} from '@components/pages/products/index';
+} from '@components/pages/products';
 
 import { logEvent } from '@library/amplitude';
 
@@ -55,15 +55,15 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 interface ProductsFilterProps {
   variant: ProductsVariant;
   showDynamicFilter?: boolean;
-  customTop?: number;
 }
 
-function ProductsFilter({ variant, showDynamicFilter = false, customTop }: ProductsFilterProps) {
+function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterProps) {
   const {
     theme: {
       palette: { primary, common }
     }
   } = useTheme();
+
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
@@ -76,7 +76,9 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   const [{ searchOptions: baseSearchOptions }, setBaseSearchOptionsState] = useRecoilState(
     searchOptionsStateFamily(`base-${atomParam}`)
   );
-  const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
+  const [{ searchParams }, setSearchParamsState] = useRecoilState(
+    searchParamsStateFamily(`search-${atomParam}`)
+  );
   const [{ searchParams: searchOptionsParams }, setSearchOptionsParamsState] = useRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
@@ -91,7 +93,6 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   const [dynamicOptions, setDynamicOptionsState] = useRecoilState(
     dynamicOptionsStateFamily(atomParam)
   );
-
   const setMyFilterIntersectionCategorySizesState = useSetRecoilState(
     myFilterIntersectionCategorySizesState
   );
@@ -101,11 +102,11 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   );
 
   const { data: accessUser } = useQueryAccessUser();
+
   const {
     data: {
       baseSearchOptions: newBaseSearchOptions,
       searchOptions,
-      userProductKeyword,
       productTotal,
       dynamicOptions: newDynamicOptions = []
     } = {},
@@ -129,25 +130,34 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   const [myFilterTooltipCustomStyle, setMyFilterTooltipCustomStyle] = useState<CustomStyle>({});
   const [step1TooltipCustomStyle, setStep1TooltipCustomStyle] = useState<CustomStyle>({});
   const [step2TooltipCustomStyle, setStep2TooltipCustomStyle] = useState<CustomStyle>({});
-  const [step3TooltipCustomStyle, setStep3TooltipCustomStyle] = useState<CustomStyle>({});
 
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
   const isUpdatedAdditionalSelectedSearchOptionsRef = useRef(false);
-  const mapFilterButtonRef = useRef<HTMLButtonElement | null>(null);
-  const legitFilterButtonRef = useRef<HTMLDivElement | null>(null);
-  const generalFilterRef = useRef<HTMLDivElement | null>(null);
+  const mapFilterButtonRef = useRef<HTMLButtonElement>(null);
+  const legitFilterButtonRef = useRef<HTMLDivElement>(null);
+  const generalFilterRef = useRef<HTMLDivElement>(null);
 
   const {
     data: {
       info: { value: { gender = '' } = {} } = {},
       size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
-    } = {}
+    } = {},
+    isLoading: isLoadingUserInfo
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
     enabled: !!accessUser
   });
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
 
+  const needGender = useMemo(
+    () => variant === 'search' && gender && gender !== 'N',
+    [variant, gender]
+  );
+  const genderId = useMemo(() => {
+    if (gender === 'M') return filterGenders.male.id;
+    if (gender === 'F') return filterGenders.female.id;
+    return 0;
+  }, [gender]);
   const intersectionCategorySizes = useMemo(() => {
     if (!gender) return [];
     if (!categorySizes.length) return [];
@@ -172,29 +182,6 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
       'categorySizeId'
     );
   }, [tops, bottoms, shoes, categorySizes, gender]);
-  const showProductKeywordSaveChip = useMemo(() => {
-    const allowPathNames = [
-      '/products/brands/[keyword]',
-      '/products/categories/[keyword]',
-      '/products/search/[keyword]'
-    ];
-    return (
-      isFetched &&
-      !userProductKeyword &&
-      !!selectedSearchOptions.filter(({ codeId }) => ![filterCodeIds.order].includes(codeId))
-        .length &&
-      allowPathNames.includes(router.pathname)
-    );
-  }, [isFetched, userProductKeyword, selectedSearchOptions, router.pathname]);
-  const needGender = useMemo(
-    () => variant === 'search' && gender && gender !== 'N',
-    [variant, gender]
-  );
-  const genderId = useMemo(() => {
-    if (gender === 'M') return filterGenders.male.id;
-    if (gender === 'F') return filterGenders.female.id;
-    return 0;
-  }, [gender]);
   const intersectionParentCategoryIds = useMemo(
     () =>
       Array.from(
@@ -271,6 +258,7 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
     genderCategories,
     genderId
   ]);
+
   const excludeAdditionalSelectedSearchOptions = useMemo(() => {
     let newSelectedSearchOptions;
 
@@ -337,53 +325,51 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   // TODO 전반적인 필터 관련 state 업데이트 흐름 및 로직 개선
   // 최초 또는 query 변화에 따른 baseSearchParams state 업데이트
   useEffect(() => {
-    if (router.isReady) {
-      const convertedBaseSearchParams = convertSearchParamsByQuery(router.query, {
-        variant,
-        onlyBaseSearchParams: true,
-        defaultValue: {
-          deviceId
-        }
-      });
-
-      if (variant === 'camel') {
-        convertedBaseSearchParams.idFilterIds = [5];
+    const convertedBaseSearchParams = convertSearchParamsByQuery(router.query, {
+      variant,
+      onlyBaseSearchParams: true,
+      defaultValue: {
+        deviceId
       }
+    });
 
-      const { parentIds: newParentIds, subParentIds: newSubParentIds } = convertSearchParamsByQuery(
-        router.query,
-        {
-          variant,
-          defaultValue: {
-            order: 'recommDesc'
-          }
+    if (variant === 'camel') {
+      convertedBaseSearchParams.idFilterIds = [5];
+    }
+
+    const { parentIds: newParentIds, subParentIds: newSubParentIds } = convertSearchParamsByQuery(
+      router.query,
+      {
+        variant,
+        defaultValue: {
+          order: 'recommDesc'
         }
-      );
+      }
+    );
 
-      setBaseSearchParamsState((prevState) => {
-        if (variant !== 'search') {
-          return {
-            type: prevState.type,
-            searchParams: {
-              ...prevState.searchParams,
-              ...convertedBaseSearchParams,
-              parentIds: newParentIds,
-              subParentIds: newSubParentIds
-            }
-          };
-        }
-
+    setBaseSearchParamsState((prevState) => {
+      if (variant !== 'search') {
         return {
           type: prevState.type,
-          searchParams: { ...prevState.searchParams, ...convertedBaseSearchParams }
+          searchParams: {
+            ...prevState.searchParams,
+            ...convertedBaseSearchParams,
+            parentIds: newParentIds,
+            subParentIds: newSubParentIds
+          }
         };
-      });
-    }
-  }, [setBaseSearchParamsState, variant, deviceId, router.isReady, router.query]);
+      }
+
+      return {
+        type: prevState.type,
+        searchParams: { ...prevState.searchParams, ...convertedBaseSearchParams }
+      };
+    });
+  }, [setBaseSearchParamsState, variant, deviceId, router.query]);
 
   // 최초의 searchParams state 업데이트 (!progressDone: 매몰 목록 새 진입 여부)
   useEffect(() => {
-    if (router.isReady && (!hasBaseSearchParams || !progressDone)) {
+    if (!hasBaseSearchParams || !progressDone) {
       const convertedInitSearchParams = convertSearchParamsByQuery(router.query, {
         variant,
         defaultValue: {
@@ -410,7 +396,6 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
     variant,
     progressDone,
     deviceId,
-    router.isReady,
     router.query
   ]);
 
@@ -418,11 +403,11 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   // additionalSelectedSearchOptions 이 존재하는 경우 searchParams/selectedSearchOptions state 업데이트 (!progressDone: 매몰 목록 새 진입 여부)
   useEffect(() => {
     if (
-      router.isReady &&
       hasBaseSearchParams &&
       additionalSelectedSearchOptions.length &&
       !progressDone &&
       !isLoading &&
+      !isLoadingUserInfo &&
       !isUpdatedAdditionalSelectedSearchOptionsRef.current
     ) {
       isUpdatedAdditionalSelectedSearchOptionsRef.current = true;
@@ -450,8 +435,8 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
     additionalSelectedSearchOptions,
     hasBaseSearchParams,
     isLoading,
-    progressDone,
-    router.isReady
+    isLoadingUserInfo,
+    progressDone
   ]);
 
   // 브랜드/카테고리/카멜 매물 목록 한정 parentIds, subParentIds 변화를 감지하여 searchParams state 업데이트
@@ -641,6 +626,7 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
             name: attrProperty.name.productList
           });
           setOpenMyFilterTooltip(true);
+          pendingInActiveMyFilterSearchRef.current = false;
         }
       });
     }
@@ -683,7 +669,7 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
   }, [setTotalCount, productTotal]);
 
   useEffect(() => {
-    if (!router.isReady || !hasBaseSearchParams || !progressDone) return;
+    if (!hasBaseSearchParams || !progressDone) return;
 
     if (generalFilterRef.current) {
       const { clientHeight } = generalFilterRef.current;
@@ -691,20 +677,28 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
 
       setStep1TooltipCustomStyle({
         position: 'fixed',
-        top: top + clientHeight + 15,
+        top: top + clientHeight + 10,
         left: 20,
         transform: 'none',
         height: 'fit-content'
       });
-      setMyFilterTooltipCustomStyle({
-        position: 'fixed',
-        top: top + clientHeight,
-        left: 'inherit',
-        right: 20,
-        transform: 'none',
-        height: 'fit-content',
-        '& > svg': { left: 'auto', right: 11 }
-      });
+
+      const myFilterButton = generalFilterRef.current.querySelector(
+        `button[data-code-id="${filterCodeIds.my}"]`
+      );
+
+      if (myFilterButton) {
+        const { clientWidth } = myFilterButton;
+        const { left } = myFilterButton.getBoundingClientRect();
+        setMyFilterTooltipCustomStyle({
+          position: 'fixed',
+          top: top + clientHeight,
+          left: left - 225 + clientWidth,
+          transform: 'none',
+          height: 'fit-content',
+          '& > svg': { left: 'auto', right: 20 }
+        });
+      }
     }
 
     if (mapFilterButtonRef.current) {
@@ -713,30 +707,18 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
         top:
           mapFilterButtonRef.current.getBoundingClientRect().top +
           mapFilterButtonRef.current.clientHeight +
-          15,
-        left: 20,
-        transform: 'none',
-        height: 'fit-content'
-      });
-    }
-    if (legitFilterButtonRef.current) {
-      setStep3TooltipCustomStyle({
-        position: 'fixed',
-        top:
-          legitFilterButtonRef.current.getBoundingClientRect().top +
-          legitFilterButtonRef.current.clientHeight +
-          22,
-        left: legitFilterButtonRef.current.offsetLeft - 51,
+          10,
+        left: 16,
         transform: 'none',
         height: 'fit-content',
-        '& > svg': { left: 'auto', right: 11 }
+        '& > svg': { left: mapFilterButtonRef.current.offsetLeft + 10 }
       });
     }
 
     if (accessUser) {
       setProductsOnBoardingTrigger(productsOnBoardingTrigger);
     }
-  }, [router.isReady, productsOnBoardingTrigger, accessUser, hasBaseSearchParams, progressDone]);
+  }, [productsOnBoardingTrigger, accessUser, hasBaseSearchParams, progressDone]);
 
   useEffect(() => {
     if (accessUser) {
@@ -746,23 +728,28 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
     }
   }, [accessUser, productsOnBoardingTrigger]);
 
+  useEffect(() => {
+    if (isFetched)
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+  }, [searchParams, isFetched]);
+
   return (
     <>
+      <Gap height={8} />
       <ProductsGeneralFilter
         ref={generalFilterRef}
         mapFilterButtonRef={mapFilterButtonRef}
         legitFilterButtonRef={legitFilterButtonRef}
         isLoading={!hasBaseSearchParams || !progressDone}
         variant={variant}
-        customTop={customTop}
       />
       {showDynamicFilter && dynamicOptions.length > 0 && hasBaseSearchParams && progressDone && (
         <ProductsDynamicFilter />
       )}
-      <ProductsFilterHistory
-        variant={variant}
-        showProductKeywordSaveChip={showProductKeywordSaveChip}
-      />
+      <ProductsFilterHistory />
       <OnBoardingSpotlight
         open={hasBaseSearchParams && progressDone && !complete && step === 0}
         onClose={() =>
@@ -799,7 +786,7 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
         onClose={() =>
           setUserOnBoardingTriggerState((prevState) => ({
             ...prevState,
-            products: { complete: false, step: 2 }
+            products: { complete: true, step: 2 }
           }))
         }
         targetRef={mapFilterButtonRef}
@@ -820,38 +807,13 @@ function ProductsFilter({ variant, showDynamicFilter = false, customTop }: Produ
           customStyle={step2TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
-      <OnBoardingSpotlight
-        open={hasBaseSearchParams && progressDone && !complete && step === 2}
-        onClose={() =>
-          setUserOnBoardingTriggerState((prevState) => ({
-            ...prevState,
-            products: { complete: true, step: 3 }
-          }))
-        }
-        targetRef={legitFilterButtonRef}
-        customSpotlightPosition={{ width: 16, height: 16, top: -8, left: -8 }}
-        customStyle={{ borderRadius: 8 }}
-      >
-        <Tooltip
-          open={hasBaseSearchParams && progressDone && !complete && step === 2}
-          message={
-            <Typography variant="body2" weight="medium" brandColor="primary">
-              정가품이 궁금하다면 클릭!
-            </Typography>
-          }
-          variant="ghost"
-          brandColor="primary"
-          placement="bottom"
-          customStyle={step3TooltipCustomStyle}
-        />
-      </OnBoardingSpotlight>
       <Tooltip
         className="products-filter-tooltip"
         open={hasBaseSearchParams && progressDone && openMyFilterTooltip}
         message={
           <Flexbox gap={8} alignment="center">
             <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
-              {variant === 'search' ? '내 성별/사이즈만 보기' : '내 사이즈만 보기'}가 켜져 있어요!
+              내 사이즈만 보기가 켜져 있어요!
             </Typography>
             <Typography
               variant="body2"

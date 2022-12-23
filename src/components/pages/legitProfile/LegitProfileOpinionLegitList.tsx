@@ -86,42 +86,32 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
 
     const legitProducts = useMemo(() => pages.map(({ content }) => content).flat(), [pages]);
 
-    const handleClick = (status: number, result: number) => () => {
-      const getAtt = () => {
-        if (status === 20) {
-          return '감정진행중';
-        }
-        if (result === 1) {
-          return '정품의견';
-        }
-        if (result === 2) {
-          return '가품의심';
-        }
-        return 'NONE';
+    const handleClick =
+      ({ status, result, label }: { status: number; result: number; label: string }) =>
+      () => {
+        logEvent(attrKeys.legitProfile.CLICK_LEGIT_FILTER, {
+          name: attrProperty.name.LEGIT_PROFILE,
+          title: attrProperty.title.LEGIT_STATUS,
+          att: label
+        });
+
+        setLegitProfileOpinionLegitsParamsState((prevState) => {
+          const prevStatus = [...(prevState.status || [])];
+          const prevResults = [...(prevState.results || [])];
+
+          const hasAlreadyResult = prevResults.some((number) => number === result);
+
+          if (hasAlreadyResult) prevStatus.splice(prevStatus.lastIndexOf(status), 1);
+
+          return {
+            ...prevState,
+            status: hasAlreadyResult ? prevStatus : [...prevStatus, status],
+            results: hasAlreadyResult
+              ? prevResults.filter((number) => number !== result)
+              : [...prevResults, result]
+          };
+        });
       };
-
-      logEvent(attrKeys.legitProfile.CLICK_LEGIT_FILTER, {
-        name: attrProperty.name.LEGIT_PROFILE,
-        att: getAtt()
-      });
-
-      setLegitProfileOpinionLegitsParamsState((prevState) => {
-        const prevStatus = [...(prevState.status || [])];
-        const prevResults = [...(prevState.results || [])];
-
-        const hasAlreadyResult = prevResults.some((number) => number === result);
-
-        if (hasAlreadyResult) prevStatus.splice(prevStatus.lastIndexOf(status), 1);
-
-        return {
-          ...prevState,
-          status: hasAlreadyResult ? prevStatus : [...prevStatus, status],
-          results: hasAlreadyResult
-            ? prevResults.filter((number) => number !== result)
-            : [...prevResults, result]
-        };
-      });
-    };
 
     const handleClickProduct = useCallback(
       ({ product }: { product: ProductResult }) =>
@@ -171,40 +161,41 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
         css={!isLoading && legitProducts.length === 0 ? { ...customStyle, flex: 1 } : customStyle}
       >
         {isLoading && (
-          <Flexbox gap={6} customStyle={{ marginBottom: 20 }}>
-            <Skeleton
-              width="80px"
-              height="32px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 16 }}
-            />
-            <Skeleton
-              width="80px"
-              height="32px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 16 }}
-            />
+          <Flexbox
+            gap={8}
+            customStyle={{
+              marginBottom: 20
+            }}
+          >
+            <Skeleton width="71.36px" height="36px" disableAspectRatio isRound />
+            <Skeleton width="71.36px" height="36px" disableAspectRatio isRound />
           </Flexbox>
         )}
         {!isLoading && legitProducts.length > 0 && (
-          <Flexbox gap={6} customStyle={{ marginBottom: 20 }}>
+          <Flexbox
+            gap={8}
+            customStyle={{
+              marginBottom: 20
+            }}
+          >
             {legitFilters.map(({ label, result, status }) => (
               <Chip
                 key={`legit-select-label-${label}`}
-                weight="regular"
+                variant="ghost"
+                brandColor={(params.results || []).includes(result) ? 'primary-light' : 'black'}
+                size="large"
                 disabled={isLoading}
-                variant={(params.results || []).includes(result) ? 'contained' : 'outlined'}
-                brandColor={(params.results || []).includes(result) ? 'black' : 'gray'}
-                onClick={handleClick(status, result)}
+                onClick={handleClick({ status, result, label })}
+                isRound={false}
               >
                 {label}
               </Chip>
             ))}
           </Flexbox>
         )}
-        <Flexbox direction="vertical" gap={20}>
-          {isLoading &&
-            Array.from({ length: 16 }).map((_, index) => (
+        {isLoading && (
+          <Flexbox direction="vertical" gap={20}>
+            {Array.from({ length: 16 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={12}>
                 <Skeleton width="100px" height="100px" isRound disableAspectRatio />
@@ -229,8 +220,11 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                 </Box>
               </Flexbox>
             ))}
-          {!isLoading &&
-            legitProducts.map(({ productId, productResult, status, legitOpinions = [] }) => {
+          </Flexbox>
+        )}
+        {!isLoading && (
+          <Flexbox direction="vertical" gap={20}>
+            {legitProducts.map(({ productId, productResult, status, legitOpinions = [] }) => {
               const { result: opinionResult, description } =
                 legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
 
@@ -330,12 +324,24 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                 </Flexbox>
               );
             })}
-        </Flexbox>
+          </Flexbox>
+        )}
         {!isLoading && legitProducts.length === 0 && (
           <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: 52 }}>
-            <Typography variant="h2" weight="bold" customStyle={{ color: common.ui80 }}>
-              감정이력이 없습니다.
-            </Typography>
+            <Flexbox direction="vertical" gap={20}>
+              <Box
+                customStyle={{
+                  textAlign: 'center',
+                  height: 52,
+                  fontSize: 52
+                }}
+              >
+                🕵️‍♂️
+              </Box>
+              <Typography variant="h3" weight="bold" customStyle={{ color: common.ui80 }}>
+                감정이력이 없습니다.
+              </Typography>
+            </Flexbox>
           </Flexbox>
         )}
       </Wrapper>
@@ -344,9 +350,8 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
 );
 
 const Wrapper = styled.section`
-  padding: 26px 20px 35px;
+  padding: 32px 20px;
   background-color: ${({ theme }) => theme.palette.common.cmnW};
-  margin-top: -44px;
   z-index: 2;
 `;
 

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MouseEvent } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -20,11 +19,6 @@ import attrKeys from '@constants/attrKeys';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
-import {
-  productsKeywordAutoSaveTriggerState,
-  productsKeywordDialogState,
-  productsKeywordInduceTriggerState
-} from '@recoil/productsKeyword';
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
 import {
@@ -40,7 +34,6 @@ import {
   LegitResultTooltip,
   List,
   ListItem,
-  NewLabel,
   StyledBottomNavigation
 } from './BottomNavigation.styles';
 
@@ -65,12 +58,6 @@ const data: {
     href: '/legit',
     logName: 'LEGIT'
   },
-  // {
-  //   title: '',
-  //   defaultIcon: 'PlusOutlined',
-  //   href: '/camelSeller',
-  //   logName: 'LISTING_TECH'
-  // },
   {
     title: 'navigation.category',
     defaultIcon: 'NewCategoryOutlined',
@@ -97,14 +84,9 @@ const data: {
 interface BottomNavigationProps {
   display?: 'block' | 'none';
   disableHideOnScroll?: boolean;
-  disableProductsKeywordClickInterceptor?: boolean;
 }
 
-function BottomNavigation({
-  display,
-  disableHideOnScroll = true,
-  disableProductsKeywordClickInterceptor = true
-}: BottomNavigationProps) {
+function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigationProps) {
   const {
     theme: {
       palette: { common }
@@ -121,10 +103,7 @@ function BottomNavigation({
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
   );
-  const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
-  const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
-  const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
   const {
     data: {
       roles = [],
@@ -154,93 +133,53 @@ function BottomNavigation({
     });
   }, [priceNotiProducts]);
 
-  // const currentTab = useMemo(() => {
-  //   if (router.query.tab) return router.query.tab;
-  //   if ((isNewUser || isNewUser === undefined) && !router.query.tab) {
-  //     return 'recommend';
-  //   }
-  //   return 'following';
-  // }, [router, isNewUser]);
+  const handleClickInterceptor = (title: string, logName: string, href: string) => () => {
+    logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
+      title:
+        !isLoading && notViewedLegitCount && logName === 'LEGIT'
+          ? attrProperty.legitTitle.LEGITRESULT_TOOLTIP
+          : undefined
+    });
 
-  // const homeTabChange = () => {
-  //   if (router.query.tab === 'following' || isNewUser) {
-  //     router.push({
-  //       pathname: '/',
-  //       query: {
-  //         tab: 'recommend'
-  //       }
-  //     });
-  //   } else {
-  //     router.push({
-  //       pathname: '/',
-  //       query: {
-  //         tab: 'following'
-  //       }
-  //     });
-  //   }
-  // };
+    if (title === 'navigation.home') {
+      // homeTabChange();
+      resetProductKeyword();
+      resetRecentSearch();
+    }
 
-  const handleClickInterceptor =
-    (title: string, logName: string, href: string) => (e: MouseEvent<HTMLAnchorElement>) => {
-      logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
-        title:
-          !isLoading && notViewedLegitCount && logName === 'LEGIT'
-            ? attrProperty.legitTitle.LEGITRESULT_TOOLTIP
-            : undefined
-      });
+    if (title === 'navigation.category' && router.pathname !== '/category') {
+      resetCategory();
+    }
 
-      if (title === 'navigation.home') {
-        // homeTabChange();
-        resetProductKeyword();
-        resetRecentSearch();
-      }
-
-      if (title === 'navigation.category' && router.pathname !== '/category') {
-        resetCategory();
-      }
-
-      if (
-        dialog &&
-        !disableProductsKeywordClickInterceptor &&
-        // 검색한 목록 자동으로 저장한 경우 검색 목록 저장 유도 팝업 노출하지 않음
-        !productsKeywordAutoSaveTrigger
-      ) {
-        e.preventDefault();
-        setProductsKeywordDialogState({
-          open: true,
-          pathname: href
+    if (href === '/') {
+      resetHomePersonalCurationBannersState();
+      queryClient
+        .getQueryCache()
+        .getAll()
+        .forEach(({ queryKey }) => {
+          if (queryKey.includes('personalProducts') || queryKey.includes('recommendProducts')) {
+            queryClient.resetQueries(queryKey);
+          }
         });
-      }
+    }
 
-      if (href === '/') {
-        resetHomePersonalCurationBannersState();
-        queryClient
-          .getQueryCache()
-          .getAll()
-          .forEach(({ queryKey }) => {
-            if (queryKey.includes('personalProducts') || queryKey.includes('recommendProducts')) {
-              queryClient.resetQueries(queryKey);
-            }
-          });
-      }
+    // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
+    // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
+    // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
+    if (href === '/legit') {
+      resetLegitFilterGridParamsState();
+      resetLegitFiltersState();
 
-      // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
-      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
-      // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
-      if (href === '/legit') {
-        resetLegitFilterGridParamsState();
-        resetLegitFiltersState();
-
-        queryClient
-          .getQueryCache()
-          .getAll()
-          .forEach(({ queryKey }) => {
-            if (queryKey.includes('productLegits') && queryKey.length >= 3) {
-              queryClient.resetQueries(queryKey);
-            }
-          });
-      }
-    };
+      queryClient
+        .getQueryCache()
+        .getAll()
+        .forEach(({ queryKey }) => {
+          if (queryKey.includes('productLegits') && queryKey.length >= 3) {
+            queryClient.resetQueries(queryKey);
+          }
+        });
+    }
+  };
 
   const handleResize = useCallback(() => {
     if (legitNavRef.current && !openTooltip) {
@@ -371,9 +310,6 @@ function BottomNavigation({
                   key={`bottom-navigation-${title}`}
                   ref={href === '/legit' ? legitNavRef : undefined}
                 >
-                  {href === '/legit' && !isLoading && !notViewedLegitCount && (
-                    <NewLabel variant="contained" text="NEW" size="xsmall" />
-                  )}
                   <Link
                     href={{
                       pathname: getPathName(href),
@@ -416,26 +352,6 @@ function BottomNavigation({
                 </ListItem>
               );
             }
-
-            // if (accessUser && roles.includes(PRODUCT_SELLER as never)) {
-            //   return (
-            //     <ListItem
-            //       key={`bottom-navigation-${navData.title}`}
-            //       ref={navData.href === '/legit' ? legitNavRef : undefined}
-            //     >
-            //       <Link as={{ pathname: navData.href }} href={{ pathname: navData.href }} passHref>
-            //         <a
-            //           onClick={handleClickInterceptor(navData.title, navData.logName, navData.href)}
-            //           aria-hidden="true"
-            //         >
-            //           <CenterIcon alignment="center" justifyContent="center">
-            //             <Icon name={navData.defaultIcon} color={common.uiWhite} />
-            //           </CenterIcon>
-            //         </a>
-            //       </Link>
-            //     </ListItem>
-            //   );
-            // }
             return '';
           })}
         </List>
@@ -480,14 +396,5 @@ function BottomNavigation({
     </>
   );
 }
-
-// const CenterIcon = styled(Flexbox)`
-//   background: ${({ theme: { palette } }) => palette.primary.main};
-//   width: 44px;
-//   height: 44px;
-//   border-radius: 50%;
-//   margin: 8px auto;
-//   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-// `;
 
 export default BottomNavigation;

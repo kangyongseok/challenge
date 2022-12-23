@@ -123,10 +123,11 @@ function LegitPhotoGuideCard({
           />
         ) : (
           <Image
-            width={48}
-            height={48}
+            width="48px"
+            height="48px"
             src={isDark ? imageWatermarkDark : imageWatermark}
             alt="WaterMark Img"
+            isRound
             disableAspectRatio
           />
         )}

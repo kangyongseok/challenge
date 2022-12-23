@@ -1,23 +1,29 @@
-import type { MouseEvent } from 'react';
+import { useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Grid, Icon } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import type { ProductsVariant } from '@typings/products';
 import {
   selectedSearchOptionsStateFamily,
   sizeFilterOptionsSelector
 } from '@recoil/productsFilter';
 
+import MyFilterInfo from '../MyFilterInfo';
 import FilterOption from '../FilterOption';
 import FilterAccordion from '../FilterAccordion';
 
-function SizeTabPanel() {
+interface SizeTabPanelProps {
+  variant: ProductsVariant;
+}
+
+function SizeTabPanel({ variant }: SizeTabPanelProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
@@ -26,19 +32,11 @@ function SizeTabPanel() {
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
 
-  const handleClickSelectedAll = ({
-    e,
-    parentCategoryCodeId,
-    id
-  }: {
-    e: MouseEvent<HTMLButtonElement>;
-    parentCategoryCodeId: number;
-    id: number;
-  }) => {
-    e.stopPropagation();
+  const [extendsCategorySizes, setExtendsCategorySizes] = useState<string[]>([]);
 
+  const handleClickSelectedAll = (parentCategoryCodeId: number, newId: number) => () => {
     const selectedParenCategoryIndex = parentCategories.findIndex(
-      (parentCategory) => parentCategory.id === id
+      (parentCategory) => parentCategory.id === newId
     );
     const selectedParenCategory = parentCategories[selectedParenCategoryIndex];
 
@@ -52,6 +50,7 @@ function SizeTabPanel() {
           value: `${selectedParenCategory.name}, 전체`
         });
       }
+
       setSelectedSearchOptionsState(({ type }) => ({
         type,
         selectedSearchOptions: !selectedParenCategory.checkedAll
@@ -72,152 +71,198 @@ function SizeTabPanel() {
     }
   };
 
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const dataCodeId = Number(e.currentTarget.getAttribute('data-code-id'));
-    const dataParentCategoryId = Number(
-      e.currentTarget.getAttribute('data-parent-category-id') || 0
-    );
-    const dataCategorySizeId = Number(e.currentTarget.getAttribute('data-category-size-id') || 0);
-    const dataGrouping = String(e.currentTarget.getAttribute('data-grouping') || '');
-
-    const selectedSearchOption = selectedSearchOptions.find(
-      ({ codeId, parentCategoryId, categorySizeId }) =>
-        codeId === dataCodeId &&
-        parentCategoryId === dataParentCategoryId &&
-        categorySizeId === dataCategorySizeId
-    );
-
-    if (selectedSearchOption && dataGrouping) {
-      setSelectedSearchOptionsState(({ type }) => ({
-        type,
-        selectedSearchOptions: [
-          ...selectedSearchOptions.filter(({ codeId, parentCategoryId }) => {
-            if (codeId !== dataCodeId) return true;
-            return parentCategoryId !== dataParentCategoryId;
-          }),
-          selectedSearchOption
-        ]
-      }));
-      return;
-    }
-
-    if (selectedSearchOption) {
-      setSelectedSearchOptionsState(({ type }) => ({
-        type,
-        selectedSearchOptions: selectedSearchOptions.filter(
-          ({ categorySizeId, codeId, parentCategoryId }) =>
-            codeId !== selectedSearchOption.codeId ||
-            parentCategoryId !== selectedSearchOption.parentCategoryId ||
-            categorySizeId !== selectedSearchOption.categorySizeId
-        )
-      }));
-    } else {
-      const selectedParentCategory = parentCategories.find(
-        (parentCategory) => parentCategory.id === dataParentCategoryId
+  const handleClick =
+    ({
+      newCodeId,
+      newParentCategoryId,
+      newCategorySizeId,
+      newGrouping
+    }: {
+      newCodeId: number;
+      newParentCategoryId: number;
+      newCategorySizeId: number;
+      newGrouping: boolean;
+    }) =>
+    () => {
+      const selectedSearchOption = selectedSearchOptions.find(
+        ({ codeId, parentCategoryId, categorySizeId }) =>
+          codeId === newCodeId &&
+          parentCategoryId === newParentCategoryId &&
+          categorySizeId === newCategorySizeId
       );
 
-      if (selectedParentCategory) {
-        const selectedCategorySizeIndex = selectedParentCategory.categorySizes.findIndex(
-          ({ categorySizeId, parentCategoryId }) =>
-            parentCategoryId === dataParentCategoryId && categorySizeId === dataCategorySizeId
+      if (selectedSearchOption && newGrouping) {
+        setSelectedSearchOptionsState(({ type }) => ({
+          type,
+          selectedSearchOptions: [
+            ...selectedSearchOptions.filter(({ codeId, parentCategoryId }) => {
+              if (codeId !== newCodeId) return true;
+              return parentCategoryId !== newParentCategoryId;
+            }),
+            selectedSearchOption
+          ]
+        }));
+        return;
+      }
+
+      if (selectedSearchOption) {
+        setSelectedSearchOptionsState(({ type }) => ({
+          type,
+          selectedSearchOptions: selectedSearchOptions.filter(
+            ({ categorySizeId, codeId, parentCategoryId }) =>
+              codeId !== selectedSearchOption.codeId ||
+              parentCategoryId !== selectedSearchOption.parentCategoryId ||
+              categorySizeId !== selectedSearchOption.categorySizeId
+          )
+        }));
+      } else {
+        const selectedParentCategory = parentCategories.find(
+          (parentCategory) => parentCategory.id === newParentCategoryId
         );
-        const selectedCategorySize =
-          selectedParentCategory.categorySizes[selectedCategorySizeIndex];
 
-        if (selectedCategorySize) {
-          logEvent(attrKeys.products.selectFilter, {
-            name: attrProperty.name.productList,
-            title: attrProperty.title.size,
-            index: selectedCategorySizeIndex,
-            count: selectedCategorySize.count,
-            value: selectedCategorySize.name
-          });
+        if (selectedParentCategory) {
+          const selectedCategorySizeIndex = selectedParentCategory.categorySizes.findIndex(
+            ({ categorySizeId, parentCategoryId }) =>
+              parentCategoryId === newParentCategoryId && categorySizeId === newCategorySizeId
+          );
+          const selectedCategorySize =
+            selectedParentCategory.categorySizes[selectedCategorySizeIndex];
 
-          setSelectedSearchOptionsState(({ type }) => ({
-            type,
-            selectedSearchOptions: selectedSearchOptions.concat(selectedCategorySize)
-          }));
+          if (selectedCategorySize) {
+            logEvent(attrKeys.products.selectFilter, {
+              name: attrProperty.name.productList,
+              title: attrProperty.title.size,
+              index: selectedCategorySizeIndex,
+              count: selectedCategorySize.count,
+              value: selectedCategorySize.name
+            });
+
+            setSelectedSearchOptionsState(({ type }) => ({
+              type,
+              selectedSearchOptions: selectedSearchOptions.concat(selectedCategorySize)
+            }));
+          }
         }
       }
-    }
-  };
+    };
+
+  const handleClickMore = (parentCategoryName: string) => () =>
+    setExtendsCategorySizes((prevState) => [...prevState, parentCategoryName]);
 
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
       <Box customStyle={{ flex: 1, overflowY: 'auto' }}>
-        {parentCategories.map(
-          ({
-            id: parentCategoryId,
-            codeId: parentCategoryCodeId,
-            name: parentCategoryName,
-            categorySizes,
-            checkedAll
-          }) => (
-            <FilterAccordion
-              key={`pc-filter-option-${parentCategoryId}`}
-              expanded={parentCategories.length === 1}
-              summary={parentCategoryName.replace(/\(P\)/g, '')}
-              customButton={
-                checkedAll ? (
-                  <Chip
-                    variant="contained"
-                    brandColor="primary"
-                    size="xsmall"
-                    onClick={(e) =>
-                      handleClickSelectedAll({
-                        e,
-                        parentCategoryCodeId,
-                        id: parentCategoryId
-                      })
-                    }
-                    customStyle={{ marginLeft: 12 }}
-                  >
-                    전체선택
-                  </Chip>
-                ) : (
-                  <Chip
-                    variant="outlined"
-                    brandColor="gray"
-                    size="xsmall"
-                    weight="medium"
-                    onClick={(e) =>
-                      handleClickSelectedAll({
-                        e,
-                        parentCategoryCodeId,
-                        id: parentCategoryId
-                      })
-                    }
-                    customStyle={{ marginLeft: 12 }}
-                  >
-                    전체선택
-                  </Chip>
-                )
-              }
-              onClickButton={(e) =>
-                handleClickSelectedAll({
-                  e,
-                  parentCategoryCodeId,
-                  id: parentCategoryId
-                })
-              }
-            >
-              {categorySizes.map(({ codeId, checked, count, viewSize, name, categorySizeId }) => (
-                <FilterOption
-                  key={`cs-filter-option-${parentCategoryId}-${categorySizeId}`}
-                  data-code-id={codeId}
-                  data-parent-category-id={parentCategoryId}
-                  data-category-size-id={categorySizeId}
-                  data-grouping={checkedAll || ''}
-                  checked={checkedAll ? false : checked}
-                  count={count}
-                  onClick={handleClick}
+        <MyFilterInfo variant={variant} />
+        <Box
+          customStyle={{
+            padding: '0 20px 20px'
+          }}
+        >
+          {parentCategories
+            .filter(({ categorySizes = [] }) => categorySizes.length)
+            .map(
+              ({
+                id: parentCategoryId,
+                codeId: parentCategoryCodeId,
+                name: parentCategoryName,
+                categorySizes,
+                filteredCategorySizes,
+                checkedAll
+              }) => (
+                <FilterAccordion
+                  key={`pc-filter-option-${parentCategoryId}`}
+                  title={`${parentCategoryName.replace(/\(P\)/g, '')} 사이즈`}
+                  subText={categorySizes
+                    .map(({ count }) => count)
+                    .reduce((a, b) => a + b, 0)
+                    .toLocaleString()}
+                  expand={parentCategories.length === 1}
+                  expandIcon={
+                    categorySizes.filter(({ checked }) => checked).length >= 1 ? (
+                      <Icon name="CheckOutlined" color="primary" />
+                    ) : undefined
+                  }
+                  isActive={categorySizes.filter(({ checked }) => checked).length >= 1}
+                  checkedAll={checkedAll}
+                  onClick={handleClickSelectedAll(parentCategoryCodeId, parentCategoryId)}
                 >
-                  {viewSize || name}
-                </FilterOption>
-              ))}
-            </FilterAccordion>
-          )
-        )}
+                  <Grid
+                    container
+                    columnGap={8}
+                    customStyle={{
+                      padding: '0 12px'
+                    }}
+                  >
+                    {!extendsCategorySizes.includes(parentCategoryName.replace(/\(P\)/g, '')) &&
+                    filteredCategorySizes.length > 0
+                      ? filteredCategorySizes.map(
+                          ({ codeId, checked, count, viewSize, name, categorySizeId }) => (
+                            <Grid
+                              key={`cs-filter-option-${parentCategoryId}-${categorySizeId}`}
+                              item
+                              xs={2}
+                            >
+                              <FilterOption
+                                checked={checkedAll ? false : checked}
+                                count={count}
+                                onClick={handleClick({
+                                  newCodeId: codeId,
+                                  newParentCategoryId: parentCategoryId,
+                                  newCategorySizeId: categorySizeId,
+                                  newGrouping: checkedAll
+                                })}
+                              >
+                                {viewSize || name}
+                              </FilterOption>
+                            </Grid>
+                          )
+                        )
+                      : categorySizes.map(
+                          ({ codeId, checked, count, viewSize, name, categorySizeId }) => (
+                            <Grid
+                              key={`cs-filter-option-${parentCategoryId}-${categorySizeId}`}
+                              item
+                              xs={2}
+                            >
+                              <FilterOption
+                                checked={checkedAll ? false : checked}
+                                count={count}
+                                onClick={handleClick({
+                                  newCodeId: codeId,
+                                  newParentCategoryId: parentCategoryId,
+                                  newCategorySizeId: categorySizeId,
+                                  newGrouping: checkedAll
+                                })}
+                              >
+                                {viewSize || name}
+                              </FilterOption>
+                            </Grid>
+                          )
+                        )}
+                  </Grid>
+                  {['아우터', '상의', '하의', '신발'].includes(
+                    parentCategoryName.replace(/\(P\)/g, '')
+                  ) &&
+                    !extendsCategorySizes.includes(parentCategoryName.replace(/\(P\)/g, '')) && (
+                      <Box
+                        customStyle={{
+                          margin: '8px 12px 12px'
+                        }}
+                      >
+                        <Button
+                          variant="ghost"
+                          brandColor="black"
+                          fullWidth
+                          onClick={handleClickMore(parentCategoryName.replace(/\(P\)/g, ''))}
+                        >
+                          사이즈 더보기
+                        </Button>
+                      </Box>
+                    )}
+                </FilterAccordion>
+              )
+            )}
+        </Box>
       </Box>
     </Flexbox>
   );

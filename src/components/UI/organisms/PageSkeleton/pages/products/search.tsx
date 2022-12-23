@@ -19,26 +19,6 @@ function SearchProducts() {
         <div>
           <ProductsHeader variant="search" />
           <Box component="section" customStyle={{ position: 'relative' }}>
-            <Wrapper>
-              <List
-                css={{
-                  minHeight: 40,
-                  padding: '0 20px',
-                  gap: 20
-                }}
-              >
-                {Array.from({ length: 12 }).map((_, index) => (
-                  <Skeleton
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`category-tag-skeleton-${index}`}
-                    width={index === 0 ? '37px' : '33px'}
-                    height="24px"
-                    disableAspectRatio
-                    isRound
-                  />
-                ))}
-              </List>
-            </Wrapper>
             <Gap height={8} />
           </Box>
           <Box
@@ -49,21 +29,34 @@ function SearchProducts() {
             <List
               css={{
                 paddingTop: 0,
-                minHeight: 36
+                minHeight: 36,
+                gap: 12
               }}
             >
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`products-id-filter-skeleton-${index}`}
-                  width="73px"
-                  height="20px"
-                  disableAspectRatio
-                  customStyle={{
-                    backgroundColor: common.ui95
-                  }}
-                />
-              ))}
+              <Skeleton
+                width="86.2px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
+              <Skeleton
+                width="73.77px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
+              <Skeleton
+                width="89.86px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
             </List>
             <List>
               {Array.from({ length: 12 }).map((_, index) => (
@@ -110,11 +103,6 @@ function SearchProducts() {
     </GeneralTemplate>
   );
 }
-
-const Wrapper = styled.div`
-  width: 100%;
-  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
-`;
 
 const List = styled.div`
   height: 100%;

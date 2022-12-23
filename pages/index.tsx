@@ -15,6 +15,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   HomeFollowingPanel,
   HomeFooter,
+  HomeLegitContinueDialog,
   HomeRecommendPanel,
   HomeSearchHeader,
   HomeTabs
@@ -25,22 +26,16 @@ import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 
 import { postManage } from '@api/userHistory';
-// import { fetchRecommWishes, fetchSimpleUserInfo, fetchUserInfo } from '@api/user';
 import { fetchSimpleUserInfo } from '@api/user';
-// import { fetchProductDealInfos } from '@api/nextJs';
-// import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-// import queryKeys from '@constants/queryKeys';
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
-// import { locales } from '@constants/common';
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { checkAgent } from '@utils/common';
 
-// import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Home() {
@@ -121,6 +116,7 @@ function Home() {
         name={attrProperty.productName.MAIN}
       />
       <CamelSellerFloatingButton source="MAIN" />
+      <HomeLegitContinueDialog />
     </>
   );
 }

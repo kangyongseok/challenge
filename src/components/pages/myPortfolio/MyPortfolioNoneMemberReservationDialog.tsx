@@ -88,7 +88,6 @@ function MyPortfolioNoneMemberReservationDialog({
     return () => {
       successDialog(false);
       setValidatorText('');
-      // LocalStorage.remove('preReserve');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

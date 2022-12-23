@@ -440,20 +440,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     setViewDetail(true);
   };
 
-  // const handleClickLeft = () => {
-  //   const path = LocalStorage.get(CAMEL_SELLER_START_ROOT) as string;
-  //   if (isCrm) {
-  //     return () => push(`/products/search/${data?.product.quoteTitle || ''}`);
-  //   }
-  //   if (isCamelSellerProduct && path) {
-  //     return () => {
-  //       replace(path);
-  //       LocalStorage.remove(CAMEL_SELLER_START_ROOT);
-  //     };
-  //   }
-  //   return null;
-  // };
-
   const soldout = useMemo(
     () =>
       PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&

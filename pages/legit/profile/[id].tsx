@@ -10,6 +10,7 @@ import { LegitContactBanner } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  LegitProfileDivider,
   LegitProfileEditInfo,
   LegitProfileInfo,
   LegitProfileOpinionLegitList,
@@ -145,6 +146,7 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
               }}
               sellerId={roleSeller?.sellerId}
             />
+            <LegitProfileDivider isLoading={isLoading} cntOpinion={cntOpinion} />
             <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />
             {!isLegitUser && <LegitContactBanner isDark isFixed />}
           </>

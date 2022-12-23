@@ -133,7 +133,6 @@ ${addInfoText}
         <LayerStyle>
           <TextareaIsertInfo
             placeholder={placeholder}
-            // maxLength={2000}
             value={addInfoText}
             onChange={handleChangeAddInfo}
             autoFocus

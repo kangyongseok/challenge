@@ -21,8 +21,7 @@ import {
   checkAgent,
   getAppVersion,
   handleClickAppDownload,
-  isExtendedLayoutIOSVersion,
-  isProduction
+  isExtendedLayoutIOSVersion
 } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
@@ -85,7 +84,7 @@ function LegitProfileEditInfo({
         });
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction) {
+      if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -104,7 +103,7 @@ function LegitProfileEditInfo({
         return;
       }
 
-      if (checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction) {
+      if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -280,7 +279,7 @@ function LegitProfileEditInfo({
             </Title>
           </Flexbox>
         </Flexbox>
-        <Flexbox direction="vertical" gap={8} customStyle={{ zIndex: 1 }}>
+        <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 20, zIndex: 1 }}>
           <Button
             size="large"
             startIcon={<Icon name={isLoadingGetPhoto ? 'LoadingFilled' : 'CameraFilled'} />}
@@ -382,12 +381,11 @@ const Wrapper = styled.section<{ backgroundImage: string }>`
   flex-direction: column;
   padding: 20px;
   user-select: none;
-  min-height: 520px;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   background-image: url(${({ backgroundImage }) => backgroundImage});
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 20}px;
 `;
 
 const Blur = styled.div`

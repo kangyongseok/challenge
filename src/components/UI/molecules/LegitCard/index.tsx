@@ -91,7 +91,7 @@ function LegitCard({
               <Flexbox alignment="center" justifyContent="space-between" gap={10}>
                 {result === 1 && <LegitLabel text="정품의견" />}
                 {result === 2 && <LegitLabel variant="fake" text="가품의심" />}
-                {!result && status === 20 && <LegitLabel variant="impossible" text="감정진행중" />}
+                {!result && status === 20 && <LegitLabel variant="impossible" text="감정중" />}
                 {result !== 1 && result !== 2 && status === 30 && (
                   <LegitLabel variant="impossible" text="감정불가" />
                 )}
@@ -137,7 +137,7 @@ function LegitCard({
       {!result && status === 20 && (
         <LegitLabel
           variant="impossible"
-          text="감정진행중"
+          text="감정중"
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}

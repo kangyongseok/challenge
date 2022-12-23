@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -16,9 +16,6 @@ import {
 import FilterAccordion from '../FilterAccordion';
 
 function GenderTabPanel() {
-  const {
-    theme: { palette }
-  } = useTheme();
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
@@ -92,38 +89,20 @@ function GenderTabPanel() {
 
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
-      <Box customStyle={{ flex: 1, overflowY: 'auto' }}>
+      <Box customStyle={{ flex: 1, padding: '0 20px', overflowY: 'auto' }}>
         {genderFilterOptions.map(({ id, synonyms, name, checked, count }, index) => (
           <FilterAccordion
             key={`gender-filter-option-${id}`}
-            summary={name}
-            showExpandIcon={false}
-            expanded={false}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            changeInterceptor={() => {}}
-            customButton={
-              <Chip
-                variant={checked ? 'contained' : 'outlined'}
-                brandColor={checked ? 'primary' : 'gray'}
-                size="xsmall"
-                onClick={handleClickGender({
-                  selectedGender: synonyms,
-                  selectedGenderId: id,
-                  index,
-                  count,
-                  name
-                })}
-                customStyle={{ marginLeft: 12 }}
-              >
-                <Typography
-                  variant="small2"
-                  weight="medium"
-                  customStyle={{ color: checked ? palette.common.uiWhite : 'inherit' }}
-                >
-                  전체선택
-                </Typography>
-              </Chip>
-            }
+            title={name}
+            expandIcon={checked ? <Icon name="CheckOutlined" color="primary" /> : undefined}
+            isActive={checked}
+            onClick={handleClickGender({
+              selectedGender: synonyms,
+              selectedGenderId: id,
+              index,
+              count,
+              name
+            })}
           />
         ))}
       </Box>

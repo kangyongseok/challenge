@@ -16,8 +16,6 @@ import attrKeys from '@constants/attrKeys';
 
 import type { ProductsVariant } from '@typings/products';
 import { activeTabCodeIdState, selectedSearchOptionsStateFamily } from '@recoil/productsFilter';
-import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface FilterTabsProps {
   variant: ProductsVariant;
@@ -29,10 +27,6 @@ function FilterTabs({ variant }: FilterTabsProps) {
   const { selectedSearchOptions } = useRecoilValue(
     selectedSearchOptionsStateFamily(`active-${router.asPath.split('?')[0]}`)
   );
-
-  const { data: accessUser } = useQueryAccessUser();
-  const { data: { size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {} } = {} } =
-    useQueryUserInfo();
 
   const handleClick =
     (index = 0, codeId = 0) =>
@@ -51,16 +45,14 @@ function FilterTabs({ variant }: FilterTabsProps) {
     };
 
   return (
-    <StyledFilterTabs
-      disableMyFilter={!accessUser || (!tops.length && !bottoms.length && !shoes.length)}
-    >
+    <StyledFilterTabs>
       {filterCodes[variant].map(({ codeId, name }, index) => (
         <FilterTabWrapper key={`filter-tab-${codeId}`} isActive={activeTabCodeId === codeId}>
           <Badge
             open={selectedSearchOptions.some(({ codeId: selectedCodeId }) => {
               if (codeId === filterCodeIds.detailOption) {
-                const { season, color, material } = filterCodeIds;
-                return [season, color, material].includes(selectedCodeId);
+                const { season, material } = filterCodeIds;
+                return [season, material].includes(selectedCodeId);
               }
               return codeId === selectedCodeId;
             })}
@@ -84,8 +76,8 @@ function FilterTabs({ variant }: FilterTabsProps) {
   );
 }
 
-const StyledFilterTabs = styled.section<{ disableMyFilter: boolean }>`
-  margin-top: ${({ disableMyFilter }) => (disableMyFilter ? 24 : 32)}px;
+const StyledFilterTabs = styled.section`
+  margin-top: 16px;
   padding: 0 20px;
   border-bottom: 1px solid
     ${({

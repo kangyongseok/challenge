@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Label, Switch, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Switch, Toast, Typography, useTheme } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
-import styled from '@emotion/styled';
+
+import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -16,7 +17,6 @@ import { convertSearchParams } from '@utils/products';
 
 import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 import {
-  activeMyFilterReceiveState,
   activeMyFilterState,
   myFilterIntersectionCategorySizesState,
   searchOptionsStateFamily,
@@ -53,9 +53,9 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
     searchParamsStateFamily(`base-${atomParam}`)
   );
   const myFilterIntersectionCategorySizes = useRecoilValue(myFilterIntersectionCategorySizesState);
-  const setActiveMyFilterReceiveState = useSetRecoilState(activeMyFilterReceiveState);
 
   const [open, setOpen] = useState(false);
+  const [info, setInfo] = useState('');
   const [activeToastOpen, setActiveToastOpen] = useState(false);
   const [inactiveToastOpen, setInActiveToastOpen] = useState(false);
 
@@ -68,25 +68,21 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
     } = {}
   } = useQueryUserInfo();
 
-  const title = useMemo(
-    () => (variant === 'search' ? '내 성별/사이즈만 보기' : '내 사이즈만 보기'),
-    [variant]
-  );
   const needGender = useMemo(
     () => variant === 'search' && gender && gender !== 'N',
     [variant, gender]
   );
 
   const handleChange = () => {
-    if (!activeMyFilter && !myFilterIntersectionCategorySizes.length) {
-      setOpen(true);
-      return;
-    }
-
     logEvent(attrKeys.products.clickMyFilter, {
       name: attrProperty.name.filterModal,
       att: !activeMyFilter ? 'ON' : 'OFF'
     });
+
+    if (!activeMyFilter && !myFilterIntersectionCategorySizes.length) {
+      setOpen(true);
+      return;
+    }
 
     const intersectionParentCategoryIds = Array.from(
       new Set(myFilterIntersectionCategorySizes.map(({ parentCategoryId }) => parentCategoryId))
@@ -101,6 +97,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
 
     if (!activeMyFilter) {
       setActiveToastOpen(true);
+      setInActiveToastOpen(false);
       newSelectedSearchOptions = [
         ...selectedSearchOptions,
         ...myFilterIntersectionCategorySizes.filter(
@@ -171,129 +168,117 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
   };
 
   useEffect(() => {
-    const hasUnSelectedMyFilterOption = myFilterIntersectionCategorySizes.some(
-      ({ categorySizeId, parentCategoryId, viewSize }) =>
-        !selectedSearchOptions.some(
-          ({
-            categorySizeId: intersectionCategorySizeId,
-            parentCategoryId: intersectionParentCategoryId,
-            viewSize: intersectionViewSize
-          }) =>
-            categorySizeId === intersectionCategorySizeId &&
-            parentCategoryId === intersectionParentCategoryId &&
-            viewSize === intersectionViewSize
-        )
-    );
-
-    if (activeMyFilter && hasUnSelectedMyFilterOption) {
-      logEvent(attrKeys.products.clickMyFilter, {
-        name: attrProperty.name.filterModal,
-        title: attrProperty.title.auto,
-        att: 'OFF'
-      });
-      setActiveMyFilterState(false);
-      setActiveMyFilterReceiveState(true);
-      setActiveToastOpen(false);
-      setInActiveToastOpen(true);
-    }
-  }, [
-    setActiveMyFilterReceiveState,
-    setActiveMyFilterState,
-    activeMyFilter,
-    selectedSearchOptions,
-    myFilterIntersectionCategorySizes
-  ]);
-
-  useEffect(() => {
     if (accessUser && (tops.length || bottoms.length || shoes.length)) {
       logEvent(attrKeys.products.viewMyFilter);
     }
   }, [accessUser, bottoms, shoes, tops]);
 
+  useEffect(() => {
+    const newInfo = [];
+
+    if (needGender) newInfo.push(gender === 'M' ? '남성' : '여성');
+    if (tops.length > 0) {
+      const checkLimit = tops.map(({ viewSize }) => viewSize).length > 3;
+      newInfo.push(
+        `상의: ${
+          checkLimit
+            ? `${tops.map(({ viewSize }) => viewSize)[0]} 외 ${tops.length - 3}개`
+            : tops.map(({ viewSize }) => viewSize).join(', ')
+        }`
+      );
+    }
+    if (bottoms.length > 0) {
+      const checkLimit = bottoms.map(({ viewSize }) => viewSize).length > 3;
+      newInfo.push(
+        `하의: ${
+          checkLimit
+            ? `${bottoms.map(({ viewSize }) => viewSize)[0]} 외 ${bottoms.length - 3}개`
+            : bottoms.map(({ viewSize }) => viewSize).join(', ')
+        }`
+      );
+    }
+    if (shoes.length > 0) {
+      const checkLimit = shoes.map(({ viewSize }) => viewSize).length > 3;
+      newInfo.push(
+        `신발: ${
+          checkLimit
+            ? `${shoes.map(({ viewSize }) => viewSize)[0]} 외 ${shoes.length - 3}개`
+            : shoes.map(({ viewSize }) => viewSize).join(', ')
+        }`
+      );
+    }
+
+    setInfo(newInfo.join(' / '));
+  }, [needGender, tops, bottoms, shoes, gender]);
+
   if (!accessUser || (!tops.length && !bottoms.length && !shoes.length)) return null;
 
   return (
-    <Box
-      component="section"
-      customStyle={{
-        marginTop: 24
-      }}
-    >
-      <Flexbox
-        alignment="center"
-        justifyContent="space-between"
+    <>
+      <Box
+        component="section"
         customStyle={{
-          padding: '0 20px'
+          padding: '20px 0'
         }}
       >
-        <Flexbox direction="vertical" gap={4}>
-          <Typography weight="medium">{title}</Typography>
-          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-            마이페이지에서 수정할 수 있어요
-          </Typography>
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
+          gap={12}
+          customStyle={{
+            padding: '0 20px'
+          }}
+        >
+          <Flexbox
+            direction="vertical"
+            gap={4}
+            customStyle={{
+              flex: 1,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
+            }}
+          >
+            <Typography variant="h4" weight="bold">
+              내 사이즈만 보기
+            </Typography>
+            <Typography
+              variant="body2"
+              customStyle={{
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                color: common.ui60
+              }}
+            >
+              {info}
+            </Typography>
+          </Flexbox>
+          <Switch onChange={handleChange} checked={activeMyFilter} size="large" />
         </Flexbox>
-        <Switch onChange={handleChange} checked={activeMyFilter} />
-      </Flexbox>
-      <Options>
-        {needGender && (
-          <Label
-            variant="ghost"
-            text={gender === 'M' ? '남성' : '여성'}
-            size="small"
-            brandColor="primary"
-          />
-        )}
-        {tops.length > 0 && (
-          <Label
-            variant="ghost"
-            text={`상의: ${tops.map(({ viewSize }) => viewSize).join(', ')}`}
-            size="small"
-            brandColor="primary"
-          />
-        )}
-        {bottoms.length > 0 && (
-          <Label
-            variant="ghost"
-            text={`하의: ${bottoms.map(({ viewSize }) => viewSize).join(', ')}`}
-            size="small"
-            brandColor="primary"
-          />
-        )}
-        {shoes.length > 0 && (
-          <Label
-            variant="ghost"
-            text={`신발: ${shoes.map(({ viewSize }) => viewSize).join(', ')}`}
-            size="small"
-            brandColor="primary"
-          />
-        )}
-      </Options>
-      <Toast open={open} onClose={() => setOpen(false)}>
-        필터 설정에 일치하는 중고매물이 없습니다😭
-      </Toast>
-      <Toast open={activeToastOpen} onClose={() => setActiveToastOpen(false)}>
-        {`${title}를 적용했어요!`}
-      </Toast>
-      <Toast open={inactiveToastOpen} onClose={() => setInActiveToastOpen(false)}>
-        {`${title}를 해제했어요!`}
-      </Toast>
-    </Box>
+        <Button
+          variant="ghost"
+          brandColor="primary-light"
+          onClick={() => router.push('/user/sizeInput')}
+          customStyle={{
+            margin: '20px 20px 0'
+          }}
+        >
+          내 사이즈 바꾸기
+        </Button>
+        <Toast open={open} onClose={() => setOpen(false)}>
+          필터 설정에 일치하는 중고매물이 없습니다😭
+        </Toast>
+        <Toast open={activeToastOpen} onClose={() => setActiveToastOpen(false)}>
+          내 사이즈만 보기를 적용했어요!
+        </Toast>
+        <Toast open={inactiveToastOpen} onClose={() => setInActiveToastOpen(false)}>
+          내 사이즈만 보기를 해제했어요!
+        </Toast>
+      </Box>
+      <Gap height={8} />
+    </>
   );
 }
-
-const Options = styled.div`
-  margin-top: 8px;
-  padding: 0 20px;
-  white-space: nowrap;
-  font-size: 1px;
-  overflow-x: auto;
-
-  & > label {
-    margin-right: 6px;
-  }
-  & > label:last-child {
-    margin-right: 0;
-  }
-`;
 
 export default MyFilterInfo;

@@ -14,7 +14,6 @@ import {
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 
-import MyFilterInfo from './MyFilterInfo';
 import FilterTabs from './FilterTabs';
 import FilterTabPanels from './FilterTabPanels';
 import FilterBottomOperation from './FilterBottomOperation';
@@ -79,21 +78,11 @@ function ProductsFilterBottomSheet({ variant }: ProductsFilterBottomSheetProps) 
             margin: '16px 20px 0 20px'
           }}
         >
-          <Typography variant="h4" weight="bold">
+          <Typography variant="h3" weight="bold">
             필터
           </Typography>
-          <Icon
-            name="CloseOutlined"
-            size="large"
-            onClick={() =>
-              setProductsFilterState(({ type }) => ({
-                type,
-                open: false
-              }))
-            }
-          />
+          <Icon name="CloseOutlined" onClick={handleClose} />
         </Flexbox>
-        <MyFilterInfo variant={variant} />
         <FilterTabs variant={variant} />
         <Box component="section" customStyle={{ flex: 1, overflowY: 'auto' }}>
           <FilterTabPanels variant={variant} />

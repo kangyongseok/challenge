@@ -1,69 +1,102 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
 
-import styled from '@emotion/styled';
+import { Button, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
-import Accordion, { AccordionProps } from '@components/UI/molecules/Accordion';
+import { Gap } from '@components/UI/atoms';
 
-interface FilterAccordionProps
-  extends Pick<
-    AccordionProps,
-    'summary' | 'expanded' | 'expandIcon' | 'button' | 'onClickButton' | 'showExpandIcon'
-  > {
-  customButton?: ReactElement;
-  changeInterceptor?: (e: MouseEvent<HTMLDivElement>) => void;
+interface FilterAccordionProps {
+  title: string;
+  subText?: string | number;
+  startIcon?: ReactElement;
+  expandIcon?: ReactElement;
+  expand?: boolean;
+  isActive?: boolean;
+  checkedAll?: boolean;
+  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  hideLine?: boolean;
+  customStyle?: CustomStyle;
 }
 
 function FilterAccordion({
   children,
-  changeInterceptor,
-  onClickButton,
-  expanded,
-  ...props
+  title,
+  subText,
+  startIcon,
+  expandIcon,
+  expand = false,
+  isActive,
+  checkedAll,
+  onClick,
+  hideLine,
+  customStyle
 }: PropsWithChildren<FilterAccordionProps>) {
-  const [newExpanded, setNewExpanded] = useState(false);
+  const {
+    theme: {
+      palette: { primary, common }
+    }
+  } = useTheme();
+  const [newExpand, setNewExpand] = useState(false);
 
-  useEffect(() => setNewExpanded(expanded), [expanded]);
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (
+      onClick &&
+      typeof onClick === 'function' &&
+      ((!isActive && !newExpand) || !children || (checkedAll && newExpand))
+    ) {
+      onClick(e);
+    }
+    setNewExpand(!newExpand);
+  };
+
+  useEffect(() => setNewExpand(expand), [expand]);
 
   return (
-    <Accordion
-      variant="outlined"
-      summaryVariant="body1"
-      expanded={newExpanded}
-      changeExpandedStatus={changeInterceptor || (() => setNewExpanded(!newExpanded))}
-      expandIconGreyColorKey="20"
-      onClickButton={onClickButton}
-      {...props}
-      customStyle={{
-        marginBottom: 0,
-        padding: '0 20px',
-        '& > div:first-of-type': {
-          padding: '16px 0',
-          borderRadius: 0
-        },
-        '& > div:last-of-type': {
-          margin: '0 -20px',
-          padding: 0
-        },
-        '&:not(:last-child)': {
-          marginBottom: 0
-        }
-      }}
-    >
-      <Content>{children}</Content>
-    </Accordion>
+    <>
+      <Flexbox direction="vertical" justifyContent="center" customStyle={customStyle}>
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
+          onClick={handleClick}
+          customStyle={{
+            paddingTop: 8,
+            '& > svg': {
+              color: isActive ? primary.light : undefined
+            }
+          }}
+        >
+          <Button
+            variant="inline"
+            size="large"
+            brandColor={isActive ? 'primary' : 'black'}
+            startIcon={startIcon}
+            endIcon={
+              <Typography
+                variant="h4"
+                customStyle={{
+                  color: common.ui80
+                }}
+              >
+                {subText}
+              </Typography>
+            }
+            customStyle={{
+              paddingLeft: 0,
+              paddingRight: 0,
+              fontWeight: isActive ? 500 : 400
+            }}
+          >
+            {title}
+          </Button>
+          {expandIcon && expandIcon}
+        </Flexbox>
+        {newExpand && children}
+      </Flexbox>
+      {!hideLine && (
+        <Gap height={1} customStyle={{ marginTop: 9, backgroundColor: common.line01 }} />
+      )}
+    </>
   );
 }
-
-const Content = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 16px 20px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui98};
-`;
 
 export default FilterAccordion;

@@ -35,9 +35,6 @@ function NonMemberContents() {
   const router = useRouter();
 
   const handleClickLogin = () => {
-    // router.push('/camelSeller/registerConfirm?id=32945602');
-    // router.push('/camelSeller');
-    // return;
     logEvent(attrKeys.mypage.CLICK_LOGIN, { name: 'MY' });
     router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
   };

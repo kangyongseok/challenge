@@ -1,4 +1,4 @@
-import { Label, Tooltip } from 'mrcamel-ui';
+import { Tooltip } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
@@ -73,25 +73,4 @@ export const LegitResultTooltip = styled(Tooltip)`
     text-align: center;
   }
   z-index: ${({ theme: { zIndex } }) => zIndex.sheet - 1};
-`;
-
-export const NewLabel = styled(Label)`
-  position: absolute;
-  top: -9.5px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 2px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.uiWhite};
-  background-color: ${({
-    theme: {
-      palette: { secondary }
-    }
-  }) => secondary.red.main};
-  border-radius: 10px;
-  font-weight: 700;
-  z-index: ${({ theme: { zIndex } }) => zIndex.tooltip};
 `;

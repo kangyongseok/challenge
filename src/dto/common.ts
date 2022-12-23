@@ -120,6 +120,7 @@ export interface CategoryCode extends CommonCode {
   name: string;
   parentId: number;
   subParentId: number;
+  genderId: number;
 }
 export interface ImageGroups {
   groupId: number;

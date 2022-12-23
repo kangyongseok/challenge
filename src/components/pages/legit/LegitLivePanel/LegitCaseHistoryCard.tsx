@@ -47,7 +47,7 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
       case 2:
         return { text: '가품의심', variant: 'fake' };
       default:
-        return { text: '감정진행중', variant: 'impossible' };
+        return { text: '감정중', variant: 'impossible' };
     }
   }, [result]);
   const comments: { icon: IconProps['name']; count: number }[] = useMemo(
@@ -122,9 +122,7 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
               .toLowerCase()
               .replace(/\s/g, '')}.jpg`}
           />
-          <Title variant="body1" line={rank === 1 ? 1 : 2}>
-            {title}
-          </Title>
+          <Title variant="body1">{title}</Title>
         </Flexbox>
         {comments.length > 0 && (
           <Flexbox gap={8} alignment="center" customStyle={{ color: common.ui80 }}>
@@ -166,13 +164,14 @@ const RankLabel = styled(Typography)`
   border-radius: 0 0 8px 8px;
 `;
 
-const Title = styled(Typography)<{ line: number }>`
+const Title = styled(Typography)`
   color: ${({ theme }) => theme.palette.common.ui60};
   overflow-x: hidden;
   white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  pointer-events: none;
 `;
 
 export default LegitCaseHistoryCard;

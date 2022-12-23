@@ -48,8 +48,9 @@ function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitR
       </Flexbox>
       <Image
         src={brandLogo}
-        width={110}
-        height={110}
+        width="110px"
+        height="110px"
+        isRound
         disableAspectRatio
         customStyle={{ margin: '0 auto' }}
       />

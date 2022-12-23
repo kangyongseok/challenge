@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Chip } from 'mrcamel-ui';
@@ -15,28 +15,17 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  RELATED_KEYWORDS_HEIGHT
-} from '@constants/common';
+import { RELATED_KEYWORDS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { isExtendedLayoutIOSVersion } from '@utils/common';
-
 import {
   filterOperationInfoSelector,
-  isRelatedKeywordState,
   productsFilterProgressDoneState,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
-import { showAppDownloadBannerState } from '@recoil/common';
 
 function ProductsRelatedKeywords() {
-  // const {
-  //   theme: { zIndex }
-  // } = useTheme();
   const router = useRouter();
   const { keyword = '', ...query } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -46,8 +35,6 @@ function ProductsRelatedKeywords() {
   const { searchParams: searchOptionsParams } = useRecoilValue(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
-  const setIsRelatedKeyword = useSetRecoilState(isRelatedKeywordState);
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const { data: { relatedKeywords = [] } = {} } = useQuery(
     queryKeys.products.searchOptions(searchOptionsParams),
@@ -74,17 +61,6 @@ function ProductsRelatedKeywords() {
     }
   );
 
-  useEffect(() => {
-    setIsRelatedKeyword(
-      !!(!progressDone || relatedKeywords.length > 0) && selectedSearchOptionsHistory.length === 0
-    );
-  }, [
-    progressDone,
-    relatedKeywords.length,
-    selectedSearchOptionsHistory.length,
-    setIsRelatedKeyword
-  ]);
-
   const handleClick = useCallback(
     ({ keyword: relatedKeyword, ...rest }: RelatedKeyword) =>
       () => {
@@ -100,7 +76,10 @@ function ProductsRelatedKeywords() {
         });
         router.push(
           {
-            pathname: router.pathname.replace('[keyword]', `${keyword} ${relatedKeyword}`).trim(),
+            pathname: `/products/search/${String(keyword || '').replace(
+              ` ${relatedKeyword}`,
+              ''
+            )} ${relatedKeyword}`,
             query
           },
           undefined,
@@ -112,10 +91,7 @@ function ProductsRelatedKeywords() {
 
   return !progressDone || relatedKeywords.length > 0 ? (
     <Wrapper show={selectedSearchOptionsHistory.length === 0}>
-      <KeywordWrapper
-        showAppDownloadBanner={showAppDownloadBanner}
-        layoutHeight={isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}
-      >
+      <KeywordWrapper>
         <KeywordList>
           {!progressDone
             ? Array.from({ length: 10 }, (_, index) => (
@@ -128,9 +104,10 @@ function ProductsRelatedKeywords() {
                   customStyle={{ borderRadius: 18 }}
                 />
               ))
-            : relatedKeywords.map((relatedKeyword) => (
+            : relatedKeywords.map((relatedKeyword, index) => (
                 <KeywordChip
-                  key={`related-keyword-${relatedKeyword.keyword}`}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`related-keyword-${relatedKeyword.keyword}-${index}`}
                   size="large"
                   variant="contained"
                   onClick={handleClick(relatedKeyword)}
@@ -140,36 +117,22 @@ function ProductsRelatedKeywords() {
               ))}
         </KeywordList>
       </KeywordWrapper>
-      {/* <Gap
-        height={8}
-        customStyle={{
-          position: 'fixed',
-          marginTop: showAppDownloadBanner ? RELATED_KEYWORDS_HEIGHT : 4,
-          zIndex: zIndex.header
-        }}
-      /> */}
     </Wrapper>
   ) : null;
 }
 
 const Wrapper = styled.section<{ show: boolean }>`
   position: relative;
-  min-height: ${({ show }) => (show ? RELATED_KEYWORDS_HEIGHT + 8 : 0)}px;
+  height: ${({ show }) => (show ? RELATED_KEYWORDS_HEIGHT : 0)}px;
   opacity: ${({ show }) => Number(show)};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
   transition: all 0.1s ease-in-out 0s;
 `;
 
-const KeywordWrapper = styled.div<{ showAppDownloadBanner: boolean; layoutHeight: number }>`
-  position: fixed;
+const KeywordWrapper = styled.div`
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
-  min-height: ${RELATED_KEYWORDS_HEIGHT}px;
-  z-index: ${({ theme }) => theme.zIndex.header};
   width: 100%;
   overflow-x: auto;
-  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.ui90};
-  top: ${({ showAppDownloadBanner, layoutHeight }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56 + layoutHeight}px;
 `;
 
 const KeywordList = styled.div`

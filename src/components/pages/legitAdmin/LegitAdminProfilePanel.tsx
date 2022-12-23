@@ -49,13 +49,14 @@ function LegitAdminProfilePanel() {
         legitsBrands={legitsBrands}
         cntOpinion={cntOpinion}
         showEdit
+        hideBlur
         onClickEditProfile={handleClickEditProfile}
         sellerId={roleSeller?.sellerId}
+        infoCustomStyle={{
+          paddingTop: 20
+        }}
       />
-      <LegitProfileOpinionLegitList
-        userId={accessUser.userId}
-        customStyle={{ marginTop: '-44px' }}
-      />
+      <LegitProfileOpinionLegitList userId={accessUser.userId} />
     </>
   ) : null;
 }

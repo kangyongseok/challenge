@@ -33,6 +33,7 @@ interface LegitProfileInfoProps {
   legitsBrands: LegitsBrand[];
   cntOpinion: number;
   showEdit?: boolean;
+  hideBlur?: boolean;
   onClickEditProfile?: () => void;
   customStyle?: CustomStyle;
   infoCustomStyle?: CustomStyle;
@@ -46,6 +47,7 @@ function LegitProfileInfo({
   legitsBrands = [],
   cntOpinion,
   showEdit = false,
+  hideBlur,
   onClickEditProfile,
   customStyle,
   infoCustomStyle
@@ -180,7 +182,7 @@ function LegitProfileInfo({
               ))}
             </Flexbox>
           </Flexbox>
-          <Flexbox direction="vertical" gap={8} customStyle={{ padding: '20px 20px 64px' }}>
+          <Flexbox direction="vertical" gap={8} customStyle={{ padding: 20 }}>
             <Flexbox alignment="center" gap={8}>
               <Skeleton width="128px" height="44px" disableAspectRatio isRound />
               <Skeleton width="44px" height="44px" disableAspectRatio isRound />
@@ -192,9 +194,15 @@ function LegitProfileInfo({
       ) : (
         <Flexbox
           direction="vertical"
-          customStyle={{ flex: 1, padding: '32px 20px 64px', ...infoCustomStyle }}
+          gap={32}
+          customStyle={{
+            position: 'relative',
+            flex: 1,
+            padding: '0 20px',
+            ...infoCustomStyle
+          }}
         >
-          <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1 }}>
+          <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, zIndex: 3 }}>
             <Flexbox gap={8}>
               <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
                 <Typography variant="h2" weight="bold" customStyle={{ color: common.cmnW }}>
@@ -290,7 +298,7 @@ function LegitProfileInfo({
               ))}
             </Flexbox>
           </Flexbox>
-          <Flexbox direction="vertical" gap={8}>
+          <Flexbox direction="vertical" gap={8} customStyle={{ paddingBottom: 20, zIndex: 3 }}>
             <Flexbox alignment="center" gap={8}>
               {userId && ![56881, 70679].includes(userId) && (
                 <Button
@@ -325,6 +333,7 @@ function LegitProfileInfo({
               </Button>
             )}
           </Flexbox>
+          {!hideBlur && <BackgroundBlur />}
         </Flexbox>
       )}
     </Wrapper>
@@ -336,7 +345,6 @@ const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
   user-select: none;
-  min-height: 520px;
   padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
 
   & > div {
@@ -363,6 +371,15 @@ const Blur = styled.div`
   position: absolute;
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(6px);
+`;
+
+const BackgroundBlur = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 96px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 100%);
 `;
 
 export default LegitProfileInfo;

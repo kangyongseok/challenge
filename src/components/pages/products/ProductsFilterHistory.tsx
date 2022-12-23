@@ -1,26 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Flexbox, Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Chip, Icon, Toast, useTheme } from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
-import type { ProductKeywordSourceType } from '@dto/user';
-import type { ProductKeyword } from '@dto/product';
-
 import { logEvent } from '@library/amplitude';
 
-import { deleteProductKeyword, postProductKeyword, putProductKeyword } from '@api/user';
-import { fetchSearchOptions } from '@api/product';
-
-import queryKeys from '@constants/queryKeys';
 import {
   filterCodeIds,
+  filterColors,
   filterGenders,
-  orderFilterOptions,
+  filterImageColorNames,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
 import attrProperty from '@constants/attrProperty';
@@ -28,128 +21,41 @@ import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
 
-import type {
-  ProductsVariant,
-  SelectedSearchOption,
-  SelectedSearchOptionHistory
-} from '@typings/products';
-import { productsKeywordInduceTriggerState } from '@recoil/productsKeyword';
+import type { SelectedSearchOption, SelectedSearchOptionHistory } from '@typings/products';
 import {
+  activeMyFilterState,
   filterOperationInfoSelector,
+  myFilterIntersectionCategorySizesState,
   productsFilterProgressDoneState,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import { homeSelectedTabStateFamily } from '@recoil/home';
-import { toastState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-interface ProductsFilterHistoryProps {
-  variant: ProductsVariant;
-  showProductKeywordSaveChip: boolean;
-}
-
-function ProductsFilterHistory({
-  variant,
-  showProductKeywordSaveChip
-}: ProductsFilterHistoryProps) {
+function ProductsFilterHistory() {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
+  const [activeMyFilter, setActiveMyFilterState] = useRecoilState(activeMyFilterState);
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
   );
-  const [{ searchParams }, setSearchParamsState] = useRecoilState(
-    searchParamsStateFamily(`search-${atomParam}`)
-  );
-  const [{ searchParams: searchOptionsParams }, setSearchOptionsParamsState] = useRecoilState(
+  const setSearchOptionsParamsState = useSetRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
-  const setToastState = useSetRecoilState(toastState);
-  const [{ tooltip }, setProductsKeywordInduceTriggerState] = useRecoilState(
-    productsKeywordInduceTriggerState
-  );
-  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
+  const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
+  const myFilterIntersectionCategorySizes = useRecoilValue(myFilterIntersectionCategorySizesState);
 
-  const { data: accessUser } = useQueryAccessUser();
-  const {
-    data: { userProductKeyword } = {},
-    isLoading,
-    isFetched
-  } = useQuery(
-    queryKeys.products.searchOptions(searchOptionsParams),
-    () => fetchSearchOptions(searchOptionsParams),
-    {
-      keepPreviousData: true,
-      enabled: Object.keys(searchOptionsParams).length > 0,
-      staleTime: 5 * 60 * 1000
-    }
-  );
-
-  const { mutate: mutateProductKeyword, isLoading: isLoadingProductKeyword } = useMutation(
-    postProductKeyword,
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
-        setToastState({ type: 'productsKeyword', status: 'saved' });
-        resetProductKeyword();
-        queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
-        setProductsKeywordInduceTriggerState((prevState) => ({
-          ...prevState,
-          alert: false
-        }));
-        window.scrollTo(0, 0);
-      },
-      onError: () => {
-        setToastState({ type: 'productsKeyword', status: 'limited' });
-      }
-    }
-  );
-  const { mutate: mutateDeleteProductKeyword, isLoading: isLoadingDeleteProductKeyword } =
-    useMutation(deleteProductKeyword, {
-      onMutate: (data: number) => {
-        prevProductKeywordIdRef.current = data;
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
-        setToastState({
-          type: 'productsKeyword',
-          status: 'deleted',
-          hideDuration: 4000,
-          action: () => {
-            if (prevProductKeywordIdRef.current) {
-              logEvent(attrKeys.products.clickUndo, {
-                name: attrProperty.name.productList,
-                title: attrProperty.title.myListDelete
-              });
-              mutateProductKeywordRestore(prevProductKeywordIdRef.current);
-            }
-          }
-        });
-        resetProductKeyword();
-        queryClient.invalidateQueries(queryKeys.users.userProductKeywords());
-      }
-    });
-  const { mutate: mutateProductKeywordRestore } = useMutation(putProductKeyword, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
-      setToastState({ type: 'productsKeyword', status: 'restored' });
-    }
-  });
-
-  const prevProductKeywordIdRef = useRef(0);
-  const productKeywordButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXFilterHistory, {
@@ -178,7 +84,7 @@ function ProductsFilterHistory({
         att: 'DYNAMIC_FILTER',
         index: selectedIndex,
         count: selectedCount,
-        value: selectedDisplayName
+        value: selectedDisplayName.replace(/~/g, '-')
       });
       let newSelectedSearchOptions: SelectedSearchOption[];
 
@@ -252,52 +158,7 @@ function ProductsFilterHistory({
       }
     };
 
-  const handleClickDeleteProductsKeyword =
-    ({ id }: ProductKeyword) =>
-    () => {
-      if (isLoadingDeleteProductKeyword) return;
-
-      if (userProductKeyword) {
-        const { keyword, keywordFilterJson } = userProductKeyword;
-        logEvent(attrKeys.products.clickMyList, {
-          name: attrProperty.name.productList,
-          att: 'DELETE',
-          keyword,
-          filters: keywordFilterJson
-        });
-      }
-
-      mutateDeleteProductKeyword(id);
-    };
-
-  const handleClickSaveProductsKeyword = () => {
-    logEvent(attrKeys.products.clickMyList, {
-      name: attrProperty.name.productList,
-      att: 'SAVE'
-    });
-
-    if (!accessUser) {
-      router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
-      return;
-    }
-
-    if (isLoadingProductKeyword) return;
-
-    let sourceType: ProductKeywordSourceType = 0;
-
-    if (variant === 'brands') sourceType = 1;
-
-    if (variant === 'categories') sourceType = 3;
-
-    mutateProductKeyword({
-      productSearch: { ...searchParams, order: orderFilterOptions[1].order },
-      sourceType
-    });
-  };
-
   const handleClickReset = () => {
-    if (isLoading || !isFetched) return;
-
     logEvent(attrKeys.products.clickResetAll, {
       name: attrProperty.name.productList
     });
@@ -322,160 +183,123 @@ function ProductsFilterHistory({
   };
 
   useEffect(() => {
-    if (showProductKeywordSaveChip) {
-      logEvent(attrKeys.products.viewMyList, {
-        name: attrProperty.name.productList,
-        att: 'SAVE'
+    const hasUnSelectedMyFilterOption = myFilterIntersectionCategorySizes.some(
+      ({ categorySizeId, parentCategoryId, viewSize }) =>
+        !selectedSearchOptions.some(
+          ({
+            categorySizeId: intersectionCategorySizeId,
+            parentCategoryId: intersectionParentCategoryId,
+            viewSize: intersectionViewSize
+          }) =>
+            categorySizeId === intersectionCategorySizeId &&
+            parentCategoryId === intersectionParentCategoryId &&
+            viewSize === intersectionViewSize
+        )
+    );
+
+    if (activeMyFilter && hasUnSelectedMyFilterOption && progressDone) {
+      logEvent(attrKeys.products.clickMyFilter, {
+        name: attrProperty.name.filterModal,
+        title: attrProperty.title.auto,
+        att: 'OFF'
       });
+      setActiveMyFilterState(false);
+      setOpen(true);
     }
-  }, [showProductKeywordSaveChip]);
-
-  // TODO 추후 로직 개선
-  useEffect(() => {
-    const handleClickProductKeywordTooltip = () =>
-      setProductsKeywordInduceTriggerState((prevState) => ({ ...prevState, tooltip: false }));
-
-    if (tooltip && showProductKeywordSaveChip) {
-      window.addEventListener('click', handleClickProductKeywordTooltip);
-    } else {
-      window.removeEventListener('click', handleClickProductKeywordTooltip);
-    }
-
-    return () => {
-      window.removeEventListener('click', handleClickProductKeywordTooltip);
-    };
-  }, [tooltip, showProductKeywordSaveChip, setProductsKeywordInduceTriggerState]);
+  }, [
+    setActiveMyFilterState,
+    activeMyFilter,
+    selectedSearchOptions,
+    myFilterIntersectionCategorySizes,
+    progressDone
+  ]);
 
   return progressDone ? (
     <>
       <Wrapper show={selectedSearchOptionsHistory.length > 0}>
-        <Box customStyle={{ overflowX: 'auto', width: '100%' }}>
-          <Flexbox
-            gap={6}
-            alignment="center"
-            customStyle={{ padding: '0 16px', width: 'fit-content' }}
-            onScroll={handleScroll}
-          >
-            {selectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
-              <FilterChip
-                key={`selected-filter-options-history-${selectedSearchOptionHistory.index || 0}-${
-                  selectedSearchOptionHistory.displayName
-                }`}
-                isRound={false}
-                endIcon={<Icon name="CloseOutlined" />}
-                onClick={handleClickRemove(selectedSearchOptionHistory)}
-              >
-                {selectedSearchOptionHistory.displayName}
-              </FilterChip>
-            ))}
-          </Flexbox>
-        </Box>
-        <Flexbox
-          alignment="center"
-          justifyContent="space-between"
-          customStyle={{ padding: '0 16px' }}
-        >
-          <Button
-            ref={productKeywordButtonRef}
-            brandColor={userProductKeyword ? 'black' : 'primary'}
-            variant={userProductKeyword ? 'ghost' : 'outlined'}
-            size="medium"
-            startIcon={
-              (!isLoadingProductKeyword &&
-                !isLoadingDeleteProductKeyword &&
-                (userProductKeyword ? (
-                  <Icon name="CloseOutlined" customStyle={{ color: `${common.ui60} !important` }} />
-                ) : (
-                  <Icon
-                    name="BookmarkFilled"
-                    customStyle={{ color: `${primary.light} !important` }}
-                  />
-                ))) ||
-              undefined
-            }
-            onClick={
-              userProductKeyword
-                ? handleClickDeleteProductsKeyword(userProductKeyword)
-                : handleClickSaveProductsKeyword
-            }
-            disabled={isLoadingProductKeyword || isLoadingDeleteProductKeyword}
-            customStyle={{ gap: 2, minWidth: 120 }}
-          >
-            <Typography
-              weight="medium"
-              customStyle={{
-                padding: '0 2px',
-                color: userProductKeyword ? common.ui60 : primary.light,
-                borderColor: userProductKeyword ? 'inherit' : primary.light
-              }}
+        <List show={selectedSearchOptionsHistory.length > 0} onScroll={handleScroll}>
+          {selectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
+            <FilterChip
+              key={`selected-filter-options-history-${selectedSearchOptionHistory.index || 0}-${
+                selectedSearchOptionHistory.displayName
+              }`}
+              weight="regular"
+              endIcon={<Icon name="CloseOutlined" />}
+              isRound={false}
+              onClick={handleClickRemove(selectedSearchOptionHistory)}
             >
-              {!isLoadingProductKeyword &&
-                !isLoadingDeleteProductKeyword &&
-                (userProductKeyword ? '저장된 필터 삭제' : '필터 저장하기')}
-              {(isLoadingProductKeyword || isLoadingDeleteProductKeyword) && (
-                <Icon name="LoadingFilled" />
+              {selectedSearchOptionHistory.codeId === filterCodeIds.color ? (
+                <>
+                  {filterColors[
+                    selectedSearchOptionHistory.description as keyof typeof filterColors
+                  ] && (
+                    <ColorSample
+                      colorCode={
+                        filterColors[
+                          selectedSearchOptionHistory.description as keyof typeof filterColors
+                        ]
+                      }
+                    />
+                  )}
+                  {filterImageColorNames.includes(
+                    selectedSearchOptionHistory.description || ''
+                  ) && (
+                    <Avatar
+                      width="20px"
+                      height="20px"
+                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${selectedSearchOptionHistory.description}.png`}
+                      alt="Color Img"
+                      customStyle={{
+                        borderRadius: '50%'
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                selectedSearchOptionHistory.displayName
               )}
-            </Typography>
-          </Button>
-          <Flexbox
-            alignment="center"
-            gap={4}
-            customStyle={{ padding: '8px 0', marginLeft: 'auto' }}
-            onClick={handleClickReset}
-          >
-            <Icon
-              name="RotateOutlined"
-              customStyle={{ color: !isLoading || isFetched ? common.ui60 : common.ui80 }}
-              size="medium"
-            />
-            <Typography
-              customStyle={{ color: !isLoading || isFetched ? common.ui60 : common.ui80 }}
-            >
-              초기화
-            </Typography>
-          </Flexbox>
-        </Flexbox>
+            </FilterChip>
+          ))}
+        </List>
+        <ResetButton>
+          <Icon name="RotateOutlined" color={common.ui60} onClick={handleClickReset} />
+        </ResetButton>
       </Wrapper>
-      {showProductKeywordSaveChip && (
-        <Tooltip
-          open={tooltip}
-          message={
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
-              나중에 같은 필터로 또 볼거죠? 그럼 저장하세요!
-            </Typography>
-          }
-          placement="bottom"
-          triangleLeft={16}
-          customStyle={{
-            top: 4,
-            left: 16,
-            transform: 'none',
-            height: 'fit-content',
-            zIndex: 1
-          }}
-        />
-      )}
+      <Toast open={open} onClose={() => setOpen(false)}>
+        내 사이즈만 보기를 해제했어요!
+      </Toast>
     </>
   ) : null;
 }
 
 const Wrapper = styled.section<{ show: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 12px 6px;
-  border-top: ${({ theme: { palette }, show }) => show && `2px solid ${palette.common.ui95}`};
+  position: relative;
+  border-top: ${({
+    theme: {
+      palette: { common }
+    },
+    show
+  }) => show && `2px solid ${common.ui95}`};
   background-color: #f5f6f7;
   opacity: ${({ show }) => Number(show)};
-  padding: ${({ show }) => (show ? '12px 0' : 0)};
   max-height: ${({ show }) => !show && 0};
-  transition-property: max-height, padding;
+  padding: ${({ show }) => (show ? '8px 0' : 0)};
+  transition-property: max-height, padding-top, padding-bottom;
   transition-duration: 0.2s;
+`;
+
+const List = styled.div<{ show: boolean }>`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  padding: 0 62px 0 16px;
+  column-gap: 6px;
+  overflow-x: auto;
 `;
 
 const FilterChip = styled(Chip)`
   border-color: ${({ theme }) => theme.palette.common.ui90};
   gap: 2px;
-  font-weight: ${({ theme }) => theme.typography.body1.weight.regular};
   white-space: nowrap;
 
   & > svg {
@@ -483,6 +307,52 @@ const FilterChip = styled(Chip)`
     height: 14px;
     color: ${({ theme: { palette } }) => palette.common.ui80};
   }
+`;
+
+const ResetButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 56px;
+  height: 32px;
+  transform: translateY(-50%);
+  background-color: #f5f6f7;
+
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 56px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(270deg, #f5f6f7 0%, rgba(245, 246, 247, 0) 100%);
+    pointer-events: none;
+  }
+`;
+
+export const ColorSample = styled.div<{
+  colorCode: string;
+}>`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+
+  ${({
+    theme: {
+      palette: { common }
+    },
+    colorCode
+  }) =>
+    colorCode === '#FFFFFF'
+      ? {
+          border: `1px solid ${common.line01}`
+        }
+      : {}};
+
+  border-radius: 50%;
+  background-color: ${({ colorCode }) => colorCode};
 `;
 
 export default ProductsFilterHistory;

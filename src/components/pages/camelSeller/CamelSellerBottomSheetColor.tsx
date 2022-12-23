@@ -1,8 +1,8 @@
-/* eslint-disable prettier/prettier */
-import { MouseEvent, useEffect } from 'react';
+import { useEffect } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useQuery } from 'react-query';
-import { Box, Typography } from 'mrcamel-ui';
+import { Avatar, Box, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -10,11 +10,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchCommonCodeDetails } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import {
-  camelSellerfilterColorImagePositions,
-  camelSellerfilterColorImagesInfo,
-  filterColors
-} from '@constants/productsFilter';
+import { filterColors, filterImageColorNames } from '@constants/productsFilter';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -58,10 +54,7 @@ function CamelSellerBottomSheetColor({ onClick }: BottomSheetColorProps) {
       <Typography customStyle={{ marginTop: 4 }}>최대한 비슷한 색상을 선택해주세요.</Typography>
       <ColorViewWrap>
         {codeDetails?.map(({ codeId, id, name, description }) => {
-          const colorImageInfo =
-            camelSellerfilterColorImagesInfo[
-              description as keyof typeof camelSellerfilterColorImagePositions
-            ];
+          const needImage = filterImageColorNames.includes(description);
           return (
             codeId === 3 && (
               <Box
@@ -70,8 +63,16 @@ function CamelSellerBottomSheetColor({ onClick }: BottomSheetColorProps) {
                 data-color-name={name}
                 data-color-id={id}
               >
-                {colorImageInfo ? (
-                  <ColorImageSample colorImageInfo={colorImageInfo} />
+                {needImage ? (
+                  <Avatar
+                    width="40px"
+                    height="40px"
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                    alt="Color Img"
+                    customStyle={{
+                      borderRadius: '50%'
+                    }}
+                  />
                 ) : (
                   <ColorSample colorCode={filterColors[description as keyof typeof filterColors]} />
                 )}
@@ -99,25 +100,14 @@ const ColorSample = styled.div<{ colorCode: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  border: 1px solid transparent;
   background: ${({ colorCode }) => colorCode};
-`;
-
-const ColorImageSample = styled.div<{
-  colorImageInfo: { size: number; position: number[] };
-}>`
-  width: 40px;
-  height: 40px;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-  border-radius: 50%;
-  background-size: ${({ colorImageInfo: { size } }) => size + 90}px;
-  background-image: url('https://${process.env
-    .IMAGE_DOMAIN}/assets/images/ico/filter_color_ico.png');
-  background-position: ${({ colorImageInfo: { position } }) => `${position[0]}px ${position[1]}px`};
+  border-color: ${({
+    theme: {
+      palette: { common }
+    },
+    colorCode
+  }) => (colorCode === '#FFFFFF' ? common.line01 : 'transparent')};
 `;
 
 export default CamelSellerBottomSheetColor;

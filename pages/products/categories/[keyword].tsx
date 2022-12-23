@@ -1,7 +1,6 @@
 import { QueryClient, dehydrate } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Box } from 'mrcamel-ui';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
@@ -12,9 +11,6 @@ import {
   ProductsFilterBottomSheet,
   ProductsHeader,
   ProductsInfiniteGrid,
-  ProductsKeywordBottomSheet,
-  ProductsKeywordDialog,
-  ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
@@ -25,33 +21,26 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
 function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useProductKeywordAutoSave('categories');
+
   return (
     <>
       <ProductsPageHead variant="categories" params={params} />
       <GeneralTemplate
         header={<ProductsHeader variant="categories" />}
-        footer={
-          <BottomNavigation
-            disableHideOnScroll={false}
-            disableProductsKeywordClickInterceptor={false}
-          />
-        }
+        footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
-          <ProductsCategoryTags variant="categories" />
-          <ProductsFilter variant="categories" showDynamicFilter />
-        </Box>
+        <ProductsCategoryTags variant="categories" />
+        <ProductsFilter variant="categories" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="categories" name={attrProperty.productName.CATEGORY} />
@@ -61,9 +50,6 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="categories" />
       <ProductsOrderFilterBottomSheet />
-      <ProductsKeywordBottomSheet variant="categories" />
-      <ProductsKeywordDialog />
-      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

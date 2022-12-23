@@ -1,23 +1,26 @@
 import type { ChangeEvent } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Button, Flexbox, Input, Label, Switch, Typography, useTheme } from 'mrcamel-ui';
+
+import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import { filterCodeIds } from '@constants/productsFilter';
+import { filterCodeIds, idFilterIds } from '@constants/productsFilter';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { convertSearchParams } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
 import {
   activeTabCodeIdState,
   priceFilterOptionsSelector,
+  searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 
@@ -25,23 +28,33 @@ function PriceTabPanel() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
-  const activeTabCodeId = useRecoilValue(activeTabCodeIdState);
-  const { codeId, minPrice, minGoodPrice, maxPrice, maxGoodPrice } = useRecoilValue(
-    priceFilterOptionsSelector
+  const { searchParams: baseSearchParams } = useRecoilValue(
+    searchParamsStateFamily(`base-${atomParam}`)
   );
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
+  const activeTabCodeId = useRecoilValue(activeTabCodeIdState);
+  const { codeId, minPrice, minGoodPrice, maxPrice, maxGoodPrice } = useRecoilValue(
+    priceFilterOptionsSelector
+  );
+  const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
+  const setSearchOptionsParamsState = useSetRecoilState(
+    searchParamsStateFamily(`searchOptions-${atomParam}`)
+  );
 
   const {
     theme: {
-      palette: { primary }
+      palette: { primary, common }
     }
   } = useTheme();
 
-  const [openTooltip, setOpenTooltip] = useState(false);
+  const [open, setOpen] = useState(false);
   const [minPriceValue, setMinPriceValue] = useState<number | string>(0);
   const [maxPriceValue, setMaxPriceValue] = useState<number | string>(0);
+  const [checked, setChecked] = useState(false);
+
+  const checkApplyRecommendPriceRef = useRef(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const dataType = e.currentTarget.getAttribute('data-type');
@@ -56,7 +69,80 @@ function PriceTabPanel() {
     }
   };
 
-  const handleBlur = useCallback(() => {
+  const handleChangeSwitch = () => {
+    logEvent(attrKeys.products.selectIdFilter, {
+      name: attrProperty.name.filterModal,
+      att: '시세이하'
+    });
+
+    const findIndex = selectedSearchOptions.findIndex(
+      ({ id, codeId: currCodeId }) => id === idFilterIds.lowPrice && currCodeId === filterCodeIds.id
+    );
+
+    const newSelectedSearchOptions = (
+      checked
+        ? selectedSearchOptions.filter((_, index) => index !== findIndex)
+        : selectedSearchOptions.concat({
+            id: idFilterIds.lowPrice,
+            codeId: filterCodeIds.id
+          })
+    ).filter(({ codeId: selectedCodeId }) => {
+      return !(findIndex === -1 && selectedCodeId === filterCodeIds.price);
+    });
+
+    setSelectedSearchOptionsState(({ type }) => ({
+      type,
+      selectedSearchOptions: newSelectedSearchOptions
+    }));
+    setSearchParamsState(({ type, searchParams }) => {
+      const newSearchParams = {
+        type,
+        searchParams: !checked
+          ? {
+              ...searchParams,
+              idFilterIds: (searchParams.idFilterIds || []).concat(idFilterIds.lowPrice)
+            }
+          : {
+              ...searchParams,
+              idFilterIds: (searchParams.idFilterIds || []).filter(
+                (idFilterId) => idFilterId !== idFilterIds.lowPrice
+              )
+            }
+      };
+
+      if (!checked) {
+        delete newSearchParams.searchParams.minPrice;
+        delete newSearchParams.searchParams.maxPrice;
+      }
+
+      return newSearchParams;
+    });
+    setSearchOptionsParamsState(({ type, searchParams }) => {
+      const newSearchParams = {
+        type,
+        searchParams: !checked
+          ? {
+              ...searchParams,
+              idFilterIds: (searchParams.idFilterIds || []).concat(idFilterIds.lowPrice)
+            }
+          : {
+              ...searchParams,
+              idFilterIds: (searchParams.idFilterIds || []).filter(
+                (idFilterId) => idFilterId !== idFilterIds.lowPrice
+              )
+            }
+      };
+
+      if (!checked) {
+        delete newSearchParams.searchParams.minPrice;
+        delete newSearchParams.searchParams.maxPrice;
+      }
+
+      return newSearchParams;
+    });
+  };
+
+  const handleClickApply = useCallback(() => {
     let applyMinPrice = 0;
     let applyMaxPrice = 0;
     const tenThousandUnitMinPrice = getTenThousandUnitPrice(minPrice);
@@ -83,6 +169,12 @@ function PriceTabPanel() {
       applyMaxPrice = Number(minPriceValue) * 10000;
     }
 
+    logEvent(attrKeys.products.selectFilter, {
+      name: attrProperty.name.productList,
+      title: attrProperty.title.price,
+      value: `${getTenThousandUnitPrice(applyMinPrice)}-${getTenThousandUnitPrice(applyMaxPrice)}`
+    });
+
     if (applyMinPrice && applyMaxPrice) {
       setSelectedSearchOptionsState(
         ({ type, selectedSearchOptions: prevSelectedSearchOptions }) => ({
@@ -102,11 +194,12 @@ function PriceTabPanel() {
     }
   }, [setSelectedSearchOptionsState, codeId, minPrice, maxPrice, minPriceValue, maxPriceValue]);
 
-  const handleClickApply = () => {
+  const handleClickRecommendApply = () => {
+    checkApplyRecommendPriceRef.current = true;
     logEvent(attrKeys.products.clickRecommPrice, {
       name: attrProperty.name.filter
     });
-    setOpenTooltip(false);
+    setOpen(false);
     setSelectedSearchOptionsState(({ type }) => ({
       type,
       selectedSearchOptions: [
@@ -128,27 +221,29 @@ function PriceTabPanel() {
   }, [minPrice, maxPrice]);
 
   useEffect(() => {
+    if (checkApplyRecommendPriceRef.current) return;
+
     const selectedPriceFilterOption = selectedSearchOptions.find(
       (selectedSearchOption) => selectedSearchOption.codeId === codeId
     );
 
-    if (minGoodPrice && maxGoodPrice && selectedPriceFilterOption && !openTooltip) {
-      setOpenTooltip(
+    if (minGoodPrice && maxGoodPrice && selectedPriceFilterOption && !open) {
+      setOpen(
         minGoodPrice !== selectedPriceFilterOption.minPrice ||
           maxGoodPrice !== selectedPriceFilterOption.maxPrice
       );
-    } else if (minGoodPrice && maxGoodPrice && !openTooltip) {
-      setOpenTooltip(true);
+    } else if (minGoodPrice && maxGoodPrice && !open) {
+      setOpen(true);
     }
-  }, [minGoodPrice, maxGoodPrice, selectedSearchOptions, codeId, openTooltip]);
+  }, [minGoodPrice, maxGoodPrice, selectedSearchOptions, codeId, open]);
 
   useEffect(() => {
-    if (openTooltip && activeTabCodeId === filterCodeIds.price) {
+    if (open && activeTabCodeId === filterCodeIds.price) {
       logEvent(attrKeys.products.viewRecommPrice, {
         name: 'FILTER'
       });
     }
-  }, [openTooltip, activeTabCodeId]);
+  }, [open, activeTabCodeId]);
 
   useEffect(() => {
     const selectedPriceFilterOption = selectedSearchOptions.find(
@@ -164,123 +259,168 @@ function PriceTabPanel() {
     }
   }, [selectedSearchOptions, codeId, minPrice, maxPrice]);
 
+  useEffect(() => {
+    setChecked(
+      selectedSearchOptions.some(
+        ({ id, codeId: newCodeId }) => id === idFilterIds.lowPrice && newCodeId === filterCodeIds.id
+      )
+    );
+  }, [selectedSearchOptions]);
+
+  useEffect(() => {
+    if (activeTabCodeId === filterCodeIds.price) {
+      setSearchOptionsParamsState(({ type }) => ({
+        type,
+        searchParams: convertSearchParams(selectedSearchOptions, {
+          baseSearchParams
+        })
+      }));
+    }
+  }, [setSearchOptionsParamsState, activeTabCodeId, baseSearchParams, selectedSearchOptions]);
+
   return (
-    <Flexbox direction="vertical" gap={16} customStyle={{ padding: '24px 20px 0' }}>
-      <Typography weight="bold">가격 범위</Typography>
-      <Tooltip
-        open={openTooltip}
-        message={
-          <Flexbox gap={8} justifyContent="space-between">
+    <>
+      <Flexbox
+        justifyContent="space-between"
+        customStyle={{
+          padding: 20
+        }}
+      >
+        <div>
+          <Typography variant="h4" weight="bold">
+            시세이하만 보기
+          </Typography>
+          <Typography
+            customStyle={{
+              marginTop: 4
+            }}
+          >
+            평균 보다 저렴한 매물을 만나보세요.
+          </Typography>
+        </div>
+        <Switch size="large" onChange={handleChangeSwitch} checked={checked} />
+      </Flexbox>
+      <Gap height={8} />
+      <Flexbox direction="vertical" customStyle={{ padding: 20 }}>
+        <Typography
+          weight="medium"
+          customStyle={{
+            color: checked ? common.ui80 : common.ui60
+          }}
+        >
+          가격 범위
+        </Typography>
+        <Flexbox
+          gap={8}
+          alignment="center"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          <Input
+            size="xlarge"
+            unit="만원"
+            type="number"
+            data-type="minPrice"
+            onChange={handleChange}
+            value={minPriceValue}
+            pattern="[0-9]*"
+            inputMode="numeric"
+            fullWidth
+            disabled={checked}
+            customStyle={{
+              whiteSpace: 'nowrap'
+            }}
+            inputCustomStyle={{
+              width: '100%'
+            }}
+          />
+          <Typography
+            variant="h3"
+            customStyle={{
+              color: common.ui60
+            }}
+          >
+            ~
+          </Typography>
+          <Input
+            size="xlarge"
+            unit="만원"
+            type="number"
+            data-type="maxPrice"
+            onChange={handleChange}
+            value={maxPriceValue}
+            pattern="[0-9]*"
+            inputMode="numeric"
+            fullWidth
+            disabled={checked}
+            customStyle={{
+              whiteSpace: 'nowrap'
+            }}
+            inputCustomStyle={{
+              width: '100%'
+            }}
+          />
+          <Button
+            variant="ghost"
+            brandColor="black"
+            size="xlarge"
+            disabled={checked}
+            onClick={handleClickApply}
+            customStyle={{
+              minWidth: 63
+            }}
+          >
+            적용
+          </Button>
+        </Flexbox>
+        {!checked && open && (
+          <Flexbox
+            gap={8}
+            alignment="center"
+            justifyContent="space-between"
+            customStyle={{
+              marginTop: 20
+            }}
+          >
+            <Flexbox gap={8} alignment="center">
+              <Label variant="contained" brandColor="primary-light" size="small" text="추천가격" />
+              <Typography
+                weight="medium"
+                customStyle={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  color: common.ui60,
+                  '& > span': {
+                    color: primary.light
+                  }
+                }}
+              >
+                <span>
+                  {commaNumber(getTenThousandUnitPrice(minGoodPrice))}~
+                  {commaNumber(getTenThousandUnitPrice(maxGoodPrice))}
+                  만원
+                </span>
+                으로 검색해 보세요.
+              </Typography>
+            </Flexbox>
             <Typography
-              variant="body2"
-              weight="bold"
+              weight="medium"
+              onClick={handleClickRecommendApply}
               customStyle={{
-                '& > span': {
-                  color: primary.main
-                }
+                whiteSpace: 'nowrap',
+                textDecoration: 'underline',
+                color: primary.light
               }}
-            >
-              추천가격
-              <span>
-                ({commaNumber(getTenThousandUnitPrice(minGoodPrice))}~
-                {commaNumber(getTenThousandUnitPrice(maxGoodPrice))}
-                만원)
-              </span>
-              으로 검색해 보세요
-            </Typography>
-            <Typography
-              variant="body2"
-              customStyle={{ textDecoration: 'underline', cursor: 'pointer' }}
-              onClick={handleClickApply}
             >
               적용하기
             </Typography>
           </Flexbox>
-        }
-        variant="ghost"
-        brandColor="primary"
-        placement="bottom"
-        triangleLeft={16}
-        disablePadding
-        disableShadow
-        customStyle={{
-          // TODO UI 라이브러리 Tooltip 컴포넌트 렌더링 로직 수정
-          width: '100%',
-          padding: '8px 16px',
-          left: 155
-        }}
-      >
-        <Flexbox gap={22} customStyle={{ width: '100%' }}>
-          <Flexbox alignment="center" gap={8}>
-            <PriceInput
-              type="number"
-              data-type="minPrice"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={minPriceValue}
-              pattern="[0-9]*"
-              inputMode="numeric"
-            />
-            <Typography weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              만원에서
-            </Typography>
-          </Flexbox>
-          <Flexbox alignment="center" gap={8}>
-            <PriceInput
-              type="number"
-              data-type="maxPrice"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={maxPriceValue}
-              pattern="[0-9]*"
-              inputMode="numeric"
-            />
-            <Typography weight="medium" customStyle={{ whiteSpace: 'nowrap' }}>
-              만원까지
-            </Typography>
-          </Flexbox>
-        </Flexbox>
-      </Tooltip>
-    </Flexbox>
+        )}
+      </Flexbox>
+    </>
   );
 }
-
-const PriceInput = styled.input`
-  width: 100%;
-  max-width: 88px;
-  height: 40px;
-  text-align: center;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui80};
-  border-radius: ${({
-    theme: {
-      box: { round }
-    }
-  }) => round['8']};
-  ${({
-    theme: {
-      palette: { common },
-      typography: {
-        h4: { size, weight, lineHeight, letterSpacing }
-      }
-    }
-  }) => ({
-    fontSize: size,
-    fontWeight: weight.bold,
-    lineHeight,
-    letterSpacing,
-    color: common.ui20
-  })};
-  outline: 0;
-  background-color: transparent;
-
-  &:focus {
-    border: 2px solid ${({ theme: { palette } }) => palette.primary.main};
-  }
-`;
 
 export default PriceTabPanel;

@@ -80,7 +80,6 @@ export const BrandImage = styled.div<
   background-size: cover;
   background-position: center;
   border-radius: 50%;
-
   ${({ theme: { mode }, variant }): CSSObject => {
     switch (mode) {
       case 'dark':

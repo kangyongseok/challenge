@@ -16,9 +16,9 @@ import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
+import { isEmpty } from 'lodash-es';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -44,13 +44,8 @@ import {
 } from '@utils/products';
 import { getUtmParams } from '@utils/common';
 
-import type { ProductsVariant } from '@typings/products';
-import { ProductsEventProperties } from '@typings/products';
+import type { ProductsEventProperties, ProductsVariant } from '@typings/products';
 import type { UtmParams } from '@typings/common';
-import {
-  productsKeywordInduceTriggerState,
-  productsSaveSearchPopupState
-} from '@recoil/productsKeyword';
 import {
   prevScrollTopStateFamily,
   productsFilterProgressDoneState,
@@ -58,9 +53,8 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-import { ProductsKeywordAlert } from '.';
+import { ProductsMiddleFilter } from '.';
 
 const cache = new CellMeasurerCache({
   fixedWidth: true
@@ -73,7 +67,7 @@ interface ProductsInfiniteGridProps {
 
 function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const router = useRouter();
-  const { keyword, parentIds, idFilterIds } = router.query;
+  const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
@@ -87,16 +81,9 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
     prevScrollTopStateFamily(router.pathname)
   );
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
-  const { alert } = useRecoilValue(productsKeywordInduceTriggerState);
   const setTotalCountState = useSetRecoilState(
     productsFilterTotalCountStateFamily(`search-${atomParam}`)
   );
-
-  const [openProductsSaveSearchPopup, setProductsSaveSearchPopup] = useRecoilState(
-    productsSaveSearchPopupState
-  );
-
-  const { data: accessUser } = useQueryAccessUser();
 
   const prevScrollTopRef = useRef(prevScrollTop);
   const windowInnerWidthRef = useRef(0);
@@ -130,20 +117,11 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   const queryClient = useQueryClient();
 
   const { data: { userProductKeyword } = {}, isFetched: isSearchOptionsFetched } = useQuery(
-    queryKeys.products.searchOptions(
-      idFilterIds
-        ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
-        : searchOptionsParams
-    ),
-    () =>
-      fetchSearchOptions(
-        idFilterIds
-          ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
-          : searchOptionsParams
-      ),
+    queryKeys.products.searchOptions(searchOptionsParams),
+    () => fetchSearchOptions(searchOptionsParams),
     {
       keepPreviousData: true,
-      enabled: Object.keys(searchOptionsParams).length > 0,
+      enabled: Object.keys(searchOptionsParams).length > 0 && !isEmpty(router.query),
       staleTime: 5 * 60 * 1000
     }
   );
@@ -190,15 +168,6 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
   }, [pages]);
 
   const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
-
-  const allowProductsKeyword = useMemo(() => {
-    const allowPathNames = [
-      '/products/brands/[keyword]',
-      '/products/categories/[keyword]',
-      '/products/search/[keyword]'
-    ];
-    return allowPathNames.includes(router.pathname);
-  }, [router.pathname]);
 
   const products = useMemo(() => {
     const newProducts = pages
@@ -316,14 +285,6 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
       const productsGroup = products[index] || [];
       const firstProduct = productsGroup[0];
       const secondProduct = productsGroup[1];
-      const openAlert =
-        alert &&
-        index >= 30 &&
-        index % 15 === 0 &&
-        index !== products.length - 1 &&
-        allowProductsKeyword &&
-        hasSelectedSearchOptions &&
-        accessUser;
       let isVisible = false;
 
       if (!firstProduct && !secondProduct) return null;
@@ -365,31 +326,9 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                   </Grid>
                 )}
               </Grid>
-              {openAlert && (
-                <Box customStyle={{ padding: '0 20px 32px 20px' }}>
-                  <Skeleton
-                    width="100%"
-                    height="56px"
-                    disableAspectRatio
-                    customStyle={{ borderRadius: 8 }}
-                  />
-                </Box>
-              )}
             </div>
           </CellMeasurer>
         );
-      }
-
-      // 비회원 검색집사 완료후 매물목록 저장 로그인 유도 팝업
-      if (
-        allowProductsKeyword &&
-        window.scrollY > 0 &&
-        index === 5 &&
-        isVisible &&
-        !openProductsSaveSearchPopup &&
-        LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)
-      ) {
-        setProductsSaveSearchPopup(true);
       }
 
       return (
@@ -425,10 +364,8 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
                   </Grid>
                 )}
               </Grid>
-              {openAlert && (
-                <Box customStyle={{ padding: '0 20px 32px 20px' }}>
-                  <ProductsKeywordAlert index={index} measure={measure} />
-                </Box>
+              {index === 15 && !hasSelectedSearchOptions && (
+                <ProductsMiddleFilter isFetched={isFetched} measure={measure} />
               )}
             </div>
           )}
@@ -437,15 +374,11 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
     },
     [
       products,
-      alert,
-      allowProductsKeyword,
-      hasSelectedSearchOptions,
-      accessUser,
-      openProductsSaveSearchPopup,
-      setProductsSaveSearchPopup,
       name,
+      hasSelectedSearchOptions,
       handleProductAtt,
-      handleWishAfterChangeCallback
+      handleWishAfterChangeCallback,
+      isFetched
     ]
   );
 

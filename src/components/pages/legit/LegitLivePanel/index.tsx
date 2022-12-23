@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { Flexbox, useTheme } from 'mrcamel-ui';
 
 import { Gap } from '@components/UI/atoms';
-import LegitRecommendBottomSheet from '@components/pages/legit/LegitLivePanel/LegitRecommendBottomSheet';
 
 import { logEvent } from '@library/amplitude';
 
@@ -27,22 +26,19 @@ function LegitLivePanel() {
   }, []);
 
   return (
-    <>
-      <Flexbox
-        direction="vertical"
-        gap={52}
-        customStyle={{ margin: '12px 0 84px', userSelect: 'none' }}
-      >
-        <LegitDashboardBanner />
-        <LegitTargetBrandList />
-        <LegitHeadAuthenticatorList />
-        <LegitYourTurnList />
-        <LegitCaseHistory />
-        <Gap height={1} customStyle={{ margin: '-20px 0', backgroundColor: common.line01 }} />
-        <LegitFilterGrid />
-      </Flexbox>
-      <LegitRecommendBottomSheet />
-    </>
+    <Flexbox
+      direction="vertical"
+      gap={52}
+      customStyle={{ margin: '12px 0 84px', userSelect: 'none' }}
+    >
+      <LegitDashboardBanner />
+      <LegitTargetBrandList />
+      <LegitHeadAuthenticatorList />
+      <LegitYourTurnList />
+      <LegitCaseHistory />
+      <Gap height={1} customStyle={{ margin: '-20px 0', backgroundColor: common.line01 }} />
+      <LegitFilterGrid />
+    </Flexbox>
   );
 }
 

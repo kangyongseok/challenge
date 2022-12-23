@@ -40,6 +40,7 @@ export type SelectedSearchOptionHistory = {
   index?: number;
   count?: number;
   gender?: string;
+  description?: string;
 };
 
 export type ProductsEventProperties = {

@@ -17,7 +17,7 @@ function FilterOptionNavigation({
 
     if (dataConsonant && scrollElement.current) {
       const filterOptionElements = scrollElement.current.querySelectorAll(
-        `div[data-consonant=consonant-${dataConsonant}]`
+        `[data-consonant=consonant-${dataConsonant}]`
       );
 
       if (filterOptionElements[0]) filterOptionElements[0].scrollIntoView();

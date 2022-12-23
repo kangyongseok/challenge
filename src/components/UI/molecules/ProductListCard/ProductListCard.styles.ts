@@ -14,7 +14,7 @@ export const WishButton = styled.button`
   top: 0;
   right: 0;
   padding: 8px 8px 0 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.button - 1};
+  z-index: ${({ theme: { zIndex } }) => zIndex.button - 2};
 
   svg {
     background-color: ${({

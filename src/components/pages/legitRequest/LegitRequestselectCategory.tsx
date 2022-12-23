@@ -75,8 +75,9 @@ function LegitRequestSelectCategory() {
             <Image
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/category/${nameEng}_default.png`}
               alt={name}
-              width={48}
-              height={48}
+              width="48px"
+              height="48px"
+              isRound
               disableAspectRatio
             />
             <Typography variant="h4" weight="medium">

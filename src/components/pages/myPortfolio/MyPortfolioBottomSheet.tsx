@@ -66,13 +66,7 @@ function MyPortfolioBottomSheet({
   const [phone, setPhone] = useState('');
   const { mutate: mutatePostManage } = useMutation(postPreReserve);
   const successDialog = useSetRecoilState(SuccessDialogState);
-  // const { data = [], refetch } = useQuery(
-  //   ['product', searchValue2],
-  //   () => fetchKeywordsSuggest(searchValue2),
-  //   {
-  //     enabled: false
-  //   }
-  // );
+
   const { data: models, refetch } = useQuery(
     queryKeys.models.suggest({ keyword: searchValue2 }),
     () => fetchModelSuggest({ keyword: searchValue2 }),
@@ -122,7 +116,6 @@ function MyPortfolioBottomSheet({
     return () => {
       successDialog(false);
       setValidatorText('');
-      // LocalStorage.remove('preReserve');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

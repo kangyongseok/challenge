@@ -38,6 +38,7 @@ function LegitGuide() {
       <GeneralTemplate
         header={
           <Header
+            showRight={false}
             rightIcon={
               <Box
                 onClick={() => router.back()}

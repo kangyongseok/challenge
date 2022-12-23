@@ -13,16 +13,18 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import type { PhotoGuideImage, PostProductLegitData } from '@dto/productLegit';
 import type { PhotoGuideParams } from '@dto/common';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProductLegit } from '@api/productLegit';
 import { fetchPhotoGuide } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
+import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, isProduction } from '@utils/common';
+import { checkAgent } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -91,7 +93,7 @@ function LegitRequestForm() {
         name: attrProperty.legitName.LEGIT_PROCESS
       });
 
-      if (isProduction && !checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
+      if (!checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
         setDialogState({
           type: 'appAuthCheck',
           theme: 'dark',
@@ -104,6 +106,17 @@ function LegitRequestForm() {
               window.webkit.messageHandlers.callMoveToSetting &&
               window.webkit.messageHandlers.callMoveToSetting.postMessage
             ) {
+              LocalStorage.set(SAVED_LEGIT_REQUEST_STATE, {
+                state: {
+                  categoryName,
+                  brandName,
+                  brandLogo,
+                  modelImage,
+                  isCompleted,
+                  isViewedSampleGuide
+                },
+                params: productLegitParams
+              });
               window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
             }
 
@@ -144,7 +157,20 @@ function LegitRequestForm() {
         );
       }
     },
-    [setDialogState, hasPhotoLibraryAuth, hasCameraAuth, groupId, photoGuideImages]
+    [
+      hasPhotoLibraryAuth,
+      hasCameraAuth,
+      setDialogState,
+      categoryName,
+      brandName,
+      brandLogo,
+      modelImage,
+      isCompleted,
+      isViewedSampleGuide,
+      productLegitParams,
+      groupId,
+      photoGuideImages
+    ]
   );
 
   const handleClickAdditionalInfo = useCallback(

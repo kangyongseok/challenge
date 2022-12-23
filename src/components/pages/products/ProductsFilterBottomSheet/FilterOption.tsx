@@ -1,13 +1,15 @@
-import { HTMLAttributes, PropsWithChildren } from 'react';
+import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
-import { Avatar, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Button, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-interface FilterOptionsProps extends HTMLAttributes<HTMLDivElement> {
+import { filterImageColorNames } from '@constants/productsFilter';
+
+interface FilterOptionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   checked: boolean;
   avatarSrc?: string;
+  colorName?: string;
   colorCode?: string;
-  colorImageInfo?: { size: number; position: number[] };
   count: number;
 }
 
@@ -15,95 +17,147 @@ function FilterOption({
   children,
   checked,
   avatarSrc,
+  colorName,
   colorCode,
-  colorImageInfo,
   count,
   ...props
-}: PropsWithChildren<FilterOptionsProps>) {
+}: PropsWithChildren<FilterOptionProps>) {
   const {
     theme: {
-      palette: { primary, common },
-      box: { shadow }
+      palette: { primary, common }
     }
   } = useTheme();
 
   return (
-    <StyledFilterOption {...props}>
-      <Icon name="CheckOutlined" size="small" color={checked ? primary.main : common.ui80} />
-      {avatarSrc && (
-        <Avatar
-          width={20}
-          height={20}
-          src={avatarSrc}
+    <Button
+      variant="inline"
+      brandColor={checked ? 'primary' : 'black'}
+      size="large"
+      startIcon={
+        <>
+          {avatarSrc && (
+            <Avatar
+              width={20}
+              height={20}
+              src={avatarSrc}
+              round="4"
+              alt="Platform Logo Img"
+              customStyle={{
+                marginRight: 4,
+                border: '1px solid rgba(0, 0, 0, 0.12)'
+              }}
+            />
+          )}
+          {!filterImageColorNames.includes(colorName || '') && colorCode && (
+            <ColorSample colorName={colorName} colorCode={colorCode}>
+              {checked && (
+                <Icon
+                  name="CheckOutlined"
+                  width={16}
+                  height={16}
+                  color={colorName === 'white' ? 'black' : 'white'}
+                  customStyle={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                />
+              )}
+            </ColorSample>
+          )}
+          {filterImageColorNames.includes(colorName || '') && (
+            <Box
+              customStyle={{
+                position: 'relative',
+                width: 24,
+                height: 24,
+                marginRight: 4
+              }}
+            >
+              <Avatar
+                width="24px"
+                height="24px"
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${colorName}.png`}
+                alt="Color Img"
+                customStyle={{
+                  borderRadius: '50%'
+                }}
+              />
+              {checked && (
+                <Icon
+                  name="CheckOutlined"
+                  width={16}
+                  height={16}
+                  color={colorName === 'ivory' ? common.uiBlack : common.uiWhite}
+                  customStyle={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                />
+              )}
+            </Box>
+          )}
+        </>
+      }
+      endIcon={
+        <Typography
+          variant="h4"
           customStyle={{
-            border: checked ? `1px solid ${primary.main}` : undefined,
-            boxShadow: shadow.platformLogo
+            color: common.ui80
           }}
-          round="4"
-          alt="Platform Logo Img"
-        />
-      )}
-      {!colorImageInfo && colorCode && <ColorSample colorCode={colorCode} />}
-      {colorImageInfo && <ColorImageSample colorImageInfo={colorImageInfo} />}
+        >
+          {count.toLocaleString()}
+        </Typography>
+      }
+      {...props}
+      customStyle={{
+        paddingLeft: 0,
+        paddingRight: 0
+      }}
+    >
       <Typography
-        weight="medium"
+        variant="h4"
+        weight={checked ? 'medium' : 'regular'}
         customStyle={{
-          color: checked ? primary.main : common.ui20
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          color: checked ? primary.light : undefined
         }}
       >
         {children}
       </Typography>
-      <Typography
-        variant="small2"
-        customStyle={{
-          color: common.ui60
-        }}
-      >
-        {count.toLocaleString()}
-      </Typography>
-    </StyledFilterOption>
+    </Button>
   );
 }
 
-const StyledFilterOption = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0;
-  cursor: pointer;
-`;
-
-const ColorSample = styled.div<{
-  colorCode: string;
+export const ColorSample = styled.div<{
+  colorName?: string;
+  colorCode?: string;
 }>`
-  width: 20px;
-  height: 20px;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  border: 1px solid transparent;
+
+  ${({
+    theme: {
+      palette: { common }
+    },
+    colorName
+  }) =>
+    colorName === 'white'
+      ? {
+          border: `1px solid ${common.line01}`
+        }
+      : {}};
+
   border-radius: 50%;
   background-color: ${({ colorCode }) => colorCode};
-`;
-
-const ColorImageSample = styled.div<{
-  colorImageInfo: { size: number; position: number[] };
-}>`
-  width: 20px;
-  height: 20px;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-  border-radius: 50%;
-  background-size: ${({ colorImageInfo: { size } }) => size}px;
-  background-image: url('https://${process.env
-    .IMAGE_DOMAIN}/assets/images/ico/filter_color_ico.png');
-  background-position: ${({ colorImageInfo: { position } }) => `${position[0]}px ${position[1]}px`};
 `;
 
 export default FilterOption;

@@ -2,46 +2,48 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { Gap, Skeleton } from '@components/UI/atoms';
+import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  CATEGORY_TAGS_HEIGHT,
-  HEADER_HEIGHT
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCenterScrollLeft } from '@utils/scroll';
 import { convertSearchParamsByQuery } from '@utils/products';
-import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common';
+import { convertStringToArray } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
-import { searchOptionsStateFamily } from '@recoil/productsFilter';
+import {
+  productsStatusTriggeredStateFamily,
+  searchOptionsStateFamily
+} from '@recoil/productsFilter';
 import { showAppDownloadBannerState } from '@recoil/common';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 interface ProductsCategoryTagListProps {
   variant: ProductsVariant;
 }
 
 function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
-  const {
-    theme: { zIndex }
-  } = useTheme();
   const router = useRouter();
   const { keyword = '', parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
+  const triggered = useReverseScrollTrigger();
+
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const { triggered: productsStatusTriggered } = useRecoilValue(
+    productsStatusTriggeredStateFamily(atomParam)
+  );
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const {
     searchOptions: { parentCategories = [], subParentCategories = [] }
@@ -209,113 +211,147 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   }, [subParentIds, subParentCategories]);
 
   return (
-    <Box
-      component="section"
-      customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT + 8, position: 'relative' }}
+    <StyledCategoryTags
+      showAppDownloadBanner={showAppDownloadBanner}
+      triggered={triggered}
+      productsStatusTriggered={productsStatusTriggered}
     >
-      <Wrapper ref={wrapperRef} showAppDownloadBanner={showAppDownloadBanner}>
-        <CategoryTags>
-          {(parentCategories.length > 0 || subParentCategories.length > 0) && (
-            <Text
-              weight={
-                (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
-              }
-              onClick={handleClickAll}
-              isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
-            >
-              전체
-            </Text>
-          )}
-          {parentCategories.length === 0 &&
-            subParentCategories.length === 0 &&
-            Array.from({ length: 12 }).map((_, index) => (
-              <Skeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`category-tag-skeleton-${index}`}
-                width={index === 0 ? '37px' : '33px'}
-                height="24px"
-                disableAspectRatio
-                isRound
-              />
-            ))}
-          {showParentCategories &&
-            parentCategories.map(({ id, name }, index) => (
+      <Box
+        component="section"
+        customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT, position: 'relative' }}
+      >
+        <Wrapper ref={wrapperRef}>
+          <List>
+            {(parentCategories.length > 0 || subParentCategories.length > 0) && (
               <Text
-                key={`parent-category-${id}`}
-                ref={(ref) => {
-                  if (ref) parentCategoryTagRefs.current[index] = ref;
-                }}
-                weight={convertStringToArray(String(parentIds)).includes(id) ? 'bold' : 'regular'}
-                onClick={handleClickParentCategory(id, name.replace(/\(P\)/g, ''))}
-                isActive={convertStringToArray(String(parentIds)).includes(id)}
+                weight={
+                  (!parentIds && !subParentIds) || (parentIds && !subParentIds) ? 'bold' : 'regular'
+                }
+                onClick={handleClickAll}
+                isActive={!!((!parentIds && !subParentIds) || (parentIds && !subParentIds))}
               >
-                {name.replace(/\(P\)/g, '')}
+                전체
               </Text>
-            ))}
-          {!showParentCategories &&
-            subParentCategories
-              .filter(({ parentId: subParentCategoryParentId, name }) => {
-                if (parentIds)
-                  return (
-                    convertStringToArray(String(parentIds)).includes(subParentCategoryParentId) &&
-                    name
-                  );
-                if (parentCategory) return parentCategory.id === subParentCategoryParentId;
-
-                return name;
-              })
-              .map(({ id, name, parentId }, index) => (
+            )}
+            {parentCategories.length === 0 && subParentCategories.length === 0 && (
+              <>
+                {Array.from({ length: 12 }).map((_, index) => (
+                  <Skeleton
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`category-tag-skeleton-${index}`}
+                    width={index === 0 ? '37px' : '33px'}
+                    height="24px"
+                    disableAspectRatio
+                    customStyle={{ borderRadius: 8 }}
+                  />
+                ))}
+              </>
+            )}
+            {showParentCategories &&
+              parentCategories.map(({ id, name }, index) => (
                 <Text
-                  key={`sub-parent-category-${id}`}
+                  key={`parent-category-${id}`}
                   ref={(ref) => {
-                    if (ref) subParentCategoryTagRefs.current[index] = ref;
+                    if (ref) parentCategoryTagRefs.current[index] = ref;
                   }}
-                  data-id={id}
-                  weight={
-                    convertStringToArray(String(subParentIds)).includes(id) ? 'bold' : 'regular'
-                  }
-                  onClick={handleClickSubParentCategory({
-                    parentId,
-                    subParentId: id,
-                    subParentName: name
-                  })}
-                  isActive={convertStringToArray(String(subParentIds)).includes(id)}
+                  weight={convertStringToArray(String(parentIds)).includes(id) ? 'bold' : 'regular'}
+                  onClick={handleClickParentCategory(id, name.replace(/\(P\)/g, ''))}
+                  isActive={convertStringToArray(String(parentIds)).includes(id)}
                 >
-                  {name}
+                  {name.replace(/\(P\)/g, '')}
                 </Text>
               ))}
-        </CategoryTags>
-      </Wrapper>
-      <Gap
-        height={8}
-        customStyle={{
-          position: 'fixed',
-          marginTop: CATEGORY_TAGS_HEIGHT,
-          zIndex: zIndex.header,
-          top: showAppDownloadBanner
-            ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
-            : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
-        }}
-      />
-    </Box>
+            {!showParentCategories &&
+              subParentCategories
+                .filter(({ parentId: subParentCategoryParentId, name }) => {
+                  if (parentIds)
+                    return (
+                      convertStringToArray(String(parentIds)).includes(subParentCategoryParentId) &&
+                      name
+                    );
+                  if (parentCategory) return parentCategory.id === subParentCategoryParentId;
+
+                  return name;
+                })
+                .map(({ id, name, parentId }, index) => (
+                  <Text
+                    key={`sub-parent-category-${id}`}
+                    ref={(ref) => {
+                      if (ref) subParentCategoryTagRefs.current[index] = ref;
+                    }}
+                    data-id={id}
+                    weight={
+                      convertStringToArray(String(subParentIds)).includes(id) ? 'bold' : 'regular'
+                    }
+                    onClick={handleClickSubParentCategory({
+                      parentId,
+                      subParentId: id,
+                      subParentName: name
+                    })}
+                    isActive={convertStringToArray(String(subParentIds)).includes(id)}
+                  >
+                    {name}
+                  </Text>
+                ))}
+          </List>
+        </Wrapper>
+      </Box>
+    </StyledCategoryTags>
   );
 }
 
-const Wrapper = styled.div<{ showAppDownloadBanner: boolean }>`
-  position: fixed;
+const StyledCategoryTags = styled.div<{
+  showAppDownloadBanner: boolean;
+  triggered?: boolean;
+  productsStatusTriggered?: boolean;
+}>`
+  position: sticky;
+  ${({ productsStatusTriggered }): CSSObject =>
+    productsStatusTriggered
+      ? {
+          opacity: 0
+        }
+      : {}};
+
+  top: ${({ showAppDownloadBanner }) =>
+    showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT}px;
+
+  ${({ triggered, productsStatusTriggered }): CSSObject => {
+    if (!triggered && productsStatusTriggered) {
+      return {
+        transform: 'translateY(-30px)',
+        opacity: 0,
+        pointerEvents: 'none'
+      };
+    }
+    if (triggered && productsStatusTriggered) {
+      return {
+        opacity: 1
+      };
+    }
+    return {};
+  }};
+
+  z-index: ${({ theme: { zIndex } }) => zIndex.header - 1};
+  transition: top 0.5s, opacity 0.2s, transform 0.2s;
+`;
+
+const Wrapper = styled.div`
   background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
   height: ${CATEGORY_TAGS_HEIGHT}px;
   min-height: ${CATEGORY_TAGS_HEIGHT}px;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   width: 100%;
   overflow-x: auto;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner
-      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
-      : HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line01};
 `;
 
-const CategoryTags = styled.div`
+const List = styled.div`
   height: 100%;
   padding: 0 20px;
   display: flex;

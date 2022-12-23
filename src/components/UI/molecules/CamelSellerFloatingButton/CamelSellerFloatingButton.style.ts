@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 export const Wrapper = styled.div<{ isLegitTooltip: boolean; isUserShop: boolean }>`
   position: fixed;
   left: 50%;
-  bottom: ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 12 : isLegitTooltip ? 110 : 72)}px;
+  bottom: ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 20 : isLegitTooltip ? 110 : 80)}px;
   transform: translateX(-50%);
   z-index: ${({ theme: { zIndex } }) => zIndex.button + 2};
 `;

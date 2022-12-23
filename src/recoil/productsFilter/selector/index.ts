@@ -5,6 +5,7 @@ import lineFilterOptionsSelector from './lineFilterOptionsSelector';
 import genderFilterOptionsSelector from './genderFilterOptionsSelector';
 import filterOperationInfoSelector from './filterOperationInfoSelector';
 import detailFilterOptionsSelector from './detailFilterOptionsSelector';
+import colorFilterOptionsSelector from './colorFilterOptionsSelector';
 import categoryFilterOptionsSelector from './categoryFilterOptionsSelector';
 import brandFilterOptionsSelector from './brandFilterOptionsSelector';
 
@@ -17,5 +18,6 @@ export {
   detailFilterOptionsSelector,
   categoryFilterOptionsSelector,
   brandFilterOptionsSelector,
-  genderFilterOptionsSelector
+  genderFilterOptionsSelector,
+  colorFilterOptionsSelector
 };

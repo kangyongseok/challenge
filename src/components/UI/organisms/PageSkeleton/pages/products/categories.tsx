@@ -50,21 +50,34 @@ function CategoryProducts() {
             <List
               css={{
                 paddingTop: 0,
-                minHeight: 36
+                minHeight: 36,
+                gap: 12
               }}
             >
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`products-id-filter-skeleton-${index}`}
-                  width="73px"
-                  height="20px"
-                  disableAspectRatio
-                  customStyle={{
-                    backgroundColor: common.ui95
-                  }}
-                />
-              ))}
+              <Skeleton
+                width="86.2px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
+              <Skeleton
+                width="73.77px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
+              <Skeleton
+                width="89.86px"
+                height="20px"
+                disableAspectRatio
+                customStyle={{
+                  backgroundColor: common.ui95
+                }}
+              />
             </List>
             <List>
               {Array.from({ length: 12 }).map((_, index) => (
@@ -114,6 +127,12 @@ function CategoryProducts() {
 
 const Wrapper = styled.div`
   width: 100%;
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line01};
   background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
 `;
 

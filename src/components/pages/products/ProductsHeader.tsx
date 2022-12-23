@@ -15,8 +15,11 @@ import attrKeys from '@constants/attrKeys';
 import { convertSearchParamsByQuery } from '@utils/products';
 
 import type { ProductsVariant } from '@typings/products';
-import { productsKeywordAutoSaveTriggerState } from '@recoil/productsKeyword';
-import { searchOptionsStateFamily } from '@recoil/productsFilter';
+import {
+  productsStatusTriggeredStateFamily,
+  searchOptionsStateFamily
+} from '@recoil/productsFilter';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 interface ProductsHeaderProps {
   variant: ProductsVariant;
@@ -35,9 +38,13 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
   const {
     searchOptions: { parentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
-  const productsKeywordAutoSaveTrigger = useRecoilValue(productsKeywordAutoSaveTriggerState);
+  const { triggered: productsStatusTriggered } = useRecoilValue(
+    productsStatusTriggeredStateFamily(atomParam)
+  );
 
   const [title, setTitle] = useState('');
+
+  const triggered = useReverseScrollTrigger();
 
   const handleClickBack = useCallback(() => {
     logEvent(attrKeys.products.clickBack, {
@@ -87,7 +94,12 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
 
   if (variant === 'search') {
     return (
-      <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT, position: 'relative' }}>
+      <Box
+        customStyle={{
+          minHeight: SEARCH_BAR_HEIGHT,
+          position: 'relative'
+        }}
+      >
         <SearchBar
           readOnly
           variant="innerOutlined"
@@ -106,22 +118,25 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
             />
           }
           onClick={() => router.push({ pathname: '/search', query: { keyword } })}
+          customStyle={{
+            borderBottom:
+              !triggered || (triggered && productsStatusTriggered)
+                ? `1px solid ${common.line01}`
+                : undefined
+          }}
         />
       </Box>
     );
   }
 
   return (
-    <Box customStyle={{ minHeight: SEARCH_BAR_HEIGHT, position: 'relative' }}>
-      <Header
-        isFixed
-        // 검색한 목록 자동으로 저장한 경우 검색 목록 저장 유도 팝업 노출하지 않음
-        disableProductsKeywordClickInterceptor={
-          !(
-            ['brands', 'categories', 'search'].includes(variant) && !productsKeywordAutoSaveTrigger
-          ) || false
-        }
-      >
+    <Box
+      customStyle={{
+        minHeight: SEARCH_BAR_HEIGHT,
+        position: 'relative'
+      }}
+    >
+      <Header isFixed hideLine={triggered || !productsStatusTriggered}>
         <Flexbox gap={6} alignment="center">
           {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
           <Typography

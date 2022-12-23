@@ -118,17 +118,18 @@ export function convertSearchParams(
     delete searchParams.parentIds;
     delete searchParams.subParentIds;
     delete searchParams.genderIds;
-  } else if (excludeCodeId === filterCodeIds.price) {
-    delete searchParams.minPrice;
-    delete searchParams.maxPrice;
   } else if (excludeCodeId === filterCodeIds.platform) {
     delete searchParams.siteUrlIds;
   } else if (excludeCodeId === filterCodeIds.line) {
     delete searchParams.lineIds;
+  } else if (excludeCodeId === filterCodeIds.color) {
+    delete searchParams.colorIds;
   } else if (excludeCodeId === filterCodeIds.detailOption) {
     delete searchParams.seasonIds;
-    delete searchParams.colorIds;
     delete searchParams.materialIds;
+  } else if (excludeCodeId === filterCodeIds.gender) {
+    delete searchParams.genderIds;
+    delete searchParams.genders;
   }
 
   return searchParams;
@@ -139,7 +140,7 @@ export function convertSearchParamsByQuery(
   options?: {
     variant?: ProductsVariant;
     onlyBaseSearchParams?: boolean;
-    defaultValue?: Partial<SearchParams>;
+    defaultValue?: Pick<SearchParams, 'idFilterIds' | 'deviceId' | 'order'>;
     excludeSearchParams?: Array<keyof SearchParams>;
   }
 ): Partial<SearchParams> {
@@ -221,7 +222,7 @@ export function convertSearchParamsByQuery(
     scoreStatus,
     scorePriceRate,
     scorePriceCount,
-    idFilterIds,
+    idFilterIds: idFilterIds || defaultValue?.idFilterIds,
     brandIds,
     parentIds,
     subParentIds,
@@ -233,15 +234,14 @@ export function convertSearchParamsByQuery(
     seasonIds,
     colorIds,
     materialIds,
-    order,
+    order: order || defaultValue?.order,
     notice,
     distance,
     requiredBrands,
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
-    deviceId,
-    ...defaultValue
+    deviceId: deviceId || defaultValue?.deviceId
   };
 
   if (variant === 'categories') {

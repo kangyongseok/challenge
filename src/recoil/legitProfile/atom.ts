@@ -5,8 +5,8 @@ import type { OpinionLegitsParams } from '@dto/productLegit';
 export const defaultLegitProfileOpinionLegitsParamsState: OpinionLegitsParams = {
   page: 0,
   size: 16,
-  status: [20, 30],
   results: [0, 1, 2],
+  status: [20, 30],
   userIds: []
 };
 

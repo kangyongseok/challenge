@@ -1,9 +1,9 @@
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
 import { useCallback } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
@@ -12,10 +12,6 @@ import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import {
-  productsKeywordDialogState,
-  productsKeywordInduceTriggerState
-} from '@recoil/productsKeyword';
 import { homeSelectedTabStateFamily } from '@recoil/home';
 
 import { IconBox, StyledHeader, Title, Wrapper } from './Header.styles';
@@ -32,11 +28,11 @@ interface HeaderProps {
   onClickLeft?: (e?: MouseEvent<HTMLDivElement>) => void;
   onClickTitle?: (e?: MouseEvent) => void;
   onClickRight?: (e?: MouseEvent<HTMLDivElement>) => void;
-  disableProductsKeywordClickInterceptor?: boolean;
   customHeader?: JSX.Element;
   leftIconCustomStyle?: CustomStyle;
   titleCustomStyle?: CustomStyle;
   rightIconCustomStyle?: CustomStyle;
+  hideLine?: boolean;
   customStyle?: CustomStyle;
   customHeight?: number;
 }
@@ -53,18 +49,21 @@ function Header({
   onClickLeft,
   onClickTitle,
   onClickRight,
-  disableProductsKeywordClickInterceptor = true,
   leftIconCustomStyle,
   titleCustomStyle,
   rightIconCustomStyle,
+  hideLine = true,
   customStyle,
   customHeight,
   customHeader
 }: PropsWithChildren<HeaderProps>) {
   const router = useRouter();
   const { isCrm } = router.query;
-  const { dialog } = useRecoilValue(productsKeywordInduceTriggerState);
-  const setProductsKeywordDialogState = useSetRecoilState(productsKeywordDialogState);
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
 
@@ -141,7 +140,7 @@ function Header({
     router.push('/');
   };
 
-  const handleClickBack = (e: MouseEvent<HTMLDivElement>) => {
+  const handleClickBack = () => {
     const splitPathNames = router.pathname.split('/');
     const lastPathName = splitPathNames[splitPathNames.length - 1] || '';
 
@@ -184,55 +183,41 @@ function Header({
       return;
     }
 
-    if (dialog && !disableProductsKeywordClickInterceptor) {
-      e.preventDefault();
-      setProductsKeywordDialogState({ open: true, pathname: '' });
-    } else {
-      handleLogEvent(attrKeys.header.CLICK_BACK);
-      callBack();
-    }
+    handleLogEvent(attrKeys.header.CLICK_BACK);
+    callBack();
   };
 
-  const handleClickSearch = (e: MouseEvent<HTMLDivElement>) => {
-    if (dialog && !disableProductsKeywordClickInterceptor) {
-      e.preventDefault();
-      setProductsKeywordDialogState({ open: true, pathname: '/search' });
-    } else {
-      if (router.pathname.split('/')[1] === 'wishes') {
-        logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
-          name: attrProperty.productName.WISH_LIST,
-          att: 'HEADER'
-        });
-        router.push('/search');
-        return;
-      }
-      if (router.pathname.split('/')[1] === 'notices') {
-        logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
-          name: attrProperty.productName.NOTI_LIST,
-          att: 'HEADER'
-        });
-        router.push('/search');
-        return;
-      }
-      if (router.pathname.split('/')[1] === 'products') {
-        logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
-          name:
-            router.pathname === '/products/[id]'
-              ? attrProperty.productName.PRODUCT_DETAIL
-              : attrProperty.productName.PRODUCT_LIST,
-          att: 'HEADER'
-        });
-      } else {
-        handleLogEvent(attrKeys.header.CLICK_SCOPE);
-      }
-
+  const handleClickSearch = () => {
+    if (router.pathname.split('/')[1] === 'wishes') {
+      logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
+        name: attrProperty.productName.WISH_LIST,
+        att: 'HEADER'
+      });
       router.push('/search');
+      return;
     }
+    if (router.pathname.split('/')[1] === 'notices') {
+      logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
+        name: attrProperty.productName.NOTI_LIST,
+        att: 'HEADER'
+      });
+      router.push('/search');
+      return;
+    }
+    if (router.pathname.split('/')[1] === 'products') {
+      logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
+        name:
+          router.pathname === '/products/[id]'
+            ? attrProperty.productName.PRODUCT_DETAIL
+            : attrProperty.productName.PRODUCT_LIST,
+        att: 'HEADER'
+      });
+    } else {
+      handleLogEvent(attrKeys.header.CLICK_SCOPE);
+    }
+
+    router.push('/search');
   };
-  // const handleClickWish = () => {
-  //   handleLogEvent(attrKeys.header.CLICK_TAB_WISH);
-  //   router.push('/wishes');
-  // };
 
   return (
     <StyledHeader
@@ -250,7 +235,8 @@ function Header({
             customStyle={{
               width: '100%',
               minHeight: customHeight || 56,
-              backgroundColor: 'inherit'
+              backgroundColor: 'inherit',
+              borderBottom: !hideLine ? `1px solid ${common.line01}` : undefined
             }}
           >
             {isCrm ? (

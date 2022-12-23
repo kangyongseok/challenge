@@ -1,8 +1,6 @@
-import type { MouseEvent } from 'react';
-
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Chip, Icon } from 'mrcamel-ui';
+import { Avatar, Button, Chip, Icon, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
 
@@ -10,7 +8,9 @@ import { logEvent } from '@library/amplitude';
 
 import {
   filterCodeIds,
+  filterColors,
   filterGenders,
+  filterImageColorNames,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
 import { PRODUCT_NAME } from '@constants/product';
@@ -30,6 +30,12 @@ import {
 function FilterBottomOperation() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const { selectedSearchOptionsHistory, selectedTotalCount } = useRecoilValue(
     filterOperationInfoSelector
@@ -85,164 +91,182 @@ function FilterBottomOperation() {
     logEvent(attrKeys.products.clickApplyFilter, eventProperties);
   };
 
-  const handleClickRemove = (e: MouseEvent<HTMLButtonElement>) => {
-    const dataId = Number(e.currentTarget.getAttribute('data-id') || 0);
-    const dataCodeId = Number(e.currentTarget.getAttribute('data-code-id') || 0);
-    const dataParentId = Number(e.currentTarget.getAttribute('data-parent-id') || 0);
-    const dataGenderId = Number(e.currentTarget.getAttribute('data-gender-id') || 0);
-    const dataGender = String(e.currentTarget.getAttribute('data-gender') || '');
-    const dataParentCategoryId = Number(
-      e.currentTarget.getAttribute('data-parent-category-id') || 0
-    );
-    const dataCategorySizeId = Number(e.currentTarget.getAttribute('data-category-size-id') || 0);
-    const dataGrouping = String(e.currentTarget.getAttribute('data-grouping') || '');
-    const dataGroupingDepth = Number(e.currentTarget.getAttribute('data-grouping-depth') || 0);
-    const dataHistoryIndex = Number(e.currentTarget.getAttribute('data-history-index'));
+  const handleClickRemove =
+    ({
+      newId = 0,
+      newCodeId = 0,
+      newParentId = 0,
+      newGenderId = 0,
+      newGender = '',
+      newParentCategoryId = 0,
+      newCategorySizeId = 0,
+      newGrouping = false,
+      newGroupingDepth = 0,
+      newHistoryIndex = 0
+    }: Partial<{
+      newId: number;
+      newCodeId: number;
+      newParentId: number;
+      newGenderId: number;
+      newGender: string;
+      newParentCategoryId: number;
+      newCategorySizeId: number;
+      newGrouping: boolean;
+      newGroupingDepth: number;
+      newHistoryIndex: number;
+    }>) =>
+    () => {
+      const selectedSearchOptionHistory = selectedSearchOptionsHistory[newHistoryIndex];
 
-    const selectedSearchOptionHistory = selectedSearchOptionsHistory[dataHistoryIndex];
+      if (selectedSearchOptionHistory) {
+        logEvent(attrKeys.products.clickFilterDelete, {
+          name: attrProperty.name.productList,
+          title: productFilterEventPropertyTitle[newCodeId],
+          att: 'FILTER',
+          index: newHistoryIndex,
+          count: selectedSearchOptionHistory.count,
+          value: selectedSearchOptionHistory.displayName.replace(/~/g, '-')
+        });
+      }
 
-    if (selectedSearchOptionHistory) {
-      logEvent(attrKeys.products.clickFilterDelete, {
-        name: attrProperty.name.productList,
-        title: productFilterEventPropertyTitle[dataCodeId],
-        att: 'FILTER',
-        index: dataHistoryIndex,
-        count: selectedSearchOptionHistory.count,
-        value: selectedSearchOptionHistory.displayName
-      });
-    }
-
-    if (dataGrouping && dataGroupingDepth) {
-      if (dataCodeId === filterCodeIds.category && dataGroupingDepth === 1) {
-        setSelectedSearchOptionsState(({ type }) => ({
-          type,
-          selectedSearchOptions: selectedSearchOptions.filter(({ codeId, genderIds = [] }) => {
-            const [selectedGenderId] = genderIds.filter(
-              (genderId) => genderId !== filterGenders.common.id
-            );
-
-            if (codeId !== dataCodeId) return true;
-            return selectedGenderId !== dataGenderId;
-          })
-        }));
-      } else if (dataCodeId === filterCodeIds.category && dataGroupingDepth === 2) {
-        setSelectedSearchOptionsState(({ type }) => ({
-          type,
-          selectedSearchOptions: selectedSearchOptions.filter(
-            ({ codeId, genderIds = [], parentId }) => {
+      if (newGrouping && newGroupingDepth) {
+        if (newCodeId === filterCodeIds.category && newGroupingDepth === 1) {
+          setSelectedSearchOptionsState(({ type }) => ({
+            type,
+            selectedSearchOptions: selectedSearchOptions.filter(({ codeId, genderIds = [] }) => {
               const [selectedGenderId] = genderIds.filter(
                 (genderId) => genderId !== filterGenders.common.id
               );
 
-              if (codeId !== dataCodeId) return true;
-              if (selectedGenderId !== dataGenderId) return true;
-              return parentId !== dataParentId;
-            }
-          )
-        }));
-      } else if (dataCodeId === filterCodeIds.size && dataGroupingDepth === 1) {
-        setSelectedSearchOptionsState(({ type }) => ({
-          type,
-          selectedSearchOptions: selectedSearchOptions.filter(
-            ({ codeId, parentCategoryId }) =>
-              codeId !== dataCodeId || parentCategoryId !== dataParentCategoryId
-          )
-        }));
-      } else if (
-        [filterCodeIds.season, filterCodeIds.color, filterCodeIds.material].includes(dataCodeId) &&
-        dataGroupingDepth === 1
-      ) {
-        setSelectedSearchOptionsState(({ type }) => ({
-          type,
-          selectedSearchOptions: selectedSearchOptions.filter(({ codeId }) => codeId !== dataCodeId)
-        }));
-      }
-      return;
-    }
+              if (codeId !== newCodeId) return true;
+              return selectedGenderId !== newGenderId;
+            })
+          }));
+        } else if (newCodeId === filterCodeIds.category && newGroupingDepth === 2) {
+          setSelectedSearchOptionsState(({ type }) => ({
+            type,
+            selectedSearchOptions: selectedSearchOptions.filter(
+              ({ codeId, genderIds = [], parentId }) => {
+                const [selectedGenderId] = genderIds.filter(
+                  (genderId) => genderId !== filterGenders.common.id
+                );
 
-    let selectedSearchOption = selectedSearchOptions.find(
-      ({ id, codeId, parentId, parentCategoryId = 0, genderIds = [] }) => {
-        if (codeId === filterCodeIds.category) {
-          const [selectedGenderId] = genderIds.filter(
-            (genderId) => genderId !== filterGenders.common.id
-          );
-
-          return (
-            dataId === id &&
-            dataCodeId === codeId &&
-            dataParentId === parentId &&
-            dataGenderId === selectedGenderId
-          );
+                if (codeId !== newCodeId) return true;
+                if (selectedGenderId !== newGenderId) return true;
+                return parentId !== newParentId;
+              }
+            )
+          }));
+        } else if (newCodeId === filterCodeIds.size && newGroupingDepth === 1) {
+          setSelectedSearchOptionsState(({ type }) => ({
+            type,
+            selectedSearchOptions: selectedSearchOptions.filter(
+              ({ codeId, parentCategoryId }) =>
+                codeId !== newCodeId || parentCategoryId !== newParentCategoryId
+            )
+          }));
+        } else if (
+          [filterCodeIds.season, filterCodeIds.color, filterCodeIds.material].includes(newCodeId) &&
+          newGroupingDepth === 1
+        ) {
+          setSelectedSearchOptionsState(({ type }) => ({
+            type,
+            selectedSearchOptions: selectedSearchOptions.filter(
+              ({ codeId }) => codeId !== newCodeId
+            )
+          }));
         }
-
-        return id === dataId && codeId === dataCodeId && parentCategoryId === dataParentCategoryId;
+        return;
       }
-    );
 
-    if (!selectedSearchOption) {
-      selectedSearchOption = selectedSearchOptions.find(
-        ({ codeId, minPrice, maxPrice }) => codeId === dataCodeId && minPrice && maxPrice
-      );
-    }
+      let selectedSearchOption = selectedSearchOptions.find(
+        ({ id, codeId, parentId, parentCategoryId = 0, genderIds = [], gender }) => {
+          if (codeId === filterCodeIds.category) {
+            const [selectedGenderId] = genderIds.filter(
+              (genderId) => genderId !== filterGenders.common.id
+            );
 
-    if (selectedSearchOption) {
-      const newSelectedSearchOptions = selectedSearchOptions.filter(
-        ({
-          id = 0,
-          codeId,
-          genderIds = [],
-          parentId = 0,
-          parentCategoryId = 0,
-          categorySizeId = 0,
-          gender = ''
-        }) => {
-          const [genderId] = genderIds.filter(
-            (selectedGenderId) => selectedGenderId !== filterGenders.common.id
-          );
+            return (
+              newId === id &&
+              newCodeId === codeId &&
+              newParentId === parentId &&
+              newGenderId === selectedGenderId
+            );
+          }
+          if (codeId === filterCodeIds.gender) {
+            return newGenderId === id || gender === newGender;
+          }
 
-          if (codeId !== dataCodeId) return true;
-          if ((parentId || 0) !== dataParentId) return true;
-          if (parentCategoryId !== dataParentCategoryId) return true;
-          if (categorySizeId !== dataCategorySizeId) return true;
-          if ((genderId || 0) !== dataGenderId) return true;
-          if (gender !== dataGender) return true;
-
-          return id !== dataId;
+          return id === newId && codeId === newCodeId && parentCategoryId === newParentCategoryId;
         }
       );
 
-      setSelectedSearchOptionsState(({ type }) => ({
-        type,
-        selectedSearchOptions: newSelectedSearchOptions
-      }));
-
-      const currentActiveTabSelectedSearchOptions = newSelectedSearchOptions.filter(
-        ({ codeId }) => codeId === activeTabCodeId
-      );
-
-      if (dataCodeId !== activeTabCodeId) {
-        setSearchOptionsParamsState(({ type }) => ({
-          type,
-          searchParams: convertSearchParams(newSelectedSearchOptions, {
-            baseSearchParams,
-            excludeCodeId: activeTabCodeId
-          })
-        }));
-      } else if (dataCodeId === activeTabCodeId && !currentActiveTabSelectedSearchOptions.length) {
-        setSearchOptionsParamsState(({ type }) => ({
-          type,
-          searchParams: convertSearchParams(newSelectedSearchOptions, {
-            baseSearchParams,
-            excludeCodeId: activeTabCodeId
-          })
-        }));
+      if (!selectedSearchOption) {
+        selectedSearchOption = selectedSearchOptions.find(
+          ({ codeId, minPrice, maxPrice }) => codeId === newCodeId && minPrice && maxPrice
+        );
       }
-    }
-  };
+
+      if (selectedSearchOption) {
+        const newSelectedSearchOptions = selectedSearchOptions.filter(
+          ({
+            id = 0,
+            codeId,
+            genderIds = [],
+            parentId = 0,
+            parentCategoryId = 0,
+            categorySizeId = 0,
+            gender = ''
+          }) => {
+            let [genderId] = genderIds.filter(
+              (selectedGenderId) => selectedGenderId !== filterGenders.common.id
+            );
+
+            if (!genderId) genderId = 0;
+
+            if (codeId !== newCodeId) return true;
+            if (parentId !== newParentId) return true;
+            if (parentCategoryId !== newParentCategoryId) return true;
+            if (categorySizeId !== newCategorySizeId) return true;
+            if (genderId !== newGenderId) return true;
+            if (gender !== newGender) return true;
+
+            return id !== newId;
+          }
+        );
+
+        setSelectedSearchOptionsState(({ type }) => ({
+          type,
+          selectedSearchOptions: newSelectedSearchOptions
+        }));
+
+        const currentActiveTabSelectedSearchOptions = newSelectedSearchOptions.filter(
+          ({ codeId }) => codeId === activeTabCodeId
+        );
+
+        if (newCodeId !== activeTabCodeId) {
+          setSearchOptionsParamsState(({ type }) => ({
+            type,
+            searchParams: convertSearchParams(newSelectedSearchOptions, {
+              baseSearchParams,
+              excludeCodeId: activeTabCodeId
+            })
+          }));
+        } else if (newCodeId === activeTabCodeId && !currentActiveTabSelectedSearchOptions.length) {
+          setSearchOptionsParamsState(({ type }) => ({
+            type,
+            searchParams: convertSearchParams(newSelectedSearchOptions, {
+              baseSearchParams,
+              excludeCodeId: activeTabCodeId
+            })
+          }));
+        }
+      }
+    };
 
   const handleClickReset = () => {
     const newSelectedSearchOptions = selectedSearchOptions.filter(({ codeId }) =>
-      [filterCodeIds.map, filterCodeIds.id, filterCodeIds.order].includes(codeId)
+      [filterCodeIds.order].includes(codeId)
     );
     setSelectedSearchOptionsState(({ type }) => ({
       type,
@@ -277,27 +301,54 @@ function FilterBottomOperation() {
               displayName,
               grouping,
               groupingDepth,
+              description,
               index
             }) => (
               <Chip
                 key={`selected-filter-options-history-${index || 0}-${displayName}`}
-                variant="ghost"
-                endIcon={<Icon name="CloseOutlined" size="small" />}
-                brandColor="primary"
-                size="small"
-                data-history-index={index}
-                data-id={id}
-                data-code-id={codeId}
-                data-parent-id={parentId}
-                data-parent-category-id={parentCategoryId}
-                data-category-size-id={categorySizeId}
-                data-gender-id={genderId}
-                data-gender={gender || ''}
-                data-grouping={grouping || ''}
-                data-grouping-depth={groupingDepth}
-                onClick={handleClickRemove}
+                endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
+                weight="regular"
+                isRound={false}
+                onClick={handleClickRemove({
+                  newHistoryIndex: index,
+                  newId: id,
+                  newCodeId: codeId,
+                  newParentId: parentId,
+                  newParentCategoryId: parentCategoryId,
+                  newCategorySizeId: categorySizeId,
+                  newGenderId: genderId,
+                  newGender: gender,
+                  newGrouping: grouping,
+                  newGroupingDepth: groupingDepth
+                })}
+                customStyle={{
+                  '& > svg': {
+                    height: 'auto'
+                  }
+                }}
               >
-                {displayName}
+                {codeId === filterCodeIds.color ? (
+                  <>
+                    {filterColors[description as keyof typeof filterColors] && (
+                      <ColorSample
+                        colorCode={filterColors[description as keyof typeof filterColors]}
+                      />
+                    )}
+                    {filterImageColorNames.includes(description || '') && (
+                      <Avatar
+                        width="20px"
+                        height="20px"
+                        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                        alt="Color Img"
+                        customStyle={{
+                          borderRadius: '50%'
+                        }}
+                      />
+                    )}
+                  </>
+                ) : (
+                  displayName
+                )}
               </Chip>
             )
           )}
@@ -305,20 +356,23 @@ function FilterBottomOperation() {
       )}
       <FilterButtons>
         <Button
-          size="large"
-          customStyle={{ minWidth: 112, whiteSpace: 'nowrap' }}
+          variant="ghost"
+          size="xlarge"
+          brandColor="black"
+          startIcon={<Icon name="RotateOutlined" />}
           onClick={handleClickReset}
+          customStyle={{ minWidth: 112, whiteSpace: 'nowrap' }}
         >
-          전체 초기화
+          초기화
         </Button>
         <Button
           variant="contained"
-          fullWidth
-          size="large"
+          size="xlarge"
           brandColor="primary"
           onClick={handleClick}
+          fullWidth
         >
-          필터 적용 ({selectedTotalCount.toLocaleString()}개)
+          {selectedTotalCount.toLocaleString()}개 매물보기
         </Button>
       </FilterButtons>
     </StyledFilterBottomOperation>
@@ -326,7 +380,6 @@ function FilterBottomOperation() {
 }
 
 const StyledFilterBottomOperation = styled.div`
-  box-shadow: ${({ theme: { box } }) => box.shadow.modal};
   z-index: 1;
 `;
 
@@ -338,23 +391,42 @@ const FilterButtons = styled.div`
 `;
 
 const SelectedSearchOptionList = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  column-gap: 8px;
   width: 100%;
-  padding: 16px 20px 0 20px;
+  padding: 12px 20px 0 20px;
+  overflow-x: auto;
   background-color: ${({
     theme: {
       palette: { common }
     }
   }) => common.uiWhite};
-  white-space: nowrap;
-  overflow-x: auto;
+`;
 
-  & > button {
-    margin-right: 8px;
+export const ColorSample = styled.div<{
+  colorCode: string;
+}>`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
 
-    &:last-child {
-      margin-right: 0;
-    }
-  }
+  ${({
+    theme: {
+      palette: { common }
+    },
+    colorCode
+  }) =>
+    colorCode === '#FFFFFF'
+      ? {
+          border: `1px solid ${common.line01}`
+        }
+      : {}};
+
+  border-radius: 50%;
+  background-color: ${({ colorCode }) => colorCode};
 `;
 
 export default FilterBottomOperation;

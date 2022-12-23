@@ -49,8 +49,9 @@ function LegitRequestTitleWithModelImage({
         </Flexbox>
         <Image
           src={modelImage}
-          width={110}
-          height={110}
+          width="110px"
+          height="110px"
+          isRound
           disableAspectRatio
           customStyle={{ margin: '0 auto' }}
         />

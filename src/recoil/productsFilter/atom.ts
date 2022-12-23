@@ -31,11 +31,11 @@ export const productsFilterAtomParamState = atom({
 
 export const productsFilterActionStateFamily = atomFamily<
   {
-    type: `brand-${string}` | `line-${string}` | `platform-${string}`;
+    type: `brand-${string}` | `line-${string}` | `platform-${string}` | `color-${string}`;
     filterValue?: string;
     sortValue?: 'default' | 'asc';
   },
-  `brand-${string}` | `line-${string}` | `platform-${string}`
+  `brand-${string}` | `line-${string}` | `platform-${string}` | `color-${string}`
 >({
   key: 'productsFilterActionStateFamily',
   default: (type) => ({
@@ -134,11 +134,6 @@ export const activeMyFilterState = atom({
   ]
 });
 
-export const activeMyFilterReceiveState = atom({
-  key: 'productsFilter/activeMyFilterReceiveState',
-  default: false
-});
-
 export const myFilterIntersectionCategorySizesState = atom<SizeCode[]>({
   key: 'productsFilter/myFilterIntersectionCategorySizesState',
   default: []
@@ -151,16 +146,25 @@ export const prevScrollTopStateFamily = atomFamily<
   },
   string
 >({
-  key: 'prevScrollTopStateFamily',
+  key: 'productsFilter/prevScrollTopStateFamily',
   default: (type) => ({
     type,
     prevScrollTop: 0
   })
 });
 
-export const isRelatedKeywordState = atom({
-  key: 'productsFilter/isRelatedKeywordState',
-  default: false
+export const productsStatusTriggeredStateFamily = atomFamily<
+  {
+    type: string;
+    triggered: boolean;
+  },
+  string
+>({
+  key: 'productsFilter/productsStatusTriggeredStateFamily',
+  default: (type) => ({
+    type,
+    triggered: false
+  })
 });
 
 export default productsFilterStateFamily;

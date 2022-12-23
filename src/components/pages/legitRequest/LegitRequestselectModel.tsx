@@ -153,8 +153,9 @@ function LegitRequestSelectModel() {
                   >
                     <Image
                       src={imageThumbnail}
-                      width={72}
-                      height={72}
+                      width="72px"
+                      height="72px"
+                      isRound
                       disableAspectRatio
                       customStyle={{ margin: '0 auto' }}
                     />

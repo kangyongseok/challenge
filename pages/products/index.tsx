@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticPropsContext } from 'next';
-import { Box } from 'mrcamel-ui';
+import { Box, Icon, useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
@@ -10,50 +10,46 @@ import {
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsInfiniteGrid,
-  ProductsKeywordDialog,
   ProductsLandingInfo,
-  ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
 
-import {
-  HEADER_HEIGHT,
-  PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT,
-  PRODUCTS_LANDING_INFO_HEIGHT,
-  locales
-} from '@constants/common';
+import { locales } from '@constants/common';
 
 function Products() {
   const router = useRouter();
-  const { keyword } = router.query;
+  const {
+    theme: { zIndex }
+  } = useTheme();
+
   return (
     <>
       <GeneralTemplate
         header={
           <Box>
-            <Header disableProductsKeywordClickInterceptor={false} />
-            <ProductsLandingInfo />
-            <ProductsFilter
-              variant="search"
-              showDynamicFilter
-              customTop={
-                HEADER_HEIGHT +
-                (keyword ? PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT : PRODUCTS_LANDING_INFO_HEIGHT)
+            <Header
+              leftIcon={
+                <Box
+                  onClick={() => router.push('/')}
+                  customStyle={{
+                    padding: 16
+                  }}
+                >
+                  <Icon name="HomeOutlined" />
+                </Box>
               }
+              customStyle={{ zIndex: zIndex.header + 1 }}
             />
+            <ProductsLandingInfo />
           </Box>
         }
-        footer={
-          <BottomNavigation
-            disableHideOnScroll={false}
-            disableProductsKeywordClickInterceptor={false}
-          />
-        }
+        footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
+        <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
@@ -63,8 +59,6 @@ function Products() {
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
       <ProductsOrderFilterBottomSheet />
-      <ProductsKeywordDialog />
-      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

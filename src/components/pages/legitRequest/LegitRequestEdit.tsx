@@ -19,7 +19,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, isProduction } from '@utils/common';
+import { checkAgent } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { dialogState, toastState } from '@recoil/common';
@@ -140,11 +140,7 @@ function LegitRequestEdit() {
       () => {
         logEvent(attrKeys.legit.CLICK_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
 
-        if (
-          isProduction &&
-          !checkAgent.isAndroidApp() &&
-          (!hasPhotoLibraryAuth || !hasCameraAuth)
-        ) {
+        if (!checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
           setDialogState({
             type: 'appAuthCheck',
             theme: 'dark',

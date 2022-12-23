@@ -12,7 +12,6 @@ import {
   ProductsFilter,
   ProductsFilterBottomSheet,
   ProductsInfiniteGrid,
-  ProductsKeywordDialog,
   ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
@@ -52,7 +51,7 @@ function CrmProducts() {
           <Box
             customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
           >
-            <Header disableProductsKeywordClickInterceptor={false} />
+            <Header />
             {notice && (
               <Box customStyle={{ minHeight: CMR_LANDING_INFO_HEIGHT, position: 'relative' }}>
                 <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
@@ -76,19 +75,10 @@ function CrmProducts() {
                 />
               </Box>
             )}
-            <ProductsFilter
-              variant="search"
-              showDynamicFilter
-              customTop={HEADER_HEIGHT + CMR_LANDING_INFO_HEIGHT}
-            />
+            <ProductsFilter variant="search" showDynamicFilter />
           </Box>
         }
-        footer={
-          <BottomNavigation
-            disableHideOnScroll={false}
-            disableProductsKeywordClickInterceptor={false}
-          />
-        }
+        footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
         <Gap height={8} />
@@ -100,7 +90,6 @@ function CrmProducts() {
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
       <ProductsOrderFilterBottomSheet />
-      <ProductsKeywordDialog />
       <ProductsLegitFilterBottomSheet />
     </>
   );

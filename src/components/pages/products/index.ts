@@ -1,9 +1,6 @@
 export { default as ProductsFilter } from './ProductsFilter';
 export { default as ProductsFilterBottomSheet } from './ProductsFilterBottomSheet';
 export { default as ProductsOrderFilterBottomSheet } from './ProductsOrderFilterBottomSheet';
-export { default as ProductsKeywordBottomSheet } from './ProductsKeywordBottomSheet';
-export { default as ProductsKeywordDialog } from './ProductsKeywordDialog';
-export { default as ProductsKeywordAlert } from './ProductsKeywordAlert';
 export { default as ProductsInfiniteGrid } from './ProductsInfiniteGrid';
 export { default as ProductsHeader } from './ProductsHeader';
 export { default as ProductsStatus } from './ProductsStatus';
@@ -17,3 +14,4 @@ export { default as ProductsGeneralFilter } from './ProductsGeneralFilter';
 export { default as ProductsDynamicFilter } from './ProductsDynamicFilter';
 export { default as ProductsFilterHistory } from './ProductsFilterHistory';
 export { default as ProductsPageHead } from './ProductsPageHead';
+export { default as ProductsMiddleFilter } from './ProductsMiddleFilter';

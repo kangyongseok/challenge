@@ -86,7 +86,9 @@ export type ProductLegitsParams = {
   size?: number;
   results?: number[];
   status?: number[];
+  legitParentIds?: number[];
   isOnlyResult?: boolean;
+  keyword?: string;
   sort?: 'lastUpdated' | 'lastCreated'; // default: laseCreated
 };
 

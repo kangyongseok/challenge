@@ -1,7 +1,6 @@
 import { QueryClient, dehydrate } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Box } from 'mrcamel-ui';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
@@ -11,9 +10,6 @@ import {
   ProductsFilterBottomSheet,
   ProductsHeader,
   ProductsInfiniteGrid,
-  ProductsKeywordBottomSheet,
-  ProductsKeywordDialog,
-  ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
@@ -25,11 +21,10 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
+import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
@@ -41,18 +36,11 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
       <ProductsPageHead variant="search" params={params} />
       <GeneralTemplate
         header={<ProductsHeader variant="search" />}
-        footer={
-          <BottomNavigation
-            disableHideOnScroll={false}
-            disableProductsKeywordClickInterceptor={false}
-          />
-        }
+        footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
-          <ProductsRelatedKeywords />
-          <ProductsFilter variant="search" showDynamicFilter />
-        </Box>
+        <ProductsRelatedKeywords />
+        <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" name={attrProperty.productName.SEARCH} />
@@ -62,9 +50,6 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
       <ProductsOrderFilterBottomSheet />
-      <ProductsKeywordBottomSheet variant="search" />
-      <ProductsKeywordDialog />
-      <ProductsLegitFilterBottomSheet />
     </>
   );
 }

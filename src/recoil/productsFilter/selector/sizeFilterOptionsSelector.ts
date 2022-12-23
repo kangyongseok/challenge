@@ -50,7 +50,20 @@ const sizeFilterOptionsSelector = selector({
           checkedAll:
             newCategorySizes.length ===
             newCategorySizes.filter((newCategorySize) => newCategorySize.checked).length,
-          categorySizes: newCategorySizes
+          categorySizes: newCategorySizes,
+          filteredCategorySizes: newCategorySizes.filter(({ viewSize }) => {
+            const replacedName = parentCategory.name.replace(/\(P\)/g, '');
+            if (['아우터', '상의'].includes(replacedName)) {
+              return /^[a-zA-Z]*$/.test(viewSize);
+            }
+            if (replacedName === '하의') {
+              return /^([\d]|[\d\sINCH])*$/.test(viewSize);
+            }
+            if (replacedName === '신발') {
+              return /^[\d]*$/.test(viewSize);
+            }
+            return true;
+          })
         };
       })
       .filter((parentCategory) => parentCategory.categorySizes.length);

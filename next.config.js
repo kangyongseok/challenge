@@ -59,6 +59,18 @@ const routers = [
     destination: '/login'
   },
   {
+    source: '/camelSeller/:path*',
+    has: [
+      {
+        type: 'cookie',
+        key: 'accessToken',
+        value: undefined
+      }
+    ],
+    permanent: false,
+    destination: '/login'
+  },
+  {
     source: '/logout',
     has: [
       {
@@ -127,11 +139,11 @@ const nextConfig = {
     GOOGLE_ANALYTICS_TRACKING_ID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
     DATADOG_RUM_APP_ID: process.env.DATADOG_RUM_APP_ID,
     DATADOG_RUM_CLIENT_TOKEN: process.env.DATADOG_RUM_CLIENT_TOKEN,
+    RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED:
+      process.env.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED,
     DATADOG_RUM_ENV: process.env.DATADOG_RUM_ENV,
     DATADOG_RUM_SERVICE: process.env.DATADOG_RUM_SERVICE,
-    DATADOG_ALLOWED_TRACING_ORIGIN: process.env.DATADOG_ALLOWED_TRACING_ORIGIN,
-    RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED:
-      process.env.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED
+    DATADOG_ALLOWED_TRACING_ORIGIN: process.env.DATADOG_ALLOWED_TRACING_ORIGIN
   },
   images: {
     domains: [

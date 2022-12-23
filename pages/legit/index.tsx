@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
@@ -18,11 +17,6 @@ import {
   LegitTabs
 } from '@components/pages/legit';
 
-import Initializer from '@library/initializer';
-
-import { fetchUserLegitTargets } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
@@ -91,25 +85,13 @@ function Legit() {
   );
 }
 
-export async function getServerSideProps({
-  req,
+export async function getStaticProps({
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
-  // TODO 권한 체크 로직 제거, 추후 보완
-  const queryClient = new QueryClient();
-
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
-
-  if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets);
-  }
-
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
-      dehydratedState: dehydrate(queryClient)
+      ...(await serverSideTranslations(locale || defaultLocale))
     }
   };
 }

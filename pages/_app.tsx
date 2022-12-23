@@ -106,7 +106,8 @@ function App({ Component, pageProps }: AppProps) {
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
-    if (router.asPath.split('?')[0] === '/legit') return common.bg03;
+    if (router.asPath.split('?')[0] === '/legit' || router.asPath.split('?')[0] === '/legit/search')
+      return common.bg03;
 
     if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
       return common.uiBlack;
