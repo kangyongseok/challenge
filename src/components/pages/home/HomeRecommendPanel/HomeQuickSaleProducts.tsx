@@ -1,3 +1,4 @@
+import { useResetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Typography } from 'mrcamel-ui';
@@ -6,20 +7,20 @@ import { Box, Grid, Typography } from 'mrcamel-ui';
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { Image } from '@components/UI/atoms';
 
-import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchPersonalsSellerProducts } from '@api/personal';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { eventContentProductsParamsState } from '@recoil/eventFilter';
+
 function HomeQuickSaleProducts() {
   const router = useRouter();
-
+  const resetEventContentProductsParamsState = useResetRecoilState(eventContentProductsParamsState);
   const {
     data: camelProducts,
     isLoading,
@@ -27,14 +28,11 @@ function HomeQuickSaleProducts() {
   } = useQuery(queryKeys.personals.sellerProducts(), () => fetchPersonalsSellerProducts());
 
   const handleClick = () => {
-    logEvent(attrKeys.home.CLICK_FEATURED_PRODUCT_LIST, {
+    resetEventContentProductsParamsState();
+    logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
       name: attrProperty.name.MAIN,
-      title: attrProperty.title.GENERAL_SELLER
-    });
-    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.GENERAL_SELLER,
-      type: attrProperty.type.GUIDED
+      title: attrProperty.title.BANNER,
+      att: attrProperty.title.GENERAL_SELLER
     });
 
     router.push('/events/신선한-매물-15');

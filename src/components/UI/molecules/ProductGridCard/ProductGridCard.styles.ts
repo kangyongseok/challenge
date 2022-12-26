@@ -46,7 +46,7 @@ export const Area = styled(Typography)`
     }
   }) => common.ui60};
   white-space: nowrap;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
 `;
 

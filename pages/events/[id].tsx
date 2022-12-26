@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 
@@ -19,28 +19,27 @@ function Event() {
   const router = useRouter();
   const { id } = router.query;
 
-  const attParser = useMemo(() => {
-    if (String(id).split('-').includes('13')) {
-      return 'QUICK';
-    }
-    if (String(id).split('-').includes('14')) {
-      return 'LOWPRICE';
-    }
-    if (String(id).split('-').includes('16')) {
-      return 'TOP_DEALS_PRODUCT';
-    }
-    return 'NUMBER_NULL';
-  }, [id]);
-
   useEffect(() => {
-    if (String(id).split('-').includes('15')) {
-      logEvent(attrKeys.events.VIEW_FEATURED_PRODUCT_LIST);
-    } else {
-      logEvent(attrKeys.events.VIEW_CRAZYWEEK, {
-        att: attParser
-      });
-    }
-  }, [attParser, id]);
+    const getAtt = () => {
+      if (String(id).split('-').includes('13')) {
+        return 'QUICK';
+      }
+      if (String(id).split('-').includes('14')) {
+        return 'LOWPRICE';
+      }
+      if (String(id).split('-').includes('15')) {
+        return 'GENERAL_SELLER';
+      }
+      if (String(id).split('-').includes('16')) {
+        return 'TOP_DEALS_PRODUCT';
+      }
+      return 'NUMBER_NULL';
+    };
+
+    logEvent(attrKeys.events.VIEW_CRAZYWEEK, {
+      att: getAtt()
+    });
+  }, [id]);
 
   return (
     <GeneralTemplate header={<EventHeader />}>

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
 
@@ -13,6 +14,8 @@ import { logEvent } from '@library/amplitude';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { eventContentProductsParamsState } from '@recoil/eventFilter';
 
 const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
 
@@ -47,6 +50,7 @@ const bannerData = [
 function HomeMainBanner() {
   const router = useRouter();
   const startXRef = useRef(0);
+  const resetEventContentProductsParamsState = useResetRecoilState(eventContentProductsParamsState);
 
   const handleClick = (pathname: string) => () => {
     const getClickBannerTitle = () => {
@@ -81,6 +85,7 @@ function HomeMainBanner() {
     }
 
     if (pathname.indexOf('/events') > -1) {
+      resetEventContentProductsParamsState();
       logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
         name: attrProperty.name.MAIN,
         title: attrProperty.title.BANNER

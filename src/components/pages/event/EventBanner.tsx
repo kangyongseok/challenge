@@ -28,7 +28,6 @@ function EventBanner() {
     <Box component="section" customStyle={{ margin: '0 -20px 32px' }}>
       <Image
         ratio="4:3"
-        height="auto"
         src={imageMain || ''}
         alt="Event Banner Img"
         disableSkeletonRender={false}

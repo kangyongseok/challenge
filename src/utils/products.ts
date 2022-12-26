@@ -651,12 +651,14 @@ export function getEventPropertyViewType(variant: ProductsVariant, parentIds?: s
 }
 
 export function getProductType(siteId: number, sellerType: number) {
-  // TODO 추후 순수 카멜에서 등록한 매물 구분 필요
-  if (
-    siteId === PRODUCT_SITE.CAMEL.id ||
-    SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']
-  ) {
+  if (SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) {
+    return 'authenticated';
+  }
+  if (SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['4']) {
     return 'transferred';
+  }
+  if (siteId === PRODUCT_SITE.ORIGINAL_CAMEL.id) {
+    return 'original';
   }
 
   return 'crawled';

@@ -334,7 +334,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           customStyle={{
             marginBottom: 4,
             flexWrap: 'wrap',
-            display: !hidePrice ? 'flex' : 'none'
+            display: !hidePrice ? 'flex' : 'none',
+            overflowY: 'hidden'
           }}
         >
           {!hidePrice && (

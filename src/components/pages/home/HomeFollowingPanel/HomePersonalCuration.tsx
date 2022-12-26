@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Typography } from 'mrcamel-ui';
@@ -25,8 +25,9 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
-import { HomeSeasonBannerData } from '@typings/common';
+import type { HomeSeasonBannerData } from '@typings/common';
 import { homePersonalCurationBannersState } from '@recoil/home';
+import { eventContentProductsParamsState } from '@recoil/eventFilter';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomePersonalCuration() {
@@ -36,6 +37,7 @@ function HomePersonalCuration() {
   const [banners, setHomePersonalCurationBannersState] = useRecoilState(
     homePersonalCurationBannersState
   );
+  const resetEventContentProductsParamsState = useResetRecoilState(eventContentProductsParamsState);
 
   const [bannerGroup, setBannerGroup] = useState<HomeSeasonBannerData[]>([]);
   const prevIndexRef = useRef<number>();
@@ -64,23 +66,6 @@ function HomePersonalCuration() {
   );
 
   const products = useMemo(() => pages.map(({ content }) => content).flat(), [pages]);
-
-  // useEffect(() => {
-  //   const bannerGroup: HomeSeasonBannerData[] =
-  //     accessUser?.gender === 'F'
-  //       ? [...defaultBanners, ...femaleBanners]
-  //       : [...defaultBanners, ...maleBanners];
-
-  //   if (Math.floor(products.length / 16) % 9 === 0) {
-  //     setShuffleBanner([...shuffleBanner, ...shuffle(bannerGroup)]);
-  //     return;
-  //   }
-
-  //   if (shuffleBanner.length === 0) {
-  //     setShuffleBanner(shuffle(bannerGroup));
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accessUser?.gender, products]);
 
   const handleClickBanner = (pathname: string) => () => {
     const getClickBannerTitle = () => {
@@ -116,6 +101,7 @@ function HomePersonalCuration() {
     }
 
     if (pathname.indexOf('/events') > -1) {
+      resetEventContentProductsParamsState();
       logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
         name: attrProperty.name.MAIN,
         title: attrProperty.title.BANNER,
@@ -251,27 +237,6 @@ function HomePersonalCuration() {
                     compact
                   />
                 </Grid>
-                {/* {(index + 1) % 16 === 0 && (
-                  <Grid
-                    item
-                    xs={1}
-                    onClick={handleClickBanner(shuffleBanner[(index + 1) / 16 - 1]?.pathname)}
-                  >
-                    <Box
-                      customStyle={{
-                        margin: '0 -20px',
-                        textAlign: 'center',
-                        backgroundColor: shuffleBanner[(index + 1) / 16 - 1]?.backgroundColor
-                      }}
-                    >
-                      <Image
-                        height="104px"
-                        src={shuffleBanner[(index + 1) / 16 - 1]?.src}
-                        disableAspectRatio
-                      />
-                    </Box>
-                  </Grid>
-                )} */}
                 {(index + 1) % 16 === 0 && (
                   <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
                     <Box

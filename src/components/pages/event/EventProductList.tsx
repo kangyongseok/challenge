@@ -14,7 +14,6 @@ import attrProperty from '@constants/attrProperty';
 
 import { eventContentProductsParamsState } from '@recoil/eventFilter/atom';
 
-// TODO 추후 API 가 구현된 다음 보완 필요
 function EventProductList() {
   const router = useRouter();
   const { id } = router.query;
@@ -42,6 +41,22 @@ function EventProductList() {
 
   const products = useMemo(() => pages.flatMap(({ content = [] }) => content), [pages]);
 
+  const getTitle = () => {
+    if (String(id).split('-').includes('13')) {
+      return 'QUICK';
+    }
+    if (String(id).split('-').includes('14')) {
+      return 'LOWPRICE';
+    }
+    if (String(id).split('-').includes('15')) {
+      return 'GENERAL_SELLER';
+    }
+    if (String(id).split('-').includes('16')) {
+      return 'TOP_DEALS_PRODUCT';
+    }
+    return 'NUMBER_NULL';
+  };
+
   useEffect(() => {
     setEventContentProductsParamsState((prevState) => ({
       ...prevState,
@@ -64,22 +79,6 @@ function EventProductList() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const attParser = useMemo(() => {
-    if (String(id).split('-').includes('13')) {
-      return 'QUICK';
-    }
-    if (String(id).split('-').includes('14')) {
-      return 'LOWPRICE';
-    }
-    if (String(id).split('-').includes('15')) {
-      return 'GENERAL_SELLER';
-    }
-    if (String(id).split('-').includes('16')) {
-      return 'TOP_DEALS_PRODUCT';
-    }
-    return 'NUMBER_NULL';
-  }, [id]);
 
   return (
     <Grid component="section" container columnGap={16} rowGap={48} customStyle={{ marginTop: -2 }}>
@@ -110,7 +109,8 @@ function EventProductList() {
                 product={product}
                 productAtt={{
                   name: attrProperty.name.CRAZY_WEEK,
-                  title: attParser,
+                  source: attrProperty.source.EVENT_LIST,
+                  title: getTitle(),
                   att,
                   id: product.id,
                   index: index + 1,
@@ -123,7 +123,8 @@ function EventProductList() {
                 }}
                 wishAtt={{
                   name: attrProperty.name.CRAZY_WEEK,
-                  title: attParser,
+                  source: attrProperty.source.EVENT_LIST,
+                  title: getTitle(),
                   att,
                   id: product.id,
                   index: index + 1,

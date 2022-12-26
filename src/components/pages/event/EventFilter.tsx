@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
@@ -42,26 +40,26 @@ function EventFilter() {
     }
   );
 
-  const attParser = useMemo(() => {
-    if (String(id).split('-').includes('13')) {
-      return 'QUICK';
-    }
-    if (String(id).split('-').includes('14')) {
-      return 'LOWPRICE';
-    }
-    if (String(id).split('-').includes('15')) {
-      return 'GENERAL_SELLER';
-    }
-    if (String(id).split('-').includes('16')) {
-      return 'TOP_DEALS_PRODUCT';
-    }
-    return 'NUMBER_NULL';
-  }, [id]);
-
   const handleClick = (newBrandId: number, name: string) => () => {
+    const getTitle = () => {
+      if (String(id).split('-').includes('13')) {
+        return 'QUICK';
+      }
+      if (String(id).split('-').includes('14')) {
+        return 'LOWPRICE';
+      }
+      if (String(id).split('-').includes('15')) {
+        return 'GENERAL_SELLER';
+      }
+      if (String(id).split('-').includes('16')) {
+        return 'TOP_DEALS_PRODUCT';
+      }
+      return 'NUMBER_NULL';
+    };
+
     logEvent(attrKeys.events.CLICK_TAG, {
       name: attrProperty.name.CRAZY_WEEK,
-      title: attParser,
+      title: getTitle(),
       att: name,
       on: brandIds.includes(newBrandId) ? 'N' : 'Y'
     });
@@ -145,6 +143,7 @@ const List = styled.section<{ showAppDownloadBanner: boolean }>`
       palette: { common }
     }
   }) => common.bg01};
+  transition: top 0.5s;
 `;
 
 export default EventFilter;

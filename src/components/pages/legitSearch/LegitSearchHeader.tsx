@@ -132,6 +132,9 @@ function LegitSearchHeader() {
           onChange={(e) => setValue(e.currentTarget.value)}
           value={value}
           spellCheck={false}
+          inputCustomStyle={{
+            width: 'calc(100% - 40px)'
+          }}
         />
       </Flexbox>
       <List>
