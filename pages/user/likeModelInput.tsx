@@ -44,7 +44,7 @@ function LikeModelInput() {
         <Footer>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             disabled={!selectedModelCard.length}
             brandColor="primary"

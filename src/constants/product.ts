@@ -147,6 +147,10 @@ export const PRODUCT_STATUS = {
   2: '중복글',
   3: '삭제글',
   4: '예약'
+  // 5: '가격하락',
+  // 6: '지난글',
+  // 7: '감정중',
+  // 8: '숨김'
 };
 
 export const REPORT_TYPE_FAKE_PRODUCT = 1;

@@ -4,12 +4,11 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -260,12 +259,11 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     >
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
         <Image
-          variant="backgroundImage"
           src={imageUrl}
           alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
-          isRound={isRound}
+          round={isRound ? 8 : 0}
           disableLazyLoad={false}
-          disableSkeletonRender={false}
+          disableOnBackground={false}
         />
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
@@ -345,7 +343,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           )}
           {!hideLegitStatusLabel && productLegitStatusText && (
             <Label
-              variant="outlined"
+              variant="outline"
               size="xsmall"
               brandColor="black"
               text={productLegitStatusText}
@@ -353,7 +351,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           )}
           {showCountLabel && (priceDownCount >= 1 || updatedCount >= 3) && (
             <Label
-              variant="contained"
+              variant="solid"
               size="xsmall"
               brandColor="black"
               text={
@@ -372,7 +370,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           {!hideUpdatedCountLabel && updatedCount > 0 && (
             <Label
               variant="ghost"
-              brandColor="primary-light"
+              brandColor="blue"
               size="xsmall"
               text={`끌올 ${commaNumber(updatedCount || 0)}회`}
             />
@@ -380,7 +378,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           {!hidePriceDownCountLabel && priceDownCount > 0 && (
             <Label
               variant="ghost"
-              brandColor="primary-light"
+              brandColor="blue"
               size="xsmall"
               text={`가격 ${commaNumber(priceDownCount || 0)}번 내림`}
             />

@@ -2,10 +2,8 @@ import { useEffect } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { Box, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Image, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import { logEvent } from '@library/amplitude';
 

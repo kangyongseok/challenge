@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Grid, Typography } from 'mrcamel-ui';
+import { Box, Grid, Image, Typography } from 'mrcamel-ui';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -51,7 +50,6 @@ function HomeAuthSellerProducts() {
         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/welcome/auth_seller_banner.png`}
         alt="Auth Seller Banner Img"
         onClick={handleClick}
-        disableSkeletonRender={false}
       />
       <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
         <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 20 }}>

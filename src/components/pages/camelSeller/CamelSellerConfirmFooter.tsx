@@ -216,7 +216,7 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       >
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           size="large"
           customStyle={{ height: 52 }}
           onClick={modify.isState ? handleClickEditTitle : handleClickRegister}

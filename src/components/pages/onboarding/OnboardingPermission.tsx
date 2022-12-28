@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchArea, postAlarm, postArea } from '@api/user';
+import { fetchArea, postArea } from '@api/user';
 
 import {
   IS_DONE_SIGN_IN_PERMISSION,
@@ -28,6 +28,7 @@ import { checkAgent } from '@utils/common';
 import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
 import { modelParentCategoryIdsState, selectedModelCardState } from '@recoil/onboarding';
+import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
@@ -56,6 +57,7 @@ function OnboardingPermission() {
     }
   } = useTheme();
   const router = useRouter();
+
   const {
     keyword,
     brandIds,
@@ -72,7 +74,7 @@ function OnboardingPermission() {
     materialIds
   } = useRecoilValue(searchParamsState);
   const resetSearchParams = useResetRecoilState(searchParamsState);
-  const { mutate: mutatePostAlarm } = useMutation(postAlarm);
+  const { mutate: mutatePostAlarm } = useMutationPostAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
   const removeModelParentCategoryId = useResetRecoilState(modelParentCategoryIdsState);
   const removeModelCard = useResetRecoilState(selectedModelCardState);
@@ -200,7 +202,12 @@ function OnboardingPermission() {
 
   useEffect(() => {
     window.getAuthPush = (result: boolean) => {
-      if (result) mutatePostAlarm(true);
+      if (result) {
+        mutatePostAlarm({
+          isAlarm: true,
+          isChannelNoti: true
+        });
+      }
     };
 
     window.getAuthLocation = async ({ lng, lat }: FindLocation) => {

@@ -58,7 +58,7 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
 
             {data.labels.filter((label) => label.codeId === 14)[0] && (
               <Label
-                variant="contained"
+                variant="solid"
                 text={data.labels.filter((label) => label.codeId === 14)[0].name}
                 customStyle={{
                   width: 35,

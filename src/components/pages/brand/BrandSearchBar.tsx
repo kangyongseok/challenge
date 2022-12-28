@@ -32,7 +32,7 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
           autoComplete="off"
           spellCheck="false"
           type="search"
-          variant="contained"
+          variant="solid"
           placeholder="브랜드 검색"
           startAdornment={
             <Icon name="SearchOutlined" width={20} height={20} customStyle={{ marginRight: 8 }} />

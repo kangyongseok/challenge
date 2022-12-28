@@ -4,9 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -135,7 +134,6 @@ function HomeMainBanner() {
               alt="Main Banner Img"
               onClick={handleClick(data.pathname)}
               disableAspectRatio
-              disableSkeletonRender={false}
             />
           </SwiperSlide>
         ))}

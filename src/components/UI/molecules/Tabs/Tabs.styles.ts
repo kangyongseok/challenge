@@ -94,4 +94,8 @@ export const BadgeText = styled(Typography)<{ selected: boolean; badge?: boolean
   padding: 0 22px;
   color: ${({ theme: { palette }, selected }) =>
     selected ? palette.common.ui20 : palette.common.ui60};
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
 `;

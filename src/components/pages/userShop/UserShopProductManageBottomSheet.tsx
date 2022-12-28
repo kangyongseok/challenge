@@ -3,13 +3,13 @@ import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
-import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -30,46 +30,38 @@ function UserShopProductManageBottomSheet() {
       }
     }
   } = useTheme();
+
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('manage'));
-  const setOpenSoldoutState = useSetRecoilState(userShopOpenStateFamily('soldOutConfirm'));
-  const product = useRecoilValue(userShopSelectedProductState);
+  const {
+    id,
+    status,
+    isNoSellerReviewAndHasTarget = false
+  } = useRecoilValue(userShopSelectedProductState);
+
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
-  const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
+  const { mutate: updateMutation, isLoading: isLoadingMutatePutProductUpdateStatus } =
+    useMutation(putProductUpdateStatus);
+
   const setToastState = useSetRecoilState(toastState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
+  const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
 
-  const { isSale, isSoldOut, isReserving } = useMemo(
+  const { isSale, isSoldOut, isReserving, isHiding } = useMemo(
     () => ({
-      isSale: product.status === 0,
-      isSoldOut: product.status === 1,
-      isReserving: product.status === 4
+      isSale: status === 0,
+      isSoldOut: status === 1,
+      isReserving: status === 4,
+      isHiding: status === 8
     }),
-    [product.status]
+    [status]
   );
 
-  const getAttProperty = {
-    id: product.id,
-    brand: product?.brand?.name,
-    category: product?.category?.name,
-    parentCategory: FIRST_CATEGORIES[product.category?.id as number],
-    line: product.line,
-    site: product.site?.name,
-    price: product.price,
-    scoreTotal: product.scoreTotal,
-    scoreStatus: product.scoreStatus,
-    scoreSeller: product.scoreSeller,
-    scorePrice: product.scorePrice,
-    scorePriceAvg: product.scorePriceAvg,
-    scorePriceCount: product.scorePriceCount,
-    scorePriceRate: product.scorePriceRate
-  };
-
   const getTitle = useMemo(() => {
-    if (product.status === 0) return attrProperty.title.SALE;
-    if (product.status === 4) return attrProperty.title.RESERVED;
+    if (status === 0) return attrProperty.title.SALE;
+    if (status === 4) return attrProperty.title.RESERVED;
     return attrProperty.title.SOLD;
-  }, [product.status]);
+  }, [status]);
 
   const getAtt = useCallback((dataStatus: number) => {
     switch (dataStatus) {
@@ -92,16 +84,15 @@ function UserShopProductManageBottomSheet() {
   }, [getTitle, open]);
 
   const handleClickUpdatePosted = () => {
-    if (!product.id) return;
+    if (!id) return;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'UP',
-      ...getAttProperty
+      att: 'UP'
     });
 
     hoistingMutation(
-      { productId: product.id },
+      { productId: id },
       {
         onSuccess() {
           setToastState({
@@ -119,35 +110,49 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickUpdateStatus = (e: MouseEvent<HTMLDivElement>) => {
-    if (!product.id) return;
+    if (!id || isLoadingMutatePutProductUpdateStatus) return;
+
     const dataStatus = Number(e.currentTarget.getAttribute('data-status'));
+
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: getAtt(dataStatus),
-      ...getAttProperty
+      att: getAtt(dataStatus)
     });
+
     if (dataStatus === 1) {
       setOpenState(({ type }) => ({
         type,
         open: false
       }));
-      setTimeout(() => {
-        setOpenSoldoutState(({ type }) => ({ type, open: true }));
-      }, 500);
+      updateMutation(
+        { productId: id, status: 1 },
+        {
+          onSuccess() {
+            if (isNoSellerReviewAndHasTarget) {
+              router.push({
+                pathname: '/channels',
+                query: {
+                  productId: id,
+                  isSelectTargetUser: true
+                }
+              });
+            } else {
+              setOpenSoldOutFeedbackState(({ type }) => ({
+                type,
+                open: true
+              }));
+            }
+          }
+        }
+      );
+
       return;
     }
     updateMutation(
-      { productId: product.id, status: dataStatus },
+      { productId: id, status: dataStatus },
       {
         onSettled: () => {
-          // if (dataStatus === 1) {
-          //   setToastState({
-          //     type: 'sellerProductState',
-          //     status: 'soldout',
-          //     customStyle: { bottom: TOAST_BOTTOM }
-          //   });
-          // }
           if (dataStatus === 0) {
             setToastState({
               type: 'sellerProductState',
@@ -172,12 +177,11 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickDelete = () => {
-    if (!product.id) return;
+    if (!id) return;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'DELETE',
-      ...getAttProperty
+      att: 'DELETE'
     });
     setOpenState(({ type }) => ({
       type,
@@ -191,7 +195,12 @@ function UserShopProductManageBottomSheet() {
   };
 
   const handleClickEdit = () => {
-    if (!product.id) return;
+    if (!id) return;
+    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
+      name: attrProperty.name.MY_STORE,
+      title: getTitle,
+      att: 'EDIT'
+    });
 
     setOpenState(({ type }) => ({
       type,
@@ -208,15 +217,7 @@ function UserShopProductManageBottomSheet() {
       }
     }
 
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
-      name: attrProperty.name.MY_STORE,
-      title: getTitle,
-      att: 'EDIT',
-      ...getAttProperty
-    });
-
-    // LocalStorage.remove(CAMEL_SELLER);
-    router.push(`/camelSeller/registerConfirm/${product.id}`);
+    router.push(`/camelSeller/registerConfirm/${id}`);
   };
 
   return (
@@ -230,102 +231,55 @@ function UserShopProductManageBottomSheet() {
       }
       disableSwipeable
     >
-      <Box customStyle={{ padding: 20 }}>
-        {isSale && (
-          <>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              onClick={handleClickUpdatePosted}
-              customStyle={{ height: 48, cursor: 'pointer' }}
-            >
-              <Icon name="PullUpOutlined" />
-              <Typography>끌어올리기</Typography>
-            </Flexbox>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              onClick={handleClickUpdateStatus}
-              data-status={4}
-              customStyle={{ height: 48, cursor: 'pointer' }}
-            >
-              <Icon name="TimeOutlined" />
-              <Typography>예약중으로 변경</Typography>
-            </Flexbox>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              onClick={handleClickUpdateStatus}
-              data-status={1}
-              customStyle={{ height: 48, cursor: 'pointer' }}
-            >
-              <Icon name="CheckOutlined" />
-              <Typography>판매완료로 변경</Typography>
-            </Flexbox>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              customStyle={{ height: 48, cursor: 'pointer' }}
-              onClick={handleClickEdit}
-            >
-              <Icon name="EditOutlined" />
-              <Typography>수정하기</Typography>
-            </Flexbox>
-          </>
-        )}
-        {isReserving && (
-          <>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              onClick={handleClickUpdateStatus}
-              data-status={1}
-              customStyle={{ height: 48, cursor: 'pointer' }}
-            >
-              <Icon name="CheckOutlined" />
-              <Typography>판매완료로 변경</Typography>
-            </Flexbox>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              onClick={handleClickUpdateStatus}
-              data-status={0}
-              customStyle={{ height: 48, cursor: 'pointer' }}
-            >
-              <Icon name="BoxOutlined" />
-              <Typography>판매중으로 변경</Typography>
-            </Flexbox>
-            <Flexbox
-              gap={12}
-              alignment="center"
-              customStyle={{ height: 48, cursor: 'pointer' }}
-              onClick={handleClickEdit}
-            >
-              <Icon name="EditOutlined" />
-              <Typography>수정하기</Typography>
-            </Flexbox>
-          </>
-        )}
-        {isSoldOut && (
-          <Flexbox
-            gap={12}
-            alignment="center"
-            onClick={handleClickUpdateStatus}
-            data-status={0}
-            customStyle={{ height: 48, cursor: 'pointer' }}
+      <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
+        <Flexbox direction="vertical">
+          {isSale && (
+            <>
+              <Menu variant="h3" weight="medium" onClick={handleClickUpdatePosted}>
+                끌어올리기
+              </Menu>
+              <Menu variant="h3" weight="medium" data-status={4} onClick={handleClickUpdateStatus}>
+                예약중으로 변경
+              </Menu>
+              <Menu variant="h3" weight="medium" data-status={1} onClick={handleClickUpdateStatus}>
+                판매완료로 변경
+              </Menu>
+              <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
+                수정하기
+              </Menu>
+            </>
+          )}
+          {isReserving && (
+            <>
+              <Menu variant="h3" weight="medium" data-status={1} onClick={handleClickUpdateStatus}>
+                판매완료로 변경
+              </Menu>
+              <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
+                판매중으로 변경
+              </Menu>
+              <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
+                수정하기
+              </Menu>
+            </>
+          )}
+          {isSoldOut && (
+            <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
+              판매중으로 변경
+            </Menu>
+          )}
+          {isHiding && (
+            <Menu variant="h3" weight="medium" data-status={8} onClick={handleClickUpdateStatus}>
+              숨기기
+            </Menu>
+          )}
+          <Menu
+            variant="h3"
+            weight="medium"
+            onClick={handleClickDelete}
+            customStyle={{ color: red.main }}
           >
-            <Icon name="BoxOutlined" />
-            <Typography>판매중으로 변경</Typography>
-          </Flexbox>
-        )}
-        <Flexbox
-          gap={12}
-          alignment="center"
-          onClick={handleClickDelete}
-          customStyle={{ height: 48, cursor: 'pointer' }}
-        >
-          <Icon name="DeleteOutlined" color={red.main} />
-          <Typography customStyle={{ color: red.main }}>삭제</Typography>
+            삭제
+          </Menu>
         </Flexbox>
         <Button
           fullWidth
@@ -337,13 +291,18 @@ function UserShopProductManageBottomSheet() {
               open: false
             }))
           }
-          customStyle={{ marginTop: 20 }}
         >
           취소
         </Button>
-      </Box>
+      </Flexbox>
     </BottomSheet>
   );
 }
+
+const Menu = styled(Typography)`
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+`;
 
 export default UserShopProductManageBottomSheet;

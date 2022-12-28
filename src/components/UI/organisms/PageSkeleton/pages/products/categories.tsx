@@ -1,23 +1,17 @@
-import { Box, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header, LinearProgress, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Gap, Skeleton } from '@components/UI/atoms';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function CategoryProducts() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   return (
     <GeneralTemplate
       header={
         <div>
           <Header>
-            <Skeleton width="45px" height="24px" isRound disableAspectRatio />
+            <Skeleton width={45} height={24} round={8} disableAspectRatio />
           </Header>
           <Box component="section" customStyle={{ position: 'relative' }}>
             <Wrapper>
@@ -32,10 +26,10 @@ function CategoryProducts() {
                   <Skeleton
                     // eslint-disable-next-line react/no-array-index-key
                     key={`category-tag-skeleton-${index}`}
-                    width={index === 0 ? '37px' : '33px'}
-                    height="24px"
+                    width={index === 0 ? 37 : 33}
+                    height={24}
+                    round={8}
                     disableAspectRatio
-                    isRound
                   />
                 ))}
               </List>
@@ -54,43 +48,19 @@ function CategoryProducts() {
                 gap: 12
               }}
             >
-              <Skeleton
-                width="86.2px"
-                height="20px"
-                disableAspectRatio
-                customStyle={{
-                  backgroundColor: common.ui95
-                }}
-              />
-              <Skeleton
-                width="73.77px"
-                height="20px"
-                disableAspectRatio
-                customStyle={{
-                  backgroundColor: common.ui95
-                }}
-              />
-              <Skeleton
-                width="89.86px"
-                height="20px"
-                disableAspectRatio
-                customStyle={{
-                  backgroundColor: common.ui95
-                }}
-              />
+              <Skeleton width={86.2} height={20} disableAspectRatio />
+              <Skeleton width={73.77} height={20} disableAspectRatio />
+              <Skeleton width={89.86} height={20} disableAspectRatio />
             </List>
             <List>
               {Array.from({ length: 12 }).map((_, index) => (
                 <Skeleton
                   // eslint-disable-next-line react/no-array-index-key
                   key={`products-filter-skeleton-${index}`}
-                  width="68px"
-                  height="36px"
-                  isRound
+                  width={68}
+                  height={36}
+                  round={8}
                   disableAspectRatio
-                  customStyle={{
-                    backgroundColor: common.ui95
-                  }}
                 />
               ))}
             </List>

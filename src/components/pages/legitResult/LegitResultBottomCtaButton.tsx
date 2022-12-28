@@ -137,7 +137,7 @@ function LegitResultBottomCtaButton() {
         />
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor={status === 20 ? 'primary' : 'black'}
           size="large"
           onClick={handleClick}

@@ -4,11 +4,10 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { DropDownSelect } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import { RecentSearchParams } from '@dto/product';
 
@@ -334,17 +333,12 @@ function CamelSellerRecentBottomSheet() {
         {isLoading &&
           Array.from({ length: 8 }, (_, i) => i + 1).map((value) => (
             <Flexbox gap={12} key={`skeleton-card-${value}`}>
-              <Skeleton
-                width="100px"
-                height="100px"
-                customStyle={{ borderRadius: 8 }}
-                disableAspectRatio
-              />
+              <Skeleton width={100} height={100} round={8} disableAspectRatio />
               <Flexbox direction="vertical" gap={5}>
-                <Skeleton disableAspectRatio width="150px" height="18px" />
-                <Skeleton disableAspectRatio width="100px" height="15px" />
-                <Skeleton disableAspectRatio width="80px" height="21px" />
-                <Skeleton disableAspectRatio width="80px" height="20px" />
+                <Skeleton disableAspectRatio width={150} height={18} />
+                <Skeleton disableAspectRatio width={100} height={15} />
+                <Skeleton disableAspectRatio width={80} height={21} />
+                <Skeleton disableAspectRatio width={80} height={21} />
               </Flexbox>
             </Flexbox>
           ))}
@@ -361,17 +355,12 @@ function CamelSellerRecentBottomSheet() {
         {isFetchingNextPage &&
           Array.from({ length: 8 }, (_, i) => i + 1).map((value) => (
             <Flexbox gap={12} key={`skeleton-card-${value}`}>
-              <Skeleton
-                width="100px"
-                height="100px"
-                customStyle={{ borderRadius: 8 }}
-                disableAspectRatio
-              />
+              <Skeleton width={100} height={100} round={8} disableAspectRatio />
               <Flexbox direction="vertical" gap={5}>
-                <Skeleton disableAspectRatio width="150px" height="18px" />
-                <Skeleton disableAspectRatio width="100px" height="15px" />
-                <Skeleton disableAspectRatio width="80px" height="21px" />
-                <Skeleton disableAspectRatio width="80px" height="20px" />
+                <Skeleton disableAspectRatio width={150} height={18} />
+                <Skeleton disableAspectRatio width={100} height={15} />
+                <Skeleton disableAspectRatio width={80} height={21} />
+                <Skeleton disableAspectRatio width={80} height={20} />
               </Flexbox>
             </Flexbox>
           ))}

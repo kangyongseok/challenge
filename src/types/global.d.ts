@@ -26,6 +26,9 @@ export declare global {
     getAuthPhotoLibrary: any;
     getAuthCamera: any;
     opera: any;
+    getChannelMessage: (message: string) => void; // Chat View Controller 내의 Message Bottom Fixed Input return value
+    getPhotoAttach: (fileUrls: string[]) => void; // Chat View Controller 내 native camera/photoAlbum에서 선택한 파일을 S3에 저장후 fileUrl 리턴
+    getRedirect: (parsedUrl: { pathname: string; redirectChannelUrl: string }) => void; // Chat View Controller 에서 전달한 url을 MainVC로 전달
   }
 
   namespace NodeJS {
@@ -48,6 +51,8 @@ export declare global {
       DATADOG_RUM_ENV: string;
       DATADOG_RUM_SERVICE: string;
       DATADOG_ALLOWED_TRACING_ORIGIN: string;
+      SENDBIRD_APP_ID: string;
+      SENDBIRD_USER_ID: string;
     }
   }
 }

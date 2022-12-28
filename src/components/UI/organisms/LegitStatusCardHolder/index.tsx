@@ -3,11 +3,11 @@ import { ReactElement, useMemo, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
-import { Avatar, Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
-import { Image, LegitLabel } from '@components/UI/atoms';
+import { LegitLabel } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
@@ -312,16 +312,14 @@ function LegitStatusCardHolder({
                     {({ isActive }) => (
                       <>
                         <Image
-                          variant="backgroundImage"
                           className="product-legit-result-image"
                           width={160}
                           height={160}
                           src={image}
                           data-src={image}
                           alt="Legit Result Img"
-                          customStyle={{
-                            borderRadius: 8
-                          }}
+                          round={8}
+                          disableOnBackground={false}
                         />
                         <ImageShield isActive={isActive} />
                       </>

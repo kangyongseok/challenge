@@ -19,7 +19,7 @@ function ProductDetailLegitImageBottomBanner({
   product
 }: {
   data: ProductLegit | undefined;
-  product: Product;
+  product: Product | undefined;
 }) {
   const router = useRouter();
   const {
@@ -73,18 +73,19 @@ function ProductDetailLegitImageBottomBanner({
         gap={10}
         original={data?.status === 30 && data.result === 1}
         onClick={() => {
-          logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
-            name: attrProperty.productName.PRODUCT_DETAIL,
-            title: attrProperty.productTitle.TOP,
-            brand: product.brand.name,
-            category: product.category.name,
-            parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-            site: product.site.name,
-            price: product.price,
-            imageCount: product.imageCount,
-            legitStatus: data?.status,
-            legitResult: data?.result
-          });
+          if (product)
+            logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
+              name: attrProperty.productName.PRODUCT_DETAIL,
+              title: attrProperty.productTitle.TOP,
+              brand: product.brand.name,
+              category: product.category.name,
+              parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+              site: product.site.name,
+              price: product.price,
+              imageCount: product.imageCount,
+              legitStatus: data?.status,
+              legitResult: data?.result
+            });
           if (!data?.status) {
             setLegitBottomSheet(true);
             return;

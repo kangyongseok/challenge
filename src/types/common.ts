@@ -93,7 +93,10 @@ export type ToastType =
   | 'bottomSheetLogin'
   | 'sellerProductState'
   | 'mypage'
-  | 'home';
+  | 'home'
+  | 'user'
+  | 'channel'
+  | 'sendbird';
 
 export type ToastStatus =
   | 'saved'
@@ -121,7 +124,25 @@ export type ToastStatus =
   | 'isAgree'
   | 'disAgree'
   | 'saleSuccess'
-  | 'selfCamelProduct';
+  | 'selfCamelProduct'
+  | 'reviewReport'
+  | 'reviewBlock'
+  | 'channelNotiOn'
+  | 'channelNotiOff'
+  | 'agreeAlarm'
+  | 'disAgreeAlarm'
+  | 'agreeNight'
+  | 'disAgreeNight'
+  | 'notiOn'
+  | 'notiOff'
+  | 'settingError'
+  | 'unBlock'
+  | 'unBlockWithRole'
+  | 'block'
+  | 'report'
+  | 'createFail'
+  | 'successSendReview'
+  | 'disabledMakeAppointment';
 
 export type DialogType =
   | 'SNSShare'
@@ -136,7 +157,16 @@ export type DialogType =
   | 'legitServiceNotice'
   | 'appUpdateNotice'
   | 'appAuthCheck'
-  | 'legitPhotoGuide';
+  | 'legitPhotoGuide'
+  | 'unblockBlockedUser'
+  | 'leaveChannel'
+  | 'blockUser'
+  | 'confirmDeal'
+  | 'successMakeAppointment'
+  | 'cancelAppointment'
+  | 'requiredAppUpdateForChat'
+  | 'loginError'
+  | 'loginProviderError';
 
 export type ShareData = {
   title: string;

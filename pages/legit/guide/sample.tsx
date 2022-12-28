@@ -2,10 +2,19 @@ import { useEffect, useRef } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Icon, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
+import {
+  Alert,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  ThemeProvider,
+  Typography,
+  dark,
+  useTheme
+} from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import { logEvent } from '@library/amplitude';
@@ -154,8 +163,9 @@ function LegitGuideSample() {
                   width="100%"
                   src={imageSample}
                   alt="Sample Img"
+                  round={8}
                   disableAspectRatio
-                  customStyle={{ marginTop: 16, borderRadius: 8 }}
+                  customStyle={{ marginTop: 16 }}
                 />
               </div>
             ))}

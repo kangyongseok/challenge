@@ -1,3 +1,4 @@
+import type { channelUserType } from '@constants/user';
 import { PRODUCT_CREATE } from '@constants/camelSeller';
 
 import type { Product, ProductResult, SearchParams } from './product';
@@ -8,6 +9,7 @@ import type { Brand } from './brand';
 export type Alarm = {
   agreeDate: string;
   isAgree: boolean;
+  isChannelNoti: boolean;
   isNightAgree: boolean;
 };
 
@@ -111,7 +113,7 @@ export type Size = {
   value?: SizeValue;
 };
 
-export interface UserInfo {
+export interface UserInfoResult {
   alarm: Alarm;
   announces: Announce[];
   area: {
@@ -136,6 +138,7 @@ export interface UserInfo {
   isNewUser: boolean;
   notViewedHistoryCount: number;
   notViewedAnnounceCount: number;
+  hasChannel: boolean;
 }
 
 export interface UserProductInfo {
@@ -168,13 +171,6 @@ export type UserRoleLegit = {
   dateCreated: string;
   dateUpdated: string;
   ip: string;
-};
-
-export type SellerRole = {
-  dateUpdated: string;
-  dateCreated: string;
-  userId: number;
-  sellerId: number;
 };
 
 export type UserWish = {
@@ -217,6 +213,84 @@ export type SizeMappingKey = {
 export type SizeMappingCategory = Record<'bottom' | 'outer' | 'shoe' | 'top', SizeMappingKey[]>;
 
 export type SizeMapping = Record<'female' | 'male', SizeMappingCategory>;
+
+export type UserInfo = {
+  curnScore: string;
+  maxScore: string;
+  image: string;
+  name: string;
+  productCount: number;
+  reviewCount: number;
+  type: number;
+};
+
+export type UserReview = {
+  content: string;
+  creator: string;
+  createUserId: number;
+  id: number;
+  productId: number;
+  reportType: number;
+  score: string;
+};
+
+export type UserSns = {
+  accessToken: string;
+  dateCreated: string;
+  dateUpdated: string;
+  expiresIn: number;
+  refreshToken: string;
+  snsType: number;
+  snsUserId: string;
+  status: number;
+  tokenType: string;
+  userId: number;
+};
+
+export type User = {
+  adAgree: boolean;
+  age: number;
+  ageRange: string;
+  alarmAgree: boolean;
+  birthday: string;
+  dateAlarmUpdated: string;
+  dateCreated: string;
+  dateUpdated: string;
+  email: string;
+  gender: Gender;
+  id: number;
+  image: string;
+  isChannelNoti: boolean;
+  isNightAlarm: boolean;
+  lastLoginDate: string;
+  lastLoginIp: string;
+  maxMoney: number;
+  method: number;
+  mrcamelId: string;
+  name: string;
+  phone: string;
+  status: boolean;
+  userSns: UserSns;
+  isDeleted: boolean;
+};
+
+export type UserBlock = {
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  isDeleted: boolean;
+  targetUser: User;
+  userId: number;
+};
+
+export type UserRoleSeller = {
+  dateCreated: string;
+  dateUpdated: string;
+  sellerId: number;
+  userId: number;
+};
+
+export type PageUserBlock = Paged<UserBlock>;
 
 /* ---------- Request Parameters ---------- */
 export interface CategoryWishesParams {
@@ -408,4 +482,51 @@ export type PutUserLegitProfileData = {
   imageBackground: string;
   targetBrandIds: number[];
   urlShop: string;
+};
+
+export interface PostAlarmData {
+  isAlarm: boolean;
+  isChannelNoti: boolean;
+}
+
+export interface ProductsByUserIdParams {
+  userId: number;
+  page?: number;
+  size?: number;
+  sort?: string[];
+}
+
+export type UserReviewsByUserIdParams = ProductsByUserIdParams;
+
+export type PageUserReview = Paged<UserReview>;
+
+export interface UserBlockParams {
+  page?: number;
+  size?: number;
+  sort?: string[];
+}
+
+export interface PostReportData {
+  userId: number;
+  type: number;
+  description?: string;
+}
+
+export type PostReviewData = {
+  content?: string;
+  productId?: number;
+  score?: string;
+  userId: number;
+};
+
+export type ChannelUser = {
+  channelId: number;
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  isDeleted: boolean;
+  isLeaved: boolean;
+  isNoti: boolean;
+  type: keyof typeof channelUserType; // 0: 구매자, 1: 판매자
+  user: User;
 };

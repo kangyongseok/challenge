@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import type { CustomStyle } from 'mrcamel-ui';
-import { useTheme } from 'mrcamel-ui';
-
-import { Skeleton } from '@components/UI/atoms';
+import { Skeleton, useTheme } from 'mrcamel-ui';
 
 import { GENDER } from '@constants/user';
 import { BRANDS_BY_GENDER } from '@constants/brand';
@@ -21,7 +19,7 @@ import {
 } from './BrandList.styles';
 
 export interface BrandListProps {
-  variant?: 'contained' | 'outlined';
+  variant?: 'solid' | 'outline';
   color?: 'grey' | 'white';
   onClickBrand?: ({
     id,
@@ -37,7 +35,7 @@ export interface BrandListProps {
 }
 
 function BrandList({
-  variant = 'contained',
+  variant = 'solid',
   color = 'grey',
   gender,
   onClickBrand,
@@ -97,8 +95,8 @@ function BrandList({
       {!!accessUser && !isFetched && personalBrands.length === 0
         ? Array.from({ length: 8 }, (_, index) => (
             <BrandItem key={`brand-skeleton-${index}`} css={{ margin: 'auto' }}>
-              <Skeleton width="64px" height="64px" customStyle={{ borderRadius: '50%' }} />
-              <Skeleton width="64px" height="18px" isRound disableAspectRatio />
+              <Skeleton width={64} height={64} round="50%" />
+              <Skeleton width={64} height={18} round={8} disableAspectRatio />
             </BrandItem>
           ))
         : brands.map(({ id, name, nameEng }) => (
@@ -109,10 +107,12 @@ function BrandList({
             >
               <BrandImageBox variant={variant} color={color}>
                 <BrandImage
+                  variant={variant}
                   src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
                     mode === 'light' ? 'white' : 'black'
                   }/${nameEng.toLowerCase().replace(/\s/g, '')}.jpg`}
-                  variant={variant}
+                  alt="Brand Logo Img"
+                  round="50%"
                 />
               </BrandImageBox>
               <BrandName variant="body2" weight="medium">

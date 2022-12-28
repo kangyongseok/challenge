@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
-import { Badge, Skeleton } from '@components/UI/atoms';
+import { Badge } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -55,8 +55,9 @@ function EventHeader() {
 
   return (
     <Header
+      showRight={false}
       rightIcon={
-        <Flexbox gap={16} customStyle={{ marginRight: 16 }}>
+        <Flexbox gap={16} customStyle={{ marginRight: 8 }}>
           <Badge
             open={!!notViewedHistoryCount}
             variant="two-tone"
@@ -73,7 +74,7 @@ function EventHeader() {
       }
     >
       {isLoading && (
-        <Skeleton width="100%" maxWidth="70px" height="24px" isRound disableAspectRatio />
+        <Skeleton width="100%" maxWidth={70} height={24} round={8} disableAspectRatio />
       )}
       {!isLoading && (
         <Typography variant="h3" weight="bold">

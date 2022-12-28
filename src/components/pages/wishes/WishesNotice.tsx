@@ -2,10 +2,8 @@ import type { ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
@@ -64,7 +62,7 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
         <Box customStyle={{ marginTop: 32, textAlign: 'center' }}>{message}</Box>
       </Flexbox>
       <Button
-        variant="contained"
+        variant="solid"
         size="large"
         brandColor="primary"
         fullWidth

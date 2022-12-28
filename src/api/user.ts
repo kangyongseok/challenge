@@ -5,25 +5,34 @@ import type {
   CategoryWish,
   CategoryWishesParams,
   PageHoneyNoti,
+  PageUserBlock,
   PageUserHistory,
+  PageUserReview,
+  PostAlarmData,
   PostAreaParams,
+  PostReportData,
+  PostReviewData,
   PostSize,
   PostStyleParams,
   ProductKeywordData,
   ProductKeywords,
   ProductsAddParams,
+  ProductsByUserIdParams,
   ProductsRemoveParams,
   PutUserLegitProfileData,
-  SellerRole,
   SizeMapping,
   SizeResult,
+  UserBlockParams,
   UserHistoryManages,
   UserInfo,
+  UserInfoResult,
   UserProductsParams,
+  UserReviewsByUserIdParams,
   UserRoleLegit,
   UserSizeSuggestParams
 } from '@dto/user';
-import type { PageProduct, ProductResult, UserPersonalStyleParams } from '@dto/product';
+import { UserRoleSeller } from '@dto/user';
+import type { PageProductResult, ProductResult, UserPersonalStyleParams } from '@dto/product';
 
 import Axios from '@library/axios';
 
@@ -32,13 +41,13 @@ import { convertQueryStringByObject } from '@utils/common';
 const BASE_PATH = '/users';
 
 export async function fetchUserInfo() {
-  const { data } = await Axios.getInstance().get<UserInfo>(`${BASE_PATH}/userInfo`);
+  const { data } = await Axios.getInstance().get<UserInfoResult>(`${BASE_PATH}/userInfo`);
 
   return data;
 }
 
 export async function fetchSimpleUserInfo() {
-  const { data } = await Axios.getInstance().get<UserInfo>(`${BASE_PATH}/simpleUserInfo`);
+  const { data } = await Axios.getInstance().get<UserInfoResult>(`${BASE_PATH}/simpleUserInfo`);
 
   return data;
 }
@@ -57,8 +66,8 @@ export async function postNightAlarm(isNightAlarm: boolean) {
   });
 }
 
-export async function postAlarm(isAlarm: boolean) {
-  await Axios.getInstance().post(`${BASE_PATH}/alarm`, { isAlarm });
+export async function postAlarm(data: PostAlarmData) {
+  await Axios.getInstance().post(`${BASE_PATH}/alarm`, data);
 }
 
 export async function postProductsAdd({ productId, ...params }: ProductsAddParams) {
@@ -206,7 +215,7 @@ export async function fetchProductKeywordProducts(id: number) {
 }
 
 export async function fetchUserProducts(params: UserProductsParams) {
-  const { data } = await Axios.getInstance().get<PageProduct>(`${BASE_PATH}/products`, {
+  const { data } = await Axios.getInstance().get<PageProductResult>(`${BASE_PATH}/products`, {
     params
   });
 
@@ -216,7 +225,7 @@ export async function fetchUserProducts(params: UserProductsParams) {
 export async function fetchLegitProfile(userId: number) {
   const { data } = await Axios.getInstance().get<{
     profile: UserRoleLegit;
-    roleSeller: SellerRole;
+    roleSeller: UserRoleSeller;
     cntOpinion: number;
   }>(`${BASE_PATH}/${userId}/legit/profile`);
 
@@ -237,4 +246,61 @@ export async function deleteWishSoldout() {
 
 export async function postUserStyle(params: UserPersonalStyleParams) {
   await Axios.getInstance().post(`${BASE_PATH}/style`, { ...params });
+}
+
+export async function fetchInfoByUserId(userId: number) {
+  const { data } = await Axios.getInstance().get<UserInfo>(`${BASE_PATH}/${userId}/info`);
+
+  return data;
+}
+
+export async function fetchProductsByUserId({ userId, ...params }: ProductsByUserIdParams) {
+  const { data } = await Axios.getInstance().get<PageProductResult>(
+    `${BASE_PATH}/${userId}/products`,
+    {
+      params
+    }
+  );
+
+  return data;
+}
+
+export async function fetchReviewsByUserId({ userId, ...params }: UserReviewsByUserIdParams) {
+  const { data } = await Axios.getInstance().get<PageUserReview>(`${BASE_PATH}/${userId}/reviews`, {
+    params
+  });
+
+  return data;
+}
+
+export async function postReview({ userId, ...data }: PostReviewData) {
+  await Axios.getInstance().post(`${BASE_PATH}/${userId}/reviews`, data);
+}
+
+export async function fetchBlocks(params: UserBlockParams) {
+  const { data } = await Axios.getInstance().get<PageUserBlock>(`${BASE_PATH}/blocks`, {
+    params
+  });
+
+  return data;
+}
+
+export async function postReviewBlock(reviewId: number) {
+  await Axios.getInstance().post(`${BASE_PATH}/reviews/${reviewId}/block`);
+}
+
+export async function postReviewReport(reviewId: number) {
+  await Axios.getInstance().post(`${BASE_PATH}/reviews/${reviewId}/report`);
+}
+
+export async function postBlock(userId: number) {
+  await Axios.getInstance().post(`${BASE_PATH}/${userId}/block`);
+}
+
+export async function deleteBlock(userId: number) {
+  await Axios.getInstance().delete(`${BASE_PATH}/${userId}/block`);
+}
+
+export async function postReport({ userId, ...data }: PostReportData) {
+  await Axios.getInstance().post(`${BASE_PATH}/${userId}/report`, data);
 }

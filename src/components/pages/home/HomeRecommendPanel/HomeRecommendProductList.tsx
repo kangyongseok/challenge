@@ -1,9 +1,8 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Grid, Typography } from 'mrcamel-ui';
+import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -58,18 +57,17 @@ function HomeRecommendProductList() {
       <Image
         ratio="4:3"
         width="100%"
-        src={imageMain}
+        src={imageMain || ''}
         alt="Recommend Product Banner Img"
         onClick={handleClick}
-        disableSkeletonRender={false}
       />
       <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
         {isLoading && (
           <Skeleton
             width="100%"
-            maxWidth="155px"
-            height="24px"
-            isRound
+            maxWidth={155}
+            height={24}
+            round={8}
             disableAspectRatio
             customStyle={{ marginBottom: 20 }}
           />

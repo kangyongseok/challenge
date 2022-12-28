@@ -186,7 +186,7 @@ function SearchHelperPopup({ type = 'continue' }: SearchHelperPopupProps) {
           {BREAK_BUTTON[type]}
         </Button>
         <Button
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           size="medium"
           customStyle={{ width: 128 }}

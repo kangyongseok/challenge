@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, CustomStyle, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -95,11 +94,11 @@ function CrazycurationMultiList({
       {isLoading ? (
         <Flexbox direction="vertical" gap={32}>
           <Flexbox direction="vertical" alignment="center" gap={8}>
-            <Skeleton disableAspectRatio isRound height="24px" width="200px" />
-            <Skeleton disableAspectRatio isRound height="42px" width="335px" />
+            <Skeleton disableAspectRatio round={8} height={24} width={200} />
+            <Skeleton disableAspectRatio round={8} height={42} width={335} />
           </Flexbox>
           <ProductList>
-            {showMainImage && <Skeleton disableAspectRatio isRound />}
+            {showMainImage && <Skeleton disableAspectRatio round={8} />}
             {Array.from({ length: 8 }, (_, index) => (
               <Flexbox key={`crazycuration-card-skeleton-${index}`} direction="vertical" gap={20}>
                 <ProductGridCardSkeleton
@@ -107,7 +106,7 @@ function CrazycurationMultiList({
                   hasAreaWithDateInfo={false}
                   customStyle={{ minWidth: 144, flex: 1 }}
                 />
-                <Skeleton disableAspectRatio isRound height="32px" />
+                <Skeleton disableAspectRatio round={8} height={32} />
               </Flexbox>
             ))}
           </ProductList>
@@ -180,7 +179,7 @@ function CrazycurationMultiList({
               })}
             </ProductList>
             <Box customStyle={{ margin: '20px 20px 0' }} onClick={handleClickSeeMore(url)}>
-              <CustomButton variant="contained" fullWidth buttonColor={buttonColor}>
+              <CustomButton variant="solid" fullWidth buttonColor={buttonColor}>
                 매물 더 찾아보기
               </CustomButton>
             </Box>

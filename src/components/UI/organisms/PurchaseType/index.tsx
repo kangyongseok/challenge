@@ -3,10 +3,8 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -79,7 +77,12 @@ function PurchaseType() {
           onClick={handleClick}
           isMatch={selectedType === data.value}
         >
-          <Image disableAspectRatio src={`${BASE_URL}/${data.icon}.png`} width={32} />
+          <Image
+            width={32}
+            src={`${BASE_URL}/${data.icon}.png`}
+            alt="Purchase Type Img"
+            disableAspectRatio
+          />
           <Box>
             <Typography
               weight="bold"

@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';
-import Image from '@components/UI/atoms/Image';
 
 import type { Product } from '@dto/product';
 
@@ -216,7 +215,13 @@ function ProductRedirect({
         />
       </Flexbox>
       <Card justifyContent="center" direction="vertical">
-        <Image src={imageThumbnail || imageMain} width={164} height={164} disableAspectRatio />
+        <Image
+          src={imageThumbnail || imageMain}
+          alt="Product Img"
+          width={164}
+          height={164}
+          disableAspectRatio
+        />
         <Typography variant="body2" weight="medium" customStyle={{ marginTop: 12 }}>
           <LinesEllipsis text={title} maxLine="2" ellipsis="..." basedOn="letters" component="p" />
         </Typography>

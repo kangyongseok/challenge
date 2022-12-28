@@ -90,7 +90,7 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
         </Button>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           customStyle={{ width: 128 }}
           onClick={handleMaintainWithdraw}

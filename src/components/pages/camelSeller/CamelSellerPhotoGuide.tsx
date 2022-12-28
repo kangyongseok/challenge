@@ -1,14 +1,14 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
-import Image from '@components/UI/atoms/Image';
 
 import type { PhotoGuideParams } from '@dto/common';
 
@@ -287,7 +287,7 @@ function CamelSellerPhotoGuide() {
                     disableAspectRatio
                   />
                 ) : (
-                  <CenterImage src={imageWatermark} disableAspectRatio />
+                  <CenterImage src={imageWatermark} alt="Center Img" disableAspectRatio />
                 )}
                 {isRequired && (
                   <RequireText weight="medium" variant="small2">
@@ -316,12 +316,18 @@ function CamelSellerPhotoGuide() {
                 ) : (
                   <>
                     {imageUrl && (
-                      <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                      <FullCoverImage
+                        src={imageUrl}
+                        alt="Cover Img"
+                        disableAspectRatio
+                        isImage={!!imageUrl}
+                      />
                     )}
                     <OverlayWarterMark>
                       <CenterImage
                         isImage={!!imageUrl}
                         src={imageUrl ? imageWatermarkDark : imageWatermark}
+                        alt="Center Img"
                         disableAspectRatio
                       />
                     </OverlayWarterMark>

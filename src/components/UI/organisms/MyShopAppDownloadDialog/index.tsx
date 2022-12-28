@@ -37,7 +37,7 @@ function MyShopAppDownloadDialog() {
       <Flexbox customStyle={{ marginTop: 32 }} gap={8} direction="vertical">
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           onClick={() => handleClickAppDownload({})}
           size="large"
@@ -46,7 +46,7 @@ function MyShopAppDownloadDialog() {
         </Button>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           customStyle={{ background: common.ui95, color: common.ui20 }}
           size="large"
           onClick={() =>

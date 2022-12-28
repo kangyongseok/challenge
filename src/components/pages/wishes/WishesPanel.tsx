@@ -4,11 +4,10 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Skeleton, Toast, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductWishesCard, ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
-import Skeleton from '@components/UI/atoms/Skeleton';
 
 import type { CategoryWishesParams } from '@dto/user';
 import type { CategoryValue } from '@dto/category';
@@ -237,36 +236,21 @@ function WishesPanel({
   if (isLoading) {
     return (
       <>
-        <Flexbox gap={6} customStyle={{ margin: '16px 0 24px' }}>
-          <Skeleton
-            width="63px"
-            height="33px"
-            disableAspectRatio
-            customStyle={{ borderRadius: 36 }}
-          />
-          <Skeleton
-            width="63px"
-            height="33px"
-            disableAspectRatio
-            customStyle={{ borderRadius: 36 }}
-          />
-          <Skeleton
-            width="45px"
-            height="33px"
-            disableAspectRatio
-            customStyle={{ borderRadius: 36 }}
-          />
+        <Flexbox alignment="center" gap={6} customStyle={{ height: 60 }}>
+          <Skeleton width={63} height={33} round={36} disableAspectRatio />
+          <Skeleton width={63} height={33} round={36} disableAspectRatio />
+          <Skeleton width={45} height={33} round={36} disableAspectRatio />
         </Flexbox>
-        <Flexbox customStyle={{ marginBottom: 16 }} gap={4}>
+        <Flexbox customStyle={{ margin: '20px 0 16px' }} gap={4}>
           <Skeleton
-            width="50px"
-            height="33px"
+            width={50}
+            height={33}
+            round={8}
             disableAspectRatio
-            isRound
             customStyle={{ marginRight: 'auto' }}
           />
-          <Skeleton width="50px" height="33px" disableAspectRatio isRound />
-          <Skeleton width="50px" height="33px" disableAspectRatio isRound />
+          <Skeleton width={50} height={32} round={8} disableAspectRatio />
+          <Skeleton width={50} height={32} round={8} disableAspectRatio />
         </Flexbox>
         <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 20 }}>
           {Array.from({ length: 10 }).map((_, index) => (
@@ -343,7 +327,7 @@ function WishesPanel({
         />
       )}
       {data && (
-        <Box customStyle={{ margin: '20px 0 12px' }}>
+        <Box customStyle={{ margin: '20px 0' }}>
           <WishesFilter order={order} userWishCount={userWishCount} />
           <Flexbox direction="vertical" gap={20}>
             {userWishes.map((wishItem, index) => (
@@ -407,7 +391,7 @@ function WishesPanel({
           <Button
             size="large"
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             onClick={handleClickDelete}
           >
@@ -423,7 +407,7 @@ function WishesPanel({
           >
             찜 목록에서 삭제했어요.
           </Typography>
-          <RollbackButton variant="contained" onClick={handleClickRollback}>
+          <RollbackButton variant="solid" onClick={handleClickRollback}>
             되돌리기
           </RollbackButton>
         </Flexbox>

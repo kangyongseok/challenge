@@ -3,12 +3,11 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useResetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';
-import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -86,16 +85,11 @@ function LegitHeadAuthenticatorList() {
           {isLoading &&
             Array.from({ length: 3 }, (_, index) => (
               <Card key={`authenticator-skeleton-${index}`}>
-                <Skeleton
-                  width="80px"
-                  height="80px"
-                  disableAspectRatio
-                  customStyle={{ borderRadius: '50%' }}
-                />
+                <Skeleton width={80} height={80} round="50%" disableAspectRatio />
                 <Box customStyle={{ marginTop: 20 }}>
                   <Flexbox direction="vertical" alignment="center" gap={6}>
-                    <Skeleton width="64px" height="20px" isRound disableAspectRatio />
-                    <Skeleton width="160px" height="48px" isRound disableAspectRatio />
+                    <Skeleton width={64} height={20} round={8} disableAspectRatio />
+                    <Skeleton width={160} height={48} round={8} disableAspectRatio />
                   </Flexbox>
                   <Divider
                     css={{
@@ -104,12 +98,12 @@ function LegitHeadAuthenticatorList() {
                   />
                   <Flexbox gap={4} justifyContent="center">
                     <Flexbox direction="vertical" alignment="center" gap={3}>
-                      <Skeleton width="59px" height="18px" isRound disableAspectRatio />
-                      <Skeleton width="25px" height="16px" isRound disableAspectRatio />
+                      <Skeleton width={59} height={18} round={8} disableAspectRatio />
+                      <Skeleton width={25} height={16} round={8} disableAspectRatio />
                     </Flexbox>
                     <Flexbox direction="vertical" alignment="center" gap={3}>
-                      <Skeleton width="59px" height="18px" isRound disableAspectRatio />
-                      <Skeleton width="25px" height="16px" isRound disableAspectRatio />
+                      <Skeleton width={59} height={18} round={8} disableAspectRatio />
+                      <Skeleton width={25} height={16} round={8} disableAspectRatio />
                     </Flexbox>
                   </Flexbox>
                 </Box>
@@ -149,9 +143,6 @@ function LegitHeadAuthenticatorList() {
                       <Flexbox direction="vertical" alignment="center" gap={3}>
                         <Label
                           variant="ghost"
-                          // TODO UI 라이브러리 업데이트 필요
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore
                           text={
                             <Flexbox alignment="center" gap={2}>
                               <Icon name="OpinionAuthenticOutlined" width={12} height={12} />

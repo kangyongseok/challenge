@@ -136,7 +136,7 @@ function SearchHelperBanner({
             {accessUser?.userName || '회원'}님을 위한 득템 파트너
           </Typography>
         </Flexbox>
-        <Chip variant="contained" brandColor="primary" onClick={handleClickStart} size="small">
+        <Chip variant="solid" brandColor="primary" onClick={handleClickStart} size="small">
           {showText && (
             <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
               시작하기

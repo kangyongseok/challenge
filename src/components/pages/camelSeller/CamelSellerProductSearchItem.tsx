@@ -1,7 +1,5 @@
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import type { Models } from '@dto/model';
 
@@ -30,8 +28,10 @@ function CamelSellerProductSearchItem({ data, onClick }: ModelSearchItemProps) {
           width={50}
           height={50}
           src={data.imageThumbnail}
+          alt="Thumbnail Img"
+          round={8}
           disableAspectRatio
-          customStyle={{ borderRadius: 8, marginRight: 12 }}
+          customStyle={{ marginRight: 12 }}
         />
         <Flexbox direction="vertical">
           <ModelName

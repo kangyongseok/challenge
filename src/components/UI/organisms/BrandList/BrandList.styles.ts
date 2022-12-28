@@ -1,4 +1,4 @@
-import { Typography } from 'mrcamel-ui';
+import { Image, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { BrandListProps } from './index';
@@ -9,7 +9,7 @@ export const StyledBrandList = styled.div<Pick<BrandListProps, 'variant'>>`
   user-select: none;
 
   ${({ variant }) =>
-    variant === 'contained'
+    variant === 'solid'
       ? {
           gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
           gap: '20px 12px'
@@ -30,7 +30,7 @@ export const BrandItem = styled.div<Pick<BrandListProps, 'variant'>>`
   cursor: pointer;
 
   ${({ variant }) =>
-    variant === 'contained'
+    variant === 'solid'
       ? {
           display: 'grid',
           gridAutoColumns: 'minmax(0, 64px)',
@@ -56,7 +56,7 @@ export const BrandImageBox = styled.div<Pick<BrandListProps, 'variant' | 'color'
       palette: { common }
     }
   }) =>
-    variant === 'contained'
+    variant === 'solid'
       ? {
           backgroundColor: color === 'grey' ? common.ui95 : common.uiWhite,
           height: 'fit-content'
@@ -68,18 +68,7 @@ export const BrandImageBox = styled.div<Pick<BrandListProps, 'variant' | 'color'
         }};
 `;
 
-export const BrandImage = styled.div<
-  Pick<BrandListProps, 'variant'> & {
-    src: string;
-  }
->`
-  width: 100%;
-  padding-bottom: 100%;
-  background-image: url(${({ src }) => src});
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
+export const BrandImage = styled(Image)<Pick<BrandListProps, 'variant'>>`
   ${({ theme: { mode }, variant }): CSSObject => {
     switch (mode) {
       case 'dark':
@@ -88,7 +77,7 @@ export const BrandImage = styled.div<
         };
       default: {
         return {
-          mixBlendMode: variant === 'contained' ? 'multiply' : undefined
+          mixBlendMode: variant === 'solid' ? 'multiply' : undefined
         };
       }
     }

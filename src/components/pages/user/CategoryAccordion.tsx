@@ -160,7 +160,7 @@ function CategoryAccordion({
 
   return (
     <Accordion
-      variant="contained"
+      variant="solid"
       summary={parentCategoryName.replace('(P)', '')}
       expanded={openedParentCategoryIds.includes(parentCategoryId)}
       changeExpandedStatus={handleOpenParentCategory}
@@ -176,7 +176,7 @@ function CategoryAccordion({
         >
           <Chip
             size="xsmall"
-            variant={buttonActive ? 'contained' : 'outlined'}
+            variant={buttonActive ? 'solid' : 'outline'}
             onClick={handleClickAllButton}
             brandColor={buttonActive ? 'black' : undefined}
           >

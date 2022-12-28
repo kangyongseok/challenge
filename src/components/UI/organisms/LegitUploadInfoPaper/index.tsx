@@ -1,9 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
 
 import type { PostProductLegitData } from '@dto/productLegit';
 
@@ -56,7 +54,7 @@ function LegitUploadInfoPaper({
           top: -55,
           left: '50%',
           transform: 'translateX(-50%)',
-          mixBlendMode: mode === 'light' ? 'darken' : ''
+          mixBlendMode: mode === 'light' ? 'darken' : undefined
         }}
       />
       <Flexbox direction="vertical" alignment="center" gap={4} customStyle={{ marginTop: 68 }}>

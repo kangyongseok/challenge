@@ -3,11 +3,10 @@ import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import { logEvent } from '@library/amplitude';
@@ -75,9 +74,9 @@ function LegitRequestSelectCategory() {
             <Image
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/category/${nameEng}_default.png`}
               alt={name}
-              width="48px"
-              height="48px"
-              isRound
+              width={48}
+              height={48}
+              round={8}
               disableAspectRatio
             />
             <Typography variant="h4" weight="medium">

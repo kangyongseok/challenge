@@ -1,10 +1,10 @@
 import type { HTMLAttributes } from 'react';
 
-import { Avatar, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
-import { Image, LegitLabel } from '@components/UI/atoms';
+import { LegitLabel } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
@@ -62,8 +62,8 @@ function LegitCard({
       >
         <ImageBox>
           <Image
-            variant="backgroundImage"
             src={imageThumbnail || imageMain}
+            disableOnBackground={false}
             alt="Product Legit Img"
           />
           {!hidePlatformLogo && postType !== 2 && (
@@ -148,7 +148,11 @@ function LegitCard({
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
-      <Image variant="backgroundImage" src={imageThumbnail || imageMain} alt="Product Legit Img" />
+      <Image
+        src={imageThumbnail || imageMain}
+        alt="Product Legit Img"
+        disableOnBackground={false}
+      />
       <Flexbox
         direction="vertical"
         gap={2}
@@ -156,11 +160,15 @@ function LegitCard({
       >
         <Image
           width="auto"
-          height="24px"
-          disableAspectRatio
+          height={24}
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/horizon_brands/white/${nameEng
             .toLowerCase()
             .replace(/\s/g, '')}.jpg`}
+          alt="Brand Logo Img"
+          disableAspectRatio
+          customStyle={{
+            maxWidth: 'fit-content'
+          }}
         />
         <Flexbox direction="vertical">
           <Title variant="body2">{quoteTitle}</Title>

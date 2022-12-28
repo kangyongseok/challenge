@@ -40,7 +40,7 @@ function FilterOption({
               width={20}
               height={20}
               src={avatarSrc}
-              round="4"
+              round={4}
               alt="Platform Logo Img"
               customStyle={{
                 marginRight: 4,
@@ -76,13 +76,11 @@ function FilterOption({
               }}
             >
               <Avatar
-                width="24px"
-                height="24px"
+                width={24}
+                height={24}
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${colorName}.png`}
                 alt="Color Img"
-                customStyle={{
-                  borderRadius: '50%'
-                }}
+                round="50%"
               />
               {checked && (
                 <Icon
@@ -121,10 +119,8 @@ function FilterOption({
       <Typography
         variant="h4"
         weight={checked ? 'medium' : 'regular'}
+        noWrap
         customStyle={{
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-          overflow: 'hidden',
           color: checked ? primary.light : undefined
         }}
       >

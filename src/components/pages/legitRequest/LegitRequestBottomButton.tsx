@@ -24,7 +24,7 @@ function LegitRequestBottomButton({
       <ButtonBox backgroundColor={backgroundColor}>
         <Button
           size="xlarge"
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           fullWidth
           onClick={onClick}

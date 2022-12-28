@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow } from 'swiper';
-import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Box, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 
 function MyPortfolioLanding05() {
   const {
@@ -41,7 +39,7 @@ function MyPortfolioLanding05() {
       >
         <Box customStyle={{ marginTop: 12 }}>
           <Label
-            variant="contained"
+            variant="solid"
             text="#샤넬 클래식 미디움 플립백"
             customStyle={{
               background: primary.highlight,
@@ -88,6 +86,7 @@ function MyPortfolioLanding05() {
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img01.png`}
                 alt="graph_img01"
                 disableAspectRatio
+                disableSkeleton
               />
             </SwiperSlide>
             <SwiperSlide
@@ -105,6 +104,7 @@ function MyPortfolioLanding05() {
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img02.png`}
                 alt="graph_img02"
                 disableAspectRatio
+                disableSkeleton
               />
             </SwiperSlide>
             <SwiperSlide
@@ -122,6 +122,7 @@ function MyPortfolioLanding05() {
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/graph_img03.png`}
                 alt="graph_img03"
                 disableAspectRatio
+                disableSkeleton
               />
             </SwiperSlide>
           </Swiper>

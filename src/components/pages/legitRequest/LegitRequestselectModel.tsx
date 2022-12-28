@@ -3,11 +3,10 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { PostProductLegitData } from '@dto/productLegit';
@@ -126,8 +125,8 @@ function LegitRequestSelectModel() {
           Array.from({ length: 9 }, (_, index) => (
             <Grid key={`model-skeleton-${index}`} item xs={3}>
               <Model key={`model-skeleton-${index}`}>
-                <Skeleton width="72px" height="72px" disableAspectRatio isRound />
-                <Skeleton width="72px" height="16px" disableAspectRatio isRound />
+                <Skeleton width={72} height={72} round={8} disableAspectRatio />
+                <Skeleton width={72} height={16} round={8} disableAspectRatio />
               </Model>
             </Grid>
           ))
@@ -153,9 +152,9 @@ function LegitRequestSelectModel() {
                   >
                     <Image
                       src={imageThumbnail}
-                      width="72px"
-                      height="72px"
-                      isRound
+                      alt="Thumbnail Img"
+                      width={72}
+                      height={72}
                       disableAspectRatio
                       customStyle={{ margin: '0 auto' }}
                     />

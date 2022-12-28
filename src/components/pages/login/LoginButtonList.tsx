@@ -1,18 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Tooltip, Typography, light, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Image,
+  Tooltip,
+  Typography,
+  light,
+  useTheme
+} from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import type { FacebookAccount, FacebookLoginResponse } from '@dto/userAuth';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -21,12 +32,12 @@ import attrKeys from '@constants/attrKeys';
 import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
 import { checkAgent } from '@utils/common';
 
-import { LOGIN_TYPE } from 'pages/login';
+import { dialogState } from '@recoil/common';
+import { LOGIN_TYPE } from '@hooks/useSignIn';
 
 interface LoginButtonListProps {
   authLogin: (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => Promise<void>;
   returnUrl: string;
-  setErrorPopup: Dispatch<SetStateAction<{ open: boolean; provider: string | null }>>;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   onClickNotLoginShow?: () => void;
@@ -37,7 +48,6 @@ interface LoginButtonListProps {
 function LoginButtonList({
   authLogin,
   returnUrl,
-  setErrorPopup,
   setShow,
   setLoading,
   onClickNotLoginShow,
@@ -52,11 +62,14 @@ function LoginButtonList({
       palette: { common }
     }
   } = useTheme();
+
+  const setDialogState = useSetRecoilState(dialogState);
+
   const [lastLoginType, setLastLoginType] = useState('');
 
   const kakaoLoginButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { openLogin } = router.query;
+  const { openLogin, isRequiredLogin } = router.query;
 
   const handleClickKakaoLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, {
@@ -114,9 +127,21 @@ function LoginButtonList({
       } else {
         logEvent(attrKeys.login.LOAD_LOGIN_SNS, { title: provider.toUpperCase(), att: 'FAIL' });
         setLoading(false);
-        setErrorPopup({
-          open: true,
-          provider: LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]
+        setDialogState({
+          type: 'loginProviderError',
+          theme: 'dark',
+          content: (
+            <Typography
+              variant="body1"
+              weight="medium"
+              customStyle={{ minWidth: 270, textAlign: 'center' }}
+            >
+              {`${LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]} 로그인 오류가 발생했어요😰`}
+              <br />
+              다른 방법을 시도해 보세요.
+            </Typography>
+          ),
+          customStyle: { button: { backgroundColor: common.cmn80 } }
         });
       }
     };
@@ -163,6 +188,20 @@ function LoginButtonList({
     ) {
       window.webkit.messageHandlers.callLoginApple.postMessage(0);
     }
+  };
+
+  const handleClickCancel = () => {
+    logEvent(attrKeys.login.CLICK_NONLOGIN);
+
+    SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams);
+
+    if (onClickNotLoginShow) {
+      onClickNotLoginShow();
+      return;
+    }
+
+    setShow(false);
+    setTimeout(() => router.replace(isRequiredLogin ? '/' : returnUrl), 300);
   };
 
   useEffect(() => {
@@ -251,7 +290,7 @@ function LoginButtonList({
           >
             <Button
               fullWidth
-              variant="contained"
+              variant="solid"
               size="xlarge"
               startIcon={<Icon name="BrandAppleFilled" color={common.cmnW} />}
               onClick={handleClickAppleLogin}
@@ -267,15 +306,7 @@ function LoginButtonList({
       )}
       <Box
         customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
-        onClick={() => {
-          logEvent(attrKeys.login.CLICK_NONLOGIN);
-          if (onClickNotLoginShow) {
-            onClickNotLoginShow();
-            return;
-          }
-          setShow(false);
-          setTimeout(() => router.replace(returnUrl || '/'), 300);
-        }}
+        onClick={handleClickCancel}
       >
         <Typography weight="medium" customStyle={{ color: common.ui80 }}>
           로그인하지 않고 둘러보기

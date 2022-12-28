@@ -258,7 +258,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
         </Flexbox>
         <Button
           variant="ghost"
-          brandColor="primary-light"
+          brandColor="blue"
           onClick={() => router.push('/user/sizeInput')}
           customStyle={{
             margin: '20px 20px 0'

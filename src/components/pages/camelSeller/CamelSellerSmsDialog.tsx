@@ -42,7 +42,7 @@ function CamelSellerSmsDialog() {
         <Button
           fullWidth
           size="large"
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           customStyle={{ marginTop: 'auto' }}
           onClick={() => setOpen(false)}

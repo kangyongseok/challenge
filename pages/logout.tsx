@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -8,6 +8,7 @@ import amplitude from 'amplitude-js';
 
 import type { FacebookLoginResponse } from '@dto/userAuth';
 
+import Sendbird from '@library/sendbird';
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
 
@@ -15,6 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
 import { deviceIdState } from '@recoil/common';
+import { channelReceivedMessageFilteredState, sendbirdState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Logout() {
@@ -22,6 +24,11 @@ function Logout() {
   const queryClient = useQueryClient();
   const deviceId = useRecoilValue(deviceIdState);
   const { data: accessUser } = useQueryAccessUser();
+
+  const resetSendbirdState = useResetRecoilState(sendbirdState);
+  const resetChannelReceivedMessageFilteredState = useResetRecoilState(
+    channelReceivedMessageFilteredState
+  );
 
   useEffect(() => {
     amplitude.getInstance().setUserId(null);
@@ -38,8 +45,18 @@ function Logout() {
     queryClient.removeQueries(queryKeys.users.userInfo(), { exact: true });
     queryClient.removeQueries(queryKeys.users.categoryWishes({ deviceId }), { exact: true });
     Axios.clearAccessToken();
+    resetSendbirdState();
+    resetChannelReceivedMessageFilteredState();
+    Sendbird.finalize();
     router.replace('/login');
-  }, [accessUser?.snsType, queryClient, router, deviceId]);
+  }, [
+    accessUser?.snsType,
+    queryClient,
+    router,
+    deviceId,
+    resetSendbirdState,
+    resetChannelReceivedMessageFilteredState
+  ]);
 
   return <div />;
 }

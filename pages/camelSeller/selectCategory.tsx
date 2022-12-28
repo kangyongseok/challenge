@@ -2,17 +2,15 @@ import { MouseEvent, useEffect, useMemo, useState } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Chip, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { SubParentCategory } from '@dto/category';
 
 import LocalStorage from '@library/localStorage';
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchParentCategories } from '@api/category';
@@ -47,7 +45,6 @@ function SelectCategory() {
 
   useEffect(() => {
     setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-    ChannelTalk.hideChannelButton();
   }, []);
 
   useEffect(() => {
@@ -116,7 +113,7 @@ function SelectCategory() {
         )}
       </Box>
       <PrevButton
-        variant="contained"
+        variant="solid"
         parentCategory={!!parentCategory}
         startIcon={
           <Icon
@@ -134,14 +131,7 @@ function SelectCategory() {
       <Flexbox gap={12} customStyle={{ flexWrap: 'wrap' }}>
         {isLoading &&
           Array.from({ length: 8 }, (_, i) => i + 1).map((v) => (
-            <Skeleton
-              height="61px"
-              ratio="2:1"
-              width="150px"
-              key={`text-${v}}`}
-              disableAspectRatio
-              customStyle={{ borerRadius: 4 }}
-            />
+            <Skeleton key={`text-${v}}`} height={61} width={150} round={4} disableAspectRatio />
           ))}
         {targetSubParentCategory.length > 0 &&
           targetSubParentCategory.map((subParent) => (

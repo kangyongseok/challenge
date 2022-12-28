@@ -86,6 +86,7 @@ export const toastState = atom<{
   type: ToastType | undefined;
   status: ToastStatus | undefined;
   theme?: Exclude<ThemeMode, 'system'>;
+  params?: Record<string, string | number>;
   hideDuration?: number;
   customStyle?: CustomStyle;
   action?: () => void;
@@ -106,6 +107,7 @@ export const dialogState = atom<{
   content?: string | number | ReactElement;
   product?: Product | undefined;
   shareData?: ShareData;
+  customStyle?: CustomStyle;
   customStyleTitle?: CustomStyle;
   disabledOnClose?: boolean;
 }>({

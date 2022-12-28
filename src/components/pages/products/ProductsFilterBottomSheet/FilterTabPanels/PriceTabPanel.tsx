@@ -384,7 +384,7 @@ function PriceTabPanel() {
             }}
           >
             <Flexbox gap={8} alignment="center">
-              <Label variant="contained" brandColor="primary-light" size="small" text="추천가격" />
+              <Label variant="solid" brandColor="blue" size="small" text="추천가격" />
               <Typography
                 weight="medium"
                 customStyle={{

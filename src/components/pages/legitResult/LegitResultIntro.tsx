@@ -1,8 +1,6 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
 import { fetchProductLegit } from '@api/productLegit';
 

@@ -34,7 +34,7 @@ function SearchBrandList() {
       <Typography variant="h4" weight="bold" customStyle={{ padding: '0 20px' }}>
         {accessUser ? '자주 찾는 브랜드' : '인기 브랜드'}
       </Typography>
-      <BrandList variant="outlined" onClickBrand={handleClickBrand} />
+      <BrandList variant="outline" onClickBrand={handleClickBrand} />
     </Flexbox>
   );
 }

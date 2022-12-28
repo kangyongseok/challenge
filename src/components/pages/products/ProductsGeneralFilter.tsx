@@ -4,11 +4,9 @@ import type { MouseEvent, MutableRefObject } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Skeleton, Toast, Typography, useTheme } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { SearchParams } from '@dto/product';
 
@@ -39,8 +37,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
-
-import { pulse } from '@styles/transition';
 
 import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 import {
@@ -586,7 +582,10 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                         <Typography
                           variant="body1"
                           weight={index === 0 ? 'bold' : 'regular'}
-                          customStyle={{ color: isLoading ? common.ui95 : common.ui20 }}
+                          customStyle={{
+                            visibility: isLoading ? 'hidden' : 'visible',
+                            color: 'inherit'
+                          }}
                         >
                           {!(searchParams.idFilterIds || []).includes(id) &&
                           legitIdFilterOptionIds.includes(id)
@@ -616,13 +615,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                   }}
                 >
                   {isLoading ? (
-                    <Skeleton
-                      width="68px"
-                      height="36px"
-                      disableAspectRatio
-                      isRound
-                      customStyle={{ backgroundColor: common.ui95 }}
-                    />
+                    <Skeleton width={68} height={36} round={8} disableAspectRatio />
                   ) : (
                     <Button
                       brandColor={selectedSearchOptionsHistoryCount > 0 ? 'primary' : 'black'}
@@ -687,7 +680,16 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                         ) : undefined
                       }
                     >
-                      {`${name}${count > 0 ? ` ${count}` : ''}`}
+                      <Typography
+                        variant="body1"
+                        weight="medium"
+                        customStyle={{
+                          visibility: isLoading ? 'hidden' : 'visible',
+                          color: 'inherit'
+                        }}
+                      >
+                        {`${name}${count > 0 ? ` ${count}` : ''}`}
+                      </Typography>
                     </FilterButton>
                   );
                 })}
@@ -767,19 +769,42 @@ const Wrapper = styled.div`
 `;
 
 const IdFilterButton = styled.div<{ isLoading?: boolean }>`
+  position: relative;
   display: flex;
   align-items: center;
   margin: 8px 0;
   column-gap: 4px;
   background-color: ${({ isLoading, theme: { palette } }) =>
-    isLoading ? palette.common.ui95 : 'inherit'};
+    isLoading ? palette.common.ui90 : 'inherit'};
   white-space: nowrap;
   cursor: pointer;
 
-  ${({ isLoading }) =>
+  ${({
+    theme: {
+      palette: { common }
+    },
+    isLoading
+  }) =>
     isLoading && {
-      animation: `${pulse} 800ms linear 0s infinite alternate`,
-      cursor: 'default'
+      '&:after': {
+        content: '""',
+        top: 0,
+        left: 0,
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        background: `linear-gradient(
+      -45deg,
+      ${common.ui95} 30%,
+      transparent 50%,
+      ${common.ui95} 70%
+    )`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '350% 350%',
+        animation: 'wave 1.2s ease-in-out infinite',
+        animationDelay: '-0.2s',
+        opacity: 0.6
+      }
     }};
 `;
 
@@ -795,18 +820,45 @@ const GeneralFilterList = styled.div`
 `;
 
 const FilterButton = styled(Button)<{ active?: boolean; isLoading?: boolean }>`
+  position: relative;
   display: flex;
   align-items: center;
   row-gap: 2px;
   white-space: nowrap;
   color: ${({ active, theme: { palette } }) => active && palette.primary.light};
+  background-color: ${({ active, theme: { palette } }) => active && palette.primary.highlight};
+  overflow: hidden;
 
-  ${({ isLoading, theme: { palette } }) =>
+  ${({
+    isLoading,
+    theme: {
+      palette: { common }
+    }
+  }) =>
     isLoading && {
-      animation: `${pulse} 800ms linear 0s infinite alternate`,
+      '&:after': {
+        content: '""',
+        top: 0,
+        left: 0,
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        background: `linear-gradient(
+      -45deg,
+      ${common.ui95} 30%,
+      transparent 50%,
+      ${common.ui95} 70%
+    )`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '350% 350%',
+        animation: 'wave 1.2s ease-in-out infinite',
+        animationDelay: '-0.2s',
+        opacity: 0.6
+      },
       '&:disabled': {
-        color: palette.common.ui95,
-        backgroundColor: palette.common.ui95,
+        border: 'none',
+        color: common.ui95,
+        backgroundColor: common.ui90,
         cursor: 'default'
       }
     }};

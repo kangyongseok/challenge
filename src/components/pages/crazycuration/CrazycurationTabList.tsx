@@ -2,14 +2,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import type { UIEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -132,7 +131,7 @@ function CrazycurationTabList({
           <Tab
             key={`crazycuration-tab-${id}`}
             isActive={selectedIndex === index}
-            variant="contained"
+            variant="solid"
             onClick={handleClickTab(index, name)}
             color={tabStyle?.color}
             backgroundColor={tabStyle?.backgroundColor}
@@ -154,7 +153,7 @@ function CrazycurationTabList({
                   hasAreaWithDateInfo={false}
                   customStyle={{ minWidth: 144, flex: 1 }}
                 />
-                <Skeleton disableAspectRatio isRound height="32px" />
+                <Skeleton disableAspectRatio round={8} height={32} />
               </Flexbox>
             ))
           : contentsDetail?.products

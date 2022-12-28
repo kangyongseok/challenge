@@ -1,11 +1,9 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Chip } from 'mrcamel-ui';
+import { Chip, Skeleton } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -93,16 +91,16 @@ function EventFilter() {
           <Skeleton
             // eslint-disable-next-line react/no-array-index-key
             key={`event-filter-skeleton-${index}`}
-            width="56px"
-            height="36px"
+            width={56}
+            height={36}
+            round={18}
             disableAspectRatio
-            customStyle={{ borderRadius: 18 }}
           />
         ))}
       {!isLoading && (
         <>
           <Chip
-            variant={!brandIds.length ? 'contained' : 'ghost'}
+            variant={!brandIds.length ? 'solid' : 'ghost'}
             brandColor={!brandIds.length ? 'primary' : 'black'}
             size="large"
             onClick={handleClickAll}
@@ -112,7 +110,7 @@ function EventFilter() {
           {brands.map(({ id: brandId, name }) => (
             <Chip
               key={`event-filter-${brandId}`}
-              variant={brandIds.includes(brandId) ? 'contained' : 'ghost'}
+              variant={brandIds.includes(brandId) ? 'solid' : 'ghost'}
               brandColor={brandIds.includes(brandId) ? 'primary' : 'black'}
               size="large"
               onClick={handleClick(brandId, name)}

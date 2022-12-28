@@ -44,7 +44,7 @@ function LegitReviewSlide() {
       gap={8}
       customStyle={{ margin: '8px 20px 0', userSelect: 'none' }}
     >
-      <Label variant="contained" brandColor="black" size="xsmall" text="USER REVIEW" />
+      <Label variant="solid" brandColor="black" size="xsmall" text="USER REVIEW" />
       <Swiper
         slidesPerView={1}
         loop

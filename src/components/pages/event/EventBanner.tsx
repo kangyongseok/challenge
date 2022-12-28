@@ -1,8 +1,6 @@
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
-
-import { Image } from '@components/UI/atoms';
+import { Box, Image, Skeleton } from 'mrcamel-ui';
 
 import { fetchContent } from '@api/common';
 
@@ -26,12 +24,8 @@ function EventBanner() {
 
   return (
     <Box component="section" customStyle={{ margin: '0 -20px 32px' }}>
-      <Image
-        ratio="4:3"
-        src={imageMain || ''}
-        alt="Event Banner Img"
-        disableSkeletonRender={false}
-      />
+      {isLoading && <Skeleton ratio="4:3" />}
+      {!isLoading && <Image ratio="4:3" src={imageMain || ''} alt="Event Banner Img" />}
     </Box>
   );
 }

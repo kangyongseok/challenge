@@ -4,7 +4,13 @@ import { Box } from 'mrcamel-ui';
 
 import type { DialogType } from '@typings/common';
 
-export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
+export const dialogTitle: Record<
+  Exclude<
+    DialogType,
+    'unblockBlockedUser' | 'blockUser' | 'confirmDeal' | 'loginError' | 'loginProviderError'
+  >,
+  string | number | ReactElement
+> = {
   SNSShare: '공유하기',
   readyNextCrazyCuration: '다음주 월요일을 기대해주세요!',
   closedCrazyCuration: '앗! 이미 마감된 테마에요.',
@@ -29,7 +35,23 @@ export const dialogTitle: Record<DialogType, string | number | ReactElement> = {
       허용해주세요.
     </>
   ),
-  legitPhotoGuide: '샘플사진을 확인해 주세요!'
+  legitPhotoGuide: '샘플사진을 확인해 주세요!',
+  leaveChannel: <Box customStyle={{ marginTop: 12 }}>채팅방 나가기</Box>,
+  successMakeAppointment: (
+    <Box customStyle={{ margin: '12px 0' }}>
+      직거래 약속을 잡았어요
+      <br />
+      매물을 예약중으로 바꿀까요?
+    </Box>
+  ),
+  cancelAppointment: <Box customStyle={{ marginTop: 12 }}>상대방과 직거래 약속을 취소할까요?</Box>,
+  requiredAppUpdateForChat: (
+    <Box customStyle={{ margin: '12px 0' }}>
+      채팅 메세지를 확인하려면
+      <br />
+      업데이트가 필요해요
+    </Box>
+  )
 };
 
 export const dialogContent = {
@@ -83,6 +105,21 @@ export const dialogContent = {
       어떻게 등록해야 감정결과를
       <br />더 빨리 받을 수 있는지 알아보세요.
     </Box>
+  ),
+  leaveChannel: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      채팅방을 나가도 상대방이 말을 걸면
+      <br />
+      다시 열릴 수 있어요.
+    </Box>
+  ),
+  cancelAppointment: <Box customStyle={{ marginBottom: 12 }}>상대방에게 알림이 발송됩니다.</Box>,
+  loginError: (
+    <>
+      앗! 로그인 오류가 발생했어요😰
+      <br />
+      다시 시도하시거나 1:1문의를 이용해주세요.
+    </>
   )
 };
 
@@ -96,6 +133,14 @@ export const firstButtonText: Record<
     | 'deleteLegitResultComment'
     | 'deleteLegitResultReply'
     | 'appAuthCheck'
+    | 'unblockBlockedUser'
+    | 'leaveChannel'
+    | 'blockUser'
+    | 'confirmDeal'
+    | 'successMakeAppointment'
+    | 'cancelAppointment'
+    | 'requiredAppUpdateForChat'
+    | 'loginError'
   >,
   string | number | ReactElement
 > = {
@@ -105,7 +150,15 @@ export const firstButtonText: Record<
   deleteLegitAdminOpinion: '취소',
   deleteLegitResultComment: '취소',
   deleteLegitResultReply: '취소',
-  appAuthCheck: '설정으로 이동'
+  appAuthCheck: '설정으로 이동',
+  unblockBlockedUser: '차단 해제하기',
+  leaveChannel: '취소',
+  blockUser: '취소',
+  confirmDeal: '네, 거래했어요.',
+  successMakeAppointment: '예약중으로 변경',
+  cancelAppointment: '약속 취소하기',
+  requiredAppUpdateForChat: '스토어로 이동하기',
+  loginError: '확인'
 };
 
 export const secondButtonText: Record<
@@ -123,6 +176,15 @@ export const secondButtonText: Record<
     | 'appUpdateNotice'
     | 'appAuthCheck'
     | 'legitPhotoGuide'
+    | 'unblockBlockedUser'
+    | 'leaveChannel'
+    | 'blockUser'
+    | 'confirmDeal'
+    | 'successMakeAppointment'
+    | 'cancelAppointment'
+    | 'requiredAppUpdateForChat'
+    | 'loginError'
+    | 'loginProviderError'
   >,
   string | number | ReactElement
 > = {
@@ -137,7 +199,16 @@ export const secondButtonText: Record<
   legitServiceNotice: '확인',
   appUpdateNotice: '3초 업데이트',
   appAuthCheck: '취소',
-  legitPhotoGuide: '사진 샘플 보기'
+  legitPhotoGuide: '사진 샘플 보기',
+  unblockBlockedUser: '취소',
+  leaveChannel: '나가기',
+  blockUser: '차단하기',
+  confirmDeal: '취소',
+  successMakeAppointment: '취소',
+  cancelAppointment: '취소',
+  requiredAppUpdateForChat: '취소',
+  loginError: '1:1 문의',
+  loginProviderError: '확인'
 };
 
 const dialog = {

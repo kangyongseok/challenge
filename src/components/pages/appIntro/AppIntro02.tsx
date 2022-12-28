@@ -1,7 +1,5 @@
-import { Box, Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 
@@ -17,6 +15,7 @@ function AppIntro02({ animationStart }: { animationStart: boolean }) {
           <Icon name="LogoText_96_20" customStyle={{ marginTop: 20 }} width={70} />
           <Image
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/center_bag_img.png`}
+            alt="Center Bag Img"
             disableAspectRatio
           />
           {animationStart && (

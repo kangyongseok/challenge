@@ -4,10 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Image, Skeleton, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { ProductLegitsParams } from '@dto/productLegit';
 import type { ProductResult } from '@dto/product';
@@ -81,19 +79,19 @@ function LegitYourTurnList() {
         {isLoading ? (
           <Card>
             <Flexbox direction="vertical" gap={12}>
-              <Skeleton width="94px" height="16px" disableAspectRatio isRound />
+              <Skeleton width={94} height={16} round={8} disableAspectRatio />
               <Flexbox direction="vertical" gap={4}>
-                <Skeleton width="184px" height="24px" disableAspectRatio isRound />
-                <Skeleton width="270px" height="32px" disableAspectRatio isRound />
+                <Skeleton width={184} height={24} round={8} disableAspectRatio />
+                <Skeleton width={270} height={32} round={8} disableAspectRatio />
               </Flexbox>
             </Flexbox>
             <Flexbox direction="vertical" gap={15} customStyle={{ marginBottom: 24 }}>
               {Array.from({ length: 5 }, (_, index) => (
                 <Flexbox key={`productLegit-${index}`} alignment="center" gap={12}>
-                  <Skeleton width="56px" height="56px" isRound disableAspectRatio />
+                  <Skeleton width={56} height={56} round={8} disableAspectRatio />
                   <Flexbox direction="vertical" gap={2}>
-                    <Skeleton width="52px" height="24px" isRound disableAspectRatio />
-                    <Skeleton width="227px" height="20px" isRound disableAspectRatio />
+                    <Skeleton width={52} height={24} round={8} disableAspectRatio />
+                    <Skeleton width={227} height={20} round={8} disableAspectRatio />
                   </Flexbox>
                 </Flexbox>
               ))}
@@ -143,22 +141,24 @@ function LegitYourTurnList() {
                         onClick={handleClickLegitProduct(productResult)}
                       >
                         <Image
-                          width="56px"
-                          height="56px"
+                          width={56}
+                          height={56}
                           disableAspectRatio
                           src={productResult.imageMain}
-                          customStyle={{ borderRadius: 8 }}
+                          alt="Product Img"
+                          round={8}
                         />
                         <Flexbox direction="vertical" gap={2}>
                           <Image
                             width="auto"
-                            height="24px"
+                            height={24}
                             disableAspectRatio
                             src={`https://${
                               process.env.IMAGE_DOMAIN
                             }/assets/images/horizon_brands/black/${productResult.brand.nameEng
                               .toLowerCase()
                               .replace(/\s/g, '')}.jpg`}
+                            alt="Brand Logo Img"
                           />
                           <Typography variant="body1">{productResult.quoteTitle}</Typography>
                         </Flexbox>

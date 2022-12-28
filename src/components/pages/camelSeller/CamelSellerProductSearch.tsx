@@ -4,12 +4,11 @@ import type { FormEvent } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce, isEmpty } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { CustomSearchBar } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 import { CamelSellerProductSearchItem } from '@components/pages/camelSeller';
 
 import { Models } from '@dto/model';
@@ -230,15 +229,10 @@ function CamelSellerProductSearch() {
           {isLoading &&
             Array.from({ length: 3 }, (_, i) => i + 1).map((value) => (
               <Flexbox alignment="center" gap={12} key={`skeleton-${value}`}>
-                <Skeleton
-                  width="50px"
-                  height="50px"
-                  disableAspectRatio
-                  customStyle={{ borderRadius: 8 }}
-                />
+                <Skeleton width={50} height={50} round={8} disableAspectRatio />
                 <Flexbox direction="vertical" gap={4}>
-                  <Skeleton height="24px" width="200px" disableAspectRatio />
-                  <Skeleton height="18px" width="150px" disableAspectRatio />
+                  <Skeleton height={24} width={200} disableAspectRatio />
+                  <Skeleton height={18} width={150} disableAspectRatio />
                 </Flexbox>
               </Flexbox>
             ))}

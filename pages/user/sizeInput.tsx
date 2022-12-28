@@ -130,7 +130,7 @@ function SizeInput() {
           <FooterFixed alignment="center" justifyContent="center">
             <Button
               fullWidth
-              variant="contained"
+              variant="solid"
               brandColor="primary"
               size="xlarge"
               onClick={searchModeType.kind ? handleSelectSuccess : handleClickSave}

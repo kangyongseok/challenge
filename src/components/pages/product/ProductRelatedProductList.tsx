@@ -16,7 +16,7 @@ import attrProperty from '@constants/attrProperty';
 interface ProductRelatedProductListProps {
   brandId?: number;
   categoryId?: number | null;
-  line?: string;
+  line?: string | null;
   prevProduct?: Product;
   quoteTitle?: string;
   price?: number;

@@ -4,11 +4,10 @@ import type { MouseEvent } from 'react';
 import { useRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
-import Skeleton from '@components/UI/atoms/Skeleton';
 
 import { fetchRequestProductLegits } from '@api/productLegit';
 
@@ -126,18 +125,17 @@ function LegitAdminRequestPanel() {
             <Skeleton
               // eslint-disable-next-line react/no-array-index-key
               key={`product-legit-filter-chip-skeleton-${index}`}
-              width="81.53px"
-              height="32px"
+              width={81.35}
+              height={32}
+              round={16}
               disableAspectRatio
-              customStyle={{ borderRadius: 16 }}
             />
           ))}
         {!isLoading && isHead && (
           <>
             <Chip
-              variant={(params.status || []).includes(10) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(10) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(10) ? 'black' : undefined}
-              // TODO 추후 UI 라이브러리에 props 구현
               endIcon={
                 <Typography
                   variant="small2"
@@ -158,7 +156,7 @@ function LegitAdminRequestPanel() {
               감정신청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(21) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(21) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(21) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -180,7 +178,7 @@ function LegitAdminRequestPanel() {
               작성완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(12) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(12) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(12) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -202,7 +200,7 @@ function LegitAdminRequestPanel() {
               보완요청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(13) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(13) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(13) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -224,7 +222,7 @@ function LegitAdminRequestPanel() {
               보완완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(30) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(30) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(30) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -250,7 +248,7 @@ function LegitAdminRequestPanel() {
         {!isLoading && !isHead && (
           <>
             <Chip
-              variant={(params.status || []).includes(20) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(20) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(20) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -272,7 +270,7 @@ function LegitAdminRequestPanel() {
               감정신청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(21) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(21) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(21) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -294,7 +292,7 @@ function LegitAdminRequestPanel() {
               작성완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(30) ? 'contained' : 'outlinedGhost'}
+              variant={(params.status || []).includes(30) ? 'solid' : 'outlineGhost'}
               brandColor={(params.status || []).includes(30) ? 'black' : undefined}
               endIcon={
                 <Typography

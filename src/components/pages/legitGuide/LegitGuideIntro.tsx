@@ -1,7 +1,5 @@
-import { Typography } from 'mrcamel-ui';
+import { Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 function LegitGuideIntro() {
   return (
@@ -19,7 +17,7 @@ function LegitGuideIntro() {
         />
       </IntroBagWrapper>
       <Image
-        width="246px"
+        width={246}
         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-real-or-fake.png`}
         alt="Intro Background Img"
         disableAspectRatio

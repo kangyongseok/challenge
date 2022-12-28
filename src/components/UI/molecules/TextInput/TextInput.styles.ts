@@ -3,7 +3,7 @@ import type { CSSObject } from '@emotion/styled';
 
 import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
-export type TextInputVariant = 'outlined' | 'contained' | 'standard' | 'underlined';
+export type TextInputVariant = 'outline' | 'solid' | 'standard' | 'underline';
 
 export type TextInputProps = {
   variant?: TextInputVariant;
@@ -39,18 +39,18 @@ export const Wrapper = styled.div<TextInputProps>`
     focused
   }): CSSObject => {
     switch (variant) {
-      case 'outlined':
+      case 'outline':
         return {
           backgroundColor: isSelected ? primary.highlight : common.uiWhite,
           border: `${borderWidth}px solid ${isSelected || focused ? primary.main : common.ui90}`,
           borderRadius: box.round['8']
         };
-      case 'contained':
+      case 'solid':
         return {
           backgroundColor: isSelected ? primary.highlight : common.ui95,
           borderRadius: box.round['8']
         };
-      case 'underlined':
+      case 'underline':
         return {
           backgroundColor: common.uiWhite
         };
@@ -112,8 +112,7 @@ export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
     variant,
     isSelected
   }) =>
-    variant === 'underlined' &&
-    `${borderWidth}px solid ${isSelected ? primary.main : common.ui90}`};
+    variant === 'underline' && `${borderWidth}px solid ${isSelected ? primary.main : common.ui90}`};
   transition-duration: 0.2s;
   font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
@@ -125,7 +124,7 @@ export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
       variant,
       borderWidth
     }): CSSObject =>
-      variant === 'underlined'
+      variant === 'underline'
         ? {
             outline: 0,
             borderBottom: `${borderWidth}px solid ${primary.main}`

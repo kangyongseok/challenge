@@ -444,8 +444,9 @@ export function getProductDetailUrl({
   type = 'product',
   product
 }:
-  | { type?: 'product' | 'targetProduct'; product: Product }
-  | { type: 'productResult'; product: ProductResult }) {
+  | { type?: 'product'; product: Product }
+  | { type: 'productResult'; product: ProductResult }
+  | { type: 'targetProduct'; product: Product | ProductResult }) {
   const { id, targetProductId, targetProductUrl, quoteTitle } = product || {};
   let productDetailUrl = `/products/${id}`;
 
@@ -523,3 +524,61 @@ export const getOnlyObjectValue = (arr: string[], origin: { [propsName: string]:
 
   return obj;
 };
+
+export function wait(ms: number) {
+  // eslint-disable-next-line no-promise-executor-return
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+/* eslint-disable no-bitwise */
+/* eslint-disable eqeqeq */
+/* eslint-disable no-mixed-operators */
+// https://stackoverflow.com/a/2117523
+// used mainly for dom key generation
+export function uuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+export const noop = (): void => {
+  //
+};
+
+export function truncateString(fullStr: string, strLen?: number): string {
+  // eslint-disable-next-line no-param-reassign
+  if (!strLen) strLen = 40;
+
+  if (fullStr === null || fullStr === undefined) return '';
+
+  if (fullStr.length <= strLen) return fullStr;
+
+  const separator = '...';
+  const sepLen = separator.length;
+  const charsToShow = strLen - sepLen;
+  const frontChars = Math.ceil(charsToShow / 2);
+  const backChars = Math.floor(charsToShow / 2);
+
+  return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
+}
+
+export function needUpdateChatIOSVersion() {
+  return checkAgent.isIOSApp() && getAppVersion() < 1148;
+}
+
+export async function urlToBlob(url: string): Promise<Blob | undefined> {
+  let blob;
+
+  try {
+    const data = await fetch(url);
+    blob = await data.blob();
+
+    return blob;
+  } catch {
+    //
+  }
+
+  return blob;
+}

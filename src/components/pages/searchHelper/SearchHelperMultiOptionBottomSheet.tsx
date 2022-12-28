@@ -132,7 +132,7 @@ function SearchHelperMultiOptionBottomSheet({
             </SearchHelperBottomSheetButton>
           )}
           {!hasSelectedOptions && needClearOptions && (
-            <SearchHelperBottomSheetButton onClick={handleClickCtaButton} variant="outlined">
+            <SearchHelperBottomSheetButton onClick={handleClickCtaButton} variant="outline">
               적용하기
             </SearchHelperBottomSheetButton>
           )}

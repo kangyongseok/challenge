@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -40,6 +38,7 @@ function AppIntro04({ animationStart }: { animationStart: boolean }) {
         <Box customStyle={{ position: 'relative' }}>
           <Image
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/legit_box.png`}
+            alt="Legit Box Img"
             disableAspectRatio
             width={240}
           />
@@ -69,7 +68,7 @@ function AppIntro04({ animationStart }: { animationStart: boolean }) {
         {animationStart && (
           <LoginButton
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             customStyle={{ marginTop: 'auto', marginBottom: 20 }}
             onClick={handleClickLogin}

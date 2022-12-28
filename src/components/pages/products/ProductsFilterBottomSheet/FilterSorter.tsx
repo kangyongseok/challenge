@@ -26,7 +26,7 @@ function FilterSorter({ options, value, onChange, customStyle, ...props }: Filte
         <Button
           key={`sorter-option-${option.value}`}
           variant="inline"
-          brandColor={option.value === value ? 'primary-light' : 'gray'}
+          brandColor={option.value === value ? 'blue' : 'gray'}
           data-value={option.value}
           onClick={handleClick}
           customStyle={{

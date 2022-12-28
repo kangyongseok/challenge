@@ -18,11 +18,11 @@ const SearchHelperBottomSheetButton = forwardRef<
       <Button
         ref={forwardedRef}
         fullWidth
-        variant="contained"
+        variant="solid"
         brandColor="primary"
         size="large"
         customStyle={{
-          color: props.variant === 'outlined' ? primary.main : common.cmnW
+          color: props.variant === 'outline' ? primary.main : common.cmnW
         }}
         {...props}
       >

@@ -43,7 +43,7 @@ function SearchCategoryList() {
       <Typography variant="h4" weight="bold" customStyle={{ padding: '0 20px' }}>
         {accessUser ? '자주 찾는 카테고리' : '인기 카테고리'}
       </Typography>
-      <CategoryList variant="outlined" onClickCategory={handleClickCategory} />
+      <CategoryList variant="outline" onClickCategory={handleClickCategory} />
     </Flexbox>
   );
 }

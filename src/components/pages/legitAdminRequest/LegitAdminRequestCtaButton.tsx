@@ -213,7 +213,7 @@ function LegitAdminRequestCtaButton() {
         <CtaButtonWrapper gap={8}>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="xlarge"
             onClick={handleClickEditComplete}
@@ -232,7 +232,7 @@ function LegitAdminRequestCtaButton() {
         <CtaButtonWrapper gap={8}>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="xlarge"
             onClick={() => setLegitAdminOpinionEditableState(true)}
@@ -241,7 +241,7 @@ function LegitAdminRequestCtaButton() {
           </Button>
           <Button
             fullWidth
-            variant="outlinedGhost"
+            variant="outlineGhost"
             brandColor="gray"
             size="xlarge"
             onClick={() =>
@@ -267,7 +267,7 @@ function LegitAdminRequestCtaButton() {
         <CtaButtonWrapper gap={8}>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="xlarge"
             onClick={handleClick}
@@ -314,7 +314,7 @@ function LegitAdminRequestCtaButton() {
             </Typography>
           </OpinionWriter>
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="xlarge"
             fullWidth

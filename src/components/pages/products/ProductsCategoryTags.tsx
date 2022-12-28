@@ -2,10 +2,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Typography } from 'mrcamel-ui';
+import { Box, Skeleton, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -239,10 +237,10 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
                   <Skeleton
                     // eslint-disable-next-line react/no-array-index-key
                     key={`category-tag-skeleton-${index}`}
-                    width={index === 0 ? '37px' : '33px'}
-                    height="24px"
+                    width={index === 0 ? 37 : 33}
+                    height={24}
+                    round={8}
                     disableAspectRatio
-                    customStyle={{ borderRadius: 8 }}
                   />
                 ))}
               </>

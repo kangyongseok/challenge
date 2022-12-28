@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { IconName } from 'mrcamel-ui';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Badge } from '@components/UI/atoms';
@@ -13,11 +15,13 @@ import { Badge } from '@components/UI/atoms';
 import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
+import { getChannelUserName, getUnreadMessagesCount } from '@utils/channel';
 
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
@@ -26,9 +30,13 @@ import {
   homePersonalCurationBannersState,
   homeSelectedTabStateFamily
 } from '@recoil/home';
+import { dialogState } from '@recoil/common';
+import { sendbirdState } from '@recoil/channel';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 import {
   LegitResultTooltip,
@@ -40,7 +48,7 @@ import {
 const data: {
   title: string;
   defaultIcon: IconName;
-  activeIcon?: IconName;
+  activeIcon: IconName;
   href: string;
   logName: string;
 }[] = [
@@ -66,11 +74,11 @@ const data: {
     logName: 'CATEGORY'
   },
   {
-    title: 'navigation.wishes',
-    defaultIcon: 'NewHeartFavoriteOutlined',
-    activeIcon: 'NewHeartFavoriteFilled',
-    href: '/wishes',
-    logName: 'WISH'
+    title: 'navigation.channel',
+    defaultIcon: 'BnChatOutlined',
+    activeIcon: 'BnChatFilled',
+    href: '/channels',
+    logName: 'CHANNEL'
   },
   {
     title: 'navigation.myPage',
@@ -93,7 +101,14 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
     }
   } = useTheme();
   const router = useRouter();
+
   const queryClient = useQueryClient();
+
+  const { initialized, unreadMessagesCount } = useRecoilValue(sendbirdState);
+
+  const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
+  const setDialogState = useSetRecoilState(dialogState);
+
   const resetCategory = useResetRecoilState(categoryState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
@@ -103,7 +118,8 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
   );
-  const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
+
+  const { data: accessUser } = useQueryAccessUser();
   const {
     data: {
       roles = [],
@@ -114,15 +130,17 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
     } = {},
     isLoading
   } = useQueryUserInfo();
+  const initializeSendbird = useInitializeSendbird();
 
   const triggered = useReverseScrollTrigger(!disableHideOnScroll);
 
   const [isAppDownModal, setIsAppDownModal] = useState(false);
   const [logAtt] = useState('');
-  const legitNavRef = useRef<HTMLLIElement | null>(null);
   const [openTooltip, setOpenTooltip] = useState(false);
   const [openLegitNotProcessedTooltip, setOpenLegitNotProcessedTooltip] = useState(false);
   const [triangleLeft, setTriangleLeft] = useState(0);
+
+  const legitNavRef = useRef<HTMLLIElement | null>(null);
 
   const confirmPriceNotiProducts = useMemo(() => {
     return priceNotiProducts.filter(({ priceBefore, price }) => {
@@ -133,53 +151,87 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
     });
   }, [priceNotiProducts]);
 
-  const handleClickInterceptor = (title: string, logName: string, href: string) => () => {
-    logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
-      title:
-        !isLoading && notViewedLegitCount && logName === 'LEGIT'
-          ? attrProperty.legitTitle.LEGITRESULT_TOOLTIP
-          : undefined
-    });
+  const handleClickInterceptor =
+    (title: string, logName: string, href: string) => async (e: MouseEvent<HTMLAnchorElement>) => {
+      logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
+        title:
+          !isLoading && notViewedLegitCount && logName === 'LEGIT'
+            ? attrProperty.legitTitle.LEGITRESULT_TOOLTIP
+            : undefined
+      });
 
-    if (title === 'navigation.home') {
-      // homeTabChange();
-      resetProductKeyword();
-      resetRecentSearch();
-    }
+      if (title === 'navigation.channel') {
+        if (!accessUser) {
+          e.preventDefault();
+          router.push({ pathname: '/login' });
+          return;
+        }
 
-    if (title === 'navigation.category' && router.pathname !== '/category') {
-      resetCategory();
-    }
+        if (needUpdateChatIOSVersion()) {
+          e.preventDefault();
+          setDialogState({
+            type: 'requiredAppUpdateForChat',
+            customStyleTitle: { minWidth: 270 },
+            firstButtonAction: () => {
+              window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+            }
+          });
+          return;
+        }
 
-    if (href === '/') {
-      resetHomePersonalCurationBannersState();
-      queryClient
-        .getQueryCache()
-        .getAll()
-        .forEach(({ queryKey }) => {
-          if (queryKey.includes('personalProducts') || queryKey.includes('recommendProducts')) {
-            queryClient.resetQueries(queryKey);
-          }
-        });
-    }
+        if (!initialized) {
+          await initializeSendbird(
+            accessUser.userId.toString(),
+            getChannelUserName(accessUser.userName, accessUser.userId),
+            accessUser.image
+          );
+          return;
+        }
 
-    // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
-    // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
-    // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
-    if (href === '/legit') {
-      resetLegitFilterGridParamsState();
-      resetLegitFiltersState();
+        queryClient.invalidateQueries(queryKeys.channels.channels({ type: 0, size: 20 }));
+      }
 
-      queryClient
-        .getQueryCache()
-        .getAll()
-        .forEach(({ queryKey }) => {
-          if (queryKey.includes('productLegits') && queryKey.length >= 3) {
-            queryClient.resetQueries(queryKey);
-          }
-        });
-    }
-  };
+      if (title === 'navigation.home') {
+        // homeTabChange();
+        resetProductKeyword();
+        resetRecentSearch();
+      }
+
+      if (title === 'navigation.category' && router.pathname !== '/category') {
+        resetCategory();
+      }
+
+      if (href === '/') {
+        resetHomePersonalCurationBannersState();
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .forEach(({ queryKey }) => {
+            if (queryKey.includes('personalProducts') || queryKey.includes('recommendProducts')) {
+              queryClient.resetQueries(queryKey);
+            }
+          });
+      }
+
+      // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
+      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
+      // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
+      if (href === '/legit') {
+        resetLegitFilterGridParamsState();
+        resetLegitFiltersState();
+
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .forEach(({ queryKey }) => {
+            if (queryKey.includes('productLegits') && queryKey.length >= 3) {
+              queryClient.resetQueries(queryKey);
+            }
+          });
+      }
+    };
 
   const handleResize = useCallback(() => {
     if (legitNavRef.current && !openTooltip) {
@@ -304,55 +356,49 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
               isActive = false;
             }
 
-            if (activeIcon) {
-              return (
-                <ListItem
-                  key={`bottom-navigation-${title}`}
-                  ref={href === '/legit' ? legitNavRef : undefined}
+            return (
+              <ListItem
+                key={`bottom-navigation-${title}`}
+                ref={href === '/legit' ? legitNavRef : undefined}
+              >
+                <Link
+                  href={{ pathname: getPathName(href), query: getQuery(href) }}
+                  as={{ pathname: getPathName(href), query: getQuery(href) }}
+                  passHref
                 >
-                  <Link
-                    href={{
-                      pathname: getPathName(href),
-                      query: getQuery(href)
-                    }}
-                    as={{
-                      pathname: getPathName(href),
-                      query: getQuery(href)
-                    }}
-                    passHref
-                  >
-                    <a onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
-                      <Box customStyle={{ position: 'relative' }}>
-                        <Icon
-                          name={isActive ? activeIcon : defaultIcon}
-                          color={isActive ? common.ui20 : common.ui80}
-                        />
-                        <Badge
-                          variant="two-tone"
-                          brandColor="red"
-                          type="alone"
-                          open={href === '/legit' && !isLoading && !!notViewedLegitCount}
-                          width={10}
-                          height={10}
-                          customStyle={{ position: 'absolute', top: -2, right: -5 }}
-                        />
-                      </Box>
-                      <FormattedText
-                        id={title}
-                        variant="small2"
-                        weight={isActive ? 'bold' : 'regular'}
-                        customStyle={{
-                          position: 'relative',
-                          marginTop: 4,
-                          color: isActive ? common.ui20 : common.ui80
-                        }}
+                  <a onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
+                    <Box customStyle={{ position: 'relative' }}>
+                      <Icon
+                        name={isActive ? activeIcon : defaultIcon}
+                        color={isActive ? common.ui20 : common.ui80}
                       />
-                    </a>
-                  </Link>
-                </ListItem>
-              );
-            }
-            return '';
+                      <CustomBadge
+                        open={
+                          (href === '/legit' && !isLoading && !!notViewedLegitCount) ||
+                          href === '/channels'
+                        }
+                        type="alone"
+                        width={16}
+                        height={16}
+                        show={unreadMessagesCount > 0}
+                      >
+                        {getUnreadMessagesCount(unreadMessagesCount)}
+                      </CustomBadge>
+                    </Box>
+                    <FormattedText
+                      id={title}
+                      variant="small2"
+                      weight={isActive ? 'bold' : 'regular'}
+                      customStyle={{
+                        position: 'relative',
+                        marginTop: 4,
+                        color: isActive ? common.ui20 : common.ui80
+                      }}
+                    />
+                  </a>
+                </Link>
+              </ListItem>
+            );
           })}
         </List>
       </StyledBottomNavigation>
@@ -396,5 +442,15 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
     </>
   );
 }
+
+const CustomBadge = styled(Badge)<{ show: boolean }>`
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  background-color: ${({ theme: { palette } }) => palette.primary.light};
+  font-weight: 500;
+  opacity: ${({ show }) => Number(show)};
+  transition: all 0.3s;
+`;
 
 export default BottomNavigation;

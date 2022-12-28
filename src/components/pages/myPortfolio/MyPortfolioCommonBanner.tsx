@@ -1,8 +1,6 @@
 import { useRouter } from 'next/router';
-import { CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { CustomStyle, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import { logEvent } from '@library/amplitude';
 

@@ -2,12 +2,21 @@ import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Icon, Label, Typography, dark, useTheme } from 'mrcamel-ui';
+import {
+  Button,
+  Chip,
+  Flexbox,
+  Icon,
+  Label,
+  Skeleton,
+  Typography,
+  dark,
+  useTheme
+} from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { UserRoleLegit } from '@dto/user';
 import type { LegitsBrand } from '@dto/model';
@@ -37,12 +46,10 @@ interface LegitProfileInfoProps {
   onClickEditProfile?: () => void;
   customStyle?: CustomStyle;
   infoCustomStyle?: CustomStyle;
-  sellerId?: number;
 }
 
 function LegitProfileInfo({
   profile,
-  sellerId,
   isLoading = false,
   legitsBrands = [],
   cntOpinion,
@@ -120,7 +127,12 @@ function LegitProfileInfo({
       name: attrProperty.legitName.LEGIT_PROFILE
     });
 
-    router.push(`/sellerInfo/${sellerId}?tab=products`);
+    router.push({
+      pathname: `/userInfo/${userId}`,
+      query: {
+        tab: 'products'
+      }
+    });
   };
 
   // const handleClickMoveUrlShop = () => {
@@ -150,45 +162,40 @@ function LegitProfileInfo({
           >
             <Flexbox gap={8} customStyle={{ marginBottom: 9 }}>
               <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
-                <Skeleton width="100px" height="32px" disableAspectRatio isRound />
+                <Skeleton width={100} height={32} round={8} disableAspectRatio />
                 <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
                   <Flexbox gap={4} alignment="center">
-                    <Skeleton width="58px" height="18px" isRound disableAspectRatio />
-                    <Skeleton width="32px" height="16px" isRound disableAspectRatio />
+                    <Skeleton width={58} height={18} round={8} disableAspectRatio />
+                    <Skeleton width={32} height={16} round={8} disableAspectRatio />
                   </Flexbox>
                   <Flexbox gap={4} alignment="center">
-                    <Skeleton width="58px" height="18px" isRound disableAspectRatio />
-                    <Skeleton width="32px" height="16px" isRound disableAspectRatio />
+                    <Skeleton width={58} height={18} round={8} disableAspectRatio />
+                    <Skeleton width={32} height={16} round={8} disableAspectRatio />
                   </Flexbox>
                 </Flexbox>
-                <Skeleton width="100%" height="40px" disableAspectRatio isRound />
+                <Skeleton width="100%" height={40} round={8} disableAspectRatio />
               </Flexbox>
-              <Skeleton
-                width="80px"
-                height="80px"
-                disableAspectRatio
-                customStyle={{ borderRadius: '50%' }}
-              />
+              <Skeleton width={80} height={80} round="50%" disableAspectRatio />
             </Flexbox>
             <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
               {Array.from({ length: 10 }, (_, index) => (
                 <Skeleton
                   key={`target-brand-${index}`}
-                  width={`${Math.min(Math.max(45, getRandomNumber(2)), 110)}px`}
-                  height="24px"
+                  width={Math.min(Math.max(45, getRandomNumber(2)), 110)}
+                  height={24}
+                  round={8}
                   disableAspectRatio
-                  isRound
                 />
               ))}
             </Flexbox>
           </Flexbox>
           <Flexbox direction="vertical" gap={8} customStyle={{ padding: 20 }}>
             <Flexbox alignment="center" gap={8}>
-              <Skeleton width="128px" height="44px" disableAspectRatio isRound />
-              <Skeleton width="44px" height="44px" disableAspectRatio isRound />
-              <Skeleton width="44px" height="44px" disableAspectRatio isRound />
+              <Skeleton width={128} height={44} round={8} disableAspectRatio />
+              <Skeleton width={44} height={44} round={8} disableAspectRatio />
+              <Skeleton width={44} height={44} round={8} disableAspectRatio />
             </Flexbox>
-            {showEdit && <Skeleton width="100%" height="44px" disableAspectRatio isRound />}
+            {showEdit && <Skeleton width="100%" height={44} round={8} disableAspectRatio />}
           </Flexbox>
         </>
       ) : (
@@ -281,7 +288,7 @@ function LegitProfileInfo({
                 src={image}
                 dateActivated={dateActivated}
                 customStyle={{ height: 'inherit' }}
-                // onClick={() => router.push(`/products/${sellerId}/sellerInfo?tab=products`)}
+                // onClick={() => router.push(`/products/${sellerId}/userInfo?tab=products`)}
               />
             </Flexbox>
             <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
@@ -289,7 +296,7 @@ function LegitProfileInfo({
                 <Chip
                   key={`target-brand-${id}`}
                   size="xsmall"
-                  variant="contained"
+                  variant="solid"
                   brandColor="black"
                   customStyle={{ backgroundColor: common.overlay40, whiteSpace: 'nowrap' }}
                 >
@@ -303,7 +310,7 @@ function LegitProfileInfo({
               {userId && ![56881, 70679].includes(userId) && (
                 <Button
                   size="large"
-                  variant="contained"
+                  variant="solid"
                   brandColor="black"
                   customStyle={{ minWidth: 128 }}
                   startIcon={<Icon name="ShopOutlined" customStyle={{ color: common.cmnW }} />}

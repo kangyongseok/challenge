@@ -156,7 +156,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                   key="size-global-oneSize"
                   data-size-id={0}
                   data-size-name="ONE SIZE"
-                  variant="contained"
+                  variant="solid"
                   customStyle={{
                     background: common.ui95,
                     color: common.ui20
@@ -170,7 +170,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                     key={`size-global-${list.id}`}
                     data-size-id={list.id}
                     data-size-name={list.name}
-                    variant="contained"
+                    variant="solid"
                     customStyle={{
                       background: common.ui95,
                       color: common.ui20
@@ -197,7 +197,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                   key="size-uk-oneSize"
                   data-size-id={0}
                   data-size-name="One Size"
-                  variant="contained"
+                  variant="solid"
                   customStyle={{
                     background: common.ui95,
                     color: common.ui20
@@ -211,7 +211,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                     key={`size-uk-${list.id}`}
                     data-size-id={list.id}
                     data-size-name={list.name}
-                    variant="contained"
+                    variant="solid"
                     customStyle={{
                       background: common.ui95,
                       color: common.ui20
@@ -238,7 +238,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                   key="size-eu-oneSize"
                   data-size-id={0}
                   data-size-name="One Size"
-                  variant="contained"
+                  variant="solid"
                   customStyle={{
                     background: common.ui95,
                     color: common.ui20
@@ -252,7 +252,7 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
                     key={`size-eu-${list.id}`}
                     data-size-id={list.id}
                     data-size-name={list.name}
-                    variant="contained"
+                    variant="solid"
                     customStyle={{
                       background: common.ui95,
                       color: common.ui20

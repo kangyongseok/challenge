@@ -1,6 +1,5 @@
+import { Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 export const UserImage = styled(Image)<{ isActive: boolean }>`
   border-radius: 50%;

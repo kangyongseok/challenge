@@ -126,7 +126,8 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
           height={48}
           src={productResult.imageMain}
           alt="Recommend Wish Product Img"
-          customStyle={{ minWidth: 48, height: 48, borderRadius: 32 }}
+          round={32}
+          customStyle={{ minWidth: 48 }}
         />
         <Badge>
           {productResult.priceBefore ? (

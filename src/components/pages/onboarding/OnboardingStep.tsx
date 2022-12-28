@@ -73,7 +73,7 @@ function OnboardingStep() {
         </Step>
       ))}
       {Number(query.step) > 1 && (
-        <SkipBtn variant="outlined" onClick={handleClickSkip}>
+        <SkipBtn variant="outline" onClick={handleClickSkip}>
           SKIP
         </SkipBtn>
       )}

@@ -1,6 +1,5 @@
-import { Box, CustomStyle, Flexbox } from 'mrcamel-ui';
-
-import Skeleton from '@components/UI/atoms/Skeleton';
+import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 interface ProductListCardSkeletonPros {
   customStyle?: CustomStyle;
@@ -10,32 +9,27 @@ function UserShopProductCardSkeleton({ customStyle }: ProductListCardSkeletonPro
   return (
     <Flexbox gap={12} customStyle={customStyle}>
       <Box customStyle={{ width: 100 }}>
-        <Skeleton isRound />
+        <Skeleton round={8} />
       </Box>
       <Box customStyle={{ flex: 1 }}>
-        <Skeleton width="100%" maxWidth="46px" height="20px" disableAspectRatio isRound />
+        <Skeleton width="100%" maxWidth={46} height={20} round={8} disableAspectRatio />
         <Skeleton
           width="100%"
-          maxWidth="200px"
-          height="18px"
+          maxWidth={200}
+          height={18}
           disableAspectRatio
           customStyle={{ marginTop: 8 }}
         />
-        <Skeleton
-          width="41px"
-          height="16.8px"
-          disableAspectRatio
-          customStyle={{ margin: '5px 0' }}
-        />
+        <Skeleton width={41} height={16.8} disableAspectRatio customStyle={{ margin: '5px 0' }} />
         <Skeleton
           width="100%"
-          maxWidth="120px"
-          height="15px"
+          maxWidth={120}
+          height={15}
           disableAspectRatio
           customStyle={{ marginTop: 3 }}
         />
       </Box>
-      <Skeleton width="16px" height="16px" disableAspectRatio />
+      <Skeleton width={16} height={16} disableAspectRatio />
     </Flexbox>
   );
 }

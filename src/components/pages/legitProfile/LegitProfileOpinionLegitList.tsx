@@ -3,11 +3,9 @@ import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Icon, Image, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -167,8 +165,8 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
               marginBottom: 20
             }}
           >
-            <Skeleton width="71.36px" height="36px" disableAspectRatio isRound />
-            <Skeleton width="71.36px" height="36px" disableAspectRatio isRound />
+            <Skeleton width={71.36} height={36} disableAspectRatio round={8} />
+            <Skeleton width={71.36} height={36} disableAspectRatio round={8} />
           </Flexbox>
         )}
         {!isLoading && legitProducts.length > 0 && (
@@ -182,7 +180,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
               <Chip
                 key={`legit-select-label-${label}`}
                 variant="ghost"
-                brandColor={(params.results || []).includes(result) ? 'primary-light' : 'black'}
+                brandColor={(params.results || []).includes(result) ? 'blue' : 'black'}
                 size="large"
                 disabled={isLoading}
                 onClick={handleClick({ status, result, label })}
@@ -198,22 +196,22 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
             {Array.from({ length: 16 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={12}>
-                <Skeleton width="100px" height="100px" isRound disableAspectRatio />
+                <Skeleton width={100} height={100} round={8} disableAspectRatio />
                 <Box customStyle={{ flexGrow: 1 }}>
-                  <Skeleton width="58px" height="18px" isRound disableAspectRatio />
+                  <Skeleton width={58} height={18} round={8} disableAspectRatio />
                   <Skeleton
                     width="100%"
-                    maxWidth="220px"
-                    height="16px"
-                    isRound
+                    maxWidth={220}
+                    height={16}
+                    round={8}
                     disableAspectRatio
                     customStyle={{ marginTop: 4 }}
                   />
                   <Skeleton
                     width="100%"
-                    maxWidth="220px"
-                    height="24px"
-                    isRound
+                    maxWidth={220}
+                    height={24}
+                    round={8}
                     disableAspectRatio
                     customStyle={{ marginTop: 8 }}
                   />
@@ -236,21 +234,16 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                 >
                   <Box customStyle={{ minWidth: 100, maxWidth: 100, height: 100 }}>
                     <Image
-                      variant="backgroundImage"
                       src={productResult.imageThumbnail || productResult.imageMain}
                       alt="User Legit Product Img"
-                      customStyle={{
-                        borderRadius: 8
-                      }}
+                      round={8}
+                      disableOnBackground={false}
                     />
                   </Box>
                   <div>
                     {status === 30 && opinionResult === 1 && (
                       <Label
                         variant="darked"
-                        // TODO UI 라이브러리 업데이트 필요
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
                         text={
                           <Flexbox alignment="center" gap={2}>
                             <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
@@ -293,7 +286,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
                     )}
                     {status === 20 && (
                       <Label
-                        variant="contained"
+                        variant="solid"
                         brandColor="black"
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore

@@ -3,16 +3,11 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-// import Image from 'next/image';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-// import { Skeleton } from '@components/UI/atoms';
-
-import { Image, Skeleton } from '@components/UI/atoms';
-
-import type { Product } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -26,7 +21,7 @@ import { commaNumber } from '@utils/common';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 
 interface UserShopProductCardProps {
-  product: Product;
+  product: ProductResult;
 }
 
 function UserShopProductCard({ product }: UserShopProductCardProps) {
@@ -91,18 +86,10 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
   return (
     <Flexbox gap={12} onClick={handleClickProduct} customStyle={{ cursor: 'pointer' }}>
       <ImageWrapper>
-        {/* <ImageWrap
-          src={imageUrl}
-          alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
-          layout="fixed"
-          width={100}
-          height={100}
-          priority
-        /> */}
         <ImageWrap src={imageUrl} alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)} />
         {!loaded && (
           <SkeletonWrapper>
-            <Skeleton isRound customStyle={{ height: '100%' }} />
+            <Skeleton height="100%" round={8} />
           </SkeletonWrapper>
         )}
         {loaded && status !== 0 && (

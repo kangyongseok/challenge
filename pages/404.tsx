@@ -51,14 +51,14 @@ function Error404() {
         </Typography>
         <Flexbox direction="vertical" gap={12} customStyle={{ width: '100%', marginTop: 24 }}>
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             fullWidth
             onClick={() => window.open('http://pf.kakao.com/_mYdxexb/chat')}
           >
             불편한 점 알려주기
           </Button>
-          <Button variant="outlined" fullWidth onClick={handleClick}>
+          <Button variant="outline" fullWidth onClick={handleClick}>
             이전 페이지 이동
           </Button>
         </Flexbox>

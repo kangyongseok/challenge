@@ -5,14 +5,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import has from 'lodash-es/has';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { Product, SearchParams } from '@dto/product';
 
@@ -229,7 +228,7 @@ function HomeRecentSearchList() {
           {!has(searchParams, 'keyword')
             ? Array.from({ length: 10 }, (_, index) => (
                 <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
-                  <Skeleton width="130px" height="19px" disableAspectRatio isRound />
+                  <Skeleton width={130} height={19} round={8} disableAspectRatio />
                 </Tab>
               ))
             : recentSearchList.map(({ keyword }, index) => (

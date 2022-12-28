@@ -8,7 +8,7 @@ import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
@@ -316,19 +316,36 @@ function ImageDetailDialog({
         border: 'none'
       }}
     >
-      {label && (
-        <Box
-          customStyle={{
-            position: 'absolute',
-            top: (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20,
-            left: 20,
-            zIndex: button
-          }}
-        >
-          {label}
-        </Box>
-      )}
-      <CloseIcon name="CloseOutlined" color="white" onClick={onClose} />
+      <Box
+        customStyle={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0,
+          height: HEADER_HEIGHT,
+          zIndex: button,
+          backgroundColor: common.overlay60
+        }}
+      >
+        {label && (
+          <Box
+            customStyle={{
+              position: 'absolute',
+              top: (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 16,
+              left: 16,
+              zIndex: button
+            }}
+          >
+            {label}
+          </Box>
+        )}
+        <CloseIcon
+          name="CloseOutlined"
+          color="white"
+          onClick={onClose}
+          customStyle={{ cursor: 'pointer' }}
+        />
+      </Box>
       <Swiper
         onInit={(swiper) => {
           swiperRef.current = swiper;
@@ -372,7 +389,7 @@ function ImageDetailDialog({
         {currentIndex + 1}/{images.length}
       </Pagination>
       <ZoomOutButton
-        variant="contained"
+        variant="solid"
         brandColor="black"
         size="large"
         startIcon={<Icon name="MinusOutlined" />}
@@ -380,7 +397,7 @@ function ImageDetailDialog({
         onClick={handleClickZoomOut}
       />
       <ZoomInButton
-        variant="contained"
+        variant="solid"
         brandColor="black"
         size="large"
         startIcon={<Icon name="PlusOutlined" />}
@@ -388,24 +405,10 @@ function ImageDetailDialog({
         onClick={handleClickZoomIn}
       />
       <RotateButton
-        variant="contained"
+        variant="solid"
         brandColor="black"
         size="large"
-        startIcon={
-          // TODO UI 라이브러리 아이콘 업데이트 필요
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M21.9999 7.96499C21.9915 7.87488 21.9769 7.7853 21.9754 7.69519C21.9629 6.72696 21.9566 5.75926 21.941 4.79103C21.9327 4.28061 21.6686 3.9353 21.2254 3.8254C20.6816 3.69051 20.1301 4.06134 20.0863 4.61915C20.0587 4.97384 20.0832 5.33321 20.0837 5.68999C20.0837 6.05874 20.0837 6.42749 20.0837 6.82436C20.0243 6.77592 19.9801 6.74415 19.9405 6.70717C18.2233 5.11759 16.2056 4.17905 13.8801 3.90301C8.65872 3.28374 3.72018 6.64728 2.39726 11.7509C1.67486 14.5369 2.0358 17.1962 3.43216 19.7134C3.70872 20.2119 4.25664 20.3837 4.72539 20.1259C5.19309 19.8686 5.3483 19.3103 5.06809 18.8119C4.32851 17.4952 3.92122 16.0863 3.91445 14.5754C3.89778 10.6921 6.25195 7.39728 9.9233 6.13946C13.1478 5.03478 16.8301 5.99259 19.1144 8.53009C19.14 8.55821 19.1634 8.58842 19.2197 8.65613C19.1035 8.65613 19.0249 8.65717 18.9457 8.65613C18.0165 8.64571 17.0879 8.6254 16.1587 8.62696C15.5056 8.62801 15.065 9.28582 15.304 9.88894C15.4551 10.2702 15.7525 10.4837 16.1592 10.49C17.8025 10.5155 19.4462 10.5306 21.09 10.5426C21.4801 10.5452 21.7988 10.3046 21.94 9.93842C21.9582 9.89103 21.9796 9.84467 21.9988 9.7978C21.9988 9.18686 21.9988 8.57644 21.9988 7.96551L21.9999 7.96499Z"
-              fill={common.uiWhite}
-            />
-          </svg>
-        }
+        startIcon={<Icon name="RotateCcwOutlined" color={common.uiWhite} />}
         iconOnly
         onClick={handleClickRotate}
       />

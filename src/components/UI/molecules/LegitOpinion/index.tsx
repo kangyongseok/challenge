@@ -34,7 +34,8 @@ function LegitOpinion({
           height={32}
           src={image}
           alt="User Avatar Img"
-          customStyle={{ minWidth: 32, maxHeight: 32, borderRadius: '50%' }}
+          round="50%"
+          customStyle={{ minWidth: 32, maxHeight: 32 }}
         />
       )}
       <Box customStyle={{ flexGrow: 1 }}>

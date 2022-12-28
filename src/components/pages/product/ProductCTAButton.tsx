@@ -2,9 +2,15 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { UseMutateFunction, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  UseMutateFunction
+} from 'react-query';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import type { BaseButtonProps } from 'mrcamel-ui/dist/components/Button';
 import {
   Avatar,
   BottomSheet,
@@ -13,7 +19,6 @@ import {
   Flexbox,
   Icon,
   Label,
-  Toast,
   Tooltip,
   Typography,
   useTheme
@@ -25,7 +30,9 @@ import styled from '@emotion/styled';
 
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 
+import type { UserRoleSeller } from '@dto/user';
 import type { Product, ProductDetail } from '@dto/product';
+import { Channel } from '@dto/channel';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
@@ -45,14 +52,27 @@ import attrKeys from '@constants/attrKeys';
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
+import {
+  checkAgent,
+  commaNumber,
+  getProductDetailUrl,
+  getRandomNumber,
+  needUpdateChatIOSVersion
+} from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
 import { productLegitToggleBottomSheetState } from '@recoil/productLegit';
+import { dialogState, toastState } from '@recoil/common';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useMutationUserBlock from '@hooks/useMutationUserBlock';
+import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 interface ProductCTAButtonProps {
   product?: Product;
+  channels?: Channel[];
+  roleSeller?: UserRoleSeller | null;
+  isBlockedUser: boolean;
   isDup: boolean;
   hasTarget: boolean;
   isPriceCrm: boolean;
@@ -80,10 +100,16 @@ interface ProductCTAButtonProps {
     MetaInfoMutateParams,
     unknown
   >;
+  refetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ProductDetail, unknown>>;
 }
 
 function ProductCTAButton({
   product,
+  channels,
+  roleSeller,
+  isBlockedUser,
   isDup,
   hasTarget,
   isPriceCrm,
@@ -93,7 +119,8 @@ function ProductCTAButton({
   isProductLegit,
   onClickWish,
   onClickSMS,
-  mutateMetaInfo
+  mutateMetaInfo,
+  refetch
 }: ProductCTAButtonProps) {
   const {
     push,
@@ -107,11 +134,21 @@ function ProductCTAButton({
   } = useTheme();
 
   const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
+  const setToastState = useSetRecoilState(toastState);
+  const setDialogState = useSetRecoilState(dialogState);
+
+  const { data: accessUser } = useQueryAccessUser();
   const { data: relatedProducts } = useQuery(
     queryKeys.products.relatedProducts(Number(product?.id || 0)),
     () => fetchRelatedProducts(Number(product?.id || 0)),
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!product }
   );
+  const {
+    unblock: { mutate: mutateUnblock, isLoading: isLoadingMutateUnblock }
+  } = useMutationUserBlock();
+  const { mutate: mutateCreateChannel, isLoading: isLoadingMutateCreateChannel } =
+    useMutationCreateChannel();
+
   const [legitTooltip, setLegitTooltip] = useState(true);
   const [isDoneWishOnBoarding, setIsDoneWishOnBoarding] = useState(true);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
@@ -120,61 +157,76 @@ function ProductCTAButton({
     isOpenPriceCRMTooltip: isPriceCrm,
     isOpenBunJangTooltip: false
   });
-  const [{ isOpenSoldOutToast, isOpenRemoveWishToast, isOpenAddWishToast }, setOpenToast] =
-    useState({
-      isOpenSoldOutToast: false,
-      isOpenRemoveWishToast: false,
-      isOpenAddWishToast: false
-    });
-  const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
-  const isCamelSelfSeller = product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id;
-  const isCamelSeller =
-    product &&
-    SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
-  const isNormalSeller =
-    product &&
-    (product.site.id === 34 || product.productSeller.type === 4) &&
-    product.productSeller.type !== 3;
-  const isSoldOut =
-    product &&
-    PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'];
-  const isReserving =
-    product &&
-    PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4'];
 
-  const ctaText = useMemo(() => {
+  const {
+    isCamelProduct,
+    isCamelSelfSeller,
+    isCamelSeller,
+    isNormalSeller,
+    isSoldOut,
+    isReserving,
+    platformId
+  } = useMemo(
+    () => ({
+      isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
+      isCamelSelfSeller: product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id,
+      isCamelSeller:
+        product &&
+        SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] ===
+          SELLER_STATUS['3'],
+      isNormalSeller:
+        product &&
+        (product.site.id === 34 || product.productSeller.type === 4) &&
+        product.productSeller.type !== 3,
+      isSoldOut:
+        product &&
+        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'],
+      isReserving:
+        product &&
+        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4'],
+      platformId:
+        (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
+        (product?.site.hasImage && product?.site?.id) ||
+        ''
+    }),
+    [product]
+  );
+
+  const {
+    ctaText,
+    ctaBrandColor
+  }: { ctaText: string; ctaBrandColor: BaseButtonProps['brandColor'] } = useMemo(() => {
     const siteName =
       (product?.siteUrl.hasImage && product?.siteUrl.name) ||
       (product?.site.hasImage && product?.site.name) ||
       '';
 
-    if (!product || !siteName) return '';
+    if (!product || !siteName) return { ctaText: '', ctaBrandColor: 'black' };
 
-    if (isDup && hasTarget) {
-      return '다시 올린 매물로 이동하기';
-    }
+    if (isBlockedUser) return { ctaText: '차단한 사용자입니다.', ctaBrandColor: 'gray' };
 
-    if (isReserving) {
-      return '예약중';
-    }
+    if (isDup && hasTarget) return { ctaText: '다시 올린 매물로 이동하기', ctaBrandColor: 'black' };
 
-    if (isSoldOut) {
-      return '판매완료';
-    }
+    if (isReserving) return { ctaText: '예약중', ctaBrandColor: 'black' };
 
-    if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) {
-      return '판매자에게 문자 보내기';
-    }
+    if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
-    return `${siteName}에서 거래하기`;
+    if (roleSeller?.userId) return { ctaText: '채팅하기', ctaBrandColor: 'primary' };
+
+    if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
+      return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
+
+    return { ctaText: `${siteName}에서 거래하기`, ctaBrandColor: 'black' };
   }, [
-    hasTarget,
-    isCamelProduct,
-    isCamelSeller,
+    product,
+    isBlockedUser,
     isDup,
+    hasTarget,
     isReserving,
     isSoldOut,
-    product,
+    roleSeller?.userId,
+    isCamelProduct,
+    isCamelSeller,
     isCamelSelfSeller,
     isNormalSeller
   ]);
@@ -191,41 +243,6 @@ function ProductCTAButton({
     isTooltipView: false,
     viewProductList: []
   };
-  const platformId =
-    (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
-    (product?.site.hasImage && product?.site?.id) ||
-    '';
-
-  useEffect(() => {
-    if (isPriceCrm) {
-      logEvent(attrKeys.products.VIEW_PURCHASE_TOOLTIP, {
-        name: 'PRODUCT_DETAIL',
-        att: 'PRICELOW'
-      });
-      setTimeout(
-        () => setOpenTooltip((prevState) => ({ ...prevState, isOpenPriceCRMTooltip: false })),
-        6000
-      );
-    }
-
-    if (
-      !LocalStorage.get(IS_DONE_WISH_ON_BOARDING) &&
-      checkAgent.isMobileApp() &&
-      source !== 'WISH_LIST'
-    ) {
-      LocalStorage.set(IS_DONE_WISH_ON_BOARDING, true);
-      setIsDoneWishOnBoarding(false);
-      window.scrollTo(0, 0);
-      scrollDisable();
-    }
-
-    return () => scrollEnable();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setIsOpenRelatedProductListBottomSheet(false);
-  }, [id]);
 
   const handleClickWish = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -250,19 +267,16 @@ function ProductCTAButton({
 
     if (onClickWish(isWish)) {
       if (isWish) {
-        setOpenToast((prevState) => ({
-          ...prevState,
-          isOpenAddWishToast: false,
-          isOpenRemoveWishToast: true
-        }));
+        setToastState({ type: 'product', status: 'successRemoveWish' });
       } else {
         appBanner.counts.WISH = (appBanner.counts.WISH || 0) + 1;
         LocalStorage.set(APP_BANNER, appBanner);
-        setOpenToast((prevState) => ({
-          ...prevState,
-          isOpenAddWishToast: true,
-          isOpenRemoveWishToast: false
-        }));
+
+        setToastState({
+          type: 'product',
+          status: 'successAddWish',
+          action: () => push('/wishes')
+        });
 
         if ((relatedProducts?.content || []).length >= 6) {
           logEvent(attrKeys.products.VIEW_WISH_MODAL, {
@@ -275,7 +289,94 @@ function ProductCTAButton({
     }
   };
 
-  const handleClickCTAButton = () => {
+  const handleClickCTAButton = async () => {
+    if (isLoadingMutateCreateChannel || !product) return;
+
+    if (isBlockedUser) {
+      setDialogState({
+        type: 'unblockBlockedUser',
+        content: (
+          <Typography
+            variant="h3"
+            weight="bold"
+            customStyle={{ minWidth: 270, padding: '12px 0', textAlign: 'center' }}
+          >
+            회원님이 차단한 사용자에요.
+            <br />
+            차단을 해제할까요?
+          </Typography>
+        ),
+        async firstButtonAction() {
+          if (isLoadingMutateUnblock) return;
+
+          if (roleSeller?.userId && !!product) {
+            await mutateUnblock(roleSeller.userId, {
+              onSuccess() {
+                refetch();
+                setToastState({
+                  type: 'user',
+                  status: 'unBlockWithRole',
+                  params: { role: '판매자', userName: product.productSeller.name }
+                });
+              }
+            });
+          }
+        }
+      });
+
+      return;
+    }
+
+    // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
+    if (roleSeller?.userId) {
+      logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.productDetail });
+
+      const createChannelParams = {
+        targetUserId: String(roleSeller.userId || 0),
+        productId: String(product.id),
+        productTitle: product.title,
+        productImage: product.imageThumbnail || product.imageMain || ''
+      };
+
+      if (!accessUser) {
+        SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
+        push({ pathname: '/login' });
+
+        return;
+      }
+
+      if (needUpdateChatIOSVersion()) {
+        setDialogState({
+          type: 'requiredAppUpdateForChat',
+          customStyleTitle: { minWidth: 270 },
+          firstButtonAction: () => {
+            window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+          }
+        });
+
+        return;
+      }
+
+      const channelId = (channels || []).find(
+        (channel) => channel.userId === accessUser.userId
+      )?.id;
+
+      if (channelId) {
+        if (checkAgent.isIOSApp()) {
+          window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
+        } else {
+          push(`/channels/${channelId}`);
+        }
+
+        return;
+      }
+
+      await mutateCreateChannel({ userId: String(accessUser.userId || 0), ...createChannelParams });
+      return;
+    }
+
     let conversionId = 0;
     const { source: productDetailSource } =
       SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
@@ -297,7 +398,8 @@ function ProductCTAButton({
     }
 
     if (isSoldOut && !isReserving && (!isDup || !hasTarget)) {
-      setOpenToast((prevState) => ({ ...prevState, isOpenSoldOutToast: true }));
+      setToastState({ type: 'product', status: 'soldout' });
+
       return;
     }
 
@@ -326,7 +428,7 @@ function ProductCTAButton({
     if (isDup && hasTarget) {
       productDetailAtt({
         key: attrKeys.products.clickProductDetail,
-        product: product as Product,
+        product,
         rest: {
           att: isPriceDown ? 'CPPRICELOW' : 'CPSAME'
         }
@@ -337,7 +439,7 @@ function ProductCTAButton({
 
     productDetailAtt({
       key: attrKeys.products.CLICK_PURCHASE,
-      product: product as Product,
+      product,
       source: productDetailSource || undefined,
       rest: { conversionId }
     });
@@ -381,45 +483,75 @@ function ProductCTAButton({
     });
   }, 300);
 
+  useEffect(() => {
+    if (isPriceCrm) {
+      logEvent(attrKeys.products.VIEW_PURCHASE_TOOLTIP, {
+        name: 'PRODUCT_DETAIL',
+        att: 'PRICELOW'
+      });
+      setTimeout(
+        () => setOpenTooltip((prevState) => ({ ...prevState, isOpenPriceCRMTooltip: false })),
+        6000
+      );
+    }
+
+    if (
+      !LocalStorage.get(IS_DONE_WISH_ON_BOARDING) &&
+      checkAgent.isMobileApp() &&
+      source !== 'WISH_LIST'
+    ) {
+      LocalStorage.set(IS_DONE_WISH_ON_BOARDING, true);
+      setIsDoneWishOnBoarding(false);
+      window.scrollTo(0, 0);
+      scrollDisable();
+    }
+
+    return () => scrollEnable();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setIsOpenRelatedProductListBottomSheet(false);
+  }, [id]);
+
   return (
     <>
       <Wrapper>
-        <Tooltip
-          open={!isDoneWishOnBoarding}
-          variant="ghost"
-          brandColor="primary"
-          message={
-            <Typography variant="body2" weight="bold">
-              찜하면 가격이 내려갔을 때 알려드려요!🛎
-            </Typography>
-          }
-          triangleLeft={20}
-          customStyle={{
-            left: 115,
-            bottom: 5,
-            top: 'auto'
-          }}
-        >
-          <WishButton onClick={handleClickWish} isWish={isWish} disabled={!product || !ctaText}>
-            {isWish ? (
-              <Icon name="HeartFilled" color={secondary.red.main} width={32} height={32} />
-            ) : (
-              <Icon name="HeartOutlined" width={32} height={32} />
+        {!isBlockedUser && (
+          <>
+            <Tooltip
+              open={!isDoneWishOnBoarding}
+              variant="ghost"
+              brandColor="primary"
+              message={
+                <Typography variant="body2" weight="bold">
+                  찜하면 가격이 내려갔을 때 알려드려요!🛎
+                </Typography>
+              }
+              triangleLeft={18}
+              customStyle={{ left: 110, bottom: 5, top: 'auto' }}
+            >
+              <WishButton onClick={handleClickWish} isWish={isWish} disabled={!product || !ctaText}>
+                {isWish ? (
+                  <Icon name="HeartFilled" color={secondary.red.main} width={24} height={24} />
+                ) : (
+                  <Icon name="HeartOutlined" width={24} height={24} />
+                )}
+              </WishButton>
+            </Tooltip>
+            {!isDoneWishOnBoarding && (
+              <OnBoardingDim onClick={handleClickWishOnBoarding}>
+                <OnBoardingWishButton>
+                  <Icon name="HeartFilled" color={secondary.red.main} width={25} />
+                </OnBoardingWishButton>
+              </OnBoardingDim>
             )}
-          </WishButton>
-        </Tooltip>
-        {!isDoneWishOnBoarding && (
-          <OnBoardingDim onClick={handleClickWishOnBoarding}>
-            {' '}
-            <OnBoardingWishButton>
-              <Icon name="HeartFilled" color={secondary.red.main} width={25} />
-            </OnBoardingWishButton>{' '}
-          </OnBoardingDim>
+          </>
         )}
         {isProductLegit && !product?.productLegit && (
           <ProductLegitCTAButton
-            variant="contained"
-            size="large"
+            variant="solid"
+            size="xlarge"
             onClick={() => {
               logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
                 name: attrProperty.productName.PRODUCT_DETAIL,
@@ -442,7 +574,7 @@ function ProductCTAButton({
               brandColor="primary"
               message={
                 <Flexbox gap={6} alignment="center">
-                  <Label text="NEW" variant="contained" size="xsmall" />
+                  <Label text="NEW" variant="solid" size="xsmall" />
                   <Typography weight="bold" variant="small1">
                     지금 보는 사진 그대로 실시간 정가품 의견받기
                   </Typography>
@@ -458,16 +590,16 @@ function ProductCTAButton({
                 </Flexbox>
               }
               customStyle={{ left: '160%' }}
-              triangleLeft={90}
+              triangleLeft={80}
             >
               사진감정
             </Tooltip>
           </ProductLegitCTAButton>
         )}
         <Button
-          variant="contained"
-          brandColor="black"
-          size="large"
+          variant="solid"
+          brandColor={ctaBrandColor}
+          size="xlarge"
           fullWidth
           disabled={
             !product ||
@@ -477,19 +609,31 @@ function ProductCTAButton({
                 PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
                   PRODUCT_STATUS['3'] ||
                 PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                  PRODUCT_STATUS['2']))
+                  PRODUCT_STATUS['2'])) ||
+            isLoadingMutateCreateChannel
           }
           onClick={handleClickCTAButton}
           customStyle={{
             whiteSpace: 'nowrap',
-            backgroundColor: common.uiBlack
+            backgroundColor: ctaBrandColor === 'black' ? common.uiBlack : undefined
           }}
+          startIcon={
+            !roleSeller && (isCamelProduct || isCamelSeller) ? (
+              <Icon name="MessageOutlined" width={20} />
+            ) : undefined
+          }
         >
-          <Typography variant="body1" weight="bold" customStyle={{ color: common.uiWhite }}>
-            {(isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) && (
-              <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
-            )}
-            {!isCamelProduct &&
+          <Typography
+            variant={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'h3' : 'body1'}
+            weight={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'medium' : 'bold'}
+            customStyle={{ display: 'flex', alignItems: 'center', color: common.uiWhite }}
+          >
+            {!roleSeller &&
+              (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) && (
+                <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
+              )}
+            {!roleSeller &&
+              !isCamelProduct &&
               !isCamelSeller &&
               !isCamelSelfSeller &&
               !isNormalSeller &&
@@ -535,43 +679,6 @@ function ProductCTAButton({
           />
         </Button>
       </Wrapper>
-      <Toast
-        open={isOpenSoldOutToast}
-        onClose={() => setOpenToast((prevState) => ({ ...prevState, isOpenSoldOutToast: false }))}
-      >
-        죄송합니다. 판매 완료된 매물입니다!
-      </Toast>
-      <Toast
-        open={isOpenAddWishToast}
-        onClose={() => setOpenToast((prevState) => ({ ...prevState, isOpenAddWishToast: false }))}
-      >
-        <Flexbox gap={8} alignment="center" justifyContent="space-between">
-          <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
-            찜목록에 추가했어요!
-          </Typography>
-          <Typography
-            variant="body1"
-            weight="medium"
-            customStyle={{
-              textDecoration: 'underline',
-              whiteSpace: 'nowrap',
-              color: common.ui80
-            }}
-          >
-            <Link href="/wishes">
-              <a>찜목록 보기</a>
-            </Link>
-          </Typography>
-        </Flexbox>
-      </Toast>
-      <Toast
-        open={isOpenRemoveWishToast}
-        onClose={() =>
-          setOpenToast((prevState) => ({ ...prevState, isOpenRemoveWishToast: false }))
-        }
-      >
-        찜목록에서 삭제했어요.
-      </Toast>
       <BottomSheet
         open={isOpenRelatedProductListBottomSheet}
         disableSwipeable
@@ -609,7 +716,7 @@ const Wrapper = styled.div`
   position: fixed;
   bottom: 0;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -628,9 +735,9 @@ const WishButton = styled.button<{ isWish: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 48px;
+  width: 44px;
   height: 44px;
-  padding: 8px 12px;
+  padding: 10px;
   background-color: ${({
     theme: {
       palette: { primary }

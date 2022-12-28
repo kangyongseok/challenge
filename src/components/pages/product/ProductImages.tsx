@@ -6,13 +6,12 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Typography, light } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Image, Skeleton, Typography, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { Product, SearchLowerProductsParams } from '@dto/product';
 
@@ -252,16 +251,14 @@ function ProductImages({
               {!isCamelSellerProduct && !isNormalseller && (
                 <Platform>
                   <Avatar
+                    width={20}
+                    height={20}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
                       (product.siteUrl?.hasImage && product.siteUrl?.id) ||
                       (product.site?.hasImage && product.site?.id) ||
                       ''
                     }.png`}
                     alt={`${product.siteUrl?.name || 'Platform'} Logo Img`}
-                    customStyle={{
-                      width: 20,
-                      height: 20
-                    }}
                   />
                   <Typography
                     variant="body2"
@@ -306,13 +303,7 @@ function ProductImages({
                   style={{ position: 'relative' }}
                 >
                   {typeof image === 'string' ? (
-                    <Image
-                      src={image}
-                      alt="image"
-                      onClick={handleImageModal}
-                      data-index={i + 2}
-                      disableSkeletonRender
-                    />
+                    <Image src={image} alt="image" onClick={handleImageModal} data-index={i + 2} />
                   ) : (
                     <Box
                       customStyle={{
@@ -343,13 +334,7 @@ function ProductImages({
                   style={{ position: 'relative' }}
                 >
                   {typeof image === 'string' ? (
-                    <Image
-                      src={image}
-                      alt="image"
-                      onClick={handleImageModal}
-                      data-index={i + 2}
-                      disableSkeletonRender
-                    />
+                    <Image src={image} alt="image" onClick={handleImageModal} data-index={i + 2} />
                   ) : (
                     <Box
                       customStyle={{

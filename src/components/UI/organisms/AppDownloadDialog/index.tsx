@@ -68,7 +68,7 @@ function AppDownloadDialog({
           </Button>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             onClick={() => handleClickAppDownload({})}
             customStyle={{ minWidth: 128 }}
@@ -106,7 +106,7 @@ function AppDownloadDialog({
             </Typography>
           </Button>
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             customStyle={{ width: 128 }}
             onClick={() => handleClickAppDownload({ name: PRODUCT_NAME.PRODUCT_DETAIL, productId })}
@@ -163,7 +163,7 @@ function AppDownloadDialog({
         </Button>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           onClick={() => handleClickAppDownload({})}
           customStyle={{ minWidth: 128 }}

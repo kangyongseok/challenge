@@ -32,6 +32,7 @@ export const List = styled.ul<{ triggered: boolean }>`
   width: 100%;
   height: 60px;
   transition: opacity 0.1s ease-in;
+
   ${({ triggered }): CSSObject =>
     triggered
       ? {
@@ -69,7 +70,7 @@ export const LegitResultTooltip = styled(Tooltip)`
     width: calc(100% - 80px);
     height: fit-content;
     top: auto;
-    bottom: 30px;
+    bottom: 20px;
     text-align: center;
   }
   z-index: ${({ theme: { zIndex } }) => zIndex.sheet - 1};

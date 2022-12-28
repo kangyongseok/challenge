@@ -3,10 +3,8 @@ import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -60,7 +58,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
       <ImageBox>
         <Label
           text="NEW"
-          variant="contained"
+          variant="solid"
           brandColor="black"
           customStyle={{ margin: 20, background: common.uiBlack }}
           size="xsmall"
@@ -82,7 +80,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
             width={80}
           />
           <MockBackground alignment="center" justifyContent="center">
-            <Image disableAspectRatio src={thumbnail} />
+            <Image disableAspectRatio src={thumbnail} alt="Thumbnail Img" />
           </MockBackground>
         </Box>
       </ImageBox>
@@ -112,7 +110,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
         gap={8}
       >
         <NextCTAButton
-          variant="contained"
+          variant="solid"
           size="large"
           onClick={() => {
             logEvent(attrKeys.legit.CLICK_LEGIT_MODAL, {
@@ -128,7 +126,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
         <Button
           weight="bold"
           size="large"
-          variant="contained"
+          variant="solid"
           fullWidth
           brandColor="primary"
           onClick={() => {

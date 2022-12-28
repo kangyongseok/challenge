@@ -16,12 +16,11 @@ import type {
   SellerReview,
   SuggestKeyword
 } from '@dto/product';
+import { SellerInfo } from '@dto/product';
 
 import Axios from '@library/axios';
 
-import { convertQueryStringByObject } from '@utils/common';
-
-import { SearcgRelatedKeywordsParams } from '@typings/products';
+import { SearcgRelatedKeywordsParams, putProductUpdateStatusParams } from '@typings/products';
 import type { SubmitType } from '@typings/camelSeller';
 
 const BASE_PATH = '/products';
@@ -54,7 +53,7 @@ export async function fetchReviewInfo({ sellerId, ...params }: ReviewInfoParams)
 }
 
 export async function fetchSellerProducts({ sellerId, ...params }: SellerProductsParams) {
-  const { data } = await Axios.getInstance().get<PageProduct>(
+  const { data } = await Axios.getInstance().get<PageProductResult>(
     `${BASE_PATH}/${sellerId}/sellerProducts`,
     {
       params
@@ -164,33 +163,31 @@ export async function putProductHoisting({ productId }: { productId: number }) {
 
 export async function putProductUpdateStatus({
   productId,
-  status,
-  soldType
-}: {
-  productId: number;
-  status: number;
-  soldType?: 0 | 1;
-}) {
-  await Axios.getInstance().put(
-    `${BASE_PATH}/${productId}/updateStatus${convertQueryStringByObject({
-      status: String(status),
-      soldType: typeof soldType === 'number' ? String(soldType) : null
-    })}`
-  );
+  ...params
+}: putProductUpdateStatusParams) {
+  await Axios.getInstance().put(`${BASE_PATH}/${productId}/updateStatus`, undefined, { params });
 }
 
 export async function deleteProduct({ productId }: { productId: number }) {
-  // ssesion 에 유저 아이디로 구분
+  // ssesion 에 유저 아ㅊ이디로 구분
   await Axios.getInstance().delete(`${BASE_PATH}/${productId}`);
 }
 
 export async function postProducts(parameter: SubmitType) {
-  const { data } = await Axios.getInstance().post(`${BASE_PATH}`, { ...parameter });
+  const { data } = await Axios.getInstance().post(`${BASE_PATH}`, parameter);
   return data;
 }
 
 export async function fetchRelatedKeywords(params: SearcgRelatedKeywordsParams) {
   const { data } = await Axios.getInstance().get(`${BASE_PATH}/searchRelatedKeywords`, { params });
+
+  return data;
+}
+
+export async function fetchSellerInfo(sellerId: number) {
+  const { data } = await Axios.getInstance().get<SellerInfo>(
+    `${BASE_PATH}/sellers/${sellerId}/info`
+  );
 
   return data;
 }

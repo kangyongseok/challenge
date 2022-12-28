@@ -4,10 +4,8 @@ import { useCallback, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -151,8 +149,8 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
                   gap={4}
                   customStyle={{ margin: '0 auto' }}
                 >
-                  <Skeleton width="64px" height="64px" isRound disableAspectRatio />
-                  <Skeleton width="64px" height="20px" isRound disableAspectRatio />
+                  <Skeleton width={64} height={64} round={8} disableAspectRatio />
+                  <Skeleton width={64} height={20} round={8} disableAspectRatio />
                 </Flexbox>
               ))}
             </ParentCategoryList>
@@ -183,8 +181,10 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
                           }/assets/images/category/ico_cate_${parentCategoryNameEng}_${gender.charAt(
                             0
                           )}.png`}
+                          alt="Category Icon Img"
                           width={48}
                           height={48}
+                          round={8}
                           disableAspectRatio
                         />
                       </ImageBox>

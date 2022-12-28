@@ -229,7 +229,7 @@ function BrandInput() {
         <Flexbox alignment="center" gap={10} customStyle={{ marginTop: 20 }}>
           <Button
             fullWidth
-            variant="outlined"
+            variant="outline"
             onClick={handleNormalBack}
             customStyle={{ height: 47 }}
           >
@@ -237,7 +237,7 @@ function BrandInput() {
           </Button>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             onClick={handleSuccess}
             customStyle={{ height: 47 }}

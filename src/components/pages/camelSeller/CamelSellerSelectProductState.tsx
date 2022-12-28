@@ -4,12 +4,11 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 import {
   CamelSellerBottomSheetColor,
   CamelSellerBottomSheetSize,
@@ -19,9 +18,8 @@ import {
 } from '@components/pages/camelSeller';
 
 import type { SearchParams } from '@dto/product';
-import { CommonCode, SizeCode } from '@dto/common';
+import type { CommonCode, SizeCode } from '@dto/common';
 
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct, fetchSearch } from '@api/product';
@@ -73,7 +71,6 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
 
   useEffect(() => {
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_OPTIONS);
-    ChannelTalk.hideChannelButton();
     scrollDisable();
     return () => scrollEnable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,7 +167,7 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
           <BorderBottomBox>
             {!size.name && isLoading && (
               <Box>
-                <Skeleton width="150px" height="20px" disableAspectRatio />
+                <Skeleton width={150} height={20} disableAspectRatio />
                 <Flexbox
                   customStyle={{ marginTop: 12, flexWrap: 'wrap' }}
                   alignment="center"
@@ -180,8 +177,9 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
                     <Skeleton
                       key={`chip-skeleton-${value}`}
                       disableAspectRatio
-                      height="32px"
-                      customStyle={{ borderRadius: 16, minWidth: 45 }}
+                      height={32}
+                      minWidth={45}
+                      round={16}
                     />
                   ))}
                 </Flexbox>
@@ -262,7 +260,7 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
           <Button
             fullWidth
             brandColor="primary"
-            variant="contained"
+            variant="solid"
             size="large"
             disabled={!(color.name && size.name)}
             onClick={handleClickNextStep}

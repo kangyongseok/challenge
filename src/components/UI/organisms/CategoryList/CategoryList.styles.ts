@@ -1,13 +1,13 @@
 import { Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-export const StyledCategoryList = styled.div<{ variant: 'contained' | 'outlined' }>`
+export const StyledCategoryList = styled.div<{ variant: 'solid' | 'outline' }>`
   display: grid;
   padding: 0 20px;
   user-select: none;
 
   ${({ variant }) =>
-    variant === 'contained'
+    variant === 'solid'
       ? {
           gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
           gap: 10
@@ -19,7 +19,7 @@ export const StyledCategoryList = styled.div<{ variant: 'contained' | 'outlined'
         }};
 `;
 
-export const CategoryItem = styled.div<{ variant: 'contained' | 'outlined' }>`
+export const CategoryItem = styled.div<{ variant: 'solid' | 'outline' }>`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -35,7 +35,7 @@ export const CategoryItem = styled.div<{ variant: 'contained' | 'outlined' }>`
     },
     variant
   }) =>
-    variant === 'contained'
+    variant === 'solid'
       ? {
           backgroundColor: common.ui95,
           padding: '8px 12px'

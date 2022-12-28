@@ -57,3 +57,10 @@ export interface SearcgRelatedKeywordsParams {
   brandIds: number[];
   categoryIds: number[];
 }
+
+export interface putProductUpdateStatusParams {
+  productId: number;
+  status: number;
+  soldType?: 0 | 1;
+  targetUserId?: number;
+}

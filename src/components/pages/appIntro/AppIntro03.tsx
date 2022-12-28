@@ -1,7 +1,5 @@
-import { Box, Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 
@@ -85,10 +83,12 @@ function AppIntro03({ animationStart }: { animationStart: boolean }) {
           <ProductImageArea justifyContent="space-between" alignment="center">
             <Image
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/left_cloth.png`}
+              alt="Left Cloth Img"
               disableAspectRatio
             />
             <Image
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/right_bag.png`}
+              alt="Right Bag Img"
               disableAspectRatio
             />
           </ProductImageArea>

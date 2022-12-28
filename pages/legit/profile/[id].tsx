@@ -56,7 +56,7 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   const userId = useMemo(() => Number(id), [id]);
   const {
     isLoading,
-    data: { profile, roleSeller, cntOpinion = 0 } = {},
+    data: { profile, cntOpinion = 0 } = {},
     refetch: refetchLegitProfile
   } = useQuery(queryKeys.users.legitProfile(userId), () => fetchLegitProfile(userId), {
     refetchOnWindowFocus: !isLegitUser || (!!accessUser && userId !== accessUser?.userId)
@@ -144,7 +144,6 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
                 paddingTop:
                   HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20
               }}
-              sellerId={roleSeller?.sellerId}
             />
             <LegitProfileDivider isLoading={isLoading} cntOpinion={cntOpinion} />
             <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />

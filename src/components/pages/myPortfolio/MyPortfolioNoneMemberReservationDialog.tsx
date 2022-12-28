@@ -182,7 +182,7 @@ function MyPortfolioNoneMemberReservationDialog({
             <TextInput
               placeholder="010-"
               borderWidth={1}
-              variant="outlined"
+              variant="outline"
               onChange={handleChangePhone}
               type="number"
               pattern="[0-9]*"
@@ -203,7 +203,7 @@ function MyPortfolioNoneMemberReservationDialog({
           </Flexbox>
           <Flexbox gap={8} direction="vertical" customStyle={{ marginTop: 'auto' }}>
             <Button
-              variant="contained"
+              variant="solid"
               fullWidth
               size="large"
               onClick={handleClickReserve}
@@ -212,7 +212,7 @@ function MyPortfolioNoneMemberReservationDialog({
               오픈 알림받기
             </Button>
             <Button
-              variant="contained"
+              variant="solid"
               fullWidth
               size="large"
               onClick={onClick}

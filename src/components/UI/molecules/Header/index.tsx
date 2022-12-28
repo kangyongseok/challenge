@@ -232,6 +232,7 @@ function Header({
         <Wrapper isFixed={isFixed}>
           <Flexbox
             alignment="center"
+            gap={16}
             customStyle={{
               width: '100%',
               minHeight: customHeight || 56,
@@ -239,21 +240,24 @@ function Header({
               borderBottom: !hideLine ? `1px solid ${common.line01}` : undefined
             }}
           >
-            {isCrm ? (
-              <Typography variant="small2" weight="medium" onClick={onClickLeft}>
-                ◀︎ 모델 전체보기
-              </Typography>
-            ) : (
-              leftIcon || (
-                <IconBox
-                  show={showLeft}
-                  css={leftIconCustomStyle}
-                  onClick={onClickLeft || handleClickBack}
-                >
-                  {showLeft && <Icon name="ArrowLeftOutlined" />}
-                </IconBox>
-              )
-            )}
+            <Flexbox customStyle={showLeft ? undefined : { paddingLeft: 8 }}>
+              {isCrm ? (
+                <Typography variant="small2" weight="medium" onClick={onClickLeft}>
+                  ◀︎ 모델 전체보기
+                </Typography>
+              ) : (
+                leftIcon || (
+                  <IconBox
+                    show={showLeft}
+                    css={leftIconCustomStyle}
+                    onClick={onClickLeft || handleClickBack}
+                  >
+                    {showLeft && <Icon name="ArrowLeftOutlined" />}
+                  </IconBox>
+                )
+              )}
+              <IconBox show={false} css={{ minWidth: showLeft ? 32 : 40 }} />
+            </Flexbox>
             <Title show={!hideTitle} customHeight={customHeight} css={titleCustomStyle}>
               {children ||
                 (!hideTitle && (
@@ -264,15 +268,24 @@ function Header({
                   />
                 ))}
             </Title>
-            {rightIcon || (
+            <Flexbox alignment="center" customStyle={{ paddingRight: 8 }}>
               <IconBox
                 show={showRight}
-                css={rightIconCustomStyle}
-                onClick={onClickRight || handleClickSearch}
+                onClick={() => router.push('/wishes')}
+                css={{ padding: showRight ? '16px 8px' : 0 }}
               >
-                {showRight && <Icon name="SearchOutlined" />}
+                {showRight && <Icon name="HeartOutlined" />}
               </IconBox>
-            )}
+              {rightIcon || (
+                <IconBox
+                  show={showRight}
+                  css={{ padding: showRight ? '16px 8px' : 0, ...rightIconCustomStyle }}
+                  onClick={onClickRight || handleClickSearch}
+                >
+                  {showRight && <Icon name="SearchOutlined" />}
+                </IconBox>
+              )}
+            </Flexbox>
           </Flexbox>
         </Wrapper>
       )}

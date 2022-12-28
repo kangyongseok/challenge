@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
 
-import { Avatar, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
-import { Badge, Image } from '@components/UI/atoms';
+import { Badge } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
@@ -47,7 +47,6 @@ function LegitStatusCard({
 }: LegitStatusCardProps) {
   const {
     theme: {
-      box: { round },
       palette: { secondary, common }
     }
   } = useTheme();
@@ -149,23 +148,22 @@ function LegitStatusCard({
     >
       <ImageBox>
         <Image
-          variant="backgroundImage"
           src={imageThumbnail || imageMain}
           alt="Product Legit Img"
-          disableAspectRatio
-          customStyle={{ borderRadius: round['8'] }}
+          round={8}
+          disableOnBackground={false}
         />
         {!postType && (
           <Avatar
-            width="20px"
-            height="20px"
+            width={20}
+            height={20}
             alt="Platform Logo Img"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
               isNormalseller
                 ? IMG_CAMEL_PLATFORM_NUMBER
                 : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
             }.png`}
-            round="4"
+            round={4}
             customStyle={{
               position: 'absolute',
               top: 8,
@@ -190,7 +188,7 @@ function LegitStatusCard({
       <Content>
         {labelText === '감정신청' && (
           <Label
-            variant="contained"
+            variant="solid"
             text={labelText}
             size="xsmall"
             customStyle={{ maxWidth: 'fit-content', backgroundColor: secondary.blue.light }}
@@ -198,7 +196,7 @@ function LegitStatusCard({
         )}
         {labelText === '감정완료' && (
           <Label
-            variant="contained"
+            variant="solid"
             brandColor="black"
             text={labelText}
             size="xsmall"
@@ -207,7 +205,7 @@ function LegitStatusCard({
         )}
         {['보완요청', '보완완료', '감정불가'].includes(labelText) && (
           <Label
-            variant="contained"
+            variant="solid"
             text={labelText}
             size="xsmall"
             customStyle={{ maxWidth: 'fit-content', backgroundColor: secondary.red.light }}

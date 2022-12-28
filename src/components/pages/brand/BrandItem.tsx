@@ -1,10 +1,8 @@
 import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import capitalize from 'lodash-es/capitalize';
-
-import { Image } from '@components/UI/atoms';
 
 import type { AllBrand } from '@dto/brand';
 
@@ -74,6 +72,7 @@ function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: B
         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
           mode === 'light' ? 'white' : 'black'
         }/${nameLogo.toLowerCase().replace(/\s/g, '')}.jpg`}
+        alt="Brand Logo Img"
         width={48}
         height={48}
         disableAspectRatio

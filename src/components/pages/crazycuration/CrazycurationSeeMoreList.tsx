@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, light } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Skeleton, light } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -88,7 +87,7 @@ function CrazycurationSeeMoreList({
                   hasAreaWithDateInfo={false}
                   customStyle={{ minWidth: 144, flex: 1 }}
                 />
-                <Skeleton disableAspectRatio isRound height="32px" />
+                <Skeleton disableAspectRatio round={8} height={32} />
               </Flexbox>
             ))
           : contentsDetail?.products?.map((product, index) => (
@@ -128,7 +127,7 @@ function CrazycurationSeeMoreList({
             ))}
       </ProductList>
       <Box customStyle={{ margin: '20px 20px 0' }} onClick={handleClickSeeMore}>
-        <CustomButton variant="contained" fullWidth buttonColor={buttonColor}>
+        <CustomButton variant="solid" fullWidth buttonColor={buttonColor}>
           매물 더 찾아보기
         </CustomButton>
       </Box>

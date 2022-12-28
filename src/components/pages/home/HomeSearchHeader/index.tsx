@@ -145,7 +145,7 @@ function HomeSearchHeader() {
           }}
         >
           <Input
-            variant="contained"
+            variant="solid"
             size="large"
             fullWidth
             startAdornment={<Icon name="SearchOutlined" size="medium" />}

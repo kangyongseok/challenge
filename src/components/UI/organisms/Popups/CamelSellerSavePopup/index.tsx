@@ -113,7 +113,7 @@ function CamelSellerSavePopup() {
       <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 16 }}>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           onClick={handleClickContinue}
           size="large"
@@ -122,7 +122,7 @@ function CamelSellerSavePopup() {
         </Button>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           onClick={handleClickNew}
           size="large"
           customStyle={{ background: primary.highlight, color: primary.light }}

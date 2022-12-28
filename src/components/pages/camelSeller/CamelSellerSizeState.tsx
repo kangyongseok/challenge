@@ -30,7 +30,7 @@ function CamelSellerSizeState({
       </Typography>
       <Flexbox gap={8} customStyle={{ marginTop: 12, flexWrap: 'wrap' }}>
         <Chip
-          variant="contained"
+          variant="solid"
           customStyle={{
             background: common.ui95,
             color: common.ui20
@@ -45,7 +45,7 @@ function CamelSellerSizeState({
           sizes.map((size) => (
             <Chip
               key={`seller-product-color-${size.name}`}
-              variant="contained"
+              variant="solid"
               customStyle={{
                 background: common.ui95,
                 color: common.ui20

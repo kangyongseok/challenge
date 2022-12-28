@@ -14,7 +14,6 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import type { Models } from '@dto/model';
 
 import LocalStorage from '@library/localStorage';
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchModelSuggest } from '@api/model';
@@ -63,7 +62,6 @@ function SelectLine() {
   );
 
   useEffect(() => {
-    ChannelTalk.hideChannelButton();
     logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MODEL, {
       name: attrProperty.name.DONTKNOW_MODEL
     });
@@ -134,12 +132,7 @@ function SelectLine() {
       footer={
         <FooterWrap>
           <TransParentGradian />
-          <SkipCtaButton
-            fullWidth
-            variant="outlined"
-            brandColor="primary"
-            onClick={handleClickNext}
-          >
+          <SkipCtaButton fullWidth variant="outline" brandColor="primary" onClick={handleClickNext}>
             건너뛰기
           </SkipCtaButton>
         </FooterWrap>

@@ -41,7 +41,7 @@ function PurchaseInput() {
         <Footer>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             disabled={purchaseDisabledState.open}
             brandColor="primary"

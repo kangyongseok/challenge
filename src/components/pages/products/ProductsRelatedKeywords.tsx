@@ -3,10 +3,8 @@ import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Chip } from 'mrcamel-ui';
+import { Chip, Skeleton } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { RelatedKeyword } from '@dto/product';
 
@@ -98,10 +96,10 @@ function ProductsRelatedKeywords() {
                 <Skeleton
                   // eslint-disable-next-line react/no-array-index-key
                   key={`related-keyword-skeleton-${index}`}
-                  height="36px"
-                  minWidth={`${(index % 2) * 47 + 82}px`}
+                  height={36}
+                  minWidth={(index % 2) * 47 + 82}
+                  round={18}
                   disableAspectRatio
-                  customStyle={{ borderRadius: 18 }}
                 />
               ))
             : relatedKeywords.map((relatedKeyword, index) => (
@@ -109,7 +107,7 @@ function ProductsRelatedKeywords() {
                   // eslint-disable-next-line react/no-array-index-key
                   key={`related-keyword-${relatedKeyword.keyword}-${index}`}
                   size="large"
-                  variant="contained"
+                  variant="solid"
                   onClick={handleClick(relatedKeyword)}
                 >
                   {relatedKeyword.keyword}

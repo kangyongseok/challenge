@@ -4,10 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import { fetchUserInfo } from '@api/user';
 
@@ -134,6 +132,7 @@ function MyPortfolioLanding01({
                   }.jpg`}
                   alt={img}
                   disableAspectRatio
+                  disableSkeleton
                   customStyle={isActive ? {} : { filter: 'brightness(0.4)' }}
                 />
               )}
@@ -144,7 +143,7 @@ function MyPortfolioLanding01({
       <BottomFixComponent>
         <RevervationCtaButton
           onClick={onClick}
-          variant="contained"
+          variant="solid"
           customStyle={{ flexDirection: 'column' }}
           fullWidth
         >

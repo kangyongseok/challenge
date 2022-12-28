@@ -530,13 +530,11 @@ function ProductsDynamicFilter() {
                         >
                           {needImage && (
                             <Avatar
-                              width="28px"
-                              height="28px"
+                              width={28}
+                              height={28}
                               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
                               alt="Color Img"
-                              customStyle={{
-                                borderRadius: '50%'
-                              }}
+                              round="50%"
                             />
                           )}
                           {!needImage && getColorCode && (
@@ -662,7 +660,6 @@ function ProductsDynamicFilter() {
                   paddingRight: 16
                 }}
               >
-                {/* TODO UI 라이브러리 업데이트 필요 */}
                 <Input
                   type="number"
                   unit="만원 이하"
@@ -674,23 +671,6 @@ function ProductsDynamicFilter() {
                   disabled={selectedSearchOptions.some(
                     ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
                   )}
-                  customStyle={{
-                    whiteSpace: 'nowrap',
-                    // TODO UI 라이브러리 업데이트 후 제거
-                    backgroundColor: selectedSearchOptions.some(
-                      ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
-                    )
-                      ? common.ui95
-                      : 'none',
-                    color: selectedSearchOptions.some(
-                      ({ id, codeId }) => id === idFilterIds.lowPrice && codeId === filterCodeIds.id
-                    )
-                      ? common.ui80
-                      : 'inherit'
-                  }}
-                  inputCustomStyle={{
-                    width: '100%'
-                  }}
                 />
                 <Button
                   variant="ghost"
@@ -705,6 +685,7 @@ function ProductsDynamicFilter() {
                 >
                   적용
                 </Button>
+                {/* TODO 추후 UI 라이브러리 CheckboxGroup 컴포넌트로 교체 */}
                 <Flexbox gap={4} alignment="center">
                   <Checkbox
                     onChange={handleClickLowPriceFilter(

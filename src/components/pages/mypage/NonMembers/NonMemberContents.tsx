@@ -1,10 +1,8 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
 import { useRouter } from 'next/router';
-import { Box, Button, Typography } from 'mrcamel-ui';
+import { Box, Button, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import { logEvent } from '@library/amplitude';
 
@@ -106,7 +104,7 @@ function NonMemberContents() {
           취향저격 매물만 골라보고 싶다면
         </Typography>
         <Button
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           customStyle={{ width: 200, height: 41 }}
           onClick={handleClickLogin}

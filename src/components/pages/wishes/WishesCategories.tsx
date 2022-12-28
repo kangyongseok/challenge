@@ -1,12 +1,10 @@
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import type { ChipProps } from 'mrcamel-ui/dist/components/Chip';
-import { Chip } from 'mrcamel-ui';
+import { Chip, Skeleton } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { CategoryValue } from '@dto/category';
 
@@ -87,10 +85,10 @@ function WishesCategories({ isLoading, categories, selectedCategoryIds }: Wishes
               const chipProps: ChipProps = isActive
                 ? {
                     brandColor: 'black',
-                    variant: 'contained'
+                    variant: 'solid'
                   }
                 : {
-                    variant: 'outlined'
+                    variant: 'outline'
                   };
 
               return (

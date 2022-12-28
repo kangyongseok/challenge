@@ -159,7 +159,7 @@ function LegitStatusAlarmGuideDialog() {
       <Box customStyle={{ marginTop: 40, textAlign: 'center' }}>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           onClick={handleClick}
           customStyle={{ maxWidth: 128, minWidth: 127 }}

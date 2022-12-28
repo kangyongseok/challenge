@@ -3,11 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { uniqBy } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { Category } from '@dto/category';
 import type { Brand } from '@dto/brand';
@@ -250,20 +248,13 @@ function HomePersonalGuide() {
                 justifyContent="center"
                 customStyle={{ minWidth: 72, maxWidth: 72 }}
               >
-                <Skeleton
-                  width="48px"
-                  height="48px"
-                  disableAspectRatio
-                  customStyle={{
-                    borderRadius: '50%'
-                  }}
-                />
-                <Skeleton width="31px" height="16px" isRound disableAspectRatio />
+                <Skeleton width={48} height={48} round="50%" disableAspectRatio />
+                <Skeleton width={31} height={16} round={8} disableAspectRatio />
               </Flexbox>
             ))}
           {!isLoadingParentCategories &&
             !isLoading &&
-            guides.map(({ id, parentId, src, type, name, subParentId }) => (
+            guides.map(({ id, parentId, src = '', type, name, subParentId }) => (
               <Flexbox
                 key={`home-personal-guide-${name}`}
                 direction="vertical"

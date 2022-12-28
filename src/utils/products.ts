@@ -25,12 +25,6 @@ interface ProductDetailAttProps {
   rest?: object;
   source?: string;
 }
-interface ProductDetailAttProps {
-  key: string;
-  product: Product;
-  rest?: object;
-  source?: string;
-}
 
 export function convertSearchParams(
   selectedSearchOptions: SelectedSearchOption[],
@@ -690,7 +684,7 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
   });
 }
 
-export function getMetaDescription(product: Product) {
+export function getMetaDescription(product?: Product) {
   const { description = '', viewCount = 0, wishCount = 0, quoteTitle, price = 0 } = product || {};
 
   if (!description) return '';

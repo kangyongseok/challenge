@@ -7,7 +7,7 @@ import { Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { Details, StyledAccordion, Summary } from './Accordion.styles';
 
 export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
-  variant?: Extract<Variant, 'outlined' | 'contained'>;
+  variant?: Extract<Variant, 'outline' | 'solid'>;
   summary: string;
   summaryVariant?: TypographyVariant;
   button?: string;
@@ -22,7 +22,7 @@ export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
 }
 
 function Accordion({
-  variant = 'contained',
+  variant = 'solid',
   summary,
   expanded,
   changeExpandedStatus,
@@ -60,7 +60,7 @@ function Accordion({
           </Typography>
           {button && (
             <Chip
-              variant={variant === 'contained' ? 'outlined' : 'ghost'}
+              variant={variant === 'solid' ? 'outline' : 'ghost'}
               size="xsmall"
               brandColor="black"
               onClick={onClickButton}

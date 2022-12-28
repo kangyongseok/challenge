@@ -85,7 +85,7 @@ function ProductKeywordList({ productId, params }: ProductKeywordListProps) {
             <Chip
               key={`related-keyword-${relatedKeyword}`}
               size="medium"
-              variant="contained"
+              variant="solid"
               customStyle={{
                 flexWrap: 'wrap',
                 whiteSpace: 'nowrap',
@@ -104,7 +104,7 @@ function ProductKeywordList({ productId, params }: ProductKeywordListProps) {
             <Chip
               key={`related-keyword-${relatedKeyword}`}
               size="medium"
-              variant="contained"
+              variant="solid"
               customStyle={{
                 flexWrap: 'wrap',
                 whiteSpace: 'nowrap',

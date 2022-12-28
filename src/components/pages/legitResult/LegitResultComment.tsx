@@ -257,7 +257,7 @@ function LegitResultComment({
                 {value.length} / 300자
               </Typography>
               <Button
-                variant="contained"
+                variant="solid"
                 brandColor="primary"
                 size="small"
                 onClick={handleClickPost}

@@ -3,13 +3,11 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Grid, Typography } from 'mrcamel-ui';
+import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
 
 import ProductGridCardSkeleton from '@components/UI/molecules/Skeletons/ProductGridCardSkeleton';
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
-import Skeleton from '@components/UI/atoms/Skeleton';
-import Image from '@components/UI/atoms/Image';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -192,7 +190,7 @@ function HomePersonalCuration() {
                       margin: '0 -20px'
                     }}
                   >
-                    <Skeleton height="104px" disableAspectRatio />
+                    <Skeleton height={104} disableAspectRatio />
                   </Box>
                 </Grid>
               )}
@@ -246,7 +244,14 @@ function HomePersonalCuration() {
                         backgroundColor: banners[index]?.backgroundColor
                       }}
                     >
-                      <Image height="104px" src={banners[index]?.src} disableAspectRatio />
+                      {banners[index]?.src && (
+                        <Image
+                          height={104}
+                          src={banners[index]?.src}
+                          alt="Banner Img"
+                          disableAspectRatio
+                        />
+                      )}
                     </Box>
                   </Grid>
                 )}

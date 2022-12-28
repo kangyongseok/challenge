@@ -20,4 +20,6 @@ export { default as LegitOpinionButton } from './LegitOpinionButton';
 export { default as LegitOpinion } from './LegitOpinion';
 export { default as ProductWishesCard } from './ProductWishesCard';
 export { default as ProductDetailHeader } from './ProductDetailHeader';
+export { default as DateSeparator } from './DateSeparator';
+export { default as FixedProductInfo } from './FixedProductInfo';
 export { default as CamelSellerFloatingButton } from './CamelSellerFloatingButton';

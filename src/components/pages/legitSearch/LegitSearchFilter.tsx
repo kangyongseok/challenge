@@ -85,8 +85,8 @@ function LegitSearchFilter() {
     <Box component="section" customStyle={{ padding: '12px 20px 0' }}>
       <Flexbox gap={6}>
         <Chip
-          variant={params.results?.includes(1) ? 'ghost' : 'outlinedGhost'}
-          brandColor={params.results?.includes(1) ? 'primary-light' : 'black'}
+          variant={params.results?.includes(1) ? 'ghost' : 'outlineGhost'}
+          brandColor={params.results?.includes(1) ? 'blue' : 'black'}
           size="large"
           isRound={false}
           onClick={handleClick({ status: 30, result: 1, name: '정품의견' })}
@@ -95,8 +95,8 @@ function LegitSearchFilter() {
           정품의견
         </Chip>
         <Chip
-          variant={params.results?.includes(2) ? 'ghost' : 'outlinedGhost'}
-          brandColor={params.results?.includes(2) ? 'primary-light' : 'black'}
+          variant={params.results?.includes(2) ? 'ghost' : 'outlineGhost'}
+          brandColor={params.results?.includes(2) ? 'blue' : 'black'}
           size="large"
           isRound={false}
           onClick={handleClick({ status: 30, result: 2, name: '가품의심' })}
@@ -105,8 +105,8 @@ function LegitSearchFilter() {
           가품의심
         </Chip>
         <Chip
-          variant={params.results?.includes(0) ? 'ghost' : 'outlinedGhost'}
-          brandColor={params.results?.includes(0) ? 'primary-light' : 'black'}
+          variant={params.results?.includes(0) ? 'ghost' : 'outlineGhost'}
+          brandColor={params.results?.includes(0) ? 'blue' : 'black'}
           size="large"
           isRound={false}
           onClick={handleClick({ status: 20, result: 0, name: '감정중' })}

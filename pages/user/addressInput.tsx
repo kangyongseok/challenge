@@ -66,7 +66,7 @@ function AddressInput() {
         <Footer isSearchMode={searchMode}>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             disabled={!isSubmittable || isLoading || searchMode}
             brandColor="primary"

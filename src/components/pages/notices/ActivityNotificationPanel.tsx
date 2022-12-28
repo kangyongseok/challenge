@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, IconName, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
+import type { IconName } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import type { UserNoti } from '@dto/user';
 import type { SearchParams } from '@dto/product';
@@ -290,6 +289,7 @@ function ActivityNotificationPanel() {
                   {!activityInfo.isViewed && (
                     <NewIcon
                       src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/badge_new.png`}
+                      alt="Badge Img"
                       width={16}
                       height={16}
                       disableAspectRatio
@@ -297,10 +297,11 @@ function ActivityNotificationPanel() {
                   )}
                   <Image
                     src={activityInfo.image}
+                    alt="ActivityInfo Img"
                     disableAspectRatio
                     width={64}
                     height={64}
-                    customStyle={{ borderRadius: 8 }}
+                    round={8}
                   />
                 </Box>
               )}

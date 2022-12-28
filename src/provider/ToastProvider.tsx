@@ -9,7 +9,8 @@ import { toastActionButtonText, toastText } from '@constants/toast';
 import { toastState } from '@recoil/common';
 
 function ToastProvider() {
-  const { type, status, theme, hideDuration, action, customStyle } = useRecoilValue(toastState);
+  const { type, status, theme, params, hideDuration, action, customStyle } =
+    useRecoilValue(toastState);
   const resetToastState = useResetRecoilState(toastState);
   const toastDisplayType = useMemo(() => {
     if (
@@ -23,6 +24,21 @@ function ToastProvider() {
     return 'text';
   }, [status, type]);
 
+  const parsedToastText = useMemo(() => {
+    let text = '';
+    if (type && status && toastDisplayType === 'text') {
+      text = toastText[type][status] as string;
+
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          text = text.replace(`{${key}}`, String(value));
+        });
+      }
+    }
+
+    return text;
+  }, [params, status, toastDisplayType, type]);
+
   return (
     <ThemeProvider theme={theme || 'light'}>
       <Toast
@@ -33,7 +49,7 @@ function ToastProvider() {
       >
         {type && status && toastDisplayType === 'text' && (
           <Content variant="body1" weight="medium">
-            {toastText[type][status]}
+            {parsedToastText}
           </Content>
         )}
         {type && status && toastDisplayType === 'textWithActionButton' && (

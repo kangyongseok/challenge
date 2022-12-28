@@ -1,14 +1,17 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Product } from '@dto/product';
+import { Badge } from '@components/UI/atoms';
 
+import type { Product } from '@dto/product';
+
+import Sendbird from '@library/sendbird';
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
@@ -17,27 +20,30 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, needUpdateChatIOSVersion } from '@utils/common';
+import { getUnreadMessagesCount } from '@utils/channel';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { toastState } from '@recoil/common';
+import { dialogState, toastState } from '@recoil/common';
+import { sendbirdState } from '@recoil/channel';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 
 function ProductSellerBottomMenu({
   status,
-  refresh,
-  product
+  product,
+  noSellerReviewAndHasTarget,
+  refresh
 }: {
   status: number;
+  product: Product | undefined;
+  noSellerReviewAndHasTarget: boolean;
   refresh: () => void;
-  product: Product;
 }) {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-
   const router = useRouter();
   const queryId = router.query.id as string;
   const splitRouter = queryId?.split('-');
@@ -45,14 +51,21 @@ function ProductSellerBottomMenu({
     productId:
       splitRouter.length === 1 ? Number(queryId) : Number(splitRouter[splitRouter.length - 1])
   };
+
+  const { initialized } = useRecoilValue(sendbirdState);
+
+  const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
+  const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+  const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
+
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
+
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
-  const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
-  const setOpenState = useSetRecoilState(userShopOpenStateFamily('soldOutConfirm'));
-  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;
@@ -72,20 +85,20 @@ function ProductSellerBottomMenu({
   }, []);
 
   const getAttProperty = {
-    id: product.id,
-    brand: product.brand.name,
-    category: product.category.name,
-    parentCategory: FIRST_CATEGORIES[product.category.id as number],
-    line: product.line,
-    site: product.site.name,
-    price: product.price,
-    scoreTotal: product.scoreTotal,
-    scoreStatus: product.scoreStatus,
-    scoreSeller: product.scoreSeller,
-    scorePrice: product.scorePrice,
-    scorePriceAvg: product.scorePriceAvg,
-    scorePriceCount: product.scorePriceCount,
-    scorePriceRate: product.scorePriceRate
+    id: product?.id,
+    brand: product?.brand.name,
+    category: product?.category.name,
+    parentCategory: FIRST_CATEGORIES[product?.category.id as number],
+    line: product?.line,
+    site: product?.site.name,
+    price: product?.price,
+    scoreTotal: product?.scoreTotal,
+    scoreStatus: product?.scoreStatus,
+    scoreSeller: product?.scoreSeller,
+    scorePrice: product?.scorePrice,
+    scorePriceAvg: product?.scorePriceAvg,
+    scorePriceCount: product?.scorePriceCount,
+    scorePriceRate: product?.scorePriceRate
   };
 
   const handleClickStatus = (e: MouseEvent<HTMLDivElement>) => {
@@ -98,9 +111,28 @@ function ProductSellerBottomMenu({
     });
     if (Number(dataset.statusId) === 1) {
       setOpenChangeStatus(false);
-      setTimeout(() => {
-        setOpenState(({ type }) => ({ type, open: true }));
-      }, 500);
+      updateMutation(
+        { productId: parameter.productId, status: 1 },
+        {
+          onSuccess() {
+            if (noSellerReviewAndHasTarget) {
+              router.push({
+                pathname: '/channels',
+                query: {
+                  productId: parameter.productId,
+                  isSelectTargetUser: true
+                }
+              });
+            } else {
+              setOpenSoldOutFeedbackState(({ type }) => ({
+                type,
+                open: true
+              }));
+            }
+          }
+        }
+      );
+
       return;
     }
 
@@ -168,6 +200,32 @@ function ProductSellerBottomMenu({
     });
   };
 
+  const handleClickChannel = () => {
+    logEvent(attrKeys.channel.CLICK_CHANNEL, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PRODUCT
+    });
+
+    if (needUpdateChatIOSVersion()) {
+      setDialogState({
+        type: 'requiredAppUpdateForChat',
+        customStyleTitle: { minWidth: 270 },
+        firstButtonAction: () => {
+          window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
+            'itms-apps://itunes.apple.com/app/id1541101835'
+          );
+        }
+      });
+
+      return;
+    }
+
+    router.push({
+      pathname: '/channels',
+      query: { productId: parameter.productId }
+    });
+  };
+
   const handleClickDelete = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_DETAIL,
@@ -181,6 +239,18 @@ function ProductSellerBottomMenu({
       open: true
     }));
   };
+
+  useEffect(() => {
+    if (initialized) {
+      Sendbird.getCustomTypeChannels(String(parameter.productId)).then((channels) => {
+        if (channels) {
+          setUnreadMessageCount(
+            channels.map((channel) => channel.unreadMessageCount).reduce((a, b) => a + b, 0)
+          );
+        }
+      });
+    }
+  }, [parameter.productId, initialized]);
 
   return (
     <StyledWrap>
@@ -209,9 +279,36 @@ function ProductSellerBottomMenu({
           alignment="center"
           gap={7}
           customStyle={{ flex: 1 }}
+          onClick={handleClickChannel}
+        >
+          <Box customStyle={{ position: 'relative' }}>
+            <Icon name="BnChatOutlined" color="#7B7D85" />
+            <CustomBadge
+              open={unreadMessageCount > 0}
+              type="alone"
+              width={unreadMessageCount > 99 ? 20 : 16}
+              height={unreadMessageCount > 99 ? 20 : 16}
+              unreadMessageCount={unreadMessageCount}
+            >
+              {getUnreadMessagesCount(unreadMessageCount)}
+            </CustomBadge>
+          </Box>
+          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+            채팅목록
+          </Typography>
+        </Flexbox>
+        <Flexbox
+          direction="vertical"
+          alignment="center"
+          gap={7}
+          customStyle={{ flex: 1 }}
           onClick={() => {
             setOpenChangeStatus(true);
-            setUserShopSelectedProductState(product);
+            if (product)
+              setUserShopSelectedProductState({
+                ...product,
+                isNoSellerReviewAndHasTarget: noSellerReviewAndHasTarget
+              });
           }}
         >
           <IconChangeStatus />
@@ -265,48 +362,33 @@ function ProductSellerBottomMenu({
         open={openChangeStatus}
         onClose={() => setOpenChangeStatus(false)}
         disableSwipeable
-        customStyle={{ padding: 20 }}
       >
-        <Flexbox gap={32} direction="vertical">
-          {status !== 4 && (
-            <Flexbox
-              alignment="center"
-              gap={15}
-              customStyle={{ padding: '15px 15px 0 15px' }}
-              onClick={handleClickStatus}
-              data-status-id={4}
-            >
-              <Icon name="TimeOutlined" />
-              <Typography variant="h4">예약중으로 변경</Typography>
-            </Flexbox>
-          )}
-          {status !== 1 && (
-            <Flexbox
-              alignment="center"
-              gap={15}
-              customStyle={{ padding: '0 15px' }}
-              onClick={handleClickStatus}
-              data-status-id={1}
-            >
-              <Icon name="CheckOutlined" />
-              <Typography variant="h4">판매완료로 변경</Typography>
-            </Flexbox>
-          )}
-          {status !== 0 && (
-            <Flexbox
-              alignment="center"
-              gap={15}
-              customStyle={{ padding: '0 15px' }}
-              onClick={handleClickStatus}
-              data-status-id={0}
-            >
-              <Icon name="BoxOutlined" />
-              <Typography variant="h4">판매중으로 변경</Typography>
-            </Flexbox>
-          )}
+        <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
+          <Flexbox direction="vertical">
+            {status !== 4 && (
+              <Menu variant="h3" weight="medium" data-status-id={4} onClick={handleClickStatus}>
+                예약중으로 변경
+              </Menu>
+            )}
+            {status !== 1 && (
+              <Menu variant="h3" weight="medium" data-status-id={1} onClick={handleClickStatus}>
+                판매완료로 변경
+              </Menu>
+            )}
+            {status !== 0 && (
+              <Menu variant="h3" weight="medium" data-status-id={0} onClick={handleClickStatus}>
+                판매중으로 변경
+              </Menu>
+            )}
+            {status !== 8 && (
+              <Menu variant="h3" weight="medium" data-status-id={8} onClick={handleClickStatus}>
+                숨기기
+              </Menu>
+            )}
+          </Flexbox>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             onClick={() => setOpenChangeStatus(false)}
           >
@@ -334,6 +416,20 @@ const SellerBottomNav = styled(Flexbox)`
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav + 1};
   padding: 12px;
   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.12);
+`;
+
+const CustomBadge = styled(Badge)<{ unreadMessageCount: number }>`
+  position: absolute;
+  top: ${({ unreadMessageCount }) => (unreadMessageCount > 99 ? -7 : -2)}px !important;
+  right: ${({ unreadMessageCount }) => (unreadMessageCount > 99 ? -7 : -4)}px !important;
+  background-color: ${({ theme: { palette } }) => palette.primary.light};
+  font-weight: 500;
+`;
+
+const Menu = styled(Typography)`
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
 `;
 
 function IconPullUp() {

@@ -36,6 +36,7 @@ import {
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
   HistoryProvider,
+  SendbirdProvider,
   ThemeModeProvider,
   ToastProvider
 } from '@provider';
@@ -47,6 +48,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
+import 'react-swipeable-list/dist/styles.css';
 
 if (global.navigator) {
   Amplitude.init();
@@ -61,6 +63,7 @@ function App({ Component, pageProps }: AppProps) {
       palette: { common }
     }
   } = useTheme();
+
   const [open, setOpen] = useState(false);
   const queryClient = useRef(
     new QueryClient({
@@ -170,9 +173,11 @@ function App({ Component, pageProps }: AppProps) {
                 <HistoryProvider>
                   <PageSkeleton />
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
-                    <PortalProvider>
-                      <Component {...pageProps} />
-                    </PortalProvider>
+                    <SendbirdProvider>
+                      <PortalProvider>
+                        <Component {...pageProps} />
+                      </PortalProvider>
+                    </SendbirdProvider>
                   </ABTestProvider>
                   <SearchHelperPopup type="break" />
                   <ToastProvider />
@@ -184,7 +189,7 @@ function App({ Component, pageProps }: AppProps) {
                     잠시 후 다시 시도해 주세요
                   </Toast>
                   <CamelSellerSavePopup />
-                  <LoginBottomSheet />
+                  {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
               </ErrorBoundary>
             </Hydrate>

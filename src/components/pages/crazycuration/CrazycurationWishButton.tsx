@@ -84,7 +84,7 @@ function CrazycurationWishButton({
   return (
     <Button
       brandColor="black"
-      variant={isWish ? 'outlined' : 'contained'}
+      variant={isWish ? 'outline' : 'solid'}
       fullWidth
       size="small"
       customStyle={isWish ? selectedButton : button}
@@ -92,6 +92,8 @@ function CrazycurationWishButton({
     >
       <Icon
         name={isWish ? 'HeartFilled' : 'HeartOutlined'}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         color={isWish ? selectedButton.color : button.color}
       />
       {isWish ? '찜' : '찜하기'}

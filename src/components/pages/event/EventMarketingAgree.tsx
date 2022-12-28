@@ -1,31 +1,24 @@
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postAlarm } from '@api/user';
+import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
+import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 function EventMarketingAgree() {
   const router = useRouter();
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const setToastState = useSetRecoilState(toastState);
-  const { mutate: switchAlarm } = useMutation(postAlarm, {
-    onSuccess: () => {
-      setToastState({
-        type: 'home',
-        status: 'disAgree',
-        customStyle: { bottom: 30 }
-      });
-    }
-  });
+  const { mutate: mutatePostAlarm } = useMutationPostAlarm();
 
   const {
     theme: {
@@ -51,7 +44,22 @@ function EventMarketingAgree() {
         customStyle: { bottom: 30 }
       });
     } else {
-      switchAlarm(true);
+      mutatePostAlarm(
+        {
+          isAlarm: true,
+          isChannelNoti: !!userInfo.alarm.isChannelNoti
+        },
+        {
+          onSuccess: () => {
+            setToastState({
+              type: 'home',
+              status: 'disAgree',
+              customStyle: { bottom: 30 }
+            });
+          }
+        },
+        true
+      );
     }
   };
 
@@ -64,7 +72,7 @@ function EventMarketingAgree() {
         내가 원하는 특가 매물, 놓치고 싶지 않다면?
       </Typography>
       <Button
-        variant="contained"
+        variant="solid"
         customStyle={{ marginTop: 20, background: common.ui95, color: common.ui20 }}
         onClick={handleClick}
       >

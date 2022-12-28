@@ -27,6 +27,7 @@ import Initializer from '@library/initializer';
 
 import { postManage } from '@api/userHistory';
 import { fetchSimpleUserInfo } from '@api/user';
+import { fetchProduct } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
@@ -36,7 +37,9 @@ import attrProperty from '@constants/attrProperty';
 
 import { checkAgent } from '@utils/common';
 
+import { CreateChannelParams } from '@typings/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 function Home() {
   const router = useRouter();
@@ -48,7 +51,8 @@ function Home() {
   );
   const { data: accessUser } = useQueryAccessUser();
 
-  const { mutate } = useMutation(postManage);
+  const { mutate: mutatePostManage } = useMutation(postManage);
+  const { mutate: mutateCreateChannel } = useMutationCreateChannel();
 
   const currentTab = useMemo(() => {
     if (!tab) {
@@ -86,10 +90,51 @@ function Home() {
   }, [accessUser, router]);
 
   useEffect(() => {
-    mutate({
-      event: 'VIEW_MAIN'
-    });
-  }, [mutate]);
+    const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
+    const signUpStep = LocalStorage.get<number>(SIGN_UP_STEP);
+
+    const savedCreateChannelParams = SessionStorage.get<Omit<CreateChannelParams, 'userId'>>(
+      sessionStorageKeys.savedCreateChannelParams
+    );
+
+    if (
+      !(
+        (checkAgent.isMobileApp() && !isNotFirstVisit) ||
+        (!!accessUser && typeof signUpStep === 'number')
+      ) &&
+      !!accessUser &&
+      !!savedCreateChannelParams
+    ) {
+      SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams);
+
+      fetchProduct({ productId: +savedCreateChannelParams.productId }).then((resultProduct) => {
+        const channelId = (resultProduct.channels || []).find(
+          (channel) => channel.userId === accessUser.userId
+        )?.id;
+
+        if (channelId) {
+          if (checkAgent.isIOSApp()) {
+            window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
+          } else {
+            router.push(`/channels/${channelId}`);
+          }
+        } else {
+          mutateCreateChannel({
+            userId: String(accessUser.userId || 0),
+            ...savedCreateChannelParams
+          });
+        }
+      });
+    } else {
+      setTimeout(() => SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams), 1000);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    mutatePostManage({ event: 'VIEW_MAIN' });
+  }, [mutatePostManage]);
 
   return (
     <>

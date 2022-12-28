@@ -113,7 +113,7 @@ function Onboarding() {
       <PortalConsumer>
         <ButtonGroups>
           <Button
-            variant="contained"
+            variant="solid"
             size="large"
             brandColor="primary"
             fullWidth
@@ -121,7 +121,7 @@ function Onboarding() {
           >
             도와주세요, 검색집사!
           </Button>
-          <Button variant="outlined" size="large" fullWidth onClick={handleClickClose}>
+          <Button variant="outline" size="large" fullWidth onClick={handleClickClose}>
             직접 찾을게요
           </Button>
         </ButtonGroups>

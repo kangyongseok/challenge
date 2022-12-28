@@ -117,7 +117,7 @@ function LegitStatusBottomSheet() {
       <Button
         fullWidth
         brandColor="primary"
-        variant="contained"
+        variant="solid"
         size="large"
         customStyle={{ marginTop: 40 }}
         onClick={handleClick}

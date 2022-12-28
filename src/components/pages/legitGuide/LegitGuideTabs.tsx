@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Tab, Tabs, useTheme } from 'mrcamel-ui';
+import { Tab, TabGroup } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -9,12 +9,6 @@ import attrKeys from '@constants/attrKeys';
 function LegitGuideTabs() {
   const router = useRouter();
   const { tab = 'upload' } = router.query;
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const handleClickTab = (value: string | number) => {
     logEvent(attrKeys.legitGuide.CLICK_LEGIT_TAB, {
@@ -37,18 +31,17 @@ function LegitGuideTabs() {
   };
 
   return (
-    <Tabs
+    <TabGroup
       fullWidth
       onChange={handleClickTab}
       value={String(tab)}
       customStyle={{
-        marginTop: 20,
-        borderBottom: `1px solid ${common.line01}`
+        marginTop: 20
       }}
     >
       <Tab text="1. 사진 올려서 감정신청" value="upload" />
       <Tab text="2. 판매사진으로 감정신청" value="picture" />
-    </Tabs>
+    </TabGroup>
   );
 }
 

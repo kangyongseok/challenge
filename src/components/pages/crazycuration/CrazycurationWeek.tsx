@@ -141,7 +141,7 @@ function CrazycurationWeek({
                     {id === 7 ? nextEventDateLabel : '내일은?'}
                   </Typography>
                 )}
-                <CurationCardButton variant="contained" fullWidth onClick={handleClickNoti(false)}>
+                <CurationCardButton variant="solid" fullWidth onClick={handleClickNoti(false)}>
                   {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
                 </CurationCardButton>
               </ActiveCurationCard>
@@ -185,7 +185,7 @@ function CrazycurationWeek({
             {isMobileWeb ? '설치하고 소식받기' : '소식받기'}
           </NotiOnButton>
           <ShareButton
-            variant="contained"
+            variant="solid"
             brandColor="black"
             fullWidth
             size="xlarge"

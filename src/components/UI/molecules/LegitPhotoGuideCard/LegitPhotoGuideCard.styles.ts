@@ -1,6 +1,5 @@
+import { Image } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import type { CommonPhotoGuideDetail } from '@dto/common';
 

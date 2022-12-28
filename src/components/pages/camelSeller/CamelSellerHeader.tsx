@@ -167,7 +167,7 @@ function CamelSellerHeader({
                 size="medium"
               />
               <CallFormButton
-                variant="contained"
+                variant="solid"
                 weight="medium"
                 onClick={handleClickCallForm}
                 disabled={!!(disabledCallForm || tempData.description)}
@@ -219,7 +219,7 @@ function CamelSellerHeader({
           <Button
             fullWidth
             size="large"
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             customStyle={{ fontWeight: typography.body1.weight.medium }}
             onClick={handlClickLater}
@@ -229,7 +229,7 @@ function CamelSellerHeader({
           <Button
             fullWidth
             size="large"
-            variant="outlined"
+            variant="outline"
             customStyle={{
               fontWeight: typography.body1.weight.medium,
               background: primary.highlight,

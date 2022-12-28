@@ -32,8 +32,8 @@ function UserAvatar({ src, dateActivated, customStyle }: UserAvatarProps) {
       <Status>
         <Label
           text={labelText}
-          variant="contained"
-          brandColor={isActive ? 'primary-light' : 'black'}
+          variant="solid"
+          brandColor={isActive ? 'blue' : 'black'}
           size="xsmall"
         />
       </Status>

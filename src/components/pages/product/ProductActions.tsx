@@ -37,6 +37,7 @@ type ReportType =
 
 interface ProductActionsProps {
   product?: Product;
+  hasRoleSeller: boolean;
   onClickSMS: ({
     siteId,
     sellerType,
@@ -52,7 +53,7 @@ interface ProductActionsProps {
   }) => void;
 }
 
-function ProductActions({ product, onClickSMS }: ProductActionsProps) {
+function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsProps) {
   const {
     theme: {
       palette: { primary, common }
@@ -234,7 +235,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
   return (
     <ActionButtonWrap>
       <ActionButtons>
-        {product && sellerPhoneNumber && (
+        {product && sellerPhoneNumber && !hasRoleSeller && (
           <ActionButton
             size="small"
             disabled={!product || !sellerPhoneNumber}
@@ -289,7 +290,7 @@ function ProductActions({ product, onClickSMS }: ProductActionsProps) {
         <Button
           fullWidth
           brandColor="black"
-          variant="contained"
+          variant="solid"
           customStyle={{ marginTop: 20 }}
           disabled={!hasCheckedReportOption}
           onClick={handleSubmitReport}

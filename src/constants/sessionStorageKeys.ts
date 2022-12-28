@@ -7,6 +7,8 @@ const hideMyPortfolioReservationAd = 'hideMyPortfolioReservationAd';
 const hideCamelSellerRecentPriceTooltip = 'hideCamelSellerRecentPriceTooltip';
 const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
 const personalProductsCache = 'personalProductsCache';
+const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
+const savedCreateChannelParams = 'savedCreateChannelParams';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -17,7 +19,9 @@ const sessionStorageKeys = {
   hideMyPortfolioReservationAd,
   hideCamelSellerRecentPriceTooltip,
   hideCrazyCurationEventBannerIds,
-  personalProductsCache
+  personalProductsCache,
+  pushToSavedRedirectChannel,
+  savedCreateChannelParams
 };
 
 export default sessionStorageKeys;

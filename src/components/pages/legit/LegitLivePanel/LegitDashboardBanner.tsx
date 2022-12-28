@@ -7,11 +7,9 @@ import type { Swiper as SwiperClass } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -150,7 +148,7 @@ function LegitDashboardBanner() {
           ? Array.from({ length: 3 }, (_, index) => (
               <SwiperSlide key={`dashboard-banner-skeleton-${index}`}>
                 <Card isLoading>
-                  <Skeleton width="100%" height="100%" disableAspectRatio isRound />
+                  <Skeleton width="100%" height="100%" round={8} disableAspectRatio />
                 </Card>
               </SwiperSlide>
             ))
@@ -171,7 +169,7 @@ function LegitDashboardBanner() {
                         <Typography
                           variant="body2"
                           weight="medium"
-                          customStyle={{ color: 'inherit', whiteSpace: 'noWrap' }}
+                          customStyle={{ color: 'inherit', whiteSpace: 'nowrap' }}
                         >
                           {label}
                         </Typography>
@@ -181,14 +179,14 @@ function LegitDashboardBanner() {
                       <Typography
                         variant="h3"
                         weight="bold"
-                        customStyle={{ color: common.uiWhite, whiteSpace: 'noWrap' }}
+                        customStyle={{ color: common.uiWhite, whiteSpace: 'nowrap' }}
                       >
                         {title}
                       </Typography>
                       <Typography
                         variant="body2"
                         dangerouslySetInnerHTML={{ __html: description }}
-                        customStyle={{ color: common.uiWhite, whiteSpace: 'noWrap' }}
+                        customStyle={{ color: common.uiWhite, whiteSpace: 'nowrap' }}
                       />
                     </Flexbox>
                     <Flexbox gap={44} />

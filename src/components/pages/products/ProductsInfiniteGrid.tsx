@@ -634,7 +634,7 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
               </Typography>
               <Button
                 fullWidth
-                variant="contained"
+                variant="solid"
                 brandColor="primary"
                 onClick={handleClickRequestKeyword}
                 customStyle={{ maxWidth: 200, fontWeight: weight.bold }}

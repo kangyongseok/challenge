@@ -2,11 +2,18 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useQuery, useQueryClient } from 'react-query';
-import { BottomSheet, Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import {
+  BottomSheet,
+  Box,
+  Chip,
+  Flexbox,
+  Image,
+  ThemeProvider,
+  Typography,
+  dark
+} from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -94,6 +101,7 @@ function OnboardingResult() {
               src={`${BASE_URL}/${
                 userInfo?.info.value.gender === 'F' ? 'female_face' : 'male_face'
               }.png`}
+              alt="Face Img"
               width={32}
             />
             <Typography
@@ -125,6 +133,7 @@ function OnboardingResult() {
                         (type) => type.value === userInfo?.personalStyle.purchaseTypes[0].id
                       )[0].icon
                     }.png`}
+                    alt="PurchaseType Img"
                     width={20}
                   />
                   <Typography customStyle={{ color: dark.palette.common.ui60, marginTop: 4 }}>
@@ -144,7 +153,7 @@ function OnboardingResult() {
               justifyContent="center"
             >
               {userInfo?.personalStyle.styles.map((item) => (
-                <ModelChip weight="regular" variant="contained" key={`selected-model-${item.id}`}>
+                <ModelChip weight="regular" variant="solid" key={`selected-model-${item.id}`}>
                   # {item.name}
                 </ModelChip>
               ))}

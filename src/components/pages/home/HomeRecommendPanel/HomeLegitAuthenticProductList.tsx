@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Grid, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import ProductGridCardSkeleton from '@components/UI/molecules/Skeletons/ProductGridCardSkeleton';
 import { ProductGridCard } from '@components/UI/molecules';
-import { Image, LegitLabel } from '@components/UI/atoms';
+import { LegitLabel } from '@components/UI/atoms';
 
-import { ProductResult } from '@dto/product';
+import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -144,7 +144,7 @@ function HomeLegitAuthenticProductList() {
               </Box>
             </Typography>
             <Button
-              variant="outlined"
+              variant="outline"
               size="large"
               onClick={() =>
                 router.push({
@@ -235,7 +235,7 @@ function HomeLegitAuthenticProductList() {
                   ))}
                 </Flexbox>
                 <Button
-                  variant="contained"
+                  variant="solid"
                   brandColor="black"
                   size="large"
                   fullWidth
@@ -316,7 +316,7 @@ function HomeLegitAuthenticProductList() {
             베타기간 내 감정비용은 무료입니다!
           </Typography>
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="large"
             fullWidth

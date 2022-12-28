@@ -262,7 +262,7 @@ ${newDescription}
         <MoreInfoButton
           isExpended={isExpended}
           fullWidth
-          variant="contained"
+          variant="solid"
           size="large"
           onClick={handleClickMoreInfo}
         >

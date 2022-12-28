@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 
 import { Divider, ProductGridCard } from '@components/UI/molecules';
 
-import { AccessUser } from '@dto/userAuth';
+import type { AccessUser } from '@dto/userAuth';
 import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
@@ -28,10 +28,10 @@ import { pulse } from '@styles/transition';
 
 function ProductSellerProductList({
   product,
-  roleSellerId
+  roleSellerUserId
 }: {
   product?: Product;
-  roleSellerId?: number;
+  roleSellerUserId?: number;
 }) {
   const router = useRouter();
   const {
@@ -113,16 +113,19 @@ function ProductSellerProductList({
         justifyContent="space-between"
         customStyle={{ marginBottom: 20 }}
         onClick={() => {
-          productDetailAtt({
-            key: attrKeys.products.CLICK_SELLER_PRODUCT,
-            product: product as Product,
-            rest: {
-              attr: 'ALL'
-            },
-            source: attrProperty.productSource.PRODUCT_LIST
-          });
+          if (product)
+            productDetailAtt({
+              key: attrKeys.products.CLICK_SELLER_PRODUCT,
+              product,
+              rest: {
+                attr: 'ALL'
+              },
+              source: attrProperty.productSource.PRODUCT_LIST
+            });
           router.push({
-            pathname: `/sellerInfo/${sellerId}`,
+            pathname: roleSellerUserId
+              ? `/userInfo/${roleSellerUserId}`
+              : `/sellerInfo/${sellerId}`,
             query: {
               tab: 'products'
             }
@@ -133,23 +136,29 @@ function ProductSellerProductList({
           {reviewInfo ? (
             (isCamelProduct && (
               <Avatar
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
-                customStyle={{ borderRadius: '50%', marginRight: 12 }}
                 width={44}
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
+                alt="Product Seller Img"
+                round="50%"
+                customStyle={{ marginRight: 12 }}
               />
             )) ||
             (isCamelSeller && (
               <Avatar
-                src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
-                customStyle={{ borderRadius: '50%', marginRight: 12 }}
                 width={44}
+                src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
+                alt="Product Seller Img"
+                round="50%"
+                customStyle={{ marginRight: 12 }}
               />
             )) ||
             (reviewInfo.productSeller.image && (
               <Avatar
-                src={`${reviewInfo.productSeller.image}`}
-                customStyle={{ borderRadius: '50%', marginRight: 12 }}
                 width={44}
+                src={`${reviewInfo.productSeller.image}`}
+                alt="Product Seller Img"
+                round="50%"
+                customStyle={{ marginRight: 12 }}
               />
             )) || (
               <EmptyAvatar justifyContent="center" alignment="center">
@@ -205,7 +214,7 @@ function ProductSellerProductList({
                   source={attrProperty.productSource.LIST_RELATED}
                   hideProductLabel
                   hideAreaWithDateInfo
-                  hideWishButton={roleSellerId === accessUser?.userId}
+                  hideWishButton={roleSellerUserId === accessUser?.userId}
                 />
               </Box>
             ))}

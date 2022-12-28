@@ -1,11 +1,10 @@
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useQuery } from 'react-query';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
-import { Image } from '@components/UI/atoms';
-
-import { Gender } from '@dto/user';
+import type { Gender } from '@dto/user';
 
 import { fetchUserInfo } from '@api/user';
 
@@ -97,7 +96,12 @@ function GenderYearInput({
           onClick={onClickGender}
           isGender={genderValue === 'M'}
         >
-          <Image disableAspectRatio src={`${BASE_URL}/male_face.png`} width={32} />
+          <Image
+            disableAspectRatio
+            src={`${BASE_URL}/male_face.png`}
+            alt="Male Face Img"
+            width={32}
+          />
           <Typography
             variant="h3"
             weight="medium"
@@ -117,7 +121,12 @@ function GenderYearInput({
           onClick={onClickGender}
           isGender={genderValue === 'F'}
         >
-          <Image disableAspectRatio src={`${BASE_URL}/female_face.png`} width={32} />
+          <Image
+            disableAspectRatio
+            src={`${BASE_URL}/female_face.png`}
+            alt="Female Face Img"
+            width={32}
+          />
           <Typography
             variant="h3"
             weight="medium"

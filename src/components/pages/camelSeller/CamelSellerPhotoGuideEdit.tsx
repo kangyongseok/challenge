@@ -1,14 +1,14 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
-import Image from '@components/UI/atoms/Image';
 
 import type { PhotoGuideParams } from '@dto/common';
 
@@ -312,7 +312,12 @@ function CamelSellerPhotoGuideEdit() {
               // data-type={imageType}
               onClick={handleClickDetailModal}
             >
-              <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+              <FullCoverImage
+                src={imageUrl || ''}
+                alt="Cover Img"
+                disableAspectRatio
+                isImage={!!imageUrl}
+              />
             </GuideBox>
           ))}
         {isSuccess &&
@@ -333,7 +338,7 @@ function CamelSellerPhotoGuideEdit() {
                     disableAspectRatio
                   />
                 ) : (
-                  <CenterImage src={imageWatermark} disableAspectRatio />
+                  <CenterImage src={imageWatermark} alt="Center Img" disableAspectRatio />
                 )}
                 {isRequired && !isExternalNormalSeller && (
                   <RequireText weight="medium" variant="small2">
@@ -361,12 +366,18 @@ function CamelSellerPhotoGuideEdit() {
                 ) : (
                   <>
                     {imageUrl && (
-                      <FullCoverImage src={imageUrl} disableAspectRatio isImage={!!imageUrl} />
+                      <FullCoverImage
+                        src={imageUrl}
+                        alt="Cover Img"
+                        disableAspectRatio
+                        isImage={!!imageUrl}
+                      />
                     )}
                     <OverlayWarterMark isNormalSeller={isExternalNormalSeller}>
                       <CenterImage
                         isImage={!!imageUrl}
                         src={imageUrl ? imageWatermarkDark : imageWatermark}
+                        alt="Center Img"
                         disableAspectRatio
                       />
                     </OverlayWarterMark>

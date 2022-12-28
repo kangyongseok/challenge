@@ -2,11 +2,10 @@ import { useCallback, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import LegitLabel from '@components/UI/atoms/LegitLabel';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
@@ -83,16 +82,16 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
 
   return isLoading ? (
     <Flexbox direction="vertical" gap={12} customStyle={{ position: 'relative', width: '100%' }}>
-      <Skeleton width="100%" height="160px" disableAspectRatio isRound />
+      <Skeleton width="100%" height="160px" round={8} disableAspectRatio />
       <Flexbox direction="vertical" gap={8}>
         <Flexbox direction="vertical" gap={2}>
-          <Skeleton width="60px" height="26px" disableAspectRatio isRound />
-          <Skeleton width="100%" height="20px" disableAspectRatio isRound />
+          <Skeleton width={60} height={26} round={8} disableAspectRatio />
+          <Skeleton width="100%" height={20} round={8} disableAspectRatio />
         </Flexbox>
         <Flexbox gap={8}>
-          <Skeleton width="21px" height="12px" disableAspectRatio isRound />
-          <Skeleton width="26px" height="12px" disableAspectRatio isRound />
-          <Skeleton width="21px" height="12px" disableAspectRatio isRound />
+          <Skeleton width={21} height={12} round={8} disableAspectRatio />
+          <Skeleton width={26} height={12} round={8} disableAspectRatio />
+          <Skeleton width={21} height={12} round={8} disableAspectRatio />
         </Flexbox>
       </Flexbox>
     </Flexbox>
@@ -114,13 +113,17 @@ function LegitCaseHistoryCard({ productLegit, isLoading, rank }: LegitCaseHistor
         <Flexbox direction="vertical" gap={2} customStyle={{ mixBlendMode: 'multiply' }}>
           <Image
             width="auto"
-            height="24px"
+            height={24}
             disableAspectRatio
             src={`https://${
               process.env.IMAGE_DOMAIN
             }/assets/images/horizon_brands/white/${brandNameEng
               .toLowerCase()
               .replace(/\s/g, '')}.jpg`}
+            alt="Brand Logo Img"
+            customStyle={{
+              maxWidth: 'fit-content'
+            }}
           />
           <Title variant="body1">{title}</Title>
         </Flexbox>

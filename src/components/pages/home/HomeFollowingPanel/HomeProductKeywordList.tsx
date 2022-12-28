@@ -6,10 +6,8 @@ import type { ParsedUrlQueryInput } from 'node:querystring';
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { SearchParams } from '@dto/product';
 
@@ -160,19 +158,14 @@ function HomeProductKeywordList() {
             customStyle={{ width: 80 }}
           >
             <Box customStyle={{ position: 'relative' }}>
-              <Skeleton
-                width="48px"
-                height="48px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 32 }}
-              />
+              <Skeleton width={48} height={48} round={32} disableAspectRatio />
               <Badge isNew={false}>
                 <Icon name="FilterFilled" width={12} height={12} color={common.uiWhite} />
               </Badge>
             </Box>
             <Flexbox direction="vertical" gap={2} alignment="center">
-              <Skeleton width="60px" height="16px" disableAspectRatio isRound />
-              <Skeleton width="35px" height="12px" disableAspectRatio isRound />
+              <Skeleton width={60} height={16} round={8} disableAspectRatio />
+              <Skeleton width={35} height={12} round={8} disableAspectRatio />
             </Flexbox>
           </Flexbox>
         ))}

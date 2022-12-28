@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
-import { Box, CustomStyle, Flexbox, Typography } from 'mrcamel-ui';
-
-import Skeleton from '@components/UI/atoms/Skeleton';
+import { Box, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 import type { ProductSeller } from '@dto/product';
 import type { CommonCode } from '@dto/common';
@@ -54,15 +53,15 @@ function ProductGridCardSkeleton({
 
   return (
     <Flexbox gap={gap || (compact ? 12 : 17)} direction="vertical" customStyle={customStyle}>
-      <Skeleton isRound={isRound} />
+      <Skeleton round={isRound ? 8 : 0} />
       <Box customStyle={{ padding: compact ? 0 : '0 12px' }}>
         <Skeleton
           width="100%"
-          maxWidth={!title ? '200px' : 'fit-content'}
-          minHeight="18px"
-          maxHeight="36px"
+          maxWidth={!title ? 200 : 'fit-content'}
+          minHeight={18}
+          maxHeight={36}
+          round={isRound ? 8 : 0}
           disableAspectRatio
-          isRound={isRound}
         >
           {title && (
             <Typography variant="body2" weight="medium" customStyle={{ visibility: 'hidden' }}>
@@ -72,29 +71,29 @@ function ProductGridCardSkeleton({
         </Skeleton>
         <Skeleton
           width="100%"
-          maxWidth="50px"
-          height="23px"
+          maxWidth={50}
+          height={23}
+          round={isRound ? 8 : 0}
           disableAspectRatio
-          isRound={isRound}
           customStyle={{ marginTop: 4 }}
         />
         {hasAreaWithDateInfo && (
           <Skeleton
             width="100%"
-            maxWidth="120px"
-            height="13px"
+            maxWidth={120}
+            height={13}
+            round={isRound ? 8 : 0}
             disableAspectRatio
-            isRound={isRound}
             customStyle={{ marginTop: 8 }}
           />
         )}
         {hasMetaInfo && (
           <Skeleton
             width="100%"
-            maxWidth="75px"
-            height="15px"
+            maxWidth={75}
+            height={15}
+            round={isRound ? 8 : 0}
             disableAspectRatio
-            isRound={isRound}
             customStyle={{ marginTop: 4 }}
           />
         )}

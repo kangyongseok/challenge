@@ -3,10 +3,9 @@ import { useEffect } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -190,9 +189,10 @@ function LegitMyPanel() {
       <Box component="section" customStyle={{ marginTop: 20 }}>
         <Box customStyle={{ position: 'relative', maxWidth: 288, margin: '0 auto' }}>
           <Image
-            variant="backgroundImage"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v2.png`}
             alt="Legit Guide Img"
+            round={8}
+            disableOnBackground={false}
             customStyle={{
               position: 'relative',
               paddingTop: '125%'
@@ -211,7 +211,7 @@ function LegitMyPanel() {
         </Flexbox>
         <Box customStyle={{ margin: '74px 0 55px', padding: '0 20px' }}>
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="large"
             fullWidth
@@ -227,7 +227,7 @@ function LegitMyPanel() {
   return (
     <Box component="section" customStyle={{ padding: '0 20px' }}>
       {isLoading ? (
-        <Skeleton width="70px" height="16px" disableAspectRatio isRound />
+        <Skeleton width={70} height={16} round={8} disableAspectRatio />
       ) : (
         <Typography variant="body2" weight="bold">
           전체 {commaNumber(totalElements)}개

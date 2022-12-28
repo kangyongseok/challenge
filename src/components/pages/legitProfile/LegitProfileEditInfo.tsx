@@ -3,11 +3,21 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useMutation } from 'react-query';
-import { Box, Button, Chip, Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Chip,
+  Flexbox,
+  Icon,
+  Image,
+  Skeleton,
+  Typography,
+  dark,
+  useTheme
+} from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import type { PutUserLegitProfileData } from '@dto/user';
 import type { PhotoGuideImage } from '@dto/productLegit';
@@ -234,22 +244,18 @@ function LegitProfileEditInfo({
             </Flexbox>
             <Box customStyle={{ position: 'relative' }} onClick={handleChangeImage(false)}>
               {isLoadingGetPhoto && imageType === 'profile' ? (
-                <Skeleton
-                  width="80px"
-                  height="80px"
-                  disableAspectRatio
-                  customStyle={{ borderRadius: '50%' }}
-                />
+                <Skeleton width={80} height={80} round="50%" disableAspectRatio />
               ) : (
                 <Image
                   src={
                     putLegitProfileParams.image ||
                     `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
                   }
-                  width="80px"
-                  height="80px"
+                  alt="Legit Profile Img"
+                  width={80}
+                  height={80}
+                  round="50%"
                   disableAspectRatio
-                  customStyle={{ borderRadius: '50%' }}
                 />
               )}
               <IconBox>
@@ -308,8 +314,8 @@ function LegitProfileEditInfo({
                 size="large"
                 variant={
                   putLegitProfileParams.targetBrandIds.some((targetBrandId) => targetBrandId === id)
-                    ? 'contained'
-                    : 'outlined'
+                    ? 'solid'
+                    : 'outline'
                 }
                 brandColor="black"
                 customStyle={{ whiteSpace: 'nowrap' }}
@@ -335,7 +341,7 @@ function LegitProfileEditInfo({
           </Typography>
           <TextInput
             type="search"
-            variant="outlined"
+            variant="outline"
             customStyle={{ padding: 12, height: 44, border: `1px solid ${common.ui90}` }}
             inputStyle={{ height: 20, width: '100%' }}
             value={putLegitProfileParams.urlShop}
@@ -353,7 +359,7 @@ function LegitProfileEditInfo({
           <Button
             type="submit"
             size="xlarge"
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             fullWidth
             disabled={

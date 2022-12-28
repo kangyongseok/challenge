@@ -113,13 +113,7 @@ function HomeLegitContinueDialog() {
           marginTop: 32
         }}
       >
-        <Button
-          variant="contained"
-          brandColor="primary"
-          size="large"
-          fullWidth
-          onClick={handleClick}
-        >
+        <Button variant="solid" brandColor="primary" size="large" fullWidth onClick={handleClick}>
           계속하기
         </Button>
         <Button variant="ghost" brandColor="black" size="large" fullWidth onClick={handleClose}>

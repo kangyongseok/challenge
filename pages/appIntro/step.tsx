@@ -10,7 +10,6 @@ import styled from '@emotion/styled';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { AppIntro01, AppIntro02, AppIntro03, AppIntro04 } from '@components/pages/appIntro';
 
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
@@ -24,7 +23,6 @@ function AppIntroStep() {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    ChannelTalk.hideChannelButton();
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
   }, []);

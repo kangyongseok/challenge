@@ -98,13 +98,7 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
           >
             취소
           </Button>
-          <Button
-            variant="contained"
-            size="large"
-            brandColor="black"
-            fullWidth
-            onClick={handleClick}
-          >
+          <Button variant="solid" size="large" brandColor="black" fullWidth onClick={handleClick}>
             삭제하기
           </Button>
         </Flexbox>

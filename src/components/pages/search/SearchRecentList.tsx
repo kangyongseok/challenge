@@ -117,7 +117,7 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
                 </Typography>
               )}
             </Flexbox>
-            <DeleteChip variant="contained">
+            <DeleteChip variant="solid">
               <Icon
                 width={15}
                 name="CloseOutlined"

@@ -44,7 +44,7 @@ function MyPotyfolioDialog() {
         <Button
           fullWidth
           brandColor="primary"
-          variant="contained"
+          variant="solid"
           customStyle={{ marginTop: 32 }}
           onClick={() => {
             setCookie('myPortfolioReserve', 'done', 1);

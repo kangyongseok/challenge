@@ -39,7 +39,7 @@ function ProductWishCancelDialog({
           </Button>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             customStyle={{ marginTop: 10 }}
             onClick={submit}

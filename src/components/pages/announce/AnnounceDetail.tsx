@@ -4,9 +4,8 @@ import type { MouseEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Box, Button, Flexbox, Typography } from 'mrcamel-ui';
+import { Alert, Box, Button, Flexbox, Image, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
-import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -116,7 +115,7 @@ function AnnounceDetail() {
                   data-pathname={announceDetail.parameter}
                   onClick={handleClickCtaButton}
                   brandColor="primary"
-                  variant="contained"
+                  variant="solid"
                   size="large"
                   fullWidth
                 >
@@ -170,6 +169,7 @@ function AnnounceDetail() {
                         key={`announce-detail-image-${src}`}
                         src={src}
                         alt="Announce Detail Img"
+                        disableAspectRatio
                       />
                     )
                 )}
@@ -180,9 +180,5 @@ function AnnounceDetail() {
     </Box>
   );
 }
-
-const Image = styled.img`
-  width: 100%;
-`;
 
 export default AnnounceDetail;

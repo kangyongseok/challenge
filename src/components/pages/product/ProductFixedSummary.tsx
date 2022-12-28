@@ -1,11 +1,9 @@
 import { memo } from 'react';
 
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Image, Typography } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-
-import Image from '@components/UI/atoms/Image';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';

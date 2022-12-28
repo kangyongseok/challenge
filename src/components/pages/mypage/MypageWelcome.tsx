@@ -30,8 +30,11 @@ function MypageWelcome() {
       <Flexbox alignment="center" customStyle={{ height: 80 }}>
         <AvatarArea>
           <Avatar
-            src={userData?.image}
-            customStyle={{ width: 48, height: 48, borderRadius: '50%' }}
+            width={48}
+            height={48}
+            src={userData?.image || ''}
+            alt="User Avatar Img"
+            round="50%"
           />
           {userData?.snsType === 'kakao' && (
             <KakaoIcon alignment="center" justifyContent="center" />

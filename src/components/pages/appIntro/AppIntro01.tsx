@@ -1,7 +1,5 @@
-import { Box, Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 

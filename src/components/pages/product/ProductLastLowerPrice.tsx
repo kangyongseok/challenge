@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { Product, SearchLowerProductsParams } from '@dto/product';
 
@@ -177,17 +176,12 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
               customStyle={{ minWidth: 144 }}
               gap={17}
             >
-              <Skeleton
-                width="144px"
-                height="144px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 8 }}
-              />
+              <Skeleton width={144} height={144} round={8} disableAspectRatio />
               <Flexbox direction="vertical" gap={3}>
-                <Skeleton width="144px" height="15px" disableAspectRatio />
-                <Skeleton width="144px" height="15px" disableAspectRatio />
-                <Skeleton width="144px" height="20px" disableAspectRatio />
-                <Skeleton width="144px" height="15px" disableAspectRatio />
+                <Skeleton width={144} height={15} disableAspectRatio />
+                <Skeleton width={144} height={15} disableAspectRatio />
+                <Skeleton width={144} height={20} disableAspectRatio />
+                <Skeleton width={144} height={15} disableAspectRatio />
               </Flexbox>
             </Flexbox>
           ))}
@@ -211,7 +205,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
       </ProductList>
       <Button
         fullWidth
-        variant="contained"
+        variant="solid"
         size="large"
         customStyle={{
           background: type ? 'rgba(0, 0, 0, 0.4)' : common.ui95,

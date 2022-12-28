@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Flexbox, Icon, Tooltip, Typography, light, useTheme } from 'mrcamel-ui';
+import {
+  BottomSheet,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  Tooltip,
+  Typography,
+  light,
+  useTheme
+} from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-import Image from '../../UI/atoms/Image';
 
 function LegitResultLoginBottomSheet() {
   const router = useRouter();

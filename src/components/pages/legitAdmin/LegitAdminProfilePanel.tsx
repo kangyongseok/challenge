@@ -20,7 +20,7 @@ function LegitAdminProfilePanel() {
   const {
     isLoading,
     isFetched,
-    data: { profile, cntOpinion = 0, roleSeller } = {}
+    data: { profile, cntOpinion = 0 } = {}
   } = useQuery(
     queryKeys.users.legitProfile(accessUser?.userId || 0),
     () => fetchLegitProfile(accessUser?.userId || 0),
@@ -51,7 +51,6 @@ function LegitAdminProfilePanel() {
         showEdit
         hideBlur
         onClickEditProfile={handleClickEditProfile}
-        sellerId={roleSeller?.sellerId}
         infoCustomStyle={{
           paddingTop: 20
         }}

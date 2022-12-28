@@ -1,7 +1,6 @@
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Image } from '@components/UI/atoms';
 import { LegitRequestBrandLogo } from '@components/pages/legitRequest/index';
 
 interface LegitRequestTitleWithModelImageProps {
@@ -49,9 +48,9 @@ function LegitRequestTitleWithModelImage({
         </Flexbox>
         <Image
           src={modelImage}
-          width="110px"
-          height="110px"
-          isRound
+          alt="Model Img"
+          width={110}
+          height={110}
           disableAspectRatio
           customStyle={{ margin: '0 auto' }}
         />

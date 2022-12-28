@@ -87,7 +87,7 @@ function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
       <OnboardingBottomCTA onClick={handleClickNext} disabled={!selectedModelCard.length}>
         <Tooltip
           open={openTooltip.open}
-          variant="contained"
+          variant="solid"
           message={
             <Typography
               variant="small1"

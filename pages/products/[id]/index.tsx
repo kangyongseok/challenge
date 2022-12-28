@@ -22,10 +22,7 @@ import {
 } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import {
-  UserShopProductDeleteConfirmDialog,
-  UserShopProductSoldOutConfirmBottomSheet
-} from '@components/pages/userShop';
+import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
   ProductCTAButton,
@@ -41,7 +38,6 @@ import {
 } from '@components/pages/product';
 
 import type { AccessUser } from '@dto/userAuth';
-import type { Product } from '@dto/product';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
@@ -75,6 +71,7 @@ import { userShopSelectedProductState } from '@recoil/userShop';
 // import { showAppDownloadBannerState } from '@recoil/common';
 // import useScrollTrigger from '@hooks/useScrollTrigger';
 import { loginBottomSheetState, toastState } from '@recoil/common';
+import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -89,29 +86,37 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
       palette: { common }
     }
   } = useTheme();
+
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
+  const setToastState = useRecoilValue(toastState);
+
   const {
     data,
     isLoading,
     isFetching,
-    refetch,
     mutatePostProductsAdd,
     mutatePostProductsRemove,
-    mutateMetaInfo
+    mutateMetaInfo,
+    refetch
   } = useQueryProduct();
+  useRedirectVC(
+    data?.product ? getProductDetailUrl({ product: data?.product }) : `/products/${productId}`
+  );
+
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
   const [isCamelSellerProduct, setCamelSellerProduct] = useState(false);
   const [viewDetail, setViewDetail] = useState(false);
-  const setToastState = useRecoilValue(toastState);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
   });
   const [targetProductUrl, setTargetProductUrl] = useState('');
+
   const loggedBrazeRef = useRef(false);
   const contentRef = useRef<HTMLHRElement | null>(null);
+
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
     const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
@@ -175,6 +180,13 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
 
     return false;
   }, [data]);
+  const soldout = useMemo(
+    () =>
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+      !(isDup && hasTarget) &&
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'],
+    [data?.product.status, hasTarget, isDup]
+  );
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading && !isFetching ? data?.product : undefined;
@@ -284,14 +296,19 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     [hasTarget, isDup, isPriceDown]
   );
 
-  useEffect(() => {
-    setUserShopSelectedProductState({
-      id: Number(productId)
+  const handleClickViewDetail = () => {
+    logEvent(attrKeys.products.CLICK_SOLDOUT_DETAIL, {
+      name: attrProperty.name.productDetail
     });
 
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init(process.env.KAKAO_JS_KEY);
-    }
+    setViewDetail(true);
+  };
+
+  useEffect(() => {
+    setUserShopSelectedProductState({ id: Number(productId) });
+
+    if (window.Kakao && !window.Kakao.isInitialized()) window.Kakao.init(process.env.KAKAO_JS_KEY);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -385,6 +402,8 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   }, [productId]);
 
   useEffect(() => {
+    scrollEnable();
+
     if (!data) return;
 
     setTargetProductUrl(getProductDetailUrl({ type: 'targetProduct', product: data.product }));
@@ -432,38 +451,22 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
     updateAccessUserOnBraze({ ...accessUser, lastProductModel: quoteTitle });
   }, [data, accessUser]);
 
-  const handleClickViewDetail = () => {
-    logEvent(attrKeys.products.CLICK_SOLDOUT_DETAIL, {
-      name: attrProperty.name.productDetail
-    });
-
-    setViewDetail(true);
-  };
-
-  const soldout = useMemo(
-    () =>
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-      !(isDup && hasTarget) &&
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'],
-    [data?.product.status, hasTarget, isDup]
-  );
-
   return (
     <>
       <PageHead
         title={`${data?.product.title} | 카멜`}
-        description={`${getMetaDescription(data?.product as Product)}`}
+        description={`${getMetaDescription(data?.product)}`}
         ogTitle={`${data?.product.title} | 카멜`}
-        ogDescription={`${getMetaDescription(data?.product as Product)}`}
+        ogDescription={`${getMetaDescription(data?.product)}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
-        ogUrl={`https://mrcamel.co.kr${getProductDetailUrl({ product: data?.product as Product })}`}
+        ogUrl={`https://mrcamel.co.kr${
+          data?.product ? getProductDetailUrl({ product: data.product }) : ''
+        }`}
         canonical={`https://mrcamel.co.kr${
           (_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale === locales.ko.lng
             ? ''
             : `/${(_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale}`
-        }${getProductDetailUrl({
-          product: data?.product as Product
-        })}`}
+        }${data?.product ? getProductDetailUrl({ product: data.product }) : ''}`}
         keywords={`중고 ${data?.product.brand.name}, 중고 ${data?.product.category.name}, 중고 ${data?.product.quoteTitle}, ${data?.product.brand.name}, ${data?.product.category.name}, ${data?.product.quoteTitle}, 여자 ${data?.product.category.name}, 남자 ${data?.product.category.name}`}
         product={data?.product}
       />
@@ -481,6 +484,9 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
             productButton={
               <ProductCTAButton
                 product={data?.product}
+                channels={data?.channels}
+                roleSeller={data?.roleSeller}
+                isBlockedUser={data?.blockUser || false}
                 isProductLegit={data?.productLegit}
                 isDup={isDup}
                 hasTarget={hasTarget}
@@ -491,6 +497,7 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
                 onClickWish={handleClickWish}
                 onClickSMS={handleClickSMS}
                 mutateMetaInfo={mutateMetaInfo}
+                refetch={refetch}
               />
             }
           />
@@ -522,7 +529,11 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
                 {!isCamelSellerProduct && (
-                  <ProductActions product={product} onClickSMS={handleClickSMS} />
+                  <ProductActions
+                    product={product}
+                    hasRoleSeller={!!data?.roleSeller?.userId}
+                    onClickSMS={handleClickSMS}
+                  />
                 )}
                 {isCamelSellerProduct && <DivideLine />}
               </>
@@ -620,7 +631,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
       />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
-      <UserShopProductSoldOutConfirmBottomSheet />
     </>
   );
 }

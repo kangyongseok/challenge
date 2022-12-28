@@ -3,10 +3,18 @@ import type { MouseEvent } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Label, Toast, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Label,
+  Skeleton,
+  Toast,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductKeywordsContent } from '@dto/user';
 import type { SearchParams } from '@dto/product';
@@ -30,7 +38,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function SearchProductsKeywordList() {
   const {
-    theme: { palette, box }
+    theme: { palette }
   } = useTheme();
   const [deleteToast, setDeleteToast] = useState(false);
   const [rollbackToast, setRollbackToast] = useState(false);
@@ -183,13 +191,7 @@ function SearchProductsKeywordList() {
             {isLoading
               ? Array.from({ length: 5 }, (_, index) => (
                   <Box key={`saved-products-skeleton-${index}`}>
-                    <Skeleton
-                      width="300px"
-                      height="78px"
-                      disableAspectRatio
-                      isRound
-                      customStyle={{ borderRadius: box.round['8'] }}
-                    />
+                    <Skeleton width={300} height={78} round={8} disableAspectRatio />
                   </Box>
                 ))
               : productKeywords.map((card) => (
@@ -215,12 +217,7 @@ function SearchProductsKeywordList() {
                               index={index}
                             />
                           ))}
-                          <NewLabel
-                            text="NEW"
-                            variant="contained"
-                            brandColor="primary"
-                            size="xsmall"
-                          />
+                          <NewLabel text="NEW" variant="solid" brandColor="primary" size="xsmall" />
                         </Box>
                       )}
                       <Flexbox
@@ -254,7 +251,7 @@ function SearchProductsKeywordList() {
           >
             저장한 매물목록이 삭제되었습니다.
           </Typography>
-          <RollbackButton variant="contained" onClick={handleClickRollback}>
+          <RollbackButton variant="solid" onClick={handleClickRollback}>
             되돌리기
           </RollbackButton>
         </Flexbox>

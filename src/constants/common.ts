@@ -14,6 +14,11 @@ export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
 export const PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT = 102;
 export const CMR_LANDING_INFO_HEIGHT = 72;
 export const IMG_CAMEL_PLATFORM_NUMBER = 161;
+export const PRODUCT_INFORMATION_HEIGHT = 65;
+export const MESSAGE_INPUT_HEIGHT = 44;
+export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
+export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
+export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
 
 export const locales = {
   ko: {
@@ -54,3 +59,29 @@ export const globalSizeGroupId = [1, 3, 6, 8, 10];
 
 export const CAMEL_SUBSET_FONTFAMILY =
   'Camel Product Sans Subset, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji';
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
+export const SUPPORTED_MIMES = {
+  IMAGE: [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif',
+    'image/svg+xml',
+    'image/webp' // not supported in IE
+  ],
+  VIDEO: ['video/mpeg', 'video/ogg', 'video/webm', 'video/mp4'],
+  AUDIO: [
+    'audio/aac',
+    'audio/midi',
+    'audio/x-midi',
+    'audio/mpeg',
+    'audio/ogg',
+    'audio/opus',
+    'audio/wav',
+    'audio/webm',
+    'audio/3gpp',
+    'audio/3gpp2',
+    'audio/mp3'
+  ]
+};

@@ -1,11 +1,21 @@
-import { useEffect, useRef } from 'react';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useCallback, useEffect, useMemo } from 'react';
 
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  Index,
+  InfiniteLoader,
+  List,
+  ListRowProps,
+  WindowScroller
+} from 'react-virtualized';
 import { useInfiniteQuery } from 'react-query';
-import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
-import ProductListCard from '@components/UI/molecules/ProductListCard';
-import { ProductListCardSkeleton } from '@components/UI/molecules';
+import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -15,114 +25,170 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-function SellerInfoProductsPanel() {
+const cache = new CellMeasurerCache({
+  fixedWidth: true
+});
+
+interface SellerInfoProductsPanelProps {
+  sellerId: number;
+}
+
+function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
   const {
-    query: { id }
-  } = useRouter();
+    theme: { palette }
+  } = useTheme();
 
-  const productsPage = useRef(0);
-
-  const sellerProductsParams = {
-    sellerId: Number(id || 0),
-    size: 20
-  };
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
-    queryKeys.products.sellerProducts(sellerProductsParams),
-    async ({ pageParam = 0 }) => fetchSellerProducts({ ...sellerProductsParams, page: pageParam }),
+  const params = useMemo(() => ({ sellerId, size: 20 }), [sellerId]);
+  const {
+    data: { pages = [] } = {},
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = useInfiniteQuery(
+    queryKeys.products.sellerProducts(params),
+    async ({ pageParam = 0 }) => fetchSellerProducts({ ...params, page: pageParam }),
     {
-      enabled: !!sellerProductsParams.sellerId,
+      enabled: !!params.sellerId,
       getNextPageParam: (nextData) => {
         const { number = 0, totalPages = 0 } = nextData || {};
+
+        if (number > 0) {
+          logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
+            title: attrProperty.title.SELLER_PRODUCT,
+            name: attrProperty.name.SELLER_PRODUCT,
+            page: number,
+            sellerId
+          });
+        }
 
         return number < totalPages - 1 ? number + 1 : undefined;
       }
     }
   );
 
+  const sellerProducts = useMemo(() => pages.flatMap(({ content }) => content), [pages]);
+
+  const loadMoreRows = useCallback(async () => {
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    await fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const handleResize = useCallback(() => {
+    cache.clearAll();
+  }, []);
+
+  const rowRenderer = useCallback(
+    ({ key, index, parent, style }: ListRowProps) => {
+      const product = sellerProducts[index];
+
+      return product ? (
+        // @ts-ignore
+        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
+          <div style={{ ...style, paddingBottom: 20 }}>
+            <ProductListCard
+              product={product}
+              productAtt={{
+                name: attrKeys.products.SELLER_PRODUCT,
+                ...product
+              }}
+              isRound
+              source={attrProperty.productSource.SELLER_PRODUCT}
+              hideMetaSocialInfo={false}
+              hideProductLabel={false}
+            />
+          </div>
+        </CellMeasurer>
+      ) : null;
+    },
+    [sellerProducts]
+  );
+
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) {
-        const requestProductsPage = productsPage.current + 1;
-        logEvent(attrKeys.sellerInfo.LOAD_MOREAUTO, {
-          title: 'SELLER_PRODUCT',
-          name: 'SELLER_PRODUCT',
-          page: requestProductsPage,
-          sellerId: id
-        });
-        await fetchNextPage();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, id]);
-  if (!isLoading && !data?.pages.map((sellerProducts) => sellerProducts.content)[0].length) {
-    return (
+  }, [handleResize]);
+
+  return !isLoading && sellerProducts.length === 0 ? (
+    <Typography
+      weight="bold"
+      variant="h3"
+      customStyle={{ textAlign: 'center', margin: '84px 20px 0', color: palette.common.ui60 }}
+    >
+      판매중인 매물이 없어요
+    </Typography>
+  ) : (
+    <>
+      {!isLoading && (
+        <Banner>
+          <Typography variant="body2" customStyle={{ color: palette.common.ui60 }}>
+            카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)
+          </Typography>
+        </Banner>
+      )}
       <Flexbox
-        customStyle={{ margin: '16px 0 20px', height: 150 }}
-        alignment="center"
-        justifyContent="center"
+        component="section"
         direction="vertical"
+        gap={isLoading ? 20 : 0}
+        customStyle={{ padding: 20 }}
       >
-        <Typography variant="h0">😮</Typography>
-        <Typography weight="bold" variant="h3">
-          판매중인 매물이 없어요
-        </Typography>
-      </Flexbox>
-    );
-  }
-  return (
-    <Box customStyle={{ margin: '16px 0 20px' }}>
-      <Alert
-        round="16"
-        customStyle={{
-          padding: '12px 24px'
-        }}
-      >
-        <Typography variant="body2">카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)</Typography>
-      </Alert>
-      <Box
-        customStyle={{
-          marginTop: 32,
-          marginBottom: 16
-        }}
-      >
-        <Typography variant="h4" weight="bold">
-          같은 판매자의 매물 보기
-        </Typography>
-      </Box>
-      <Flexbox direction="vertical" gap={20}>
-        {isLoading &&
+        {isLoading ? (
           Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`sellerInfo-seller-product-skeleton-${index}`} isRound />
-          ))}
-        {!isLoading &&
-          data?.pages?.map((sellerProducts) =>
-            sellerProducts?.content?.map((product) => (
-              <ProductListCard
-                key={`sellerInfo-seller-product-${product.id}`}
-                product={product}
-                productAtt={{
-                  name: attrKeys.products.SELLER_PRODUCT,
-                  ...product
-                }}
-                isRound
-                source={attrProperty.productSource.SELLER_PRODUCT}
-              />
-            ))
-          )}
+            <ProductListCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`profile-user-product-skeleton-${index}`}
+              isRound
+            />
+          ))
+        ) : (
+          // @ts-ignore
+          <InfiniteLoader
+            isRowLoaded={({ index }: Index) => !!sellerProducts[index]}
+            loadMoreRows={loadMoreRows}
+            rowCount={hasNextPage ? sellerProducts.length + 1 : sellerProducts.length}
+          >
+            {({ registerChild, onRowsRendered }) => (
+              // @ts-ignore
+              <WindowScroller>
+                {({ height, isScrolling, scrollTop, scrollLeft }) => (
+                  // @ts-ignore
+                  <AutoSizer disableHeight onResize={handleResize}>
+                    {({ width }) => (
+                      // @ts-ignore
+                      <List
+                        ref={registerChild}
+                        onRowsRendered={onRowsRendered}
+                        width={width}
+                        autoHeight
+                        height={height}
+                        rowCount={sellerProducts.length}
+                        rowHeight={cache.rowHeight}
+                        rowRenderer={rowRenderer}
+                        scrollTop={scrollTop}
+                        scrollLeft={scrollLeft}
+                        isScrolling={isScrolling}
+                        deferredMeasurementCache={cache}
+                      />
+                    )}
+                  </AutoSizer>
+                )}
+              </WindowScroller>
+            )}
+          </InfiniteLoader>
+        )}
       </Flexbox>
-    </Box>
+    </>
   );
 }
+
+const Banner = styled.section`
+  background-color: ${({ theme: { palette } }) => palette.common.bg02};
+  padding: 12px 20px;
+  text-align: center;
+`;
 
 export default SellerInfoProductsPanel;

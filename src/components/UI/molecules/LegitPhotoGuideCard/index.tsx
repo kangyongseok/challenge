@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
 
-import { Label, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Image, Label, Typography, useTheme } from 'mrcamel-ui';
 
 import type { CommonPhotoGuideDetail } from '@dto/common';
 
@@ -94,7 +92,7 @@ function LegitPhotoGuideCard({
       )}
       {!hideLabel && status === 1 && isInvalid && (
         <Label
-          variant="contained"
+          variant="solid"
           brandColor="red"
           size="xsmall"
           text="필수"
@@ -107,7 +105,7 @@ function LegitPhotoGuideCard({
       )}
       {!hideLabel && status >= 2 && !isInvalid && (
         <Label
-          variant="contained"
+          variant="solid"
           brandColor={status === 2 ? 'red' : 'primary'}
           size="xsmall"
           text={status === 2 ? '수정' : '수정완료'}
@@ -123,11 +121,11 @@ function LegitPhotoGuideCard({
           />
         ) : (
           <Image
-            width="48px"
-            height="48px"
+            width={48}
+            height={48}
             src={isDark ? imageWatermarkDark : imageWatermark}
             alt="WaterMark Img"
-            isRound
+            round={8}
             disableAspectRatio
           />
         )}

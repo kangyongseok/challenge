@@ -1,12 +1,12 @@
-import { HTMLAttributes, MouseEvent, forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import type { HTMLAttributes, MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Alert, Avatar, Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
@@ -120,7 +120,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       wishCount = 0,
       purchaseCount = 0,
       status
-    } = product as Product;
+    } = product;
 
     const isNormalseller =
       (product?.site.id === 34 || product?.productSeller.type === 4) &&
@@ -242,12 +242,11 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         >
           <Content size={100} isTimeline={router.query.tab === 'history'}>
             <Image
-              variant="backgroundImage"
               src={imageUrl}
               alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
+              round={8}
               disableLazyLoad={false}
-              disableSkeletonRender={false}
-              isRound
+              disableOnBackground={false}
             />
             <Avatar
               width={20}
@@ -286,14 +285,14 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
                 </Typography>
                 {productLegitStatusText && (
                   <Label
-                    variant="outlined"
+                    variant="outline"
                     size="xsmall"
                     brandColor="black"
                     text={productLegitStatusText}
                   />
                 )}
                 {isPopular && (
-                  <Label variant="contained" size="xsmall" brandColor="black" text="인기" />
+                  <Label variant="solid" size="xsmall" brandColor="black" text="인기" />
                 )}
                 {showPriceDown && (
                   <PriceDownLabel>
@@ -355,11 +354,11 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         <>
           {showDuplicateUploadAlert && (
             <Alert
-              brandColor="primary-bgLight"
               onClick={handleClickAlert}
               customStyle={{
                 padding: '10px 20px',
-                marginTop: -8
+                marginTop: -8,
+                backgroundColor: primary.bgLight
               }}
             >
               <Flexbox alignment="center" gap={20}>

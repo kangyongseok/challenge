@@ -305,7 +305,7 @@ function SearchHelperCategoryBottomSheet({
           </Box>
           {showSubParentCategories && (
             <SearchHelperBottomSheetButton
-              variant={selectedOptions.subParentCategory.id > 0 ? 'contained' : 'outlined'}
+              variant={selectedOptions.subParentCategory.id > 0 ? 'solid' : 'outline'}
               onClick={handleClickCtaButton}
             >
               {selectedOptions.subParentCategory.id > 0

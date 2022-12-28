@@ -1,7 +1,5 @@
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 function MyPortfolioLanding02({ isSmallHeight }: { isSmallHeight: boolean }) {
   const {
@@ -26,9 +24,10 @@ function MyPortfolioLanding02({ isSmallHeight }: { isSmallHeight: boolean }) {
             height="auto"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/new_price_card_img.png`}
             alt="price_card"
+            round={20}
             disableAspectRatio
+            disableSkeleton
             customStyle={{
-              borderRadius: 20,
               filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
             }}
           />
@@ -37,9 +36,10 @@ function MyPortfolioLanding02({ isSmallHeight }: { isSmallHeight: boolean }) {
             height="auto"
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/new_product_card_img.jpg`}
             alt="product_card"
+            round={20}
             disableAspectRatio
+            disableSkeleton
             customStyle={{
-              borderRadius: 20,
               filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.08))'
             }}
           />

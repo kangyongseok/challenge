@@ -257,7 +257,7 @@ function Search() {
         </Typography>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           customStyle={{ marginTop: 20 }}
           onClick={() => setIsSearchEmpty(false)}

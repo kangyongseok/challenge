@@ -2,11 +2,9 @@ import type { MouseEvent } from 'react';
 
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import type { Brand } from '@dto/brand';
 
@@ -76,8 +74,9 @@ function HotBrandList({ onClick, checkList }: HotBrandListProps) {
                 .toLowerCase()
                 .replace(/\s/g, '')}.png`}
               alt={nameEng}
+              round="50%"
               disableAspectRatio
-              style={{ borderRadius: '50%', backgroundColor: '#eff2f7' }}
+              style={{ backgroundColor: '#eff2f7' }}
             />
             <Typography
               variant="small1"

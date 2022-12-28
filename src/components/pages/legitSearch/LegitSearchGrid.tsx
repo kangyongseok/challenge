@@ -3,12 +3,11 @@ import { useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Grid, Typography } from 'mrcamel-ui';
+import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import { CSSObject } from '@emotion/react';
 
 import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import { fetchProductLegits } from '@api/productLegit';
 
@@ -78,9 +77,9 @@ function LegitSearchGrid() {
     <Box component="section" customStyle={{ padding: 20 }}>
       {isLoading && (
         <Skeleton
-          width="70px"
-          height="16px"
-          isRound
+          width={70}
+          height={16}
+          round={8}
           disableAspectRatio
           customStyle={{
             marginBottom: 13

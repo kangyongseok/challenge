@@ -1,11 +1,10 @@
 import { useResetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Grid, Typography } from 'mrcamel-ui';
+import { Box, Grid, Image, Typography } from 'mrcamel-ui';
 
 // import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -46,7 +45,6 @@ function HomeQuickSaleProducts() {
         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/welcome/quick_product_banner.png`}
         alt="Auth Seller Banner Img"
         onClick={handleClick}
-        disableSkeletonRender={false}
       />
       <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
         <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 20 }}>

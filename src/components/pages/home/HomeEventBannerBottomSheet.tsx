@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Typography } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { BottomSheet, Button, Flexbox, Image, Typography } from 'mrcamel-ui';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';

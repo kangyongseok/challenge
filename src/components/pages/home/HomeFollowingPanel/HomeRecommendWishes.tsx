@@ -3,11 +3,10 @@ import { useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Image, Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -109,8 +108,9 @@ function HomeRecommendWishes() {
           }}
         >
           <Image
-            height="104px"
+            height={104}
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/my-portfolio-main-banner.png`}
+            alt="MyPortfolio Main Banner Img"
             disableAspectRatio
             onClick={() => router.push('/myPortfolio')}
           />
@@ -155,8 +155,8 @@ function HomeRecommendWishes() {
       >
         {(isLoading || isLoadingUserHistory) && (
           <>
-            <Skeleton width="100%" maxWidth="153px" height="24px" disableAspectRatio isRound />
-            <Skeleton width="105px" height="16px" disableAspectRatio isRound />
+            <Skeleton width="100%" maxWidth={153} height={24} round={8} disableAspectRatio />
+            <Skeleton width={105} height={16} round={8} disableAspectRatio />
           </>
         )}
         {!isLoading && !enabledUserHistories && (
@@ -212,31 +212,31 @@ function HomeRecommendWishes() {
         <Flexbox direction="vertical" gap={12} customStyle={{ padding: '0 20px' }}>
           <Card gap={12}>
             <Box customStyle={{ position: 'relative', width: 48, height: 48 }}>
-              <Skeleton customStyle={{ borderRadius: 32 }} />
+              <Skeleton round={32} />
               <Badge>
                 <Skeleton />
               </Badge>
             </Box>
             <Flexbox direction="vertical" gap={15} customStyle={{ flexGrow: 1 }}>
-              <Skeleton width="100%" height="40px" disableAspectRatio isRound />
+              <Skeleton width="100%" height={40} round={8} disableAspectRatio />
               <Flexbox alignment="center" justifyContent="space-between">
-                <Skeleton width="100%" maxWidth="70px" height="16px" disableAspectRatio isRound />
-                <Skeleton width="30px" height="16px" disableAspectRatio isRound />
+                <Skeleton width="100%" maxWidth={70} height={16} round={8} disableAspectRatio />
+                <Skeleton width={30} height={16} round={8} disableAspectRatio />
               </Flexbox>
             </Flexbox>
           </Card>
           <Card gap={12}>
             <Box customStyle={{ position: 'relative', width: 48, height: 48 }}>
-              <Skeleton customStyle={{ borderRadius: 32 }} />
+              <Skeleton round={32} />
               <Badge>
                 <Skeleton />
               </Badge>
             </Box>
             <Flexbox direction="vertical" gap={15} customStyle={{ flexGrow: 1 }}>
-              <Skeleton width="100%" height="40px" disableAspectRatio isRound />
+              <Skeleton width="100%" height={40} round={8} disableAspectRatio />
               <Flexbox alignment="center" justifyContent="space-between">
-                <Skeleton width="100%" maxWidth="70px" height="16px" disableAspectRatio isRound />
-                <Skeleton width="30px" height="16px" disableAspectRatio isRound />
+                <Skeleton width="100%" maxWidth={70} height={16} round={8} disableAspectRatio />
+                <Skeleton width={30} height={16} round={8} disableAspectRatio />
               </Flexbox>
             </Flexbox>
           </Card>

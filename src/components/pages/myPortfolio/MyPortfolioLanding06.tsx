@@ -1,6 +1,4 @@
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
 function MyPortfolioLanding06() {
   const {
@@ -29,6 +27,7 @@ function MyPortfolioLanding06() {
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/new_frame_06.png`}
           alt="판매하기"
           disableAspectRatio
+          disableSkeleton
         />
       </Box>
     </Flexbox>

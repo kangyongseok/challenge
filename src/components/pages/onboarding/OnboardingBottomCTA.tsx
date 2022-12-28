@@ -18,7 +18,7 @@ const OnboardingBottomCTA = forwardRef<
         <Button
           ref={forwardedRef}
           fullWidth
-          variant="contained"
+          variant="solid"
           size="xlarge"
           customStyle={{ background: '#2937FF' }}
           {...props}

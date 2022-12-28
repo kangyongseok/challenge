@@ -1,7 +1,7 @@
 import { Box } from 'mrcamel-ui';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
-import type { Product, ProductDetail } from '@dto/product';
+import type { ProductDetail } from '@dto/product';
 
 import { checkAgent } from '@utils/common';
 
@@ -30,7 +30,8 @@ function ProductDetailFooter({
   if (isCamelSellerProduct)
     return (
       <ProductSellerBottomMenu
-        product={data?.product as Product}
+        product={data?.product}
+        noSellerReviewAndHasTarget={data?.noSellerReviewAndHasTarget || false}
         status={data?.product.status as number}
         refresh={refresh}
       />

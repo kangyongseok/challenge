@@ -46,7 +46,7 @@ function BudgetInput() {
           <Flexbox gap={8} direction="vertical" alignment="center" justifyContent="center">
             <Button
               fullWidth
-              variant="contained"
+              variant="solid"
               size="large"
               disabled={!isSubmittable || isLoading}
               brandColor="primary"
@@ -60,7 +60,7 @@ function BudgetInput() {
             </Button>
             <Button
               fullWidth
-              variant="outlined"
+              variant="outline"
               size="large"
               disabled={isLoading}
               brandColor="primary"

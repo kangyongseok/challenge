@@ -42,7 +42,7 @@ function SearchHelperFixedBottomCTAButton({
           </InfoLabel>
         )}
         <Button
-          variant={showEnableSkip ? 'outlined' : 'contained'}
+          variant={showEnableSkip ? 'outline' : 'solid'}
           size="large"
           brandColor="primary"
           fullWidth

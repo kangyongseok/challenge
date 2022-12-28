@@ -104,7 +104,7 @@ function PersonalInput() {
         <Footer>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="xlarge"
             disabled={
               isLoading || !(genderValue === 'M' || genderValue === 'F') || isShowYearOfBirthError

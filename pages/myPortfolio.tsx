@@ -1,4 +1,5 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
@@ -20,7 +21,6 @@ import {
   MyPotyfolioDialog
 } from '@components/pages/myPortfolio';
 
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { postPreReserve } from '@api/user';
@@ -95,7 +95,6 @@ function MyPortfolio() {
   }, [openReservation, windowRemoveEvent, windowAddEvent]);
 
   useEffect(() => {
-    ChannelTalk.hideChannelButton();
     return () => {
       setInnerHeight(0);
       setCurrentSection(0);
@@ -111,7 +110,6 @@ function MyPortfolio() {
   }, [currentSection]);
 
   useEffect(() => {
-    ChannelTalk.hideChannelButton();
     toggleEvent();
   }, [openReservation, toggleEvent]);
 
@@ -313,7 +311,7 @@ function MyPortfolio() {
           </Flexbox>
         </Flexbox>
         {currentSection > 0 && (
-          <ReservationButton onClick={handleClickReservation} variant="contained">
+          <ReservationButton onClick={handleClickReservation} variant="solid">
             <Icon name="AlarmFilled" />
             오픈 알림받기
           </ReservationButton>

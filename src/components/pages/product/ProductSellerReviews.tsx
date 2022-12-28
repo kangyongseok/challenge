@@ -21,16 +21,22 @@ import { productDetailAtt } from '@utils/products';
 
 import { pulse } from '@styles/transition';
 
-import atom from '@recoil/productReview';
+import { reviewBlockState } from '@recoil/productReview';
 
-function ProductSellerReviews({ product }: { product?: Product }) {
+function ProductSellerReviews({
+  product,
+  roleSellerUserId
+}: {
+  product?: Product;
+  roleSellerUserId?: number;
+}) {
   const router = useRouter();
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const [reviewBlockState, atomReviewBlockState] = useRecoilState(atom.reviewBlockState);
+  const [reviewBlock, setReviewBlockState] = useRecoilState(reviewBlockState);
 
   const sellerId = product?.productSeller.id || 0;
 
@@ -60,11 +66,11 @@ function ProductSellerReviews({ product }: { product?: Product }) {
   }, [sellerId]);
 
   useEffect(() => {
-    if (reviewBlockState) {
-      atomReviewBlockState(false);
+    if (reviewBlock) {
+      setReviewBlockState(false);
       queryClient.invalidateQueries(queryKeys.products.reviewInfo(reviewInfoParams));
     }
-  }, [reviewBlockState, reviewInfoParams, queryClient, atomReviewBlockState]);
+  }, [reviewBlock, reviewInfoParams, queryClient, setReviewBlockState]);
 
   useEffect(() => {
     setReviewInfoParams((props) => ({ ...props, sellerId }));
@@ -81,16 +87,20 @@ function ProductSellerReviews({ product }: { product?: Product }) {
         alignment="center"
         customStyle={{ margin: '32px 0 20px' }}
         onClick={() => {
-          productDetailAtt({
-            key: attrKeys.products.CLICK_SELLER_REVIEW,
-            product: product as Product,
-            rest: {
-              attr: 'ALL'
-            },
-            source: attrProperty.productSource.PRODUCT_LIST
-          });
+          if (product)
+            productDetailAtt({
+              key: attrKeys.products.CLICK_SELLER_REVIEW,
+              product,
+              rest: {
+                attr: 'ALL'
+              },
+              source: attrProperty.productSource.PRODUCT_LIST
+            });
+
           router.push({
-            pathname: `/sellerInfo/${sellerId}`,
+            pathname: roleSellerUserId
+              ? `/userInfo/${roleSellerUserId}`
+              : `/sellerInfo/${sellerId}`,
             query: {
               tab: 'reviews'
             }

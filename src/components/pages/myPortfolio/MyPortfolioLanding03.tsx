@@ -1,7 +1,5 @@
 import { useQuery } from 'react-query';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Box, Image, Typography, useTheme } from 'mrcamel-ui';
 
 import { fetchUserInfo } from '@api/user';
 
@@ -32,6 +30,7 @@ function MyPortfolioLanding03() {
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_05_F.png`}
             alt="여성 샤넬 클래식 미디움 플립백 가격 그래프 이미지"
             disableAspectRatio
+            disableSkeleton
           />
         ) : (
           <Image
@@ -40,6 +39,7 @@ function MyPortfolioLanding03() {
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_05_M.png`}
             alt="남성 조던 1 레트로 하이 OG 블랙 모카 가격 그래프 이미지"
             disableAspectRatio
+            disableSkeleton
           />
         )}
       </Box>

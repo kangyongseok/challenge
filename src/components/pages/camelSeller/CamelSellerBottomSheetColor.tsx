@@ -65,13 +65,11 @@ function CamelSellerBottomSheetColor({ onClick }: BottomSheetColorProps) {
               >
                 {needImage ? (
                   <Avatar
-                    width="40px"
-                    height="40px"
+                    width={40}
+                    height={40}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                    round="50%"
                     alt="Color Img"
-                    customStyle={{
-                      borderRadius: '50%'
-                    }}
                   />
                 ) : (
                   <ColorSample colorCode={filterColors[description as keyof typeof filterColors]} />
@@ -99,6 +97,7 @@ const ColorViewWrap = styled.div`
 const ColorSample = styled.div<{ colorCode: string }>`
   width: 40px;
   height: 40px;
+  margin: auto;
   border-radius: 50%;
   border: 1px solid transparent;
   background: ${({ colorCode }) => colorCode};

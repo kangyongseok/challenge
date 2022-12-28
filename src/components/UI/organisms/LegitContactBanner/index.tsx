@@ -1,7 +1,6 @@
-import { Box, CustomStyle, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Box, Image, Typography, dark, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 import { PopupButton } from '@typeform/embed-react';
-
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 

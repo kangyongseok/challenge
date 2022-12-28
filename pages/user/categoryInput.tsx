@@ -103,7 +103,7 @@ function CategoryInput() {
         <Footer>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             size="large"
             disabled={!isSubmittable || isLoading}
             brandColor="primary"

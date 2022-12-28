@@ -8,8 +8,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   UserShopProductDeleteConfirmDialog,
   UserShopProductList,
-  UserShopProductMangeBottomSheet,
-  UserShopProductSoldOutConfirmBottomSheet,
+  UserShopProductManageBottomSheet,
   UserShopTabs
 } from '@components/pages/userShop';
 
@@ -32,8 +31,7 @@ function UserShop() {
         <UserShopTabs />
         <UserShopProductList />
       </GeneralTemplate>
-      <UserShopProductMangeBottomSheet />
-      <UserShopProductSoldOutConfirmBottomSheet />
+      <UserShopProductManageBottomSheet />
       <UserShopProductDeleteConfirmDialog />
       <MyShopAppDownloadDialog />
       <CamelSellerFloatingButton source="MYSHOP" />

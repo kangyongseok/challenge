@@ -53,7 +53,7 @@ function LogoutDialog({ status, setLogoutToggle }: LogoutProps) {
         </Button>
         <Button
           fullWidth
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           customStyle={{ minWidth: 128 }}
           onClick={handleMaintainLogin}

@@ -273,7 +273,7 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
             </Typography>
           )}
           <Button
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="small"
             onClick={editable ? handleClickEdit : handleClickPost}

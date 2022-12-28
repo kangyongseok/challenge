@@ -80,7 +80,7 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
               {data.labels[0] && (
                 <Label
                   size="xsmall"
-                  variant="contained"
+                  variant="solid"
                   text={data.labels.filter((label) => label.codeId === 14)[0].name}
                   customStyle={{
                     background: primary.highlight,
@@ -108,7 +108,7 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
               </Typography>
             </Flexbox>
           </Box>
-          <Button variant="contained" onClick={handleClickSellPrice}>
+          <Button variant="solid" onClick={handleClickSellPrice}>
             이 금액으로 판매하기
           </Button>
         </Flexbox>

@@ -168,7 +168,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                 <ChipStyle
                   key={`top-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant="contained"
+                  variant="solid"
                   onClick={handleClickSizeLabel({
                     type: 'top',
                     selectedValue: categorySizeId,
@@ -192,7 +192,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                 <ChipStyle
                   key={`bottom-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant="contained"
+                  variant="solid"
                   onClick={handleClickSizeLabel({
                     type: 'bottom',
                     selectedValue: categorySizeId,
@@ -223,7 +223,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                 <ChipStyle
                   key={`shoes-${viewSize}-${categorySizeId}`}
                   isRound
-                  variant="contained"
+                  variant="solid"
                   onClick={handleClickSizeLabel({
                     type: 'shoes',
                     selectedValue: categorySizeId,
@@ -239,7 +239,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
         )}
       </Box>
       <OnboardingBottomCTA
-        variant={hasSize ? 'contained' : 'outlined'}
+        variant={hasSize ? 'solid' : 'outline'}
         onClick={handleClickCTAButton}
         disabled={
           !(selectedBottomList?.length && selectedShoesList?.length && selectedTopList?.length)

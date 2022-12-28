@@ -65,11 +65,11 @@ function MowebFooter() {
     <FooterWrap bottomPadding={pathname === '/products/[id]' ? 100 : 0}>
       <Typography weight="bold">카멜 앱으로 더 편하게 매물 찾기</Typography>
       <Flexbox customStyle={{ marginTop: 12 }} gap={8}>
-        <Button variant="outlined" onClick={handleClickDownload}>
+        <Button variant="outline" onClick={handleClickDownload}>
           <Icon name="BrandAppleFilled" />
           <Typography weight="medium">IOS</Typography>
         </Button>
-        <Button variant="outlined" onClick={handleClickDownload}>
+        <Button variant="outline" onClick={handleClickDownload}>
           <Icon name="BrandPlayStoreFilled" />
           <Typography weight="medium">Android</Typography>
         </Button>

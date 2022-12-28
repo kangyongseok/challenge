@@ -19,7 +19,6 @@ import {
 } from '@components/pages/mypage';
 
 import Initializer from '@library/initializer';
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo } from '@api/user';
@@ -59,14 +58,6 @@ function MyPage() {
       title: accessUser ? 'LOGIN' : 'NONLOGIN'
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    ChannelTalk.hideChannelButton();
-
-    return () => {
-      ChannelTalk.showChannelButton();
-    };
   }, []);
 
   if (!accessUser || !userInfo) {

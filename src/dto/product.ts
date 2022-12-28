@@ -1,8 +1,9 @@
-import type { ProductLegit } from '@dto/productLegit';
+import { Channel } from '@dto/channel';
 
 import type { PhotoGuideImages } from '@typings/camelSeller';
 
-import { SellerRole } from './user';
+import type { UserRoleSeller } from './user';
+import type { ProductLegit } from './productLegit';
 import type {
   CategoryCode,
   CommonCode,
@@ -361,6 +362,7 @@ export type ProductResult = {
   imageDetails: string;
   imageMain: string;
   imageThumbnail: string;
+  isNoSellerReviewAndHasTarget: boolean;
   imageMainLarge: string;
   imageDetailsLarge: string;
   imageModel: string | null;
@@ -407,6 +409,7 @@ export type ProductResult = {
   }[];
   quoteTitle: string;
   description: string;
+  isDeleted: boolean | null;
 };
 
 export type PageProduct = Paged<Product>;
@@ -487,14 +490,17 @@ export interface Search {
 
 export interface ProductDetail {
   product: Product;
+  channels: Channel[];
+  noSellerReviewAndHasTarget: boolean;
   productLegit: boolean;
   productSearchOptions: ProductSearchOption;
   quoteTitleCount: number;
   relatedKeywords: string[];
   reportCount: number;
+  roleSeller: UserRoleSeller | null;
+  blockUser: boolean;
   showReviewPrompt: boolean;
   wish: boolean;
-  roleSeller: SellerRole;
 }
 
 export type ProductSellerReview = {
@@ -539,19 +545,7 @@ export interface SellerReview {
 
 export type ProductOrder = 'postedDesc' | 'postedAllDesc' | 'recommDesc' | 'priceAsc' | 'priceDesc';
 
-export interface PageProductResult {
-  content: ProductResult[];
-  empty: boolean;
-  first: boolean;
-  last: boolean;
-  number: number;
-  numberOfElements: number;
-  pageable: Page;
-  size: number;
-  sort: Sort;
-  totalElements: number;
-  totalPages: number;
-}
+export type PageProductResult = Paged<ProductResult>;
 
 export interface ProductContent {
   contents: Contents;
@@ -678,6 +672,17 @@ export interface UserPersonalStyleParams {
   purchaseTypeIds?: number[];
   styleIds?: number[];
   subParentCategoryIds?: number[];
+}
+
+export interface SellerInfo {
+  curnScore: string | null;
+  maxScore: string | null;
+  image: string | null;
+  name: string;
+  productCount: number;
+  reviewCount: number;
+  site: Site;
+  type: number;
 }
 
 export interface RecentSearchParams extends Omit<SearchParams, 'order'> {

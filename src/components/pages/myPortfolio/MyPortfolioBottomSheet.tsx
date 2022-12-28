@@ -259,7 +259,7 @@ function MyPortfolioBottomSheet({
               <TextInput
                 placeholder="010-"
                 borderWidth={1}
-                variant="outlined"
+                variant="outline"
                 onChange={handleChangePhone}
                 type="number"
                 pattern="[0-9]*"
@@ -285,7 +285,7 @@ function MyPortfolioBottomSheet({
             </Typography>
             <TextInput
               borderWidth={1}
-              variant="outlined"
+              variant="outline"
               placeholder="모델명 입력"
               onChange={(e) => {
                 handleChange(e);
@@ -323,7 +323,7 @@ function MyPortfolioBottomSheet({
           <Box customStyle={{ marginTop: 'auto' }}>
             {accessUser ? (
               <GradationCtaButton
-                variant="contained"
+                variant="solid"
                 fullWidth
                 size="large"
                 onClick={handleClickReserve}
@@ -332,7 +332,7 @@ function MyPortfolioBottomSheet({
               </GradationCtaButton>
             ) : (
               <KakaoCtaButton
-                variant="contained"
+                variant="solid"
                 size="large"
                 fullWidth
                 startIcon={<Icon name="KakaoFilled" />}

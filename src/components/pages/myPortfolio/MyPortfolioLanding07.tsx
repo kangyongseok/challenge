@@ -1,8 +1,6 @@
 import { useQuery } from 'react-query';
-import { Button, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 import { logEvent } from '@library/amplitude';
 
@@ -33,7 +31,7 @@ function MyPortfolioLanding07({
         <Typography weight="medium" variant="h3">
           내 명품의 가치를 가장 먼저 알아보세요!
         </Typography>
-        <GradationCtaButton size="large" fullWidth variant="contained" onClick={onClick}>
+        <GradationCtaButton size="large" fullWidth variant="solid" onClick={onClick}>
           <Icon name="AlarmFilled" />
           오픈 알림받기
         </GradationCtaButton>
@@ -41,7 +39,7 @@ function MyPortfolioLanding07({
           <AppDownloadCtaButton
             size="large"
             fullWidth
-            variant="contained"
+            variant="solid"
             onClick={() => {
               logEvent(attrKeys.myPortfolio.CLICK_APPDOWNLOAD, {
                 name: attrProperty.productName.MYPORTFOLIO,
@@ -63,6 +61,7 @@ function MyPortfolioLanding07({
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_left_img09_F.png`}
               alt="frame_left_img09"
               disableAspectRatio
+              disableSkeleton
             />
             <Image
               width={162}
@@ -70,6 +69,7 @@ function MyPortfolioLanding07({
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_right_img09_F.png`}
               alt="frame_right_img09"
               disableAspectRatio
+              disableSkeleton
             />
           </>
         ) : (
@@ -80,6 +80,7 @@ function MyPortfolioLanding07({
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_left_img09_M.png`}
               alt="frame_left_img09"
               disableAspectRatio
+              disableSkeleton
             />
             <Image
               width={162}
@@ -87,6 +88,7 @@ function MyPortfolioLanding07({
               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/frame_right_img09_M.png`}
               alt="frame_right_img09"
               disableAspectRatio
+              disableSkeleton
             />
           </>
         )}
@@ -126,7 +128,6 @@ const SlideupFrame = styled(Flexbox)<{ isAnimation: boolean }>`
   img:first-of-type {
     position: relative;
     top: 80px;
-    left: 20px;
   }
   ${({ isAnimation }): CSSObject => (isAnimation ? { animation: 'slideup 1s forwards' } : {})}
   @keyframes slideup {

@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
-
-import { Image } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -95,7 +93,7 @@ function DropDownSelect({
         data-drop-filter
         isSelectValue={!!activeValue && type !== 'recent'}
         disabledBg={disabledBg}
-        variant="contained"
+        variant="solid"
         ref={dropDownIconRef}
         onClick={handleClickFilterButton}
       >

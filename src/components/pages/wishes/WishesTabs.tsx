@@ -153,7 +153,7 @@ function WishesTabs() {
           </Button>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             onClick={handleClickConfirm}
             customStyle={{ minWidth: 128 }}

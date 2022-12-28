@@ -297,7 +297,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         <Button
           fullWidth
           size="large"
-          variant="contained"
+          variant="solid"
           customStyle={{ marginTop: 32, background: common.ui95, color: common.ui20 }}
           onClick={handleClickLowerProduct}
         >

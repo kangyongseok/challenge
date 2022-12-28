@@ -165,7 +165,7 @@ function LegitStatusFailContents() {
             (status === 12 && !canModified) ||
             (status === 12 && canModified && !isAuthUser)) && (
             <Button
-              variant="contained"
+              variant="solid"
               size="medium"
               brandColor="black"
               fullWidth

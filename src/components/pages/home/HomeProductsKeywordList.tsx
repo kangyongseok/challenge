@@ -7,13 +7,12 @@ import { useRecoilState } from 'recoil';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { ProductResult, SearchParams } from '@dto/product';
 
@@ -286,8 +285,8 @@ function HomeProductsKeywordList() {
             ? Array.from({ length: 10 }, (_, index) => (
                 <Tab key={`product-tab-skeleton-${index}`} isActive={false}>
                   <Flexbox direction="vertical" gap={4}>
-                    <Skeleton width="130px" height="19px" disableAspectRatio isRound />
-                    <Skeleton width="90px" height="15px" disableAspectRatio isRound />
+                    <Skeleton width={130} height="19px" round={8} disableAspectRatio />
+                    <Skeleton width={90} height="15px" round={8} disableAspectRatio />
                   </Flexbox>
                 </Tab>
               ))

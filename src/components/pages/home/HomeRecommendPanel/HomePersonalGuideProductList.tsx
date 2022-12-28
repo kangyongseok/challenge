@@ -4,13 +4,12 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-import Skeleton from '@components/UI/atoms/Skeleton';
 
 import { GuideProducts } from '@dto/personal';
 
@@ -153,8 +152,8 @@ function HomePersonalGuideProductList() {
         <Flexbox alignment="flex-start">
           {isLoading && (
             <Flexbox direction="vertical" gap={4} customStyle={{ flexGrow: 1 }}>
-              <Skeleton width="100%" maxWidth="120px" height="24px" isRound disableAspectRatio />
-              <Skeleton width="100%" maxWidth="100px" height="24px" isRound disableAspectRatio />
+              <Skeleton width="100%" maxWidth={120} height={24} round={8} disableAspectRatio />
+              <Skeleton width="100%" maxWidth={100} height={24} round={8} disableAspectRatio />
             </Flexbox>
           )}
           {!isLoading && (

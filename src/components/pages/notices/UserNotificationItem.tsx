@@ -2,9 +2,7 @@ import { useState } from 'react';
 
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Box, Flexbox, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
 
 import type { ProductKeywordsContent, UserNoti } from '@dto/user';
 import type { SearchParams } from '@dto/product';
@@ -139,8 +137,8 @@ function UserNotificationItem({
           width={48}
           height={48}
           disableAspectRatio
+          round="50%"
           alt="Notification Img"
-          style={{ borderRadius: '50%' }}
         />
       </Box>
       <Flexbox

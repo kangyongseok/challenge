@@ -11,6 +11,7 @@ import {
   CustomStyle,
   Flexbox,
   Icon,
+  Image,
   Label,
   Typography,
   useTheme
@@ -18,10 +19,11 @@ import {
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
-import { Badge, Image } from '@components/UI/atoms';
+import { Badge } from '@components/UI/atoms';
 import { ProductWishCancelDialog } from '@components/pages/product';
 
 import type { Product } from '@dto/product';
+import { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -48,7 +50,7 @@ import useProductCardState from '@hooks/useProductCardState';
 import { Area, Content, MetaSocial, Title, WishButton } from './ProductListCard.styles';
 
 interface ProductListCardProps extends HTMLAttributes<HTMLDivElement> {
-  product: Product;
+  product: Product | ProductResult;
   hideProductLabel?: boolean;
   hideAreaWithDateInfo?: boolean;
   hideMetaSocialInfo?: boolean;
@@ -94,7 +96,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     targetProductId,
     brand: { name: brandName } = {},
     category: { name: categoryName } = {},
-    line,
     site: { name: siteName } = {},
     targetProductPrice,
     scoreTotal,
@@ -116,7 +117,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
   const router = useRouter();
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { primary, secondary, common }
     }
   } = useTheme();
 
@@ -206,7 +207,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, { source });
     }
 
-    router.push(getProductDetailUrl({ product }));
+    router.push(getProductDetailUrl({ product: product as Product }));
   };
 
   const handleClickWish = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -267,7 +268,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
       id: targetProductId,
       brand: brandName,
       category: categoryName,
-      line,
+      line: (product as Product)?.line || '',
       site: siteName,
       price: targetProductPrice,
       scoreTotal,
@@ -342,12 +343,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           />
           <Content isRound={isRound}>
             <Image
-              variant="backgroundImage"
               src={imageUrl}
               alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
-              isRound={isRound}
+              round={isRound ? 8 : 0}
               disableLazyLoad={false}
-              disableSkeletonRender={false}
+              disableOnBackground={false}
             />
             <WishButton onClick={handleClickWish}>
               {isWish ? (
@@ -402,18 +402,18 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
                 </Typography>
                 {productLegitStatusText && (
                   <Label
-                    variant="outlined"
+                    variant="outline"
                     size="xsmall"
                     brandColor="black"
                     text={productLegitStatusText}
                   />
                 )}
                 {isPopular && (
-                  <Label variant="contained" size="xsmall" brandColor="black" text="인기" />
+                  <Label variant="solid" size="xsmall" brandColor="black" text="인기" />
                 )}
                 {showPriceDown && (
                   <Label
-                    variant="outlined"
+                    variant="outline"
                     size="xsmall"
                     brandColor="red"
                     text="가격하락"
@@ -465,11 +465,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           <>
             {showDuplicateUploadAlert && (
               <Alert
-                brandColor="primary-highlight"
                 onClick={handleClickAlert}
                 customStyle={{
                   marginTop: 8,
-                  padding: '10px 20px'
+                  padding: '10px 20px',
+                  backgroundColor: primary.highlight
                 }}
               >
                 <Flexbox justifyContent="space-between" alignment="center">
@@ -482,11 +482,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             )}
             {!showDuplicateUploadAlert && showDuplicateWithPriceDownAlert && (
               <Alert
-                brandColor="primary-highlight"
                 onClick={handleClickAlert}
                 customStyle={{
                   marginTop: 8,
-                  padding: '10px 20px'
+                  padding: '10px 20px',
+                  backgroundColor: primary.highlight
                 }}
               >
                 <Flexbox justifyContent="space-between" alignment="center">

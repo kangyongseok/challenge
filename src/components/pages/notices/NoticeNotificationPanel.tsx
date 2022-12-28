@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
@@ -141,7 +141,7 @@ function NoticeNotificationPanel() {
                         data-pathname={announceDetail.parameter}
                         onClick={handleClickCtaButton}
                         brandColor="primary"
-                        variant="contained"
+                        variant="solid"
                         size="large"
                         fullWidth
                       >
@@ -195,6 +195,8 @@ function NoticeNotificationPanel() {
                               key={`announce-detail-image-${src}`}
                               src={src}
                               alt="Announce Detail Img"
+                              round={8}
+                              disableAspectRatio
                             />
                           )
                       )}
@@ -242,10 +244,6 @@ const NoticeContentsWrap = styled(Flexbox)<{ open: boolean }>`
   opacity: ${({ open }) => (open ? 1 : 0)};
   margin-top: ${({ open }) => (open ? 32 : 0)}px;
   transition: all 0.2s ease-in-out;
-`;
-
-const Image = styled.img`
-  width: 100%;
 `;
 
 export default NoticeNotificationPanel;

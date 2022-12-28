@@ -187,7 +187,7 @@ function LegitStatusCtaButton() {
           >
             <Flexbox gap={8}>
               <Button
-                variant="outlinedGhost"
+                variant="outlineGhost"
                 fullWidth
                 size="xlarge"
                 onClick={handleClickProductDetail}
@@ -196,7 +196,7 @@ function LegitStatusCtaButton() {
               </Button>
               <Button
                 brandColor="primary"
-                variant="contained"
+                variant="solid"
                 fullWidth
                 size="xlarge"
                 onClick={() => ChannelTalk.showMessenger()}
@@ -210,7 +210,7 @@ function LegitStatusCtaButton() {
       {data?.status === 12 && data?.canModified && isAuthUser && (
         <Button
           brandColor="primary"
-          variant="contained"
+          variant="solid"
           fullWidth
           size="xlarge"
           onClick={handleClickContinue}
@@ -249,7 +249,7 @@ function LegitStatusCtaButton() {
             }}
           >
             <Button
-              variant="contained"
+              variant="solid"
               brandColor="primary"
               fullWidth
               size="xlarge"

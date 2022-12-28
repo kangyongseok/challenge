@@ -1,7 +1,13 @@
 import compact from 'lodash-es/compact';
 
 import type { ActivityNotiParams, ManageParams } from '@dto/userHistory';
-import type { CategoryWishesParams, UserProductsParams } from '@dto/user';
+import type {
+  CategoryWishesParams,
+  ProductsByUserIdParams,
+  UserBlockParams,
+  UserProductsParams,
+  UserReviewsByUserIdParams
+} from '@dto/user';
 import type {
   OpinionLegitsParams,
   ProductLegitCommentsParams,
@@ -32,6 +38,7 @@ import type {
 } from '@dto/model';
 import type { LegitDashboardParams } from '@dto/dashboard';
 import type { ContentProductsParams, PhotoGuideParams } from '@dto/common';
+import type { ChannelsParams } from '@dto/channel';
 import type { SuggestParams } from '@dto/brand';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
@@ -102,6 +109,7 @@ const products = {
     compact([...products.all, 'searchLowerProducts', params]),
   searchRelatedKeyword: (params: SearcgRelatedKeywordsParams) =>
     [...products.all, 'searchRelatedKeyword', params] as const,
+  sellerInfo: (sellerId: number) => [...products.all, 'sellerInfo', sellerId] as const,
   sellerEditProducs: (params: ProductParams) =>
     [...products.all, 'sellerEditProducs', params] as const
 };
@@ -136,7 +144,13 @@ const users = {
   productKeywordProducts: (id: number) => [...users.all, 'productKeywordProducts', id] as const,
   products: (params?: UserProductsParams) => [...users.all, 'products', params] as const,
   legitProfile: (userId: number) => [...users.all, 'legitProfile', userId] as const,
-  simpleUserInfo: () => [...users.all, 'simpleUserInfo'] as const
+  simpleUserInfo: () => [...users.all, 'simpleUserInfo'] as const,
+  infoByUserId: (userId: number) => [...users.all, 'infoByUserId', userId] as const,
+  productsByUserId: (params: ProductsByUserIdParams) =>
+    [...users.all, 'productsByUserId', params] as const,
+  reviewsByUserId: (params: UserReviewsByUserIdParams) =>
+    [...users.all, 'reviewsByUserId', params] as const,
+  blocks: (params: UserBlockParams) => [...users.all, 'blocks', params] as const
 };
 
 const userAuth = {
@@ -195,6 +209,12 @@ const dashboards = {
   legit: (params?: LegitDashboardParams) => [...dashboards.all, 'legit', params] as const
 };
 
+const channels = {
+  all: ['channels'] as const,
+  channels: (params: ChannelsParams) => [...channels.all, 'channel', params] as const,
+  channel: (channelId: number) => [...channels.all, 'channel', channelId] as const
+};
+
 const queryKeys = {
   brands,
   categories,
@@ -209,7 +229,8 @@ const queryKeys = {
   models,
   commons,
   nextJs,
-  client
+  client,
+  channels
 };
 
 export default queryKeys;

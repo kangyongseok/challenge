@@ -11,8 +11,8 @@ export const Img = styled.img<{ rotate: number }>`
 
 export const CloseIcon = styled(Icon)`
   position: absolute;
-  top: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20}px;
-  right: 20px;
+  top: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 16}px;
+  right: 16px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
   cursor: pointer;
 `;

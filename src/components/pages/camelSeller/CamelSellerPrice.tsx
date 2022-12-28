@@ -1,15 +1,14 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
-import { Image } from '@components/UI/atoms';
 
 import { RecentSearchParams } from '@dto/product';
 
@@ -281,6 +280,7 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
                       ? IMG_CAMEL_PLATFORM_NUMBER
                       : product.site.id
                   }.png`}
+                  alt="Platform Logo Img"
                   width={15}
                 />
                 <Typography variant="small1" customStyle={{ color: common.ui60 }}>
@@ -328,7 +328,7 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
       )}
       <Box>
         <Button
-          variant="contained"
+          variant="solid"
           onClick={() => {
             logEvent(attrKeys.camelSeller.CLICK_MARKET_PRICE, {
               name: attrProperty.name.PRODUCT_MAIN,

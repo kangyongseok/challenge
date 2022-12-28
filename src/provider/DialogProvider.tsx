@@ -17,14 +17,10 @@ import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { productDetailAtt } from '@utils/products';
-import { commaNumber, copyToClipboard } from '@utils/common';
+import { commaNumber, copyToClipboard, noop } from '@utils/common';
 
 import type { ShareData } from '@typings/common';
 import { dialogState, toastState } from '@recoil/common';
-
-const noop = (): void => {
-  //
-};
 
 function DialogProvider() {
   const {
@@ -35,6 +31,7 @@ function DialogProvider() {
     onClose,
     content,
     product,
+    customStyle,
     customStyleTitle,
     disabledOnClose = false,
     shareData
@@ -50,18 +47,24 @@ function DialogProvider() {
       case 'deleteLegitAdminOpinion':
       case 'deleteLegitResultComment':
       case 'deleteLegitResultReply':
+      case 'leaveChannel':
+      case 'blockUser':
+      case 'loginError':
         return 'textWithTwoButton';
       case 'legitRequestOnlyInApp':
       case 'legitRequestOnlyInIOS':
-        return 'textWithOneButton';
       case 'legitServiceNotice':
-        return 'textWithOneButton';
       case 'appUpdateNotice':
+      case 'legitPhotoGuide':
+      case 'loginProviderError':
         return 'textWithOneButton';
       case 'appAuthCheck':
+      case 'unblockBlockedUser':
+      case 'confirmDeal':
+      case 'successMakeAppointment':
+      case 'cancelAppointment':
+      case 'requiredAppUpdateForChat':
         return 'textWithTwoVerticalButton';
-      case 'legitPhotoGuide':
-        return 'textWithOneButton';
       default:
         return 'text';
     }
@@ -88,7 +91,11 @@ function DialogProvider() {
 
   return (
     <ThemeProvider theme={theme || 'light'}>
-      <Dialog open={!!type} onClose={!disabledOnClose ? handleClose : noop}>
+      <Dialog
+        open={!!type}
+        onClose={!disabledOnClose ? handleClose : noop}
+        customStyle={customStyle}
+      >
         {type === 'legitServiceNotice' && (
           <Box
             customStyle={{
@@ -111,9 +118,11 @@ function DialogProvider() {
                 customStyle={{ position: 'absolute', right: 0, margin: '-2px -4px 0 0' }}
               />
             </Box>
-            <Typography variant="body1" weight="medium" customStyle={{ textAlign: 'center' }}>
-              {dialogTitle[type]}
-            </Typography>
+            {has(dialogTitle, type) && (
+              <Typography variant="body1" weight="medium" customStyle={{ textAlign: 'center' }}>
+                {dialogTitle[type as keyof typeof dialogTitle]}
+              </Typography>
+            )}
           </>
         )}
         {type && !['SNSShare'].includes(type) && (
@@ -125,7 +134,7 @@ function DialogProvider() {
                   weight="bold"
                   customStyle={{ width: '100%', textAlign: 'center', ...customStyleTitle }}
                 >
-                  {dialogTitle[type]}
+                  {dialogTitle[type as keyof typeof dialogTitle]}
                 </Typography>
               )}
               {content ||
@@ -138,7 +147,7 @@ function DialogProvider() {
             {dialogDisplayType === 'textWithTwoVerticalButton' && (
               <Flexbox direction="vertical" gap={8}>
                 <Button
-                  variant="contained"
+                  variant="solid"
                   brandColor="primary"
                   size="large"
                   customStyle={{ width: '100%' }}
@@ -171,7 +180,7 @@ function DialogProvider() {
                   </Button>
                 )}
                 <Button
-                  variant="contained"
+                  variant="solid"
                   brandColor="primary"
                   size="large"
                   customStyle={{ width: '100%' }}

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
@@ -49,7 +49,9 @@ function ProductSoldoutCard({
           {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
         </Typography>
       </Box>
-      <ImageWrap imageUrl={product?.imageMain} />
+      <Box customStyle={{ marginLeft: 20, width: 72, height: 72 }}>
+        <Image src={product?.imageMain || ''} alt="Product Img" round={8} disableAspectRatio />
+      </Box>
     </StyledWrap>
   );
 }
@@ -64,15 +66,6 @@ const StyledWrap = styled(Flexbox)`
       palette: { common }
     }
   }) => common.bg02};
-`;
-
-const ImageWrap = styled.div<{ imageUrl?: string }>`
-  margin-left: 20px;
-  width: 72px;
-  height: 72px;
-  border-radius: 8px;
-  background: url(${({ imageUrl }) => imageUrl}) no-repeat 50% 50%;
-  background-size: cover;
 `;
 
 const EllipsisTitle = styled(Typography)`

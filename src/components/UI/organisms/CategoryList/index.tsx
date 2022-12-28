@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
-
-import { Skeleton } from '@components/UI/atoms';
+import { Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 
 import { fetchParentCategories } from '@api/category';
 
@@ -17,7 +15,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import { CategoryItem, CategoryName, StyledCategoryList } from './CategoryList.styles';
 
 interface CategoryListProps {
-  variant?: 'contained' | 'outlined';
+  variant?: 'solid' | 'outline';
   onClickCategory?: ({
     parentId,
     subParentId,
@@ -33,7 +31,7 @@ interface CategoryListProps {
   }) => void;
 }
 
-function CategoryList({ variant = 'contained', onClickCategory }: CategoryListProps) {
+function CategoryList({ variant = 'solid', onClickCategory }: CategoryListProps) {
   const {
     theme: {
       palette: { common }
@@ -126,8 +124,8 @@ function CategoryList({ variant = 'contained', onClickCategory }: CategoryListPr
         ? Array.from({ length: 6 }, (_, index) => (
             <CategoryItem key={`category-skeleton-${index}`} variant={variant}>
               <Flexbox direction="vertical" gap={4}>
-                <Skeleton width="30px" height="13px" isRound disableAspectRatio />
-                <Skeleton width="80px" height="19px" isRound disableAspectRatio />
+                <Skeleton width={30} height={13} round={8} disableAspectRatio />
+                <Skeleton width={80} height={19} round={8} disableAspectRatio />
               </Flexbox>
             </CategoryItem>
           ))
@@ -145,7 +143,7 @@ function CategoryList({ variant = 'contained', onClickCategory }: CategoryListPr
               <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
                 {parentCategoryName}
               </Typography>
-              <CategoryName variant={variant === 'contained' ? 'body2' : 'body1'} weight="medium">
+              <CategoryName variant={variant === 'solid' ? 'body2' : 'body1'} weight="medium">
                 {name}
               </CategoryName>
             </CategoryItem>

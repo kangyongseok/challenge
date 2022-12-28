@@ -140,7 +140,7 @@ ${addInfoText}
           <SubmitCtaButton
             fullWidth
             brandColor="primary"
-            variant="contained"
+            variant="solid"
             onClick={handleClickSucess}
           >
             완료

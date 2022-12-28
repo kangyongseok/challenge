@@ -1,10 +1,8 @@
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -23,7 +21,6 @@ import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-// TODO 추후 UI 라이브러리 업데이트 후 수정 필요
 function MypageUserShopCard() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
@@ -32,8 +29,7 @@ function MypageUserShopCard() {
   const setContinueDialog = useSetRecoilState(camelSellerDialogStateFamily('continue'));
   const {
     theme: {
-      palette: { primary, common },
-      box: { round }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -168,15 +164,13 @@ function MypageUserShopCard() {
           {images.map((image, index) => (
             <UserProductImage
               key={`user-shop-product-image-${image?.slice(image.lastIndexOf('/') + 1)}`}
-              width={`${56 - index * 4}px`}
-              height={`${56 - index * 4}px`}
+              width={56 - index * 4}
+              height={56 - index * 4}
               src={image}
               alt="Shop Product Img"
+              round={8}
               disableAspectRatio
               index={index}
-              customStyle={{
-                borderRadius: round['8']
-              }}
             />
           ))}
         </Box>
@@ -206,7 +200,11 @@ const ProductCreateButton = styled.button`
   width: 56px;
   height: 56px;
   min-width: 56px;
-  background-color: #dcdde0;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui90};
   border-radius: ${({ theme: { box } }) => box.round['8']};
 `;
 

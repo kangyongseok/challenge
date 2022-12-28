@@ -1,4 +1,4 @@
-import { Skeleton } from '@components/UI/atoms';
+import { Skeleton } from 'mrcamel-ui';
 
 function SkeletonPhotoGuideBox() {
   return (
@@ -7,9 +7,10 @@ function SkeletonPhotoGuideBox() {
         <Skeleton
           key={`icon-${v}`}
           width={72}
+          minWidth={72}
           height={72}
+          round={8}
           disableAspectRatio
-          customStyle={{ borderRadius: 8, minWidth: 72 }}
         />
       ))}
     </>

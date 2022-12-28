@@ -27,9 +27,11 @@ export const Title = styled.div<{ show: boolean; customHeight?: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: ${({ customHeight }) => customHeight || 56}px;
   visibility: ${({ show }) => !show && 'hidden'};
+  opacity: ${({ show }) => Number(show)};
+  transition: all 0.3s;
 `;
 
 export const IconBox = styled.div<{
@@ -39,8 +41,16 @@ export const IconBox = styled.div<{
   display: flex;
   justify-content: center;
   align-items: center;
-  visibility: ${({ show }) => !show && 'hidden'};
-  padding: 16px;
   ${({ disablePadding }) => disablePadding && `padding-${disablePadding}: 0`};
   cursor: pointer;
+
+  ${({ show }) =>
+    show
+      ? {
+          padding: 16
+        }
+      : {
+          visibility: 'hidden',
+          minWidth: 40
+        }};
 `;

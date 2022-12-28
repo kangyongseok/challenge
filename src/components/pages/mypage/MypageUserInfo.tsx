@@ -118,7 +118,7 @@ function MypageUserInfo() {
       </Typography>
       <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
         {/* <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="categoryInput"
           data-att="CATEGORY"
           onClick={handleClickRoute}
@@ -135,7 +135,7 @@ function MypageUserInfo() {
           </ElipsisArea>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="brandInput"
           data-att="BRAND"
           onClick={handleClickRoute}
@@ -152,7 +152,7 @@ function MypageUserInfo() {
           </ElipsisArea>
         </MyInfoBox> */}
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="personalInput"
           data-att="INFO"
           data-value={`${gender === 'M' ? '남' : '여'}, ${yearOfBirth}`}
@@ -166,7 +166,7 @@ function MypageUserInfo() {
           </Typography>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="sizeInput"
           data-att="SIZE"
           onClick={handleClickRoute}
@@ -177,7 +177,7 @@ function MypageUserInfo() {
           <ElipsisArea variant="small1">{sizeParser()}</ElipsisArea>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="addressInput"
           data-att="ADDRESS"
           data-value={(area && area?.filter((list) => list.isActive)[0]?.areaName) || ''}
@@ -191,7 +191,7 @@ function MypageUserInfo() {
           </ElipsisArea>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="budgetInput"
           data-att="BUDGET"
           data-value={maxMoney}
@@ -205,7 +205,7 @@ function MypageUserInfo() {
           </Typography>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="likeModelInput"
           data-att="LIKEMODEL"
           data-value={maxMoney}
@@ -221,7 +221,7 @@ function MypageUserInfo() {
           </ElipsisArea>
         </MyInfoBox>
         <MyInfoBox
-          variant="contained"
+          variant="solid"
           data-param="purchaseInput"
           data-att="PURCHASE"
           data-value={maxMoney}

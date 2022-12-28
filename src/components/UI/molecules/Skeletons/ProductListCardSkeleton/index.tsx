@@ -1,6 +1,5 @@
-import { Box, CustomStyle, Flexbox } from 'mrcamel-ui';
-
-import Skeleton from '@components/UI/atoms/Skeleton';
+import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
 interface ProductListCardSkeletonPros {
   isRound?: boolean;
@@ -11,48 +10,54 @@ function ProductListCardSkeleton({ isRound = false, customStyle }: ProductListCa
   return (
     <Flexbox gap={12} customStyle={customStyle}>
       <Box customStyle={{ width: 134 }}>
-        <Skeleton isRound={isRound} />
+        <Skeleton round={isRound ? 8 : 0} />
       </Box>
       <Box customStyle={{ flex: 1 }}>
-        <Skeleton width="100%" maxWidth="46px" height="20px" disableAspectRatio isRound={isRound} />
         <Skeleton
           width="100%"
-          maxWidth="200px"
-          height="18px"
+          maxWidth={46}
+          height={20}
+          round={isRound ? 8 : 0}
           disableAspectRatio
-          isRound={isRound}
+        />
+        <Skeleton
+          width="100%"
+          maxWidth={200}
+          height={18}
+          round={isRound ? 8 : 0}
+          disableAspectRatio
           customStyle={{ marginTop: 8 }}
         />
         <Skeleton
-          width="41px"
-          height="16.8px"
+          width={41}
+          height={16.8}
+          round={isRound ? 8 : 0}
           disableAspectRatio
-          isRound={isRound}
           customStyle={{ margin: '5px 0' }}
         />
         <Skeleton
           width="100%"
-          maxWidth="120px"
-          height="15px"
+          maxWidth={120}
+          height={15}
+          round={isRound ? 8 : 0}
           disableAspectRatio
-          isRound={isRound}
           customStyle={{ marginTop: 3 }}
         />
         <Flexbox gap={3}>
           <Skeleton
             width="100%"
-            maxWidth="30px"
-            height="15px"
+            maxWidth={30}
+            height={15}
+            round={isRound ? 8 : 0}
             disableAspectRatio
-            isRound={isRound}
             customStyle={{ marginTop: 4 }}
           />
           <Skeleton
             width="100%"
-            maxWidth="30px"
-            height="15px"
+            maxWidth={30}
+            height={15}
+            round={isRound ? 8 : 0}
             disableAspectRatio
-            isRound={isRound}
             customStyle={{ marginTop: 4 }}
           />
         </Flexbox>

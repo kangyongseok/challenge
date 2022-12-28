@@ -172,8 +172,8 @@ function LegitFilterGrid() {
           {legitFilters.map(({ label, isActive, result: selectResult, status: selectStatus }) => (
             <Chip
               key={`legit-select-label-${label}`}
-              variant={isActive ? 'ghost' : 'outlinedGhost'}
-              brandColor={isActive ? 'primary-light' : 'black'}
+              variant={isActive ? 'ghost' : 'outlineGhost'}
+              brandColor={isActive ? 'blue' : 'black'}
               size="large"
               disabled={isLoading || !initialized}
               isRound={false}

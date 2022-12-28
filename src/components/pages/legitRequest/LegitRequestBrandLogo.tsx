@@ -1,6 +1,5 @@
+import { Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Image } from '@components/UI/atoms';
 
 interface LegitRequestBrandLogoProps {
   src: string;
@@ -11,9 +10,9 @@ function LegitRequestBrandLogo({ src }: LegitRequestBrandLogoProps) {
     <BrandLogo>
       <Image
         src={src}
-        width="80px"
-        height="80px"
-        isRound
+        alt="Brand Logo Img"
+        width={80}
+        height={80}
         disableAspectRatio
         customStyle={{ margin: '0 auto', mixBlendMode: 'screen' }}
       />

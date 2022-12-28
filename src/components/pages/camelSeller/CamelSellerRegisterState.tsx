@@ -73,8 +73,8 @@ function CamelSellerRegisterState() {
     <Flexbox alignment="center" justifyContent="space-between" onClick={handleClickStyle}>
       {tempData?.size?.name && tempData?.color?.name ? (
         <Flexbox alignment="center" gap={8}>
-          <ProductStateLabel text={tempData?.size?.name} variant="contained" />
-          <ProductStateLabel text={tempData?.color?.name} variant="contained" />
+          <ProductStateLabel text={tempData?.size?.name} variant="solid" />
+          <ProductStateLabel text={tempData?.color?.name} variant="solid" />
         </Flexbox>
       ) : (
         <Typography

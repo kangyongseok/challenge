@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Image from '@components/UI/atoms/Image';
 
 const tabData = [
   { tab: '비싸게 팔린', img: 'new_tab_img01', num: 1 },
@@ -52,6 +50,7 @@ function MyPortfolioLanding04() {
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/${imgName}.jpg`}
             alt={imgName}
             disableAspectRatio
+            disableSkeleton
           />
         </TabContents>
       </Box>

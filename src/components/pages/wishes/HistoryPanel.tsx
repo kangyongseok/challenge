@@ -2,13 +2,22 @@ import { Fragment, useMemo, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Toast,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
 import { entries, groupBy } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import { ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
-import { Skeleton } from '@components/UI/atoms';
 
 import type { UserHistory } from '@dto/user';
 
@@ -95,18 +104,18 @@ function HistoryPanel() {
           alignment="center"
           justifyContent="space-between"
           customStyle={{
-            margin: '25px 0 8px'
+            margin: '20px 0 32px'
           }}
         >
           <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
-          <Skeleton width="84px" height="36px" isRound disableAspectRatio />
+          <Skeleton width={84} height={32} round={8} disableAspectRatio />
         </Flexbox>
         <Skeleton
-          width="74px"
-          height="20px"
+          width={74}
+          height={20}
+          round={8}
           disableAspectRatio
-          isRound
-          customStyle={{ margin: '39px 0 20px' }}
+          customStyle={{ marginBottom: 20 }}
         />
         <TimeLineWrap direction="vertical" gap={20}>
           {Array.from({ length: 3 }).map((_, index) => (
@@ -117,19 +126,8 @@ function HistoryPanel() {
             />
           ))}
           <Flexbox alignment="center" gap={24}>
-            <Skeleton
-              width="48px"
-              height="28px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
-            <Skeleton
-              width="100%"
-              maxWidth="120px"
-              height="20px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
+            <Skeleton width={48} height={28} round={24} disableAspectRatio />
+            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
           </Flexbox>
           <ProductWishesCardSkeleton isRound />
           <ProductWishesCardSkeleton isRound />
@@ -142,10 +140,10 @@ function HistoryPanel() {
           }}
         />
         <Skeleton
-          width="74px"
-          height="20px"
+          width={74}
+          height={20}
+          round={8}
           disableAspectRatio
-          isRound
           customStyle={{ margin: '39px 0 20px' }}
         />
         <TimeLineWrap direction="vertical" gap={20}>
@@ -157,36 +155,14 @@ function HistoryPanel() {
             />
           ))}
           <Flexbox alignment="center" gap={24}>
-            <Skeleton
-              width="48px"
-              height="28px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
-            <Skeleton
-              width="100%"
-              maxWidth="120px"
-              height="20px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
+            <Skeleton width={48} height={28} round={24} disableAspectRatio />
+            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
           </Flexbox>
           <ProductWishesCardSkeleton isRound />
           <ProductWishesCardSkeleton isRound />
           <Flexbox alignment="center" gap={24}>
-            <Skeleton
-              width="48px"
-              height="28px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
-            <Skeleton
-              width="100%"
-              maxWidth="120px"
-              height="20px"
-              disableAspectRatio
-              customStyle={{ borderRadius: 24 }}
-            />
+            <Skeleton width={48} height={28} round={24} disableAspectRatio />
+            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
           </Flexbox>
           {Array.from({ length: 3 }).map((_, index) => (
             <ProductWishesCardSkeleton
@@ -320,7 +296,7 @@ function HistoryPanel() {
           <Button
             size="large"
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             onClick={handleClickDeleteSubmit}
           >

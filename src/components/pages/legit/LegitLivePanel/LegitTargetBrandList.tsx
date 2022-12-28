@@ -5,10 +5,8 @@ import { Pagination } from 'swiper';
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Skeleton } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -156,8 +154,8 @@ function LegitTargetBrandList() {
                     // eslint-disable-next-line react/no-array-index-key
                     key={`target-brand-skeleton-${index}`}
                   >
-                    <Skeleton width="64px" height="64px" customStyle={{ borderRadius: '50%' }} />
-                    <Skeleton width="64px" height="18px" isRound disableAspectRatio />
+                    <Skeleton width={64} height={64} round="50%" />
+                    <Skeleton width={64} height={18} round={8} disableAspectRatio />
                   </BrandItem>
                 ))}
               </BrandList>
@@ -184,8 +182,9 @@ function LegitTargetBrandList() {
                           .split(' ')
                           .join('')}.jpg`}
                         alt="Brand Logo Img"
+                        round="50%"
                         onClick={handleClick(id, name, nameEng)}
-                        customStyle={{ margin: 'auto', borderRadius: '50%' }}
+                        customStyle={{ margin: 'auto' }}
                       />
                       <Typography variant="body1" customStyle={{ textAlign: 'center' }}>
                         {name}

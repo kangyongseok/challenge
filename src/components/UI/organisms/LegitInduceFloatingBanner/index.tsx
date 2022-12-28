@@ -2,10 +2,8 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
-
-import { Image } from '@components/UI/atoms';
 
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
@@ -103,17 +101,17 @@ function LegitInduceFloatingBanner({
           {images.map((image, index) => (
             <Image
               key={`legit-induce-image-${image.slice(image.lastIndexOf('/') + 1)}`}
-              width="32px"
-              height="32px"
+              width={32}
+              height={32}
               src={image}
               alt="Product Img"
+              round={4}
               disableAspectRatio
               customStyle={{
                 position: 'absolute',
                 top: 0,
                 left: index * 4,
                 border: `1px solid ${common.ui90}`,
-                borderRadius: 4,
                 zIndex: 3 - index
               }}
             />

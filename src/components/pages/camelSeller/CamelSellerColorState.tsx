@@ -35,7 +35,7 @@ function CamelSellerColorState({
           colors.map((color) => (
             <Chip
               key={`seller-product-color-${color.name}`}
-              variant="contained"
+              variant="solid"
               weight="regular"
               customStyle={{
                 background: common.ui95,

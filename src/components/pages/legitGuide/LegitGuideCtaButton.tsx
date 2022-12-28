@@ -129,7 +129,7 @@ function LegitGuideCtaButton() {
                 zIndex: 0
               }}
             >
-              <Button variant="contained" brandColor="primary" size="xlarge" fullWidth>
+              <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
                 {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
               </Button>
             </Tooltip>
@@ -142,7 +142,7 @@ function LegitGuideCtaButton() {
   return (
     <Box customStyle={{ height: 92 }}>
       <StyledLegitGuideCtaButton onClick={handleClick}>
-        <Button variant="contained" brandColor="primary" size="xlarge" fullWidth>
+        <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
           {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
         </Button>
       </StyledLegitGuideCtaButton>

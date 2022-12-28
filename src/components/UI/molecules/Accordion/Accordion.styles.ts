@@ -31,7 +31,7 @@ export const Summary = styled.div<{ variant: Variant }>`
     let cssObject: CSSObject;
 
     switch (variant) {
-      case 'outlined': {
+      case 'outline': {
         cssObject = {
           backgroundColor: common.uiWhite,
           '&:after': {
@@ -47,7 +47,7 @@ export const Summary = styled.div<{ variant: Variant }>`
 
         break;
       }
-      case 'contained': {
+      case 'solid': {
         cssObject = {
           backgroundColor: '#f2f2f2'
         };

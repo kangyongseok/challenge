@@ -139,7 +139,7 @@ function LegitSearchHeader() {
       </Flexbox>
       <List>
         <Chip
-          variant={legitParentIds.includes(481) ? 'contained' : 'outlinedGhost'}
+          variant={legitParentIds.includes(481) ? 'solid' : 'outlineGhost'}
           size="large"
           brandColor="black"
           onClick={handleClick(481, '신발')}
@@ -148,7 +148,7 @@ function LegitSearchHeader() {
           신발
         </Chip>
         <Chip
-          variant={legitParentIds.includes(479) ? 'contained' : 'outlinedGhost'}
+          variant={legitParentIds.includes(479) ? 'solid' : 'outlineGhost'}
           size="large"
           brandColor="black"
           onClick={handleClick(479, '가방')}
@@ -157,7 +157,7 @@ function LegitSearchHeader() {
           가방
         </Chip>
         <Chip
-          variant={legitParentIds.includes(480) ? 'contained' : 'outlinedGhost'}
+          variant={legitParentIds.includes(480) ? 'solid' : 'outlineGhost'}
           size="large"
           brandColor="black"
           onClick={handleClick(480, '지갑')}
@@ -166,7 +166,7 @@ function LegitSearchHeader() {
           지갑
         </Chip>
         <Chip
-          variant={legitParentIds.includes(482) ? 'contained' : 'outlinedGhost'}
+          variant={legitParentIds.includes(482) ? 'solid' : 'outlineGhost'}
           size="large"
           brandColor="black"
           onClick={handleClick(482, '의류')}
@@ -175,7 +175,7 @@ function LegitSearchHeader() {
           의류
         </Chip>
         <Chip
-          variant={legitParentIds.includes(483) ? 'contained' : 'outlinedGhost'}
+          variant={legitParentIds.includes(483) ? 'solid' : 'outlineGhost'}
           size="large"
           brandColor="black"
           onClick={handleClick(483, '기타')}

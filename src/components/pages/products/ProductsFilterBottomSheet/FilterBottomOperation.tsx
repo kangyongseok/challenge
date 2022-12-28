@@ -365,13 +365,7 @@ function FilterBottomOperation() {
         >
           초기화
         </Button>
-        <Button
-          variant="contained"
-          size="xlarge"
-          brandColor="primary"
-          onClick={handleClick}
-          fullWidth
-        >
+        <Button variant="solid" size="xlarge" brandColor="primary" onClick={handleClick} fullWidth>
           {selectedTotalCount.toLocaleString()}개 매물보기
         </Button>
       </FilterButtons>

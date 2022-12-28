@@ -60,12 +60,15 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         <ErrorBoundary disableFallback>
           <ProductAveragePriceChart product={data?.product} />
         </ErrorBoundary>
-        <ProductSellerProductList product={data?.product} roleSellerId={data?.roleSeller?.userId} />
-        <ProductSellerReviews product={data?.product} />
+        <ProductSellerProductList
+          product={data?.product}
+          roleSellerUserId={data?.roleSeller?.userId}
+        />
+        <ProductSellerReviews product={data?.product} roleSellerUserId={data?.roleSeller?.userId} />
         <Box customStyle={{ paddingTop: 20 }} />
         <ProductLastLowerPrice />
         {isCrm && (
-          <Button variant="contained" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
+          <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
             <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
               지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
             </Typography>
@@ -81,7 +84,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
     <>
       <ProductLastLowerPrice />
       {isCrm && (
-        <Button variant="contained" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
+        <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
           <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
             지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
           </Typography>
@@ -92,8 +95,11 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         <ProductAveragePriceChart product={data?.product} />
       </ErrorBoundary>
       {!isShowChart && <Box customStyle={{ paddingTop: 32 }} />}
-      <ProductSellerProductList product={data?.product} roleSellerId={data?.roleSeller?.userId} />
-      <ProductSellerReviews product={data?.product} />
+      <ProductSellerProductList
+        product={data?.product}
+        roleSellerUserId={data?.roleSeller?.userId}
+      />
+      <ProductSellerReviews product={data?.product} roleSellerUserId={data?.roleSeller?.userId} />
     </>
   );
 }

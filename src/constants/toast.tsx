@@ -45,7 +45,8 @@ const product = {
       <p>내 매물이 등록되었어요! 판매시작!</p>
       <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
     </>
-  )
+  ),
+  soldout: '죄송합니다. 판매 완료된 매물입니다!'
 };
 
 const legitAdminOpinion = {
@@ -83,6 +84,56 @@ const mypage = {
   overFiveStyle: '최대 5개까지 고를 수 있어요!'
 };
 
+const user = {
+  agreeNight: '야간 방해금지 모드가 설정 되었어요',
+  disAgreeNight: '야간 방해금지 모드가 해제 되었어요',
+  agreeAlarm: (
+    <>
+      {dayjs().format('YYYY.M.D')} 마케팅 수신 동의 처리되었습니다.
+      <br />
+      (재설정: 마이 {'->'} 해제)
+    </>
+  ),
+  disAgreeAlarm: (
+    <>
+      {dayjs().format('YYYY.M.D')} 마케팅 수신 미동의 처리되었습니다.
+      <br />
+      (재설정: 마이 {'->'} 해제)
+    </>
+  ),
+  reviewReport: (
+    <>
+      신고가 접수되었습니다.
+      <br />이 리뷰는 가려드릴게요!
+    </>
+  ),
+  reviewBlock: (
+    <>
+      차단 처리되었습니다.
+      <br />이 사용자는 가려드릴게요!
+    </>
+  ),
+  block: '{role} {userName}을 차단했어요.',
+  unBlock: '{userName}님을 차단 해제했어요.',
+  unBlockWithRole: '{userName}님을 차단 해제했어요.',
+  channelNotiOff: '채팅 알림을 받지 않아요.',
+  channelNotiOn: '채팅 알림을 받아요.',
+  report: '신고 접수 완료되었습니다.',
+  successSendReview: '후기를 보냈어요.'
+};
+
+const channel = {
+  notiOff: '채팅 알림을 받지 않아요.',
+  notiOn: '채팅 알림을 받아요.',
+  createFail: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.',
+  disabledMakeAppointment: '{userName}님과 대화를 나눈 뒤 약속을 잡을 수 있어요.'
+};
+
+const sendbird = {
+  settingError: '설정 변경에 실패했어요. 잠시 후 다시 시도해 주세요.',
+  createFail: '채팅방 생성에 실패했어요.'
+};
+
 export const toastText: Record<
   ToastType,
   Partial<Record<ToastStatus, string | number | ReactElement>>
@@ -97,7 +148,10 @@ export const toastText: Record<
   legitStatus,
   bottomSheetLogin,
   home,
-  mypage
+  mypage,
+  user,
+  channel,
+  sendbird
 };
 
 const productsKeywordActionButton = {

@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box, Flexbox, Typography, dark, useTheme } from 'mrcamel-ui';
-
-import { Image } from '@components/UI/atoms';
+import { Box, Flexbox, Image, Typography, dark, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -123,7 +121,7 @@ function AppDownloadBanner() {
             앱으로 대한민국 중고명품 모두 보기!
           </Typography>
         </Box>
-        <DownloadButtonBox variant="contained" onClick={handleClickDownload}>
+        <DownloadButtonBox variant="solid" onClick={handleClickDownload}>
           <Typography customStyle={{ color: common.cmn80 }}>다운로드</Typography>
         </DownloadButtonBox>
       </Flexbox>

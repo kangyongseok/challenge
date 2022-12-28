@@ -7,7 +7,7 @@ import type { IconName } from 'mrcamel-ui';
 import { Box, Chip, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import { filter, find, uniqBy } from 'lodash-es';
 
-import type { SizeValue, UserInfo } from '@dto/user';
+import type { SizeValue } from '@dto/user';
 
 import { logEvent } from '@library/amplitude';
 
@@ -69,19 +69,21 @@ function SizeInputType() {
   }, [accessUserInfo, selectedSizes]);
 
   useEffect(() => {
-    if (data && selectedSizes.length === 0) {
-      const types = Object.keys(data.size.value as SizeValue);
+    if (data?.size.value && selectedSizes.length === 0) {
+      const types = Object.keys(data.size.value);
+
       types.forEach((type) => {
-        (data.size.value as SizeValue)[type].forEach((info) => {
-          const obj = {
-            kind: type as Kind,
-            categorySizeId: info.categorySizeId,
-            viewSize: info.viewSize
-          };
-          if (!find(selectedSizes, { categorySizeId: obj.categorySizeId })) {
-            atomSelectedSize((props) => [...props, obj]);
-          }
-        });
+        if (data?.size.value)
+          data.size.value[type].forEach((info) => {
+            const obj = {
+              kind: type as Kind,
+              categorySizeId: info.categorySizeId,
+              viewSize: info.viewSize
+            };
+            if (!find(selectedSizes, { categorySizeId: obj.categorySizeId })) {
+              atomSelectedSize((props) => [...props, obj]);
+            }
+          });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,8 +132,8 @@ function SizeInputType() {
 
   return (
     <Box customStyle={{ marginTop: 110 }}>
-      {data &&
-        Object.keys((data as UserInfo).size.value as SizeValue).map((kinds) => (
+      {data?.size.value &&
+        Object.keys(data.size.value).map((kinds) => (
           <Box customStyle={{ marginBottom: 32 }} key={`kinds-${kinds}`}>
             <Flexbox gap={6} alignment="center">
               <Icon name={parseKindText(kinds).icon} width={30} height={25} />
@@ -162,7 +164,7 @@ function SizeInputType() {
                 return (
                   <Chip
                     key={`size-${info.viewSize}`}
-                    variant={isChecked ? 'outlinedGhost' : 'outlined'}
+                    variant={isChecked ? 'outlineGhost' : 'outline'}
                     brandColor={isChecked ? 'primary' : 'gray'}
                     data-kind={kinds}
                     data-view-size={info.viewSize}

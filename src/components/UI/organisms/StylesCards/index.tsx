@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find, uniq } from 'lodash-es';
-
-import { Image } from '@components/UI/atoms';
 
 import { StyleDetails } from '@dto/common';
 
@@ -250,8 +248,10 @@ function StylesCards({ themeType }: { themeType?: 'normal' }) {
             </Box>
             <StyleCardImgWrap>
               <Image
-                disableAspectRatio
                 src={`${BASE_URL}/${find(parentData, { id: style.id })?.imgName}.png`}
+                alt="Style Card Img"
+                disableAspectRatio
+                disableSkeleton
               />
             </StyleCardImgWrap>
           </ParentStyleCard>

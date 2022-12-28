@@ -46,8 +46,8 @@ function LegitSelectAdditionalInfo({
             isRound={false}
             variant={
               additionalIds.includes(id as keyof PostProductLegitData['additionalIds'])
-                ? 'contained'
-                : 'outlined'
+                ? 'solid'
+                : 'outline'
             }
             customStyle={{
               backgroundColor: additionalIds.includes(

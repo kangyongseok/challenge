@@ -309,7 +309,7 @@ function SearchHelperMoreOptionBottomSheet({
                                         marginRight: 6,
                                         boxShadow: shadow.platformLogo
                                       }}
-                                      round="4"
+                                      round={4}
                                       alt="Platform Logo Img"
                                     />
                                   )}
@@ -552,7 +552,7 @@ function SearchHelperMoreOptionBottomSheet({
             </SearchHelperBottomSheetButton>
           )}
           {!hasSelectedOptions && needClearOptions && (
-            <SearchHelperBottomSheetButton onClick={handleClickCtaButton} variant="outlined">
+            <SearchHelperBottomSheetButton onClick={handleClickCtaButton} variant="outline">
               적용하기
             </SearchHelperBottomSheetButton>
           )}

@@ -1,12 +1,11 @@
 import { atom, atomFamily } from 'recoil';
 
-import type { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 export const userShopOpenStateFamily = atomFamily<
   {
     type:
       | 'manage'
-      | 'soldOutConfirm'
       | 'deleteConfirm'
       | 'updatePostedFeedback'
       | 'reservingFeedback'
@@ -16,7 +15,6 @@ export const userShopOpenStateFamily = atomFamily<
     open: boolean;
   },
   | 'manage'
-  | 'soldOutConfirm'
   | 'deleteConfirm'
   | 'updatePostedFeedback'
   | 'reservingFeedback'
@@ -31,7 +29,9 @@ export const userShopOpenStateFamily = atomFamily<
   })
 });
 
-export const userShopSelectedProductState = atom<Partial<Product>>({
+export const userShopSelectedProductState = atom<
+  Partial<Product & { isNoSellerReviewAndHasTarget?: boolean }> | Partial<ProductResult>
+>({
   key: 'users/userShopSelectedProductState',
   default: {}
 });

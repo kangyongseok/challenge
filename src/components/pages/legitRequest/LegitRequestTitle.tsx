@@ -1,6 +1,4 @@
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-
-import Image from '@components/UI/atoms/Image';
+import { Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 
 interface LegitRequestTitleProps {
   brandLogo: string;
@@ -48,9 +46,9 @@ function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitR
       </Flexbox>
       <Image
         src={brandLogo}
-        width="110px"
-        height="110px"
-        isRound
+        alt="Brand Logo Img"
+        width={110}
+        height={110}
         disableAspectRatio
         customStyle={{ margin: '0 auto' }}
       />

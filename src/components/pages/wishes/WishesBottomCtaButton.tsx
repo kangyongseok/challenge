@@ -107,13 +107,13 @@ function WishesBottomCtaButton() {
         <CtaButtonWrapper>
           <Button
             fullWidth
-            variant="contained"
+            variant="solid"
             brandColor="primary"
             size="large"
             onClick={handleClick}
             disabled={!userWishes.length}
           >
-            <NewLabel variant="contained" text="무료" />
+            <NewLabel variant="solid" text="무료" />
             모두 사진감정 해보기
           </Button>
         </CtaButtonWrapper>
@@ -139,7 +139,7 @@ function WishesBottomCtaButton() {
             </Button>
             <Button
               fullWidth
-              variant="contained"
+              variant="solid"
               brandColor="primary"
               size="large"
               onClick={handleClickConfirm}

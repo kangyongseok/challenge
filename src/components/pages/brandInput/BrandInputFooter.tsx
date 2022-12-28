@@ -153,7 +153,7 @@ function BrandInputFooter({
         <Button
           fullWidth
           customStyle={{ position: 'relative', zIndex: 10 }}
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           size="large"
           disabled={searchValue ? selectBrands?.length === 0 : checkList.length === 0}

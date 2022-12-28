@@ -397,7 +397,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                       }}
                     />
                     <Flexbox gap={4} alignment="center">
-                      {/* TODO UI 라이브러리 업데이트 필요 */}
+                      {/* TODO 추후 UI 라이브러리 CheckboxGroup 컴포넌트로 교체 */}
                       <Checkbox checked={checked} onChange={handleClickLowerPrice} />
                       <Typography
                         onClick={handleClickLowerPrice}
@@ -506,7 +506,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                                 codeDetailParentId === parentId &&
                                 (genderId ? genderIds?.includes(genderId) : true)
                             )
-                              ? 'primary-light'
+                              ? 'blue'
                               : 'black'
                           }
                           size="large"
@@ -552,7 +552,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                                 categorySizeId === codeDetailCategorySizeId &&
                                 parentCategoryId === codeDetailParentCategoryId
                             )
-                              ? 'primary-light'
+                              ? 'blue'
                               : 'black'
                           }
                           size="large"
@@ -590,7 +590,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                             ({ codeId, id }) =>
                               codeId === getCodeIdByCodeType(codeType) && id === codeDetail.id
                           )
-                            ? 'primary-light'
+                            ? 'blue'
                             : 'black'
                         }
                         size="large"
@@ -608,7 +608,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
             );
           })}
         <Button
-          variant="contained"
+          variant="solid"
           brandColor="primary"
           size="large"
           fullWidth

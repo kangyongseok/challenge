@@ -88,3 +88,24 @@ export const viewClothingIdsData = {
   bottom: [104, 282, 283],
   shoes: [14]
 };
+
+export const userReportType = {
+  10: '거래/환불 분쟁이 있어요',
+  20: '사기/가품이에요',
+  30: '비매너/욕설 사용자에요',
+  40: '성희롱 사용자에요',
+  50: '기타'
+};
+
+export const userReportTypeAtt = {
+  10: 'TRADE_DISPUTE',
+  20: 'FRAUD',
+  30: 'BAD_MANNER',
+  40: 'SEXUAL_PROBLEM',
+  50: 'OTHER'
+};
+
+export const channelUserType = {
+  0: '구매자',
+  1: '판매자'
+};
