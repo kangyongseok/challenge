@@ -8,7 +8,12 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
+import {
+  checkAgent,
+  handleClickAppDownload,
+  isNeedUpdateImageUploadAOSVersion,
+  isNeedUpdateImageUploadIOSVersion
+} from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -48,7 +53,7 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
+      if (isNeedUpdateImageUploadIOSVersion()) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -67,7 +72,7 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
+      if (isNeedUpdateImageUploadAOSVersion()) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

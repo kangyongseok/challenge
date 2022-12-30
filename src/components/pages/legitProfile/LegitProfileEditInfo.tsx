@@ -29,9 +29,10 @@ import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/commo
 
 import {
   checkAgent,
-  getAppVersion,
   handleClickAppDownload,
-  isExtendedLayoutIOSVersion
+  isExtendedLayoutIOSVersion,
+  isNeedUpdateImageUploadAOSVersion,
+  isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
@@ -94,7 +95,7 @@ function LegitProfileEditInfo({
         });
       }
 
-      if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
+      if (isNeedUpdateImageUploadIOSVersion()) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -113,7 +114,7 @@ function LegitProfileEditInfo({
         return;
       }
 
-      if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
+      if (isNeedUpdateImageUploadAOSVersion()) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

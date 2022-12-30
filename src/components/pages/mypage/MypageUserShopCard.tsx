@@ -14,7 +14,12 @@ import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber, getAppVersion, isProduction } from '@utils/common';
+import {
+  checkAgent,
+  commaNumber,
+  isNeedUpdateImageUploadAOSVersion,
+  isNeedUpdateImageUploadIOSVersion
+} from '@utils/common';
 
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
@@ -62,7 +67,7 @@ function MypageUserShopCard() {
           return;
         }
 
-        if (checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction) {
+        if (isNeedUpdateImageUploadIOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -81,7 +86,7 @@ function MypageUserShopCard() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction) {
+        if (isNeedUpdateImageUploadAOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },

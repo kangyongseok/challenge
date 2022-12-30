@@ -104,7 +104,7 @@ function HistoryPanel() {
           alignment="center"
           justifyContent="space-between"
           customStyle={{
-            margin: '20px 0 32px'
+            margin: '25px 0 8px'
           }}
         >
           <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
@@ -115,7 +115,7 @@ function HistoryPanel() {
           height={20}
           round={8}
           disableAspectRatio
-          customStyle={{ marginBottom: 20 }}
+          customStyle={{ margin: '39px 0 20px' }}
         />
         <TimeLineWrap direction="vertical" gap={20}>
           {Array.from({ length: 3 }).map((_, index) => (

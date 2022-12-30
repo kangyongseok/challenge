@@ -20,7 +20,12 @@ import { postType } from '@constants/productlegits';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, commaNumber, getAppVersion, getProductDetailUrl } from '@utils/common';
+import {
+  commaNumber,
+  getProductDetailUrl,
+  isNeedUpdateImageUploadAOSVersion,
+  isNeedUpdateImageUploadIOSVersion
+} from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
@@ -83,7 +88,7 @@ function LegitMyPanel() {
           )}/result`
         );
       } else if (status === 12 && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
+        if (isNeedUpdateImageUploadIOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -102,7 +107,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
+        if (isNeedUpdateImageUploadAOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -118,7 +123,7 @@ function LegitMyPanel() {
         resetProductLegitEditParamsState();
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
-        if (checkAgent.isIOSApp() && getAppVersion() < 1147) {
+        if (isNeedUpdateImageUploadIOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },
@@ -137,7 +142,7 @@ function LegitMyPanel() {
           return;
         }
 
-        if (checkAgent.isAndroidApp() && getAppVersion() < 1145) {
+        if (isNeedUpdateImageUploadAOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',
             customStyleTitle: { minWidth: 269 },

@@ -42,6 +42,9 @@ function Menu() {
 
   return (
     <Flexbox gap={16} alignment="center">
+      <SlideDown delay={0.7}>
+        <Icon name="HeartOutlined" onClick={handleClickWish} />
+      </SlideDown>
       <SlideDown>
         <Badge
           open={!!notViewedHistoryCount}
@@ -54,9 +57,6 @@ function Menu() {
         >
           <Icon name="AlarmOutlined" onClick={handleClick} />
         </Badge>
-      </SlideDown>
-      <SlideDown delay={0.7}>
-        <Icon name="HeartOutlined" onClick={handleClickWish} />
       </SlideDown>
     </Flexbox>
   );

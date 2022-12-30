@@ -108,7 +108,11 @@ function ChannelMessageInput({
           <Flexbox
             alignment="center"
             justifyContent="center"
-            customStyle={{ height: MESSAGE_ACTION_BUTTONS_HEIGHT + 8, marginTop: 'auto' }}
+            customStyle={{
+              height: MESSAGE_ACTION_BUTTONS_HEIGHT + 8,
+              marginTop: 'auto',
+              minWidth: 44
+            }}
           >
             <SandIcon name="SandFilled" disabled={message.length === 0} onClick={handleClickSand} />
           </Flexbox>
@@ -133,8 +137,8 @@ const InputLayout = styled.div`
   position: relative;
   display: flex;
   min-height: ${MESSAGE_INPUT_HEIGHT}px;
-  margin: 8px 16px 8px;
-  column-gap: 16px;
+  margin: 8px 8px 8px 16px;
+  column-gap: 8px;
 `;
 
 const InputWrapper = styled.div`
@@ -206,7 +210,6 @@ const FooterBottomBackground = styled.div`
   height: calc(env(safe-area-inset-bottom,0) + 8px);
   background-color:  ${({ theme: { palette } }) => palette.common.uiWhite};
   transform: translateY(calc(env(safe-area-inset-bottom,0) + 8px));
-}
-`;
+}`;
 
 export default ChannelMessageInput;

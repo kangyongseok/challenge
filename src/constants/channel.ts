@@ -1,7 +1,7 @@
 export const channelType = {
   0: '전체',
-  1: '판매 메세지',
-  2: '구매 메세지'
+  1: '판매 대화',
+  2: '구매 대화'
 };
 
 export const productStatus = {

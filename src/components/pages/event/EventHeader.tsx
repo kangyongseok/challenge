@@ -63,6 +63,7 @@ function EventHeader() {
             paddingRight: 8
           }}
         >
+          <Icon name="HeartOutlined" onClick={handleClickWish} />
           <Badge
             open={!!notViewedHistoryCount}
             variant="two-tone"
@@ -74,7 +75,6 @@ function EventHeader() {
           >
             <Icon name="NotiOutlined" onClick={handleClick} />
           </Badge>
-          <Icon name="HeartOutlined" onClick={handleClickWish} />
         </Flexbox>
       }
     >

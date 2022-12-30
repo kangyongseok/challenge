@@ -291,7 +291,7 @@ function ChannelsSwipeActionList({
                 {!!sendbirdChannel?.unreadMessageCount && (
                   <Badge
                     variant="solid"
-                    brandColor="blue"
+                    brandColor="red"
                     text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
                   />
                 )}

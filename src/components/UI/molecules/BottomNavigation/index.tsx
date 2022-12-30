@@ -446,7 +446,7 @@ const CustomBadge = styled(Badge)<{ show: boolean }>`
   position: absolute;
   top: -2px;
   right: -4px;
-  background-color: ${({ theme: { palette } }) => palette.primary.light};
+  background-color: ${({ theme: { palette } }) => palette.secondary.red.main};
   font-weight: 500;
   opacity: ${({ show }) => Number(show)};
   transition: all 0.3s;
