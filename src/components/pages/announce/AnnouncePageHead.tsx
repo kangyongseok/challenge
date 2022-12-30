@@ -33,7 +33,6 @@ function AnnouncePageHead() {
         .replace(/{userName}/gi, accessUser?.userName ?? '')
         .replace(/<br \/>/g, ' ')}
       ogImage={announce.announceDetails[0].images.split('|')[0]}
-      ogUrl={`https://mrcamel.co.kr/announces/${router.query.id}`}
     />
   );
 }

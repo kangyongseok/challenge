@@ -63,7 +63,6 @@ function Category() {
         ogTitle="전국에서 중고명품 카테고리 모아드릴게요 | 카멜"
         ogDescription="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
         ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
-        ogUrl="https://mrcamel.co.kr/category"
       />
       <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding>
         <Flexbox

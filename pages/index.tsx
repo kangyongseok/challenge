@@ -144,7 +144,6 @@ function Home() {
         ogTitle="전국 중고명품 통합검색은 카멜에서"
         ogDescription="여러분은 카멜에서 검색만 하세요. 전국 중고명품 매물은 카멜이 다 모아서 비교하고 분석해드릴게요!"
         ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
-        ogUrl="https://mrcamel.co.kr"
         keywords="중고 명품, 빈티지 명품, 구찌, 샤넬, 루이비통, 보테가베네타, 톰브라운, 명품 중고, 중고 샤넬, 중고 루이비통, 중고 구찌, 중고 톰브라운, 중고 보테가베네타"
       />
       <GeneralTemplate footer={<BottomNavigation />} disablePadding>

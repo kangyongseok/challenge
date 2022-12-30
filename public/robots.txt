@@ -1,3 +1,16 @@
+User-agent: Googlebot
+Disallow: /wishes*
+Disallow: /mypage*
+Disallow: /user*
+Disallow: /onboarding*
+Disallow: /searchHelper*
+Disallow: /legit/admin*
+Disallow: /camelSeller*
+Disallow: /notices*
+Disallow: /login
+Disallow: /logout
+Allow: /
+
 User-agent: NaverBot
 Disallow: /wishes*
 Disallow: /mypage*
@@ -25,17 +38,7 @@ Disallow: /logout
 Allow: /
 
 User-agent: *
-Disallow: /wishes*
-Disallow: /mypage*
-Disallow: /user*
-Disallow: /onboarding*
-Disallow: /searchHelper*
-Disallow: /legit/admin*
-Disallow: /camelSeller*
-Disallow: /notices*
-Disallow: /login
-Disallow: /logout
-Allow: /
+Disallow: /
 
 Sitemap: https://mrcamel.co.kr/sitemap.xml
 

@@ -258,7 +258,7 @@ function ProductImages({
                       (product.site?.hasImage && product.site?.id) ||
                       ''
                     }.png`}
-                    alt={`${product.siteUrl?.name || 'Platform'} Logo Img`}
+                    alt={`${product.siteUrl?.name || '플랫폼'} 로고 이미지`}
                   />
                   <Typography
                     variant="body2"
@@ -285,7 +285,7 @@ function ProductImages({
             ) : (
               <Image
                 src={product.imageMain}
-                alt="goods image"
+                alt={`${product.title} 이미지`}
                 onClick={handleImageModal}
                 data-index={1}
               />
@@ -303,7 +303,12 @@ function ProductImages({
                   style={{ position: 'relative' }}
                 >
                   {typeof image === 'string' ? (
-                    <Image src={image} alt="image" onClick={handleImageModal} data-index={i + 2} />
+                    <Image
+                      src={image}
+                      alt={`${product?.title} 이미지 ${i + 1}`}
+                      onClick={handleImageModal}
+                      data-index={i + 2}
+                    />
                   ) : (
                     <Box
                       customStyle={{
@@ -334,7 +339,12 @@ function ProductImages({
                   style={{ position: 'relative' }}
                 >
                   {typeof image === 'string' ? (
-                    <Image src={image} alt="image" onClick={handleImageModal} data-index={i + 2} />
+                    <Image
+                      src={image}
+                      alt={`${product?.title} 이미지 ${i + 1}`}
+                      onClick={handleImageModal}
+                      data-index={i + 2}
+                    />
                   ) : (
                     <Box
                       customStyle={{

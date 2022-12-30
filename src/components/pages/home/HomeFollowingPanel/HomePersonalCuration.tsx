@@ -122,7 +122,7 @@ function HomePersonalCuration() {
       const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
 
       const isFloor =
-        scrollTop + clientHeight >=
+        Math.ceil(scrollTop + clientHeight) >=
         scrollHeight -
           (!checkAgent.isIOSApp() || !checkAgent.isAndroidApp()
             ? MOBILE_WEB_FOOTER_HEIGHT + BOTTOM_NAVIGATION_HEIGHT

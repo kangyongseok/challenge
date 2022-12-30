@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticPropsContext } from 'next';
+import type { GetStaticPropsContext } from 'next';
 import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 

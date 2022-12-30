@@ -495,6 +495,7 @@ export interface ProductDetail {
   productLegit: boolean;
   productSearchOptions: ProductSearchOption;
   quoteTitleCount: number;
+  relatedProducts: Product[];
   relatedKeywords: string[];
   reportCount: number;
   roleSeller: UserRoleSeller | null;

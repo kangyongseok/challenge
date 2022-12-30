@@ -62,7 +62,6 @@ function LegitResultPageHead() {
         authenticCount + fakeCount + impossibleCount
       )}개의 의견이 있어요! 오늘 사려는 그 명품, 중고라면 정품가품 의견 꼭 받아보세요.`}
       ogImage={imageMain || imageThumbnail || (photoGuideDetails[0] || {}).imageUrl}
-      ogUrl={`https://mrcamel.co.kr/legit/${id}/result`}
       keywords={`중고 ${brand.name} 정품가품 구별, ${brand.name} 정품 가품 구별법, ${brand.name} 정품 가품 구분, ${brand.name} 정품 가품, ${brand.name} 가품, ${brand.name} 정품, ${name} 정품, ${name} 정품가품 구별, ${name} 정품가품 확인`}
     />
   );

@@ -139,7 +139,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
       const handleScroll = async () => {
         const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
 
-        const isFloor = scrollTop + clientHeight >= scrollHeight;
+        const isFloor = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
         if (hasNextPage && !isFetchingNextPage && isFloor) {
           await fetchNextPage();

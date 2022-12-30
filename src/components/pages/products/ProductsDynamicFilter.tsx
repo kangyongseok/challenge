@@ -43,7 +43,7 @@ import {
   brandFilterOptionsSelector,
   categoryFilterOptionsSelector,
   dynamicOptionsStateFamily,
-  priceFilterOptionsSelector,
+  searchOptionsStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
@@ -66,6 +66,9 @@ function ProductsDynamicFilter() {
     searchParamsStateFamily(`base-${atomParam}`)
   );
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
+  const { searchOptions: baseSearchOptions } = useRecoilValue(
+    searchOptionsStateFamily(`base-${atomParam}`)
+  );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
   const setSearchOptionsParamsState = useSetRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
@@ -76,7 +79,6 @@ function ProductsDynamicFilter() {
   const dynamicOptions = useRecoilValue(dynamicOptionsStateFamily(atomParam));
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const categories = useRecoilValue(categoryFilterOptionsSelector);
-  const { maxPrice: filterMaxPrice = 0 } = useRecoilValue(priceFilterOptionsSelector);
 
   const [value, setValue] = useState<string | number>('');
 
@@ -85,8 +87,8 @@ function ProductsDynamicFilter() {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.currentTarget.value;
 
-    if (Number(newValue) > getTenThousandUnitPrice(filterMaxPrice)) {
-      setValue(getTenThousandUnitPrice(filterMaxPrice));
+    if (Number(newValue) > getTenThousandUnitPrice(baseSearchOptions.maxPrice || 0)) {
+      setValue(getTenThousandUnitPrice(baseSearchOptions.maxPrice || 0));
     } else {
       setValue(newValue);
     }
@@ -453,10 +455,10 @@ function ProductsDynamicFilter() {
     const hasLowerPriceIdFilter = searchParams.idFilterIds?.some(
       (id) => id === idFilterIds.lowPrice
     );
-    if (hasLowerPriceIdFilter) {
-      setValue(getTenThousandUnitPrice(filterMaxPrice));
+    if (hasLowerPriceIdFilter && baseSearchOptions.maxPrice) {
+      setValue(getTenThousandUnitPrice(baseSearchOptions.maxPrice));
     }
-  }, [searchParams, filterMaxPrice]);
+  }, [searchParams, baseSearchOptions.maxPrice]);
 
   useEffect(() => {
     if (searchParams.maxPrice && !isInitRef.current) {

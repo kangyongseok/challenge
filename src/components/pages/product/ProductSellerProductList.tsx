@@ -138,7 +138,7 @@ function ProductSellerProductList({
                 width={44}
                 height={44}
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
-                alt="Product Seller Img"
+                alt="프로필 이미지"
                 round="50%"
                 customStyle={{ marginRight: 12 }}
               />
@@ -148,7 +148,7 @@ function ProductSellerProductList({
                 width={44}
                 height={44}
                 src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
-                alt="Product Seller Img"
+                alt={`${product?.productSeller.name} 프로필 이미지`}
                 round="50%"
                 customStyle={{ marginRight: 12 }}
               />
@@ -158,7 +158,7 @@ function ProductSellerProductList({
                 width={44}
                 height={44}
                 src={`${reviewInfo.productSeller.image}`}
-                alt="Product Seller Img"
+                alt="프로필 이미지"
                 round="50%"
                 customStyle={{ marginRight: 12 }}
               />

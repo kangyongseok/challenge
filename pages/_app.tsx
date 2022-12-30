@@ -89,8 +89,11 @@ function App({ Component, pageProps }: AppProps) {
     // 해당 페이지 내에서 렌더링하기 위함
     if (router.pathname === '/products/[id]') return '';
 
-    const asPath = (router.asPath === '/' ? '' : router.asPath.split('?')[0]).replace(/ /g, '-');
-    return decodeURI(`${originUrl}${asPath}${lang === locales.ko.lng ? '' : `/${lang}`}`);
+    const asPath = router.asPath === '/' ? '' : router.asPath.split('?')[0];
+    return decodeURI(`${originUrl}${lang === locales.ko.lng ? '' : `/${lang}`}${asPath}`).replace(
+      / /g,
+      '-'
+    );
   }, [lang, router.asPath, router.pathname]);
   const alternativeLink = useMemo(
     () =>
@@ -99,9 +102,11 @@ function App({ Component, pageProps }: AppProps) {
           key={lng}
           rel="alternate"
           hrefLang={lng}
-          href={`${originUrl}${lng === locales.ko.lng ? '' : `/${lng}`}${
-            router.asPath === '/' ? '' : router.asPath
-          }`}
+          href={decodeURI(
+            `${originUrl}${lng === locales.ko.lng ? '' : `/${lng}`}${
+              router.asPath === '/' ? '' : router.asPath
+            }`
+          ).replace(/ /g, '-')}
         />
       )),
     [router.asPath]
@@ -159,7 +164,10 @@ function App({ Component, pageProps }: AppProps) {
         <link
           rel="alternate"
           hrefLang="x-default"
-          href={`${originUrl}${router.asPath === '/' ? '' : router.asPath}`}
+          href={decodeURI(`${originUrl}${router.asPath === '/' ? '' : router.asPath}`).replace(
+            / /g,
+            '-'
+          )}
         />
       </Head>
       <ChannelTalkProvider />

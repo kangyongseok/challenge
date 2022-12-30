@@ -4,7 +4,8 @@ export const GENDER = {
 };
 export const GENDER_BY_VALUE = {
   M: 'male',
-  F: 'female'
+  F: 'female',
+  W: 'female'
 };
 
 export const SELLER_STATUS = {

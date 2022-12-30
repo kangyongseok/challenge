@@ -64,6 +64,8 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
   const [openTooltip, setOpenTooltip] = useState(true);
   const [fetchData, setFetchData] = useState<RecentSearchParams>({});
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const [toggleViewHeight, setToggleViewHeight] = useState(0);
+  const [originHeight, setOriginHeight] = useState(0);
   const { data: searchHistory, isFetched } = useQuery(
     queryKeys.products.searchHistoryTopFive(fetchData),
     () => fetchSearchHistory(fetchData),
@@ -79,6 +81,29 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
       enabled: !!productId
     }
   );
+
+  useEffect(() => {
+    setOriginHeight(window.innerHeight);
+  }, []);
+
+  useEffect(() => {
+    // alert(window.visualViewport?.height)
+    if (checkAgent.isAndroid()) {
+      window.addEventListener('resize', () => {
+        if (!toggleViewHeight) {
+          setToggleViewHeight(window.visualViewport?.height as number);
+        }
+      });
+
+      if (toggleViewHeight) {
+        if (toggleViewHeight >= originHeight) {
+          boxRef.current?.querySelector('input')?.blur();
+          setToggleViewHeight(0);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toggleViewHeight]);
 
   useEffect(() => {
     if (modifyProductPrice) {

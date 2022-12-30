@@ -9,17 +9,13 @@ class MyDocument extends Document {
     const lang = this.props.locale || locales.ko.lng;
 
     return (
-      <Html lang={lang}>
+      <Html lang={lang} prefix="og: https://ogp.me/ns#">
         <Head>
           <meta name="application-name" content="카멜" />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-          <meta name="apple-mobile-web-app-title" content="Mr Camel" />
-          {/* <meta
-            name="apple-itunes-app"
-            content={`app-id=1541101835`}
-          /> */}
+          <meta name="apple-mobile-web-app-title" content="카멜" />
           <meta
             name="google-site-verification"
             content="7prKl76G0FB_U38s9lbBEiQDRbi6JnhgZYMJKnGw_hE"

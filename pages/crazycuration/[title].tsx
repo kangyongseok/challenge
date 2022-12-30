@@ -735,9 +735,6 @@ function Crazycuration({
         ogTitle={`${ogTitle} | 카멜 최저가 가격비교`}
         ogDescription={ogDescription}
         ogImage={ogImage}
-        ogUrl={`${
-          typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
-        }${ogUrl}`}
       />
       <GeneralTemplate
         header={<CrazycurationHeader onClickShare={handleClickShare} />}

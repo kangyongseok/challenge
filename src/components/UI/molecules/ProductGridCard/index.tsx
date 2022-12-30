@@ -260,7 +260,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
         <Image
           src={imageUrl}
-          alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
+          alt={`${product.title} 이미지`}
           round={isRound ? 8 : 0}
           disableLazyLoad={false}
           disableOnBackground={false}
@@ -332,7 +332,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           customStyle={{
             marginBottom: 4,
             flexWrap: 'wrap',
-            display: !hidePrice ? 'flex' : 'none'
+            display: !hidePrice ? 'flex' : 'none',
+            overflowY: 'hidden'
           }}
         >
           {!hidePrice && (

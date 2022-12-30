@@ -106,7 +106,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
           fullWidth
           isFixed
           placeholder="검색어를 입력해 주세요."
-          value={keyword || ''}
+          value={(keyword || '').replace(/-/g, ' ')}
           startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
           endAdornment={
             <Icon
@@ -140,6 +140,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
         <Flexbox gap={6} alignment="center">
           {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
           <Typography
+            component="h1"
             variant="h3"
             weight="bold"
             customStyle={{ textAlign: 'center', whiteSpace: 'nowrap' }}

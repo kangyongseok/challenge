@@ -15,6 +15,7 @@ import {
   ProductsPageHead,
   ProductsRelated,
   ProductsStatus,
+  ProductsStructuredData,
   ProductsTopButton
 } from '@components/pages/products';
 
@@ -34,6 +35,7 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
   return (
     <>
       <ProductsPageHead variant="brands" params={params} />
+      <ProductsStructuredData variant="brands" params={params} />
       <GeneralTemplate
         header={<ProductsHeader variant="brands" />}
         footer={<BottomNavigation disableHideOnScroll={false} />}
@@ -58,9 +60,19 @@ export async function getServerSideProps({
   query,
   req,
   res,
+  resolvedUrl,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
+  if (query.keyword?.includes(' ')) {
+    return {
+      redirect: {
+        destination: encodeURI(decodeURI(resolvedUrl).replace(/ /g, '-')),
+        permanent: true
+      }
+    };
+  }
+
   const params = convertSearchParamsByQuery(query, {
     variant: 'brands'
   });

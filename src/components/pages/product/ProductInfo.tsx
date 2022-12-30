@@ -247,7 +247,7 @@ ${newDescription}
           customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         />
       ) : (
-        <Content variant="body1" isClamped={isClamped}>
+        <Content component="article" variant="body1" isClamped={isClamped}>
           <LinesEllipsis
             text={convertedDescription !== 'null' ? convertedDescription : ''}
             maxLine="20"

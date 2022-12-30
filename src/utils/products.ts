@@ -361,6 +361,10 @@ export function convertSearchParamsByQuery(
     delete searchParams[key as keyof typeof searchParams];
   });
 
+  if (searchParams.keyword) {
+    searchParams.keyword = searchParams.keyword.replace(/-/g, ' ');
+  }
+
   return searchParams;
 }
 

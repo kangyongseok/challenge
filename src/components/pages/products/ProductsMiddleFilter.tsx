@@ -43,7 +43,7 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import type { SelectedSearchOption } from '@typings/products';
 import {
   dynamicOptionsStateFamily,
-  priceFilterOptionsSelector,
+  searchOptionsStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
@@ -86,8 +86,10 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
   );
+  const { searchOptions: baseSearchOptions } = useRecoilValue(
+    searchOptionsStateFamily(`base-${atomParam}`)
+  );
   const dynamicOptions = useRecoilValue(dynamicOptionsStateFamily(atomParam));
-  const { maxPrice } = useRecoilValue(priceFilterOptionsSelector);
 
   const [middleFilterSelectedSearchOptions, setMiddleFilterSelectedSearchOptions] = useState<
     SelectedSearchOption[]
@@ -232,8 +234,8 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.currentTarget.value;
 
-    if (Number(newValue) > getTenThousandUnitPrice(maxPrice)) {
-      setValue(getTenThousandUnitPrice(maxPrice));
+    if (Number(newValue) > getTenThousandUnitPrice(baseSearchOptions.maxPrice || 0)) {
+      setValue(getTenThousandUnitPrice(baseSearchOptions.maxPrice || 0));
     } else {
       setValue(newValue);
     }
@@ -327,7 +329,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
       isInitRef.current = false;
       setValue('');
     }
-  }, [middleFilterSelectedSearchOptions, maxPrice]);
+  }, [middleFilterSelectedSearchOptions, baseSearchOptions.maxPrice]);
 
   if (isFetched && (!dynamicOptions || !dynamicOptions.length)) return null;
 

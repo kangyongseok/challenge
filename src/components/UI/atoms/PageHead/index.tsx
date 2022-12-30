@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 import type { Product } from '@dto/product';
@@ -11,7 +12,6 @@ interface PageHeadProps {
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
-  ogUrl?: string;
   canonical?: string;
   product?: Product;
 }
@@ -23,10 +23,11 @@ function PageHead({
   ogTitle,
   ogDescription,
   ogImage,
-  ogUrl,
   canonical,
   product
 }: PageHeadProps) {
+  const router = useRouter();
+
   const {
     category: { name: categoryName = '' } = {},
     price = 0,
@@ -45,15 +46,28 @@ function PageHead({
       {ogTitle && <meta property="og:title" content={ogTitle} />}
       {ogDescription && <meta property="og:description" content={ogDescription} />}
       {ogImage && <meta property="og:image" content={ogImage} />}
-      {ogUrl && <meta property="og:url" content={ogUrl} />}
+      <meta
+        property="og:url"
+        content={decodeURI(
+          `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}${
+            router.asPath === '/' ? '' : router.asPath
+          }`
+        )}
+      />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="카멜" />
-      <meta property="og:locale" content="ko_KR" />
       {title && <meta name="twitter:title" content={title} />}
       {description && <meta name="twitter:description" content={description} />}
       {ogImage && <meta name="twitter:image" content={ogImage} />}
       <meta name="twitter:card" content="summary" />
-      {ogUrl && <meta name="twitter:url" content={ogUrl} />}
+      <meta
+        name="twitter:url"
+        content={decodeURI(
+          `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}${
+            router.asPath === '/' ? '' : router.asPath
+          }`
+        )}
+      />
       {canonical && <link rel="canonical" href={canonical} />}
       {product && (
         <>

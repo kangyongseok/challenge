@@ -344,7 +344,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
           <Content isRound={isRound}>
             <Image
               src={imageUrl}
-              alt={imageUrl.slice(imageUrl.lastIndexOf('/') + 1)}
+              alt={`${product.title} 이미지`}
               round={isRound ? 8 : 0}
               disableLazyLoad={false}
               disableOnBackground={false}

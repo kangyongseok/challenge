@@ -5,8 +5,7 @@ import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { SSRConfig } from 'next-i18next';
-import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import type { TypographyVariant } from 'mrcamel-ui';
 import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -34,10 +33,12 @@ import {
   ProductMowebAppContents,
   ProductRedirect,
   ProductRelatedProductList,
-  ProductSoldoutCard
+  ProductSoldoutCard,
+  ProductStructuredData
 } from '@components/pages/product';
 
 import type { AccessUser } from '@dto/userAuth';
+import type { Product } from '@dto/product';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
@@ -46,6 +47,7 @@ import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
+import { fetchParentCategories } from '@api/category';
 
 import { SELLER_STATUS } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
@@ -73,8 +75,9 @@ import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryProduct from '@hooks/useQueryProduct';
 
-function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function ProductDetail() {
   const {
+    locale,
     query: { id: productId, redirect, chainPrice },
     asPath
   } = useRouter();
@@ -456,16 +459,20 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
         ogTitle={`${data?.product.title} | 카멜`}
         ogDescription={`${getMetaDescription(data?.product)}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
-        ogUrl={`https://mrcamel.co.kr${
-          data?.product ? getProductDetailUrl({ product: data.product }) : ''
-        }`}
         canonical={`https://mrcamel.co.kr${
-          (_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale === locales.ko.lng
-            ? ''
-            : `/${(_nextI18Next as SSRConfig['_nextI18Next'])?.initialLocale}`
-        }${data?.product ? getProductDetailUrl({ product: data.product }) : ''}`}
+          locale === 'ko' ? '' : `/${locale}`
+        }${getProductDetailUrl({
+          product: data?.product as Product
+        })}`}
         keywords={`중고 ${data?.product.brand.name}, 중고 ${data?.product.category.name}, 중고 ${data?.product.quoteTitle}, ${data?.product.brand.name}, ${data?.product.category.name}, ${data?.product.quoteTitle}, 여자 ${data?.product.category.name}, 남자 ${data?.product.category.name}`}
         product={data?.product}
+      />
+      <ProductStructuredData
+        product={data?.product}
+        relatedProducts={data?.relatedProducts}
+        url={`https://mrcamel.co.kr${locale === 'ko' ? '' : `/${locale}`}${getProductDetailUrl({
+          product: data?.product as Product
+        })}`}
       />
       <GeneralTemplate
         subset
@@ -681,7 +688,17 @@ export async function getServerSideProps({
       }
     );
 
+    if (!Number.isNaN(Number(id)) || id?.includes(' ')) {
+      return {
+        redirect: {
+          destination: encodeURI(getProductDetailUrl({ product: product.product })),
+          permanent: true
+        }
+      };
+    }
+
     queryClient.setQueryData(queryKeys.products.product({ productId }), product);
+    await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);
 
     return {
       props: {

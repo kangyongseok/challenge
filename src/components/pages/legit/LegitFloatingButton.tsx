@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Icon, Tooltip, Typography, useTheme } from 'mrcamel-ui';
@@ -16,6 +16,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent, getAppVersion, handleClickAppDownload } from '@utils/common';
 
+import { legitRequestState } from '@recoil/legitRequest';
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { dialogState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -32,6 +33,7 @@ function LegitFloatingButton() {
   const [openLegitRecommendBottomSheet, setOpenLegitRecommendBottomSheet] = useRecoilState(
     legitOpenRecommendBottomSheetState
   );
+  const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const setDialogState = useSetRecoilState(dialogState);
   const { data: accessUser } = useQueryAccessUser();
 
@@ -95,12 +97,13 @@ function LegitFloatingButton() {
       return;
     }
 
+    resetLegitRequestState();
     router.push(
       accessUser
         ? { pathname: '/legit/request/selectCategory' }
         : { pathname: '/login', query: { returnUrl: '/legit' } }
     );
-  }, [accessUser, router, setDialogState]);
+  }, [accessUser, router, setDialogState, resetLegitRequestState]);
 
   useEffect(() => {
     if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {
