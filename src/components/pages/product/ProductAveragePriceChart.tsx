@@ -24,8 +24,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
 
-// import { pulse } from '@styles/transition';
-
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
 /**
@@ -303,61 +301,11 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         >
           시세이하 매물보기
         </Button>
-        {/* {!product ? (
-      <LabelSkeleton />
-    ) : (
-      <>
-        <Label isShowChart={isShowChart}>
-          {isShowChart ? (
-            <>
-              <Typography variant="body1" weight="medium">
-                {product.quoteTitle}
-              </Typography>
-              <Typography variant="body1" weight="medium">
-                {commaNumber(productPrice)}만원
-              </Typography>
-            </>
-          ) : (
-            <Typography variant="body1" weight="medium">
-              데이터가 부족해요
-            </Typography>
-          )}
-        </Label>
-        {isShowChart && data && options && <Line data={data} options={options} />}
-      </>
-    )} */}
         <Divider />
       </Box>
     </>
   );
 }
-
-// const LabelSkeleton = styled.div`
-//   background-color: ${({
-//     theme: {
-//       palette: { common }
-//     }
-//   }) => common.ui90};
-//   animation: ${pulse} 800ms linear 0s infinite alternate;
-//   margin-top: 16px;
-//   height: 128px;
-// `;
-
-// const Label = styled.div<{ isShowChart: boolean }>`
-//   margin-top: 16px;
-//   padding: 12px 16px;
-//   display: ${({ isShowChart }) => (isShowChart ? 'grid' : 'inline-block')};
-//   grid-template-columns: 1fr auto;
-//   grid-gap: 8px;
-//   justify-content: space-between;
-//   align-items: center;
-//   background-color: ${({
-//     theme: {
-//       palette: { primary }
-//     }
-//   }) => primary.bgLight};
-//   border-radius: ${({ theme }) => theme.box.round['8']};
-// `;
 
 const Divider = styled.div`
   margin-top: 32px;

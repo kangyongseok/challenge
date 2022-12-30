@@ -444,7 +444,7 @@ export function getProductDetailUrl({
   type = 'product',
   product
 }:
-  | { type?: 'product'; product: Product }
+  | { type?: 'product' | 'targetProduct'; product: Product }
   | { type: 'productResult'; product: ProductResult }
   | { type: 'targetProduct'; product: Product | ProductResult }) {
   const { id, targetProductId, targetProductUrl, quoteTitle } = product || {};

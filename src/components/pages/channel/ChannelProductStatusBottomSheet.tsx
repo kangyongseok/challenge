@@ -43,6 +43,15 @@ function ChannelProductStatusBottomSheet({
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
 
+  useEffect(() => {
+    if (open) {
+      logEvent(attrKeys.channel.VIEW_PRODUCT_MODAL, {
+        name: attrProperty.name.CHANNEL_DETAIL,
+        title: getLogEventTitle(status)
+      });
+    }
+  }, [open, status]);
+
   const handleClose = useCallback(() => {
     setProductStatusBottomSheetState({ open: false, isChannel });
   }, [isChannel, setProductStatusBottomSheetState]);
@@ -54,7 +63,7 @@ function ChannelProductStatusBottomSheet({
       logEvent(attrKeys.channel.CLICK_PRODUCT_MODAL, {
         name: attrProperty.name.CHANNEL,
         title: getLogEventTitle(status),
-        att: getLogEventAtt(newStatus)
+        att: status === 8 && newStatus === 0 ? 'SHOW' : getLogEventAtt(newStatus)
       });
 
       const params: putProductUpdateStatusParams = { productId: id, status: newStatus };
@@ -132,6 +141,11 @@ function ChannelProductStatusBottomSheet({
           {productStatus[8] !== productStatus[status as keyof typeof productStatus] && (
             <Menu variant="h3" weight="medium" onClick={handleClickStatus(8)}>
               숨기기
+            </Menu>
+          )}
+          {productStatus[8] === productStatus[status as keyof typeof productStatus] && (
+            <Menu variant="h3" weight="medium" onClick={handleClickStatus(0)}>
+              보이기
             </Menu>
           )}
         </Flexbox>

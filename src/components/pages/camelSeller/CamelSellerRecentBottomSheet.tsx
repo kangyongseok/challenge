@@ -197,7 +197,6 @@ function CamelSellerRecentBottomSheet() {
               ? [Number(query.brandIds)]
               : (query.brandIds?.map((id) => Number(id)) as number[]),
           categoryIds: [Number(query.categoryIds)],
-          // keyword: tempData.quoteTitle || `${String(query.brandName)} ${query.categoryName}`,
           keyword: getKeyword() as string,
           conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
           colorIds: tempData.color.id ? [tempData.color.id] : [],
@@ -221,12 +220,6 @@ function CamelSellerRecentBottomSheet() {
     tempData.size.id,
     viewRecentPriceList.open
   ]);
-
-  // useEffect(() => {
-  //   if (inView) {
-  //     fetchNextPage();
-  //   }
-  // }, [fetchNextPage, inView]);
 
   const handleClickFilterSelect = ({ type, id }: { type: string; id: number }) => {
     setFetchData((props) => ({
@@ -275,9 +268,6 @@ function CamelSellerRecentBottomSheet() {
         <Flexbox>
           <Typography brandColor="primary" weight="bold" variant="h3">
             {getKeyword()}
-            {/* {tempData.quoteTitle ||
-              `${String(query.brandName)} ${query.categoryName}` ||
-              query.brandName} */}
             <Typography weight="bold" variant="h3" customStyle={{ display: 'inline-block' }}>
               의 최근 거래가
             </Typography>

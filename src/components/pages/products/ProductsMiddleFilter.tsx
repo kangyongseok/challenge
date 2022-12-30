@@ -387,11 +387,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                       onChange={handleChange}
                       value={value}
                       disabled={checked}
-                      customStyle={{
-                        whiteSpace: 'nowrap', // TODO UI 라이브러리 업데이트 후 제거
-                        backgroundColor: checked ? common.ui95 : 'none',
-                        color: checked ? common.ui80 : 'inherit'
-                      }}
+                      customStyle={{ whiteSpace: 'nowrap' }}
                       inputCustomStyle={{
                         width: '100%'
                       }}
@@ -447,13 +443,11 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                         >
                           {needImage && (
                             <Avatar
-                              width="28px"
-                              height="28px"
+                              width={28}
+                              height={28}
                               src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
                               alt="Color Img"
-                              customStyle={{
-                                borderRadius: '50%'
-                              }}
+                              round="50%"
                             />
                           )}
                           {!needImage && getColorCode && (

@@ -165,8 +165,8 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
               marginBottom: 20
             }}
           >
-            <Skeleton width={71.36} height={36} disableAspectRatio round={8} />
-            <Skeleton width={71.36} height={36} disableAspectRatio round={8} />
+            <Skeleton width={71.36} height={36} round={8} disableAspectRatio />
+            <Skeleton width={71.36} height={36} round={8} disableAspectRatio />
           </Flexbox>
         )}
         {!isLoading && legitProducts.length > 0 && (

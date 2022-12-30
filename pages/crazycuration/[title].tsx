@@ -34,6 +34,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
+import { getCookies } from '@utils/cookies';
 import { checkAgent, executedShareURl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
@@ -843,8 +844,8 @@ export async function getServerSideProps({
   let nextEventTitle = '';
   let gender = 'M';
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
     const { info: { value: { gender: userGender = '' } = {} } = {} } = await queryClient.fetchQuery(

@@ -17,7 +17,7 @@ import {
   WishesTabs
 } from '@components/pages/wishes';
 
-import { CategoryValue } from '@dto/category';
+import type { CategoryValue } from '@dto/category';
 
 import { logEvent } from '@library/amplitude';
 

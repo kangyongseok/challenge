@@ -48,7 +48,6 @@ function MypageUserShopCard() {
       });
 
       router.push('/user/shop');
-      // router.push('/camelSeller/registerConfirm/35945662');
     } else {
       logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
         name: attrProperty.name.MAIN
@@ -130,8 +129,6 @@ function MypageUserShopCard() {
     }
   };
 
-  // if (!roles.length || !roles.some((role) => role === PRODUCT_CREATE)) return null;
-
   return (
     <StyledMypageUserShopCard onClick={handleClickCamelSeller}>
       <Box customStyle={{ flexGrow: 1 }}>
@@ -170,6 +167,7 @@ function MypageUserShopCard() {
               alt="Shop Product Img"
               round={8}
               disableAspectRatio
+              disableOnBackground={false}
               index={index}
             />
           ))}
@@ -213,7 +211,6 @@ const UserProductImage = styled(Image)<{ index: number }>`
   top: ${({ index }) => index * 2}px;
   left: ${({ index }) => index * 8}px;
   z-index: ${({ index }) => 3 - index};
-  object-fit: cover;
 `;
 
 export default MypageUserShopCard;

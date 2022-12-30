@@ -76,11 +76,6 @@ function ProductSellerReviews({
     setReviewInfoParams((props) => ({ ...props, sellerId }));
   }, [sellerId]);
 
-  // const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
-  // const isCamelSeller =
-  //   reviewInfo &&
-  //   SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
-  //     SELLER_STATUS['3'];
   return reviewInfo?.sellerReviews?.totalElements ? (
     <Box>
       <Flexbox
@@ -138,59 +133,6 @@ function ProductSellerReviews({
           customStyle={{ color: common.ui60, marginLeft: 5 }}
         />
       </Flexbox>
-      {/* <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginTop: 16 }}>
-        <Flexbox alignment="center">
-          {reviewInfo ? (
-            (isCamelProduct && (
-              <Avatar
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
-                customStyle={{ borderRadius: '50%' }}
-              />
-            )) ||
-            (isCamelSeller && (
-              <Avatar
-                src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
-                customStyle={{ borderRadius: '50%' }}
-              />
-            ))
-          ) : (
-            <Icon name="UserFilled" width={20} color={common.ui95} />
-          )}
-          <ProductSellerName
-            variant="body1"
-            weight="medium"
-            hasName={!!reviewInfo?.productSeller.name}
-          >
-            {reviewInfo?.productSeller.name}
-          </ProductSellerName>
-        </Flexbox>
-        <Flexbox alignment="center" gap={12}>
-          {isCamelProduct && (
-            <Flexbox alignment="center">
-              <Typography variant="body2" weight="bold">
-                카멜우수판매자
-              </Typography>
-            </Flexbox>
-          )}
-          {isCamelSeller && (
-            <Flexbox alignment="center">
-              <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
-              <Typography variant="body2" weight="bold">
-                카멜인증판매자
-              </Typography>
-            </Flexbox>
-          )}
-          {reviewInfo?.curnScore && (
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
-              {`${
-                reviewInfo.curnScore.length > 1
-                  ? reviewInfo?.curnScore
-                  : `${reviewInfo?.curnScore}.0` || 0
-              }${reviewInfo?.maxScore ? `/${reviewInfo?.maxScore}` : ''}`}
-            </Typography>
-          )}
-        </Flexbox>
-      </Flexbox> */}
       {!reviewInfo?.sellerReviews
         ? Array.from({ length: 2 }, (_, index) => (
             <ReviewCardSkeleton key={`review-loading-${index}`} />
@@ -232,30 +174,6 @@ function ProductSellerReviews({
     </Box>
   ) : null;
 }
-
-// const ProductSellerName = styled(Typography)<{ hasName: boolean }>`
-//   margin-left: 6px;
-//   overflow: hidden;
-//   display: -webkit-box;
-//   -webkit-line-clamp: 1;
-//   -webkit-box-orient: vertical;
-//   overflow-wrap: anywhere;
-
-//   ${({
-//     theme: {
-//       box,
-//       palette: { common }
-//     },
-//     hasName
-//   }) =>
-//     !hasName && {
-//       height: '21px',
-//       width: '50px',
-//       borderRadius: box.round['4'],
-//       backgroundColor: common.ui90,
-//       animation: `${pulse} 800ms linear 0s infinite alternate`
-//     }}
-// `;
 
 const ReviewCard = styled.div`
   margin-top: 8px;

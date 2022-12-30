@@ -2,16 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useQuery, useQueryClient } from 'react-query';
-import {
-  BottomSheet,
-  Box,
-  Chip,
-  Flexbox,
-  Image,
-  ThemeProvider,
-  Typography,
-  dark
-} from 'mrcamel-ui';
+import { BottomSheet, Box, Chip, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
 import styled from '@emotion/styled';
 
@@ -36,6 +27,11 @@ import Firecracker from './Firecracker';
 const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/onboarding`;
 
 function OnboardingResult() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
@@ -77,11 +73,9 @@ function OnboardingResult() {
   };
 
   return (
-    <ThemeProvider theme="dark">
+    <>
       <Firecracker />
-      <Box
-        customStyle={{ padding: '0 40px', background: dark.palette.common.uiWhite, height: '100%' }}
-      >
+      <Box customStyle={{ padding: '0 40px', background: common.uiWhite, height: '100%' }}>
         <Flexbox
           justifyContent="center"
           alignment="center"
@@ -103,22 +97,25 @@ function OnboardingResult() {
               }.png`}
               alt="Face Img"
               width={32}
+              customStyle={{
+                margin: 'auto'
+              }}
             />
             <Typography
               variant="h3"
               weight="medium"
-              customStyle={{ color: dark.palette.common.ui98, marginBottom: 12, marginTop: 10 }}
+              customStyle={{ color: common.ui98, marginBottom: 12, marginTop: 10 }}
             >
               {userNameParse()}, {userInfo?.info.value.yearOfBirth}
             </Typography>
-            <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
+            <ElipsisArea customStyle={{ color: common.ui60 }}>
               👕 상의 : {userInfo?.size.value?.tops.map((top) => top.viewSize)?.join(',')}
             </ElipsisArea>
-            <ElipsisArea customStyle={{ color: dark.palette.common.ui60, margin: '4px 0' }}>
+            <ElipsisArea customStyle={{ color: common.ui60, margin: '4px 0' }}>
               👖 하의 :{' '}
               {sortBy(userInfo?.size.value?.bottoms.map((bottom) => bottom.size))?.join(',')}
             </ElipsisArea>
-            <ElipsisArea customStyle={{ color: dark.palette.common.ui60 }}>
+            <ElipsisArea customStyle={{ color: common.ui60 }}>
               👟 신발 :{' '}
               {sortBy(userInfo?.size?.value?.shoes.map((shoe) => shoe.viewSize))?.join(',')}
             </ElipsisArea>
@@ -136,7 +133,7 @@ function OnboardingResult() {
                     alt="PurchaseType Img"
                     width={20}
                   />
-                  <Typography customStyle={{ color: dark.palette.common.ui60, marginTop: 4 }}>
+                  <Typography customStyle={{ color: common.ui60, marginTop: 4 }}>
                     {
                       purchaseType.filter(
                         (type) => type.value === userInfo?.personalStyle.purchaseTypes[0].id
@@ -159,11 +156,7 @@ function OnboardingResult() {
               ))}
             </Flexbox>
           </ProfileCard>
-          <Typography
-            variant="small1"
-            weight="medium"
-            customStyle={{ color: dark.palette.common.ui60 }}
-          >
+          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
             프로필 수정은 <MypageText>마이페이지</MypageText>에서도 가능해요!
           </Typography>
         </Flexbox>
@@ -181,20 +174,19 @@ function OnboardingResult() {
       >
         카멜에서 득템하러 GO!
       </OnboardingBottomCTA>
-      <BottomSheet
-        open={isOpen}
-        onClose={handleClickClose}
-        customStyle={{ background: dark.palette.common.uiBlack }}
-        disableSwipeable
-      >
+      <BottomSheet open={isOpen} onClose={handleClickClose} disableSwipeable>
         <OnboardingPermission />
       </BottomSheet>
-    </ThemeProvider>
+    </>
   );
 }
 
 const ProfileCard = styled.div`
-  background: ${dark.palette.common.uiBlack};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
   border-radius: 20px;
   padding: 32px;
   width: 100%;
@@ -210,8 +202,16 @@ const DotLine = styled.div`
 `;
 
 const ModelChip = styled(Chip)`
-  background: ${dark.palette.common.ui20};
-  color: ${dark.palette.common.ui98};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui98};
   width: fit-content;
 `;
 
@@ -245,8 +245,17 @@ const ElipsisArea = styled(Typography)`
 `;
 
 const MypageText = styled.span`
-  color: ${dark.palette.common.uiBlack};
-  border-bottom: 1px solid ${dark.palette.common.uiBlack};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
+  border-bottom: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiBlack};
 `;
 
 function CamelIcon() {

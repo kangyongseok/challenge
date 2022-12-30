@@ -16,6 +16,8 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
+
 function Announce() {
   const router = useRouter();
 
@@ -61,8 +63,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
   try {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     await queryClient.fetchQuery(queryKeys.commons.announce(Number(query.id)), () =>
       fetchAnnounce(Number(query.id))

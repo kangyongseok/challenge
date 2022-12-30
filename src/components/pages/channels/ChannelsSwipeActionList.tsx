@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import {
   Type as ListType,
   SwipeAction,
@@ -39,6 +40,7 @@ import {
   getUnreadMessagesCount
 } from '@utils/channel';
 
+import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
 import useMutationChannelNoti from '@hooks/useMutationChannelNoti';
@@ -55,10 +57,12 @@ function ChannelsSwipeActionList({
   const router = useRouter();
   const {
     theme: {
-      palette: { common },
+      palette: { common, secondary },
       typography
     }
   } = useTheme();
+
+  const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -121,8 +125,26 @@ function ChannelsSwipeActionList({
       name: attrProperty.name.CHANNEL
     });
 
-    await mutateLeaveChannel(camelChannel.channel.id);
-  }, [camelChannel.channel, isLoadingMutateLeaveChannel, mutateLeaveChannel]);
+    setDialogState({
+      type: 'leaveChannel',
+      customStyle: { minWidth: 310, 'button + button': { backgroundColor: secondary.red.main } },
+      async secondButtonAction() {
+        logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
+          name: attrProperty.name.CHANNEL_DETAIL,
+          title: attrProperty.title.LEAVE,
+          att: 'YES'
+        });
+
+        if (camelChannel.channel) await mutateLeaveChannel(camelChannel.channel.id);
+      }
+    });
+  }, [
+    camelChannel.channel,
+    isLoadingMutateLeaveChannel,
+    mutateLeaveChannel,
+    secondary.red.main,
+    setDialogState
+  ]);
 
   const handleClickChannel = useCallback(() => {
     if (!camelChannel.channel) return;
@@ -145,6 +167,9 @@ function ChannelsSwipeActionList({
   const handleClickSelectTargetUser = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
+      logEvent(attrKeys.channel.CLICK_BUYER, {
+        name: attrProperty.name.VIEW_SELECT_BUYER
+      });
 
       if (
         isLoadingMutatePutProductUpdateStatus ||
@@ -155,6 +180,7 @@ function ChannelsSwipeActionList({
 
       const productId = camelChannel.product.id;
       const targetUserId = camelChannel.channelTargetUser.user?.id;
+      const targetUserName = camelChannel.channelTargetUser.user?.name;
       const isTargetUserSeller =
         channelUserType[camelChannel.channelTargetUser.type as keyof typeof channelUserType] ===
         channelUserType[1];
@@ -180,6 +206,7 @@ function ChannelsSwipeActionList({
               query: {
                 productId,
                 targetUserId,
+                targetUserName,
                 isTargetUserSeller
               }
             });
@@ -236,7 +263,9 @@ function ChannelsSwipeActionList({
             currentUserId: String(accessUser?.userId || '')
           })}
           description={
-            getLastMessage(sendbirdChannel) || camelChannel.lastMessageManage?.content || ''
+            camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
+              ? camelChannel.lastMessageManage.content
+              : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
           }
           descriptionCustomStyle={{
             fontSize: typography.h4.size,
@@ -253,6 +282,7 @@ function ChannelsSwipeActionList({
                 variant="ghost"
                 brandColor="black"
                 onClick={handleClickSelectTargetUser}
+                customStyle={{ minWidth: 43 }}
               >
                 선택
               </Button>
@@ -316,6 +346,7 @@ const ProductImage = styled.div<{ url?: string; isVisible: boolean }>`
   display: flex;
   flex-direction: column;
   width: 44px;
+  min-width: 44px;
   height: 44px;
   border-radius: 8px;
   background-image: ${({ url }) => `url(${url})`};

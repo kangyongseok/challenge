@@ -41,6 +41,7 @@ function MyPortfolioCommonBanner({ name, customStyle }: MyPortfolioCommonBannerP
       <Flexbox alignment="center">
         <Image
           disableAspectRatio
+          disableSkeleton
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/myportfolio/banner_small_shoes.png`}
           alt="나이키 운동화"
           width={120}

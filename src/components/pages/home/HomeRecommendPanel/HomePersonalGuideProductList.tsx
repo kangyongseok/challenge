@@ -199,8 +199,6 @@ function HomePersonalGuideProductList() {
               compact
               gap={8}
               hideProductLabel
-              // hideMetaCamelInfo
-              // hideAreaWithDateInfo
               productAtt={{
                 name: attrProperty.name.MAIN,
                 title: attrProperty.title.PERSONAL_GUIDE,

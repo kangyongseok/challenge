@@ -71,7 +71,7 @@ function ImageDetailDialog({
   });
 
   const handleSlideMove = () => {
-    slideMovingRef.current = true;
+    if (images.length > 1) slideMovingRef.current = true;
   };
 
   const handleSlideMoveEnd = () => {

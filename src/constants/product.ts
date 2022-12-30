@@ -101,7 +101,6 @@ export const PRODUCT_SITE = {
   FRUITSFAMILY: { id: 22, name: '후루츠패밀리' },
   DIESELMANIA: { id: 23, name: '디젤매니아' },
   CAMEL: { id: 24, name: '카멜' },
-  ORIGINAL_CAMEL: { id: 34, name: '카멜' },
   CAMELSELLER: { id: 34, name: '카멜판매자' },
   MJOONGNA: { id: 25, name: '중나앱' },
   CAMELNCAFE: { id: 26, name: '카멜-N카페' },

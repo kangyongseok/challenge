@@ -40,7 +40,7 @@ export const getChannelTitle = ({
 
     if (targetUser.user.name) return `${targetUser.user.name}${suffix}`;
 
-    return `회원${targetUser.id}${suffix}`;
+    return `회원${targetUser.user.id}${suffix}`;
   }
 
   if (!groupChannel?.name && !groupChannel?.members) return 'No title';
@@ -59,7 +59,7 @@ export const getLastMessageCreatedAt = (
   lastMessageManage: ChannelHistoryManage | null,
   channel: GroupChannel | undefined
 ): string => {
-  const createdAt = channel?.lastMessage?.createdAt || lastMessageManage?.dateUpdated;
+  const createdAt = lastMessageManage?.dateUpdated || channel?.lastMessage?.createdAt;
 
   if (!createdAt) return '';
 

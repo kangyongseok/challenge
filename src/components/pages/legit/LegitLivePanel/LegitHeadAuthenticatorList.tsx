@@ -114,7 +114,13 @@ function LegitHeadAuthenticatorList() {
               ({ userId, image, name, title, dateActivated, cntReal = 0, cntFake = 0 }) => (
                 <Card key={`authenticator-${userId}`} onClick={handleClick(userId, name)}>
                   <Flexbox direction="vertical" alignment="center" gap={20}>
-                    <UserAvatar src={image} dateActivated={dateActivated} />
+                    <UserAvatar
+                      width={80}
+                      height={80}
+                      src={image}
+                      isRound
+                      dateActivated={dateActivated}
+                    />
                     <Flexbox
                       direction="vertical"
                       gap={6}

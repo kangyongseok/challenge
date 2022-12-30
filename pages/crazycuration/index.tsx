@@ -7,6 +7,8 @@ import { fetchContentsProducts } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 
+import { getCookies } from '@utils/cookies';
+
 function Crazycuration() {
   return <div />;
 }
@@ -14,8 +16,8 @@ function Crazycuration() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   try {
     const { contents: { url } = {} } = await queryClient.fetchQuery(

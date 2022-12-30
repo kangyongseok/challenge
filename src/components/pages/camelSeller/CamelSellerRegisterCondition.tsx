@@ -13,7 +13,6 @@ import attrKeys from '@constants/attrKeys';
 import {
   camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  // camelSellerSubmitState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
 

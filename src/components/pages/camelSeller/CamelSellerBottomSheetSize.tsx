@@ -11,14 +11,12 @@ import { filter, sortBy, uniqBy } from 'lodash-es';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-// import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchCategorySizes } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
 import { globalSizeGroupId } from '@constants/common';
-// import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -39,7 +37,6 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
   const swiperRef = useRef<SwiperClass | null>(null);
   const [tab, setTab] = useState(0);
   const [groupSize, setGroupSize] = useState<GroupSize[]>([]);
-  // const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
   const [fetchData, setFetchData] = useState({ brandId: 0, categoryId: 0 });
   const tempData = useRecoilValue(camelSellerTempSaveDataState);
   const { data: categorySizes } = useQuery(
@@ -55,8 +52,6 @@ function CamelSellerBottomSheetSize({ onClick }: BottomSheetSizeProps) {
       name: attrProperty.name.PRODUCT_OPTIONS,
       title: attrProperty.title.SIZE
     });
-
-    // setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

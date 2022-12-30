@@ -13,6 +13,7 @@ function LegitRequestBrandLogo({ src }: LegitRequestBrandLogoProps) {
         alt="Brand Logo Img"
         width={80}
         height={80}
+        round={8}
         disableAspectRatio
         customStyle={{ margin: '0 auto', mixBlendMode: 'screen' }}
       />

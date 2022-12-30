@@ -4,6 +4,8 @@ import type { UserSnsLoginInfo } from '@dto/userAuth';
 
 import { postLogin } from '@api/userAuth';
 
+import { setCookie } from '@utils/cookies';
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
@@ -20,18 +22,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const expires = new Date();
       expires.setDate(365);
 
-      res.setHeader('Set-Cookie', [
-        `accessUser=${encodeURIComponent(
-          JSON.stringify(userSnsLoginResult.accessUser)
-        )}; expires=${expires.toUTCString()}; path=/; httpOnly; sameSite=lax;${
-          process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
-        }`,
-        `accessToken=${
-          userSnsLoginResult.jwtToken
-        }; expires=${expires.toUTCString()}; path=/; httpOnly; sameSite=lax;${
-          process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
-        }`
-      ]);
+      setCookie('accessUser', encodeURIComponent(JSON.stringify(userSnsLoginResult.accessUser)), {
+        req,
+        res,
+        domain: process.env.NODE_ENV !== 'development' ? '.mrcamel.co.kr' : '',
+        path: '/',
+        expires,
+        httpOnly: true,
+        sameSite: 'lax'
+      });
+      setCookie('accessToken', userSnsLoginResult.jwtToken, {
+        req,
+        res,
+        domain: process.env.NODE_ENV !== 'development' ? '.mrcamel.co.kr' : '',
+        path: '/',
+        expires,
+        httpOnly: true,
+        sameSite: 'lax'
+      });
+
       res.statusCode = 200;
 
       return res.send(userSnsLoginResult);

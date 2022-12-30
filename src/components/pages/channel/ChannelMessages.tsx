@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { MutableRefObject, UIEvent } from 'react';
 
-import { useRouter } from 'next/router';
-import { Box, Typography } from 'mrcamel-ui';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
+import { Box } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 import dayjs from 'dayjs';
 import type { AdminMessage, FileMessage, UserMessage } from '@sendbird/chat/message';
@@ -11,8 +11,9 @@ import styled from '@emotion/styled';
 
 import DateSeparator from '@components/UI/molecules/DateSeparator';
 import ChannelMessage from '@components/pages/channel/ChannelMessage';
+import ChannelAdminMessage from '@components/pages/channel/ChannelAdminMessage';
 
-import { logEvent } from '@library/amplitude';
+import type { ChannelDetail } from '@dto/channel';
 
 import {
   HEADER_HEIGHT,
@@ -21,24 +22,16 @@ import {
   MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
   PRODUCT_INFORMATION_HEIGHT
 } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
 import { isAdminMessage } from '@utils/channel';
 
-import type { MemorizedMessage } from '@typings/channel';
-
-import ChannelAppointmentMessage from './ChannelAppointmentMessage';
+import type { CoreMessageType } from '@typings/channel';
 
 interface ChannelMessagesProps {
   sendbirdChannel: GroupChannel;
-  messages: MemorizedMessage[];
+  messages: CoreMessageType[];
   productId: number;
-  productStatus: number;
-  isSeller: boolean;
   targetUserId: number;
-  targetUserName: string;
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
@@ -46,145 +39,69 @@ interface ChannelMessagesProps {
   hasMorePrev: boolean;
   fetchPrevMessages: () => Promise<void>;
   scrollToBottom(behavior?: ScrollBehavior): void;
+  refetchChannel: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
 }
 
 function ChannelMessages({
   sendbirdChannel,
   messages,
   productId,
-  productStatus,
-  isSeller,
   targetUserId,
-  targetUserName,
   showAppointmentBanner,
   showNewMessageNotification,
   showActionButtons,
   messagesRef,
   hasMorePrev,
   fetchPrevMessages,
-  scrollToBottom
+  scrollToBottom,
+  refetchChannel
 }: ChannelMessagesProps) {
-  const router = useRouter();
-
   const [initialized, setInitialized] = useState(false);
 
   const memorizedAllMessages = useMemo(
     () =>
       messages.length > 0 ? (
-        messages.map(
-          (
-            {
-              message,
-              appointment,
-              userReview,
-              isPushNoti,
-              showChangeProductStatus,
-              showAppointmentDetail
-            },
-            idx
-          ) => {
-            const previousMessage = messages[idx - 1]?.message;
-            const previousAppointment = messages[idx - 1]?.appointment;
-            const previousUserReview = messages[idx - 1]?.userReview;
-            const nextMessage = messages[idx + 1]?.message;
-            const previousCreatedAt =
-              previousMessage?.createdAt ||
-              previousAppointment?.dateCreated ||
-              previousUserReview?.dateCreated;
-            const currentCreatedAt =
-              message?.createdAt || appointment?.dateCreated || userReview?.dateCreated;
-            const hasSeparator = !(
-              previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'date')
-            );
+        messages.map((message, idx) => {
+          const previousMessage = messages[idx - 1];
+          const nextMessage = messages[idx + 1];
+          const previousCreatedAt = previousMessage?.createdAt;
+          const currentCreatedAt = message?.createdAt;
+          const hasSeparator = !(
+            previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'date')
+          );
 
-            const handleClickViewReviews = () => {
-              logEvent(attrKeys.channel.CLICK_REVIEW_DETAIL, {
-                name: attrProperty.name.CHANNEL_DETAIL,
-                att: 'SEND'
-              });
-
-              if (checkAgent.isIOSApp()) {
-                window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-                  JSON.stringify({
-                    pathname: `/userInfo/${targetUserId}?tab=reviews`,
-                    redirectChannelUrl: router.asPath
-                  })
-                );
-                return;
-              }
-
-              router.push({
-                pathname: `/userInfo/${targetUserId}`,
-                query: {
-                  tab: 'reviews'
-                }
-              });
-            };
-
-            return !!message || !!appointment || !!userReview ? (
-              <Box
-                className="message-scroll"
-                key={
-                  (appointment && `appointment-message-${appointment.id}${Number(isPushNoti)}`) ||
-                  (userReview && `userReview-message-${userReview.id}`) ||
-                  `message-${message?.messageId || idx}`
-                }
-              >
-                {hasSeparator && (
-                  <DateSeparator customStyle={{ margin: '20px 0' }}>
-                    {dayjs(currentCreatedAt).format('YYYY년 MM월 DD일')}
-                  </DateSeparator>
-                )}
-                {!!message &&
-                  (isAdminMessage(message) ? (
-                    <AdminTextMessage variant="body2" weight="medium">
-                      {(message as AdminMessage).message}
-                    </AdminTextMessage>
-                  ) : (
-                    <ChannelMessage
-                      sendbirdChannel={sendbirdChannel}
-                      message={message as UserMessage | FileMessage}
-                      nextMessage={nextMessage as UserMessage | FileMessage | undefined}
-                    />
-                  ))}
-                {!!appointment && (
-                  <ChannelAppointmentMessage
-                    productId={productId}
-                    status={productStatus}
-                    appointment={appointment}
-                    isPushNoti={isPushNoti}
-                    showChangeProductStatus={showChangeProductStatus}
-                    showAppointmentDetail={showAppointmentDetail}
-                    isSeller={isSeller}
-                    targetUserName={targetUserName}
-                    isTargetUserSeller={!isSeller}
-                  />
-                )}
-                {!!userReview && (
-                  <AdminTextMessage variant="body2" weight="medium">
-                    {`${isSeller ? '구매자' : '판매자'} ${targetUserName}에게 후기를 보냈어요. `}
-                    <span onClick={handleClickViewReviews}>보낸 후기 보기</span>
-                  </AdminTextMessage>
-                )}
-              </Box>
-            ) : null;
-          }
-        )
+          return message ? (
+            <Box className="message-scroll" key={`message-${message.messageId}`}>
+              {hasSeparator && (
+                <DateSeparator customStyle={{ margin: '20px 0' }}>
+                  {dayjs(currentCreatedAt).format('YYYY년 MM월 DD일')}
+                </DateSeparator>
+              )}
+              {isAdminMessage(message) ? (
+                <ChannelAdminMessage
+                  message={message as AdminMessage}
+                  productId={productId}
+                  targetUserId={targetUserId}
+                  refetchChannel={refetchChannel}
+                />
+              ) : (
+                <ChannelMessage
+                  sendbirdChannel={sendbirdChannel}
+                  message={message as UserMessage | FileMessage}
+                  nextMessage={nextMessage as UserMessage | FileMessage | undefined}
+                />
+              )}
+            </Box>
+          ) : null;
+        })
       ) : (
         <DateSeparator customStyle={{ margin: '20px 0' }}>
           {dayjs(sendbirdChannel.createdAt).format('YYYY년 MM월 DD일')}
         </DateSeparator>
       ),
-    [
-      sendbirdChannel,
-      isSeller,
-      messages,
-      productId,
-      productStatus,
-      router,
-      targetUserId,
-      targetUserName
-    ]
+    [messages, sendbirdChannel, productId, targetUserId, refetchChannel]
   );
 
   const handleScroll = debounce((e: UIEvent<HTMLDivElement>) => {
@@ -261,16 +178,6 @@ const Content = styled.div<{
   position: relative;
   width: 100%;
   overflow: hidden;
-`;
-
-const AdminTextMessage = styled(Typography)`
-  color: ${({ theme: { palette } }) => palette.common.ui60};
-  text-align: center;
-  margin: 20px 0;
-
-  span {
-    text-decoration: underline;
-  }
 `;
 
 export default ChannelMessages;

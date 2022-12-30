@@ -34,12 +34,6 @@ function HomeStyleRecommendProductList() {
     }
   );
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setTest(true);
-  //   }, 3000);
-  // }, []);
-
   return (
     <Box
       component="section"

@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import type { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Typography } from 'mrcamel-ui';
+import { Tab, TabGroup, Typography } from 'mrcamel-ui';
 
-import { BottomNavigation, Header, Tabs } from '@components/UI/molecules';
+import { BottomNavigation, Header } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -28,6 +27,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getUserScoreText } from '@utils/user';
+import { getCookies } from '@utils/cookies';
 import { commaNumber } from '@utils/common';
 import { getChannelUserName } from '@utils/channel';
 
@@ -55,20 +55,16 @@ function UserInfo() {
     () => fetchInfoByUserId(userId)
   );
 
-  const { sellerName, scoreText, labels } = useMemo(
+  const { sellerName, scoreText } = useMemo(
     () => ({
       sellerName: getChannelUserName(name, userId),
-      scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), 0),
-      labels: [
-        { key: 'products', value: `매물 ${productCount || 0}개` },
-        { key: 'reviews', value: `후기 ${reviewCount || 0}개` }
-      ]
+      scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), 0)
     }),
-    [curnScore, maxScore, name, productCount, reviewCount, userId]
+    [curnScore, maxScore, name, userId]
   );
 
   const changeSelectedValue = useCallback(
-    (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+    (newValue: string | number) => {
       if (tab === 'products') {
         logEvent(attrKeys.userInfo.CLICK_SELLER_REVIEW, {
           name: attrProperty.name.SELLER_REVIEW,
@@ -143,11 +139,12 @@ function UserInfo() {
         footer={<BottomNavigation />}
         disablePadding
       >
-        <Box ref={tabRef} component="section" customStyle={{ minHeight: TAB_HEIGHT, zIndex: 1 }}>
-          <Tabs value={tab as string} changeValue={changeSelectedValue} labels={labels} />
-        </Box>
-        {tab === labels[0].key && <UserInfoProductsPanel userId={userId} />}
-        {tab === labels[1].key && <UserInfoReviewsPanel userId={userId} />}
+        <TabGroup ref={tabRef} value={tab as string} onChange={changeSelectedValue} fullWidth>
+          <Tab text={`매물 ${productCount || 0}개`} value="products" />
+          <Tab text={`후기 ${reviewCount || 0}개`} value="reviews" />
+        </TabGroup>
+        {tab === 'products' && <UserInfoProductsPanel userId={userId} />}
+        {tab === 'reviews' && <UserInfoReviewsPanel userId={userId} />}
       </GeneralTemplate>
     </>
   );
@@ -164,8 +161,8 @@ export async function getServerSideProps({
   if (/^[0-9]+$/.test(userId)) {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     try {
       const infoData = await fetchInfoByUserId(+userId);

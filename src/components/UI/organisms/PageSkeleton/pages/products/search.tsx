@@ -40,6 +40,7 @@ function SearchProducts() {
                   height={36}
                   round={8}
                   disableAspectRatio
+                  customStyle={{ marginRight: index === 0 ? 4 : undefined }}
                 />
               ))}
             </List>

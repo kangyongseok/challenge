@@ -142,6 +142,7 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
               // eslint-disable-next-line react/no-array-index-key
               key={`profile-user-product-skeleton-${index}`}
               isRound
+              imageSkeletonWidth={122}
             />
           ))
         ) : (

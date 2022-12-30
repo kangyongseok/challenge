@@ -31,6 +31,7 @@ import {
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -56,7 +57,7 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   const userId = useMemo(() => Number(id), [id]);
   const {
     isLoading,
-    data: { profile, cntOpinion = 0 } = {},
+    data: { profile, cntOpinion = 0, roleSeller } = {},
     refetch: refetchLegitProfile
   } = useQuery(queryKeys.users.legitProfile(userId), () => fetchLegitProfile(userId), {
     refetchOnWindowFocus: !isLegitUser || (!!accessUser && userId !== accessUser?.userId)
@@ -133,6 +134,7 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
             <LegitProfileInfo
               isLoading={isLoading}
               profile={profile}
+              sellerId={roleSeller?.sellerId}
               legitsBrands={legitsBrands}
               cntOpinion={cntOpinion}
               customStyle={{
@@ -161,8 +163,8 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
   if (/^[0-9]+$/.test(userId)) {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     // TODO 의도치 않은 redirect 발생, 임시 비활성화 처리 후 추후 보완
     // if (isEdit && +userId !== accessUser?.userId) {

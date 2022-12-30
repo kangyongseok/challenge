@@ -44,7 +44,19 @@ function useMutationSendMessage() {
         if (file) {
           await Sendbird.sendFile({
             channelUrl,
+            customType: data.channelId.toString(),
             file,
+            onSucceeded
+          });
+
+          return;
+        }
+
+        if (fileUrl) {
+          await Sendbird.sendFile({
+            channelUrl,
+            customType: data.channelId.toString(),
+            file: await urlToBlob(fileUrl),
             onSucceeded
           });
 
@@ -56,18 +68,11 @@ function useMutationSendMessage() {
             channelUrl,
             // eslint-disable-next-line no-return-await
             paramsList: await Promise.all(
-              fileUrls.map(async (url) => ({ file: await urlToBlob(url) }))
+              fileUrls.map(async (url) => ({
+                customType: data.channelId.toString(),
+                file: await urlToBlob(url)
+              }))
             ),
-            onSucceeded
-          });
-
-          return;
-        }
-
-        if (fileUrl) {
-          await Sendbird.sendFile({
-            channelUrl,
-            file: await urlToBlob(fileUrl),
             onSucceeded
           });
 
@@ -76,6 +81,7 @@ function useMutationSendMessage() {
 
         await Sendbird.sendMessage({
           channelUrl,
+          customType: data.channelId.toString(),
           newMessage: data.content,
           onSucceeded
         });

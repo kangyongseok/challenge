@@ -117,40 +117,6 @@ function MypageUserInfo() {
         내 정보
       </Typography>
       <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
-        {/* <MyInfoBox
-          variant="solid"
-          data-param="categoryInput"
-          data-att="CATEGORY"
-          onClick={handleClickRoute}
-        >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
-            카테고리
-          </Typography>
-          <ElipsisArea variant="small1">
-            {Object.values(subParentCategories.map(({ name }) => name)).join(', ') || '0개'}
-          </ElipsisArea>
-        </MyInfoBox>
-        <MyInfoBox
-          variant="solid"
-          data-param="brandInput"
-          data-att="BRAND"
-          onClick={handleClickRoute}
-        >
-          <Typography
-            weight="bold"
-            variant="small2"
-            customStyle={{ color: palette.common.grey['60'] }}
-          >
-            브랜드
-          </Typography>
-          <ElipsisArea variant="small1">
-            {Object.values(brands.map(({ name }) => name)).join(', ') || '0개'}
-          </ElipsisArea>
-        </MyInfoBox> */}
         <MyInfoBox
           variant="solid"
           data-param="personalInput"

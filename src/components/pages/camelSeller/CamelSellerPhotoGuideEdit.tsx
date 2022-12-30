@@ -95,7 +95,6 @@ function CamelSellerPhotoGuideEdit() {
         commonPhotoGuideDetail: { id: Number(photoGuideId) },
         photoGuideId: Number(photoGuideId),
         imageUrl
-        // productId: Number(query.id)
       }));
 
       setIsImageLoadingState(false);
@@ -104,10 +103,6 @@ function CamelSellerPhotoGuideEdit() {
         ...tempData,
         photoGuideImages: isImages
       });
-      // setSubmitData({
-      //   ...(submitData as SubmitType),
-      //   photoGuideImages: isImages
-      // });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tempData]);
@@ -309,7 +304,6 @@ function CamelSellerPhotoGuideEdit() {
             <GuideBox
               key={`photo-guide-${imageUrl?.split('/')[imageUrl.split('/').length - 1]}`}
               data-index={i}
-              // data-type={imageType}
               onClick={handleClickDetailModal}
             >
               <FullCoverImage

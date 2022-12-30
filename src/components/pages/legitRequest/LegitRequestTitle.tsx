@@ -49,6 +49,7 @@ function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitR
         alt="Brand Logo Img"
         width={110}
         height={110}
+        round={8}
         disableAspectRatio
         customStyle={{ margin: '0 auto' }}
       />

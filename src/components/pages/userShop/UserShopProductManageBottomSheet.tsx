@@ -6,10 +6,13 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import type { Product } from '@dto/product';
+
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -34,9 +37,23 @@ function UserShopProductManageBottomSheet() {
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('manage'));
   const {
     id,
+    brand,
+    category,
+    line,
+    site,
     status,
+    price,
+    scoreTotal,
+    scoreStatus,
+    scoreSeller,
+    scorePrice,
+    scorePriceAvg,
+    scorePriceCount,
+    scorePriceRate,
     isNoSellerReviewAndHasTarget = false
-  } = useRecoilValue(userShopSelectedProductState);
+  } = useRecoilValue(userShopSelectedProductState) as Product & {
+    isNoSellerReviewAndHasTarget?: boolean;
+  };
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation, isLoading: isLoadingMutatePutProductUpdateStatus } =
@@ -56,6 +73,23 @@ function UserShopProductManageBottomSheet() {
     }),
     [status]
   );
+
+  const getAttProperty = {
+    id,
+    brand: brand?.name,
+    category: category?.name,
+    parentCategory: FIRST_CATEGORIES[category?.id as number],
+    line,
+    site: site?.name,
+    price,
+    scoreTotal,
+    scoreStatus,
+    scoreSeller,
+    scorePrice,
+    scorePriceAvg,
+    scorePriceCount,
+    scorePriceRate
+  };
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;
@@ -88,7 +122,8 @@ function UserShopProductManageBottomSheet() {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'UP'
+      att: 'UP',
+      ...getAttProperty
     });
 
     hoistingMutation(
@@ -117,7 +152,8 @@ function UserShopProductManageBottomSheet() {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: getAtt(dataStatus)
+      att: getAtt(dataStatus),
+      ...getAttProperty
     });
 
     if (dataStatus === 1) {
@@ -181,7 +217,8 @@ function UserShopProductManageBottomSheet() {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      att: 'DELETE'
+      att: 'DELETE',
+      ...getAttProperty
     });
     setOpenState(({ type }) => ({
       type,
@@ -196,11 +233,6 @@ function UserShopProductManageBottomSheet() {
 
   const handleClickEdit = () => {
     if (!id) return;
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
-      name: attrProperty.name.MY_STORE,
-      title: getTitle,
-      att: 'EDIT'
-    });
 
     setOpenState(({ type }) => ({
       type,
@@ -216,6 +248,13 @@ function UserShopProductManageBottomSheet() {
         return;
       }
     }
+
+    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
+      name: attrProperty.name.MY_STORE,
+      title: getTitle,
+      att: 'EDIT',
+      ...getAttProperty
+    });
 
     router.push(`/camelSeller/registerConfirm/${id}`);
   };

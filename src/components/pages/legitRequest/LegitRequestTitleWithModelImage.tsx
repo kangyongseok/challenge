@@ -51,6 +51,7 @@ function LegitRequestTitleWithModelImage({
           alt="Model Img"
           width={110}
           height={110}
+          round={8}
           disableAspectRatio
           customStyle={{ margin: '0 auto' }}
         />

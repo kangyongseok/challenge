@@ -13,6 +13,8 @@ import { fetchChannels } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
+import { isProduction } from '@utils/common';
+
 import { sendbirdState } from '@recoil/channel';
 
 type UseQueryChannelsProps = ChannelsParams;
@@ -73,8 +75,7 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
   const channelHandlers: GroupChannelCollectionEventHandler = useMemo(
     () => ({
       onChannelsAdded: async (_, channels) => {
-        if (process.env.NODE_ENV === 'development')
-          console.debug('Sendbird onChannelsAdded::', { channels });
+        if (!isProduction) console.debug('Sendbird onChannelsAdded::', { channels });
         await useQueryResult.refetch();
       },
       onChannelsUpdated: async (_, channels) => {
@@ -103,7 +104,7 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
             return updatedChannel || channel;
           });
 
-          if (process.env.NODE_ENV === 'development')
+          if (!isProduction)
             console.debug('Sendbird onChannelsUpdated::', {
               state: currVal,
               channels,
@@ -134,7 +135,7 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
             (channel) => !channelUrls.includes(channel.url)
           );
 
-          if (process.env.NODE_ENV === 'development')
+          if (!isProduction)
             console.debug('Sendbird onChannelsDeleted::', {
               state: currVal,
               channelUrls,

@@ -136,12 +136,6 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
       color,
       size
     });
-
-    // setSubmitData({
-    //   ...(submitData as SubmitType),
-    //   colorIds: [color.id],
-    //   categorySizeIds: [size.id]
-    // });
     close();
   };
 
@@ -152,7 +146,6 @@ function CamelSellerSelectProductState({ close }: { close: () => void }) {
         customStyle={{
           margin: '32px 0',
           padding: '0 20px'
-          // display: searchValue && searchBrands?.length === 0 ? 'none' : 'block'
         }}
       >
         <Typography variant="h2" weight="bold">

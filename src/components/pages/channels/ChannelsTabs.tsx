@@ -1,12 +1,9 @@
 import { useCallback } from 'react';
-import type { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
+import { Box, Tab, TabGroup } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import { Tabs } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -28,7 +25,7 @@ function ChannelsTabs({ labels, value }: ChannelsTabsProps) {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const changeSelectedValue = useCallback(
-    async (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+    async (newValue: string | number) => {
       let title = attrProperty.title.ALL;
       const newChannelType = +newValue as keyof typeof channelType;
 
@@ -64,29 +61,35 @@ function ChannelsTabs({ labels, value }: ChannelsTabsProps) {
       component="section"
       customStyle={{ position: 'relative', minHeight: TAB_HEIGHT, zIndex: 1 }}
     >
-      <CustomTabs
+      <CustomTabGroup
         value={value}
-        changeValue={changeSelectedValue}
-        labels={labels}
+        onChange={changeSelectedValue}
         showAppDownloadBanner={showAppDownloadBanner}
-      />
+        fullWidth
+      >
+        {labels.map(({ key, value: labelValue }) => (
+          <Tab key={`label-${key}`} text={labelValue} value={key} />
+        ))}
+      </CustomTabGroup>
     </Box>
   );
 }
 
-const CustomTabs = styled(Tabs)<{ showAppDownloadBanner: boolean }>`
+const CustomTabGroup = styled(TabGroup)<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) =>
     showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT};
   width: 100%;
-  transition: all 0.5s;
-
-  & > button {
-    padding: 0;
-
-    & > h4 {
-      padding: 0;
+  background-color: ${({
+    theme: {
+      palette: { common }
     }
+  }) => common.uiWhite};
+  transition: top 0.5s;
+
+  // TODO UI 라이브러리 컴포넌트 props 추가
+  & button {
+    flex: 1;
   }
 `;
 

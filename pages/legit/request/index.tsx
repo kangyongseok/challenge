@@ -22,6 +22,8 @@ import { fetchProductLegit } from '@api/productLegit';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 
+import { getCookies } from '@utils/cookies';
+
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -286,8 +288,8 @@ export async function getServerSideProps({ req, query: { id } = {} }: GetServerS
   const queryClient = new QueryClient();
   const productId = Number(id || 0);
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (productId > 0) {
     try {

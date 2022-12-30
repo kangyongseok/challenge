@@ -217,12 +217,7 @@ function LoginButtonList({
   }, [openLogin]);
 
   return (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      gap={12}
-      customStyle={{ textAlign: 'center', paddingTop: disabledRecentLogin ? 32 : 0 }}
-    >
+    <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
       <TooltipWrapper>
         {lastLoginType === 'kakao' ? (
           <Tooltip

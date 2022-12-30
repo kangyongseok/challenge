@@ -92,7 +92,7 @@ const Initializer = {
       site: 'datadoghq.com',
       service: process.env.DATADOG_RUM_SERVICE,
       env: process.env.DATADOG_RUM_ENV,
-      sampleRate: 50,
+      sampleRate: 100,
       sessionReplaySampleRate: 20,
       trackInteractions: true,
       trackFrustrations: true,

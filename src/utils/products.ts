@@ -651,7 +651,7 @@ export function getProductType(siteId: number, sellerType: number) {
   if (SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['4']) {
     return 'transferred';
   }
-  if (siteId === PRODUCT_SITE.ORIGINAL_CAMEL.id) {
+  if (siteId === PRODUCT_SITE.CAMELSELLER.id) {
     return 'original';
   }
 

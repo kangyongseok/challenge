@@ -107,11 +107,11 @@ function BrandList({
             >
               <BrandImageBox variant={variant} color={color}>
                 <BrandImage
-                  variant={variant}
                   src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
                     mode === 'light' ? 'white' : 'black'
                   }/${nameEng.toLowerCase().replace(/\s/g, '')}.jpg`}
                   alt="Brand Logo Img"
+                  variant={variant}
                   round="50%"
                 />
               </BrandImageBox>

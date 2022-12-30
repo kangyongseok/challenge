@@ -24,17 +24,6 @@ export const Item = styled.div`
   row-gap: 4px;
 `;
 
-export const UserAvatar = styled.div`
-  background-color: ${({ theme: { palette } }) => palette.common.bg02};
-  border-radius: 50%;
-  min-width: 52px;
-  width: 52px;
-  height: 52px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export const HiddenImageLoader = styled.img`
   display: none;
 `;

@@ -5,8 +5,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
-import CamelSellerFloatingButton from '@components/UI/molecules/CamelSellerFloatingButton';
-import { BottomNavigation, Header } from '@components/UI/molecules';
+import { BottomNavigation, CamelSellerFloatingButton, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   MypageEtc,
@@ -29,6 +28,7 @@ import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { isProduction } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -98,8 +98,8 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);

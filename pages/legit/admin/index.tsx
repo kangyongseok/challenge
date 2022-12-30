@@ -25,6 +25,8 @@ import Initializer from '@library/initializer';
 
 import { locales } from '@constants/common';
 
+import { getCookies } from '@utils/cookies';
+
 function LegitAdmin() {
   const router = useRouter();
   const { tab = 'home' } = router.query;
@@ -89,8 +91,8 @@ export async function getServerSideProps({
   // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   return {
     props: {

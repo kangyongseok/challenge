@@ -52,7 +52,6 @@ function CamelSellerSavePopup() {
       att: 'CONTINUE'
     });
 
-    // resetEditState();
     setContinueRegisterDialog(({ type }) => ({ type, open: false }));
     setTempData({
       ...tempData,

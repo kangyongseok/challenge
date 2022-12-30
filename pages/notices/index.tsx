@@ -1,14 +1,13 @@
-import type { MouseEvent } from 'react';
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticPropsContext } from 'next';
-import { Box, Button } from 'mrcamel-ui';
+import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { BottomNavigation, Header, Tabs } from '@components/UI/molecules';
+import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { ActivityNotificationPanel, NoticeNotificationPanel } from '@components/pages/notices';
 
@@ -24,23 +23,15 @@ import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-const labels = [
-  {
-    key: '활동알림',
-    value: '활동알림'
-  },
-  {
-    key: '공지사항',
-    value: '공지사항',
-    badge: true
-  }
-];
-
-//  router.push(`/announces/${id}`);
-
 function Notices() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const queryClient = useQueryClient();
-  const [tab, setTab] = useState(labels[0].value);
+  const [tab, setTab] = useState<string | number>('활동알림');
   const { data: accessUser } = useQueryAccessUser();
   const params = {
     size: 20,
@@ -58,7 +49,7 @@ function Notices() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const { mutate: mutatePostManage } = useMutation(postManage);
 
-  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+  const changeSelectedValue = (newValue: string | number) => {
     if (newValue === '공지사항') {
       logEvent(attrKeys.noti.CLICK_ANNOUNCE_LIST);
     } else {
@@ -80,46 +71,84 @@ function Notices() {
       disablePadding
       header={
         <Header
+          showRight={tab !== '활동알림'}
           rightIcon={
-            tab === labels[0].value ? (
+            tab === '활동알림' ? (
               <Button
                 onClick={handleClickAllRead}
-                customStyle={{ border: 'none', marginRight: 20, padding: 0, fontSize: 12 }}
+                customStyle={{ border: 'none', marginRight: 8, padding: 0, fontSize: 12 }}
               >
                 모두 읽음
               </Button>
-            ) : (
-              <Box customStyle={{ width: 65 }} />
-            )
+            ) : undefined
           }
         />
       }
       footer={<BottomNavigation />}
     >
-      <TabsWrapper showAppDownloadBanner={showAppDownloadBanner} minHeight={TAB_HEIGHT}>
-        <Tabs
+      <TabsWrapper showAppDownloadBanner={showAppDownloadBanner}>
+        <TabGroup
+          fullWidth
           value={tab}
-          changeValue={changeSelectedValue}
-          labels={labels}
-          isNew={notViewedAnnounceCount > 0}
-        />
+          onChange={changeSelectedValue}
+          customStyle={{
+            backgroundColor: common.uiWhite
+          }}
+        >
+          <Tab text="활동알림" value="활동알림" />
+          <Tab
+            text={
+              <Badge
+                variant="solid"
+                open={notViewedAnnounceCount > 0}
+                text="N"
+                brandColor="red"
+                size="xsmall"
+                position={{
+                  top: '50%',
+                  right: -26
+                }}
+                // TODO UI 라이브러리 수정 필요
+                customStyle={{
+                  width: 16,
+                  height: 16,
+                  fontWeight: 700,
+                  justifyContent: 'center',
+                  transform: 'translateY(-50%)'
+                }}
+              >
+                <Typography
+                  weight={tab === '공지사항' ? 'bold' : 'regular'}
+                  // TODO UI 라이브러리 수정 필요, text 가 ReactElement 인 경우 onChange 이벤트가 동작하지 않음에 따른 임시 조치
+                  onClick={() => changeSelectedValue('공지사항')}
+                  customStyle={{
+                    color: tab === '공지사항' ? undefined : common.ui60
+                  }}
+                >
+                  공지사항
+                </Typography>
+              </Badge>
+            }
+            value="공지사항"
+          />
+        </TabGroup>
       </TabsWrapper>
       <Box customStyle={{ marginTop: 41 }}>
-        {tab === labels[0].value && <ActivityNotificationPanel />}
-        {tab === labels[1].value && <NoticeNotificationPanel />}
+        {tab === '활동알림' && <ActivityNotificationPanel />}
+        {tab === '공지사항' && <NoticeNotificationPanel />}
       </Box>
     </GeneralTemplate>
   );
 }
 
-const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean; minHeight: number }>`
+const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) =>
     showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
   width: 100%;
-  min-height: ${({ minHeight }) => minHeight}px;
+  min-height: ${TAB_HEIGHT}px;
   z-index: 2;
-  /* margin-left: -16px; */
+  transition: top 0.5s;
 `;
 
 export async function getStaticProps({

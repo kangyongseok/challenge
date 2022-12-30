@@ -1,28 +1,15 @@
-import { MouseEvent, useState } from 'react';
+import { useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-
-import { Tabs } from '@components/UI/molecules';
+import { Box, Button, Dialog, Flexbox, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
-
-const labels = [
-  {
-    key: 'wish',
-    value: '찜'
-  },
-  {
-    key: 'history',
-    value: '최근'
-  }
-];
 
 function WishesTabs() {
   const router = useRouter();
@@ -40,13 +27,14 @@ function WishesTabs() {
 
   const {
     theme: {
+      palette: { common },
       zIndex: { header }
     }
   } = useTheme();
 
   const [open, setOpen] = useState(false);
 
-  const changeSelectedValue = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+  const changeSelectedValue = (newValue: string | number) => {
     if (newValue === 'wish') {
       logEvent(attrKeys.wishes.VIEW_WISH_LIST);
     }
@@ -123,17 +111,26 @@ function WishesTabs() {
       <Box
         component="section"
         customStyle={{
-          minHeight: 45,
+          minHeight: TAB_HEIGHT,
           zIndex: header,
           paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
         }}
       >
-        <Tabs
+        <TabGroup
           value={tab}
-          changeValue={changeSelectedValue}
-          labels={labels}
-          customStyle={{ position: 'fixed', width: '100%' }}
-        />
+          onChange={changeSelectedValue}
+          fullWidth
+          // TODO backgroundColor UI 라이브러리 수정 필요
+          customStyle={{
+            position: 'fixed',
+            width: '100%',
+            backgroundColor: common.uiWhite,
+            '& button': { flex: 1 }
+          }}
+        >
+          <Tab text="찜" value="wish" />
+          <Tab text="최근" value="history" />
+        </TabGroup>
       </Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Typography weight="medium" customStyle={{ textAlign: 'center' }}>

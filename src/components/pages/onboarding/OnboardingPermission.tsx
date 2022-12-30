@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import styled from '@emotion/styled';
@@ -228,10 +228,10 @@ function OnboardingPermission() {
   }, [mutatePostAlarm, mutatePostArea, router]);
 
   return (
-    <ThemeProvider theme="dark">
+    <>
       <Box
         customStyle={{
-          background: dark.palette.common.uiBlack,
+          background: common.uiBlack,
           borderRadius: '16px 16px 0 0',
           padding: '32px 20px'
         }}
@@ -239,7 +239,7 @@ function OnboardingPermission() {
         <Typography
           variant="h3"
           weight="bold"
-          customStyle={{ color: dark.palette.common.ui98, marginBottom: 20 }}
+          customStyle={{ color: common.ui98, marginBottom: 20 }}
         >
           카멜을 더 잘 즐기기 위해
           <br />
@@ -250,7 +250,7 @@ function OnboardingPermission() {
             <Flexbox gap={12} alignment="center" key={`permisstion-contents-${content.title}`}>
               <IconBox>{content.icon}</IconBox>
               <Box>
-                <Typography weight="bold" customStyle={{ color: dark.palette.common.ui98 }}>
+                <Typography weight="bold" customStyle={{ color: common.ui98 }}>
                   {content.title}
                 </Typography>
                 <Typography variant="small1" customStyle={{ color: common.ui60, marginTop: 2 }}>
@@ -264,7 +264,7 @@ function OnboardingPermission() {
       <OnboardingBottomCTA onClick={handleClick} disabled={pending} isResult>
         시작하기
       </OnboardingBottomCTA>
-    </ThemeProvider>
+    </>
   );
 }
 
@@ -275,7 +275,11 @@ const IconBox = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  background-color: ${dark.palette.common.ui20};
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
   font-size: ${({ theme: { typography } }) => typography.h2.size};
 `;
 

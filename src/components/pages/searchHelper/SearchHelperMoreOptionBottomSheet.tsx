@@ -383,13 +383,14 @@ function SearchHelperMoreOptionBottomSheet({
                                   />
                                   {needImage && (
                                     <Avatar
-                                      width="20px"
-                                      height="20px"
+                                      width={20}
+                                      height={20}
                                       src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
                                       alt="Color Img"
+                                      round="50%"
                                       customStyle={{
                                         marginRight: 6,
-                                        borderRadius: '50%'
+                                        border: `1px solid ${common.line01}`
                                       }}
                                     />
                                   )}

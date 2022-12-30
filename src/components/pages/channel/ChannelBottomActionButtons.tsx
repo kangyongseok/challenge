@@ -212,6 +212,7 @@ function ChannelBottomActionButtons({
             pathname: '/user/reviews/form',
             query: {
               productId,
+              targetUserName,
               targetUserId,
               isTargetUserSeller
             }
@@ -226,6 +227,7 @@ function ChannelBottomActionButtons({
                   pathname: '/user/reviews/form',
                   query: {
                     productId,
+                    targetUserName,
                     targetUserId,
                     isTargetUserSeller
                   }
@@ -234,16 +236,6 @@ function ChannelBottomActionButtons({
             }
           );
         }
-      },
-      secondButtonAction() {
-        router.push({
-          pathname: '/user/reviews/form',
-          query: {
-            productId,
-            targetUserId,
-            isTargetUserSeller
-          }
-        });
       }
     });
   };
@@ -332,7 +324,7 @@ const ActionButtons = styled.div<{ messageInputHeight: number }>`
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
   box-sizing: content-box;
   margin: 0 16px
-    ${({ messageInputHeight }) => (checkAgent.isIOSApp() ? 0 : messageInputHeight + 16) + 8}px;
+    ${({ messageInputHeight }) => (checkAgent.isIOSApp() ? 0 : messageInputHeight + 12) + 8}px;
   display: flex;
   column-gap: 8px;
 

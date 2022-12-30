@@ -19,6 +19,7 @@ import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 
+import { getCookies } from '@utils/cookies';
 import { getProductDetailUrl } from '@utils/common';
 
 function LegitAdminRequestDetail() {
@@ -50,8 +51,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
   try {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     const { id = 0 } = query;
 

@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Icon, Skeleton, Typography } from 'mrcamel-ui';
+import { Icon, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
+
+import UserAvatar from '@components/UI/organisms/UserAvatar';
 
 import { logEvent } from '@library/amplitude';
 
@@ -33,8 +35,6 @@ function ChannelHeader({
   const router = useRouter();
 
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
-
-  const [imageRendered, setImageRendered] = useState(false);
 
   const handleClickClose = useCallback(() => {
     if (checkAgent.isIOSApp()) {
@@ -100,18 +100,13 @@ function ChannelHeader({
         ) : (
           <>
             <Title onClick={handleClickTitle}>
-              <Avatar
+              <UserAvatar
+                src={targetUserImage || ''}
                 width={32}
                 height={32}
-                src={
-                  imageRendered
-                    ? targetUserImage || ''
-                    : `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
-                }
-                alt="Legit Profile Img"
-                round="50%"
+                isRound
+                iconCustomStyle={{ width: 16, height: 16 }}
               />
-              <HiddenImageLoader src={targetUserImage} onLoad={() => setImageRendered(true)} />
               <Typography
                 variant="h3"
                 weight="bold"
@@ -164,10 +159,6 @@ const Title = styled.div`
   padding: 16px 0;
   height: ${HEADER_HEIGHT}px;
   cursor: pointer;
-`;
-
-const HiddenImageLoader = styled.img`
-  display: none;
 `;
 
 export default ChannelHeader;

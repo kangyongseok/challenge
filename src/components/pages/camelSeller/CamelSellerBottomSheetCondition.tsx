@@ -14,12 +14,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-// import type { SubmitType } from '@typings/camelSeller';
-import {
-  camelSellerDialogStateFamily,
-  // camelSellerSubmitState,
-  camelSellerTempSaveDataState
-} from '@recoil/camelSeller';
+import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function CamelSellerBottomSheetCondition() {
   const {
@@ -27,7 +22,6 @@ function CamelSellerBottomSheetCondition() {
       palette: { common }
     }
   } = useTheme();
-  // const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [{ open }, setOpen] = useRecoilState(camelSellerDialogStateFamily('condition'));
   const { data: codeDetails } = useQuery(queryKeys.commons.codeDetails(14), () =>
@@ -35,10 +29,6 @@ function CamelSellerBottomSheetCondition() {
       codeId: 14
     })
   );
-
-  // useEffect(() => {
-  //   setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-  // }, []);
 
   useEffect(() => {
     if (open) {
@@ -58,33 +48,10 @@ function CamelSellerBottomSheetCondition() {
     });
 
     setOpen(({ type }) => ({ type, open: false }));
-    // if (!editMode.isState) {
-    //   LocalStorage.set(CAMEL_SELLER, {
-    //     ...(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage),
-    //     condition: {
-    //       name: target.dataset.name as string,
-    //       id: Number(target.dataset.id)
-    //     }
-    //   });
-    // }
-    // if (editMode.isState) {
-    //   setEditData({
-    //     ...(editData as CamelSellerLocalStorage),
-    //     condition: {
-    //       name: target.dataset.name as string,
-    //       id: Number(target.dataset.id)
-    //     }
-    //   });
-    // }
     setTempData({
       ...tempData,
       condition: { id: Number(target.dataset.id), name: target.dataset.name || '' }
     });
-
-    // setSubmitState({
-    //   ...(submitState as SubmitType),
-    //   conditionId: Number(target.dataset.id)
-    // });
   };
 
   return (

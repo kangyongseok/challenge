@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Typography } from 'mrcamel-ui';
 
-// import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';

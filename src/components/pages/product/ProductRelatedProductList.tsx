@@ -122,7 +122,7 @@ function ProductRelatedProductList({
   };
 
   return (
-    <Box customStyle={{ margin: '32px 0 112px' }}>
+    <Box customStyle={{ margin: '32px 0' }}>
       <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
         보고 있는 매물과 비슷해요
       </Typography>

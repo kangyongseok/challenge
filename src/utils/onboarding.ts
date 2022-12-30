@@ -126,7 +126,6 @@ export class SpinnerPicker {
     this.fontColor = config != null && 'font_color' in config ? config.font_color : '#000000';
     this.selectionColor =
       config != null && 'selection_color' in config ? config.selection_color : '#000000';
-    // this.font = (config != null && "font" in config)?config["font"]:"Arial";
     this.addClickEvent = config != null && 'onclick' in config ? config.onclick : true;
     this.addDblclickEvent = config != null && 'ondblclick' in config ? config.ondblclick : true;
     this.addKeydownEvent = config != null && 'onkeydown' in config ? config.onkeydown : true;
@@ -431,8 +430,6 @@ export class SpinnerPicker {
       this.ctx.closePath();
       this.ctx.fill();
       if (borderWidth !== null && borderColor !== null) {
-        // this.ctx.lineWidth = border.width;
-        // this.ctx.strokeStyle = border.color;
         this.ctx.stroke();
       }
       this.ctx.restore();

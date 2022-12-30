@@ -1,6 +1,6 @@
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Tab, TabGroup } from 'mrcamel-ui';
+import { Box, Flexbox, Tab, TabGroup } from 'mrcamel-ui';
 
 import Badge from '@components/UI/atoms/Badge';
 
@@ -35,32 +35,34 @@ function LegitAdminTabs() {
   };
 
   return (
-    <TabGroup fullWidth onChange={handleChange} value={String(tab)}>
-      <Tab text="홈" value="home" />
-      <Tab text="내 사진감정" value="my" />
-      <Tab
-        text={
-          <Flexbox alignment="center" gap={4} onClick={() => handleChange('request')}>
-            감정요청
-            {notProcessedLegitCount > 0 && (
-              <Badge
-                open
-                variant="two-tone"
-                brandColor="red"
-                type="alone"
-                width="auto"
-                height={20}
-                customStyle={{ minWidth: 20 }}
-              >
-                {notProcessedLegitCount > 99 ? '99+' : notProcessedLegitCount}
-              </Badge>
-            )}
-          </Flexbox>
-        }
-        value="request"
-      />
-      <Tab text="내 프로필" value="profile" />
-    </TabGroup>
+    <Box component="section">
+      <TabGroup fullWidth onChange={handleChange} value={String(tab)}>
+        <Tab text="홈" value="home" />
+        <Tab text="내 사진감정" value="my" />
+        <Tab
+          text={
+            <Flexbox alignment="center" gap={4} onClick={() => handleChange('request')}>
+              감정요청
+              {notProcessedLegitCount > 0 && (
+                <Badge
+                  open
+                  variant="two-tone"
+                  brandColor="red"
+                  type="alone"
+                  width="auto"
+                  height={20}
+                  customStyle={{ minWidth: 20 }}
+                >
+                  {notProcessedLegitCount > 99 ? '99+' : notProcessedLegitCount}
+                </Badge>
+              )}
+            </Flexbox>
+          }
+          value="request"
+        />
+        <Tab text="내 프로필" value="profile" />
+      </TabGroup>
+    </Box>
   );
 }
 

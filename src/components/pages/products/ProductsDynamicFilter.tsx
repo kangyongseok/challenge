@@ -463,7 +463,7 @@ function ProductsDynamicFilter() {
       isInitRef.current = true;
       setValue(getTenThousandUnitPrice(searchParams.maxPrice));
     }
-  }, [value, searchParams.maxPrice]);
+  }, [searchParams.maxPrice]);
 
   useEffect(() => {
     if (isInitRef.current && !searchParams.maxPrice) {

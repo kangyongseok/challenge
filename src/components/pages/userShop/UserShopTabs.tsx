@@ -1,10 +1,8 @@
-import { MouseEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
+import { Box, Tab, TabGroup } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import Tabs from '@components/UI/molecules/Tabs';
 
 import { logEvent } from '@library/amplitude';
 
@@ -23,7 +21,7 @@ function UserShopTabs() {
     });
   }, [tab]);
 
-  const handleChange = (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+  const handleChange = (newValue: string | number) => {
     router.replace({
       pathname: '/user/shop',
       query: {
@@ -34,29 +32,23 @@ function UserShopTabs() {
 
   return (
     <Box customStyle={{ minHeight: TAB_HEIGHT, zIndex: 1 }}>
-      <StyledUserShopTabs
-        brandColor="black"
-        value={tab}
-        changeValue={handleChange}
-        labels={[
-          {
-            key: '0',
-            value: '판매중'
-          },
-          {
-            key: '1',
-            value: '판매완료'
-          }
-        ]}
-      />
+      <StyledUserShopTabs fullWidth onChange={handleChange} value={tab}>
+        <Tab text="판매중" value={0} />
+        <Tab text="판매완료" value={1} />
+      </StyledUserShopTabs>
     </Box>
   );
 }
 
-const StyledUserShopTabs = styled(Tabs)`
+const StyledUserShopTabs = styled(TabGroup)`
   position: fixed;
   width: 100%;
   margin: 0 -20px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
 `;
 

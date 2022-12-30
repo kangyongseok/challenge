@@ -52,10 +52,6 @@ function CamelSellerRegisterState() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editData]);
 
-  // useEffect(() => {
-  //   setCamelSeller(editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage));
-  // }, [submitData, editData]);
-
   const handleClickStyle = () => {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
       name: attrProperty.name.PRODUCT_MAIN,

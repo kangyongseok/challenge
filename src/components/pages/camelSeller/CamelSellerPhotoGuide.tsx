@@ -69,7 +69,6 @@ function CamelSellerPhotoGuide() {
   );
 
   useEffect(() => {
-    // setPhotoImages(tempData.photoGuideImages);
     if (query?.brandIds) {
       setPhotoGuideParams({
         brandId:
@@ -156,7 +155,6 @@ function CamelSellerPhotoGuide() {
 
   const mergePhotoResult = useCallback(() => {
     if (photoImages.length > 0 && guideImages) {
-      // alert(JSON.stringify(photoImages))
       return guideImages.photoGuideDetails.map((photoGuide) => {
         if (find(photoImages, { photoGuideId: photoGuide.id })) {
           return {
@@ -297,7 +295,6 @@ function CamelSellerPhotoGuide() {
               </GuideBox>
             )
           )}
-        {/* {alert(JSON.stringify(mergePhotoResult()))} */}
         {mergePhotoResult() &&
           mergePhotoResult()?.map(
             ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (
@@ -387,8 +384,6 @@ const StyledPhotoGuide = styled.div<{ isLongText: boolean }>`
     }
   }) => common.ui95};
   position: absolute;
-  /* top: 56px;
-  left: 0; */
   margin-left: -20px;
   padding: ${({ isLongText }) => (isLongText ? '10px 0' : '20px 0')};
 `;

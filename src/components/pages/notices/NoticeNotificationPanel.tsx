@@ -78,6 +78,7 @@ function NoticeNotificationPanel() {
 
   const handleClickCtaButton = (event: MouseEvent<HTMLButtonElement>) => {
     const pathname = event.currentTarget.getAttribute('data-pathname');
+
     LocalStorage.set(SOURCE, NOTI);
     if (pathname) {
       if (pathname.includes('/searchHelper')) {

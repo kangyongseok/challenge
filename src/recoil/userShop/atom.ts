@@ -11,6 +11,7 @@ export const userShopOpenStateFamily = atomFamily<
       | 'reservingFeedback'
       | 'saleFeedback'
       | 'soldOutFeedback'
+      | 'soldOutConfirm'
       | 'deleteFeedback';
     open: boolean;
   },
@@ -20,6 +21,7 @@ export const userShopOpenStateFamily = atomFamily<
   | 'reservingFeedback'
   | 'saleFeedback'
   | 'soldOutFeedback'
+  | 'soldOutConfirm'
   | 'deleteFeedback'
 >({
   key: 'users/userShopOpenStateFamily',

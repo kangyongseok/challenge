@@ -245,13 +245,11 @@ function ProductsFilterHistory() {
                     selectedSearchOptionHistory.description || ''
                   ) && (
                     <Avatar
-                      width="20px"
-                      height="20px"
+                      width={20}
+                      height={20}
                       src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${selectedSearchOptionHistory.description}.png`}
                       alt="Color Img"
-                      customStyle={{
-                        borderRadius: '50%'
-                      }}
+                      round="50%"
                     />
                   )}
                 </>

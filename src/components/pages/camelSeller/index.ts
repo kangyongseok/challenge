@@ -10,7 +10,6 @@ export { default as CamelSellerHeader } from './CamelSellerHeader';
 export { default as CamelSellerPhotoGuide } from './CamelSellerPhotoGuide';
 export { default as CamelSellerProductTitle } from './CamelSellerProductTitle';
 export { default as CamelSellerRecentBottomSheet } from './CamelSellerRecentBottomSheet';
-export { default as CamelSellerSmsDialog } from './CamelSellerSmsDialog';
 export { default as CamelSellerPrice } from './CamelSellerPrice';
 export { default as CamelSellerRegisterState } from './CamelSellerRegisterState';
 export { default as CamelSellerRegisterCondition } from './CamelSellerRegisterCondition';

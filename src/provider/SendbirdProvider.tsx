@@ -13,7 +13,7 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 
-import { uuidv4 } from '@utils/common';
+import { isProduction, uuidv4 } from '@utils/common';
 import { getChannelUserName, getUpdatedChannels } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
@@ -59,7 +59,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
           const channelList = state.typingChannels.filter((ch) => ch.url !== channel.url);
 
           setState((currVal) => {
-            if (process.env.NODE_ENV === 'development')
+            if (!isProduction)
               console.debug('Sendbird onTypingStatusUpdated::', {
                 state: currVal,
                 typingMemberCount,
@@ -77,7 +77,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         },
         onUnreadMemberStatusUpdated: (channel) => {
           setState((currVal) => {
-            if (process.env.NODE_ENV === 'development')
+            if (!isProduction)
               console.debug('Sendbird onUnreadMemberStatusUpdated::', { state: currVal, channel });
 
             return {
@@ -90,7 +90,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         },
         onUndeliveredMemberStatusUpdated: (channel) => {
           setState((currVal) => {
-            if (process.env.NODE_ENV === 'development')
+            if (!isProduction)
               console.debug('Sendbird onUndeliveredMemberStatusUpdated::', {
                 state: currVal,
                 channel
@@ -106,7 +106,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         },
         onMessageUpdated: (channel) => {
           setState((currVal) => {
-            if (process.env.NODE_ENV === 'development')
+            if (!isProduction)
               console.debug('Sendbird onMessageUpdated::', {
                 state: currVal,
                 channel

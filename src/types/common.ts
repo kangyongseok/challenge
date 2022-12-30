@@ -156,8 +156,6 @@ export type DialogType =
   | 'legitRequestOnlyInIOS'
   | 'legitServiceNotice'
   | 'appUpdateNotice'
-  | 'appAuthCheck'
-  | 'legitPhotoGuide'
   | 'unblockBlockedUser'
   | 'leaveChannel'
   | 'blockUser'
@@ -166,7 +164,9 @@ export type DialogType =
   | 'cancelAppointment'
   | 'requiredAppUpdateForChat'
   | 'loginError'
-  | 'loginProviderError';
+  | 'loginProviderError'
+  | 'legitPhotoGuide'
+  | 'appAuthCheck';
 
 export type ShareData = {
   title: string;

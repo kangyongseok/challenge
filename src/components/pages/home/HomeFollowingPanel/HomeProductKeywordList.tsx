@@ -176,7 +176,6 @@ function HomeProductKeywordList() {
 
           if (splitFilter.length >= 3) {
             splitFilter = splitFilter.join(', ');
-            // splitFilter = `${splitFilter.slice(0, 5).join(',')}...`;
           } else {
             splitFilter = splitFilter.join(',');
           }

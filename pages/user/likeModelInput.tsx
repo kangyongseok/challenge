@@ -54,7 +54,6 @@ function LikeModelInput() {
           </Button>
         </Footer>
       }
-      // customStyle={{ padding: '48px 12px 0 12px' }}
     >
       <Box customStyle={{ marginBottom: 32, textAlign: 'center' }}>
         <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
@@ -74,7 +73,6 @@ const Footer = styled.footer`
   position: fixed;
   bottom: 0;
   width: 100%;
-  /* left: -12px; */
   padding: 20px;
   background-color: white;
 `;

@@ -23,7 +23,7 @@ import {
 } from '@sendbird/chat/groupChannel';
 import SendbirdChat from '@sendbird/chat';
 
-import { wait } from '@utils/common';
+import { isProduction, wait } from '@utils/common';
 
 import type { CreateChannelParams } from '@typings/channel';
 
@@ -46,10 +46,9 @@ const SendBird = {
 
       await sb.updateCurrentUserInfo(userUpdateParams);
 
-      if (process.env.NODE_ENV === 'development')
-        console.debug('Sendbird initialized', { sb, user });
+      if (!isProduction) console.log('Sendbird initialized', { sb, user });
     } catch (error) {
-      console.debug(error);
+      console.log('Sendbird error', error);
     }
 
     return sb;
@@ -61,7 +60,7 @@ const SendBird = {
       //
     }
 
-    if (process.env.NODE_ENV === 'development') console.debug('Sendbird finalized');
+    if (!isProduction) console.log('Sendbird finalized');
   },
   async setBlockUser(userId: string, blockOn: boolean) {
     if (blockOn) {
@@ -179,12 +178,14 @@ const SendBird = {
   },
   async sendMessage({
     channelUrl,
+    customType,
     newMessage,
     onPending,
     onSucceeded,
     onFailed
   }: {
     channelUrl: string;
+    customType: string;
     newMessage: string;
     onPending?: MessageHandler;
     onSucceeded: MessageHandler;
@@ -193,7 +194,7 @@ const SendBird = {
     const channel = await sb.groupChannel.getChannel(channelUrl);
 
     channel
-      .sendUserMessage({ message: newMessage })
+      .sendUserMessage({ message: newMessage, customType })
       .onPending((message) => {
         if (onPending) onPending(message);
       })

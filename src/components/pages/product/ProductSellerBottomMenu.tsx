@@ -195,7 +195,6 @@ function ProductSellerBottomMenu({
           status: 'hoisting'
         });
         setOpenChangeStatus(false);
-        // refresh();
       }
     });
   };

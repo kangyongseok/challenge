@@ -3,13 +3,18 @@ import type { CustomStyle } from 'mrcamel-ui';
 
 interface ProductListCardSkeletonPros {
   isRound?: boolean;
+  imageSkeletonWidth?: number;
   customStyle?: CustomStyle;
 }
 
-function ProductListCardSkeleton({ isRound = false, customStyle }: ProductListCardSkeletonPros) {
+function ProductListCardSkeleton({
+  isRound = false,
+  imageSkeletonWidth = 134,
+  customStyle
+}: ProductListCardSkeletonPros) {
   return (
     <Flexbox gap={12} customStyle={customStyle}>
-      <Box customStyle={{ width: 134 }}>
+      <Box customStyle={{ width: imageSkeletonWidth }}>
         <Skeleton round={isRound ? 8 : 0} />
       </Box>
       <Box customStyle={{ flex: 1 }}>

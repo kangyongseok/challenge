@@ -16,6 +16,8 @@ import { fetchHotBrands } from '@api/brand';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
+
 import type { SelectedHotBrand } from '@typings/brands';
 
 interface HotBrandListProps {
@@ -122,8 +124,8 @@ const CircleChecked = styled.div`
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   await queryClient.prefetchQuery(queryKeys.brands.hotBrands(), fetchHotBrands);
 

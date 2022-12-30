@@ -133,9 +133,6 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
   ]);
 
   useEffect(() => {
-    // const localData = editData || (LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
-    // setCamelSeller(localData);
-    // setChangePrice(localData?.price as number);
     controlTooltip();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editData]);

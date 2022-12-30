@@ -51,7 +51,6 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
   const [openEmptyTitleToast, setOpenEmptyTitleToast] = useRecoilState(
     camelSellerBooleanStateFamily('title')
   );
-  // const focusTitle = useRecoilValue(camelSellerBooleanStateFamily('focusTitle'));
   const customTitle = useRecoilValue(setModifyProductTitleState);
   const validatorPhoto = useRecoilValue(camelSellerBooleanStateFamily('requirePhotoValid'));
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
@@ -254,7 +253,6 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
 const RegisterButtonBox = styled.div<{
   isEditTitle: boolean;
   registerActive: boolean;
-  // focusTitle: boolean;
 }>`
   padding: 0 20px;
   height: 70px;

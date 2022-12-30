@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
 import styled from '@emotion/styled';
 
+import { OnBoardingSpotlight } from '@components/UI/organisms';
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 
 import type { UserRoleSeller } from '@dto/user';
@@ -157,6 +158,9 @@ function ProductCTAButton({
     isOpenPriceCRMTooltip: isPriceCrm,
     isOpenBunJangTooltip: false
   });
+  const [pendingCreateChannel, setPendingCreateChannel] = useState(false);
+
+  const wishButtonRef = useRef<HTMLButtonElement>(null);
 
   const {
     isCamelProduct,
@@ -290,7 +294,7 @@ function ProductCTAButton({
   };
 
   const handleClickCTAButton = async () => {
-    if (isLoadingMutateCreateChannel || !product) return;
+    if (isLoadingMutateCreateChannel || pendingCreateChannel || !product) return;
 
     if (isBlockedUser) {
       setDialogState({
@@ -373,7 +377,16 @@ function ProductCTAButton({
         return;
       }
 
-      await mutateCreateChannel({ userId: String(accessUser.userId || 0), ...createChannelParams });
+      setPendingCreateChannel(true);
+      await mutateCreateChannel(
+        { userId: String(accessUser.userId || 0), ...createChannelParams },
+        {
+          onSettled() {
+            setPendingCreateChannel(false);
+          }
+        }
+      );
+
       return;
     }
 
@@ -529,9 +542,14 @@ function ProductCTAButton({
                 </Typography>
               }
               triangleLeft={18}
-              customStyle={{ left: 110, bottom: 5, top: 'auto' }}
+              customStyle={{ left: 110, bottom: 5, top: 'auto', zIndex: 1000000 }}
             >
-              <WishButton onClick={handleClickWish} isWish={isWish} disabled={!product || !ctaText}>
+              <WishButton
+                ref={wishButtonRef}
+                onClick={handleClickWish}
+                isWish={isWish}
+                disabled={!product || !ctaText}
+              >
                 {isWish ? (
                   <Icon name="HeartFilled" color={secondary.red.main} width={24} height={24} />
                 ) : (
@@ -539,13 +557,14 @@ function ProductCTAButton({
                 )}
               </WishButton>
             </Tooltip>
-            {!isDoneWishOnBoarding && (
-              <OnBoardingDim onClick={handleClickWishOnBoarding}>
-                <OnBoardingWishButton>
-                  <Icon name="HeartFilled" color={secondary.red.main} width={25} />
-                </OnBoardingWishButton>
-              </OnBoardingDim>
-            )}
+            <OnBoardingSpotlight
+              targetRef={wishButtonRef}
+              open={!isDoneWishOnBoarding}
+              onClose={handleClickWishOnBoarding}
+              customStyle={{
+                borderRadius: 8
+              }}
+            />
           </>
         )}
         {isProductLegit && !product?.productLegit && (
@@ -610,7 +629,8 @@ function ProductCTAButton({
                   PRODUCT_STATUS['3'] ||
                 PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
                   PRODUCT_STATUS['2'])) ||
-            isLoadingMutateCreateChannel
+            isLoadingMutateCreateChannel ||
+            pendingCreateChannel
           }
           onClick={handleClickCTAButton}
           customStyle={{
@@ -720,7 +740,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  /* height: 92px; */
   background-color: ${({
     theme: {
       palette: { common }
@@ -728,7 +747,6 @@ const Wrapper = styled.div`
   }) => common.uiWhite};
   padding: 12px 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
-  /* box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1); */
 `;
 
 const WishButton = styled.button<{ isWish: boolean }>`
@@ -745,34 +763,6 @@ const WishButton = styled.button<{ isWish: boolean }>`
     isWish
   }) => isWish && primary.bgLight};
   border-radius: ${({ theme }) => theme.box.round['4']};
-`;
-
-const OnBoardingDim = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
-  background: rgba(0, 0, 0, 0.5);
-`;
-
-const OnBoardingWishButton = styled.div`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  left: 20px;
-  bottom: 11px;
-  width: 48px;
-  height: 44px;
-  border-radius: ${({ theme }) => theme.box.round['4']};
-  background-color: ${({
-    theme: {
-      palette: { primary }
-    }
-  }) => primary.bgLight};
-  z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
 `;
 
 const ProductCardList = styled.div`

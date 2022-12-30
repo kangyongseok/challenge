@@ -59,7 +59,7 @@ function LegitOpinion({
               .replaceAll(/\r?\n/gi, '<br />')
               .split('<br />')
               .map((text) => text.replace(/^-|^- /, ''))
-              .join('<br />')}`
+              .join('<br />')}}`
           }}
           customStyle={{ marginTop: 4, color: common.ui60 }}
         />

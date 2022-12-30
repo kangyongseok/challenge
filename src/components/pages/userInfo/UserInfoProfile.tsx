@@ -48,6 +48,7 @@ function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: Use
         <Flexbox alignment="center">
           {Array.from({ length: 5 }, (_, index) => (
             <Icon
+              key={`rating-star-${index}`}
               name="StarFilled"
               width={16}
               height={16}

@@ -65,11 +65,10 @@ import attrKeys from '@constants/attrKeys';
 import { scrollEnable } from '@utils/scroll';
 import { getMetaDescription, getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
+import { getCookies } from '@utils/cookies';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-// import { showAppDownloadBannerState } from '@recoil/common';
-// import useScrollTrigger from '@hooks/useScrollTrigger';
 import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryProduct from '@hooks/useQueryProduct';
@@ -78,8 +77,6 @@ function ProductDetail({ _nextI18Next }: InferGetServerSidePropsType<typeof getS
   const {
     query: { id: productId, redirect, chainPrice },
     asPath
-    // beforePopState,
-    // replace
   } = useRouter();
   const {
     theme: {
@@ -656,8 +653,8 @@ export async function getServerSideProps({
   try {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     const { id } = query;
 

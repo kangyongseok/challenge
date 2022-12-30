@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-// import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Flexbox } from 'mrcamel-ui';
 import { filter, find, sortBy } from 'lodash-es';
@@ -21,10 +20,6 @@ import attrKeys from '@constants/attrKeys';
 import type { FilterDropItem, GroupSize } from '@typings/camelSeller';
 import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
-// import { fetchSearchHistory } from '@api/product';
-
-// import queryKeys from '@constants/queryKeys';
-
 function CamelSellerFilter({
   baseSearchOptions,
   searchOptions,
@@ -40,7 +35,6 @@ function CamelSellerFilter({
   const [sizes, setSizes] = useState<FilterDropItem[]>([]);
   const [conditionIds, setCondtionIds] = useState<FilterDropItem[]>([]);
   const [groupSize, setGroupSize] = useState<GroupSize[]>([]);
-  // const [camelSeller, setCamelSeller] = useState<CamelSellerLocalStorage>();
   const [isResetFilter, setResetFilter] = useRecoilState(
     camelSellerBooleanStateFamily('filterReset')
   );
@@ -48,17 +42,8 @@ function CamelSellerFilter({
   const [selectSizeId, setSize] = useState(0);
   const [selectPlatform, setPlatform] = useState(0);
   const [selectCondition, setCondition] = useState(0);
-  // const [selectStatus, setStatus] = useState();
   const tempData = useRecoilValue(camelSellerTempSaveDataState);
-  // const submitData = useRecoilValue(camelSellerSubmitState);
 
-  // const { data: searchHistory } = useQuery(
-  //   queryKeys.products.searchHistory(),
-  //   () => fetchSearchHistory()
-  //   // {
-  //   //   enabled: false
-  //   // }
-  // );
   useEffect(() => {
     if (!selectColorId) {
       setColor(tempData.color.id);
@@ -73,7 +58,6 @@ function CamelSellerFilter({
   }, [tempData]);
 
   useEffect(() => {
-    // setCamelSeller(LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage);
     document.querySelector('#sheet-root')?.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       if (target.parentNode) {

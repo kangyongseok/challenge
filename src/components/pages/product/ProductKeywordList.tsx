@@ -7,8 +7,6 @@ import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import styled from '@emotion/styled';
 
-// import { Divider } from '@components/UI/molecules';
-
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -20,8 +18,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { SearcgRelatedKeywordsParams } from '@typings/products';
-
-// import { pulse } from '@styles/transition';
 
 interface ProductKeywordListProps {
   productId?: number;
@@ -119,34 +115,6 @@ function ProductKeywordList({ productId, params }: ProductKeywordListProps) {
           ))}
         </Flexbox>
       </KeywordWrap>
-      {/* <KeywordList>
-        {relatedKeywords
-          ? line01?.map((relatedKeyword) => (
-              <Chip
-                key={`related-keyword-${relatedKeyword}`}
-                size="small"
-                variant="ghost"
-                brandColor="black"
-                customStyle={{ flexWrap: 'wrap', whiteSpace: 'nowrap' }}
-                data-related-keyword={relatedKeyword}
-                onClick={handleClick}
-              >
-                {relatedKeyword}
-              </Chip>
-            ))
-          : Array.from({ length: 5 }, (_, index) => (
-              <Chip
-                key={`related-keyword-loading-${index}`}
-                size="small"
-                variant="ghost"
-                brandColor="black"
-                customStyle={{
-                  minWidth: 100,
-                  animation: `${pulse} 800ms linear 0s infinite alternate`
-                }}
-              />
-            ))}
-      </KeywordList> */}
     </Box>
   );
 }
@@ -156,7 +124,6 @@ const KeywordWrap = styled(Flexbox)`
   width: calc(100% + 40px);
   overflow: auto;
   padding: 0 20px 32px;
-  /* margin-bottom: 32px; */
   border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.bg02};
 `;
 

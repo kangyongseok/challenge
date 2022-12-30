@@ -1,11 +1,7 @@
-import { useEffect } from 'react';
-
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
-
-import ChannelTalk from '@library/channelTalk';
 
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
@@ -24,14 +20,6 @@ function MypageIntro() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useViewportUnitsTrick();
-
-  useEffect(() => {
-    ChannelTalk.moveChannelButtonPosition(-50);
-
-    return () => {
-      ChannelTalk.resetChannelButtonPosition();
-    };
-  }, []);
 
   return (
     <Wrapper

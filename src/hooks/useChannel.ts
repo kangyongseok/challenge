@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 
 import { useRecoilValue } from 'recoil';
@@ -10,40 +10,34 @@ import type { GroupChannelHandlerParams, SendableMessage } from '@sendbird/chat/
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
-import type { ChannelAppointmentResult } from '@dto/channel';
+import { ChannelAppointmentResult } from '@dto/channel';
 
+import StompJs from '@library/stompJs';
 import Sendbird from '@library/sendbird';
 
 import { fetchChannel } from '@api/channel';
 
+import { channelUserType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
+import { productStatus } from '@constants/channel';
 
-import { uuidv4 } from '@utils/common';
-import { compareIds, scrollIntoLast } from '@utils/channel';
+import { isProduction, uuidv4 } from '@utils/common';
+import { compareIds, getChannelUserName, isAdminMessage, scrollIntoLast } from '@utils/channel';
 
-import type { CoreMessageType, MemorizedMessage } from '@typings/channel';
+import type { CoreMessageType } from '@typings/channel';
 import { sendbirdState } from '@recoil/channel';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const PREV_RESULT_SIZE = 30;
 
-function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
+function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
   const router = useRouter();
 
   const { initialized } = useRecoilValue(sendbirdState);
 
-  const [{ messages, hasMorePrev, oldestMessageTimeStamp }, setState] = useState<{
-    messages: CoreMessageType[];
-    hasMorePrev: boolean;
-    oldestMessageTimeStamp: number;
-  }>({
-    messages: [],
-    hasMorePrev: false,
-    oldestMessageTimeStamp: 0
-  });
+  const { data: accessUser } = useQueryAccessUser();
 
   const channelId = useMemo(() => Number(router.query.id || ''), [router.query.id]);
-  const currentChannel = useRef<GroupChannel | null>(null);
-  const prevScrollHeight = useRef(0);
 
   const useQueryResult = useQuery(
     queryKeys.channels.channel(channelId),
@@ -52,6 +46,8 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       enabled: !!channelId && initialized,
       refetchOnMount: true,
       async onSuccess(data) {
+        if (messages.length > 0) return; // 최초 채널 입장시에만 초기화
+
         const { externalId } = data?.channel || {};
 
         if (externalId) {
@@ -64,12 +60,11 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
             })
             .then((baseMessages) => {
               currentChannel.current = channel;
-              setState((prevState) => ({
-                ...prevState,
+              setState({
                 messages: baseMessages as CoreMessageType[],
                 hasMorePrev: baseMessages.length === 30,
                 oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
-              }));
+              });
             });
           await channel.markAsRead();
 
@@ -84,6 +79,19 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     }
   );
 
+  const [{ messages, hasMorePrev, oldestMessageTimeStamp }, setState] = useState<{
+    messages: CoreMessageType[];
+    hasMorePrev: boolean;
+    oldestMessageTimeStamp: number;
+  }>({
+    messages: [],
+    hasMorePrev: false,
+    oldestMessageTimeStamp: 0
+  });
+
+  const currentChannel = useRef<GroupChannel | null>(null);
+  const prevScrollHeight = useRef(0);
+
   const channelHandler: GroupChannelHandlerParams = useMemo(
     () => ({
       onMessageReceived: (channel, message) => {
@@ -93,8 +101,7 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         )
           return;
 
-        if (process.env.NODE_ENV === 'development')
-          console.log('Channel | onMessageReceived', message);
+        if (!isProduction) console.log('Channel | onMessageReceived', message);
 
         let scrollToEnd = false;
 
@@ -111,7 +118,10 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         currentChannel.current = channel as GroupChannel;
         setState((prevState) => ({
           ...prevState,
-          messages: [...prevState.messages, message] as CoreMessageType[]
+          messages: [
+            ...prevState.messages.filter(({ messageId }) => messageId !== message.messageId),
+            message
+          ] as CoreMessageType[]
         }));
 
         if (scrollToEnd) {
@@ -127,34 +137,39 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       },
       onUnreadMemberStatusUpdated: (channel) => {
         if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (process.env.NODE_ENV === 'development')
-            console.log('Channel | onUnreadMemberStatusUpdated', channel);
+          if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
 
-          setState((prevState) => ({ ...prevState, sendbirdChannel: channel }));
           currentChannel.current = channel;
+          channel
+            .getMessagesByTimestamp(new Date().getTime(), {
+              prevResultSize: PREV_RESULT_SIZE,
+              nextResultSize: 0
+            })
+            .then((baseMessages) => {
+              setState({
+                messages: baseMessages as CoreMessageType[],
+                hasMorePrev: baseMessages.length === 30,
+                oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
+              });
+            });
         }
       },
       // before(onDeliveryReceiptUpdated)
       onUndeliveredMemberStatusUpdated: (channel) => {
         if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (process.env.NODE_ENV === 'development')
-            console.log('Channel | onDeliveryReceiptUpdated', channel);
-          setState((prevState) => ({ ...prevState, sendbirdChannel: channel }));
+          if (!isProduction) console.log('Channel | onDeliveryReceiptUpdated', channel);
           currentChannel.current = channel;
         }
       },
       onUnreadMemberCountUpdated: (channel: GroupChannel) => {
         if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (process.env.NODE_ENV === 'development')
-            console.log('Channel | onUnreadMemberCountUpdated', channel);
-          setState((prevState) => ({ ...prevState, sendbirdChannel: channel }));
+          if (!isProduction) console.log('Channel | onUnreadMemberCountUpdated', channel);
           currentChannel.current = channel;
         }
       },
       onChannelChanged: (channel) => {
         if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (process.env.NODE_ENV === 'development')
-            console.log('Channel | onChannelChanged', channel);
+          if (!isProduction) console.log('Channel | onChannelChanged', channel);
           currentChannel.current = channel as GroupChannel;
         }
       }
@@ -162,125 +177,54 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     [messages, messagesRef]
   );
 
-  const memorizedMessages = useMemo<MemorizedMessage[]>(() => {
-    if (messages.length === 0) return [];
+  const channelData = useMemo<{
+    userName: string;
+    isSeller: boolean;
+    appointment: ChannelAppointmentResult | undefined;
+    showAppointmentBanner: boolean;
+    showProductReserveMessage: boolean;
+    targetUserId: number;
+    targetUserName: string;
+    isTargetUserBlocked: boolean;
+    isDeletedTargetUser: boolean;
+    productId: number;
+    productStatus: number;
+    isDeletedProduct: boolean;
+  }>(() => {
+    const { product, channelUser, channelTargetUser, channelAppointments, userBlocks } =
+      useQueryResult.data || {};
 
-    const channelMessages = [...messages];
-    const channelAppointments: Array<
-      {
-        appointment: ChannelAppointmentResult;
-      } & Pick<MemorizedMessage, 'isPushNoti' | 'showChangeProductStatus' | 'showAppointmentDetail'>
-    > = [];
-    const channelUserReview = useQueryResult.data?.userReview
-      ? [useQueryResult.data?.userReview]
-      : [];
+    const findAppointment = channelAppointments?.find(
+      ({ isDeleted, type }) => !isDeleted && type !== 'DELETE'
+    );
+    const channelTargetUserId = channelTargetUser?.user?.id || 0;
+    const isSeller =
+      typeof channelUser?.type === 'number' &&
+      channelUserType[channelUser.type as keyof typeof channelUserType] === channelUserType[1];
 
-    if (useQueryResult.data?.channelAppointments) {
-      useQueryResult.data?.channelAppointments
-        .filter(
-          (channelAppointment) =>
-            dayjs(channelAppointment.dateCreated).diff(channelMessages[0].createdAt, 'second') > 0
-        )
-        .forEach((channelAppointment, index) => {
-          const nextAppointment = useQueryResult.data?.channelAppointments?.[index + 1];
-          const findNextCreateAppointment = useQueryResult.data?.channelAppointments
-            ?.slice(index + 1)
-            ?.find(({ type }) => type === 'CREATE');
-          const findNextUpdateAppointment = useQueryResult.data?.channelAppointments
-            ?.slice(index + 1)
-            ?.find(({ type }) => type === 'UPDATE');
-
-          channelAppointments.push({
-            appointment: channelAppointment,
-            isPushNoti: false,
-            showChangeProductStatus:
-              channelAppointment.type === 'CREATE' && !findNextCreateAppointment,
-            showAppointmentDetail:
-              channelAppointment.type === 'UPDATE' && !findNextUpdateAppointment
-          });
-
-          // 푸시 알림
-          if (
-            channelAppointment.type !== 'DELETE' &&
-            channelAppointment.notiTime > 0 &&
-            dayjs(channelAppointment.dateAppointment).diff(
-              channelAppointment.isDeleted ? nextAppointment?.dateCreated || dayjs() : dayjs(),
-              'minute'
-            ) <= channelAppointment.notiTime
-          ) {
-            channelAppointments.push({
-              appointment: channelAppointment,
-              isPushNoti: true,
-              showChangeProductStatus: false,
-              showAppointmentDetail: false
-            });
-          }
-        });
-    }
-
-    return Array.from({
-      length: messages.length + channelAppointments.length + channelUserReview.length
-    }).map((_) => {
-      const [currentMessage] = channelMessages;
-      const [channelAppointment] = channelAppointments;
-      const currentMessageCreatedAt = currentMessage?.createdAt;
-
-      // 직거래 약속
-      if (channelAppointment?.appointment) {
-        const {
-          isPushNoti,
-          appointment: { dateCreated, dateAppointment }
-        } = channelAppointment;
-
-        if (
-          isPushNoti &&
-          dayjs(dateAppointment).diff(currentMessageCreatedAt || dayjs(), 'second') <= 0
-        ) {
-          return {
-            message: undefined,
-            userReview: undefined,
-            ...channelAppointments.splice(0, 1)[0]
-          };
-        }
-
-        if (dayjs(dateCreated).diff(currentMessageCreatedAt || dayjs(), 'second') <= 0) {
-          return {
-            message: undefined,
-            userReview: undefined,
-            ...channelAppointments.splice(0, 1)[0]
-          };
-        }
-      }
-
-      // 후기
-      if (
-        channelUserReview.length > 0 &&
-        dayjs(channelUserReview[0].dateCreated).diff(
-          currentMessageCreatedAt || dayjs(),
-          'second'
-        ) <= 0
-      ) {
-        return {
-          message: undefined,
-          userReview: channelUserReview.splice(0, 1)[0],
-          appointment: undefined,
-          isPushNoti: false,
-          showChangeProductStatus: false,
-          showAppointmentDetail: false
-        };
-      }
-
-      // 일반 메세지
-      return {
-        message: channelMessages.splice(0, 1)[0],
-        userReview: undefined,
-        appointment: undefined,
-        isPushNoti: false,
-        showChangeProductStatus: false,
-        showAppointmentDetail: false
-      };
-    });
-  }, [messages, useQueryResult.data?.channelAppointments, useQueryResult.data?.userReview]);
+    return {
+      userName: getChannelUserName(channelUser?.user.name, channelUser?.user.id || 0),
+      isSeller,
+      appointment: findAppointment,
+      showAppointmentBanner:
+        !!findAppointment && dayjs().diff(findAppointment.dateAppointment, 'minute') < 0,
+      showProductReserveMessage:
+        isSeller &&
+        productStatus[(product?.status || 0) as keyof typeof productStatus] === productStatus[0] &&
+        !!findAppointment,
+      targetUserId: channelTargetUserId,
+      targetUserName: getChannelUserName(channelTargetUser?.user?.name, channelTargetUserId),
+      isTargetUserBlocked: !!userBlocks?.some(
+        (blockedUser) =>
+          blockedUser.userId === accessUser?.userId &&
+          blockedUser.targetUser.id === channelTargetUserId
+      ),
+      isDeletedTargetUser: !!channelTargetUser?.user?.isDeleted,
+      productId: product?.id || 0,
+      productStatus: product?.status || 0,
+      isDeletedProduct: !!product?.isDeleted
+    };
+  }, [accessUser?.userId, useQueryResult.data]);
 
   const fetchPrevMessages = useCallback(async () => {
     prevScrollHeight.current = messagesRef.current?.scrollHeight || 0;
@@ -351,19 +295,51 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
   const updateNewMessage = useCallback((msg: SendableMessage) => {
     setState((prevState) => ({
       ...prevState,
-      messages: [...prevState.messages, msg] as CoreMessageType[]
+      messages: [
+        ...prevState.messages.filter(({ messageId }) => messageId !== msg.messageId),
+        msg
+      ] as CoreMessageType[]
     }));
     setTimeout(() => scrollIntoLast(), 50);
   }, []);
 
+  useEffect(() => {
+    StompJs.initialize(channelId);
+    setTimeout(() => {
+      StompJs.subScribeChannel({
+        channelId,
+        callback: () => {
+          useQueryResult.refetch();
+        }
+      });
+    }, 3000);
+
+    return () => {
+      StompJs.finalize();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return {
-    ...useQueryResult,
+    useQueryChannel: useQueryResult,
+    channelData,
     sendbirdChannel: currentChannel.current,
-    memorizedMessages,
+    messages: messages.filter(
+      (message, index) =>
+        !isAdminMessage(message) ||
+        (isAdminMessage(message) &&
+          ((message.data || '').length <= 2 ||
+            (!!message.data?.length &&
+              Number(JSON.parse(message.data)?.userId || 0) === accessUser?.userId &&
+              (message.customType !== 'productReserve' ||
+                (message.customType === 'productReserve' &&
+                  messages.slice(index + 1).every((msg) => msg.customType !== 'productReserve') &&
+                  channelData.showProductReserveMessage)))))
+    ),
     hasMorePrev,
     fetchPrevMessages,
     updateNewMessage
   };
 }
 
-export default useQueryChannel;
+export default useChannel;

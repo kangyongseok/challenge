@@ -96,7 +96,6 @@ export type PersonalStyle = {
   categories: Detail[];
   parentCategories: Detail[];
   personalBrands: Brand[];
-  // purchaseTypes: PurchaseTypes[];
   personalCategories: Category[];
   styles: Detail[];
   subParentCategories: Detail[];

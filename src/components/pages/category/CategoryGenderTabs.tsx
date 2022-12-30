@@ -1,10 +1,7 @@
-import type { MouseEvent } from 'react';
 import { useCallback } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box } from 'mrcamel-ui';
-
-import { Tabs } from '@components/UI/molecules';
+import { Box, Tab, TabGroup, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -19,10 +16,16 @@ interface CategoryGenderTabsProps {
 }
 
 function CategoryGenderTabs({ resetSelectedParentCategory }: CategoryGenderTabsProps) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const [{ gender }, setCategoryState] = useRecoilState(categoryState);
 
   const changeSelectedValue = useCallback(
-    (_: MouseEvent<HTMLButtonElement> | null, newValue: string) => {
+    (newValue: string | number) => {
       logEvent(attrKeys.category.CLICK_CATEGORY_GENDER, {
         name: 'CATEGORY',
         gender: newValue === 'male' ? 'M' : 'F'
@@ -40,12 +43,18 @@ function CategoryGenderTabs({ resetSelectedParentCategory }: CategoryGenderTabsP
 
   return (
     <Box component="section" customStyle={{ minHeight: TAB_HEIGHT, zIndex: 1 }}>
-      <Tabs
+      <TabGroup
         value={gender}
-        changeValue={changeSelectedValue}
-        labels={Object.entries(GENDER).map(([key, value]) => ({ key, value }))}
-        customStyle={{ position: 'fixed', width: '100%' }}
-      />
+        onChange={changeSelectedValue}
+        fullWidth
+        customStyle={{ position: 'fixed', width: '100%', backgroundColor: common.uiWhite }}
+      >
+        {Object.entries(GENDER)
+          .map(([key, value]) => ({ key, value }))
+          .map(({ key, value }) => (
+            <Tab key={`label-${key}`} text={value} value={key} />
+          ))}
+      </TabGroup>
     </Box>
   );
 }

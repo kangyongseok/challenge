@@ -123,8 +123,6 @@ function CamelSellerHeader({
         brand: { id: query.brandIds, name: query.brandName },
         category: { id: query.categoryIds, name: query.categoryName }
       });
-      // resetTempData();
-      // resetSubmitData();
     }
     resetClickState();
     replace('/');
@@ -160,12 +158,7 @@ function CamelSellerHeader({
               }}
             />
             <Wrap alignment="center" customStyle={{ padding: '0 20px' }}>
-              <Icon
-                onClick={onClickClose}
-                name="ArrowLeftOutlined"
-                // customStyle={{ display: type === 'isSearch' ? 'none' : 'block' }}
-                size="medium"
-              />
+              <Icon onClick={onClickClose} name="ArrowLeftOutlined" size="medium" />
               <CallFormButton
                 variant="solid"
                 weight="medium"

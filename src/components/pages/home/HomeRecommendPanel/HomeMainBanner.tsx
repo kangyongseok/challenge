@@ -129,11 +129,10 @@ function HomeMainBanner() {
         {bannerData.map((data) => (
           <SwiperSlide key={`main-banner-${data.imageName}`}>
             <Image
-              width="100%"
+              ratio="4:3"
               src={`${IMAGE_BASE_URL}/${data.imageName}.png`}
               alt="Main Banner Img"
               onClick={handleClick(data.pathname)}
-              disableAspectRatio
             />
           </SwiperSlide>
         ))}

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useQuery } from 'react-query';
-import { Avatar, Box, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -57,27 +57,35 @@ function CamelSellerBottomSheetColor({ onClick }: BottomSheetColorProps) {
           const needImage = filterImageColorNames.includes(description);
           return (
             codeId === 3 && (
-              <Box
+              <Flexbox
                 key={`color-list-${id}`}
+                direction="vertical"
+                alignment="center"
                 onClick={handleClick}
                 data-color-name={name}
                 data-color-id={id}
               >
                 {needImage ? (
-                  <Avatar
+                  <Image
                     width={40}
                     height={40}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
-                    round="50%"
                     alt="Color Img"
+                    round="50%"
+                    disableAspectRatio
                   />
                 ) : (
                   <ColorSample colorCode={filterColors[description as keyof typeof filterColors]} />
                 )}
-                <Typography variant="small2" customStyle={{ marginTop: 8 }}>
+                <Typography
+                  variant="small2"
+                  customStyle={{
+                    marginTop: 8
+                  }}
+                >
                   {name}
                 </Typography>
-              </Box>
+              </Flexbox>
             )
           );
         })}
@@ -97,16 +105,15 @@ const ColorViewWrap = styled.div`
 const ColorSample = styled.div<{ colorCode: string }>`
   width: 40px;
   height: 40px;
-  margin: auto;
   border-radius: 50%;
-  border: 1px solid transparent;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      },
+      colorCode
+    }) => (colorCode === '#FFFFFF' ? common.line01 : 'transparent')};
   background: ${({ colorCode }) => colorCode};
-  border-color: ${({
-    theme: {
-      palette: { common }
-    },
-    colorCode
-  }) => (colorCode === '#FFFFFF' ? common.line01 : 'transparent')};
 `;
 
 export default CamelSellerBottomSheetColor;

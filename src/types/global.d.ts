@@ -53,6 +53,7 @@ export declare global {
       DATADOG_ALLOWED_TRACING_ORIGIN: string;
       SENDBIRD_APP_ID: string;
       SENDBIRD_USER_ID: string;
+      SOCKET_SERVER_URL: string;
     }
   }
 }

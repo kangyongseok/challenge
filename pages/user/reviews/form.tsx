@@ -18,6 +18,7 @@ import { postReview } from '@api/user';
 import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
@@ -31,13 +32,19 @@ function ReviewForm() {
   } = useTheme();
   const router = useRouter();
 
-  const { productId, userId, isSeller } = useMemo(
+  const { productId, userName, userId, isSeller } = useMemo(
     () => ({
       productId: Number(router.query.productId || ''),
+      userName: String(router.query.targetUserName || ''),
       userId: Number(router.query.targetUserId || ''),
       isSeller: router.query.isTargetUserSeller || false
     }),
-    [router.query.isTargetUserSeller, router.query.productId, router.query.targetUserId]
+    [
+      router.query.isTargetUserSeller,
+      router.query.productId,
+      router.query.targetUserId,
+      router.query.targetUserName
+    ]
   );
 
   const setToastState = useSetRecoilState(toastState);
@@ -111,25 +118,32 @@ function ReviewForm() {
         gap={32}
         customStyle={{ padding: '52px 20px', flex: 1 }}
       >
-        <Flexbox>
-          {Array.from({ length: 5 }, (_, index) => (
-            <Icon
-              name="StarFilled"
-              customStyle={{
-                color: index < Number(params.score) / 2 ? '#FEB700' : common.bg02,
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                setParams((prevState) => ({
-                  ...prevState,
-                  score:
-                    Number(params.score) / 2 === 1 && index === 0
-                      ? '0'
-                      : ((index + 1) * 2).toString()
-                }));
-              }}
-            />
-          ))}
+        <Flexbox direction="vertical" gap={20} alignment="center">
+          <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
+            {`${userName}님과의 거래는 어떠셨나요?`}
+          </Typography>
+          <Flexbox>
+            {Array.from({ length: 5 }, (_, index) => (
+              <Icon
+                name="StarFilled"
+                customStyle={{
+                  width: 32,
+                  height: 32,
+                  color: index < Number(params.score) / 2 ? '#FEB700' : common.bg02,
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setParams((prevState) => ({
+                    ...prevState,
+                    score:
+                      Number(params.score) / 2 === 1 && index === 0
+                        ? '0'
+                        : ((index + 1) * 2).toString()
+                  }));
+                }}
+              />
+            ))}
+          </Flexbox>
         </Flexbox>
         <Description>
           <TextareaAutosize
@@ -142,6 +156,7 @@ function ReviewForm() {
                 content: prevState.content?.length ? e.target.value : e.target.value.trim()
               }))
             }
+            style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
           />
         </Description>
       </Flexbox>

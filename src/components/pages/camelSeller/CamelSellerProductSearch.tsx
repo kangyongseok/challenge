@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
@@ -24,11 +24,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-import {
-  camelSellerBooleanStateFamily,
-  camelSellerSMSDialogState,
-  camelSellerTempSaveDataState
-} from '@recoil/camelSeller';
+import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function CamelSellerProductSearch() {
   const {
@@ -44,7 +40,6 @@ function CamelSellerProductSearch() {
   const setFocusState = useSetRecoilState(camelSellerBooleanStateFamily('focus'));
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
-  const initDialogState = useRecoilValue(camelSellerSMSDialogState);
   const {
     data: models,
     refetch,
@@ -89,12 +84,10 @@ function CamelSellerProductSearch() {
   }, [refetch, searchValue, windowClickEvent]);
 
   useEffect(() => {
-    if (!initDialogState) {
-      if (inputRef.current?.querySelector('input')) {
-        inputRef.current.querySelector('input')?.focus();
-      }
+    if (inputRef.current?.querySelector('input')) {
+      inputRef.current.querySelector('input')?.focus();
     }
-  }, [initDialogState]);
+  }, []);
 
   useEffect(() => {
     if (!isEmpty(searchValue)) {
@@ -192,7 +185,6 @@ function CamelSellerProductSearch() {
           <Search
             fullWidth
             isBorder={false}
-            // placeholder="모델명 입력 (e.g. 구찌 오피디아 버킷백)"
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -236,11 +228,6 @@ function CamelSellerProductSearch() {
                 </Flexbox>
               </Flexbox>
             ))}
-          {/* {
-            models &&
-            models.length > 0 && 
-            isExtendedLayoutIOSVersion() && <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />
-          } */}
           {models &&
             models.length > 0 &&
             models.map((result) => (
@@ -310,8 +297,6 @@ const SearchResultArea = styled.ul<{ isFocus: boolean }>`
   flex-direction: column;
   gap: 20px;
   margin-top: 100px;
-  /* overflow: auto; */
-  /* max-height: calc(100vh - 350px); */
 `;
 
 const SearchWrap = styled.div<{ isSearchValue: boolean }>`

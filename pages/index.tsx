@@ -8,8 +8,7 @@ import dayjs from 'dayjs';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
-import CamelSellerFloatingButton from '@components/UI/molecules/CamelSellerFloatingButton';
-import { BottomNavigation } from '@components/UI/molecules';
+import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -35,6 +34,7 @@ import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
+import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 import { CreateChannelParams } from '@typings/channel';
@@ -173,9 +173,9 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
-  Initializer.initABTestIdentifierByCookie(req.cookies);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
+  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.simpleUserInfo(), fetchSimpleUserInfo);

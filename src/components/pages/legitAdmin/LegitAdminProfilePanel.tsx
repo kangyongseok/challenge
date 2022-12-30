@@ -20,7 +20,7 @@ function LegitAdminProfilePanel() {
   const {
     isLoading,
     isFetched,
-    data: { profile, cntOpinion = 0 } = {}
+    data: { profile, cntOpinion = 0, roleSeller } = {}
   } = useQuery(
     queryKeys.users.legitProfile(accessUser?.userId || 0),
     () => fetchLegitProfile(accessUser?.userId || 0),
@@ -46,6 +46,7 @@ function LegitAdminProfilePanel() {
       <LegitProfileInfo
         isLoading={isLoading}
         profile={profile}
+        sellerId={roleSeller?.sellerId}
         legitsBrands={legitsBrands}
         cntOpinion={cntOpinion}
         showEdit

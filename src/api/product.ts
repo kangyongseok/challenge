@@ -11,12 +11,12 @@ import type {
   SearchAiProductParams,
   SearchParams,
   SearchRelatedProductsParams,
+  SellerInfo,
   SellerProductsParams,
   SellerReportParams,
   SellerReview,
   SuggestKeyword
 } from '@dto/product';
-import { SellerInfo } from '@dto/product';
 
 import Axios from '@library/axios';
 

@@ -1,18 +1,11 @@
 import type { MouseEvent, ReactElement } from 'react';
-import { useState } from 'react';
 
-import { Avatar, Flexbox, Icon, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
-import {
-  Description,
-  HiddenImageLoader,
-  Item,
-  StyledListItem,
-  Time,
-  Title,
-  UserAvatar
-} from './List.styles';
+import UserAvatar from '@components/UI/organisms/UserAvatar';
+
+import { Description, Item, StyledListItem, Time, Title } from './List.styles';
 
 interface ListItemProps {
   avatarUrl?: string;
@@ -43,26 +36,16 @@ function ListItem({
   titleCustomStyle,
   descriptionCustomStyle
 }: ListItemProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-  const [imageRendered, setImageRendered] = useState(false);
-
   return (
     <StyledListItem css={customStyle} onClick={onClick}>
       {!!avatarUrl && (
-        <>
-          {imageRendered ? (
-            <Avatar width={52} height={52} src={avatarUrl} alt="Avatar Img" round="50%" />
-          ) : (
-            <UserAvatar>
-              <Icon name="UserFilled" width={24} height={24} customStyle={{ color: common.ui80 }} />
-            </UserAvatar>
-          )}
-          <HiddenImageLoader src={avatarUrl} onLoad={() => setImageRendered(true)} />
-        </>
+        <UserAvatar
+          src={avatarUrl}
+          width={52}
+          height={52}
+          isRound
+          iconCustomStyle={{ width: 24, height: 24 }}
+        />
       )}
       {!!avatar && avatar}
       <Item>

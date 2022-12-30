@@ -38,6 +38,7 @@ import { dialogState } from '@recoil/common';
 
 interface LegitProfileInfoProps {
   profile?: UserRoleLegit;
+  sellerId?: number;
   isLoading?: boolean;
   legitsBrands: LegitsBrand[];
   cntOpinion: number;
@@ -50,6 +51,7 @@ interface LegitProfileInfoProps {
 
 function LegitProfileInfo({
   profile,
+  sellerId,
   isLoading = false,
   legitsBrands = [],
   cntOpinion,
@@ -128,20 +130,12 @@ function LegitProfileInfo({
     });
 
     router.push({
-      pathname: `/userInfo/${userId}`,
+      pathname: `/sellerInfo/${sellerId}`,
       query: {
         tab: 'products'
       }
     });
   };
-
-  // const handleClickMoveUrlShop = () => {
-  //   logEvent(attrKeys.legit.CLICK_PROFILE_LINK, {
-  //     name: attrProperty.legitName.LEGIT_PROFILE
-  //   });
-  //
-  //   window.open(urlShop as string, '_blank');
-  // };
 
   return (
     <Wrapper css={customStyle}>
@@ -285,7 +279,10 @@ function LegitProfileInfo({
                 />
               </Flexbox>
               <UserAvatar
+                width={80}
+                height={80}
                 src={image}
+                isRound
                 dateActivated={dateActivated}
                 customStyle={{ height: 'inherit' }}
                 // onClick={() => router.push(`/products/${sellerId}/userInfo?tab=products`)}

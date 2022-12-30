@@ -1,15 +1,11 @@
 export { default as ProductActions } from './ProductActions';
-// export { default as ProductAveragePriceChart } from './ProductAveragePriceChart';
 export { default as ProductCTAButton } from './ProductCTAButton';
 export { default as ProductImages } from './ProductImages';
 export { default as ProductInfo } from './ProductInfo';
 export { default as ProductInfoSkeleton } from './ProductInfoSkeleton';
-// export { default as ProductKeywordList } from './ProductKeywordList';
 export { default as ProductRedirect } from './ProductRedirect';
 export { default as ProductFixedSummary } from './ProductFixedSummary';
 export { default as ProductRelatedProductList } from './ProductRelatedProductList';
-// export { default as ProductSellerProductList } from './ProductSellerProductList';
-// export { default as ProductSellerReviews } from './ProductSellerReviews';
 export { default as ProductDetailLegitBanner } from './ProductDetailLegitBanner';
 export { default as ProductDetailLegitImageBottomBanner } from './ProductDetailLegitImageBottomBanner';
 export { default as ProductDetailLegitBottomSheet } from './ProductDetailLegitBottomSheet';

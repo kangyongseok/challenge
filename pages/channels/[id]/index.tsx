@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Chip, Flexbox, Icon } from 'mrcamel-ui';
-import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
@@ -21,8 +20,6 @@ import {
   ChannelMoreMenuBottomSheet,
   ChannelProductStatusBottomSheet
 } from '@components/pages/channel';
-
-import type { ChannelAppointmentResult } from '@dto/channel';
 
 import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
@@ -40,116 +37,73 @@ import {
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { checkAgent, getProductDetailUrl } from '@utils/common';
-import { getChannelUserName, getLogEventTitle } from '@utils/channel';
+import { getLogEventTitle } from '@utils/channel';
 
-import { channelThumbnailMessageImageState } from '@recoil/channel';
-import useQueryChannel from '@hooks/useQueryChannel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import { dialogState } from '@recoil/common';
+import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
+import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
+import useChannel from '@hooks/useChannel';
 
 function Chanel() {
   const router = useRouter();
 
+  useViewportUnitsTrick();
+
   const [channelThumbnailMessageImage, setChannelThumbnailMessageImage] = useRecoilState(
     channelThumbnailMessageImageState
+  );
+  const resetDialogState = useResetRecoilState(dialogState);
+  const resetMoreBottomSheetState = useResetRecoilState(channelBottomSheetStateFamily('more'));
+  const resetProductStatusBottomSheetState = useResetRecoilState(
+    channelBottomSheetStateFamily('productStatus')
   );
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const {
-    data: {
-      channel,
-      product,
-      channelUser,
-      channelTargetUser,
-      userReview,
-      targetUserReview,
-      channelAppointments,
-      userBlocks,
-      lastMessageManage
-    } = {},
+    useQueryChannel: {
+      data: {
+        channel,
+        product,
+        channelUser,
+        channelTargetUser,
+        userReview,
+        targetUserReview,
+        lastMessageManage
+      } = {},
+      isLoading,
+      isFetched,
+      refetch
+    },
+    channelData: {
+      userName,
+      isSeller,
+      appointment,
+      showAppointmentBanner,
+      targetUserId,
+      targetUserName,
+      isTargetUserBlocked,
+      isDeletedTargetUser,
+      isDeletedProduct,
+      productId,
+      productStatus
+    },
     sendbirdChannel,
-    memorizedMessages,
+    messages,
     hasMorePrev,
     fetchPrevMessages,
-    updateNewMessage,
-    isLoading,
-    isFetched,
-    refetch
-  } = useQueryChannel(messagesRef);
-  const { data: accessUser } = useQueryAccessUser();
+    updateNewMessage
+  } = useChannel(messagesRef);
   const { mutate: mutateSendMessage } = useMutationSendMessage();
 
   const [isFocused, setIsFocused] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messageInputHeight, setMessageInputHeight] = useState(MESSAGE_INPUT_HEIGHT);
 
-  const {
-    userName,
-    isSeller,
-    appointment,
-    showAppointmentBanner,
-    targetUserId,
-    targetUserName,
-    isTargetUserBlocked,
-    isDeletedTargetUser,
-    isDeletedProduct,
-    productId,
-    productStatus
-  } = useMemo<{
-    userName: string;
-    isSeller: boolean;
-    appointment: ChannelAppointmentResult | undefined;
-    showAppointmentBanner: boolean;
-    targetUserId: number;
-    targetUserName: string;
-    isTargetUserBlocked: boolean;
-    isDeletedTargetUser: boolean;
-    productId: number;
-    productStatus: number;
-    isDeletedProduct: boolean;
-  }>(() => {
-    const findAppointment = channelAppointments?.find(
-      ({ isDeleted, type }) => !isDeleted && type !== 'DELETE'
-    );
-    const channelTargetUserId = channelTargetUser?.user?.id || 0;
-
-    return {
-      userName: getChannelUserName(channelUser?.user.name, channelUser?.user.id || 0),
-      isSeller:
-        typeof channelUser?.type === 'number' &&
-        channelUserType[channelUser.type as keyof typeof channelUserType] === channelUserType[1],
-      appointment: findAppointment,
-      showAppointmentBanner:
-        !!findAppointment && dayjs().diff(findAppointment.dateAppointment, 'minute') < 0,
-      targetUserId: channelTargetUserId,
-      targetUserName: getChannelUserName(channelTargetUser?.user?.name, channelTargetUserId),
-      isTargetUserBlocked: !!userBlocks?.some(
-        (blockedUser) =>
-          blockedUser.userId === accessUser?.userId &&
-          blockedUser.targetUser.id === channelTargetUserId
-      ),
-      isDeletedTargetUser: !!channelTargetUser?.user?.isDeleted,
-      productId: product?.id || 0,
-      productStatus: product?.status || 0,
-      isDeletedProduct: !!product?.isDeleted
-    };
-  }, [
-    accessUser?.userId,
-    channelAppointments,
-    channelTargetUser?.user?.id,
-    channelTargetUser?.user?.isDeleted,
-    channelTargetUser?.user?.name,
-    channelUser?.type,
-    channelUser?.user?.id,
-    channelUser?.user?.name,
-    product?.id,
-    product?.isDeleted,
-    product?.status,
-    userBlocks
-  ]);
   const showMessageInput = useMemo(
-    () => !!((!checkAgent.isIOSApp() && isFetched) || isTargetUserBlocked || isDeletedTargetUser),
+    () => (!checkAgent.isIOSApp() && isFetched) || isTargetUserBlocked || isDeletedTargetUser,
     [isDeletedTargetUser, isFetched, isTargetUserBlocked]
   );
 
@@ -208,8 +162,11 @@ function Chanel() {
     if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
 
     return () => {
-      setChannelThumbnailMessageImage('');
       document.body.classList.remove('channel-body');
+      setChannelThumbnailMessageImage('');
+      resetDialogState();
+      resetProductStatusBottomSheetState();
+      resetMoreBottomSheetState();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -240,10 +197,10 @@ function Chanel() {
   useEffect(() => {
     const handleResize = () => scrollToBottom('smooth');
 
-    if (checkAgent.isIOSApp()) window.addEventListener('resize', handleResize);
+    if (checkAgent.isMobileApp()) window.addEventListener('resize', handleResize);
 
     return () => {
-      if (checkAgent.isIOSApp()) window.removeEventListener('resize', handleResize);
+      if (checkAgent.isMobileApp()) window.removeEventListener('resize', handleResize);
     };
   }, [scrollToBottom]);
 
@@ -355,12 +312,9 @@ function Chanel() {
                 {!!sendbirdChannel && (
                   <ChannelMessages
                     sendbirdChannel={sendbirdChannel}
-                    messages={memorizedMessages}
+                    messages={messages}
                     productId={productId}
-                    productStatus={productStatus}
-                    isSeller={isSeller}
                     targetUserId={targetUserId}
-                    targetUserName={targetUserName}
                     showAppointmentBanner={showAppointmentBanner}
                     showNewMessageNotification={unreadCount > 0}
                     showActionButtons={!isDeletedTargetUser && !isTargetUserBlocked}
@@ -368,6 +322,7 @@ function Chanel() {
                     hasMorePrev={hasMorePrev}
                     fetchPrevMessages={fetchPrevMessages}
                     scrollToBottom={scrollToBottom}
+                    refetchChannel={refetch}
                   />
                 )}
               </ContentWrapper>
@@ -446,8 +401,11 @@ export async function getServerSideProps({
   const channelId = String(id);
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!!accessUser && channelId.length > 0) {
     const { channelUser } = await fetchChannel(+channelId);
@@ -475,6 +433,7 @@ export async function getServerSideProps({
 const Layout = styled.div`
   width: 100%;
   height: 100%;
+  min-height: calc(var(--vh, 1vh) * 100);
 
   main {
     position: relative;
@@ -520,7 +479,6 @@ const FooterWrapper = styled.section<{
   isFocused: boolean;
 }>`
   position: ${({ isFocused }) => (isFocused ? 'static' : 'sticky')};
-  right: 0;
   bottom: ${({ isFocused }) => (isFocused ? 0 : 'env(safe-area-inset-bottom, 0)')};
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};

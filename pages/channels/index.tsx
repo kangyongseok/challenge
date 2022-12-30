@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
+import { useResetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -28,9 +29,11 @@ import { channelType } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getProductDetailUrl } from '@utils/common';
+import { getCookies } from '@utils/cookies';
+import { checkAgent, getProductDetailUrl } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
+import { channelBottomSheetStateFamily } from '@recoil/channel';
 import useRedirectVC from '@hooks/useRedirectVC';
 
 const labels = Object.entries(channelType).map(([key, value]) => ({ key, value }));
@@ -38,6 +41,10 @@ const labels = Object.entries(channelType).map(([key, value]) => ({ key, value }
 function Channels() {
   const router = useRouter();
   useRedirectVC('/channels');
+
+  const resetProductStatusBottomSheetState = useResetRecoilState(
+    channelBottomSheetStateFamily('productStatus')
+  );
 
   const { type, productId, isSelectTargetUser } = useMemo(
     () => ({
@@ -66,13 +73,40 @@ function Channels() {
     router.push(getProductDetailUrl({ product }));
   }, [product, router]);
 
+  useEffect(() => {
+    const { channelId } = router.query;
+
+    if (channelId) {
+      router.replace('/channels').then(() => {
+        if (checkAgent.isIOSApp()) {
+          window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
+        } else {
+          router.push(`/channels/${channelId}`);
+        }
+      });
+    }
+
+    return () => {
+      resetProductStatusBottomSheetState();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (productId) {
+      logEvent(attrKeys.channel.VIEW_SELECT_BUYER);
+    }
+  }, [productId]);
+
   return (
     <GeneralTemplate
       header={
-        <Header showLeft={!!productId}>
-          <Typography variant="h3" weight="bold">
-            {isSelectTargetUser ? '거래자 선택' : '채팅'}
-          </Typography>
+        <Header>
+          {isSelectTargetUser && (
+            <Typography variant="h3" weight="bold">
+              거래자 선택
+            </Typography>
+          )}
         </Header>
       }
       footer={<BottomNavigation />}
@@ -127,22 +161,16 @@ function Channels() {
 export async function getServerSideProps({
   req,
   locale,
-  query: { productId, channelId },
+  query: { productId },
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
-  if (channelId) {
-    return {
-      redirect: {
-        destination: `/channels/${channelId}`,
-        permanent: false
-      }
-    };
-  }
-
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!accessUser) {
     return {

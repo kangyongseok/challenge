@@ -55,7 +55,6 @@ function DialogProvider() {
       case 'legitRequestOnlyInIOS':
       case 'legitServiceNotice':
       case 'appUpdateNotice':
-      case 'legitPhotoGuide':
       case 'loginProviderError':
         return 'textWithOneButton';
       case 'appAuthCheck':
@@ -65,6 +64,8 @@ function DialogProvider() {
       case 'cancelAppointment':
       case 'requiredAppUpdateForChat':
         return 'textWithTwoVerticalButton';
+      case 'legitPhotoGuide':
+        return 'textWithOneButton';
       default:
         return 'text';
     }

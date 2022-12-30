@@ -1,4 +1,4 @@
-import { Channel } from '@dto/channel';
+import type { Channel } from '@dto/channel';
 
 import type { PhotoGuideImages } from '@typings/camelSeller';
 

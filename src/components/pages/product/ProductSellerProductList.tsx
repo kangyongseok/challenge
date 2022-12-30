@@ -123,9 +123,8 @@ function ProductSellerProductList({
               source: attrProperty.productSource.PRODUCT_LIST
             });
           router.push({
-            pathname: roleSellerUserId
-              ? `/userInfo/${roleSellerUserId}`
-              : `/sellerInfo/${sellerId}`,
+            pathname:
+              product?.site.id === 34 ? `/userInfo/${roleSellerUserId}` : `/sellerInfo/${sellerId}`,
             query: {
               tab: 'products'
             }
@@ -137,6 +136,7 @@ function ProductSellerProductList({
             (isCamelProduct && (
               <Avatar
                 width={44}
+                height={44}
                 src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
                 alt="Product Seller Img"
                 round="50%"
@@ -146,6 +146,7 @@ function ProductSellerProductList({
             (isCamelSeller && (
               <Avatar
                 width={44}
+                height={44}
                 src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
                 alt="Product Seller Img"
                 round="50%"
@@ -155,6 +156,7 @@ function ProductSellerProductList({
             (reviewInfo.productSeller.image && (
               <Avatar
                 width={44}
+                height={44}
                 src={`${reviewInfo.productSeller.image}`}
                 alt="Product Seller Img"
                 round="50%"
@@ -205,8 +207,6 @@ function ProductSellerProductList({
               <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
                 <ProductGridCard
                   product={sellerProduct}
-                  // wishAtt={handleWishAtt(product, i)}
-                  // productAtt={handleProductAtt(product, i)}
                   name={attrProperty.productName.PRODUCT_DETAIL}
                   isRound
                   compact
@@ -228,13 +228,10 @@ const ProductList = styled.div`
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 144px;
-  /* grid-auto-rows: 96px; */
   gap: 12px;
   margin: 0 -20px;
   padding: 0 20px 0;
   overflow-x: auto;
-  /* overflow-x: auto;
-  overflow-y: hidden; */
   justify-content: flex-start;
 `;
 

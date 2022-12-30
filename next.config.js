@@ -71,6 +71,18 @@ const routers = [
     destination: '/login'
   },
   {
+    source: '/camelSeller/:path*',
+    has: [
+      {
+        type: 'cookie',
+        key: 'accessToken',
+        value: undefined
+      }
+    ],
+    permanent: false,
+    destination: '/login'
+  },
+  {
     source: '/logout',
     has: [
       {
@@ -144,7 +156,8 @@ const nextConfig = {
     DATADOG_RUM_ENV: process.env.DATADOG_RUM_ENV,
     DATADOG_RUM_SERVICE: process.env.DATADOG_RUM_SERVICE,
     DATADOG_ALLOWED_TRACING_ORIGIN: process.env.DATADOG_ALLOWED_TRACING_ORIGIN,
-    SENDBIRD_APP_ID: process.env.SENDBIRD_APP_ID
+    SENDBIRD_APP_ID: process.env.SENDBIRD_APP_ID,
+    SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL
   },
   images: {
     domains: [

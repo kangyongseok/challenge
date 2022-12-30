@@ -2,8 +2,6 @@ import { PropsWithChildren, RefObject, useEffect, useRef, useState } from 'react
 
 import type { CustomStyle } from 'mrcamel-ui';
 
-import { PortalConsumer } from '@provider/PortalProvider';
-
 import { Backdrop, Spotlight } from './OnBoardingSpotlight.styles';
 
 interface OnBoardingSpotlightProps<T> {
@@ -84,7 +82,7 @@ function OnBoardingSpotlight({
 
   if (open) {
     return (
-      <PortalConsumer>
+      <>
         <Backdrop backdropOpen={backdropOpen} onClick={onClose}>
           <Spotlight
             offsetTop={offsetTop}
@@ -95,7 +93,7 @@ function OnBoardingSpotlight({
           />
         </Backdrop>
         {children}
-      </PortalConsumer>
+      </>
     );
   }
 

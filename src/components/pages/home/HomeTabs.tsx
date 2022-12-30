@@ -1,5 +1,3 @@
-// import { useMemo } from 'react';
-
 import { useEffect, useMemo } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -133,6 +131,7 @@ function HomeTabs() {
         </Typography>
       </Flexbox>
       <Flexbox gap={16}>
+        <Icon name="HeartOutlined" onClick={handleClickWish} />
         <Badge
           open={!!notViewedHistoryCount}
           variant="two-tone"
@@ -144,7 +143,6 @@ function HomeTabs() {
         >
           <Icon name="AlarmOutlined" onClick={handleClickAlarm} />
         </Badge>
-        <Icon name="HeartOutlined" onClick={handleClickWish} />
       </Flexbox>
     </Flexbox>
   );

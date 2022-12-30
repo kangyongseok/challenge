@@ -31,29 +31,6 @@ export interface CamelSellerLocalStorage {
   price: number;
   description: string;
   photoGuideImages: PhotoGuideImages[];
-  // title: string;
-  // keyword: string;
-  // search?: boolean;
-  // step?: string;
-  // modelSearchValue?: string;
-  // price?: number;
-  // category: {
-  //   id: number;
-  //   name: string;
-  // };
-  // subCategoryName?: string;
-  // brand?: {
-  //   id: number;
-  //   name: string;
-  //   searchValue?: string;
-  // };
-  // color?: { id: number; name: string; count?: number };
-  // size?: { id: number; name: string; count?: number };
-  // platform?: { id: number; name: string; count?: number; hasImage?: boolean };
-  // condition?: { name: string; id: number };
-  // description?: string;
-  // photoGuideImages: PhotoGuideImages[];
-  // [x: string]: FilterDropItem | PhotoGuideImages[] | number | string | undefined | boolean;
 }
 
 export interface CamelSellerTempData {

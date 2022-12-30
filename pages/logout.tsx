@@ -15,6 +15,8 @@ import Axios from '@library/axios';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
+import { deleteCookie } from '@utils/cookies';
+
 import { deviceIdState } from '@recoil/common';
 import { channelReceivedMessageFilteredState, sendbirdState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -45,6 +47,8 @@ function Logout() {
     queryClient.removeQueries(queryKeys.users.userInfo(), { exact: true });
     queryClient.removeQueries(queryKeys.users.categoryWishes({ deviceId }), { exact: true });
     Axios.clearAccessToken();
+    deleteCookie('accessUser');
+    deleteCookie('accessToken');
     resetSendbirdState();
     resetChannelReceivedMessageFilteredState();
     Sendbird.finalize();
@@ -61,15 +65,9 @@ function Logout() {
   return <div />;
 }
 
-export async function getServerSideProps({ res }: GetServerSidePropsContext) {
-  res.setHeader('Set-Cookie', [
-    `accessUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
-      process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
-    }`,
-    `accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httpOnly;${
-      process.env.NODE_ENV !== 'development' ? ' domain=.mrcamel.co.kr;' : ''
-    }`
-  ]);
+export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+  deleteCookie('accessUser', { req, res });
+  deleteCookie('accessToken', { req, res });
 
   return {
     props: {}

@@ -139,7 +139,6 @@ function CamelSellerFloatingButton({ source }: { source?: string }) {
     }
 
     if (accessUser && prevStep) {
-      // accessUser && prevStep
       setContinueDialog(({ type }) => ({ type, open: true }));
       return;
     }
@@ -149,7 +148,6 @@ function CamelSellerFloatingButton({ source }: { source?: string }) {
 
   // eslint-disable-next-line no-constant-condition
   if (authProductSeller) {
-    // authProductSeller
     return (
       <>
         <Wrapper

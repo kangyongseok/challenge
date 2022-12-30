@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
-import type { IconName } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, IconName, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 

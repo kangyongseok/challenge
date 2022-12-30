@@ -69,7 +69,6 @@ const Footer = styled.footer`
   position: fixed;
   bottom: 0;
   width: 100%;
-  /* left: -12px; */
   padding: 20px;
   background-color: white;
 `;

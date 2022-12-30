@@ -13,6 +13,8 @@ import { fetchChannels } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
+import { isProduction } from '@utils/common';
+
 import { sendbirdState } from '@recoil/channel';
 
 type UseInfiniteQueryChannelsProps = ChannelsParams;
@@ -91,8 +93,7 @@ function useInfiniteQueryChannels({
   const channelHandlers: GroupChannelCollectionEventHandler = useMemo(
     () => ({
       onChannelsAdded: async (_, channels) => {
-        if (process.env.NODE_ENV === 'development')
-          console.debug('Sendbird onChannelsAdded::', { channels });
+        if (!isProduction) console.debug('Sendbird onChannelsAdded::', { channels });
         await useInfiniteQueryResult.refetch();
       },
       onChannelsUpdated: async (_, channels) => {
@@ -121,7 +122,7 @@ function useInfiniteQueryChannels({
             return updatedChannel || channel;
           });
 
-          if (process.env.NODE_ENV === 'development')
+          if (!isProduction)
             console.debug('Sendbird onChannelsUpdated::', {
               state: currVal,
               channels,
@@ -152,7 +153,7 @@ function useInfiniteQueryChannels({
             (channel) => !channelUrls.includes(channel.url)
           );
 
-          if (process.env.NODE_ENV === 'development')
+          if (!isProduction)
             console.debug('Sendbird onChannelsDeleted::', {
               state: currVal,
               channelUrls,

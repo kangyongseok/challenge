@@ -28,11 +28,6 @@ export const camelSellerSubmitState = atom<SubmitType | null>({
   default: null
 });
 
-// export const camelSellerEditState = atom<CamelSellerLocalStorage | null>({
-//   key: '@camelSeller/EditState',
-//   default: null
-// });
-
 export const submitValidatorState = selector({
   key: 'submitValidatorState',
   get: ({ get }) => {
@@ -78,11 +73,6 @@ export const camelSellerDialogStateFamily = atomFamily({
     type,
     open: false
   })
-});
-
-export const camelSellerSMSDialogState = atom({
-  key: '@camelSeller/camelSellerSMSDialogState',
-  default: true
 });
 
 export const camelSellerIsImageLoadingState = atom({

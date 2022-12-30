@@ -103,10 +103,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const router = useRouter();
 
   const queryClient = useQueryClient();
+  const { data: accessUser } = useQueryAccessUser();
 
   const { initialized, unreadMessagesCount } = useRecoilValue(sendbirdState);
 
-  const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const setDialogState = useSetRecoilState(dialogState);
 
   const resetCategory = useResetRecoilState(categoryState);
@@ -118,8 +118,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
   );
-
-  const { data: accessUser } = useQueryAccessUser();
+  const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const {
     data: {
       roles = [],

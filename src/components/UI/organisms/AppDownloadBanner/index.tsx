@@ -45,7 +45,6 @@ function AppDownloadBanner() {
     showAppDownloadBannerState
   );
 
-  // const touchTriggerd = useTouchScrollTrigger(true);
   const scrollTriggerd = useReverseScrollTrigger(true);
   const {
     theme: {
@@ -76,14 +75,6 @@ function AppDownloadBanner() {
       }
     });
   };
-  // const handleClickClose = () => {
-  //   setShowAppDownloadBannerState(false);
-  //   SessionStorage.set(sessionStorageKeys.hideAppDownloadBanner, true);
-  // logEvent('CLICK_APPDOWNLOAD_CLOSE', {
-  //   name: getPageNameByPathName(window.location.pathname),
-  //   att: 'BANNER'
-  // });
-  // };
 
   return (
     <StyledAppDownloadBanner scrollTriggered={scrollTriggerd && isAppdownBannerState}>

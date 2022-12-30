@@ -57,7 +57,12 @@ function EventHeader() {
     <Header
       showRight={false}
       rightIcon={
-        <Flexbox gap={16} customStyle={{ marginRight: 8 }}>
+        <Flexbox
+          gap={16}
+          customStyle={{
+            paddingRight: 8
+          }}
+        >
           <Badge
             open={!!notViewedHistoryCount}
             variant="two-tone"

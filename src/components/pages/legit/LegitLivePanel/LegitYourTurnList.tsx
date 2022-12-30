@@ -159,6 +159,9 @@ function LegitYourTurnList() {
                               .toLowerCase()
                               .replace(/\s/g, '')}.jpg`}
                             alt="Brand Logo Img"
+                            customStyle={{
+                              maxWidth: 'fit-content'
+                            }}
                           />
                           <Typography variant="body1">{productResult.quoteTitle}</Typography>
                         </Flexbox>

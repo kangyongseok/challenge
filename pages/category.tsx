@@ -21,6 +21,7 @@ import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import categoryState from '@recoil/category';
@@ -94,8 +95,8 @@ export async function getServerSideProps({
   const queryClient = new QueryClient();
   const queryClientList: Promise<void>[] = [];
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
     queryClientList.concat([queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo)]);

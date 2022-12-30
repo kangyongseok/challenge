@@ -20,6 +20,8 @@ import { fetchUserInfo, postUserSize } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
+
 import type { SelectSize } from '@typings/user';
 import atom from '@recoil/users';
 
@@ -186,8 +188,8 @@ const FooterFixed = styled(Flexbox)`
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);

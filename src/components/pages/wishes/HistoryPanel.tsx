@@ -108,7 +108,7 @@ function HistoryPanel() {
           }}
         >
           <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
-          <Skeleton width={84} height={32} round={8} disableAspectRatio />
+          <Skeleton width={80.66} height={32} round={8} disableAspectRatio />
         </Flexbox>
         <Skeleton
           width={74}
@@ -126,8 +126,19 @@ function HistoryPanel() {
             />
           ))}
           <Flexbox alignment="center" gap={24}>
-            <Skeleton width={48} height={28} round={24} disableAspectRatio />
-            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
           </Flexbox>
           <ProductWishesCardSkeleton isRound />
           <ProductWishesCardSkeleton isRound />
@@ -155,14 +166,36 @@ function HistoryPanel() {
             />
           ))}
           <Flexbox alignment="center" gap={24}>
-            <Skeleton width={48} height={28} round={24} disableAspectRatio />
-            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
           </Flexbox>
           <ProductWishesCardSkeleton isRound />
           <ProductWishesCardSkeleton isRound />
           <Flexbox alignment="center" gap={24}>
-            <Skeleton width={48} height={28} round={24} disableAspectRatio />
-            <Skeleton width="100%" maxWidth={120} height={20} round={24} disableAspectRatio />
+            <Skeleton
+              width="48px"
+              height="28px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
+            <Skeleton
+              width="100%"
+              maxWidth="120px"
+              height="20px"
+              disableAspectRatio
+              customStyle={{ borderRadius: 24 }}
+            />
           </Flexbox>
           {Array.from({ length: 3 }).map((_, index) => (
             <ProductWishesCardSkeleton

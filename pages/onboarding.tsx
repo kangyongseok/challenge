@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
+import { ThemeProvider } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import {
   OnboardingGenderAndYearOfBirth,
   OnboardingLikeModel,
-  // OnboardingPermission,
   OnboardingPurchaseType,
   OnboardingResult,
   OnboardingSize,
@@ -35,15 +35,16 @@ function Onboarding() {
   }, []);
 
   return (
-    <Wrapper>
-      {step === 0 && <OnboardingWelcome onClick={handleClickStep} />}
-      {step === 1 && <OnboardingGenderAndYearOfBirth onClick={handleClickStep} />}
-      {step === 2 && <OnboardingLikeModel onClick={handleClickStep} />}
-      {step === 3 && <OnboardingSize onClick={handleClickStep} />}
-      {step === 4 && <OnboardingPurchaseType onClick={handleClickStep} />}
-      {step === 5 && <OnboardingResult />}
-      {/* {step === 5 && <OnboardingPermission />} */}
-    </Wrapper>
+    <ThemeProvider theme="dark">
+      <Wrapper>
+        {step === 0 && <OnboardingWelcome onClick={handleClickStep} />}
+        {step === 1 && <OnboardingGenderAndYearOfBirth onClick={handleClickStep} />}
+        {step === 2 && <OnboardingLikeModel onClick={handleClickStep} />}
+        {step === 3 && <OnboardingSize onClick={handleClickStep} />}
+        {step === 4 && <OnboardingPurchaseType onClick={handleClickStep} />}
+        {step === 5 && <OnboardingResult />}
+      </Wrapper>
+    </ThemeProvider>
   );
 }
 

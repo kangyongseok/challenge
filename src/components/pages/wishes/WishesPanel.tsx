@@ -236,21 +236,21 @@ function WishesPanel({
   if (isLoading) {
     return (
       <>
-        <Flexbox alignment="center" gap={6} customStyle={{ height: 60 }}>
+        <Flexbox gap={6} alignment="center" customStyle={{ height: 60 }}>
           <Skeleton width={63} height={33} round={36} disableAspectRatio />
-          <Skeleton width={63} height={33} round={36} disableAspectRatio />
+          <Skeleton width={36} height={33} round={36} disableAspectRatio />
           <Skeleton width={45} height={33} round={36} disableAspectRatio />
         </Flexbox>
         <Flexbox customStyle={{ margin: '20px 0 16px' }} gap={4}>
           <Skeleton
             width={50}
-            height={33}
+            height={32}
             round={8}
             disableAspectRatio
             customStyle={{ marginRight: 'auto' }}
           />
           <Skeleton width={50} height={32} round={8} disableAspectRatio />
-          <Skeleton width={50} height={32} round={8} disableAspectRatio />
+          <Skeleton width={105} height={32} round={8} disableAspectRatio />
         </Flexbox>
         <Flexbox direction="vertical" gap={20} customStyle={{ marginBottom: 20 }}>
           {Array.from({ length: 10 }).map((_, index) => (
