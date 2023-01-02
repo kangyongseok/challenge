@@ -24,12 +24,10 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
-import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { isProduction } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -39,17 +37,10 @@ function MyPage() {
   const [authProductSeller, setAuthProductSeller] = useState(false);
 
   useEffect(() => {
-    // beta 일땐 모든 판매하기 접근경로 오픈
-    // 운영에서 노출 조건
-    // 로그인 + PRODUCT_CREATE 권한 보유자
-    if (isProduction) {
-      if (accessUser && userInfo?.roles?.includes(PRODUCT_CREATE as never)) {
-        setAuthProductSeller(true);
-      } else {
-        setAuthProductSeller(false);
-      }
-    } else {
+    if (accessUser) {
       setAuthProductSeller(true);
+    } else {
+      setAuthProductSeller(false);
     }
   }, [accessUser, userInfo]);
 

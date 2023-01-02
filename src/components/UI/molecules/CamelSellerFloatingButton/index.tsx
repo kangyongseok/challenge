@@ -12,15 +12,13 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { CAMEL_SELLER, SOURCE } from '@constants/localStorage';
-import { PRODUCT_CREATE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
   isNeedUpdateImageUploadAOSVersion,
-  isNeedUpdateImageUploadIOSVersion,
-  isProduction
+  isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
@@ -50,17 +48,10 @@ function CamelSellerFloatingButton({ source }: { source?: string }) {
   const [authProductSeller, setAuthProductSeller] = useState(false);
 
   useEffect(() => {
-    // 운영이 아닐땐 일땐 모든 판매하기 접근경로 오픈
-    // 운영에서 노출 조건
-    // 로그인 + PRODUCT_CREATE 권한 보유자
-    if (isProduction) {
-      if (accessUser && roles.includes(PRODUCT_CREATE as never)) {
-        setAuthProductSeller(true);
-      } else {
-        setAuthProductSeller(false);
-      }
-    } else {
+    if (accessUser) {
       setAuthProductSeller(true);
+    } else {
+      setAuthProductSeller(false);
     }
   }, [accessUser, roles]);
 
