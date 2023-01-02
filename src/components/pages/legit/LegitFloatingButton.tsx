@@ -151,7 +151,7 @@ function LegitFloatingButton() {
                 '& > strong': { color: secondary.red.light }
               }}
             >
-              😎 베타기간 내 <strong>무료진행</strong>중입니다!
+              😎 <strong>무료진행</strong>중입니다!
             </Typography>
           }
           customStyle={{
@@ -179,7 +179,7 @@ function LegitFloatingButton() {
                 '& > strong': { color: secondary.red.light }
               }}
             >
-              😎 베타기간 내 <strong>무료진행</strong>중입니다!
+              😎 <strong>무료진행</strong>중입니다!
             </Typography>
           }
           customStyle={{

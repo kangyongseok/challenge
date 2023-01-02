@@ -90,7 +90,7 @@ function HomeProductKeywordList() {
 
       const searchParams: SearchParams = JSON.parse(selectedProductKeyword.keywordFilterJson);
       let viewType = 'search';
-      let productKeyword: string | string[] | undefined = searchParams.keyword;
+      let productKeyword: string | string[] | undefined = searchParams.keyword?.replace(/-/g, ' ');
 
       if (selectedProductKeyword.sourceType === 3) {
         viewType = 'categories';
@@ -205,7 +205,7 @@ function HomeProductKeywordList() {
               </AvatarWrap>
               <Flexbox direction="vertical" gap={2} alignment="center">
                 <Title variant="body2" weight="medium">
-                  {keyword.replace(/,전체/g, '')}
+                  {keyword.replace(/,전체/g, '').replace(/-/g, ' ')}
                 </Title>
                 <Description variant="small2">{splitFilter}</Description>
               </Flexbox>

@@ -312,9 +312,7 @@ function HomeLegitAuthenticProductList() {
             <br />
             실시간 정가품의견 받아보실래요?
           </Typography>
-          <Typography customStyle={{ marginTop: 20 }}>
-            베타기간 내 감정비용은 무료입니다!
-          </Typography>
+          <Typography customStyle={{ marginTop: 20 }}>감정비용은 무료입니다!</Typography>
           <Button
             variant="solid"
             brandColor="primary"

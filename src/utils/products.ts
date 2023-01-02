@@ -244,6 +244,8 @@ export function convertSearchParamsByQuery(
   } else if (variant === 'brands') {
     delete searchParams.keyword;
     searchParams.requiredBrands = String(keyword || '').split('-');
+  } else if (variant === 'search') {
+    searchParams.keyword = (keyword || '').replace(/-/g, ' ');
   }
 
   if (onlyBaseSearchParams) {
@@ -298,6 +300,10 @@ export function convertSearchParamsByQuery(
         ...baseSearchParams,
         requiredBrands: searchParams.requiredBrands
       };
+    }
+
+    if (baseSearchParams.keyword && variant === 'search') {
+      baseSearchParams.keyword = baseSearchParams.keyword.replace(/-/g, ' ');
     }
 
     return baseSearchParams;

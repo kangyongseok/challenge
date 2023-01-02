@@ -287,11 +287,11 @@ function LoginButtonList({
               fullWidth
               variant="solid"
               size="xlarge"
-              startIcon={<Icon name="BrandAppleFilled" color={common.cmnW} />}
+              startIcon={<Icon name="BrandAppleFilled" color={common.uiWhite} />}
               onClick={handleClickAppleLogin}
               customStyle={{
-                backgroundColor: light.palette.common.ui20,
-                color: common.cmnW
+                backgroundColor: common.uiBlack,
+                color: common.uiWhite
               }}
             >
               Apple로 계속하기

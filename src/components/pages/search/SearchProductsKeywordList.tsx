@@ -128,7 +128,7 @@ function SearchProductsKeywordList() {
         if (viewType === 'brands') {
           return searchParams.requiredBrands;
         }
-        return searchParams.keyword;
+        return searchParams.keyword?.replace(/-/g, ' ');
       };
 
       const viewType = getViewType();
@@ -225,7 +225,9 @@ function SearchProductsKeywordList() {
                         gap={2}
                         customStyle={{ width: card.images.length > 0 ? 152 : 160 }}
                       >
-                        <Text weight="medium">{card.keyword.replace('(P)', '')}</Text>
+                        <Text weight="medium">
+                          {card.keyword.replace('(P)', '').replace(/-/g, ' ')}
+                        </Text>
                         <Text variant="small1">{card.filter}</Text>
                       </Flexbox>
                     </Flexbox>

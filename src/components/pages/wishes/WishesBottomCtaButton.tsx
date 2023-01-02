@@ -125,7 +125,7 @@ function WishesBottomCtaButton() {
             {userWishes.length}건 모두 <strong>실시간 정가품 의견</strong> 받아보시겠어요?
           </Typography>
           <Typography weight="medium" customStyle={{ marginTop: 16, color: common.ui60 }}>
-            🤑 베타기간 내 감정비용은 무료입니다!
+            🤑 감정비용은 무료입니다!
           </Typography>
           <Flexbox gap={8} customStyle={{ marginTop: 32 }}>
             <Button

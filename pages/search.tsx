@@ -52,7 +52,7 @@ function Search() {
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const debouncedSearchKeyword = useDebounce<string>(searchValue, 300);
+  const debouncedSearchKeyword = useDebounce<string>(searchValue.replace(/-/g, ' '), 300);
   const { data: suggestKeywords = [] } = useQuery(
     queryKeys.products.keywordsSuggest(debouncedSearchKeyword),
     () => fetchKeywordsSuggest(debouncedSearchKeyword),
@@ -214,7 +214,7 @@ function Search() {
             fullWidth
             isFixed
             placeholder="어떤 명품을 득템해 볼까요?"
-            value={searchValue}
+            value={searchValue.replace(/-/g, ' ')}
             onChange={(e) => setSearchValue(e.target.value)}
             onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
             startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
