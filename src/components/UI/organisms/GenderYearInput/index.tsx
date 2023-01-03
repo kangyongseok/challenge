@@ -19,7 +19,7 @@ const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/onboarding`;
 function GenderYearInput({
   onClickGender,
   onChangeYear,
-  genderValue,
+  genderValue = 'M',
   themeType
 }: {
   onClickGender: (e: MouseEvent<HTMLDivElement>) => void;

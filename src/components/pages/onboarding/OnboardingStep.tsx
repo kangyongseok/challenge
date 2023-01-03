@@ -72,11 +72,9 @@ function OnboardingStep() {
           </Typography>
         </Step>
       ))}
-      {Number(query.step) > 1 && (
-        <SkipBtn variant="outline" onClick={handleClickSkip}>
-          SKIP
-        </SkipBtn>
-      )}
+      <SkipBtn variant="outline" onClick={handleClickSkip}>
+        SKIP
+      </SkipBtn>
       <BottomSheet
         open={isOpen}
         onClose={handleClickClose}

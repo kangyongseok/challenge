@@ -121,14 +121,14 @@ function MypageUserInfo() {
           variant="solid"
           data-param="personalInput"
           data-att="INFO"
-          data-value={`${gender === 'M' ? '남' : '여'}, ${yearOfBirth}`}
+          data-value={`${gender === 'F' ? '여' : '남'}, ${yearOfBirth}`}
           onClick={handleClickRoute}
         >
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             성별 출생연도
           </Typography>
           <Typography variant="body2" weight="medium">
-            {gender === 'M' ? '남' : '여'}, {yearOfBirth}
+            {gender === 'F' ? '여' : '남'}, {yearOfBirth}
           </Typography>
         </MyInfoBox>
         <MyInfoBox

@@ -39,7 +39,7 @@ function PersonalInput() {
       router.back();
     }
   });
-  const [genderValue, setGenderValue] = useState<Gender | null>(null);
+  const [genderValue, setGenderValue] = useState<Gender | null>('M');
   const [yearOfBirthValue, setYearOfBirthValue] = useState('');
   const isShowYearOfBirthError =
     Number(yearOfBirthValue || 0) < 1900 ||
@@ -65,7 +65,7 @@ function PersonalInput() {
   const save = () => {
     logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
       name: 'INFO',
-      gender: genderValue === 'M' ? 'MALE' : 'FEMALE',
+      gender: genderValue === 'F' ? 'FEMALE' : 'MALE',
       yearOfBirth: yearOfBirthValue
     });
 
@@ -83,7 +83,7 @@ function PersonalInput() {
     logEvent(attrKeys.userInput.SELECT_ITEM, {
       name: 'INFO',
       title: 'GENDER',
-      att: selectedGender === 'M' ? 'MALE' : 'FEMALE'
+      att: selectedGender === 'F' ? 'FEMALE' : 'MALE'
     });
     if (genderValue === selectedGender) {
       setGenderValue(null);
