@@ -6,7 +6,7 @@ export const Wrapper = styled.div<{ isLegitTooltip: boolean; isUserShop: boolean
   left: 50%;
   bottom: ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 20 : isLegitTooltip ? 110 : 80)}px;
   transform: translateX(-50%);
-  z-index: ${({ theme: { zIndex } }) => zIndex.button + 2};
+  z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
 `;
 
 export const FloatingButton = styled.button<{ triggered: boolean; onlyIcon?: boolean }>`
@@ -58,7 +58,7 @@ export const FloatingButton = styled.button<{ triggered: boolean; onlyIcon?: boo
     }
     return 'scale(0, 1)';
   }};
-  background: ${({ theme: { palette } }) => palette.primary.main};
+  background: linear-gradient(285.02deg, #111214 57.69%, #5e6066 100%);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   border-radius: 26px;
 `;

@@ -29,7 +29,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import { FloatingButton, Wrapper } from './CamelSellerFloatingButton.style';
 
-function CamelSellerFloatingButton({ source }: { source?: string }) {
+function CamelSellerFloatingButton({ source }: { source: string }) {
   const {
     theme: {
       palette: { common }
@@ -152,10 +152,10 @@ function CamelSellerFloatingButton({ source }: { source?: string }) {
           isUserShop={router.pathname === '/user/shop'}
         >
           <FloatingButton triggered={triggered}>
-            <Icon name="PlusOutlined" color={common.uiWhite} />
             <Typography variant="h3" weight="medium" customStyle={{ color: common.uiWhite }}>
               판매하기
             </Typography>
+            <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
           </FloatingButton>
         </Wrapper>
         <Wrapper
