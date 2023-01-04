@@ -169,6 +169,7 @@ function ProductCTAButton({
     isNormalSeller,
     isSoldOut,
     isReserving,
+    isHiding,
     platformId
   } = useMemo(
     () => ({
@@ -188,6 +189,9 @@ function ProductCTAButton({
       isReserving:
         product &&
         PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4'],
+      isHiding:
+        product &&
+        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['8'],
       platformId:
         (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
         (product?.site.hasImage && product?.site?.id) ||
@@ -213,6 +217,8 @@ function ProductCTAButton({
 
     if (isReserving) return { ctaText: '예약중', ctaBrandColor: 'black' };
 
+    if (isHiding) return { ctaText: '판매중지', ctaBrandColor: 'black' };
+
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
     if (roleSeller?.userId) return { ctaText: '채팅하기', ctaBrandColor: 'primary' };
@@ -227,6 +233,7 @@ function ProductCTAButton({
     isDup,
     hasTarget,
     isReserving,
+    isHiding,
     isSoldOut,
     roleSeller?.userId,
     isCamelProduct,
@@ -629,6 +636,7 @@ function ProductCTAButton({
                   PRODUCT_STATUS['3'] ||
                 PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
                   PRODUCT_STATUS['2'])) ||
+            isHiding ||
             isLoadingMutateCreateChannel ||
             pendingCreateChannel
           }

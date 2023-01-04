@@ -78,6 +78,28 @@ export const ReservingOverlay = styled(BaseOverlay)<{ card?: boolean }>`
   ${({ card }) => card && { backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
 `;
 
+export const HideOverlay = styled(BaseOverlay)<{ card?: boolean }>`
+  & ::after {
+    content: '판매중지';
+    ${({ card, theme: { palette, box } }): CSSObject => {
+      if (card) {
+        return {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          background: palette.common.ui20,
+          width: '100%',
+          height: '24px',
+          borderBottomRightRadius: box.round['8'],
+          borderBottomLeftRadius: box.round['8']
+        };
+      }
+      return {};
+    }}
+  }
+  ${({ card }) => card && { backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
+`;
+
 export const DuplicatedOverlay = styled(BaseOverlay)`
   & ::after {
     content: '판매자가 같은 매물을 다시 올렸어요';

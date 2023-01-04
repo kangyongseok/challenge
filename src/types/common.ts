@@ -117,6 +117,7 @@ export type ToastStatus =
   | 'reserve'
   | 'sell'
   | 'soldout'
+  | 'hide'
   | 'successRequest'
   | 'loginSuccess'
   | 'overFiveStyle'

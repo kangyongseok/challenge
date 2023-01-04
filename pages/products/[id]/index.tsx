@@ -14,6 +14,7 @@ import styled from '@emotion/styled';
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import {
   DuplicatedOverlay,
+  HideOverlay,
   PriceDownOverlay,
   ProductDetailHeader,
   ReservingOverlay,
@@ -184,7 +185,8 @@ function ProductDetail() {
     () =>
       PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
       !(isDup && hasTarget) &&
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'],
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'] &&
+      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['8'],
     [data?.product.status, hasTarget, isDup]
   );
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
@@ -289,6 +291,10 @@ function ProductDetail() {
 
       if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']) {
         return <ReservingOverlay variant={variant} />;
+      }
+
+      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['8']) {
+        return <HideOverlay variant={variant} />;
       }
 
       return <SoldOutOverlay variant={variant} />;

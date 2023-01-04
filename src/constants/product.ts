@@ -145,11 +145,21 @@ export const PRODUCT_STATUS = {
   1: '미진열',
   2: '중복글',
   3: '삭제글',
-  4: '예약'
+  4: '예약',
   // 5: '가격하락',
   // 6: '지난글',
   // 7: '감정중',
-  // 8: '숨김'
+  8: '숨김'
+};
+
+export const VIEW_PRODUCT_STATUS = {
+  0: '판매중',
+  1: '판매완료',
+  2: '판매완료',
+  3: '판매완료',
+  4: '예약중',
+  7: '판매중',
+  8: '판매중지'
 };
 
 export const REPORT_TYPE_FAKE_PRODUCT = 1;

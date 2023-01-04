@@ -13,7 +13,8 @@ const sellerProductState = {
   reserve: '예약중으로 변경되었어요.',
   sell: '판매중으로 변경되었어요.',
   deleted: '상품이 삭제되었어요.',
-  soldout: '판매완료 처리되었어요!'
+  soldout: '판매완료 처리되었어요!',
+  hide: '숨김 처리되었어요!'
 };
 
 const productsKeyword = {

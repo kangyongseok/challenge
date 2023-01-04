@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { logEvent } from '@library/amplitude';
 
 import { postWithdraw } from '@api/userAuth';
+import { deleteSendbirdUser, deleteSendbirdUserDeviceToken } from '@api/senbird';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
@@ -28,7 +29,7 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
 
   const { refetch } = useQuery(queryKeys.userAuth.withdraw(), postWithdraw, {
     enabled: false,
-    onSuccess: () => {
+    onSuccess: async () => {
       if (checkAgent.isAndroidApp()) {
         if (window.webview && window.webview.callSetLogoutUser && accessUser)
           window.webview.callSetLogoutUser(accessUser.userId);
@@ -43,9 +44,12 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
           window.webkit.messageHandlers.callSetLogoutUser.postMessage(`${accessUser.userId}`);
         }
       }
+      const { userId = 0 } = accessUser || {};
       setAccessUserSettingValuesState((prevState) =>
-        prevState.filter(({ userId }) => userId !== (accessUser || {}).userId)
+        prevState.filter(({ userId: prevUserId }) => prevUserId !== userId)
       );
+      await deleteSendbirdUser(userId);
+      await deleteSendbirdUserDeviceToken(userId);
       setExtToggle(false);
       router.push('/logout');
     }

@@ -11,6 +11,7 @@ import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { VIEW_PRODUCT_STATUS } from '@constants/product';
 import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -97,7 +98,7 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
             <Overlay />
             <OverlayBanner>
               <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
-                {status === 4 ? '예약중' : '판매완료'}
+                {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
               </Typography>
             </OverlayBanner>
           </>

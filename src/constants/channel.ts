@@ -11,7 +11,7 @@ export const productStatus = {
   3: '판매완료',
   4: '예약중',
   7: '판매중',
-  8: '숨김글'
+  8: '판매중지'
 };
 
 export const messageStates = {

@@ -201,6 +201,12 @@ function UserShopProductManageBottomSheet() {
               status: 'reserve',
               customStyle: { bottom: TOAST_BOTTOM }
             });
+          } else if (dataStatus === 8) {
+            setToastState({
+              type: 'sellerProductState',
+              status: 'hide',
+              customStyle: { bottom: TOAST_BOTTOM }
+            });
           }
 
           setOpenState(({ type }) => ({
@@ -286,6 +292,9 @@ function UserShopProductManageBottomSheet() {
               <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
                 수정하기
               </Menu>
+              <Menu variant="h3" weight="medium" data-status={8} onClick={handleClickUpdateStatus}>
+                숨기기
+              </Menu>
             </>
           )}
           {isReserving && (
@@ -307,8 +316,8 @@ function UserShopProductManageBottomSheet() {
             </Menu>
           )}
           {isHiding && (
-            <Menu variant="h3" weight="medium" data-status={8} onClick={handleClickUpdateStatus}>
-              숨기기
+            <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
+              판매중으로 변경
             </Menu>
           )}
           <Menu

@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Alert, Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 
-import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
+import { HideOverlay, ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
 
 import type { Product } from '@dto/product';
 
@@ -257,12 +257,16 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
               alt="Platform Img"
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
-            {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-              (status === 4 ? (
-                <ReservingOverlay card variant="small1" />
-              ) : (
-                <SoldOutOverlay card variant="small1" />
-              ))}
+            {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] && (
+              <>
+                {status === 4 && <ReservingOverlay card variant="small1" />}
+                {status === 8 ? (
+                  <HideOverlay card variant="small1" />
+                ) : (
+                  <SoldOutOverlay card variant="small1" />
+                )}
+              </>
+            )}
           </Content>
           <Flexbox
             alignment="flex-start"

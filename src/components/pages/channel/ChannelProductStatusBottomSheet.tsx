@@ -131,14 +131,14 @@ function ChannelProductStatusBottomSheet({
               예약중
             </Menu>
           )}
-          {![productStatus[1], productStatus[2], productStatus[3]].includes(
+          {![productStatus[1], productStatus[2], productStatus[3], productStatus[8]].includes(
             productStatus[status as keyof typeof productStatus]
           ) && (
             <Menu variant="h3" weight="medium" onClick={handleClickStatus(1)}>
               판매완료
             </Menu>
           )}
-          {productStatus[8] !== productStatus[status as keyof typeof productStatus] && (
+          {productStatus[0] === productStatus[status as keyof typeof productStatus] && (
             <Menu variant="h3" weight="medium" onClick={handleClickStatus(8)}>
               숨기기
             </Menu>

@@ -364,12 +364,12 @@ function ProductSellerBottomMenu({
       >
         <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
           <Flexbox direction="vertical">
-            {status !== 4 && (
+            {status !== 4 && status !== 8 && (
               <Menu variant="h3" weight="medium" data-status-id={4} onClick={handleClickStatus}>
                 예약중으로 변경
               </Menu>
             )}
-            {status !== 1 && (
+            {status !== 1 && status !== 8 && (
               <Menu variant="h3" weight="medium" data-status-id={1} onClick={handleClickStatus}>
                 판매완료로 변경
               </Menu>
@@ -379,7 +379,7 @@ function ProductSellerBottomMenu({
                 판매중으로 변경
               </Menu>
             )}
-            {status !== 8 && (
+            {status === 0 && (
               <Menu variant="h3" weight="medium" data-status-id={8} onClick={handleClickStatus}>
                 숨기기
               </Menu>
@@ -387,7 +387,8 @@ function ProductSellerBottomMenu({
           </Flexbox>
           <Button
             fullWidth
-            variant="solid"
+            variant="ghost"
+            brandColor="black"
             size="xlarge"
             onClick={() => setOpenChangeStatus(false)}
           >
