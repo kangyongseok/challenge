@@ -4,17 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import {
-  Box,
-  Button,
-  Flexbox,
-  Icon,
-  Image,
-  Tooltip,
-  Typography,
-  light,
-  useTheme
-} from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import type { FacebookAccount, FacebookLoginResponse } from '@dto/userAuth';
@@ -237,18 +227,18 @@ function LoginButtonList({
             </Button>
           </Tooltip>
         ) : (
-          <QuickLoginTooltip open message="⚡가장빨리 카멜을 만나는 법!">
-            <Button
-              ref={kakaoLoginButtonRef}
-              fullWidth
-              startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
-              size="xlarge"
-              onClick={handleClickKakaoLogin}
-              customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
-            >
-              카카오톡으로 계속하기
-            </Button>
-          </QuickLoginTooltip>
+          // <QuickLoginTooltip open message="⚡가장빨리 카멜을 만나는 법!">
+          <Button
+            ref={kakaoLoginButtonRef}
+            fullWidth
+            startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
+            size="xlarge"
+            onClick={handleClickKakaoLogin}
+            customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+          >
+            카카오톡으로 계속하기
+          </Button>
+          // </QuickLoginTooltip>
         )}
       </TooltipWrapper>
       <TooltipWrapper>
@@ -317,21 +307,21 @@ const TooltipWrapper = styled.div`
   }
 `;
 
-const QuickLoginTooltip = styled(Tooltip)`
-  & > div {
-    top: auto;
-    bottom: -2px;
-    background-color: ${light.palette.common.ui20};
-    color: ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.cmnW};
-    z-index: ${({ theme: { zIndex } }) => zIndex.button};
-    & > svg {
-      color: ${light.palette.common.ui20};
-    }
-  }
-`;
+// const QuickLoginTooltip = styled(Tooltip)`
+//   & > div {
+//     top: auto;
+//     bottom: -2px;
+//     background-color: ${light.palette.common.ui20};
+//     color: ${({
+//       theme: {
+//         palette: { common }
+//       }
+//     }) => common.cmnW};
+//     z-index: ${({ theme: { zIndex } }) => zIndex.button};
+//     & > svg {
+//       color: ${light.palette.common.ui20};
+//     }
+//   }
+// `;
 
 export default LoginButtonList;
