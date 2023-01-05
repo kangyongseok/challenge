@@ -51,7 +51,7 @@ function SellerInfo() {
   });
 
   const sellerId = useMemo(() => Number(query.sellerId || ''), [query.sellerId]);
-  const { data: { name, site, type, curnScore, maxScore, productCount, reviewCount } = {} } =
+  const { data: { name, site, type, curnScore, maxScore, productCount, reviewCount, image } = {} } =
     useQuery(queryKeys.products.sellerInfo(sellerId), () => fetchSellerInfo(sellerId));
 
   const { sellerName, scoreText } = useMemo(
@@ -126,6 +126,7 @@ function SellerInfo() {
             <SellerInfoProfile
               show={!triggered}
               platformId={site?.id || 0}
+              profileImage={image}
               userName={sellerName}
               isCamelSeller={
                 SELLER_STATUS[type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']

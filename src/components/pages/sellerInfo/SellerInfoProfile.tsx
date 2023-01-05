@@ -1,4 +1,5 @@
 import { Avatar, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import styled from '@emotion/styled';
 
 import { PRODUCT_SITE } from '@constants/product';
 
@@ -9,6 +10,7 @@ interface SellerInfoProfileProps {
   isCamelSeller: boolean;
   curnScore: number;
   maxScore: number;
+  profileImage?: string | null;
 }
 
 function SellerInfoProfile({
@@ -17,7 +19,8 @@ function SellerInfoProfile({
   userName,
   isCamelSeller,
   curnScore,
-  maxScore
+  maxScore,
+  profileImage
 }: SellerInfoProfileProps) {
   const {
     theme: {
@@ -38,16 +41,22 @@ function SellerInfoProfile({
         visibility: show ? 'visible' : 'hidden'
       }}
     >
-      <Avatar
-        width={32}
-        height={32}
-        round="50%"
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`}
-        alt="Platform Logo Img"
-        customStyle={{
-          border: '1px solid rgba(0, 0, 0, 0.12)'
-        }}
-      />
+      {profileImage ? (
+        <Avatar
+          width={32}
+          height={32}
+          round="50%"
+          src={profileImage}
+          alt="Platform Logo Img"
+          customStyle={{
+            border: '1px solid rgba(0, 0, 0, 0.12)'
+          }}
+        />
+      ) : (
+        <IconBox justifyContent="center" alignment="center">
+          <Icon name="UserFilled" customStyle={{ color: common.ui80 }} />
+        </IconBox>
+      )}
       <Typography variant="h3" weight="bold">
         {userName}
       </Typography>
@@ -83,5 +92,23 @@ function SellerInfoProfile({
     </Flexbox>
   );
 }
+
+const IconBox = styled(Flexbox)`
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
+  width: 40px;
+  height: 40px;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line02};
+  border-radius: 50%;
+  overflow: hidden;
+`;
 
 export default SellerInfoProfile;

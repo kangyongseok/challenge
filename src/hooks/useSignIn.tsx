@@ -25,8 +25,7 @@ import {
   ACCESS_USER,
   IS_DONE_SIGN_IN_PERMISSION,
   LAST_LOGIN_TYPE,
-  SHOW_PRODUCTS_KEYWORD_POPUP,
-  SIGN_UP_STEP
+  SHOW_PRODUCTS_KEYWORD_POPUP
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
@@ -140,16 +139,7 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
         Initializer.initAccessUserInAmplitude(amplitude.getInstance());
         Initializer.initAccessUserInBraze();
 
-        fetchUserInfo().then((userInfo) => {
-          const { personalStyle: { styles = [] } = {} } = userInfo || {};
-
-          // 온보딩을 진행하지 않은 유저인 경우 온보딩 페이지로 이동
-          if (styles.length === 0) {
-            LocalStorage.set(SIGN_UP_STEP, 0);
-            router.replace('/onboarding?step=0');
-            return;
-          }
-
+        fetchUserInfo().then(() => {
           // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
           if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
             LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
