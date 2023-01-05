@@ -4,10 +4,10 @@ import { useRouter } from 'next/router';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import Sendbird from '@library/sendbird';
 import { logEvent } from '@library/amplitude';
 
 import { postWithdraw } from '@api/userAuth';
-import { deleteSendbirdUser, deleteSendbirdUserDeviceToken } from '@api/senbird';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
@@ -48,8 +48,7 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
       setAccessUserSettingValuesState((prevState) =>
         prevState.filter(({ userId: prevUserId }) => prevUserId !== userId)
       );
-      await deleteSendbirdUser(userId);
-      await deleteSendbirdUserDeviceToken(userId);
+      await Sendbird.unregister();
       setExtToggle(false);
       router.push('/logout');
     }

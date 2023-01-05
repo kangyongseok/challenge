@@ -248,7 +248,7 @@ export const getChannelHandler = ({
       );
 
       if (updatedChannel) {
-        const channelId = +((channel.lastMessage as CoreMessageType).customType || 0);
+        const channelId = +((channel.lastMessage as CoreMessageType)?.customType || 0);
 
         if (channelId > 0) {
           fetchChannel(channelId).then((result) => {

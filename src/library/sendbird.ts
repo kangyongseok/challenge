@@ -62,6 +62,20 @@ const SendBird = {
 
     if (!isProduction) console.log('Sendbird finalized');
   },
+  async unregister() {
+    try {
+      await sb.unregisterFCMPushTokenAllForCurrentUser();
+    } catch {
+      //
+    }
+    try {
+      await sb.unregisterAPNSPushTokenAllForCurrentUser();
+    } catch {
+      //
+    }
+
+    if (!isProduction) console.log('Sendbird unRegistered');
+  },
   async setBlockUser(userId: string, blockOn: boolean) {
     if (blockOn) {
       await sb.blockUserWithUserId(userId);
