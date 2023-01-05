@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 
 import { useQueries } from 'react-query';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -25,6 +26,9 @@ import { productDetailAtt } from '@utils/products';
 import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
+
+const NEXT_IMAGE_BLUR_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
 function ProductSellerProductList({
   product,
@@ -144,24 +148,50 @@ function ProductSellerProductList({
               />
             )) ||
             (isCamelSeller && (
-              <Avatar
-                width={44}
-                height={44}
-                src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
-                alt={`${product?.productSeller.name} 프로필 이미지`}
-                round="50%"
-                customStyle={{ marginRight: 12 }}
-              />
+              <Box
+                customStyle={{
+                  position: 'relative',
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  background: common.bg02,
+                  overflow: 'hidden',
+                  marginRight: 12
+                }}
+              >
+                <Image
+                  src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
+                  alt={`${product?.productSeller.name} 프로필 이미지`}
+                  placeholder="blur"
+                  blurDataURL={NEXT_IMAGE_BLUR_URL}
+                  layout="fill"
+                  objectFit="cover"
+                  style={{ borderRadius: '50%' }}
+                />
+              </Box>
             )) ||
             (reviewInfo.productSeller.image && (
-              <Avatar
-                width={44}
-                height={44}
-                src={`${reviewInfo.productSeller.image}`}
-                alt="프로필 이미지"
-                round="50%"
-                customStyle={{ marginRight: 12 }}
-              />
+              <Box
+                customStyle={{
+                  position: 'relative',
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  background: common.bg02,
+                  overflow: 'hidden',
+                  marginRight: 12
+                }}
+              >
+                <Image
+                  src={`${reviewInfo.productSeller.image}`}
+                  alt="프로필 이미지"
+                  placeholder="blur"
+                  blurDataURL={NEXT_IMAGE_BLUR_URL}
+                  layout="fill"
+                  objectFit="cover"
+                  style={{ borderRadius: '50%' }}
+                />
+              </Box>
             )) || (
               <EmptyAvatar justifyContent="center" alignment="center">
                 <Icon name="UserFilled" size="large" />
