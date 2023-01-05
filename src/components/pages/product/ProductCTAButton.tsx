@@ -646,11 +646,11 @@ function ProductCTAButton({
             whiteSpace: 'nowrap',
             backgroundColor: ctaBrandColor === 'black' ? common.uiBlack : undefined
           }}
-          startIcon={
-            !roleSeller && (isCamelProduct || isCamelSeller) ? (
-              <Icon name="MessageOutlined" width={20} />
-            ) : undefined
-          }
+          // startIcon={
+          //   !roleSeller && (isCamelProduct || isCamelSeller) ? (
+          //     <Icon name="MessageOutlined" width={20} />
+          //   ) : undefined
+          // }
         >
           <Typography
             variant={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'h3' : 'body1'}

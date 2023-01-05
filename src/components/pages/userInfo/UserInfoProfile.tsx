@@ -1,8 +1,11 @@
 import { useState } from 'react';
 
-import { Avatar, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import Image from 'next/image';
+import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+const NEXT_IMAGE_BLUR_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 interface UserInfoProfileProps {
   show: boolean;
   userName: string;
@@ -18,8 +21,11 @@ function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: Use
       palette: { common }
     }
   } = useTheme();
-
   const [imageRendered, setImageRendered] = useState(false);
+
+  const handleLoadComplete = () => {
+    setImageRendered(true);
+  };
 
   return (
     <Flexbox
@@ -33,14 +39,34 @@ function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: Use
         visibility: show ? 'visible' : 'hidden'
       }}
     >
-      {imageRendered ? (
-        <Avatar width={52} height={52} src={userImage} alt="User Avatar Img" round="50%" />
-      ) : (
+      {userImage && (
+        <Box
+          customStyle={{
+            position: 'relative',
+            width: 52,
+            height: 52,
+            borderRadius: '50%',
+            background: common.bg02,
+            overflow: 'hidden'
+          }}
+        >
+          <Image
+            alt="User Avatar Img"
+            src={userImage}
+            onLoadingComplete={handleLoadComplete}
+            placeholder="blur"
+            blurDataURL={NEXT_IMAGE_BLUR_URL}
+            layout="fill"
+            objectFit="cover"
+            style={{ borderRadius: '50%' }}
+          />
+        </Box>
+      )}
+      {!imageRendered && !userImage && (
         <UserAvatar>
           <Icon name="UserFilled" width={24} height={24} customStyle={{ color: common.ui80 }} />
         </UserAvatar>
       )}
-      <HiddenImageLoader src={userImage} onLoad={() => setImageRendered(true)} />
       <Typography variant="h3" weight="bold">
         {userName}
       </Typography>
@@ -75,10 +101,6 @@ export const UserAvatar = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const HiddenImageLoader = styled.img`
-  display: none;
 `;
 
 export default UserInfoProfile;

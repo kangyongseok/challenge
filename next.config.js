@@ -163,7 +163,8 @@ const nextConfig = {
     domains: [
       process.env.IMAGE_DOMAIN,
       's3.ap-northeast-2.amazonaws.com',
-      'mrcamel-dev.s3.ap-northeast-2.amazonaws.com'
+      'mrcamel-dev.s3.ap-northeast-2.amazonaws.com',
+      'k.kakaocdn.net'
     ]
   },
   async redirects() {
