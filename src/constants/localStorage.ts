@@ -33,3 +33,4 @@ export const SELLER_PROCESS_TYPE = 'sellerProcessType';
 export const IS_CHECKED_RECEIVED_MESSAGE_FILTER = 'isCheckedReceivedMessageFilter';
 export const NOTI = 'NOTI';
 export const SOURCE = 'SOURCE';
+export const ONBOARDING_SKIP_USERIDS = 'onboardingSkipUserIds';

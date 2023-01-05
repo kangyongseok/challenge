@@ -8,7 +8,7 @@ import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
 
-import { AppleAccount, FacebookAccount, KakaoAppAccount } from '@dto/userAuth';
+import { AccessUser, AppleAccount, FacebookAccount, KakaoAppAccount } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -25,7 +25,9 @@ import {
   ACCESS_USER,
   IS_DONE_SIGN_IN_PERMISSION,
   LAST_LOGIN_TYPE,
-  SHOW_PRODUCTS_KEYWORD_POPUP
+  ONBOARDING_SKIP_USERIDS,
+  SHOW_PRODUCTS_KEYWORD_POPUP,
+  SIGN_UP_STEP
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
@@ -139,7 +141,15 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
         Initializer.initAccessUserInAmplitude(amplitude.getInstance());
         Initializer.initAccessUserInBraze();
 
-        fetchUserInfo().then(() => {
+        fetchUserInfo().then((userInfo) => {
+          const userId = LocalStorage.get<AccessUser>(ACCESS_USER)?.userId;
+          const skipUserIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
+
+          if (!skipUserIds.includes(Number(userId)) && !userInfo.area.values.length) {
+            LocalStorage.set(SIGN_UP_STEP, 0);
+            router.replace('/onboarding?step=0');
+            return;
+          }
           // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
           if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
             LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);

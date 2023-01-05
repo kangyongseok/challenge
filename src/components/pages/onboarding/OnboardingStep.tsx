@@ -44,6 +44,7 @@ function OnboardingStep() {
       name: attrProperty.name.PERSONAL_INPUT,
       title: attTitle()
     });
+
     setIsOpen(true);
   };
 

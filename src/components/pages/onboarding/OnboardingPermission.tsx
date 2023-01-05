@@ -16,6 +16,7 @@ import { fetchArea, postArea } from '@api/user';
 import {
   IS_DONE_SIGN_IN_PERMISSION,
   MODEL_CATEGORY_IDS,
+  ONBOARDING_SKIP_USERIDS,
   SELECTED_MODEL_CARD,
   SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
@@ -28,6 +29,7 @@ import { checkAgent } from '@utils/common';
 import type { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
 import { modelParentCategoryIdsState, selectedModelCardState } from '@recoil/onboarding';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -76,6 +78,7 @@ function OnboardingPermission() {
   const resetSearchParams = useResetRecoilState(searchParamsState);
   const { mutate: mutatePostAlarm } = useMutationPostAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
+  const { data: acessUser } = useQueryAccessUser();
   const removeModelParentCategoryId = useResetRecoilState(modelParentCategoryIdsState);
   const removeModelCard = useResetRecoilState(selectedModelCardState);
   const [pending, setPending] = useState(false);
@@ -133,6 +136,16 @@ function OnboardingPermission() {
     subParentIds
   ]);
 
+  const onboardingSkipUserManage = useCallback(() => {
+    const userIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
+
+    if (userIds.length) {
+      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [...userIds, Number(acessUser?.userId)]);
+    } else {
+      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [Number(acessUser?.userId)]);
+    }
+  }, [acessUser?.userId]);
+
   const handleClick = useCallback(() => {
     setPending(true);
 
@@ -142,6 +155,7 @@ function OnboardingPermission() {
     // LocalStorage.remove(SELECTED_STYLE_CARD_IDS);
     LocalStorage.remove(SELECTED_MODEL_CARD);
     LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
+    onboardingSkipUserManage();
     removeModelParentCategoryId();
     removeModelCard();
 
@@ -198,7 +212,13 @@ function OnboardingPermission() {
         redirectPage();
       }
     );
-  }, [removeModelParentCategoryId, removeModelCard, mutatePostArea, redirectPage]);
+  }, [
+    onboardingSkipUserManage,
+    removeModelParentCategoryId,
+    removeModelCard,
+    mutatePostArea,
+    redirectPage
+  ]);
 
   useEffect(() => {
     window.getAuthPush = (result: boolean) => {

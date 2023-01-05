@@ -5,11 +5,13 @@ import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import Sendbird from '@library/sendbird';
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postWithdraw } from '@api/userAuth';
 
 import queryKeys from '@constants/queryKeys';
+import { ONBOARDING_SKIP_USERIDS } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
@@ -54,11 +56,17 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
     }
   });
 
+  const clearSkipUserId = () => {
+    const userIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
+    const result = userIds.filter((id) => Number(id) !== Number(accessUser?.userId));
+    LocalStorage.set(ONBOARDING_SKIP_USERIDS, result);
+  };
+
   const handleWithdraw = () => {
     logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
       att: 'YES'
     });
-
+    clearSkipUserId();
     refetch();
   };
 

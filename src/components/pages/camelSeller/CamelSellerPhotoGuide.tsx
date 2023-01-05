@@ -69,6 +69,12 @@ function CamelSellerPhotoGuide() {
   );
 
   useEffect(() => {
+    if (!photoImages.length) {
+      setPhotoImages(tempData.photoGuideImages);
+    }
+  }, [photoImages, tempData.photoGuideImages]);
+
+  useEffect(() => {
     if (query?.brandIds) {
       setPhotoGuideParams({
         brandId:
