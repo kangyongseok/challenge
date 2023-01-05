@@ -346,7 +346,6 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
               src={imageUrl}
               alt={`${product.title} 이미지`}
               round={isRound ? 8 : 0}
-              disableLazyLoad={false}
               disableOnBackground={false}
             />
             <WishButton onClick={handleClickWish}>

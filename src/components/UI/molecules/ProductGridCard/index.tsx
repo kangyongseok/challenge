@@ -262,7 +262,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           src={imageUrl}
           alt={`${product.title} 이미지`}
           round={isRound ? 8 : 0}
-          disableLazyLoad={false}
           disableOnBackground={false}
         />
         {!hideProductLabel && productLabels.length > 0 && (

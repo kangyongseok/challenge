@@ -536,6 +536,7 @@ function ProductCTAButton({
 
   return (
     <>
+      <Box customStyle={{ minHeight: 76 }} />
       <Wrapper>
         {!isBlockedUser && (
           <>
