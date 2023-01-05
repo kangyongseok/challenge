@@ -1,5 +1,6 @@
 import { useMutation } from 'react-query';
 import type { UseMutationOptions } from 'react-query';
+import { PushNotificationDeliveryOption } from '@sendbird/chat/message';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { FileCompat } from '@sendbird/chat';
 
@@ -17,6 +18,7 @@ function useMutationSendMessage() {
   const mutate = async ({
     data,
     channelUrl,
+    isTargetUserNoti = true,
     file,
     fileUrl,
     fileUrls,
@@ -24,6 +26,7 @@ function useMutationSendMessage() {
     options
   }: {
     data: PostHistoryManageData;
+    isTargetUserNoti: boolean | undefined;
     channelUrl: string;
     file?: FileCompat | undefined;
     fileUrl?: string;
@@ -33,6 +36,11 @@ function useMutationSendMessage() {
       | Omit<UseMutationOptions<void, unknown, PostHistoryManageData, unknown>, 'mutationFn'>
       | undefined;
   }) => {
+    const customType = String(isTargetUserNoti ? data.channelId : 0);
+    const pushNotificationDeliveryOption = isTargetUserNoti
+      ? PushNotificationDeliveryOption.DEFAULT
+      : PushNotificationDeliveryOption.SUPPRESS;
+
     const onSucceeded = (msg: SendableMessage) => {
       if (callback) callback(msg);
     };
@@ -44,7 +52,8 @@ function useMutationSendMessage() {
         if (file) {
           await Sendbird.sendFile({
             channelUrl,
-            customType: data.channelId.toString(),
+            customType,
+            pushNotificationDeliveryOption,
             file,
             onSucceeded
           });
@@ -55,7 +64,8 @@ function useMutationSendMessage() {
         if (fileUrl) {
           await Sendbird.sendFile({
             channelUrl,
-            customType: data.channelId.toString(),
+            customType,
+            pushNotificationDeliveryOption,
             file: await urlToBlob(fileUrl),
             onSucceeded
           });
@@ -69,7 +79,8 @@ function useMutationSendMessage() {
             // eslint-disable-next-line no-return-await
             paramsList: await Promise.all(
               fileUrls.map(async (url) => ({
-                customType: data.channelId.toString(),
+                customType,
+                pushNotificationDeliveryOption,
                 file: await urlToBlob(url)
               }))
             ),
@@ -81,8 +92,9 @@ function useMutationSendMessage() {
 
         await Sendbird.sendMessage({
           channelUrl,
-          customType: data.channelId.toString(),
-          newMessage: data.content,
+          customType,
+          pushNotificationDeliveryOption,
+          message: data.content,
           onSucceeded
         });
       },

@@ -254,7 +254,7 @@ function ChannelsSwipeActionList({
             camelChannel.channelTargetUser?.user?.image &&
             !camelChannel.channelTargetUser?.user?.isDeleted
               ? camelChannel.channelTargetUser.user.image
-              : 'true'
+              : ' '
           }
           title={getChannelTitle({
             targetUser: camelChannel.channelTargetUser,

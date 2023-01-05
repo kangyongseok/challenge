@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
-import type { GroupChannelCollectionEventHandler } from '@sendbird/chat/groupChannel';
+import { useQuery, useQueryClient } from 'react-query';
+import { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
 
 import type { Channel, ChannelsParams } from '@dto/channel';
 
@@ -13,19 +13,22 @@ import { fetchChannels } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
-import { isProduction } from '@utils/common';
+import { getChannelHandler } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
 
 type UseQueryChannelsProps = ChannelsParams;
 
 function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsProps) {
+  const queryClient = useQueryClient();
+
   const [sendbird, setSendbirdState] = useRecoilState(sendbirdState);
 
   const channelsParams = useMemo<ChannelsParams>(
     () => ({ size, type, ...params }),
     [params, size, type]
   );
+  const groupChannelCollection = useRef<GroupChannelCollection | null>(null);
 
   const { data, ...useQueryResult } = useQuery(
     queryKeys.channels.channels(channelsParams),
@@ -34,16 +37,48 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
       enabled: sendbird.initialized,
       refetchOnMount: true,
       async onSuccess(successData) {
+        // 이전 핸들러 클리닝
+        groupChannelCollection.current?.dispose?.();
         setSendbirdState((currVal) => ({ ...currVal, loading: true }));
 
         const { content } = successData || {};
 
         if (!content) return;
 
+        const channelHandler = getChannelHandler({
+          setSendbirdState,
+          channelsRefetch: () => {
+            useQueryResult.refetch();
+          },
+          setChannelsData: (channelId, lastMessageManage) => {
+            const updatedChannel = successData.content.find(
+              (camelChannel) => channelId === camelChannel?.channel?.id
+            );
+
+            if (
+              !!updatedChannel?.lastMessageManage &&
+              !!lastMessageManage &&
+              updatedChannel.lastMessageManage.content !== lastMessageManage.content
+            ) {
+              queryClient.setQueryData(queryKeys.channels.channels(channelsParams), {
+                ...successData,
+                content: successData.content.map((camelChannel) =>
+                  channelId === camelChannel?.channel?.id
+                    ? { ...camelChannel, lastMessageManage }
+                    : camelChannel
+                )
+              });
+            }
+          }
+        });
         const channelUrls = content
           .filter(({ channel }) => !!channel)
           .map(({ channel }) => (channel as Channel).externalId);
-        const sendBirdChannels = await Sendbird.loadChannels(channelHandlers, channelUrls);
+        const { channels: sendBirdChannels, collection } = await Sendbird.loadChannels(
+          channelHandler,
+          channelUrls
+        );
+        groupChannelCollection.current = collection;
 
         if (type === 0) {
           setSendbirdState((currVal) => ({
@@ -70,90 +105,6 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
         }
       }
     }
-  );
-
-  const channelHandlers: GroupChannelCollectionEventHandler = useMemo(
-    () => ({
-      onChannelsAdded: async (_, channels) => {
-        if (!isProduction) console.debug('Sendbird onChannelsAdded::', { channels });
-        await useQueryResult.refetch();
-      },
-      onChannelsUpdated: async (_, channels) => {
-        const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-
-        setSendbirdState((currVal) => {
-          const updatedAllChannels = currVal.allChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-          const updatedReceivedChannels = currVal.receivedChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-          const updatedSendChannels = currVal.sendChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-
-          if (!isProduction)
-            console.debug('Sendbird onChannelsUpdated::', {
-              state: currVal,
-              channels,
-              updatedAllChannels,
-              updatedReceivedChannels,
-              updatedSendChannels,
-              unreadMessagesCount
-            });
-
-          return {
-            ...currVal,
-            allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
-            receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
-            sendChannels: JSON.parse(JSON.stringify(updatedSendChannels)),
-            unreadMessagesCount
-          };
-        });
-      },
-      onChannelsDeleted: (_, channelUrls) => {
-        setSendbirdState((currVal) => {
-          const updatedAllChannels = currVal.allChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-          const updatedReceivedChannels = currVal.receivedChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-          const updatedSendChannels = currVal.sendChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-
-          if (!isProduction)
-            console.debug('Sendbird onChannelsDeleted::', {
-              state: currVal,
-              channelUrls,
-              updatedAllChannels,
-              updatedReceivedChannels,
-              updatedSendChannels
-            });
-
-          return {
-            ...currVal,
-            allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
-            receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
-            sendChannels: JSON.parse(JSON.stringify(updatedSendChannels))
-          };
-        });
-      }
-    }),
-    [setSendbirdState, useQueryResult]
   );
 
   const { channels, filteredChannels } = useMemo(() => {
@@ -184,6 +135,12 @@ function useQueryChannels({ type = 0, size = 100, ...params }: UseQueryChannelsP
       filteredChannels: filteredSendbirdChannels
     };
   }, [data, sendbird.allChannels, sendbird.receivedChannels, sendbird.sendChannels, type]);
+
+  useEffect(() => {
+    return () => {
+      groupChannelCollection.current?.dispose?.();
+    };
+  }, []);
 
   return { data: { ...data, channels, filteredChannels }, ...useQueryResult };
 }

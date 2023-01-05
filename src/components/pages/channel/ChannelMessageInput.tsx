@@ -23,6 +23,7 @@ interface ChannelMessageInputProps {
   setIsFocused: Dispatch<SetStateAction<boolean>>;
   isDeletedTargetUser: boolean;
   isTargetUserBlocked: boolean;
+  isTargetUserNoti: boolean | undefined;
   scrollToBottom(behavior?: ScrollBehavior): void;
   updateNewMessage: (msg: SendableMessage) => void;
 }
@@ -34,6 +35,7 @@ function ChannelMessageInput({
   setIsFocused,
   isDeletedTargetUser,
   isTargetUserBlocked,
+  isTargetUserNoti,
   scrollToBottom,
   updateNewMessage
 }: ChannelMessageInputProps) {
@@ -68,12 +70,13 @@ function ChannelMessageInput({
     await mutateSendMessage({
       data: { channelId, content: message, event: 'LAST_MESSAGE' },
       channelUrl,
+      isTargetUserNoti,
       callback: (msg) => {
         updateNewMessage(msg);
         setMessage('');
       }
     });
-  }, [channelId, channelUrl, message, mutateSendMessage, updateNewMessage]);
+  }, [channelId, channelUrl, isTargetUserNoti, message, mutateSendMessage, updateNewMessage]);
 
   useEffect(() => {
     throttleInputHeight.current(

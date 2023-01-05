@@ -16,7 +16,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
 
-import { PhotoActionType, productStatus } from '@constants/channel';
+import { photoActionType, productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -30,6 +30,7 @@ interface ChannelBottomActionButtonsProps {
   channelId: number;
   channelUrl: string;
   userName: string;
+  isTargetUserNoti: boolean | undefined;
   isTargetUserSeller: boolean;
   targetUserName: string;
   targetUserId: number;
@@ -51,6 +52,7 @@ function ChannelBottomActionButtons({
   channelId,
   channelUrl,
   userName,
+  isTargetUserNoti,
   isTargetUserSeller,
   targetUserId,
   targetUserName,
@@ -129,6 +131,7 @@ function ChannelBottomActionButtons({
           event: 'LAST_MESSAGE'
         },
         channelUrl,
+        isTargetUserNoti,
         file,
         callback: (msg) => {
           updateNewMessage(msg);
@@ -296,7 +299,7 @@ function ChannelBottomActionButtons({
             alignment="center"
             gap={4}
             customStyle={{ padding: 8 }}
-            onClick={handleClickCameraOption(PhotoActionType.album)}
+            onClick={handleClickCameraOption(photoActionType.album)}
           >
             <Icon name="ImageFilled" />
             <Typography variant="body1">앨범에서 선택하기</Typography>
@@ -305,7 +308,7 @@ function ChannelBottomActionButtons({
             alignment="center"
             gap={4}
             customStyle={{ padding: 8 }}
-            onClick={handleClickCameraOption(PhotoActionType.camera)}
+            onClick={handleClickCameraOption(photoActionType.camera)}
           >
             <Icon name="CameraFilled" />
             <Typography variant="body1">사진 촬영하기</Typography>

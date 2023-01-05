@@ -58,6 +58,7 @@ export interface ChannelDetail {
   channelAppointments: ChannelAppointmentResult[] | null;
   channelTargetUser: ChannelUser | null;
   channelUser: ChannelUser | null;
+  isTargetUserNoti: boolean;
   targetUserReview: UserReview | null;
   userReview: UserReview | null;
   product: ProductResult | null;

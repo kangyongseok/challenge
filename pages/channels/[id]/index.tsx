@@ -71,7 +71,8 @@ function Chanel() {
         channelTargetUser,
         userReview,
         targetUserReview,
-        lastMessageManage
+        lastMessageManage,
+        isTargetUserNoti
       } = {},
       isLoading,
       isFetched,
@@ -220,11 +221,12 @@ function Chanel() {
         mutateSendMessage({
           data: { channelId: channel.id, content: message, event: 'LAST_MESSAGE' },
           channelUrl: channel.externalId,
+          isTargetUserNoti,
           callback: updateNewMessage
         });
       }
     };
-  }, [channel?.externalId, channel?.id, mutateSendMessage, updateNewMessage]);
+  }, [channel?.externalId, channel?.id, isTargetUserNoti, mutateSendMessage, updateNewMessage]);
 
   useEffect(() => {
     window.getPhotoAttach = async (fileUrls: string[]) => {
@@ -236,12 +238,20 @@ function Chanel() {
             event: 'LAST_MESSAGE'
           },
           channelUrl: channel.externalId,
+          isTargetUserNoti,
           fileUrls,
           callback: updateNewMessage
         });
       }
     };
-  }, [channel?.externalId, channel?.id, mutateSendMessage, updateNewMessage, userName]);
+  }, [
+    channel?.externalId,
+    channel?.id,
+    isTargetUserNoti,
+    mutateSendMessage,
+    updateNewMessage,
+    userName
+  ]);
 
   return (
     <>
@@ -333,6 +343,7 @@ function Chanel() {
                     channelId={channel.id}
                     channelUrl={channel.externalId}
                     userName={userName}
+                    isTargetUserNoti={isTargetUserNoti}
                     isTargetUserSeller={!isSeller}
                     targetUserId={targetUserId}
                     targetUserName={targetUserName}
@@ -353,6 +364,7 @@ function Chanel() {
                     channelUrl={channel?.externalId}
                     setMessageInputHeight={setMessageInputHeight}
                     setIsFocused={setIsFocused}
+                    isTargetUserNoti={isTargetUserNoti}
                     isDeletedTargetUser={isDeletedTargetUser}
                     isTargetUserBlocked={isTargetUserBlocked}
                     scrollToBottom={scrollToBottom}

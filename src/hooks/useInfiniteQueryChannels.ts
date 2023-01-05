@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
-import type { GroupChannelCollectionEventHandler } from '@sendbird/chat/groupChannel';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
+import type { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
 
 import type { Channel, ChannelsParams } from '@dto/channel';
 
@@ -13,7 +12,7 @@ import { fetchChannels } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
-import { isProduction } from '@utils/common';
+import { getChannelHandler } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
 
@@ -24,19 +23,17 @@ function useInfiniteQueryChannels({
   size = 20,
   ...params
 }: UseInfiniteQueryChannelsProps) {
+  const queryClient = useQueryClient();
+
   const [sendbird, setSendbirdState] = useRecoilState(sendbirdState);
 
   const channelsParams = useMemo<ChannelsParams>(
     () => ({ size, type, ...params }),
     [params, size, type]
   );
+  const groupChannelCollection = useRef<GroupChannelCollection | null>(null);
 
-  const {
-    data: { pages = [] } = {},
-    isLoading,
-    isFetched,
-    ...useInfiniteQueryResult
-  } = useInfiniteQuery(
+  const { data, isLoading, isFetched, ...useInfiniteQueryResult } = useInfiniteQuery(
     queryKeys.channels.channels(channelsParams),
     ({ pageParam = 0 }) => fetchChannels({ ...channelsParams, page: pageParam }),
     {
@@ -47,21 +44,56 @@ function useInfiniteQueryChannels({
 
         return number < totalPages - 1 ? number + 1 : undefined;
       },
-      async onSuccess(data) {
+      async onSuccess(successData) {
+        // 이전 핸들러 클리닝
+        groupChannelCollection.current?.dispose?.();
         setSendbirdState((currVal) => ({ ...currVal, loading: true }));
 
-        const { pages: successPages } = data || {};
+        const { pages: successPages } = successData || {};
 
         if (!successPages.some((successPage) => !!successPage)) {
           setSendbirdState((currVal) => ({ ...currVal, loading: false }));
           return;
         }
 
+        const channelHandler = getChannelHandler({
+          setSendbirdState,
+          channelsRefetch: () => {
+            useInfiniteQueryResult.refetch();
+          },
+          setChannelsData: (channelId, lastMessageManage) => {
+            const updatedChannel = successData.pages
+              .flatMap((page) => page.content)
+              .find((camelChannel) => channelId === camelChannel?.channel?.id);
+
+            if (
+              !!updatedChannel?.lastMessageManage &&
+              !!lastMessageManage &&
+              updatedChannel.lastMessageManage.content !== lastMessageManage.content
+            ) {
+              queryClient.setQueryData(queryKeys.channels.channels(channelsParams), {
+                ...successData,
+                pages: successData.pages.map((page) => ({
+                  ...page,
+                  content: page.content.map((camelChannel) =>
+                    channelId === camelChannel?.channel?.id
+                      ? { ...camelChannel, lastMessageManage }
+                      : camelChannel
+                  )
+                }))
+              });
+            }
+          }
+        });
         const channelUrls = successPages
           .flatMap(({ content }) => content)
           .filter(({ channel }) => !!channel?.externalId)
           .map(({ channel }) => (channel as Channel).externalId);
-        const sendBirdChannels = await Sendbird.loadChannels(channelHandlers, channelUrls);
+        const { channels: sendBirdChannels, collection } = await Sendbird.loadChannels(
+          channelHandler,
+          channelUrls
+        );
+        groupChannelCollection.current = collection;
 
         if (type === 0) {
           setSendbirdState((currVal) => ({
@@ -90,95 +122,11 @@ function useInfiniteQueryChannels({
     }
   );
 
-  const channelHandlers: GroupChannelCollectionEventHandler = useMemo(
-    () => ({
-      onChannelsAdded: async (_, channels) => {
-        if (!isProduction) console.debug('Sendbird onChannelsAdded::', { channels });
-        await useInfiniteQueryResult.refetch();
-      },
-      onChannelsUpdated: async (_, channels) => {
-        const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-
-        setSendbirdState((currVal) => {
-          const updatedAllChannels = currVal.allChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-          const updatedReceivedChannels = currVal.receivedChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-          const updatedSendChannels = currVal.sendChannels.map((channel) => {
-            const updatedChannel = channels.find(
-              (incomingChannel) => incomingChannel.url === channel.url
-            );
-
-            return updatedChannel || channel;
-          });
-
-          if (!isProduction)
-            console.debug('Sendbird onChannelsUpdated::', {
-              state: currVal,
-              channels,
-              updatedAllChannels,
-              updatedReceivedChannels,
-              updatedSendChannels,
-              unreadMessagesCount
-            });
-
-          return {
-            ...currVal,
-            allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
-            receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
-            sendChannels: JSON.parse(JSON.stringify(updatedSendChannels)),
-            unreadMessagesCount
-          };
-        });
-      },
-      onChannelsDeleted: (_, channelUrls) => {
-        setSendbirdState((currVal) => {
-          const updatedAllChannels = currVal.allChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-          const updatedReceivedChannels = currVal.receivedChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-          const updatedSendChannels = currVal.sendChannels.filter(
-            (channel) => !channelUrls.includes(channel.url)
-          );
-
-          if (!isProduction)
-            console.debug('Sendbird onChannelsDeleted::', {
-              state: currVal,
-              channelUrls,
-              updatedAllChannels,
-              updatedReceivedChannels,
-              updatedSendChannels
-            });
-
-          return {
-            ...currVal,
-            allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
-            receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
-            sendChannels: JSON.parse(JSON.stringify(updatedSendChannels))
-          };
-        });
-      }
-    }),
-    [setSendbirdState, useInfiniteQueryResult]
-  );
-
   const channels = useMemo(
     () =>
-      !pages.some((page) => !!page)
+      !(data?.pages || []).some((page) => !!page)
         ? []
-        : pages
+        : (data?.pages || [])
             .flatMap(({ content }) => content)
             .map((camelChannel) => {
               let sendbirdChannels = sendbird.allChannels;
@@ -194,8 +142,14 @@ function useInfiniteQueryChannels({
                 camel: camelChannel
               };
             }),
-    [pages, sendbird.allChannels, sendbird.receivedChannels, sendbird.sendChannels, type]
+    [data?.pages, sendbird.allChannels, sendbird.receivedChannels, sendbird.sendChannels, type]
   );
+
+  useEffect(() => {
+    return () => {
+      groupChannelCollection.current?.dispose?.();
+    };
+  }, []);
 
   return {
     channels,

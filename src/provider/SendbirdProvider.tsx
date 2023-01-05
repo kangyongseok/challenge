@@ -60,7 +60,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
 
           setState((currVal) => {
             if (!isProduction)
-              console.debug('Sendbird onTypingStatusUpdated::', {
+              console.log('Sendbird onTypingStatusUpdated::', {
                 state: currVal,
                 typingMemberCount,
                 channel,
@@ -78,7 +78,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         onUnreadMemberStatusUpdated: (channel) => {
           setState((currVal) => {
             if (!isProduction)
-              console.debug('Sendbird onUnreadMemberStatusUpdated::', { state: currVal, channel });
+              console.log('Sendbird onUnreadMemberStatusUpdated::', { state: currVal, channel });
 
             return {
               ...currVal,
@@ -91,7 +91,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         onUndeliveredMemberStatusUpdated: (channel) => {
           setState((currVal) => {
             if (!isProduction)
-              console.debug('Sendbird onUndeliveredMemberStatusUpdated::', {
+              console.log('Sendbird onUndeliveredMemberStatusUpdated::', {
                 state: currVal,
                 channel
               });
@@ -107,7 +107,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
         onMessageUpdated: (channel) => {
           setState((currVal) => {
             if (!isProduction)
-              console.debug('Sendbird onMessageUpdated::', {
+              console.log('Sendbird onMessageUpdated::', {
                 state: currVal,
                 channel
               });

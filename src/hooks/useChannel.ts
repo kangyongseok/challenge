@@ -5,12 +5,13 @@ import type { MutableRefObject } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import has from 'lodash-es/has';
 import dayjs from 'dayjs';
-import type { GroupChannelHandlerParams, SendableMessage } from '@sendbird/chat/lib/__definition';
+import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
-import { ChannelAppointmentResult } from '@dto/channel';
+import type { ChannelAppointmentResult } from '@dto/channel';
 
 import StompJs from '@library/stompJs';
 import Sendbird from '@library/sendbird';
@@ -37,7 +38,89 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const channelId = useMemo(() => Number(router.query.id || ''), [router.query.id]);
+  const { channelId, channelHandlerId } = useMemo(
+    () => ({
+      channelId: Number(router.query.id || ''),
+      channelHandlerId: uuidv4()
+    }),
+    [router.query.id]
+  );
+  const sendbirdSdk = Sendbird.getInstance();
+  const channelHandler = new GroupChannelHandler({
+    onMessageReceived: (channel, message) => {
+      if (
+        !compareIds(channel?.url, currentChannel.current?.url) ||
+        messages.some((msg) => compareIds(msg.messageId, message.messageId))
+      )
+        return;
+
+      if (!isProduction) console.log('Channel | onMessageReceived', message);
+
+      let scrollToEnd = false;
+
+      try {
+        if (messagesRef.current) {
+          const { clientHeight, scrollTop, scrollHeight } = messagesRef.current;
+
+          scrollToEnd = Math.round(clientHeight + scrollTop) >= scrollHeight;
+        }
+      } catch {
+        //
+      }
+
+      currentChannel.current = channel as GroupChannel;
+      setState((prevState) => ({
+        ...prevState,
+        messages: [
+          ...prevState.messages.filter(({ messageId }) => messageId !== message.messageId),
+          message
+        ] as CoreMessageType[]
+      }));
+
+      if (scrollToEnd) {
+        try {
+          setTimeout(async () => {
+            await currentChannel.current?.markAsRead();
+            scrollIntoLast();
+          }, 100);
+        } catch (error) {
+          console.warn('Channel | onMessageReceived | scroll to end failed');
+        }
+      }
+    },
+    onUnreadMemberStatusUpdated: (channel) => {
+      if (compareIds(channel?.url, currentChannel.current?.url)) {
+        if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
+
+        currentChannel.current = channel;
+        channel
+          .getMessagesByTimestamp(new Date().getTime(), {
+            prevResultSize: PREV_RESULT_SIZE,
+            nextResultSize: 0
+          })
+          .then((baseMessages) => {
+            setState({
+              messages: baseMessages as CoreMessageType[],
+              hasMorePrev: baseMessages.length === 30,
+              oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
+            });
+          });
+      }
+    },
+    // before(onDeliveryReceiptUpdated)
+    onUndeliveredMemberStatusUpdated: (channel) => {
+      if (compareIds(channel?.url, currentChannel.current?.url)) {
+        if (!isProduction) console.log('Channel | onDeliveryReceiptUpdated', channel);
+        currentChannel.current = channel;
+      }
+    },
+    onChannelChanged: (channel) => {
+      if (compareIds(channel?.url, currentChannel.current?.url)) {
+        if (!isProduction) console.log('Channel | onChannelChanged', channel);
+        currentChannel.current = channel as GroupChannel;
+      }
+    }
+  });
 
   const useQueryResult = useQuery(
     queryKeys.channels.channel(channelId),
@@ -68,12 +151,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
             });
           await channel.markAsRead();
 
-          const channelHandlerId = uuidv4();
-
-          Sendbird.getInstance()?.groupChannel.addGroupChannelHandler(
-            channelHandlerId,
-            new GroupChannelHandler(channelHandler)
-          );
+          sendbirdSdk.groupChannel?.addGroupChannelHandler?.(channelHandlerId, channelHandler);
         }
       }
     }
@@ -91,91 +169,6 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
   const currentChannel = useRef<GroupChannel | null>(null);
   const prevScrollHeight = useRef(0);
-
-  const channelHandler: GroupChannelHandlerParams = useMemo(
-    () => ({
-      onMessageReceived: (channel, message) => {
-        if (
-          !compareIds(channel?.url, currentChannel.current?.url) ||
-          messages.some((msg) => compareIds(msg.messageId, message.messageId))
-        )
-          return;
-
-        if (!isProduction) console.log('Channel | onMessageReceived', message);
-
-        let scrollToEnd = false;
-
-        try {
-          if (messagesRef.current) {
-            const { clientHeight, scrollTop, scrollHeight } = messagesRef.current;
-
-            scrollToEnd = Math.round(clientHeight + scrollTop) >= scrollHeight;
-          }
-        } catch {
-          //
-        }
-
-        currentChannel.current = channel as GroupChannel;
-        setState((prevState) => ({
-          ...prevState,
-          messages: [
-            ...prevState.messages.filter(({ messageId }) => messageId !== message.messageId),
-            message
-          ] as CoreMessageType[]
-        }));
-
-        if (scrollToEnd) {
-          try {
-            setTimeout(async () => {
-              await currentChannel.current?.markAsRead();
-              scrollIntoLast();
-            }, 100);
-          } catch (error) {
-            console.warn('Channel | onMessageReceived | scroll to end failed');
-          }
-        }
-      },
-      onUnreadMemberStatusUpdated: (channel) => {
-        if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
-
-          currentChannel.current = channel;
-          channel
-            .getMessagesByTimestamp(new Date().getTime(), {
-              prevResultSize: PREV_RESULT_SIZE,
-              nextResultSize: 0
-            })
-            .then((baseMessages) => {
-              setState({
-                messages: baseMessages as CoreMessageType[],
-                hasMorePrev: baseMessages.length === 30,
-                oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
-              });
-            });
-        }
-      },
-      // before(onDeliveryReceiptUpdated)
-      onUndeliveredMemberStatusUpdated: (channel) => {
-        if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (!isProduction) console.log('Channel | onDeliveryReceiptUpdated', channel);
-          currentChannel.current = channel;
-        }
-      },
-      onUnreadMemberCountUpdated: (channel: GroupChannel) => {
-        if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (!isProduction) console.log('Channel | onUnreadMemberCountUpdated', channel);
-          currentChannel.current = channel;
-        }
-      },
-      onChannelChanged: (channel) => {
-        if (compareIds(channel?.url, currentChannel.current?.url)) {
-          if (!isProduction) console.log('Channel | onChannelChanged', channel);
-          currentChannel.current = channel as GroupChannel;
-        }
-      }
-    }),
-    [messages, messagesRef]
-  );
 
   const channelData = useMemo<{
     userName: string;
@@ -225,6 +218,30 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       isDeletedProduct: !!product?.isDeleted
     };
   }, [accessUser?.userId, useQueryResult.data]);
+  const filteredMessages = useMemo(
+    () =>
+      messages.filter((message, index) => {
+        if (!isAdminMessage(message)) return true;
+
+        const messageData: Record<string, string> = JSON.parse(message.data || '{}');
+
+        if (!has(messageData, 'userId')) return true;
+
+        // 판매자인 경우 매물 변경 노티는 가장 마지막 메세지만 표시하도록 필터 처리
+        if (Number(messageData.userId || 0) === accessUser?.userId) {
+          if (message.customType !== 'productReserve') return true;
+
+          if (
+            messages.slice(index + 1).every((msg) => msg.customType !== 'productReserve') &&
+            channelData.showProductReserveMessage
+          )
+            return true;
+        }
+
+        return false;
+      }),
+    [accessUser?.userId, channelData.showProductReserveMessage, messages]
+  );
 
   const fetchPrevMessages = useCallback(async () => {
     prevScrollHeight.current = messagesRef.current?.scrollHeight || 0;
@@ -316,6 +333,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
     return () => {
       StompJs.finalize();
+      sendbirdSdk.groupChannel?.removeGroupChannelHandler?.(channelHandlerId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -324,18 +342,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     useQueryChannel: useQueryResult,
     channelData,
     sendbirdChannel: currentChannel.current,
-    messages: messages.filter(
-      (message, index) =>
-        !isAdminMessage(message) ||
-        (isAdminMessage(message) &&
-          ((message.data || '').length <= 2 ||
-            (!!message.data?.length &&
-              Number(JSON.parse(message.data)?.userId || 0) === accessUser?.userId &&
-              (message.customType !== 'productReserve' ||
-                (message.customType === 'productReserve' &&
-                  messages.slice(index + 1).every((msg) => msg.customType !== 'productReserve') &&
-                  channelData.showProductReserveMessage)))))
-    ),
+    messages: filteredMessages,
     hasMorePrev,
     fetchPrevMessages,
     updateNewMessage

@@ -3,14 +3,15 @@ import dayjs from 'dayjs';
 import type {
   FailedMessageHandler,
   FileMessageCreateParams,
-  GroupChannelCreateParams,
   MessageHandler,
   SnoozePeriod,
+  UserMessageCreateParams,
   UserUpdateParams
 } from '@sendbird/chat/lib/__definition';
 import type {
   GroupChannel,
   GroupChannelCollectionEventHandler,
+  GroupChannelCreateParams,
   MessageCollectionEventHandler,
   MessageCollectionInitResultHandler
 } from '@sendbird/chat/groupChannel';
@@ -29,7 +30,6 @@ import type { CreateChannelParams } from '@typings/channel';
 
 const sb = SendbirdChat.init({
   appId: process.env.SENDBIRD_APP_ID,
-  localCacheEnabled: true,
   modules: [new GroupChannelModule()]
 });
 
@@ -69,7 +69,7 @@ const SendBird = {
       await sb.unblockUserWithUserId(userId);
     }
   },
-  async loadChannels(channelHandlers: GroupChannelCollectionEventHandler, channelUrls?: string[]) {
+  async loadChannels(channelHandler: GroupChannelCollectionEventHandler, channelUrls?: string[]) {
     const groupChannelFilter = new GroupChannelFilter();
     groupChannelFilter.includeEmpty = true;
     // groupChannelFilter.hiddenChannelFilter = HiddenChannelFilter.HIDDEN_ALLOW_AUTO_UNHIDE;
@@ -80,11 +80,11 @@ const SendBird = {
       filter: groupChannelFilter,
       order: GroupChannelListOrder.LATEST_LAST_MESSAGE
     });
-    collection.setGroupChannelCollectionHandler(channelHandlers);
+    collection.setGroupChannelCollectionHandler(channelHandler);
 
     const channels = await collection.loadMore();
 
-    return channels;
+    return { channels, collection };
   },
   async getCustomTypeChannels(customType: string) {
     const query = sb.groupChannel.createMyGroupChannelListQuery({
@@ -178,23 +178,20 @@ const SendBird = {
   },
   async sendMessage({
     channelUrl,
-    customType,
-    newMessage,
     onPending,
     onSucceeded,
-    onFailed
+    onFailed,
+    ...params
   }: {
     channelUrl: string;
-    customType: string;
-    newMessage: string;
     onPending?: MessageHandler;
     onSucceeded: MessageHandler;
     onFailed?: FailedMessageHandler;
-  }) {
+  } & UserMessageCreateParams) {
     const channel = await sb.groupChannel.getChannel(channelUrl);
 
     channel
-      .sendUserMessage({ message: newMessage, customType })
+      .sendUserMessage(params)
       .onPending((message) => {
         if (onPending) onPending(message);
       })

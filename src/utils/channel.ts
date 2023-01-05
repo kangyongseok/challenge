@@ -1,18 +1,26 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/ban-ts-comment,no-console */
+import type { SetterOrUpdater } from 'recoil';
 import dayjs from 'dayjs';
 import type { AdminMessage, FileMessage, UserMessage } from '@sendbird/chat/message';
 import { MessageType } from '@sendbird/chat/message';
-import type { GroupChannel } from '@sendbird/chat/groupChannel';
+import type { GroupChannel, GroupChannelCollectionEventHandler } from '@sendbird/chat/groupChannel';
 import type { BaseChannel } from '@sendbird/chat';
 
 import type { ChannelUser } from '@dto/user';
 import type { ChannelHistoryManage } from '@dto/channel';
 
+import Sendbird from '@library/sendbird';
+
+import { fetchChannel } from '@api/channel';
+
 import { SUPPORTED_MIMES } from '@constants/common';
 import { messageStates, productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 
-import { truncateString } from '@utils/common';
+import { isProduction, truncateString } from '@utils/common';
+
+import type { CoreMessageType } from '@typings/channel';
+import type { SendbirdState } from '@recoil/channel';
 
 export const getUnreadMessagesCount = (count: number): string => (count > 99 ? '+99' : `${count}`);
 
@@ -199,9 +207,9 @@ export const getLogEventAtt = (status: number) => {
 export const scrollIntoLast = (intialTry = 0) => {
   const MAX_TRIES = 10;
   const currentTry = intialTry;
-  if (currentTry > MAX_TRIES) {
-    return;
-  }
+
+  if (currentTry > MAX_TRIES) return;
+
   try {
     const scrollDOM = document.querySelector('.messages');
 
@@ -222,4 +230,99 @@ export const compareIds = (a: unknown, b: unknown) => {
   if (isEmpty(a) || isEmpty(b)) return false;
 
   return String(a).toString() === String(b).toString();
+};
+
+export const getChannelHandler = ({
+  channelsRefetch,
+  setSendbirdState,
+  setChannelsData
+}: {
+  channelsRefetch: () => void;
+  setSendbirdState: SetterOrUpdater<SendbirdState>;
+  setChannelsData: (channelId: number, lastMessageManage: ChannelHistoryManage | null) => void;
+}): GroupChannelCollectionEventHandler => {
+  const updateChannelsState = (stateChannels: GroupChannel[], incomingChannels: BaseChannel[]) => {
+    return stateChannels.map((channel) => {
+      const updatedChannel = incomingChannels.find(
+        (incomingChannel) => incomingChannel.url === channel.url
+      );
+
+      if (updatedChannel) {
+        const channelId = +((channel.lastMessage as CoreMessageType).customType || 0);
+
+        if (channelId > 0) {
+          fetchChannel(channelId).then((result) => {
+            if (channelId === result.channel?.id) {
+              setChannelsData(channelId, result.lastMessageManage);
+            }
+          });
+        }
+      }
+
+      return updatedChannel || channel;
+    });
+  };
+
+  return {
+    onChannelsAdded: async (_, channels) => {
+      if (!isProduction) console.log('Channels | onChannelsAdded::', { channels });
+      channelsRefetch();
+    },
+    onChannelsUpdated: async (_, channels) => {
+      const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+
+      setSendbirdState((currVal) => {
+        const updatedAllChannels = updateChannelsState(currVal.allChannels, channels);
+        const updatedReceivedChannels = updateChannelsState(currVal.receivedChannels, channels);
+        const updatedSendChannels = updateChannelsState(currVal.sendChannels, channels);
+
+        if (!isProduction)
+          console.log('Channels | onChannelsUpdated::', {
+            state: currVal,
+            channels,
+            updatedAllChannels,
+            updatedReceivedChannels,
+            updatedSendChannels,
+            unreadMessagesCount
+          });
+
+        return {
+          ...currVal,
+          allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
+          receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
+          sendChannels: JSON.parse(JSON.stringify(updatedSendChannels)),
+          unreadMessagesCount
+        };
+      });
+    },
+    onChannelsDeleted: (_, channelUrls) => {
+      setSendbirdState((currVal) => {
+        const updatedAllChannels = currVal.allChannels.filter(
+          (channel) => !channelUrls.includes(channel.url)
+        );
+        const updatedReceivedChannels = currVal.receivedChannels.filter(
+          (channel) => !channelUrls.includes(channel.url)
+        );
+        const updatedSendChannels = currVal.sendChannels.filter(
+          (channel) => !channelUrls.includes(channel.url)
+        );
+
+        if (!isProduction)
+          console.log('Channels | onChannelsDeleted::', {
+            state: currVal,
+            channelUrls,
+            updatedAllChannels,
+            updatedReceivedChannels,
+            updatedSendChannels
+          });
+
+        return {
+          ...currVal,
+          allChannels: JSON.parse(JSON.stringify(updatedAllChannels)),
+          receivedChannels: JSON.parse(JSON.stringify(updatedReceivedChannels)),
+          sendChannels: JSON.parse(JSON.stringify(updatedSendChannels))
+        };
+      });
+    }
+  };
 };

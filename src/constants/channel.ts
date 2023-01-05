@@ -23,7 +23,7 @@ export const messageStates = {
   read: 'READ'
 };
 
-export const PhotoActionType = {
+export const photoActionType = {
   camera: 0,
   album: 1
 };
