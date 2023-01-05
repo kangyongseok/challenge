@@ -43,8 +43,8 @@ function SellerInfoProfile({
     >
       {profileImage ? (
         <Avatar
-          width={32}
-          height={32}
+          width={52}
+          height={52}
           round="50%"
           src={profileImage}
           alt="Platform Logo Img"
