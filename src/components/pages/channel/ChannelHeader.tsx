@@ -15,7 +15,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
-import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
+import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel/atom';
 
 interface ChannelHeaderProps {
   isLoading?: boolean;
@@ -35,6 +35,7 @@ function ChannelHeader({
   const router = useRouter();
 
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
+  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
 
   const handleClickClose = useCallback(() => {
     if (checkAgent.isIOSApp()) {
@@ -58,18 +59,21 @@ function ChannelHeader({
 
     if (!targetUserId) return;
 
+    const pathname = `/userInfo/${targetUserId}`;
+
     if (checkAgent.isIOSApp()) {
+      setChannelPushPageState('userInfo');
       window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
         JSON.stringify({
-          pathname: `/userInfo/${targetUserId}`,
+          pathname,
           redirectChannelUrl: router.asPath
         })
       );
       return;
     }
 
-    router.push(`/userInfo/${targetUserId}`);
-  }, [router, targetUserId, targetUserIsSeller]);
+    router.push(pathname);
+  }, [router, setChannelPushPageState, targetUserId, targetUserIsSeller]);
 
   const handleClickMore = useCallback(() => {
     logEvent(attrKeys.channel.CLICK_CHANNEL_MORE, { name: attrProperty.name.CHANNEL_DETAIL });

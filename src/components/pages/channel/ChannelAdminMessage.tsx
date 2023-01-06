@@ -1,3 +1,4 @@
+import { useSetRecoilState } from 'recoil';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
@@ -16,6 +17,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent } from '@utils/common';
 
+import { channelPushPageState } from '@recoil/channel';
+
 interface ChannelAdminMessageProps {
   message: AdminMessage;
   productId: number;
@@ -32,6 +35,8 @@ function ChannelAdminMessage({
   refetchChannel
 }: ChannelAdminMessageProps) {
   const router = useRouter();
+
+  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
 
@@ -64,22 +69,21 @@ function ChannelAdminMessage({
       att: 'SEND'
     });
 
+    const pathname = `/userInfo/${targetUserId}?tab=reviews`;
+
     if (checkAgent.isIOSApp()) {
+      setChannelPushPageState('userInfo');
       window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
         JSON.stringify({
-          pathname: `/userInfo/${targetUserId}?tab=reviews`,
+          pathname,
           redirectChannelUrl: router.asPath
         })
       );
+
       return;
     }
 
-    router.push({
-      pathname: `/userInfo/${targetUserId}`,
-      query: {
-        tab: 'reviews'
-      }
-    });
+    router.push(pathname);
   };
 
   return message.customType === 'appointmentPushNoti' ? (

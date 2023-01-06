@@ -34,3 +34,4 @@ export const IS_CHECKED_RECEIVED_MESSAGE_FILTER = 'isCheckedReceivedMessageFilte
 export const NOTI = 'NOTI';
 export const SOURCE = 'SOURCE';
 export const ONBOARDING_SKIP_USERIDS = 'onboardingSkipUserIds';
+export const PUSH_PAGE_FROM_CHAENNEL = 'pushPageFromChannel';

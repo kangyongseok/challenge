@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -42,7 +42,11 @@ import { checkAgent, getProductDetailUrl } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
+import {
+  channelBottomSheetStateFamily,
+  channelPushPageState,
+  channelThumbnailMessageImageState
+} from '@recoil/channel';
 import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useChannel from '@hooks/useChannel';
@@ -55,6 +59,7 @@ function Chanel() {
   const [channelThumbnailMessageImage, setChannelThumbnailMessageImage] = useRecoilState(
     channelThumbnailMessageImageState
   );
+  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
   const resetDialogState = useResetRecoilState(dialogState);
   const resetMoreBottomSheetState = useResetRecoilState(channelBottomSheetStateFamily('more'));
   const resetProductStatusBottomSheetState = useResetRecoilState(
@@ -125,6 +130,7 @@ function Chanel() {
     });
 
     if (checkAgent.isIOSApp()) {
+      setChannelPushPageState('product');
       window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
         JSON.stringify({
           pathname,
@@ -135,7 +141,7 @@ function Chanel() {
     }
 
     router.push(pathname);
-  }, [isDeletedProduct, product, router]);
+  }, [isDeletedProduct, product, router, setChannelPushPageState]);
 
   const handleClickUnreadCount = useCallback(async () => {
     setUnreadCount(0);

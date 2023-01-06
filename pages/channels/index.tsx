@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useResetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -33,7 +33,7 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent, getProductDetailUrl } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
-import { channelBottomSheetStateFamily } from '@recoil/channel';
+import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
 import useRedirectVC from '@hooks/useRedirectVC';
 
 const labels = Object.entries(channelType).map(([key, value]) => ({ key, value }));
@@ -42,6 +42,7 @@ function Channels() {
   const router = useRouter();
   useRedirectVC('/channels');
 
+  const channelPushPage = useRecoilValue(channelPushPageState);
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
@@ -80,9 +81,10 @@ function Channels() {
       router.replace('/channels').then(() => {
         if (checkAgent.isIOSApp()) {
           window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
-        } else {
-          router.push(`/channels/${channelId}`);
+          return;
         }
+
+        router.push(`/channels/${channelId}`);
       });
     }
 
@@ -98,7 +100,9 @@ function Channels() {
     }
   }, [productId]);
 
-  return (
+  return channelPushPage ? (
+    <div />
+  ) : (
     <GeneralTemplate
       header={
         <Header>

@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import {
   Type as ListType,
   SwipeAction,
@@ -41,6 +41,7 @@ import {
 } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
+import { channelPushPageState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
 import useMutationChannelNoti from '@hooks/useMutationChannelNoti';
@@ -63,6 +64,7 @@ function ChannelsSwipeActionList({
   } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
+  const resetChannelPushPageState = useResetRecoilState(channelPushPageState);
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -150,10 +152,8 @@ function ChannelsSwipeActionList({
     if (!camelChannel.channel) return;
 
     logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.CHANNEL });
-
-    if (SessionStorage.get(sessionStorageKeys.pushToSavedRedirectChannel)) {
-      SessionStorage.remove(sessionStorageKeys.pushToSavedRedirectChannel);
-    }
+    SessionStorage.remove(sessionStorageKeys.pushToSavedRedirectChannel);
+    resetChannelPushPageState();
 
     if (checkAgent.isIOSApp()) {
       window.webkit?.messageHandlers?.callChannel?.postMessage?.(
@@ -162,7 +162,7 @@ function ChannelsSwipeActionList({
     } else {
       router.push(`/channels/${camelChannel.channel.id}`);
     }
-  }, [camelChannel.channel, router]);
+  }, [camelChannel.channel, resetChannelPushPageState, router]);
 
   const handleClickSelectTargetUser = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
