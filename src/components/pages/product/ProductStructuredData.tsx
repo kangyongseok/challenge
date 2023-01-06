@@ -115,7 +115,9 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
             '@type': 'Product',
             '@id': '#product',
             name: `${product.title} | 카멜`,
-            image: (product.imageDetailsLarge || product.imageDetails || '').split('|'),
+            image: `${product.imageMain || product.imageThumbnail}|${product.imageDetails || ''}`
+              .split('|')
+              .filter((image) => image),
             description: getMetaDescription(product),
             sku: product.productSeller.id,
             mpn: product.id,

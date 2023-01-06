@@ -83,7 +83,7 @@ export function copyToClipboard(text: string) {
 
   if (navigator.clipboard) {
     // eslint-disable-next-line func-names
-    return navigator.clipboard.writeText(text).catch(function (err) {
+    navigator.clipboard.writeText(text).catch(function (err) {
       throw err !== undefined
         ? err
         : new DOMException('The request is not allowed', 'NotAllowedError');

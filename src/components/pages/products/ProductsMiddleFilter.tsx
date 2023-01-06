@@ -416,7 +416,11 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                 <Flexbox
                   key={`products-middle-filter-${name}`}
                   alignment="center"
-                  customStyle={{ position: 'relative', marginTop: index !== 0 ? 12 : undefined }}
+                  customStyle={{
+                    position: 'relative',
+                    marginTop: index !== 0 ? 12 : undefined,
+                    overflowY: 'hidden'
+                  }}
                 >
                   <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
                     {name}

@@ -45,7 +45,7 @@ function LegitResultPageHead() {
 
   return (
     <PageHead
-      title={`${productId} ${name} ${commaNumber(
+      title={`${name} ${productId} ${commaNumber(
         authenticCount + fakeCount + impossibleCount
       )}개의 정품 가품 의견 확인하기 | 카멜`}
       description={`${name} 정품의견 ${commaNumber(authenticCount)}개, 가품의견 ${commaNumber(
@@ -53,7 +53,7 @@ function LegitResultPageHead() {
       )}개, 감정불가 ${impossibleCount}개, 총 ${commaNumber(
         authenticCount + fakeCount + impossibleCount
       )}개의 의견이 있어요! 오늘 사려는 그 명품, 중고라면 정품가품 의견 꼭 받아보세요.`}
-      ogTitle={`${productId} ${name} ${commaNumber(
+      ogTitle={`${name} ${productId} ${commaNumber(
         authenticCount + fakeCount + impossibleCount
       )}개의 정품 가품 의견 확인하기 | 카멜`}
       ogDescription={`${name} 정품의견 ${commaNumber(authenticCount)}개, 가품의견 ${commaNumber(

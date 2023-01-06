@@ -694,10 +694,14 @@ export async function getServerSideProps({
       }
     );
 
-    if (!Number.isNaN(Number(id)) || id?.includes(' ')) {
+    const destination = encodeURI(getProductDetailUrl({ product: product.product }));
+    const splitDestination = destination.split('/');
+    const hasNewId = Number.isNaN(Number(splitDestination[splitDestination.length - 1]));
+
+    if ((!Number.isNaN(Number(id)) && hasNewId) || id?.includes(' ')) {
       return {
         redirect: {
-          destination: encodeURI(getProductDetailUrl({ product: product.product })),
+          destination,
           permanent: true
         }
       };

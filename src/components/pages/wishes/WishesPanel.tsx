@@ -241,7 +241,7 @@ function WishesPanel({
           <Skeleton width={36} height={33} round={36} disableAspectRatio />
           <Skeleton width={45} height={33} round={36} disableAspectRatio />
         </Flexbox>
-        <Flexbox customStyle={{ marginBottom: 16 }} gap={4}>
+        <Flexbox customStyle={{ margin: '24px 0 16px' }} gap={4}>
           <Skeleton
             width={50}
             height={32}
