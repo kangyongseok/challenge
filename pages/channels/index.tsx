@@ -84,7 +84,7 @@ function Channels() {
         type: 'requiredAppUpdateForChat',
         customStyleTitle: { minWidth: 270 },
         disabledOnClose: true,
-        firstButtonAction: () => {
+        secondButtonAction: () => {
           window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
             'itms-apps://itunes.apple.com/app/id1541101835'
           );
