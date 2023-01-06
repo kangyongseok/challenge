@@ -16,6 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
 import { deleteCookie } from '@utils/cookies';
+import { checkAgent } from '@utils/common';
 
 import { deviceIdState } from '@recoil/common';
 import { channelReceivedMessageFilteredState, sendbirdState } from '@recoil/channel';
@@ -41,6 +42,13 @@ function Logout() {
       });
     }
 
+    if (accessUser?.userId) {
+      if (checkAgent.isAndroidApp()) window.webview?.callSetLogoutUser?.(accessUser.userId);
+
+      if (checkAgent.isIOSApp())
+        window.webkit?.messageHandlers?.callSetLogoutUser?.postMessage?.(`${accessUser.userId}`);
+    }
+
     LocalStorage.remove(ACCESS_USER);
     LocalStorage.remove(ACCESS_TOKEN);
     queryClient.removeQueries(queryKeys.userAuth.accessUser(), { exact: true });
@@ -59,7 +67,8 @@ function Logout() {
     router,
     deviceId,
     resetSendbirdState,
-    resetChannelReceivedMessageFilteredState
+    resetChannelReceivedMessageFilteredState,
+    accessUser?.userId
   ]);
 
   return <div />;

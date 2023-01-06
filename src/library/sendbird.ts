@@ -55,15 +55,6 @@ const SendBird = {
   },
   async finalize() {
     try {
-      await sb.disconnect();
-    } catch {
-      //
-    }
-
-    if (!isProduction) console.log('Sendbird finalized');
-  },
-  async unregister() {
-    try {
       await sb.unregisterFCMPushTokenAllForCurrentUser();
     } catch {
       //
@@ -73,8 +64,13 @@ const SendBird = {
     } catch {
       //
     }
+    try {
+      await sb.disconnect();
+    } catch {
+      //
+    }
 
-    if (!isProduction) console.log('Sendbird unRegistered');
+    if (!isProduction) console.log('Sendbird finalized');
   },
   async setBlockUser(userId: string, blockOn: boolean) {
     if (blockOn) {

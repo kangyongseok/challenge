@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import Sendbird from '@library/sendbird';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -13,8 +12,6 @@ import { postWithdraw } from '@api/userAuth';
 import queryKeys from '@constants/queryKeys';
 import { ONBOARDING_SKIP_USERIDS } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
-
-import { checkAgent } from '@utils/common';
 
 import { accessUserSettingValuesState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -32,25 +29,11 @@ function ExitDialog({ status, setExtToggle }: ExitProps) {
   const { refetch } = useQuery(queryKeys.userAuth.withdraw(), postWithdraw, {
     enabled: false,
     onSuccess: async () => {
-      if (checkAgent.isAndroidApp()) {
-        if (window.webview && window.webview.callSetLogoutUser && accessUser)
-          window.webview.callSetLogoutUser(accessUser.userId);
-      }
-      if (checkAgent.isIOSApp()) {
-        if (
-          window.webkit &&
-          window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.callSetLogoutUser &&
-          accessUser
-        ) {
-          window.webkit.messageHandlers.callSetLogoutUser.postMessage(`${accessUser.userId}`);
-        }
-      }
       const { userId = 0 } = accessUser || {};
+
       setAccessUserSettingValuesState((prevState) =>
         prevState.filter(({ userId: prevUserId }) => prevUserId !== userId)
       );
-      await Sendbird.unregister();
       setExtToggle(false);
       router.push('/logout');
     }
