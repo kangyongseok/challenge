@@ -56,13 +56,13 @@ function DialogProvider() {
       case 'legitServiceNotice':
       case 'appUpdateNotice':
       case 'loginProviderError':
+      case 'requiredAppUpdateForChat':
         return 'textWithOneButton';
       case 'appAuthCheck':
       case 'unblockBlockedUser':
       case 'confirmDeal':
       case 'successMakeAppointment':
       case 'cancelAppointment':
-      case 'requiredAppUpdateForChat':
         return 'textWithTwoVerticalButton';
       case 'legitPhotoGuide':
         return 'textWithOneButton';

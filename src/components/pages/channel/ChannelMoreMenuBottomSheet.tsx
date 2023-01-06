@@ -31,6 +31,7 @@ interface ChannelMoreMenuBottomSheetProps {
   targetUserId: number;
   isTargetUserSeller: boolean;
   isTargetUserBlocked: boolean;
+  isDeletedTargetUser: boolean;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
@@ -44,6 +45,7 @@ function ChannelMoreMenuBottomSheet({
   targetUserName,
   isTargetUserSeller,
   isTargetUserBlocked,
+  isDeletedTargetUser,
   refetchChannel
 }: ChannelMoreMenuBottomSheetProps) {
   const {
@@ -204,15 +206,19 @@ function ChannelMoreMenuBottomSheet({
     <BottomSheet disableSwipeable open={open} onClose={handleClose}>
       <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
         <Flexbox direction="vertical">
-          <Menu variant="h3" weight="medium" onClick={handleClickNoti}>
-            {isNotiOn ? '알림 끄기' : '알림 켜기'}
-          </Menu>
-          <Menu variant="h3" weight="medium" onClick={handleClickReport}>
-            신고하기
-          </Menu>
-          <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
-            {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
-          </Menu>
+          {!isDeletedTargetUser && (
+            <>
+              <Menu variant="h3" weight="medium" onClick={handleClickNoti}>
+                {isNotiOn ? '알림 끄기' : '알림 켜기'}
+              </Menu>
+              <Menu variant="h3" weight="medium" onClick={handleClickReport}>
+                신고하기
+              </Menu>
+              <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
+                {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
+              </Menu>
+            </>
+          )}
           <RedMenu variant="h3" weight="medium" onClick={handleClickLeave}>
             채팅방 나가기
           </RedMenu>

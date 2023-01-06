@@ -139,7 +139,6 @@ export const firstButtonText: Record<
     | 'confirmDeal'
     | 'successMakeAppointment'
     | 'cancelAppointment'
-    | 'requiredAppUpdateForChat'
     | 'loginError'
   >,
   string | number | ReactElement
@@ -157,7 +156,6 @@ export const firstButtonText: Record<
   confirmDeal: '네, 거래했어요.',
   successMakeAppointment: '예약중으로 변경',
   cancelAppointment: '약속 취소하기',
-  requiredAppUpdateForChat: '스토어로 이동하기',
   loginError: '확인'
 };
 
@@ -206,7 +204,7 @@ export const secondButtonText: Record<
   confirmDeal: '취소',
   successMakeAppointment: '취소',
   cancelAppointment: '취소',
-  requiredAppUpdateForChat: '취소',
+  requiredAppUpdateForChat: '스토어로 이동하기',
   loginError: '1:1 문의',
   loginProviderError: '확인'
 };

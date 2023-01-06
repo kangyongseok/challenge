@@ -269,7 +269,8 @@ function Chanel() {
               <HeaderWrapper>
                 <ChannelHeader
                   isLoading={isLoading || !isFetched}
-                  targetUserIsSeller={!isSeller}
+                  isTargetUserSeller={!isSeller}
+                  isDeletedTargetUser={isDeletedTargetUser}
                   targetUserImage={channelTargetUser?.user?.image}
                   targetUserName={targetUserName}
                   targetUserId={targetUserId}
@@ -396,6 +397,7 @@ function Chanel() {
           targetUserName={targetUserName}
           isTargetUserSeller={!isSeller}
           isTargetUserBlocked={isTargetUserBlocked}
+          isDeletedTargetUser={isDeletedTargetUser}
           isNotiOn={!!channelUser?.isNoti}
           refetchChannel={refetch}
         />

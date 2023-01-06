@@ -19,7 +19,8 @@ import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/cha
 
 interface ChannelHeaderProps {
   isLoading?: boolean;
-  targetUserIsSeller: boolean;
+  isTargetUserSeller: boolean;
+  isDeletedTargetUser: boolean;
   targetUserImage: string | undefined;
   targetUserName: string;
   targetUserId: number | undefined;
@@ -27,7 +28,8 @@ interface ChannelHeaderProps {
 
 function ChannelHeader({
   isLoading = false,
-  targetUserIsSeller,
+  isTargetUserSeller,
+  isDeletedTargetUser,
   targetUserImage,
   targetUserName,
   targetUserId
@@ -52,12 +54,12 @@ function ChannelHeader({
   }, [router]);
 
   const handleClickTitle = useCallback(() => {
+    if (!targetUserId || isDeletedTargetUser) return;
+
     logEvent(attrKeys.channel.CLICK_PROFILE, {
       name: attrProperty.name.CHANNEL_DETAIL,
-      title: targetUserIsSeller ? attrProperty.title.SELLER : attrProperty.title.BUYER
+      title: isTargetUserSeller ? attrProperty.title.SELLER : attrProperty.title.BUYER
     });
-
-    if (!targetUserId) return;
 
     const pathname = `/userInfo/${targetUserId}`;
 
@@ -73,7 +75,7 @@ function ChannelHeader({
     }
 
     router.push(pathname);
-  }, [router, setChannelPushPageState, targetUserId, targetUserIsSeller]);
+  }, [targetUserId, isDeletedTargetUser, isTargetUserSeller, router, setChannelPushPageState]);
 
   const handleClickMore = useCallback(() => {
     logEvent(attrKeys.channel.CLICK_CHANNEL_MORE, { name: attrProperty.name.CHANNEL_DETAIL });
@@ -103,21 +105,19 @@ function ChannelHeader({
           </>
         ) : (
           <>
-            <Title onClick={handleClickTitle}>
-              <UserAvatar
-                src={targetUserImage || ''}
-                width={32}
-                height={32}
-                isRound
-                iconCustomStyle={{ width: 16, height: 16 }}
-              />
-              <Typography
-                variant="h3"
-                weight="bold"
-                customStyle={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
-              >
-                {targetUserName}
-              </Typography>
+            <Title disabled={isDeletedTargetUser} onClick={handleClickTitle}>
+              {!isDeletedTargetUser && (
+                <UserAvatar
+                  src={targetUserImage || ''}
+                  width={32}
+                  height={32}
+                  isRound
+                  iconCustomStyle={{ width: 16, height: 16 }}
+                />
+              )}
+              <UserName variant="h3" weight="bold" disabled={isDeletedTargetUser}>
+                {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
+              </UserName>
             </Title>
             <IconBox onClick={handleClickMore}>
               <Icon name="MoreHorizFilled" />
@@ -152,7 +152,7 @@ const IconBox = styled.div`
   padding: 16px;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ disabled?: boolean }>`
   display: flex;
   justify-content: start;
   align-items: center;
@@ -162,7 +162,13 @@ const Title = styled.div`
   white-space: nowrap;
   padding: 16px 0;
   height: ${HEADER_HEIGHT}px;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+`;
+
+const UserName = styled(Typography)<{ disabled: boolean }>`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: ${({ disabled, theme: { palette } }) => disabled && palette.common.ui60};
 `;
 
 export default ChannelHeader;

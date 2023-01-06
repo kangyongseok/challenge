@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -30,9 +30,10 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent, getProductDetailUrl } from '@utils/common';
+import { checkAgent, getProductDetailUrl, needUpdateChatIOSVersion } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
+import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
 import useRedirectVC from '@hooks/useRedirectVC';
 
@@ -43,6 +44,7 @@ function Channels() {
   useRedirectVC('/channels');
 
   const channelPushPage = useRecoilValue(channelPushPageState);
+  const setDialogState = useSetRecoilState(dialogState);
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
@@ -77,7 +79,18 @@ function Channels() {
   useEffect(() => {
     const { channelId } = router.query;
 
-    if (channelId) {
+    if (needUpdateChatIOSVersion()) {
+      setDialogState({
+        type: 'requiredAppUpdateForChat',
+        customStyleTitle: { minWidth: 270 },
+        disabledOnClose: true,
+        firstButtonAction: () => {
+          window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
+            'itms-apps://itunes.apple.com/app/id1541101835'
+          );
+        }
+      });
+    } else if (channelId) {
       router.replace('/channels').then(() => {
         if (checkAgent.isIOSApp()) {
           window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
