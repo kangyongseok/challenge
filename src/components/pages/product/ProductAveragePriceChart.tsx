@@ -141,15 +141,13 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
       const suggestedMax = Number(((105 / 100) * Math.max(...slicedValues)).toFixed(1));
       const suggestedMin = Number(((95 / 100) * Math.min(...slicedValues)).toFixed(1));
       const stepSize = Number(((suggestedMax - suggestedMin) / 3).toFixed(0));
-      const previousMonth = Number(dayjs().format('M')) - 1;
-      const year = dayjs().format('YY년');
 
       setData({
         labels: [
-          `${year} ${previousMonth - 3}월`,
-          `${previousMonth - 2}월`,
-          `${previousMonth - 1}월`,
-          `${previousMonth}월`
+          `${dayjs().set('month', -4).format('YY년')} ${dayjs().set('month', -4).format('M')}월`,
+          `${dayjs().set('month', -3).format('M')}월`,
+          `${dayjs().set('month', -2).format('M')}월`,
+          `${dayjs().set('month', -1).format('M')}월`
         ],
         datasets: [
           {
