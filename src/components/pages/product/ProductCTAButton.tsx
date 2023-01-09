@@ -360,7 +360,8 @@ function ProductCTAButton({
         setDialogState({
           type: 'requiredAppUpdateForChat',
           customStyleTitle: { minWidth: 270 },
-          firstButtonAction: () => {
+          disabledOnClose: true,
+          secondButtonAction: () => {
             window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
               'itms-apps://itunes.apple.com/app/id1541101835'
             );
