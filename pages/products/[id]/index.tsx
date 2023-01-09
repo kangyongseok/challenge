@@ -50,7 +50,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchProduct } from '@api/product';
 import { fetchParentCategories } from '@api/category';
 
-import { SELLER_STATUS } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import {
@@ -58,7 +58,7 @@ import {
   LABELS,
   PRODUCT_SITE,
   PRODUCT_SOURCE,
-  PRODUCT_STATUS
+  productStatusCode
 } from '@constants/product';
 import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
 import { locales } from '@constants/common';
@@ -147,9 +147,7 @@ function ProductDetail() {
     };
   }, [chainPrice, data]);
 
-  const isNormalseller =
-    (data?.product.site.id === 34 || data?.product.productSeller.type === 4) &&
-    data?.product.productSeller.type !== 3;
+  const isNormalseller = data?.product.sellerType === productSellerType.normal;
 
   useEffect(() => {
     scrollEnable();
@@ -181,12 +179,9 @@ function ProductDetail() {
 
     return false;
   }, [data]);
+
   const soldout = useMemo(
-    () =>
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-      !(isDup && hasTarget) &&
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['4'] &&
-      PRODUCT_STATUS[data?.product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['8'],
+    () => data?.product.status === productStatusCode.soldOut && !(isDup && hasTarget),
     [data?.product.status, hasTarget, isDup]
   );
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
@@ -277,7 +272,7 @@ function ProductDetail() {
 
   const getProductImageOverlay = useCallback(
     ({ status, variant }: { status: number; variant?: TypographyVariant }) => {
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['0']) {
+      if (status === productStatusCode.sale) {
         return null;
       }
 
@@ -289,11 +284,11 @@ function ProductDetail() {
         );
       }
 
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']) {
+      if (status === productStatusCode.reservation) {
         return <ReservingOverlay variant={variant} />;
       }
 
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['8']) {
+      if (status === productStatusCode.hidden) {
         return <HideOverlay variant={variant} />;
       }
 

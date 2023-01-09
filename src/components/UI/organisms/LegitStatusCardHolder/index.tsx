@@ -37,15 +37,15 @@ export interface LegitStatusCardHolderProps {
 
 function getLegitResultLabel(result: 0 | 1 | 2 | 3) {
   if (result === 1) {
-    return <LegitLabel variant="authentic" text="정품의견" />;
+    return <LegitLabel text="정품의견" />;
   }
 
   if (result === 2) {
-    return <LegitLabel variant="fake" text="가품의심" />;
+    return <LegitLabel opinion="fake" text="가품의심" />;
   }
 
   if (result === 3) {
-    return <LegitLabel variant="impossible" text="감정불가" />;
+    return <LegitLabel opinion="impossible" text="감정불가" />;
   }
 
   return undefined;
@@ -245,7 +245,7 @@ function LegitStatusCardHolder({
           )}
           {!simplify && result === 2 && (
             <LegitLabel
-              variant="fake"
+              opinion="fake"
               text="가품의심"
               customStyle={{
                 position: 'absolute',
@@ -256,7 +256,7 @@ function LegitStatusCardHolder({
           )}
           {!simplify && result !== 1 && result !== 2 && (
             <LegitLabel
-              variant="impossible"
+              opinion="impossible"
               text="감정불가"
               customStyle={{
                 position: 'absolute',

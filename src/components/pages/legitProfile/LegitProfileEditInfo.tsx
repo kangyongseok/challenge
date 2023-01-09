@@ -25,7 +25,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT } from '@constants/common';
 
 import {
   checkAgent,
@@ -35,7 +35,7 @@ import {
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 interface LegitProfileEditInfoProps extends PutUserLegitProfileData {
   legitsBrands: LegitsBrand[];
@@ -54,7 +54,6 @@ function LegitProfileEditInfo({
   } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
 
   const { mutate: mutatePutLegitProfile, isLoading: isLoadingMutate } = useMutation(
     putLegitProfile,
@@ -81,18 +80,22 @@ function LegitProfileEditInfo({
     mutatePutLegitProfile(putLegitProfileParams);
   }, [isLoadingMutate, mutatePutLegitProfile, putLegitProfileParams]);
 
+  const appDownLoadDialog = useCallback(() => {
+    setDialogState({
+      type: 'featureIsMobileAppDown',
+      customStyleTitle: { minWidth: 311 },
+      secondButtonAction() {
+        handleClickAppDownload({});
+      }
+    });
+  }, [setDialogState]);
+
   const handleChangeImage = useCallback(
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
       if (!checkAgent.isMobileApp()) {
-        setToastState({
-          type: 'legitProfile',
-          status: 'disableUpload',
-          action() {
-            handleClickAppDownload({});
-          }
-        });
+        appDownLoadDialog();
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
@@ -158,7 +161,7 @@ function LegitProfileEditInfo({
         );
       }
     },
-    [isLoadingGetPhoto, isLoadingMutate, setDialogState, setToastState]
+    [appDownLoadDialog, isLoadingGetPhoto, isLoadingMutate, setDialogState]
   );
 
   useEffect(() => {
@@ -202,13 +205,15 @@ function LegitProfileEditInfo({
 
   return (
     <>
-      <Wrapper
-        backgroundImage={
-          putLegitProfileParams.imageBackground ||
-          `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-background.png`
-        }
-      >
-        <Blur />
+      <Wrapper>
+        <BackgroundImage
+          src={
+            putLegitProfileParams.imageBackground ||
+            `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-background.png`
+          }
+        >
+          <Blur />
+        </BackgroundImage>
         <Flexbox direction="vertical" gap={20} customStyle={{ flex: 1 }}>
           <Flexbox alignment="center" gap={18}>
             <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1 }}>
@@ -244,14 +249,19 @@ function LegitProfileEditInfo({
               </Flexbox>
             </Flexbox>
             <Box customStyle={{ position: 'relative' }} onClick={handleChangeImage(false)}>
+              {!putLegitProfileParams.image && (
+                <ProfileImageWrap>
+                  <Icon
+                    name="UserFilled"
+                    customStyle={{ width: 52, height: 52, color: common.ui80 }}
+                  />
+                </ProfileImageWrap>
+              )}
               {isLoadingGetPhoto && imageType === 'profile' ? (
                 <Skeleton width={80} height={80} round="50%" disableAspectRatio />
               ) : (
                 <Image
-                  src={
-                    putLegitProfileParams.image ||
-                    `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-image.png`
-                  }
+                  src={putLegitProfileParams.image}
                   alt="Legit Profile Img"
                   width={80}
                   height={80}
@@ -268,8 +278,8 @@ function LegitProfileEditInfo({
             <Typography variant="h4" weight="bold" customStyle={{ color: common.cmnW }}>
               한 줄 소개
             </Typography>
-            <Title>
-              <TextareaAutosize
+            <TextAreaWrap>
+              <AutoTextArea
                 placeholder={'한 줄 소개를 입력해주세요\n(명품 관련 주요 업무 경력, 감정 경력 등)'}
                 value={putLegitProfileParams.title}
                 onChange={(e) =>
@@ -283,7 +293,7 @@ function LegitProfileEditInfo({
               <TitleInfo variant="small2" weight="medium">
                 {`${putLegitProfileParams.title.length || 0}/ 100자`}
               </TitleInfo>
-            </Title>
+            </TextAreaWrap>
           </Flexbox>
         </Flexbox>
         <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 20, zIndex: 1 }}>
@@ -382,17 +392,35 @@ function LegitProfileEditInfo({
   );
 }
 
-const Wrapper = styled.section<{ backgroundImage: string }>`
+const ProfileImageWrap = styled(Flexbox)`
+  position: relative;
+  min-width: 80px;
+  min-height: 80px;
+  border-radius: 50%;
+  background: ${({ theme: { palette } }) => palette.common.bg03};
+`;
+
+const Wrapper = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 20px;
   user-select: none;
+  min-height: 520px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 56}px;
+  margin-top: -${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+`;
+
+const BackgroundImage = styled.div<{ src: string }>`
+  position: absolute;
+  width: 100%;
+  height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-image: url(${({ backgroundImage }) => backgroundImage});
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 20}px;
+  background-image: url(${({ src }) => src});
+  left: 0;
+  top: 0;
 `;
 
 const Blur = styled.div`
@@ -419,32 +447,32 @@ const IconBox = styled.div`
   padding: 8px;
 `;
 
-const Title = styled.div`
-  position: relative;
+// const Title = styled.div`
+//   position: relative;
 
-  textarea {
-    min-height: 168px;
-    width: 100%;
-    background-color: ${({ theme: { palette } }) => palette.common.bg01};
-    border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
-    border-radius: 8px;
-    padding: 12px 12px 24px;
-    resize: none;
-    color: ${({ theme: { palette } }) => palette.common.ui20};
+//   textarea {
+//     min-height: 168px;
+//     width: 100%;
+//     background-color: ${({ theme: { palette } }) => palette.common.bg01};
+//     border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
+//     border-radius: 8px;
+//     padding: 12px 12px 24px;
+//     resize: none;
+//     color: ${({ theme: { palette } }) => palette.common.ui20};
 
-    ${({ theme: { typography } }) => ({
-      fontSize: typography.h4.size,
-      fontWeight: typography.h4.weight.regular,
-      lineHeight: typography.h4.lineHeight,
-      letterSpacing: typography.h4.letterSpacing
-    })};
+//     ${({ theme: { typography } }) => ({
+//       fontSize: typography.h4.size,
+//       fontWeight: typography.h4.weight.regular,
+//       lineHeight: typography.h4.lineHeight,
+//       letterSpacing: typography.h4.letterSpacing
+//     })};
 
-    ::placeholder {
-      color: ${({ theme: { palette } }) => palette.common.ui80};
-      white-space: pre-wrap;
-    }
-  }
-`;
+//     ::placeholder {
+//       color: ${({ theme: { palette } }) => palette.common.ui80};
+//       white-space: pre-wrap;
+//     }
+//   }
+// `;
 
 const TitleInfo = styled(Typography)`
   display: inline-flex;
@@ -469,6 +497,36 @@ const ButtonBox = styled.div`
   padding: 20px;
   background-color: ${({ theme }) => theme.palette.common.bg03};
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+`;
+
+const TextAreaWrap = styled.div<{ ban?: boolean }>`
+  width: 100%;
+  height: 206px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common, secondary }
+      },
+      ban
+    }) => (ban ? secondary.red.light : common.line01)};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  font-weight: ${({ theme: { typography } }) => typography.h4.weight.regular};
+  font-size: ${({ theme: { typography } }) => typography.h4.size};
+`;
+
+const AutoTextArea = styled(TextareaAutosize)`
+  font-family: ${CAMEL_SUBSET_FONTFAMILY};
+  width: 100%;
+  min-height: 150px;
+  font-size: ${({ theme: { typography } }) => typography.h4};
+  line-height: 20px;
+  resize: none;
+  margin-bottom: 10px;
+  outline: none;
 `;
 
 export default LegitProfileEditInfo;

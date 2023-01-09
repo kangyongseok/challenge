@@ -61,18 +61,42 @@ export type Area = {
   values: AreaValues[];
   x: string;
   y: string;
+  isAreaOpen: boolean;
 };
 
 export type Gender = 'N' | 'M' | 'F' | 'E';
 
 export interface UserAgeAndGender {
-  age: number;
+  age: number; // 삭제예정
   gender: Gender;
   yearOfBirth?: string;
 }
 
+export interface MyUserInfoValue {
+  age: number; // 삭제예정
+  gender: Gender;
+  image: string;
+  imageBackground: string;
+  imageProfile: string;
+  isAreaOpen: boolean;
+  name: string;
+  nickName: string;
+  shopDescription: string;
+  yearOfBirth: number;
+}
+
+export type MyUserInfoInfo = {
+  value: MyUserInfoValue;
+};
+
 export type Info = {
   value: UserAgeAndGender;
+};
+
+export type UserInfoResultInfoValue = UserAgeAndGender;
+
+export type UserInfoResultInfo = {
+  value: UserInfoResultInfoValue;
 };
 
 export type Detail = {
@@ -95,6 +119,7 @@ export type PersonalStyle = {
   categories: Detail[];
   parentCategories: Detail[];
   personalBrands: Brand[];
+  // purchaseTypes: PurchaseTypes[];
   personalCategories: Category[];
   styles: Detail[];
   subParentCategories: Detail[];
@@ -118,7 +143,7 @@ export interface UserInfoResult {
     values: Area[];
   };
   dateUserHistoryViewed: string;
-  info: Info;
+  info: UserInfoResultInfo;
   maxMoney: number;
   personalRefreshCount: number;
   personalStyle: PersonalStyle;
@@ -212,20 +237,33 @@ export type SizeMappingCategory = Record<'bottom' | 'outer' | 'shoe' | 'top', Si
 
 export type SizeMapping = Record<'female' | 'male', SizeMappingCategory>;
 
+/**
+ * @param type 0: 수집매물, 1: 카멜내 판매자, 2: 인증판매자 3: 감정사 매물
+ */
 export type UserInfo = {
+  area: Area | null;
   curnScore: string;
-  maxScore: string;
+  displayProductCount: number;
   image: string;
+  imageBackground: string | null;
+  imageProfile: string | null;
+  maxScore: string;
   name: string;
+  nickName: string | null;
   productCount: number;
   reviewCount: number;
-  type: number;
+  shopDescription: string | null;
+  type: 0 | 1 | 2 | 3;
+  undisplayProductCount: number;
+  userRoleLegit: UserRoleLegit | null;
+  userRoleSeller: UserRoleSeller | null;
 };
 
 export type UserReview = {
   content: string;
-  creator: string;
   createUserId: number;
+  creator: string;
+  creatorType: 1 | 2; // 1: 판매자, 2: 구매자
   id: number;
   productId: number;
   reportType: number;
@@ -290,34 +328,37 @@ export type UserRoleSeller = {
 
 export type PageUserBlock = Paged<UserBlock>;
 
-/* ---------- Request Parameters ---------- */
-export interface CategoryWishesParams {
-  categoryIds?: number[];
-  deviceId?: string;
-  page?: number;
-  size?: number;
-  sort?: string[];
-  isLegitProduct?: boolean;
-  status?: number;
+export type UserActionBannerInfo = {
+  dateCreated: string;
+  dateUpdated: string;
+  event: 'ACTION_BANNER';
+  isDeleted: boolean;
+  name: string;
+};
+
+export interface MyUserInfo {
+  area: Area;
+  info: MyUserInfoInfo;
+  isCertifiedSeller: boolean;
+  maxMoney: number;
+  notProcessedLegitCount: number;
+  personalStyle: PersonalStyle;
+  roles: Role['name'][];
+  size: Size;
+  userActionBannerInfo: UserActionBannerInfo | null;
 }
 
-export interface AreaValues {
-  areaName: string;
+export type ChannelUser = {
+  channelId: number;
+  dateCreated: string;
+  dateUpdated: string;
   id: number;
-  isActive: boolean;
-}
-
-export interface ProductsAddParams {
-  productId: number;
-  deviceId?: string;
-}
-
-export type ProductsRemoveParams = ProductsAddParams;
-
-export interface UserSizeSuggestParams {
-  sizeType: number;
-  value: string;
-}
+  isDeleted: boolean;
+  isLeaved: boolean;
+  isNoti: boolean;
+  type: keyof typeof channelUserType; // 0: 구매자, 1: 판매자
+  user: User;
+};
 
 export interface UserHistory {
   dateTime: string;
@@ -404,7 +445,7 @@ export interface ProductKeywordsContent {
   sourceType: number;
 }
 
-export interface Pagetble {
+export interface Pageable {
   offset: number;
   pageNumber: number;
   pageSize: number;
@@ -424,7 +465,7 @@ export interface ProductKeywords {
   last: boolean;
   number: number;
   numberOfElements: number;
-  pageable: Pagetble;
+  pageable: Pageable;
   size: number;
   sort: {
     empty: true;
@@ -433,6 +474,50 @@ export interface ProductKeywords {
   };
   totalElements: number;
   totalPages: number;
+}
+
+export type PageUserReview = Paged<UserReview>;
+
+export type InvalidReason = {
+  param: 'NICKNAME' | 'SHOPDESCRIPTION' | 'LEGITTITLE';
+  result: string;
+  type: 'DUPLICATE' | 'BAN' | 'ADMIN';
+};
+
+export interface BanWordResponse {
+  invalidReasons: InvalidReason[] | null;
+  isValidLegitTitle: boolean;
+  isValidNickName: boolean;
+  isValidShopDescription: boolean;
+}
+
+/* ---------- Request Parameters ---------- */
+export interface CategoryWishesParams {
+  categoryIds?: number[];
+  deviceId?: string;
+  page?: number;
+  size?: number;
+  sort?: string[];
+  isLegitProduct?: boolean;
+  status?: number;
+}
+
+export interface AreaValues {
+  areaName: string;
+  id: number;
+  isActive: boolean;
+}
+
+export interface ProductsAddParams {
+  productId: number;
+  deviceId?: string;
+}
+
+export type ProductsRemoveParams = ProductsAddParams;
+
+export interface UserSizeSuggestParams {
+  sizeType: number;
+  value: string;
 }
 
 export interface AgeAndGenderParams {
@@ -456,7 +541,8 @@ export type PostAreaParams =
       name: string;
       x?: string;
       y?: string;
-    };
+    }
+  | { isAreaOpen: boolean };
 
 export interface PostStyleParams {
   styleIds?: number[];
@@ -482,10 +568,16 @@ export type PutUserLegitProfileData = {
   urlShop: string;
 };
 
-export interface PostAlarmData {
-  isAlarm: boolean;
-  isChannelNoti: boolean;
-}
+export type AlarmsParams = {
+  isNotiNotNight?: boolean;
+  isNotiEvent?: boolean;
+  isNotiChannel?: boolean;
+  isNotiProductList?: boolean;
+  isNotiProductWish?: boolean;
+  isNotiLegit?: boolean;
+  isNotiMyProductWish?: boolean;
+  dateIsNotiEventAgree?: string;
+};
 
 export interface ProductsByUserIdParams {
   userId: number;
@@ -495,8 +587,6 @@ export interface ProductsByUserIdParams {
 }
 
 export type UserReviewsByUserIdParams = ProductsByUserIdParams;
-
-export type PageUserReview = Paged<UserReview>;
 
 export interface UserBlockParams {
   page?: number;
@@ -517,14 +607,20 @@ export type PostReviewData = {
   userId: number;
 };
 
-export type ChannelUser = {
-  channelId: number;
-  dateCreated: string;
-  dateUpdated: string;
-  id: number;
-  isDeleted: boolean;
-  isLeaved: boolean;
-  isNoti: boolean;
-  type: keyof typeof channelUserType; // 0: 구매자, 1: 판매자
-  user: User;
+export type BanWordParams = {
+  legitTitle?: string;
+  nickName?: string;
+  shopDescription?: string;
 };
+
+export interface UpdateUserProfileData {
+  imageBackground?: string;
+  imageProfile?: string;
+  legitDescription?: string;
+  legitSubTitle?: string;
+  legitTargetBrandIds?: number[];
+  legitTitle?: string;
+  legitUrlShop?: string;
+  nickName?: string;
+  shopDescription?: string;
+}

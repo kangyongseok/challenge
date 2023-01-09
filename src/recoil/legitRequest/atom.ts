@@ -6,6 +6,10 @@ import type {
   PutProductLegitData
 } from '@dto/productLegit';
 
+import LocalStorage from '@library/localStorage';
+
+import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
+
 export const legitRequestState = atom({
   key: 'legitRequest/state',
   default: {
@@ -17,7 +21,25 @@ export const legitRequestState = atom({
     modelImage: '',
     isCompleted: false,
     isViewedSampleGuide: false
-  }
+  },
+  effects: [
+    ({ setSelf }) => {
+      const savedLegitRequestState = LocalStorage.get<{
+        state: {
+          brandId: number;
+          brandName: string;
+          brandLogo: string;
+          categoryId: number;
+          categoryName: string;
+          modelImage: string;
+          isCompleted: boolean;
+          isViewedSampleGuide: boolean;
+        };
+      }>(SAVED_LEGIT_REQUEST_STATE);
+
+      if (savedLegitRequestState) setSelf(savedLegitRequestState.state);
+    }
+  ]
 });
 
 export const legitRequestParamsState = atom<ProductLegitsParams>({
@@ -34,7 +56,16 @@ export const productLegitParamsState = atom<PostProductLegitData>({
     brandIds: [],
     categoryIds: [],
     photoGuideImages: []
-  }
+  },
+  effects: [
+    ({ setSelf }) => {
+      const savedLegitRequestParams = LocalStorage.get<{
+        params: PostProductLegitData;
+      }>(SAVED_LEGIT_REQUEST_STATE);
+
+      if (savedLegitRequestParams) setSelf(savedLegitRequestParams.params);
+    }
+  ]
 });
 
 export const productLegitEditParamsState = atom<PutProductLegitData>({

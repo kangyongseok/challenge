@@ -234,6 +234,8 @@ function ProductSellerBottomMenu({
       ...getAttProperty
     });
 
+    setUserShopSelectedProductState({ id: product?.id });
+
     setOpenDelete(({ type }) => ({
       type,
       open: true

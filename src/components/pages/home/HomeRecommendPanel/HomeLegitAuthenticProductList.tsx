@@ -6,8 +6,13 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Grid, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import ProductGridCardSkeleton from '@components/UI/molecules/Skeletons/ProductGridCardSkeleton';
-import { ProductGridCard } from '@components/UI/molecules';
+import {
+  LegitGridCard,
+  LegitGridCardSkeleton,
+  NewProductListCard,
+  ProductGridCard,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 import { LegitLabel } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
@@ -21,11 +26,13 @@ import { fetchLegit } from '@api/dashboard';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import { deviceIdState, toastState } from '@recoil/common';
+import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -52,6 +59,7 @@ function HomeLegitAuthenticProductList() {
       enabled: !!accessUser
     }
   );
+
   const { isLoading, data: { caseHistories = [] } = {} } = useQuery(
     queryKeys.dashboards.legit({ result: 1 }),
     () =>
@@ -208,31 +216,59 @@ function HomeLegitAuthenticProductList() {
                 >
                   👍
                 </Box>
-                <Flexbox direction="vertical" gap={20}>
-                  {userLegitTargets.map((product) => (
-                    <Flexbox
-                      gap={12}
-                      key={`home-recommend-legit-${product.id}`}
-                      onClick={() =>
-                        router.push(getProductDetailUrl({ type: 'productResult', product }))
-                      }
-                    >
-                      <ImageBox>
-                        <Image
-                          src={product.imageMain || product.imageThumbnail}
-                          alt="Recommend Legit Product Img"
-                        />
-                      </ImageBox>
-                      <Flexbox direction="vertical" gap={4}>
-                        <Title variant="body2" weight="medium">
-                          {product.title}
-                        </Title>
-                        <Typography variant="h4" weight="bold">
-                          {`${commaNumber(getTenThousandUnitPrice(product.price || 0))}만원`}
-                        </Typography>
+                <Flexbox direction="vertical" gap={12}>
+                  <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+                    {userLegitTargets.map((product) => (
+                      <NewProductListCard
+                        key={`home-recommend-legit-${product.id}`}
+                        variant="listB"
+                        product={product}
+                        hideLabel
+                        hideAreaInfo
+                        hideMetaInfo
+                        hideWishButton
+                      />
+                    ))}
+                  </ABTestGroup>
+                  <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+                    {userLegitTargets.map((product) => (
+                      <NewProductListCard
+                        key={`home-recommend-legit-${product.id}`}
+                        variant="listB"
+                        product={product}
+                        hideLabel
+                        hideAreaInfo
+                        hideMetaInfo
+                        hideWishButton
+                      />
+                    ))}
+                  </ABTestGroup>
+                  <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+                    {userLegitTargets.map((product) => (
+                      <Flexbox
+                        gap={12}
+                        key={`home-recommend-legit-${product.id}`}
+                        onClick={() =>
+                          router.push(getProductDetailUrl({ type: 'productResult', product }))
+                        }
+                      >
+                        <ImageBox>
+                          <Image
+                            src={product.imageMain || product.imageThumbnail}
+                            alt="Recommend Legit Product Img"
+                          />
+                        </ImageBox>
+                        <Flexbox direction="vertical" gap={4}>
+                          <Title variant="body2" weight="medium">
+                            {product.title}
+                          </Title>
+                          <Typography variant="h4" weight="bold">
+                            {`${commaNumber(getTenThousandUnitPrice(product.price || 0))}만원`}
+                          </Typography>
+                        </Flexbox>
                       </Flexbox>
-                    </Flexbox>
-                  ))}
+                    ))}
+                  </ABTestGroup>
                 </Flexbox>
                 <Button
                   variant="solid"
@@ -261,43 +297,100 @@ function HomeLegitAuthenticProductList() {
         >
           전문가들이 정품의견을 주었어요 🔍
         </Typography>
-        <Grid container columnGap={16} rowGap={48} customStyle={{ padding: '0 20px' }}>
-          {isLoading &&
-            Array.from({ length: 8 }).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
-                <ProductGridCardSkeleton
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`home-authentic-product-skeleton-${index}`}
-                  isRound
-                />
-              </Grid>
-            ))}
-          {!isLoading &&
-            caseHistories.map(({ productResult, legitOpinions }) => (
-              <Grid key={`home-authentic-product-${productResult.id}`} item xs={2}>
-                <ProductGridCard
-                  product={productResult}
-                  hidePrice
-                  hideAreaWithDateInfo
-                  hideProductLabel
-                  hidePlatformLogo
-                  hideWishButton
-                  hideOverlay
-                  isRound
-                  compact
-                  onClick={handleClickCard(productResult)}
-                  customLabel={
-                    <LegitLabel
-                      text={`정품의견 ${commaNumber(
-                        legitOpinions.filter(({ result }) => result === 1).length
-                      )} 개`}
-                      customStyle={{ width: 'fit-content', marginTop: 4 }}
-                    />
-                  }
-                />
-              </Grid>
-            ))}
+        <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 20px' }}>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+            {isLoading &&
+              Array.from({ length: 8 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
+                  <LegitGridCardSkeleton variant="gridB" isRound />
+                </Grid>
+              ))}
+            {!isLoading &&
+              caseHistories.map(({ productResult, result, status, legitOpinions }) => (
+                <Grid key={`home-authentic-product-${productResult.id}`} item xs={2}>
+                  <LegitGridCard
+                    variant="gridB"
+                    product={productResult}
+                    result={result}
+                    resultCount={
+                      legitOpinions.filter(({ result: opinionResult }) => result === opinionResult)
+                        .length
+                    }
+                    status={status}
+                    isRound
+                    onClick={handleClickCard(productResult)}
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+            {isLoading &&
+              Array.from({ length: 8 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
+                  <LegitGridCardSkeleton variant="gridB" isRound />
+                </Grid>
+              ))}
+            {!isLoading &&
+              caseHistories.map(({ productResult, result, status, legitOpinions }) => (
+                <Grid key={`home-authentic-product-${productResult.id}`} item xs={2}>
+                  <LegitGridCard
+                    variant="gridB"
+                    product={productResult}
+                    result={result}
+                    resultCount={
+                      legitOpinions.filter(({ result: opinionResult }) => result === opinionResult)
+                        .length
+                    }
+                    status={status}
+                    isRound
+                    onClick={handleClickCard(productResult)}
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+            {isLoading &&
+              Array.from({ length: 8 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
+                  <ProductGridCardSkeleton
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`home-authentic-product-skeleton-${index}`}
+                    isRound
+                    compact
+                    hasAreaWithDateInfo={false}
+                    hasMetaInfo={false}
+                  />
+                </Grid>
+              ))}
+            {!isLoading &&
+              caseHistories.map(({ productResult, legitOpinions }) => (
+                <Grid key={`home-authentic-product-${productResult.id}`} item xs={2}>
+                  <ProductGridCard
+                    product={productResult}
+                    hidePrice
+                    hideAreaWithDateInfo
+                    hideProductLabel
+                    hidePlatformLogo
+                    hideWishButton
+                    hideOverlay
+                    isRound
+                    compact
+                    onClick={handleClickCard(productResult)}
+                    customLabel={
+                      <LegitLabel
+                        text={`정품의견 ${commaNumber(
+                          legitOpinions.filter(({ result }) => result === 1).length
+                        )} 개`}
+                        customStyle={{ width: 'fit-content', marginTop: 4 }}
+                      />
+                    }
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
         </Grid>
       </Box>
       <BottomSheet disableSwipeable open={open} onClose={() => setOpen(false)}>

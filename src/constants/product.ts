@@ -140,6 +140,7 @@ export const LABELS = {
   ]
 };
 
+// 제거 대상 productStatusCode 로 대체 예정
 export const PRODUCT_STATUS = {
   0: '진열',
   1: '미진열',
@@ -150,6 +151,17 @@ export const PRODUCT_STATUS = {
   // 6: '지난글',
   // 7: '감정중',
   8: '숨김'
+};
+
+export const productStatusCode = {
+  sale: 0,
+  soldOut: 1,
+  duplicate: 2,
+  deleted: 3,
+  reservation: 4,
+  underPrice: 5,
+  oldProductSixMonth: 6,
+  hidden: 8
 };
 
 export const VIEW_PRODUCT_STATUS = {

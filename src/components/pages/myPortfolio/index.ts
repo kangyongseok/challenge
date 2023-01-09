@@ -6,6 +6,5 @@ export { default as MyPortfolioLanding05 } from './MyPortfolioLanding05';
 export { default as MyPortfolioLanding06 } from './MyPortfolioLanding06';
 export { default as MyPortfolioLanding07 } from './MyPortfolioLanding07';
 export { default as MyPortfolioNoneMemberReservationDialog } from './MyPortfolioNoneMemberReservationDialog';
-export { default as MyPortfolioCommonBanner } from './MyPortfolioCommonBanner';
 export { default as MyPotyfolioDialog } from './MyPotyfolioDialog';
 export { default as MyPortfolioPagenation } from './MyPortfolioPagenation';

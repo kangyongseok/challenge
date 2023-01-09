@@ -36,12 +36,10 @@ export const Title = styled.div<{ show: boolean; customHeight?: number }>`
 
 export const IconBox = styled.div<{
   show: boolean;
-  disablePadding?: 'top' | 'bottom' | 'left' | 'right';
 }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ disablePadding }) => disablePadding && `padding-${disablePadding}: 0`};
   cursor: pointer;
 
   ${({ show }) =>

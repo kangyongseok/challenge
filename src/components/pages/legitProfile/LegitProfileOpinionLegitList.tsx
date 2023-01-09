@@ -7,6 +7,8 @@ import { Box, Chip, Flexbox, Icon, Image, Label, Skeleton, Typography, useTheme 
 import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import Gap from '@components/UI/atoms/Gap';
+
 import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
@@ -34,7 +36,7 @@ const legitFilters = [
   { result: 2, status: 30, label: '가품의심' }
 ];
 
-const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinionLegitListProps>(
+const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpinionLegitListProps>(
   function LegitProfileOpinionLegitList({ userId, customStyle }, ref) {
     const router = useRouter();
     const {
@@ -154,28 +156,13 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     return (
-      <Wrapper
-        ref={ref}
-        css={!isLoading && legitProducts.length === 0 ? { ...customStyle, flex: 1 } : customStyle}
-      >
-        {isLoading && (
-          <Flexbox
-            gap={8}
-            customStyle={{
-              marginBottom: 20
-            }}
-          >
-            <Skeleton width={71.36} height={36} round={8} disableAspectRatio />
-            <Skeleton width={71.36} height={36} round={8} disableAspectRatio />
-          </Flexbox>
-        )}
-        {!isLoading && legitProducts.length > 0 && (
-          <Flexbox
-            gap={8}
-            customStyle={{
-              marginBottom: 20
-            }}
-          >
+      <Box component="section">
+        <Gap height={8} />
+        <Wrapper
+          ref={ref}
+          css={!isLoading && legitProducts.length === 0 ? { ...customStyle, flex: 1 } : customStyle}
+        >
+          <Flexbox gap={8} customStyle={{ marginBottom: 20 }}>
             {legitFilters.map(({ label, result, status }) => (
               <Chip
                 key={`legit-select-label-${label}`}
@@ -190,160 +177,145 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLElement, LegitProfileOpinion
               </Chip>
             ))}
           </Flexbox>
-        )}
-        {isLoading && (
           <Flexbox direction="vertical" gap={20}>
-            {Array.from({ length: 16 }).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={12}>
-                <Skeleton width={100} height={100} round={8} disableAspectRatio />
-                <Box customStyle={{ flexGrow: 1 }}>
-                  <Skeleton width={58} height={18} round={8} disableAspectRatio />
-                  <Skeleton
-                    width="100%"
-                    maxWidth={220}
-                    height={16}
-                    round={8}
-                    disableAspectRatio
-                    customStyle={{ marginTop: 4 }}
-                  />
-                  <Skeleton
-                    width="100%"
-                    maxWidth={220}
-                    height={24}
-                    round={8}
-                    disableAspectRatio
-                    customStyle={{ marginTop: 8 }}
-                  />
-                </Box>
-              </Flexbox>
-            ))}
-          </Flexbox>
-        )}
-        {!isLoading && (
-          <Flexbox direction="vertical" gap={20}>
-            {legitProducts.map(({ productId, productResult, status, legitOpinions = [] }) => {
-              const { result: opinionResult, description } =
-                legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
-
-              return (
-                <Flexbox
-                  key={`user-legit-opinion-${productId}`}
-                  gap={12}
-                  onClick={handleClickProduct({ product: productResult })}
-                >
-                  <Box customStyle={{ minWidth: 100, maxWidth: 100, height: 100 }}>
-                    <Image
-                      src={productResult.imageThumbnail || productResult.imageMain}
-                      alt="User Legit Product Img"
+            {isLoading &&
+              Array.from({ length: 16 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={12}>
+                  <Skeleton width={100} height={100} round={8} disableAspectRatio />
+                  <Box customStyle={{ flexGrow: 1 }}>
+                    <Skeleton width={58} height={18} round={8} disableAspectRatio />
+                    <Skeleton
+                      width="100%"
+                      maxWidth={220}
+                      height={16}
                       round={8}
-                      disableOnBackground={false}
+                      disableAspectRatio
+                      customStyle={{ marginTop: 4 }}
+                    />
+                    <Skeleton
+                      width="100%"
+                      maxWidth={220}
+                      height={24}
+                      round={8}
+                      disableAspectRatio
+                      customStyle={{ marginTop: 8 }}
                     />
                   </Box>
-                  <div>
-                    {status === 30 && opinionResult === 1 && (
-                      <Label
-                        variant="darked"
-                        text={
-                          <Flexbox alignment="center" gap={2}>
-                            <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
-                            <Typography
-                              variant="small2"
-                              weight="medium"
-                              customStyle={{
-                                color: common.cmnW
-                              }}
-                            >
-                              정품의견
-                            </Typography>
-                          </Flexbox>
-                        }
-                        size="xsmall"
-                      />
-                    )}
-                    {status === 30 && opinionResult === 2 && (
-                      <Label
-                        variant="darked"
-                        brandColor="red"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        text={
-                          <Flexbox alignment="center" gap={2}>
-                            <Icon name="OpinionFakeOutlined" width={12} height={12} />
-                            <Typography
-                              variant="small2"
-                              weight="medium"
-                              customStyle={{
-                                color: common.cmnW
-                              }}
-                            >
-                              가품의심
-                            </Typography>
-                          </Flexbox>
-                        }
-                        size="xsmall"
-                      />
-                    )}
-                    {status === 20 && (
-                      <Label
-                        variant="solid"
-                        brandColor="black"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        text={
-                          <Flexbox alignment="center" gap={2}>
-                            <Icon name="OpinionImpossibleOutlined" width={12} height={12} />
-                            <Typography
-                              variant="small2"
-                              weight="medium"
-                              customStyle={{
-                                color: common.cmnW
-                              }}
-                            >
-                              감정중
-                            </Typography>
-                          </Flexbox>
-                        }
-                        size="xsmall"
-                      />
-                    )}
-                    <Typography variant="body2" weight="medium" customStyle={{ marginTop: 4 }}>
-                      {productResult.title}
-                    </Typography>
-                    <Description variant="small2" weight="medium">
-                      {description}
-                    </Description>
-                  </div>
                 </Flexbox>
-              );
-            })}
+              ))}
+            {!isLoading &&
+              legitProducts.map(({ productId, productResult, status, legitOpinions = [] }) => {
+                const { result: opinionResult, description } =
+                  legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
+
+                return (
+                  <Flexbox
+                    key={`user-legit-opinion-${productId}`}
+                    gap={12}
+                    onClick={handleClickProduct({ product: productResult })}
+                  >
+                    <Box customStyle={{ minWidth: 100, maxWidth: 100, height: 100 }}>
+                      <Image
+                        src={productResult.imageThumbnail || productResult.imageMain}
+                        alt="User Legit Product Img"
+                        round={8}
+                        disableOnBackground={false}
+                      />
+                    </Box>
+                    <div>
+                      {status === 30 && opinionResult === 1 && (
+                        <Label
+                          variant="darked"
+                          text={
+                            <Flexbox alignment="center" gap={2}>
+                              <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
+                              <Typography
+                                variant="small2"
+                                weight="medium"
+                                customStyle={{
+                                  color: common.cmnW
+                                }}
+                              >
+                                정품의견
+                              </Typography>
+                            </Flexbox>
+                          }
+                          size="xsmall"
+                        />
+                      )}
+                      {status === 30 && opinionResult === 2 && (
+                        <Label
+                          variant="darked"
+                          brandColor="red"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          text={
+                            <Flexbox alignment="center" gap={2}>
+                              <Icon name="OpinionFakeOutlined" width={12} height={12} />
+                              <Typography
+                                variant="small2"
+                                weight="medium"
+                                customStyle={{
+                                  color: common.cmnW
+                                }}
+                              >
+                                가품의심
+                              </Typography>
+                            </Flexbox>
+                          }
+                          size="xsmall"
+                        />
+                      )}
+                      {status === 20 && (
+                        <Label
+                          variant="solid"
+                          brandColor="black"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          text={
+                            <Flexbox alignment="center" gap={2}>
+                              <Icon name="OpinionImpossibleOutlined" width={12} height={12} />
+                              <Typography
+                                variant="small2"
+                                weight="medium"
+                                customStyle={{
+                                  color: common.cmnW
+                                }}
+                              >
+                                감정중
+                              </Typography>
+                            </Flexbox>
+                          }
+                          size="xsmall"
+                        />
+                      )}
+                      <Typography variant="body2" weight="medium" customStyle={{ marginTop: 4 }}>
+                        {productResult.title}
+                      </Typography>
+                      <Description variant="small2" weight="medium">
+                        {description}
+                      </Description>
+                    </div>
+                  </Flexbox>
+                );
+              })}
           </Flexbox>
-        )}
-        {!isLoading && legitProducts.length === 0 && (
-          <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: 52 }}>
-            <Flexbox direction="vertical" gap={20}>
-              <Box
-                customStyle={{
-                  textAlign: 'center',
-                  height: 52,
-                  fontSize: 52
-                }}
-              >
-                🕵️‍♂️
-              </Box>
-              <Typography variant="h3" weight="bold" customStyle={{ color: common.ui80 }}>
+          {!isLoading && legitProducts.length === 0 && (
+            <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: 52 }}>
+              <Typography variant="h2" weight="bold" customStyle={{ color: common.ui80 }}>
                 감정이력이 없습니다.
               </Typography>
             </Flexbox>
-          </Flexbox>
-        )}
-      </Wrapper>
+          )}
+        </Wrapper>
+      </Box>
     );
   }
 );
 
-const Wrapper = styled.section`
-  padding: 32px 20px;
+const Wrapper = styled.div`
+  padding: 32px 20px 35px;
   background-color: ${({ theme }) => theme.palette.common.cmnW};
   z-index: 2;
 `;

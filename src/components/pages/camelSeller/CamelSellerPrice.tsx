@@ -17,6 +17,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchProduct, fetchSearchHistory } from '@api/product';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
@@ -298,7 +299,7 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
                 <Image
                   disableAspectRatio
                   src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                    product.productSeller.type === 4 || product.site.id === 34
+                    product.sellerType === productSellerType.normal
                       ? IMG_CAMEL_PLATFORM_NUMBER
                       : product.site.id
                   }.png`}

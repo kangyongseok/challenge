@@ -117,7 +117,7 @@ function ProductSellerReviews({
         </Flexbox>
         {reviewInfo?.curnScore && (
           <Flexbox alignment="center" gap={2}>
-            <Icon name="StarFilled" customStyle={{ color: '#FEB700' }} size="medium" />
+            <Icon name="StarFilled" customStyle={{ color: '#FFD911' }} size="medium" />
             <Typography variant="h4" weight="bold" customStyle={{ color: common.ui20 }}>
               {`${
                 reviewInfo.curnScore.length > 1

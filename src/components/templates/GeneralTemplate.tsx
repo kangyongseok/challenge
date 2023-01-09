@@ -59,8 +59,6 @@ function GeneralTemplate({
     <Wrapper
       subset={subset}
       css={{
-        position: 'relative',
-        transition: 'padding-top 0.5s',
         paddingTop: paddingTopParser(),
         ...customStyle
       }}
@@ -78,6 +76,7 @@ function GeneralTemplate({
 }
 
 const Wrapper = styled.div<{ subset?: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -88,6 +87,7 @@ const Wrapper = styled.div<{ subset?: boolean }>`
     }
   }) => common.bg01};
   font-family: ${({ subset }) => (subset ? CAMEL_SUBSET_FONTFAMILY : 'inherit')};
+  transition: padding-top 0.5s;
 `;
 
 const Content = styled.main<{ disablePadding: boolean }>`

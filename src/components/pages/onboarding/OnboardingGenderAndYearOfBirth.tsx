@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 
 import GenderYearInput from '@components/UI/organisms/GenderYearInput';
@@ -25,11 +25,6 @@ import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
 function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const [genderValue, setGenderValue] = useState<'F' | 'M' | null>(null);
   const { data: accessUser } = useQueryAccessUser();
   const [yearOfBirthValue, setYearOfBirthValue] = useState('');
@@ -126,14 +121,16 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
   }, 500);
 
   return (
-    <>
-      <Box customStyle={{ padding: 32, background: common.uiWhite, height: '100%' }}>
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite, height: '100%' }}>
         <OnboardingStep />
         <Box customStyle={{ marginTop: 50 }}>
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             성별과 나이를 알려주세요!
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>인기매물을 추천해드릴게요</Typography>
+          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
+            인기매물을 추천해드릴게요
+          </Typography>
         </Box>
         <GenderYearInput
           onClickGender={handleclickGender}
@@ -144,7 +141,7 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
       <OnboardingBottomCTA disabled={!genderValue || !yearOfBirthValue} onClick={handleClickNext}>
         다음
       </OnboardingBottomCTA>
-    </>
+    </ThemeProvider>
   );
 }
 

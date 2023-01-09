@@ -1,26 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { QueryClient, dehydrate } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 
 import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation, CamelSellerFloatingButton, Header } from '@components/UI/molecules';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  MypageActionBanner,
   MypageEtc,
   MypageIntro,
-  MypageQnA,
-  MypageSetting,
-  MypageUserInfo,
-  MypageUserShopCard,
-  MypageWelcome
+  MypageLegitInfo,
+  MypageMyInfo,
+  MypageProfile,
+  MypageSetting
 } from '@components/pages/mypage';
 
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
+import { fetchMyUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
@@ -29,20 +30,14 @@ import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MyPage() {
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: myUserInfo } = useQueryMyUserInfo();
   const { data: accessUser } = useQueryAccessUser();
-  const [authProductSeller, setAuthProductSeller] = useState(false);
-
-  useEffect(() => {
-    if (accessUser) {
-      setAuthProductSeller(true);
-    } else {
-      setAuthProductSeller(false);
-    }
-  }, [accessUser, userInfo]);
+  const authLegit =
+    myUserInfo?.roles.includes('PRODUCT_LEGIT') || myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD');
 
   useEffect(() => {
     logEvent(attrKeys.mypage.VIEW_MY, {
@@ -51,7 +46,7 @@ function MyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!accessUser || !userInfo) {
+  if (!accessUser) {
     return (
       <GeneralTemplate header={<Header isFixed={false} />} footer={<BottomNavigation />}>
         <MypageIntro />
@@ -61,12 +56,24 @@ function MyPage() {
 
   return (
     <>
-      <GeneralTemplate header={<Header isFixed={false} />} footer={<BottomNavigation />}>
-        <MypageWelcome />
-        {authProductSeller && <MypageUserShopCard />}
-        <MypageUserInfo />
-        <MypageSetting data={userInfo?.alarm} />
-        <MypageQnA />
+      <GeneralTemplate
+        header={<Header isFixed={false} />}
+        footer={<BottomNavigation />}
+        disablePadding
+        customStyle={{ userSelect: 'none', footer: { marginTop: 0 } }}
+      >
+        <MypageProfile />
+        <MypageActionBanner />
+        {authLegit && (
+          <>
+            <MypageLegitInfo />
+            <Gap height={1} />
+          </>
+        )}
+        <MypageMyInfo />
+        <Gap height={1} />
+        <MypageSetting />
+        <Gap height={1} />
         <MypageEtc />
       </GeneralTemplate>
       <LegitInduceFloatingBanner
@@ -93,7 +100,7 @@ export async function getServerSideProps({
   Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    await queryClient.prefetchQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo);
   }
 
   return {

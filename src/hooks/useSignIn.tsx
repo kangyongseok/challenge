@@ -403,8 +403,8 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
     window.getAuthPush = (result: boolean) => {
       if (result) {
         mutatePostAlarm({
-          isAlarm: true,
-          isChannelNoti: true
+          isNotiEvent: true,
+          isNotiChannel: true
         });
       }
     };

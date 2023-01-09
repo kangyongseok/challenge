@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-const NEXT_IMAGE_BLUR_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
+
 interface UserInfoProfileProps {
   show: boolean;
   userName: string;
@@ -71,21 +71,29 @@ function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: Use
         {userName}
       </Typography>
       {!!curnScore && !!maxScore && (
-        <Flexbox alignment="center">
-          {Array.from({ length: 5 }, (_, index) => (
-            <Icon
-              key={`rating-star-${index}`}
-              name="StarFilled"
-              width={16}
-              height={16}
-              customStyle={{
-                color:
-                  index < (maxScore === 10 ? Math.floor(curnScore / 2) : curnScore)
-                    ? '#FEB700'
-                    : common.bg02
-              }}
-            />
-          ))}
+        <Flexbox alignment="center" justifyContent="center" gap={1}>
+          {Array.from({ length: 5 }, (_, index) => {
+            return index <
+              (maxScore === 10 ? Math.floor(Number(curnScore) / 2) : Number(curnScore)) ? (
+              <Icon
+                name="StarFilled"
+                width={16}
+                height={16}
+                customStyle={{
+                  color: '#FFD911'
+                }}
+              />
+            ) : (
+              <Icon
+                name="StarOutlined"
+                width={16}
+                height={16}
+                customStyle={{
+                  color: '#FFD911'
+                }}
+              />
+            );
+          })}
         </Flexbox>
       )}
     </Flexbox>

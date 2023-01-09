@@ -204,7 +204,6 @@ const Card = styled.div<{ isLoading?: boolean; url?: string }>`
   row-gap: 32px;
   flex-direction: column;
   padding: 32px 20px 20px;
-  min-width: 335px;
   border-radius: 8px;
   background-color: ${({ theme: { palette } }) => palette.common.bg03};
 `;

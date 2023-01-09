@@ -74,8 +74,9 @@ export type ProductDealInfo = {
 export type ABTestTask = {
   name: string;
   slot: 'test_type_01' | 'test_type_02';
-  postfix: Record<Exclude<ABTestBelong, null>, string | number | null>;
-  ratio: Record<Exclude<ABTestBelong, null>, number>;
+  postfix: Record<Exclude<ABTestBelong, null>, string | number | null> &
+    Partial<Record<'C', string | number | null>>;
+  ratio: Record<Exclude<ABTestBelong, null>, number> & Partial<Record<'C', number>>;
   running: boolean;
   defaultBelong: Exclude<ABTestBelong, null>;
 };
@@ -83,6 +84,7 @@ export type ABTestTask = {
 export type ABTestBelong = 'A' | 'B' | null;
 
 export type ToastType =
+  | 'common'
   | 'productsKeyword'
   | 'mapFilter'
   | 'product'
@@ -143,7 +145,14 @@ export type ToastStatus =
   | 'report'
   | 'createFail'
   | 'successSendReview'
-  | 'disabledMakeAppointment';
+  | 'disabledMakeAppointment'
+  | 'overLimitText'
+  | 'duplicatedNickName'
+  | 'invalidBanWord'
+  | 'invalidAdminWord'
+  | 'disableImageUpload'
+  | 'savedProfileImage'
+  | 'savedBackgroundImage';
 
 export type DialogType =
   | 'SNSShare'
@@ -157,6 +166,8 @@ export type DialogType =
   | 'legitRequestOnlyInIOS'
   | 'legitServiceNotice'
   | 'appUpdateNotice'
+  | 'appAuthCheck'
+  | 'legitPhotoGuide'
   | 'unblockBlockedUser'
   | 'leaveChannel'
   | 'blockUser'
@@ -166,8 +177,9 @@ export type DialogType =
   | 'requiredAppUpdateForChat'
   | 'loginError'
   | 'loginProviderError'
-  | 'legitPhotoGuide'
-  | 'appAuthCheck';
+  | 'deleteAccount'
+  | 'featureIsMobileAppDown'
+  | 'leaveEditProfile';
 
 export type ShareData = {
   title: string;
@@ -197,3 +209,6 @@ export interface HomeSeasonBannerData {
   pathname: string;
   backgroundColor: string;
 }
+
+export type ProductGridCardVariant = 'gridA' | 'gridB' | 'gridC' | 'swipeX';
+export type ProductListCardVariant = 'listA' | 'listB';

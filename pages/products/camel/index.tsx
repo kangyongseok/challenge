@@ -1,5 +1,5 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetStaticPropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
@@ -16,8 +16,12 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
+
+import { getCookies } from '@utils/cookies';
 
 function CamelProducts() {
   return (
@@ -42,10 +46,12 @@ function CamelProducts() {
   );
 }
 
-export async function getStaticProps({
+export async function getServerSideProps({
+  req,
   locale,
   defaultLocale = locales.ko.lng
-}: GetStaticPropsContext) {
+}: GetServerSidePropsContext) {
+  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
   return {
     props: {
       ...(await serverSideTranslations(locale || defaultLocale))

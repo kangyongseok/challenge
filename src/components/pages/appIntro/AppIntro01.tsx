@@ -77,7 +77,7 @@ const AnimationArea = styled.div`
 const AnimationItem = styled(Image)<{ index: number }>`
   position: absolute;
   animation: innerBox 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-  animation-delay: ${({ index }) => index - 0.95 * index + 2}s;
+  animation-delay: ${({ index }) => index - 0.95 * index + 1}s;
   @keyframes innerBox {
     100% {
       top: 150px;

@@ -174,9 +174,9 @@ function App({ Component, pageProps }: AppProps) {
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
       <QueryClientProvider client={queryClient.current}>
-        <RecoilRoot>
-          <ThemeModeProvider>
-            <Hydrate state={pageProps.dehydratedState}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <RecoilRoot>
+            <ThemeModeProvider>
               <ErrorBoundary>
                 <HistoryProvider>
                   <PageSkeleton />
@@ -200,9 +200,9 @@ function App({ Component, pageProps }: AppProps) {
                   {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
               </ErrorBoundary>
-            </Hydrate>
-          </ThemeModeProvider>
-        </RecoilRoot>
+            </ThemeModeProvider>
+          </RecoilRoot>
+        </Hydrate>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>

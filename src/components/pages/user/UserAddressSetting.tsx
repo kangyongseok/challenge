@@ -3,23 +3,23 @@ import type { Dispatch, FocusEvent, SetStateAction } from 'react';
 import type { Address } from 'react-daum-postcode';
 import DaumPostcode from 'react-daum-postcode';
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
+import { Box, Icon, Typography } from 'mrcamel-ui';
+import styled from '@emotion/styled';
+
+import SearchBar from '@components/UI/molecules/SearchBar';
 
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import UserAddressDisplay from './UserAddressDisplay';
-
 interface UserAddressSettingProps {
+  isSearchMode: boolean;
   address: string;
-  recentAddresses: string[];
   setAddress: Dispatch<SetStateAction<string>>;
 }
 
-function UserAddressSetting({ address, setAddress, recentAddresses }: UserAddressSettingProps) {
+function UserAddressSetting({ isSearchMode, address, setAddress }: UserAddressSettingProps) {
   const router = useRouter();
-  const searchMode = router.query.searchMode === 'true';
 
   const handleFocusSearchBar = (e: FocusEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -43,40 +43,64 @@ function UserAddressSetting({ address, setAddress, recentAddresses }: UserAddres
   };
 
   return (
-    <Box
-      component="section"
-      customStyle={{
-        marginTop: 32
-      }}
-    >
-      <Box
-        customStyle={{
-          marginTop: 24
-        }}
-      >
-        {searchMode ? (
-          <Box customStyle={{ height: 470 }} key="UserAddressSearch">
-            <DaumPostcode
-              onComplete={handleComplete}
-              theme={{ bgColor: '#ffffff' }}
-              hideMapBtn
-              submitMode={false}
-              shorthand={false}
-              maxSuggestItems={5}
-              style={{ height: '100%' }}
-            />
-          </Box>
-        ) : (
-          <UserAddressDisplay
-            address={address}
-            setAddress={setAddress}
-            recentAddresses={recentAddresses}
-            onFocusSearchBar={handleFocusSearchBar}
+    <Box component="section">
+      {isSearchMode ? (
+        <Box customStyle={{ height: 470 }} key="UserAddressSearch">
+          <DaumPostcode
+            onComplete={handleComplete}
+            theme={{ bgColor: '#ffffff' }}
+            hideMapBtn
+            submitMode={false}
+            shorthand={false}
+            maxSuggestItems={5}
+            style={{ height: '100%' }}
           />
-        )}
-      </Box>
+        </Box>
+      ) : (
+        <>
+          <SearchBar
+            fullWidth
+            placeholder="카멜구 혹은 카멜동12-3"
+            onFocus={handleFocusSearchBar}
+            startAdornment={
+              <Icon name="SearchOutlined" color="black" customStyle={{ width: 20, height: 20 }} />
+            }
+            customStyle={{
+              '& > div': { padding: 0, zIndex: 0 },
+              '& > div > div': { height: 48, gap: 8 }
+            }}
+          />
+          {address === '' ? (
+            <Typography
+              variant="h1"
+              weight="bold"
+              customStyle={{ padding: '84px 0', textAlign: 'center' }}
+            >
+              📍
+              <br />
+              아직 설정하신
+              <br />
+              위치가 없어요.
+            </Typography>
+          ) : (
+            <Address variant="h1" weight="bold">
+              {address
+                .split(' ')
+                .map((districtName) => districtName)
+                .join('\n')}
+            </Address>
+          )}
+        </>
+      )}
     </Box>
   );
 }
+
+const Address = styled(Typography)`
+  padding: 52px 0 84px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  text-align: center;
+`;
 
 export default UserAddressSetting;

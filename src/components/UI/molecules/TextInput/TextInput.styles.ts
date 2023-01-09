@@ -21,6 +21,13 @@ export const Wrapper = styled.div<TextInputProps>`
   padding: 16px 20px;
   margin: 0;
   border: 0;
+  b {
+    color: ${({
+      theme: {
+        palette: { secondary }
+      }
+    }) => secondary.red.light};
+  }
   color: ${({
     theme: {
       palette: { common }
@@ -135,6 +142,9 @@ export const Input = styled.input<Omit<TextInputProps, 'focused'>>`
   }
   :read-only {
     outline: 0;
+  }
+  ::placeholder {
+    color: ${({ theme: { palette } }) => palette.common.ui80};
   }
 
   ${({ theme: { typography }, isSelected }): CSSObject => ({

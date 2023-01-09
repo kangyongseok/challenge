@@ -9,11 +9,7 @@ import { Box, useTheme } from 'mrcamel-ui';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import {
-  LegitAdminProfilePanel,
-  LegitAdminRequestPanel,
-  LegitAdminTabs
-} from '@components/pages/legitAdmin';
+import { LegitAdminRequestPanel, LegitAdminTabs } from '@components/pages/legitAdmin';
 import {
   LegitFloatingButton,
   LegitLivePanel,
@@ -75,7 +71,6 @@ function LegitAdmin() {
           </Box>
         )}
         {tab === 'request' && <LegitAdminRequestPanel />}
-        {tab === 'profile' && <LegitAdminProfilePanel />}
         {tab === 'home' && <LegitFloatingButton />}
       </GeneralTemplate>
     </>

@@ -4,6 +4,7 @@ import { useTheme } from 'mrcamel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
+import { productSellerType } from '@constants/user';
 import { ID_FILTER, LABELS, PRODUCT_SITE, productInfoLabels } from '@constants/product';
 
 import { getProductLabelColor } from '@utils/products';
@@ -27,8 +28,7 @@ export default function useProductCardState({
   const { theme } = useTheme();
   const imageUrl = imageMain || imageThumbnail;
 
-  const isNormalseller =
-    (props.site.id === 34 || productSeller.type === 4) && productSeller.type !== 3;
+  const isNormalseller = props.sellerType === productSellerType.normal;
 
   const productLabels = useMemo(() => {
     const { site } = productSeller || {};

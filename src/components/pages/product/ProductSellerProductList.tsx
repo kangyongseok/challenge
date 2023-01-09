@@ -3,7 +3,7 @@ import { memo, useEffect, useState } from 'react';
 import { useQueries } from 'react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Divider, ProductGridCard } from '@components/UI/molecules';
@@ -15,10 +15,10 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
-import { SELLER_STATUS } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { PRODUCT_SITE } from '@constants/product';
 import { ACCESS_USER } from '@constants/localStorage';
+import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -26,9 +26,6 @@ import { productDetailAtt } from '@utils/products';
 import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
-
-const NEXT_IMAGE_BLUR_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
 function ProductSellerProductList({
   product,
@@ -94,15 +91,36 @@ function ProductSellerProductList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sellerId]);
 
-  const isCamelProduct = PRODUCT_SITE.CAMEL.id === reviewInfo?.productSeller?.site?.id;
+  const handleClickMoreList = () => {
+    const { collection } = productSellerType;
+    if (product)
+      productDetailAtt({
+        key: attrKeys.products.CLICK_SELLER_PRODUCT,
+        product,
+        rest: {
+          attr: 'ALL'
+        },
+        source: attrProperty.productSource.PRODUCT_LIST
+      });
+    // 크롤링 판매자 정보 sellerInfo
+    // 일반 or 인증 사용자 정보 userInfo
+    router.push({
+      pathname:
+        product?.sellerType === collection
+          ? `/sellerInfo/${sellerId}`
+          : `/userInfo/${roleSellerUserId}`,
+      query: {
+        tab: 'products'
+      }
+    });
+  };
+
   const isCamelSeller =
     reviewInfo &&
     SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
 
-  const isNormalseller =
-    (reviewInfo?.site.id === 34 || reviewInfo?.productSeller.type === 4) &&
-    reviewInfo?.productSeller.type !== 3;
+  const isNormalseller = product?.sellerType === productSellerType.normal;
 
   return sellerProductsIsLoading ||
     reviewInfoIsLoading ||
@@ -116,89 +134,25 @@ function ProductSellerProductList({
         alignment="center"
         justifyContent="space-between"
         customStyle={{ marginBottom: 20 }}
-        onClick={() => {
-          if (product)
-            productDetailAtt({
-              key: attrKeys.products.CLICK_SELLER_PRODUCT,
-              product,
-              rest: {
-                attr: 'ALL'
-              },
-              source: attrProperty.productSource.PRODUCT_LIST
-            });
-          router.push({
-            pathname:
-              product?.site.id === 34 ? `/userInfo/${roleSellerUserId}` : `/sellerInfo/${sellerId}`,
-            query: {
-              tab: 'products'
-            }
-          });
-        }}
+        onClick={handleClickMoreList}
       >
         <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
-          {reviewInfo ? (
-            (isCamelProduct && (
-              <Avatar
-                width={44}
-                height={44}
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/new_icon/user-camel.png`}
+          {reviewInfo?.productSeller.image ? (
+            <UserAvatar>
+              <Image
+                src={`${reviewInfo?.productSeller.image}`}
                 alt="프로필 이미지"
-                round="50%"
-                customStyle={{ marginRight: 12 }}
+                placeholder="blur"
+                blurDataURL={NEXT_IMAGE_BLUR_URL}
+                layout="fill"
+                objectFit="cover"
+                style={{ borderRadius: '50%' }}
               />
-            )) ||
-            (isCamelSeller && (
-              <Box
-                customStyle={{
-                  position: 'relative',
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: common.bg02,
-                  overflow: 'hidden',
-                  marginRight: 12
-                }}
-              >
-                <Image
-                  src={`https://${process.env.IMAGE_DOMAIN}/product/seller/${reviewInfo.productSeller.id}.png`}
-                  alt={`${product?.productSeller.name} 프로필 이미지`}
-                  placeholder="blur"
-                  blurDataURL={NEXT_IMAGE_BLUR_URL}
-                  layout="fill"
-                  objectFit="cover"
-                  style={{ borderRadius: '50%' }}
-                />
-              </Box>
-            )) ||
-            (reviewInfo.productSeller.image && (
-              <Box
-                customStyle={{
-                  position: 'relative',
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: common.bg02,
-                  overflow: 'hidden',
-                  marginRight: 12
-                }}
-              >
-                <Image
-                  src={`${reviewInfo.productSeller.image}`}
-                  alt="프로필 이미지"
-                  placeholder="blur"
-                  blurDataURL={NEXT_IMAGE_BLUR_URL}
-                  layout="fill"
-                  objectFit="cover"
-                  style={{ borderRadius: '50%' }}
-                />
-              </Box>
-            )) || (
-              <EmptyAvatar justifyContent="center" alignment="center">
-                <Icon name="UserFilled" size="large" />
-              </EmptyAvatar>
-            )
+            </UserAvatar>
           ) : (
-            <Icon name="UserFilled" width={20} color={common.ui95} />
+            <EmptyAvatar justifyContent="center" alignment="center">
+              <Icon name="UserFilled" size="large" />
+            </EmptyAvatar>
           )}
           <Flexbox direction="vertical">
             <Flexbox gap={6} alignment="center">
@@ -303,6 +257,20 @@ const ProductSellerName = styled(Typography)<{
       backgroundColor: common.ui90,
       animation: `${pulse} 800ms linear 0s infinite alternate`
     }}
+`;
+
+const UserAvatar = styled.div`
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
+  overflow: hidden;
+  margin-right: 12px;
 `;
 
 const EmptyAvatar = styled(Flexbox)`

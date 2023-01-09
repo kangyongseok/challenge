@@ -15,11 +15,11 @@ export const userShopOpenStateFamily = atomFamily<
       | 'deleteFeedback';
     open: boolean;
   },
-  | 'manage'
   | 'deleteConfirm'
   | 'updatePostedFeedback'
   | 'reservingFeedback'
   | 'saleFeedback'
+  | 'manage'
   | 'soldOutFeedback'
   | 'soldOutConfirm'
   | 'deleteFeedback'
@@ -36,4 +36,9 @@ export const userShopSelectedProductState = atom<
 >({
   key: 'users/userShopSelectedProductState',
   default: {}
+});
+
+export const userShopSelectProductManageState = atom<ProductResult & Product>({
+  key: 'users/userShopSelectProductManageState',
+  default: {} as ProductResult & Product
 });

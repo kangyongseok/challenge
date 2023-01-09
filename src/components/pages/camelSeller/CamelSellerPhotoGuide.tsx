@@ -161,6 +161,7 @@ function CamelSellerPhotoGuide() {
 
   const mergePhotoResult = useCallback(() => {
     if (photoImages.length > 0 && guideImages) {
+      // alert(JSON.stringify(photoImages))
       return guideImages.photoGuideDetails.map((photoGuide) => {
         if (find(photoImages, { photoGuideId: photoGuide.id })) {
           return {
@@ -301,6 +302,7 @@ function CamelSellerPhotoGuide() {
               </GuideBox>
             )
           )}
+        {/* {alert(JSON.stringify(mergePhotoResult()))} */}
         {mergePhotoResult() &&
           mergePhotoResult()?.map(
             ({ imageWatermark, isRequired, imageUrl, imageType, imageWatermarkDark }, i) => (

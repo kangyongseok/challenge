@@ -132,6 +132,7 @@ const Initializer = {
     if (abTestIdentifier) {
       const taskNames = ABTest.getTasks().map(({ name }) => name);
       const parsedAbTestIdentifier = JSON.parse(abTestIdentifier);
+
       Object.keys(parsedAbTestIdentifier).forEach((key) => {
         if (!taskNames.includes(key)) {
           delete parsedAbTestIdentifier[key];

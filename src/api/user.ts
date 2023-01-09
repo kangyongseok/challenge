@@ -1,14 +1,17 @@
 import type {
   AgeAndGenderParams,
+  AlarmsParams,
   Area,
   AreaParams,
+  BanWordParams,
+  BanWordResponse,
   CategoryWish,
   CategoryWishesParams,
+  MyUserInfo,
   PageHoneyNoti,
   PageUserBlock,
   PageUserHistory,
   PageUserReview,
-  PostAlarmData,
   PostAreaParams,
   PostReportData,
   PostReviewData,
@@ -22,6 +25,7 @@ import type {
   PutUserLegitProfileData,
   SizeMapping,
   SizeResult,
+  UpdateUserProfileData,
   UserBlockParams,
   UserHistoryManages,
   UserInfo,
@@ -29,9 +33,9 @@ import type {
   UserProductsParams,
   UserReviewsByUserIdParams,
   UserRoleLegit,
+  UserRoleSeller,
   UserSizeSuggestParams
 } from '@dto/user';
-import { UserRoleSeller } from '@dto/user';
 import type { PageProductResult, ProductResult, UserPersonalStyleParams } from '@dto/product';
 
 import Axios from '@library/axios';
@@ -60,14 +64,14 @@ export async function fetchCategoryWishes(params?: CategoryWishesParams) {
   return data;
 }
 
-export async function postNightAlarm(isNightAlarm: boolean) {
-  await Axios.getInstance().post(`${BASE_PATH}/userNightAlarm`, {
-    isNightAlarm
-  });
+export async function fetchAlarm() {
+  const { data } = await Axios.getInstance().get<AlarmsParams>(`${BASE_PATH}/alarm`);
+
+  return data;
 }
 
-export async function postAlarm(data: PostAlarmData) {
-  await Axios.getInstance().post(`${BASE_PATH}/alarm`, data);
+export async function putAlarm(params: AlarmsParams) {
+  await Axios.getInstance().put(`${BASE_PATH}/alarm`, params);
 }
 
 export async function postProductsAdd({ productId, ...params }: ProductsAddParams) {
@@ -227,6 +231,7 @@ export async function fetchLegitProfile(userId: number) {
     profile: UserRoleLegit;
     roleSeller: UserRoleSeller;
     cntOpinion: number;
+    shopDescription?: string;
   }>(`${BASE_PATH}/${userId}/legit/profile`);
 
   return data;
@@ -246,6 +251,12 @@ export async function deleteWishSoldout() {
 
 export async function postUserStyle(params: UserPersonalStyleParams) {
   await Axios.getInstance().post(`${BASE_PATH}/style`, { ...params });
+}
+
+export async function fetchMyUserInfo() {
+  const { data } = await Axios.getInstance().get<MyUserInfo>(`${BASE_PATH}/myUserInfo`);
+
+  return data;
 }
 
 export async function fetchInfoByUserId(userId: number) {
@@ -303,4 +314,16 @@ export async function deleteBlock(userId: number) {
 
 export async function postReport({ userId, ...data }: PostReportData) {
   await Axios.getInstance().post(`${BASE_PATH}/${userId}/report`, data);
+}
+
+export async function fetchBanword(params: BanWordParams) {
+  const { data } = await Axios.getInstance().get<BanWordResponse>(`${BASE_PATH}/banword`, {
+    params
+  });
+
+  return data;
+}
+
+export async function putProfile(data: UpdateUserProfileData) {
+  await Axios.getInstance().put(`${BASE_PATH}/profile`, data);
 }

@@ -228,6 +228,11 @@ function CamelSellerProductSearch() {
                 </Flexbox>
               </Flexbox>
             ))}
+          {/* {
+            models &&
+            models.length > 0 && 
+            isExtendedLayoutIOSVersion() && <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />
+          } */}
           {models &&
             models.length > 0 &&
             models.map((result) => (

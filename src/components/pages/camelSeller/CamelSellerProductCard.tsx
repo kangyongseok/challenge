@@ -8,6 +8,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { productSellerType } from '@constants/user';
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -24,8 +25,7 @@ function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: b
     }
   } = useTheme();
   const [openDetail, setOpenDetail] = useState(false);
-  const isNormalseller =
-    (data.site.id === 34 || data.productSeller.type === 4) && data.productSeller.type !== 3;
+  const isNormalseller = data?.sellerType === productSellerType.normal;
 
   const handleClickRecentProduct = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {

@@ -1,18 +1,11 @@
-import { Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 4px;
-  padding: 12px 16px;
-  background-color: ${({ theme: { palette } }) => palette.common.bg02};
-  border-radius: 12px;
-`;
-
-export const Content = styled(Typography)`
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  row-gap: 12px;
+  padding: 20px;
+  background-color: ${({ theme: { palette } }) => palette.common.bg03};
+  border-radius: 8px;
+  user-select: none;
 `;

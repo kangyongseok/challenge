@@ -23,6 +23,7 @@ interface HeaderProps {
   showLeft?: boolean;
   hideTitle?: boolean;
   showRight?: boolean;
+  hideHeart?: boolean;
   leftIcon?: ReactElement;
   rightIcon?: ReactElement;
   onClickLeft?: (e?: MouseEvent<HTMLDivElement>) => void;

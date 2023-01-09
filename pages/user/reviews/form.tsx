@@ -32,19 +32,13 @@ function ReviewForm() {
   } = useTheme();
   const router = useRouter();
 
-  const { productId, userName, userId, isSeller } = useMemo(
+  const { productId, userId, isSeller } = useMemo(
     () => ({
       productId: Number(router.query.productId || ''),
-      userName: String(router.query.targetUserName || ''),
       userId: Number(router.query.targetUserId || ''),
       isSeller: router.query.isTargetUserSeller || false
     }),
-    [
-      router.query.isTargetUserSeller,
-      router.query.productId,
-      router.query.targetUserId,
-      router.query.targetUserName
-    ]
+    [router.query.isTargetUserSeller, router.query.productId, router.query.targetUserId]
   );
 
   const setToastState = useSetRecoilState(toastState);
@@ -118,18 +112,15 @@ function ReviewForm() {
         gap={32}
         customStyle={{ padding: '52px 20px', flex: 1 }}
       >
-        <Flexbox direction="vertical" gap={20} alignment="center">
-          <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
-            {`${userName}님과의 거래는 어떠셨나요?`}
-          </Typography>
-          <Flexbox>
-            {Array.from({ length: 5 }, (_, index) => (
+        <Flexbox>
+          {Array.from({ length: 5 }, (_, index) => {
+            return index < Number(params.score) / 2 ? (
               <Icon
                 name="StarFilled"
+                width={23}
+                height={23}
                 customStyle={{
-                  width: 32,
-                  height: 32,
-                  color: index < Number(params.score) / 2 ? '#FEB700' : common.bg02,
+                  color: '#FFD911',
                   cursor: 'pointer'
                 }}
                 onClick={() => {
@@ -142,8 +133,27 @@ function ReviewForm() {
                   }));
                 }}
               />
-            ))}
-          </Flexbox>
+            ) : (
+              <Icon
+                name="StarOutlined"
+                width={23}
+                height={23}
+                customStyle={{
+                  color: '#FFD911',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setParams((prevState) => ({
+                    ...prevState,
+                    score:
+                      Number(params.score) / 2 === 1 && index === 0
+                        ? '0'
+                        : ((index + 1) * 2).toString()
+                  }));
+                }}
+              />
+            );
+          })}
         </Flexbox>
         <Description>
           <TextareaAutosize

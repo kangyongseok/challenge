@@ -8,7 +8,12 @@ import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from '
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
-import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
+import {
+  HideOverlay,
+  MyShopHideOverlay,
+  ReservingOverlay,
+  SoldOutOverlay
+} from '@components/UI/molecules';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -17,6 +22,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
@@ -28,12 +34,20 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
+import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 
-import { Area, MetaSocial, Title, TodayWishViewLabel, WishButton } from './ProductGridCard.styles';
+import {
+  Area,
+  MetaSocial,
+  ShopMoreButton,
+  Title,
+  TodayWishViewLabel,
+  WishButton
+} from './ProductGridCard.styles';
 
 interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
@@ -66,6 +80,9 @@ interface ProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   metaCamelInfoCustomStyle?: CustomStyle;
   todayWishViewLabelCustomStyle?: CustomStyle;
   hideSafePayment?: boolean;
+  showShopManageButton?: boolean;
+  showHideOverlay?: boolean;
+  showMyShopHideOverlay?: boolean;
 }
 
 const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(function ProductGridCard(
@@ -81,6 +98,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     hidePriceDownCountLabel = true,
     hideUpdatedCountLabel = true,
     showTodayWishViewLabel = false,
+    showShopManageButton = false,
+    showHideOverlay = false,
+    showMyShopHideOverlay = false,
     hideOverlay = false,
     showCountLabel = false,
     hideWishButton = false,
@@ -112,6 +132,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     price = 0,
     wishCount = 0,
     purchaseCount = 0,
+    viewCount = 0,
     area,
     datePosted,
     dateFirstPosted,
@@ -140,7 +161,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-
+  const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
     useQueryCategoryWishes({ deviceId });
@@ -189,9 +211,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const imageBoxRef = useRef<HTMLDivElement>(null);
 
-  const isNormalseller =
-    (product?.site.id === 34 || product?.productSeller.type === 4) &&
-    product?.productSeller.type !== 3;
+  const isNormalseller = product?.sellerType === productSellerType.normal;
 
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
@@ -248,6 +268,15 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     }
   }, [measure]);
 
+  const handleClickManageProduct = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setUserShopSelectedProductState(product as Product & ProductResult);
+    setOpenState(({ type }) => ({
+      type,
+      open: true
+    }));
+  };
+
   return (
     <Flexbox
       ref={ref}
@@ -290,6 +319,11 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             customStyle={todayWishViewLabelCustomStyle}
           />
         )}
+        {showShopManageButton && (
+          <ShopMoreButton onClick={handleClickManageProduct}>
+            <Icon name="MoreHorizFilled" color={common.uiWhite} />
+          </ShopMoreButton>
+        )}
         {!hideWishButton && (
           <WishButton onClick={handleClickWish}>
             {isWish ? (
@@ -312,13 +346,18 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             customStyle={{ position: 'absolute', top: 10, left: 10 }}
           />
         )}
+        {!hideOverlay && showMyShopHideOverlay && status === 8 && (
+          <MyShopHideOverlay variant="h4" isRound={isRound} />
+        )}
+        {!hideOverlay && showHideOverlay && status === 8 && (
+          <HideOverlay variant="h4" isRound={isRound} />
+        )}
         {!hideOverlay &&
           PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-          (status === 4 ? (
-            <ReservingOverlay variant="h4" isRound={isRound} />
-          ) : (
-            <SoldOutOverlay variant="h4" isRound={isRound} />
-          ))}
+          status === 4 && <ReservingOverlay variant="h4" isRound={isRound} />}
+        {!hideOverlay &&
+          PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+          status === 1 && <SoldOutOverlay variant="h4" isRound={isRound} />}
       </Box>
       <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
         <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
@@ -392,8 +431,17 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             </Box>
           </Area>
         )}
-        {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0) && (
+
+        {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0 || viewCount > 0) && (
           <MetaSocial>
+            {viewCount > 0 && (
+              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
+                <Icon name="ViewOutlined" width={14} height={14} color={common.ui60} />
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                  {viewCount}
+                </Typography>
+              </Flexbox>
+            )}
             {wishCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />

@@ -1,12 +1,15 @@
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
+import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
+import { GetServerSidePropsContext } from 'next';
+import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { StylesCards } from '@components/UI/organisms';
-import { Header } from '@components/UI/molecules';
+import StylesCards from '@components/UI/organisms/StylesCards';
+import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+
+import Initializer from '@library/initializer';
 
 import { postUserStyle } from '@api/user';
 
@@ -19,8 +22,10 @@ function LikeModelInput() {
       palette: { common }
     }
   } = useTheme();
+
   const selectedModelCard = useRecoilValue(selectedModelCardState);
   const resetSelectedModelCard = useResetRecoilState(selectedModelCardState);
+
   const { mutate: styleMutate } = useMutation(postUserStyle);
 
   const handleClickNext = () => {
@@ -54,19 +59,43 @@ function LikeModelInput() {
           </Button>
         </Footer>
       }
+      disablePadding
     >
-      <Box customStyle={{ marginBottom: 32, textAlign: 'center' }}>
-        <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
-          관심 모델을 선택해주세요!
-        </Typography>
-        <Typography customStyle={{ color: common.ui60 }}>
-          펼쳐진 선택지에서 여러 개 고를 수 있어요
-        </Typography>
-      </Box>
-      <StylesCards themeType="normal" />
-      <Box customStyle={{ height: 100 }} />
+      <Flexbox direction="vertical" gap={32} customStyle={{ flex: 1, padding: '20px 20px 144px' }}>
+        <Flexbox component="section" direction="vertical" alignment="center" gap={4}>
+          <Typography variant="h2" weight="bold">
+            관심 모델을 선택해주세요!
+          </Typography>
+          <Typography customStyle={{ color: common.ui60 }}>
+            펼쳐진 선택지에서 여러 개 고를 수 있어요
+          </Typography>
+        </Flexbox>
+        <StylesCards themeType="normal" />
+      </Flexbox>
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  const queryClient = new QueryClient();
+
+  Initializer.initAccessTokenByCookies(req.cookies);
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+
+  if (!accessUser) {
+    return {
+      redirect: {
+        destination: '/login?returnUrl=/user/likeModelInput&isRequiredLogin=true',
+        permanent: false
+      }
+    };
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient)
+    }
+  };
 }
 
 const Footer = styled.footer`
@@ -74,7 +103,7 @@ const Footer = styled.footer`
   bottom: 0;
   width: 100%;
   padding: 20px;
-  background-color: white;
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
 `;
 
 export default LikeModelInput;

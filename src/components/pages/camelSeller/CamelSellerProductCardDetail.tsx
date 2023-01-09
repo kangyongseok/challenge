@@ -7,6 +7,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { productSellerType } from '@constants/user';
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -32,8 +33,7 @@ function CamelSellerProductCardDetail({ data }: { data: Product }) {
   const setModifyProductPrice = useSetRecoilState(setModifyProductPriceState);
   const [submitState, setSubmitState] = useRecoilState(camelSellerSubmitState);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
-  const isNormalseller =
-    (data.site.id === 34 || data.productSeller.type === 4) && data.productSeller.type !== 3;
+  const isNormalseller = data?.sellerType === productSellerType.normal;
 
   const handleClickSellPrice = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {

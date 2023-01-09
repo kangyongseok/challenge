@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { Box, Flexbox, Image, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -31,12 +31,6 @@ const slideImages = [
 ];
 
 function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const { data: accessUser } = useQueryAccessUser();
 
   useEffect(() => {
@@ -51,56 +45,58 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
   };
 
   return (
-    <Box customStyle={{ background: common.uiWhite, height: '100%' }}>
-      <Flexbox
-        gap={20}
-        direction="vertical"
-        customStyle={{ textAlign: 'center', marginTop: '20%' }}
-      >
-        <Box>
-          <Typography variant="h1" weight="bold">
-            {accessUser?.userName || '회원'}님
-          </Typography>
-          <Typography variant="h1" weight="bold">
-            환영합니다
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
-            프로필을 만들어주시면,
-          </Typography>
-          <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
-            {accessUser?.userName || '회원'}님이 찾는 매물을 찰떡같이 보여드릴게요😍
-          </Typography>
-        </Box>
-      </Flexbox>
-      <SlideImgWrap>
-        <Swiper
-          loop
-          slidesPerView={4}
-          modules={[Autoplay]}
-          centeredSlides
-          speed={2000}
-          autoplay={{
-            delay: 0,
-            disableOnInteraction: false
-          }}
-          style={{ width: 'calc(100% + 50px)', height: '100%' }}
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ background: dark.palette.common.uiWhite, height: '100%' }}>
+        <Flexbox
+          gap={20}
+          direction="vertical"
+          customStyle={{ textAlign: 'center', marginTop: '20%' }}
         >
-          {slideImages.map(({ imgName, alt, paddingTop, marginLeft }) => (
-            <SwiperSlide key={`slide-image-${imgName}`}>
-              <Image
-                src={`${BASE_ONBOARDING_URL}/${imgName}.png`}
-                disableAspectRatio
-                alt={alt}
-                customStyle={{ paddingTop, marginLeft }}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </SlideImgWrap>
-      <OnboardingBottomCTA onClick={handleClick}>시작하기!</OnboardingBottomCTA>
-    </Box>
+          <Box>
+            <Typography variant="h1" weight="bold">
+              {accessUser?.userName || '회원'}님
+            </Typography>
+            <Typography variant="h1" weight="bold">
+              환영합니다
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+              프로필을 만들어주시면,
+            </Typography>
+            <Typography variant="h4" customStyle={{ color: dark.palette.common.ui60 }}>
+              {accessUser?.userName || '회원'}님이 찾는 매물을 찰떡같이 보여드릴게요😍
+            </Typography>
+          </Box>
+        </Flexbox>
+        <SlideImgWrap>
+          <Swiper
+            loop
+            slidesPerView={4}
+            modules={[Autoplay]}
+            centeredSlides
+            speed={2000}
+            autoplay={{
+              delay: 0,
+              disableOnInteraction: false
+            }}
+            style={{ width: 'calc(100% + 50px)', height: '100%' }}
+          >
+            {slideImages.map(({ imgName, alt, paddingTop, marginLeft }) => (
+              <SwiperSlide key={`slide-image-${imgName}`}>
+                <Image
+                  src={`${BASE_ONBOARDING_URL}/${imgName}.png`}
+                  disableAspectRatio
+                  alt={alt}
+                  customStyle={{ paddingTop, marginLeft }}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </SlideImgWrap>
+        <OnboardingBottomCTA onClick={handleClick}>시작하기!</OnboardingBottomCTA>
+      </Box>
+    </ThemeProvider>
   );
 }
 

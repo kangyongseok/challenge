@@ -1,50 +1,52 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useMutation, useQuery } from 'react-query';
+import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
+import { GetServerSidePropsContext } from 'next';
+import { Button, Flexbox, Switch, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Header } from '@components/UI/molecules';
+import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { UserAddressSetting } from '@components/pages/user';
+import { UserAddressSetting, UserRecentAddresses } from '@components/pages/user';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postArea } from '@api/user';
+import { postArea } from '@api/user';
 
-import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+
 function AddressInput() {
-  const [address, setAddress] = useState('');
-
-  const isSubmittable = address !== '';
-  const { isLoading, mutate } = useMutation(postArea);
-  const [recentAddresses, setRecentAddresses] = useState<string[]>([]);
-  const { data: userInfo, refetch } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
-
   const router = useRouter();
-  const searchMode = router.query.searchMode === 'true';
-
-  useEffect(() => {
-    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, { name: 'ADDRESS' });
-  }, []);
-
-  useEffect(() => {
-    if (userInfo && userInfo.area.values.length) {
-      setAddress(userInfo.area.values.filter((area) => area.isActive)[0].areaName);
-
-      setRecentAddresses(
-        userInfo.area.values
-          .filter((area) => !area.isActive)
-          .map((area) => area.areaName)
-          .reverse()
-      );
+  const {
+    theme: {
+      palette: { common }
     }
-  }, [userInfo]);
+  } = useTheme();
+
+  const { data: myUserInfo, refetch } = useQueryMyUserInfo();
+  const { isLoading: isLoadingMutatePostArea, mutate } = useMutation(postArea);
+
+  const [recentAddresses, setRecentAddresses] = useState<string[]>([]);
+  const [address, setAddress] = useState('');
+  const [publicAddressOnShop, setPublicAddressOnShop] = useState(false);
+
+  const isSearchMode = router.query.searchMode === 'true';
+  const isSubmittable = address !== '';
+
+  useEffect(() => {
+    if (publicAddressOnShop !== myUserInfo?.info.value.isAreaOpen) {
+      setPublicAddressOnShop(!!myUserInfo?.info.value.isAreaOpen);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myUserInfo?.info.value.isAreaOpen]);
 
   const handleClickSave = () => {
+    if (isLoadingMutatePostArea) return;
+
     if (isSubmittable) {
       mutate(
         { name: address },
@@ -59,67 +61,123 @@ function AddressInput() {
     }
   };
 
+  const handleChangeSwitch = useCallback(() => {
+    if (isLoadingMutatePostArea) return;
+
+    mutate(
+      { isAreaOpen: !publicAddressOnShop },
+      {
+        onSuccess: () => {
+          refetch();
+          setPublicAddressOnShop(!publicAddressOnShop);
+        }
+      }
+    );
+  }, [isLoadingMutatePostArea, mutate, publicAddressOnShop, refetch]);
+
+  useEffect(() => {
+    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, { name: 'ADDRESS' });
+  }, []);
+
+  useEffect(() => {
+    if (myUserInfo?.area.values.length) {
+      setAddress(myUserInfo.area.values.filter((area) => area.isActive)[0].areaName);
+      setRecentAddresses(
+        myUserInfo.area.values
+          .filter((area) => !area.isActive)
+          .map((area) => area.areaName)
+          .reverse()
+      );
+    }
+  }, [myUserInfo]);
+
   return (
     <GeneralTemplate
       header={<Header showRight={false} hideTitle />}
       footer={
-        <Footer isSearchMode={searchMode}>
+        <Footer isSearchMode={isSearchMode}>
           <Button
             fullWidth
             variant="solid"
             size="xlarge"
-            disabled={!isSubmittable || isLoading || searchMode}
+            disabled={!isSubmittable || isLoadingMutatePostArea || isSearchMode}
             brandColor="primary"
             onClick={handleClickSave}
           >
-            {!isSubmittable || isLoading ? '저장' : '저장할게요!'}
+            저장
           </Button>
         </Footer>
       }
+      disablePadding
     >
-      <Box
-        component="section"
-        customStyle={{
-          marginTop: 32
-        }}
-      >
-        <Flexbox
-          customStyle={{
-            textAlign: 'center'
-          }}
-          direction="vertical"
-          gap={6}
-        >
-          <Typography variant="h3" weight="bold" brandColor="black">
-            위치를 알려주세요.
+      <Flexbox direction="vertical" gap={32} customStyle={{ flex: 1, padding: '20px 20px 144px' }}>
+        <Flexbox component="section" direction="vertical" alignment="center" gap={4}>
+          <Typography variant="h2" weight="bold" brandColor="black">
+            위치를 알려주세요
           </Typography>
-          <Typography weight="regular">
-            당근마켓 포함 내 주변 매물을 보시려면
-            <br />
-            위치정보가 필요해요.
+          <Typography variant="body1" customStyle={{ color: common.ui60 }}>
+            당근마켓 포함, 주변매물만 볼 수 있어요.
           </Typography>
         </Flexbox>
-        <UserAddressSetting
-          address={address}
-          setAddress={setAddress}
-          recentAddresses={recentAddresses}
-        />
-      </Box>
+        <UserAddressSetting isSearchMode={isSearchMode} address={address} setAddress={setAddress} />
+        {!isSearchMode && (
+          <>
+            {recentAddresses.length > 0 && (
+              <UserRecentAddresses recentAddresses={recentAddresses} setAddress={setAddress} />
+            )}
+            {address.length > 0 && (
+              <PublicAddressOnShopBanner>
+                <Typography variant="h4" weight="medium">
+                  거래지역 상점에 공개
+                </Typography>
+                <Switch checked={publicAddressOnShop} onChange={handleChangeSwitch} />
+              </PublicAddressOnShopBanner>
+            )}
+          </>
+        )}
+      </Flexbox>
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  const queryClient = new QueryClient();
+
+  Initializer.initAccessTokenByCookies(req.cookies);
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+
+  if (!accessUser) {
+    return {
+      redirect: {
+        destination: '/login?returnUrl=/user/addressInput&isRequiredLogin=true',
+        permanent: false
+      }
+    };
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient)
+    }
+  };
 }
 
 const Footer = styled.footer<{ isSearchMode: boolean }>`
   position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 20px 20px 24px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
+  padding: 20px;
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
   display: ${({ isSearchMode }) => (isSearchMode ? 'none' : 'block')};
+`;
+
+const PublicAddressOnShopBanner = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: ${({ theme: { palette } }) => palette.common.bg03};
+  border-radius: 8px;
 `;
 
 export default AddressInput;

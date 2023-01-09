@@ -1,10 +1,18 @@
 import { Box, Flexbox, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { LinearProgress, ProductGridCardSkeleton } from '@components/UI/molecules';
+import {
+  LinearProgress,
+  NewProductGridCardSkeleton,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { ProductsHeader } from '@components/pages/products';
+
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
+
+import { ABTestGroup } from '@provider/ABTestProvider';
 
 function SearchProducts() {
   return (
@@ -66,7 +74,15 @@ function SearchProducts() {
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
-            <ProductGridCardSkeleton />
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+              <NewProductGridCardSkeleton />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+              <NewProductGridCardSkeleton />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+              <ProductGridCardSkeleton />
+            </ABTestGroup>
           </Grid>
         ))}
       </Grid>

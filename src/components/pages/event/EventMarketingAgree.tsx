@@ -1,24 +1,31 @@
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
+import { fetchUserInfo, putAlarm } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
-import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 function EventMarketingAgree() {
   const router = useRouter();
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const setToastState = useSetRecoilState(toastState);
-  const { mutate: mutatePostAlarm } = useMutationPostAlarm();
+  const { mutate: switchAlarm } = useMutation(putAlarm, {
+    onSuccess: () => {
+      setToastState({
+        type: 'home',
+        status: 'disAgree',
+        customStyle: { bottom: 30 }
+      });
+    }
+  });
 
   const {
     theme: {
@@ -44,32 +51,19 @@ function EventMarketingAgree() {
         customStyle: { bottom: 30 }
       });
     } else {
-      mutatePostAlarm(
-        {
-          isAlarm: true,
-          isChannelNoti: !!userInfo.alarm.isChannelNoti
-        },
-        {
-          onSuccess: () => {
-            setToastState({
-              type: 'home',
-              status: 'disAgree',
-              customStyle: { bottom: 30 }
-            });
-          }
-        },
-        true
-      );
+      switchAlarm({
+        isNotiEvent: true
+      });
     }
   };
 
   return (
     <Wrap>
       <Typography variant="h4" weight="bold">
-        매주 (목) 오전 11시 업데이트!
+        매주 오전 11시 업데이트!
       </Typography>
       <Typography customStyle={{ marginTop: 4 }}>
-        내가 원하는 특가 매물, 놓치고 싶지 않다면?
+        내가 원하는 급처템, 놓치고 싶지 않다면?
       </Typography>
       <Button
         variant="solid"

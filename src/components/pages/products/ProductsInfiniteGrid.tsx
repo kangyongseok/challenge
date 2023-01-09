@@ -18,13 +18,19 @@ import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel
 import throttle from 'lodash-es/throttle';
 import { isEmpty } from 'lodash-es';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import {
+  NewProductGridCard,
+  NewProductGridCardSkeleton,
+  ProductGridCard,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 
 import type { Product } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
+import ABTest from '@library/abTest';
 
 import { fetchSearch, fetchSearchOptions } from '@api/product';
 
@@ -35,6 +41,7 @@ import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import {
   convertSearchParamsByQuery,
@@ -53,6 +60,7 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import { ABTestGroup } from '@provider/ABTestProvider';
 
 import { ProductsMiddleFilter } from '.';
 
@@ -65,7 +73,10 @@ interface ProductsInfiniteGridProps {
   name?: string;
 }
 
-function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
+function ProductsInfiniteGrid({
+  variant,
+  name = attrProperty.productName.PRODUCT_LIST
+}: ProductsInfiniteGridProps) {
   const router = useRouter();
   const { keyword, parentIds, idFilterIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -214,10 +225,35 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
     await fetchNextPage();
   };
 
-  const handleProductAtt = useCallback(
+  const handleWishAfterChangeCallback = useCallback(
+    () => (product: Product, isWish: boolean) => {
+      queryClient.setQueryData(queryKeys.products.search(searchParams), {
+        pageParams,
+        pages: pages.map((page) => {
+          const findIndex = page.page.content.findIndex(({ id }) => id === product.id);
+
+          if (findIndex !== -1) {
+            const { wishCount } = page.page.content[findIndex];
+
+            if (!isWish) {
+              page.page.content[findIndex].wishCount = wishCount + 1;
+            } else if (isWish && wishCount > 0) {
+              page.page.content[findIndex].wishCount = wishCount - 1;
+            }
+            return page;
+          }
+
+          return page;
+        })
+      });
+    },
+    [pageParams, pages, queryClient, searchParams]
+  );
+
+  const getProductAttributes = useCallback(
     (product: Product) => {
       return {
-        name: attrProperty.productName.PRODUCT_LIST,
+        name: name || attrProperty.productName.PRODUCT_LIST,
         index: (product.index || 0) + 1,
         id: product.id,
         brand: product.brand.name,
@@ -244,49 +280,27 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         sort: getEventPropertySortValue(searchParams.order)
       };
     },
-    [searchParams.order]
+    [name, searchParams.order]
   );
 
-  const handleWishAtt = (product: Product) => {
-    return {
-      name: attrProperty.productName.PRODUCT_LIST,
-      id: product.id,
-      index: (product.index || 0) + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      line: product.line,
-      site: product.site.name,
-      price: product.price,
-      scoreTotal: product.scoreTotal,
-      cluster: product.cluster,
-      source: attrProperty.productSource.PRODUCT_LIST
-    };
-  };
-
-  const handleWishAfterChangeCallback = useCallback(
-    () => (product: Product, isWish: boolean) => {
-      queryClient.setQueryData(queryKeys.products.search(searchParams), {
-        pageParams,
-        pages: pages.map((page) => {
-          const findIndex = page.page.content.findIndex(({ id }) => id === product.id);
-
-          if (findIndex !== -1) {
-            const { wishCount } = page.page.content[findIndex];
-
-            if (!isWish) {
-              page.page.content[findIndex].wishCount = wishCount + 1;
-            } else if (isWish && wishCount > 0) {
-              page.page.content[findIndex].wishCount = wishCount - 1;
-            }
-            return page;
-          }
-
-          return page;
-        })
-      });
+  const getWishAttributes = useCallback(
+    (product: Product) => {
+      return {
+        name: name || attrProperty.productName.PRODUCT_LIST,
+        id: product.id,
+        index: (product?.index || 0) + 1,
+        brand: product.brand.name,
+        category: product.category.name,
+        parentId: product.category.parentId,
+        line: product.line,
+        site: product.site.name,
+        price: product.price,
+        scoreTotal: product.scoreTotal,
+        cluster: product.cluster,
+        source: attrProperty.productSource.PRODUCT_LIST
+      };
     },
-    [pageParams, pages, queryClient, searchParams]
+    [name]
   );
 
   const rowRenderer = useCallback(
@@ -313,27 +327,65 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
           // @ts-ignore
           <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
             <div style={style}>
-              <Grid container customStyle={{ paddingBottom: 32 }}>
-                {firstProduct && (
-                  <Grid item xs={2}>
-                    <ProductGridCardSkeleton
-                      title={firstProduct.title}
-                      labels={firstProduct.labels}
-                      productSeller={firstProduct.productSeller}
-                      hasMetaInfo={!!firstProduct.wishCount || !!firstProduct.purchaseCount}
-                    />
-                  </Grid>
-                )}
-                {secondProduct && (
-                  <Grid item xs={2}>
-                    <ProductGridCardSkeleton
-                      title={secondProduct.title}
-                      labels={firstProduct.labels}
-                      productSeller={firstProduct.productSeller}
-                      hasMetaInfo={!!secondProduct.wishCount || !!secondProduct.purchaseCount}
-                    />
-                  </Grid>
-                )}
+              <Grid
+                container
+                columnGap={ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 0 : 2}
+                customStyle={{ paddingBottom: 20 }}
+              >
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCardSkeleton
+                        hideMetaInfo={!firstProduct.wishCount && !firstProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCardSkeleton
+                        hideMetaInfo={!secondProduct.wishCount && !secondProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCardSkeleton
+                        hideMetaInfo={!firstProduct.wishCount && !firstProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCardSkeleton
+                        hideMetaInfo={!secondProduct.wishCount && !secondProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <ProductGridCardSkeleton
+                        title={firstProduct.title}
+                        labels={firstProduct.labels}
+                        productSeller={firstProduct.productSeller}
+                        hasMetaInfo={!!firstProduct.wishCount || !!firstProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <ProductGridCardSkeleton
+                        title={secondProduct.title}
+                        labels={secondProduct.labels}
+                        productSeller={secondProduct.productSeller}
+                        hasMetaInfo={!!secondProduct.wishCount || !!secondProduct.purchaseCount}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
               </Grid>
             </div>
           </CellMeasurer>
@@ -345,33 +397,89 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
           {({ measure }) => (
             <div style={style}>
-              <Grid container customStyle={{ paddingBottom: 32 }}>
-                {firstProduct && (
-                  <Grid item xs={2}>
-                    <ProductGridCard
-                      product={firstProduct}
-                      measure={measure}
-                      name={name}
-                      source={attrProperty.productSource.PRODUCT_LIST}
-                      productAtt={handleProductAtt(firstProduct)}
-                      wishAtt={handleWishAtt(firstProduct)}
-                      onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                    />
-                  </Grid>
-                )}
-                {secondProduct && (
-                  <Grid item xs={2}>
-                    <ProductGridCard
-                      product={secondProduct}
-                      measure={measure}
-                      name={name}
-                      source={attrProperty.productSource.PRODUCT_LIST}
-                      productAtt={handleProductAtt(secondProduct)}
-                      wishAtt={handleWishAtt(secondProduct)}
-                      onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                    />
-                  </Grid>
-                )}
+              <Grid
+                container
+                columnGap={ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 0 : 2}
+                customStyle={{ paddingBottom: 20 }}
+              >
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCard
+                        product={firstProduct}
+                        attributes={getProductAttributes(firstProduct)}
+                        measure={measure}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                        hideLabel={variant === 'camel'}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCard
+                        product={secondProduct}
+                        attributes={getProductAttributes(secondProduct)}
+                        measure={measure}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                        hideLabel={variant === 'camel'}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCard
+                        product={firstProduct}
+                        wishButtonType="B"
+                        attributes={getProductAttributes(firstProduct)}
+                        measure={measure}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                        hideLabel={variant === 'camel'}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <NewProductGridCard
+                        product={secondProduct}
+                        wishButtonType="B"
+                        attributes={getProductAttributes(secondProduct)}
+                        measure={measure}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                        hideLabel={variant === 'camel'}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+                  {firstProduct && (
+                    <Grid item xs={2}>
+                      <ProductGridCard
+                        product={firstProduct}
+                        measure={measure}
+                        name={name}
+                        source={attrProperty.productSource.PRODUCT_LIST}
+                        productAtt={getProductAttributes(firstProduct)}
+                        wishAtt={getWishAttributes(firstProduct)}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                      />
+                    </Grid>
+                  )}
+                  {secondProduct && (
+                    <Grid item xs={2}>
+                      <ProductGridCard
+                        product={secondProduct}
+                        measure={measure}
+                        name={name}
+                        source={attrProperty.productSource.PRODUCT_LIST}
+                        productAtt={getProductAttributes(secondProduct)}
+                        wishAtt={getWishAttributes(secondProduct)}
+                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                      />
+                    </Grid>
+                  )}
+                </ABTestGroup>
               </Grid>
               {index === 15 && !hasSelectedSearchOptions && (
                 <ProductsMiddleFilter isFetched={isFetched} measure={measure} />
@@ -383,10 +491,12 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
     },
     [
       products,
-      name,
-      hasSelectedSearchOptions,
-      handleProductAtt,
+      getProductAttributes,
       handleWishAfterChangeCallback,
+      variant,
+      name,
+      getWishAttributes,
+      hasSelectedSearchOptions,
       isFetched
     ]
   );
@@ -596,7 +706,15 @@ function ProductsInfiniteGrid({ variant, name }: ProductsInfiniteGridProps) {
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
-            <ProductGridCardSkeleton />
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+              <NewProductGridCardSkeleton />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+              <NewProductGridCardSkeleton />
+            </ABTestGroup>
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+              <ProductGridCardSkeleton />
+            </ABTestGroup>
           </Grid>
         ))}
       </Grid>

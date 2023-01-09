@@ -145,12 +145,15 @@ const users = {
   products: (params?: UserProductsParams) => [...users.all, 'products', params] as const,
   legitProfile: (userId: number) => [...users.all, 'legitProfile', userId] as const,
   simpleUserInfo: () => [...users.all, 'simpleUserInfo'] as const,
+  alarms: () => [...users.all, 'alarms'] as const,
   infoByUserId: (userId: number) => [...users.all, 'infoByUserId', userId] as const,
   productsByUserId: (params: ProductsByUserIdParams) =>
     [...users.all, 'productsByUserId', params] as const,
   reviewsByUserId: (params: UserReviewsByUserIdParams) =>
     [...users.all, 'reviewsByUserId', params] as const,
-  blocks: (params: UserBlockParams) => [...users.all, 'blocks', params] as const
+  blocks: (params: UserBlockParams) => [...users.all, 'blocks', params] as const,
+  myUserInfo: () => [...users.all, 'myUserInfo'] as const,
+  banword: () => [...users.all, 'banword'] as const
 };
 
 const userAuth = {

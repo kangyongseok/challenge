@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 
 import PurchaseType from '@components/UI/organisms/PurchaseType';
@@ -22,11 +22,6 @@ import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
 function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const purchaseDisabledState = useRecoilValue(disabledState('purchase'));
   const { mutate: styleMutate } = useMutation(postUserStyle);
   const purchaseTypeId = useRecoilValue(purchaseTypeIdState);
@@ -54,14 +49,14 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
   };
 
   return (
-    <>
-      <Box customStyle={{ padding: 32, background: common.uiWhite, height: '100%' }}>
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite, height: '100%' }}>
         <OnboardingStep />
         <Box customStyle={{ marginTop: 50 }}>
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             중고구매에서 가장 중요한 것은?
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>
+          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
             조건에 맞는 매물을 더 먼저 보여드릴게요
           </Typography>
         </Box>
@@ -70,7 +65,7 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
       <OnboardingBottomCTA onClick={handleClick} disabled={purchaseDisabledState.open}>
         다음
       </OnboardingBottomCTA>
-    </>
+    </ThemeProvider>
   );
 }
 

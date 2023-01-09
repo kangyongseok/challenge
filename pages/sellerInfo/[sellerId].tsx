@@ -21,7 +21,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchSellerInfo } from '@api/product';
 
-import { SELLER_STATUS } from '@constants/user';
+import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -126,11 +126,13 @@ function SellerInfo() {
             <SellerInfoProfile
               show={!triggered}
               platformId={site?.id || 0}
-              profileImage={image}
-              userName={sellerName}
-              isCamelSeller={
-                SELLER_STATUS[type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']
+              profileImage={
+                type === productSellerType.collection
+                  ? `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${site?.id}.png`
+                  : image
               }
+              userName={sellerName}
+              isCertificationSeller={type === productSellerType.certification}
               curnScore={Number(curnScore || '')}
               maxScore={Number(maxScore || '')}
             />

@@ -41,10 +41,10 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchRelatedProducts } from '@api/product';
 
-import { SELLER_STATUS } from '@constants/user';
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
+import { PRODUCT_SITE, productStatusCode } from '@constants/product';
 import { APP_BANNER, IS_DONE_WISH_ON_BOARDING } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -175,23 +175,11 @@ function ProductCTAButton({
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
       isCamelSelfSeller: product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id,
-      isCamelSeller:
-        product &&
-        SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] ===
-          SELLER_STATUS['3'],
-      isNormalSeller:
-        product &&
-        (product.site.id === 34 || product.productSeller.type === 4) &&
-        product.productSeller.type !== 3,
-      isSoldOut:
-        product &&
-        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'],
-      isReserving:
-        product &&
-        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4'],
-      isHiding:
-        product &&
-        PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['8'],
+      isCamelSeller: product && product.productSeller.type === productSellerType.certification,
+      isNormalSeller: product && product.productSeller.type === productSellerType.normal,
+      isSoldOut: product && product.status === productStatusCode.soldOut,
+      isReserving: product && product.status === productStatusCode.reservation,
+      isHiding: product && product.status === productStatusCode.hidden,
       platformId:
         (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
         (product?.site.hasImage && product?.site?.id) ||
@@ -632,12 +620,9 @@ function ProductCTAButton({
           disabled={
             !product ||
             ((!isDup || !hasTarget) &&
-              (PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                PRODUCT_STATUS['1'] ||
-                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                  PRODUCT_STATUS['3'] ||
-                PRODUCT_STATUS[product.status as keyof typeof PRODUCT_STATUS] ===
-                  PRODUCT_STATUS['2'])) ||
+              (product.status === productStatusCode.soldOut ||
+                product.status === productStatusCode.duplicate ||
+                product.status === productStatusCode.deleted)) ||
             isHiding ||
             isLoadingMutateCreateChannel ||
             pendingCreateChannel

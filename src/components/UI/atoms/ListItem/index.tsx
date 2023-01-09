@@ -38,15 +38,13 @@ function ListItem({
 }: ListItemProps) {
   return (
     <StyledListItem css={customStyle} onClick={onClick}>
-      {!!avatarUrl && (
-        <UserAvatar
-          src={avatarUrl}
-          width={52}
-          height={52}
-          isRound
-          iconCustomStyle={{ width: 24, height: 24 }}
-        />
-      )}
+      <UserAvatar
+        src={avatarUrl || ''}
+        width={52}
+        height={52}
+        isRound
+        iconCustomStyle={{ width: 24, height: 24 }}
+      />
       {!!avatar && avatar}
       <Item>
         <Flexbox alignment="center" gap={4}>

@@ -1,6 +1,6 @@
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Tab, TabGroup } from 'mrcamel-ui';
+import { Box, Flexbox, Tab, TabGroup, useTheme } from 'mrcamel-ui';
 
 import Badge from '@components/UI/atoms/Badge';
 
@@ -11,6 +11,12 @@ import useQueryUserInfo from '@hooks/useQueryUserInfo';
 function LegitAdminTabs() {
   const router = useRouter();
   const { tab = 'home' } = router.query;
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const resetLegitProfileOpinionLegitsParamsState = useResetRecoilState(
     legitProfileOpinionLegitsParamsState
@@ -36,7 +42,14 @@ function LegitAdminTabs() {
 
   return (
     <Box component="section">
-      <TabGroup fullWidth onChange={handleChange} value={String(tab)}>
+      <TabGroup
+        fullWidth
+        onChange={handleChange}
+        value={String(tab)}
+        customStyle={{
+          backgroundColor: common.bg03
+        }}
+      >
         <Tab text="홈" value="home" />
         <Tab text="내 사진감정" value="my" />
         <Tab
@@ -60,7 +73,6 @@ function LegitAdminTabs() {
           }
           value="request"
         />
-        <Tab text="내 프로필" value="profile" />
       </TabGroup>
     </Box>
   );

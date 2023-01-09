@@ -12,6 +12,8 @@ import queryKeys from '@constants/queryKeys';
 
 import { SpinnerPicker } from '@utils/onboarding';
 
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 import { CenterContents, DatePicker, GenderSelect } from './GenderYearInput.styles';
 
 const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/onboarding`;
@@ -29,6 +31,7 @@ function GenderYearInput({
 }) {
   const textRef = useRef(null);
   const { data: userInfo, isSuccess } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: accessUser, refetch } = useQueryAccessUser();
   // const [yearOfBirthValue, setYearOfBirthValue] = useState('');
   const [smallHeight, setSmallHeight] = useState(false);
   const {
@@ -37,11 +40,11 @@ function GenderYearInput({
 
   useEffect(() => {
     setSmallHeight(window.innerHeight <= 560);
-  }, []);
+  }, [refetch]);
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
-    if (isSuccess && userInfo && userInfo.info?.value?.yearOfBirth) {
+    if (isSuccess && accessUser?.birthday) {
       // eslint-disable-next-line no-new
       new SpinnerPicker(
         textRef.current,
@@ -53,7 +56,7 @@ function GenderYearInput({
           return currentYear - index;
         },
         {
-          index: currentYear - Number(userInfo?.info.value.yearOfBirth),
+          index: currentYear - Number(userInfo.info.value.yearOfBirth),
           font_color: palette.common.ui60,
           selection_color: themeType === 'normal' ? palette.common.ui20 : '#ffffff'
         },
@@ -62,7 +65,7 @@ function GenderYearInput({
       );
     }
 
-    if (isSuccess && !userInfo) {
+    if (isSuccess && !accessUser?.birthday) {
       // eslint-disable-next-line no-new
       new SpinnerPicker(
         textRef.current,

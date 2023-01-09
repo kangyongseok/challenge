@@ -1,6 +1,15 @@
 import { Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+export const CenterContents = styled.section`
+  position: absolute;
+  top: 50%;
+  margin-top: -121px;
+  left: 0;
+  width: 100%;
+  padding: 0 40px;
+`;
+
 export const GenderSelect = styled(Flexbox)<{ isGender: boolean }>`
   width: 120px;
   height: 120px;
@@ -17,16 +26,4 @@ export const DatePicker = styled.div<{ url: string; smallHeight: boolean }>`
   margin-top: ${({ smallHeight }) => (smallHeight ? 30 : 52)}px;
   overflow: hidden;
   position: relative;
-  /* box-shadow: 0px 1px 104px 13px rgba(0, 0, 0, 0.62) inset;
-  -webkit-box-shadow: 0px 1px 104px 13px rgba(0, 0, 0, 0.62) inset;
-  -moz-box-shadow: 0px 1px 104px 13px rgba(0, 0, 0, 0.62) inset; */
-`;
-
-export const CenterContents = styled.div`
-  position: absolute;
-  top: 50%;
-  margin-top: -121px;
-  left: 0;
-  width: 100%;
-  padding: 0 40px;
 `;

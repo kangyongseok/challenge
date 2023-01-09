@@ -3,5 +3,6 @@ export {
   ReservingOverlay,
   DuplicatedOverlay,
   PriceDownOverlay,
-  HideOverlay
+  HideOverlay,
+  MyShopHideOverlay
 } from './Overlay.styles';

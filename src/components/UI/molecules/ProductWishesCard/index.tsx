@@ -15,6 +15,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
@@ -122,9 +123,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       status
     } = product;
 
-    const isNormalseller =
-      (product?.site.id === 34 || product?.productSeller.type === 4) &&
-      product?.productSeller.type !== 3;
+    const isNormalseller = product.sellerType === productSellerType.normal;
 
     useEffect(() => {
       setIsWish(userWishIds.includes(id));

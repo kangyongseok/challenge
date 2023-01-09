@@ -19,6 +19,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchSearchRelatedProducts } from '@api/product';
 
+import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -74,9 +75,7 @@ function ProductImages({
     }
   );
 
-  const isNormalseller =
-    (product?.site.id === 34 || product?.productSeller.type === 4) &&
-    product?.productSeller.type !== 3;
+  const isNormalseller = product?.sellerType === productSellerType.normal;
 
   useEffect(() => {
     if (searchRelatedProducts && !isLoading && isFetched) {

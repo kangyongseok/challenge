@@ -1,19 +1,11 @@
-import { Typography, light } from 'mrcamel-ui';
+import { Label, light } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { LegitLabelProps } from '.';
 
-export const StyledLegitLabel = styled.label<Pick<LegitLabelProps, 'variant'>>`
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 6px;
-  min-width: fit-content;
-  height: fit-content;
-  border-radius: ${({ theme: { box } }) => box.round['4']};
-
-  ${({ variant }): CSSObject => {
-    switch (variant) {
+export const StyledLegitLabel = styled(Label)<Pick<LegitLabelProps, 'opinion'>>`
+  ${({ opinion }): CSSObject => {
+    switch (opinion) {
       case 'fake':
         return {
           backgroundColor: light.palette.secondary.red.dark
@@ -28,20 +20,4 @@ export const StyledLegitLabel = styled.label<Pick<LegitLabelProps, 'variant'>>`
         };
     }
   }}
-
-  & > svg {
-    color: ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.cmnW};
-  }
-`;
-
-export const Text = styled(Typography)`
-  color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.cmnW};
 `;

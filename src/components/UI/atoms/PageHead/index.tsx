@@ -3,6 +3,8 @@ import Head from 'next/head';
 
 import type { Product } from '@dto/product';
 
+import { productSellerType } from '@constants/user';
+
 import { getTenThousandUnitPrice } from '@utils/formats';
 
 interface PageHeadProps {
@@ -35,9 +37,7 @@ function PageHead({
     brand: { name: brandName = '', nameEng: brandNameEng = '' } = {}
   } = product || {};
 
-  const isNormalseller =
-    (product?.site.id === 34 || product?.productSeller.type === 4) &&
-    product?.productSeller.type !== 3;
+  const isNormalseller = product?.sellerType === productSellerType.normal;
 
   return (
     <Head>

@@ -19,6 +19,8 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
@@ -26,6 +28,7 @@ import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { getCookies } from '@utils/cookies';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
@@ -88,6 +91,8 @@ export async function getServerSideProps({
       }
     };
   }
+
+  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
 
   const queryClient = new QueryClient();
 

@@ -1,16 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Button, Flexbox, Typography } from 'mrcamel-ui';
-import filter from 'lodash-es/filter';
+import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { Header } from '@components/UI/molecules';
+import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { SizeInputSearch, SizeInputType } from '@components/pages/sizeInput';
+import UserSizeInputList from '@components/pages/user/UserSizeInputList';
 
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
@@ -20,57 +18,21 @@ import { fetchUserInfo, postUserSize } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
-import { getCookies } from '@utils/cookies';
+// import { getCookies } from '@utils/cookies';
 
 import type { SelectSize } from '@typings/user';
-import atom from '@recoil/users';
 
 function SizeInput() {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
+  const [selectedSizes, setSelectedSize] = useState<SelectSize[]>([]);
+
   const { mutateAsync } = useMutation(postUserSize);
-  const [searchModeType, atomSearchModeType] = useRecoilState(atom.searchModeTypeState);
-  const [selectedSizes, atomSelectedSize] = useRecoilState(atom.selectedSizeState);
-  const [tempSelected, atomTempSelected] = useRecoilState(atom.tempSelectedState);
-  const [searchModeDisabled] = useRecoilState(atom.searchModeDisabledState);
-
-  useEffect(() => {
-    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, {
-      name: 'SIZE'
-    });
-    return () => atomSelectedSize([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleBack = () => {
-    if (searchModeType.kind) {
-      atomSearchModeType({
-        kind: '',
-        parentCategoryId: 0
-      });
-      return;
-    }
-    router.back();
-  };
-
-  const handleSelectSuccess = () => {
-    if (searchModeType.kind) {
-      const filterData = filter(tempSelected, { kind: searchModeType.kind });
-      const result = filterData.map((info) => (info as SelectSize).categorySizeId);
-      logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
-        name: 'SIZE',
-        att: (searchModeType.kind as string).toUpperCase(),
-        title: 'SEARCH',
-        options: result
-      });
-
-      atomSelectedSize(tempSelected);
-      atomTempSelected([]);
-      atomSearchModeType({
-        kind: '',
-        parentCategoryId: 0
-      });
-    }
-  };
 
   const handleClickSave = async () => {
     const filterTop = selectedSizes
@@ -114,85 +76,62 @@ function SizeInput() {
     await Promise.all(result);
   };
 
-  const buttonDisabled = (): boolean => {
-    if (searchModeType.kind) {
-      return !searchModeDisabled;
-    }
-    if (!searchModeType.kind) {
-      return selectedSizes.length === 0;
-    }
-    return true;
-  };
+  useEffect(() => {
+    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, {
+      name: 'SIZE'
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <GeneralTemplate
-      header={<Header hideTitle showRight={false} onClickLeft={handleBack} />}
+      header={<Header hideTitle showRight={false} />}
       footer={
-        <Box customStyle={{ minHeight: 120 }}>
-          <FooterFixed alignment="center" justifyContent="center">
-            <Button
-              fullWidth
-              variant="solid"
-              brandColor="primary"
-              size="xlarge"
-              onClick={searchModeType.kind ? handleSelectSuccess : handleClickSave}
-              disabled={buttonDisabled()}
-            >
-              {searchModeType.kind ? '선택완료' : '저장'}
-            </Button>
-          </FooterFixed>
-        </Box>
+        <Footer>
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="xlarge"
+            onClick={handleClickSave}
+            disabled={selectedSizes.length === 0}
+          >
+            저장
+          </Button>
+        </Footer>
       }
+      disablePadding
     >
-      <PageHaederFlex gap={6} direction="vertical">
-        <Typography variant="h3" weight="bold" brandColor="black">
-          사이즈가 어떻게 되세요?
-        </Typography>
-        <Typography variant="body1">저장한 사이즈 매물만 모아볼 수 있어요.</Typography>
-      </PageHaederFlex>
-      {!searchModeType.kind && <SizeInputType />}
-      {searchModeType.kind && <SizeInputSearch />}
+      <Flexbox direction="vertical" gap={32} customStyle={{ padding: '0 32px 144px 31px' }}>
+        <Flexbox component="section" direction="vertical" alignment="center" gap={4}>
+          <Typography variant="h2" weight="bold">
+            사이즈를 알려주세요!
+          </Typography>
+          <Typography customStyle={{ color: common.ui60 }}>
+            사이즈에 맞는 매물만 보여드릴게요
+          </Typography>
+        </Flexbox>
+        <UserSizeInputList selectedSizes={selectedSizes} setSelectedSize={setSelectedSize} />
+      </Flexbox>
     </GeneralTemplate>
   );
 }
 
-const PageHaederFlex = styled(Flexbox)`
-  width: 100%;
-  height: 90px;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-  position: fixed;
-  left: 0;
-  padding-top: 18px;
-  text-align: center;
-  z-index: 100;
-`;
-
-const FooterFixed = styled(Flexbox)`
-  width: 100%;
-  height: 92px;
-  padding: 0 20px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-`;
-
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
+  Initializer.initAccessTokenByCookies(req.cookies);
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
 
-  if (req.cookies.accessToken) {
+  if (accessUser) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  } else {
+    return {
+      redirect: {
+        destination: '/login?returnUrl=/user/purchaseInput&isRequiredLogin=true',
+        permanent: false
+      }
+    };
   }
 
   return {
@@ -201,5 +140,13 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
     }
   };
 }
+
+const Footer = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
+`;
 
 export default SizeInput;

@@ -2,7 +2,12 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import {
+  NewProductGridCard,
+  NewProductGridCardSkeleton,
+  ProductGridCard,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -14,7 +19,9 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
+import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function HomeRecommendProductList() {
@@ -77,52 +84,103 @@ function HomeRecommendProductList() {
             {title}
           </Typography>
         )}
-        <Grid container rowGap={32} columnGap={12}>
-          {isLoading &&
-            Array.from({ length: 8 }, (_, index) => (
-              <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
-                <ProductGridCardSkeleton isRound />
-              </Grid>
-            ))}
-          {!isLoading &&
-            content.map((product, i) => (
-              <Grid key={`home-recommend-product-${product.id}`} item xs={2}>
-                <ProductGridCard
-                  product={product}
-                  hideProductLabel
-                  hideLegitStatusLabel
-                  wishAtt={{
-                    name: attrProperty.name.MAIN,
-                    title: attrProperty.title.RECOMM,
-                    id: product.id,
-                    index: i + 1,
-                    brand: product.brand.name,
-                    category: product.category.name,
-                    parentId: product.category.parentId,
-                    site: product.site.name,
-                    price: product.price,
-                    cluster: product.cluster,
-                    source: attrProperty.source.MAIN_RECOMM
-                  }}
-                  productAtt={{
-                    name: attrProperty.name.MAIN,
-                    title: attrProperty.title.RECOMM,
-                    id: product.id,
-                    index: i + 1,
-                    brand: product.brand.name,
-                    category: product.category.name,
-                    parentId: product.category.parentId,
-                    site: product.site.name,
-                    price: product.price,
-                    cluster: product.cluster,
-                    source: attrProperty.source.MAIN_RECOMM
-                  }}
-                  source={attrProperty.source.MAIN_RECOMM}
-                  compact
-                  isRound
-                />
-              </Grid>
-            ))}
+        <Grid container rowGap={20} columnGap={12}>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+            {isLoading &&
+              Array.from({ length: 8 }, (_, index) => (
+                <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
+                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                </Grid>
+              ))}
+            {!isLoading &&
+              content.map((product, i) => (
+                <Grid key={`home-recommend-product-${product.id}`} item xs={2}>
+                  <NewProductGridCard
+                    variant="gridB"
+                    product={product}
+                    isRound
+                    attributes={{
+                      name: attrProperty.name.MAIN,
+                      title: attrProperty.title.RECOMM,
+                      source: attrProperty.source.MAIN_RECOMM,
+                      index: i + 1
+                    }}
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+            {isLoading &&
+              Array.from({ length: 8 }, (_, index) => (
+                <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
+                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                </Grid>
+              ))}
+            {!isLoading &&
+              content.map((product, i) => (
+                <Grid key={`home-recommend-product-${product.id}`} item xs={2}>
+                  <NewProductGridCard
+                    variant="gridB"
+                    product={product}
+                    wishButtonType="B"
+                    isRound
+                    attributes={{
+                      name: attrProperty.name.MAIN,
+                      title: attrProperty.title.RECOMM,
+                      source: attrProperty.source.MAIN_RECOMM,
+                      index: i + 1
+                    }}
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+            {isLoading &&
+              Array.from({ length: 8 }, (_, index) => (
+                <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
+                  <ProductGridCardSkeleton isRound />
+                </Grid>
+              ))}
+            {!isLoading &&
+              content.map((product, i) => (
+                <Grid key={`home-recommend-product-${product.id}`} item xs={2}>
+                  <ProductGridCard
+                    product={product}
+                    hideProductLabel
+                    hideLegitStatusLabel
+                    wishAtt={{
+                      name: attrProperty.name.MAIN,
+                      title: attrProperty.title.RECOMM,
+                      id: product.id,
+                      index: i + 1,
+                      brand: product.brand.name,
+                      category: product.category.name,
+                      parentId: product.category.parentId,
+                      site: product.site.name,
+                      price: product.price,
+                      cluster: product.cluster,
+                      source: attrProperty.source.MAIN_RECOMM
+                    }}
+                    productAtt={{
+                      name: attrProperty.name.MAIN,
+                      title: attrProperty.title.RECOMM,
+                      id: product.id,
+                      index: i + 1,
+                      brand: product.brand.name,
+                      category: product.category.name,
+                      parentId: product.category.parentId,
+                      site: product.site.name,
+                      price: product.price,
+                      cluster: product.cluster,
+                      source: attrProperty.source.MAIN_RECOMM
+                    }}
+                    source={attrProperty.source.MAIN_RECOMM}
+                    compact
+                    isRound
+                  />
+                </Grid>
+              ))}
+          </ABTestGroup>
         </Grid>
       </Box>
     </Box>

@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
 
+import type { UpdateUserProfileData } from '@dto/user';
 import type { OpinionLegitsParams } from '@dto/productLegit';
 
 export const defaultLegitProfileOpinionLegitsParamsState: OpinionLegitsParams = {
@@ -18,5 +19,12 @@ export const legitProfileOpinionLegitsParamsState = atom<OpinionLegitsParams>({
     status: [],
     results: [],
     userIds: []
+  }
+});
+
+export const legitProfileEditState = atom<UpdateUserProfileData>({
+  key: 'legitProfile/legitProfileEditState',
+  default: {
+    nickName: ''
   }
 });

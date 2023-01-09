@@ -9,8 +9,10 @@ export const CATEGORY_TAGS_HEIGHT = 39;
 export const RELATED_KEYWORDS_HEIGHT = 52;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
 export const APP_TOP_STATUS_HEIGHT = 44;
-export const TAB_HEIGHT = 41;
 export const TAB_HEIGHT_XLARGE = 45;
+export const TAB_HEIGHT = 41;
+export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
+export const PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT = 102;
 export const CMR_LANDING_INFO_HEIGHT = 72;
 export const IMG_CAMEL_PLATFORM_NUMBER = 161;
 export const PRODUCT_INFORMATION_HEIGHT = 65;
@@ -18,6 +20,10 @@ export const MESSAGE_INPUT_HEIGHT = 44;
 export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
 export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
 export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
+export const extractTagRegx = /(<([^>]+)>)/gi;
+export const NEXT_IMAGE_BLUR_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+export const BASIC_BACKGROUND_IMG = `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-background.png`;
 
 export const locales = {
   ko: {

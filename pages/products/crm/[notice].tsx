@@ -19,6 +19,8 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import Initializer from '@library/initializer';
+
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   APP_TOP_STATUS_HEIGHT,
@@ -27,6 +29,7 @@ import {
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
+import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -79,9 +82,11 @@ function CrmProducts() {
 }
 
 export async function getServerSideProps({
+  req,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
+  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
   return {
     props: {
       ...(await serverSideTranslations(locale || defaultLocale))

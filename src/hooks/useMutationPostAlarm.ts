@@ -2,11 +2,11 @@ import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import type { UseMutationOptions } from 'react-query';
 
-import type { PostAlarmData } from '@dto/user';
+import type { AlarmsParams } from '@dto/user';
 
 import Sendbird from '@library/sendbird';
 
-import { postAlarm } from '@api/user';
+import { putAlarm } from '@api/user';
 
 import { toastState } from '@recoil/common';
 
@@ -16,19 +16,19 @@ function useMutationPostAlarm() {
   const setToastState = useSetRecoilState(toastState);
 
   const { refetch: refetchUserInfo } = useQueryUserInfo();
-  const { mutate: mutatePostAlarm, ...useMutationResult } = useMutation(postAlarm, {
+  const { mutate: mutatePostAlarm, ...useMutationResult } = useMutation(putAlarm, {
     async onSuccess() {
       await refetchUserInfo();
     }
   });
 
   const mutate = async (
-    data: PostAlarmData,
-    options?: Omit<UseMutationOptions<void, unknown, PostAlarmData, unknown>, 'mutationFn'>,
+    data: AlarmsParams,
+    options?: Omit<UseMutationOptions<void, unknown, AlarmsParams, unknown>, 'mutationFn'>,
     isUpdateNoti = false
   ) => {
     if (isUpdateNoti) {
-      await Sendbird.setSnoozeNotification(!data.isChannelNoti).then((snoozePeriod) => {
+      await Sendbird.setSnoozeNotification(!data.isNotiChannel).then((snoozePeriod) => {
         if (snoozePeriod) {
           mutatePostAlarm(data, options);
         } else {

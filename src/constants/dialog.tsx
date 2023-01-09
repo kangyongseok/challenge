@@ -7,7 +7,12 @@ import type { DialogType } from '@typings/common';
 export const dialogTitle: Record<
   Exclude<
     DialogType,
-    'unblockBlockedUser' | 'blockUser' | 'confirmDeal' | 'loginError' | 'loginProviderError'
+    | 'unblockBlockedUser'
+    | 'blockUser'
+    | 'confirmDeal'
+    | 'loginError'
+    | 'loginProviderError'
+    | 'deleteAccount'
   >,
   string | number | ReactElement
 > = {
@@ -51,7 +56,9 @@ export const dialogTitle: Record<
       <br />
       업데이트가 필요해요
     </Box>
-  )
+  ),
+  leaveEditProfile: <Box customStyle={{ marginTop: 12 }}>페이지를 나가시겠어요?</Box>,
+  featureIsMobileAppDown: '이 기능은 앱에서만 할 수 있어요!'
 };
 
 export const dialogContent = {
@@ -120,7 +127,15 @@ export const dialogContent = {
       <br />
       다시 시도하시거나 1:1문의를 이용해주세요.
     </>
-  )
+  ),
+  leaveEditProfile: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      수정한 내용이 저장되지 않았어요.
+      <br />
+      그래도 떠나시나요?
+    </Box>
+  ),
+  featureIsMobileAppDown: '지금 바로 앱을 다운받아볼까요?'
 };
 
 export const firstButtonText: Record<
@@ -140,6 +155,8 @@ export const firstButtonText: Record<
     | 'successMakeAppointment'
     | 'cancelAppointment'
     | 'loginError'
+    | 'deleteAccount'
+    | 'leaveEditProfile'
   >,
   string | number | ReactElement
 > = {
@@ -156,7 +173,9 @@ export const firstButtonText: Record<
   confirmDeal: '네, 거래했어요.',
   successMakeAppointment: '예약중으로 변경',
   cancelAppointment: '약속 취소하기',
-  loginError: '확인'
+  loginError: '확인',
+  deleteAccount: '회원탈퇴',
+  leaveEditProfile: '취소'
 };
 
 export const secondButtonText: Record<
@@ -183,6 +202,9 @@ export const secondButtonText: Record<
     | 'requiredAppUpdateForChat'
     | 'loginError'
     | 'loginProviderError'
+    | 'deleteAccount'
+    | 'leaveEditProfile'
+    | 'featureIsMobileAppDown'
   >,
   string | number | ReactElement
 > = {
@@ -206,7 +228,10 @@ export const secondButtonText: Record<
   cancelAppointment: '취소',
   requiredAppUpdateForChat: '스토어로 이동하기',
   loginError: '1:1 문의',
-  loginProviderError: '확인'
+  loginProviderError: '확인',
+  deleteAccount: '회원정보 유지',
+  leaveEditProfile: '나가기',
+  featureIsMobileAppDown: '3초 앱 다운로드'
 };
 
 const dialog = {

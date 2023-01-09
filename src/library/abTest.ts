@@ -22,6 +22,22 @@ const tasks: ABTestTask[] = [
     },
     running: true,
     defaultBelong: 'A'
+  },
+  {
+    name: abTestTaskNameKeys.BETTER_CARD_2301,
+    slot: 'test_type_02',
+    postfix: {
+      A: '2301_RECOMMEND_A',
+      B: '2301_RECOMMEND_B',
+      C: '2301_RECOMMEND_C'
+    },
+    ratio: {
+      A: 33.3,
+      B: 33.3,
+      C: 33.3
+    },
+    running: true,
+    defaultBelong: 'A'
   }
 ];
 
@@ -62,7 +78,7 @@ const ABTest = {
     if (!identifier[name] || !findTask) return null;
 
     const {
-      ratio: { A, B },
+      ratio: { A, B, C },
       defaultBelong
     } = findTask;
 
@@ -71,6 +87,9 @@ const ABTest = {
     }
     if (identifier[name] < A + B) {
       return 'B';
+    }
+    if (C && identifier[name] < A + B + C) {
+      return 'C';
     }
 
     return defaultBelong;

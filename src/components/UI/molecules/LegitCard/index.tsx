@@ -90,10 +90,10 @@ function LegitCard({
             {!hideLegitLabelWithDate && (
               <Flexbox alignment="center" justifyContent="space-between" gap={10}>
                 {result === 1 && <LegitLabel text="정품의견" />}
-                {result === 2 && <LegitLabel variant="fake" text="가품의심" />}
-                {!result && status === 20 && <LegitLabel variant="impossible" text="감정중" />}
+                {result === 2 && <LegitLabel opinion="fake" text="가품의심" />}
+                {!result && status === 20 && <LegitLabel opinion="impossible" text="감정중" />}
                 {result !== 1 && result !== 2 && status === 30 && (
-                  <LegitLabel variant="impossible" text="감정불가" />
+                  <LegitLabel opinion="impossible" text="감정불가" />
                 )}
                 <Typography className="legit-alert-date" variant="small2">
                   {dayjs(dateCreated).fromNow()}
@@ -129,21 +129,21 @@ function LegitCard({
       )}
       {result === 2 && (
         <LegitLabel
-          variant="fake"
+          opinion="fake"
           text="가품의심"
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
       {!result && status === 20 && (
         <LegitLabel
-          variant="impossible"
+          opinion="impossible"
           text="감정중"
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
       {result !== 1 && result !== 2 && status === 30 && (
         <LegitLabel
-          variant="impossible"
+          opinion="impossible"
           text="감정불가"
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />

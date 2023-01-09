@@ -18,7 +18,7 @@ export declare global {
     fbq: any;
     gtag: any;
     callSetLoginUser: any;
-    getPhotoGuide: any;
+    getPhotoGuide: () => void;
     getPhotoGuideDone: any;
     getLogEvent: any;
     getCameraAuth: any;

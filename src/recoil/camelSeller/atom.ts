@@ -1,10 +1,6 @@
 import { atom, atomFamily, selector } from 'recoil';
 
-import type {
-  // CamelSellerLocalStorage,
-  CamelSellerTempData,
-  SubmitType
-} from '@typings/camelSeller';
+import type { CamelSellerTempData, SubmitType } from '@typings/camelSeller';
 
 export const camelSellerTempSaveDataState = atom<CamelSellerTempData>({
   key: '@camelSeller/TempSaveDataState',

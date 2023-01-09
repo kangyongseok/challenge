@@ -113,3 +113,25 @@ export const PriceDownOverlay = styled(BaseOverlay)`
     white-space: pre;
   }
 `;
+
+export const MyShopHideOverlay = styled(BaseOverlay)<{ card?: boolean }>`
+  & ::after {
+    content: '숨김';
+    ${({ card, theme: { palette, box } }): CSSObject => {
+      if (card) {
+        return {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          background: palette.common.ui20,
+          width: '100%',
+          height: '24px',
+          borderBottomRightRadius: box.round['8'],
+          borderBottomLeftRadius: box.round['8']
+        };
+      }
+      return {};
+    }}
+  }
+  ${({ card }) => card && { backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
+`;

@@ -3,12 +3,16 @@ import { useRouter } from 'next/router';
 import { Button, Flexbox, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { logEvent } from '@library/amplitude';
+
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   APP_TOP_STATUS_HEIGHT,
   BOTTOM_NAVIGATION_HEIGHT,
   HEADER_HEIGHT
 } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -20,6 +24,14 @@ function MypageIntro() {
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useViewportUnitsTrick();
+
+  const handleClickLogin = () => {
+    logEvent(attrKeys.mypage.CLICK_LOGIN, {
+      name: attrProperty.name.MY
+    });
+
+    router.push('/login');
+  };
 
   return (
     <Wrapper
@@ -58,7 +70,7 @@ function MypageIntro() {
         size="large"
         brandColor="primary"
         fullWidth
-        onClick={() => router.push('/login')}
+        onClick={handleClickLogin}
         customStyle={{ marginBottom: 20 }}
       >
         로그인/가입하기

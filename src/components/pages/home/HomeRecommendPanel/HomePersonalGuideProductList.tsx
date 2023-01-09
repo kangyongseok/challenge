@@ -1,20 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
-import { debounce } from 'lodash-es';
+import { debounce, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
-
-import { GuideProducts } from '@dto/personal';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
+import ABTest from '@library/abTest';
 
 import { fetchGuideAllProducts } from '@api/personal';
 
@@ -22,6 +21,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { getOnlyObjectValue } from '@utils/common';
 
@@ -44,13 +44,13 @@ function HomePersonalGuideProductList() {
   const setActiveMyFilterState = useSetRecoilState(activeMyFilterState);
   const { data: userInfo } = useQueryUserInfo();
   const {
-    data: products,
+    data: products = [],
     isLoading,
     refetch
   } = useQuery(queryKeys.personals.guideAllProducts(), () => fetchGuideAllProducts(), {
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    keepPreviousData: true
   });
-  const [filterData, setFilterData] = useState<GuideProducts[]>([]);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -68,12 +68,6 @@ function HomePersonalGuideProductList() {
     return () => clearInterval(intervalRef.current);
   }, [refetch]);
 
-  useEffect(() => {
-    if (products) {
-      setFilterData(products.filter((data) => !!data.products));
-    }
-  }, [products]);
-
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const target = e.currentTarget;
     logEvent(attrKeys.home.CLICK_REFRESH_PRODUCT, {
@@ -85,7 +79,7 @@ function HomePersonalGuideProductList() {
 
     if (target.dataset.left) {
       if (guideProductsNum === 0) {
-        setGuideProductsNum(filterData.length - 1);
+        setGuideProductsNum(products.length - 1);
         return;
       }
       setGuideProductsNum((props) => props - 1);
@@ -93,7 +87,7 @@ function HomePersonalGuideProductList() {
     }
 
     if (target.dataset.right) {
-      if (guideProductsNum === filterData.length - 1) {
+      if (guideProductsNum === products.length - 1) {
         setGuideProductsNum(0);
         return;
       }
@@ -113,12 +107,12 @@ function HomePersonalGuideProductList() {
       type: attrProperty.type.GUIDED
     });
 
-    if (filterData) {
-      if (isLoading || !filterData[guideProductsNum].name) return;
-      const genderSizeType = filterData[guideProductsNum].purchaseTypeValue === 40;
+    if (!isEmpty(products)) {
+      if (isLoading || !products[guideProductsNum].name) return;
+      const genderSizeType = products[guideProductsNum].purchaseTypeValue === 40;
       const origin: { [propsName: string]: string } = {
-        idFilterIds: filterData[guideProductsNum].idFilter,
-        distance: filterData[guideProductsNum].distance
+        idFilterIds: products[guideProductsNum].idFilter,
+        distance: products[guideProductsNum].distance
       };
 
       if (genderSizeType) {
@@ -133,7 +127,7 @@ function HomePersonalGuideProductList() {
       const isValueQuery = Object.keys(origin).filter((q) => !!origin[q]);
 
       router.push({
-        pathname: `/products/search/${filterData[guideProductsNum].name}`,
+        pathname: `/products/search/${products[guideProductsNum].name}`,
         query: getOnlyObjectValue(isValueQuery, origin)
       });
     }
@@ -159,10 +153,10 @@ function HomePersonalGuideProductList() {
           {!isLoading && (
             <Flexbox direction="vertical" customStyle={{ flexGrow: 1 }}>
               <Typography variant="h3" weight="bold">
-                {filterData[guideProductsNum]?.title || ''}
+                {products[guideProductsNum]?.title || ''}
               </Typography>
               <Typography variant="h3" weight="bold">
-                {filterData[guideProductsNum]?.name || ''}
+                {products[guideProductsNum]?.name || ''}
               </Typography>
             </Flexbox>
           )}
@@ -177,55 +171,35 @@ function HomePersonalGuideProductList() {
           </Button>
         </Flexbox>
       </Box>
-      <List onScroll={handleScroll} ref={listScrollRef}>
+      <List
+        onScroll={handleScroll}
+        ref={listScrollRef}
+        css={{
+          minHeight: ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 222 : 286
+        }}
+      >
         {isLoading &&
           Array.from({ length: 10 }).map((_, index) => (
-            <ProductGridCardSkeleton
+            <NewProductGridCardSkeleton
               // eslint-disable-next-line react/no-array-index-key
               key={`home-personal-guide-product-skeleton-${index}`}
+              variant="swipeX"
               isRound
-              hasAreaWithDateInfo={false}
-              hasMetaInfo={false}
-              compact
-              gap={8}
             />
           ))}
         {!isLoading &&
-          filterData[guideProductsNum]?.products?.content.map((product, index) => (
-            <ProductGridCard
+          products[guideProductsNum]?.products?.content.map((product, index) => (
+            <NewProductGridCard
               key={`home-personal-guide-product-${product.id}`}
+              variant="swipeX"
               product={product}
               isRound
-              compact
-              gap={8}
-              hideProductLabel
-              productAtt={{
+              attributes={{
                 name: attrProperty.name.MAIN,
                 title: attrProperty.title.PERSONAL_GUIDE,
-                id: product.id,
-                index: index + 1,
-                brand: product.brand.name,
-                category: product.category.name,
-                parentId: product.category.parentId,
-                site: product.site.name,
-                price: product.price,
-                cluster: product.cluster,
-                source: attrProperty.source.MAIN_PERSONAL_GUIDE
+                source: attrProperty.source.MAIN_PERSONAL_GUIDE,
+                index: index + 1
               }}
-              wishAtt={{
-                name: attrProperty.name.MAIN,
-                title: attrProperty.title.PERSONAL_GUIDE,
-                id: product.id,
-                index: index + 1,
-                brand: product.brand.name,
-                category: product.category.name,
-                parentId: product.category.parentId,
-                site: product.site.name,
-                price: product.price,
-                cluster: product.cluster,
-                source: attrProperty.source.MAIN_PERSONAL_GUIDE
-              }}
-              source={attrProperty.source.MAIN_PERSONAL_GUIDE}
             />
           ))}
       </List>
@@ -244,7 +218,7 @@ function HomePersonalGuideProductList() {
           <span style={{ color: common.ui20, minWidth: 9, display: 'inline-block' }}>
             {guideProductsNum + 1}
           </span>{' '}
-          / {filterData.length}
+          / {products.length}
         </Typography>
         <Button
           customStyle={{ borderRadius: 36, width: 44, outline: 'none' }}
@@ -266,7 +240,6 @@ const List = styled.div`
   margin-top: 20px;
   padding: 0 20px;
   overflow-x: auto;
-  min-height: 222px;
 
   & > div {
     width: 120px;

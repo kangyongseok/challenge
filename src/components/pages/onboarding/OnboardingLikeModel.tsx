@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useMutation, useQuery } from 'react-query';
-import { Box, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { Box, ThemeProvider, Tooltip, Typography, dark } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 
 import { StylesCards } from '@components/UI/organisms';
@@ -24,11 +24,6 @@ import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
 function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const { mutate: styleMutate } = useMutation(postUserStyle);
   const openTooltip = useRecoilValue(openState('likeTooltip'));
   const selectedModelCard = useRecoilValue(selectedModelCardState);
@@ -74,14 +69,14 @@ function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
   };
 
   return (
-    <>
-      <Box customStyle={{ padding: 32, background: common.uiWhite }}>
+    <ThemeProvider theme="dark">
+      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite }}>
         <OnboardingStep />
         <Box customStyle={{ margin: '50px 0 32px' }}>
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             관심 아이템을 선택해주세요!
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>
+          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
             {selectedModelCard.length
               ? '혹은 비슷한 아이템을 골라주셔도 돼요'
               : '스타일을 먼저 골라보세요'}
@@ -94,7 +89,11 @@ function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
           open={openTooltip.open}
           variant="solid"
           message={
-            <Typography variant="small1" weight="medium" customStyle={{ color: common.ui98 }}>
+            <Typography
+              variant="small1"
+              weight="medium"
+              customStyle={{ color: dark.palette.common.ui98 }}
+            >
               😎 최대 5개까지 고를 수 있어요.
             </Typography>
           }
@@ -102,7 +101,7 @@ function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
           다음
         </Tooltip>
       </OnboardingBottomCTA>
-    </>
+    </ThemeProvider>
   );
 }
 

@@ -1,3 +1,3 @@
 export { default as UserAddressSetting } from './UserAddressSetting';
-export { default as UserBudget } from './UserBudget';
-export { default as UserCategoryCollapse } from './UserCategoryCollapse';
+export { default as UserRecentAddresses } from './UserRecentAddresses';
+export { default as UserSizeInputList } from './UserSizeInputList';

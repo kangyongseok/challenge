@@ -7,7 +7,7 @@ import { Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
+import { CAMEL_SELLER, LISTING_TECH_DATE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -84,7 +84,7 @@ function CamelSellerSavePopup() {
       title: attrProperty.title.CONTINUE,
       att: 'NEW'
     });
-
+    LocalStorage.remove(LISTING_TECH_DATE);
     setContinueRegisterDialog(({ type }) => ({ type, open: false }));
     reset();
     router.push('/camelSeller');

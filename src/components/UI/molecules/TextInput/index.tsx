@@ -6,7 +6,7 @@ import { Adornment, Input, Label, Wrapper } from './TextInput.styles';
 import type { TextInputVariant } from './TextInput.styles';
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: string | ReactElement;
   onClick?: () => void;
   variant?: TextInputVariant;
   startAdornment?: string | ReactElement;
@@ -15,6 +15,8 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   isSelected?: boolean;
   customStyle?: CSSObject;
   inputStyle?: CSSObject;
+  labelStyle?: CSSObject;
+  wrapperClassName?: string;
 }
 
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function TextField(
@@ -28,8 +30,10 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function TextFiel
     isSelected = false,
     customStyle,
     inputStyle,
-    onFocus,
+    labelStyle,
     onBlur,
+    wrapperClassName,
+    onFocus,
     ...props
   },
   ref
@@ -56,8 +60,9 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function TextFiel
       isSelected={isSelected}
       focused={focused}
       css={customStyle}
+      className={wrapperClassName}
     >
-      {label && <Label>{label}</Label>}
+      {!!label && (typeof label === 'string' ? <Label css={labelStyle}>{label}</Label> : label)}
       {startAdornment && <Adornment>{startAdornment}</Adornment>}
       <Input
         ref={ref}

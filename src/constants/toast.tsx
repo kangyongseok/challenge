@@ -4,6 +4,11 @@ import dayjs from 'dayjs';
 
 import { ToastStatus, ToastType } from '@typings/common';
 
+const common = {
+  saved: '저장이 완료되었습니다',
+  overLimitText: '{length}글자만 입력할 수 있어요.'
+};
+
 const bottomSheetLogin = {
   loginSuccess: '로그인 되었습니다.'
 };
@@ -120,7 +125,14 @@ const user = {
   channelNotiOff: '채팅 알림을 받지 않아요.',
   channelNotiOn: '채팅 알림을 받아요.',
   report: '신고 접수 완료되었습니다.',
-  successSendReview: '후기를 보냈어요.'
+  successSendReview: '후기를 보냈어요.',
+  saved: '저장을 완료했어요.',
+  duplicatedNickName: '이미 사용 중인 닉네임이에요.',
+  invalidBanWord: '욕설 및 비속어는 사용할 수 없어요!',
+  invalidAdminWord: '관리자로 오해할 수 있는 단어는 쓸 수 없어요.',
+  disableImageUpload: '사진 업로드는 앱에서만 할 수 있어요!',
+  savedProfileImage: '프로필 사진을 저장했어요',
+  savedBackgroundImage: '배경 사진을 저장했어요.'
 };
 
 const channel = {
@@ -139,6 +151,7 @@ export const toastText: Record<
   ToastType,
   Partial<Record<ToastStatus, string | number | ReactElement>>
 > = {
+  common,
   productsKeyword,
   mapFilter,
   product,

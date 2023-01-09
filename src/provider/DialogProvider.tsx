@@ -50,11 +50,15 @@ function DialogProvider() {
       case 'leaveChannel':
       case 'blockUser':
       case 'loginError':
+      case 'deleteAccount':
+      case 'leaveEditProfile':
         return 'textWithTwoButton';
       case 'legitRequestOnlyInApp':
+      case 'featureIsMobileAppDown':
       case 'legitRequestOnlyInIOS':
       case 'legitServiceNotice':
       case 'appUpdateNotice':
+      case 'legitPhotoGuide':
       case 'loginProviderError':
       case 'requiredAppUpdateForChat':
         return 'textWithOneButton';
@@ -64,8 +68,6 @@ function DialogProvider() {
       case 'successMakeAppointment':
       case 'cancelAppointment':
         return 'textWithTwoVerticalButton';
-      case 'legitPhotoGuide':
-        return 'textWithOneButton';
       default:
         return 'text';
     }

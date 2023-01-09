@@ -36,3 +36,38 @@ export const rotate = keyframes`
     transform: rotate(360deg);
   }
 `;
+
+export const shake = keyframes`
+  0% {
+    transform: translateX(0px);
+    animation-timing-function: ease-in;
+  }
+  37% {
+    transform: translateX(5px);
+    animation-timing-function: ease-out;
+  }
+  55% {
+    transform: translateX(-5px);
+    animation-timing-function: ease-in;
+  }
+  73% {
+    transform: translateX(4px);
+    animation-timing-function: ease-out;
+  }
+  82% {
+    transform: translateX(-4px);
+    animation-timing-function: ease-in;
+  }
+  91% {
+    transform: translateX(2px);
+    animation-timing-function: ease-out;
+  }
+  96% {
+    transform: translateX(-2px);
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: translateX(0px);
+    animation-timing-function: ease-in;
+  }
+`;

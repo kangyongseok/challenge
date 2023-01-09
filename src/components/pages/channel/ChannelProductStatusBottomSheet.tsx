@@ -143,11 +143,6 @@ function ChannelProductStatusBottomSheet({
               숨기기
             </Menu>
           )}
-          {productStatus[8] === productStatus[status as keyof typeof productStatus] && (
-            <Menu variant="h3" weight="medium" onClick={handleClickStatus(0)}>
-              보이기
-            </Menu>
-          )}
         </Flexbox>
         <Button size="xlarge" variant="ghost" brandColor="black" fullWidth onClick={handleClose}>
           취소

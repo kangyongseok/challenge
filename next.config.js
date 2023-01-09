@@ -35,7 +35,19 @@ const routers = [
     destination: '/login'
   },
   {
-    source: '/user/:path*',
+    source: '/camelSeller/:path*',
+    has: [
+      {
+        type: 'cookie',
+        key: 'accessToken',
+        value: undefined
+      }
+    ],
+    permanent: false,
+    destination: '/login'
+  },
+  {
+    source: '/legit/profile/:id/edit',
     has: [
       {
         type: 'cookie',

@@ -31,7 +31,7 @@ export function ABTestGroup({
   children,
   name,
   belong
-}: PropsWithChildren<{ name: string; belong: ABTestBelong }>) {
+}: PropsWithChildren<{ name: string; belong: ABTestBelong | 'C' }>) {
   if (ABTest.getBelong(name) === belong) {
     return children as ReactElement;
   }

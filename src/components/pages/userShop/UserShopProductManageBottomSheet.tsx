@@ -1,7 +1,7 @@
 import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -12,6 +12,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -21,11 +22,14 @@ import { checkAgent } from '@utils/common';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { toastState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const TOAST_BOTTOM = 20;
 
 function UserShopProductManageBottomSheet() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: accessUser } = useQueryAccessUser();
   const {
     theme: {
       palette: {
@@ -62,7 +66,6 @@ function UserShopProductManageBottomSheet() {
   const setToastState = useSetRecoilState(toastState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
-  const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
 
   const { isSale, isSoldOut, isReserving, isHiding } = useMemo(
     () => ({
@@ -156,6 +159,8 @@ function UserShopProductManageBottomSheet() {
       ...getAttProperty
     });
 
+    queryClient.invalidateQueries(queryKeys.users.infoByUserId(accessUser?.userId || 0));
+
     if (dataStatus === 1) {
       setOpenState(({ type }) => ({
         type,
@@ -173,11 +178,6 @@ function UserShopProductManageBottomSheet() {
                   isSelectTargetUser: true
                 }
               });
-            } else {
-              setOpenSoldOutFeedbackState(({ type }) => ({
-                type,
-                open: true
-              }));
             }
           }
         }

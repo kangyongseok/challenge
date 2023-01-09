@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
@@ -13,7 +13,7 @@ import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { AccessUser } from '@dto/userAuth';
-import type { Gender } from '@dto/user';
+import { Gender } from '@dto/user';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import { logEvent } from '@library/amplitude';
@@ -32,6 +32,7 @@ function PersonalInput() {
     }
   } = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
   const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const { isLoading, mutate } = useMutation(postUserAgeAndGender, {
@@ -41,6 +42,7 @@ function PersonalInput() {
   });
   const [genderValue, setGenderValue] = useState<Gender | null>('M');
   const [yearOfBirthValue, setYearOfBirthValue] = useState('');
+
   const isShowYearOfBirthError =
     Number(yearOfBirthValue || 0) < 1900 ||
     Number(yearOfBirthValue || 0) > Number(dayjs().format('YYYY'));
@@ -67,6 +69,10 @@ function PersonalInput() {
       name: 'INFO',
       gender: genderValue === 'F' ? 'FEMALE' : 'MALE',
       yearOfBirth: yearOfBirthValue
+    });
+
+    queryClient.invalidateQueries(queryKeys.users.myUserInfo(), {
+      refetchInactive: true
     });
 
     updateAccessUserOnBraze({
@@ -118,7 +124,7 @@ function PersonalInput() {
     >
       <Box component="section" customStyle={{ marginTop: 20 }}>
         <Box customStyle={{ marginBottom: 32, textAlign: 'center' }}>
-          <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
+          <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             {accessUser?.userName || '회원'}님에 대해 알려주세요.
           </Typography>
           <Typography customStyle={{ color: common.ui60 }}>

@@ -49,8 +49,8 @@ function LegitOpinion({
             )}
           </Flexbox>
           {result === 1 && <LegitLabel text="정품의견" />}
-          {result === 2 && <LegitLabel variant="fake" text="가품의심" />}
-          {result !== 1 && result !== 2 && <LegitLabel variant="impossible" text="감정불가" />}
+          {result === 2 && <LegitLabel opinion="fake" text="가품의심" />}
+          {result !== 1 && result !== 2 && <LegitLabel opinion="impossible" text="감정불가" />}
         </Flexbox>
         <Typography
           variant="body2"

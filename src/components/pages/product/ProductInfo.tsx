@@ -13,7 +13,7 @@ import { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { SELLER_STATUS } from '@constants/user';
+import { productSellerType } from '@constants/user';
 import { ID_FILTER, LABELS, PRODUCT_SITE, productInfoLabels } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -48,12 +48,11 @@ function ProductInfo({
   const [getToastState] = useRecoilState(toastState);
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
 
-  const isNormalseller =
-    (product?.site.id === 34 || product?.productSeller.type === 4) &&
-    product?.productSeller.type !== 3;
-  const isCamelSeller =
-    product &&
-    SELLER_STATUS[product.productSeller.type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'];
+  const isNormalseller = product?.sellerType === productSellerType.normal;
+
+  const isCertificationSeller =
+    product && product.productSeller.type === productSellerType.certification;
+
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
       product?.viewDescription || product?.description || ''
@@ -138,12 +137,12 @@ ${newDescription}
   return !product ? (
     <ProductInfoSkeleton />
   ) : (
-    <Box customStyle={{ marginTop: isCamelSeller ? 16 : 20 }}>
-      {(isCamelProduct || isCamelSeller) && !isNormalseller && (
+    <Box customStyle={{ marginTop: isCertificationSeller ? 16 : 20 }}>
+      {(isCamelProduct || isCertificationSeller) && !isNormalseller && (
         <Flexbox customStyle={{ marginBottom: 8 }}>
           <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
           <Typography variant="small2" weight="bold">
-            {isCamelSeller
+            {isCertificationSeller
               ? '저희 카멜이 인증한 친절한 판매자입니다. 편하게 연락해보세요 :)'
               : '카멜중개거래'}
           </Typography>
@@ -160,7 +159,7 @@ ${newDescription}
             />
           ))}
         </Flexbox>
-        {isCamelSeller && !isNormalseller && (
+        {isCertificationSeller && !isNormalseller && (
           <Label
             text="가품 시, 100%환불"
             size="xsmall"

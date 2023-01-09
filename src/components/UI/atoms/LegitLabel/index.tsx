@@ -1,28 +1,38 @@
 import type { HTMLAttributes } from 'react';
 
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle, Size } from 'mrcamel-ui';
 import { Icon } from 'mrcamel-ui';
 
 import type { LegitOpinionType } from '@typings/common';
 
-import { StyledLegitLabel, Text } from './LegitLabel.styles';
+import { StyledLegitLabel } from './LegitLabel.styles';
 
 export interface LegitLabelProps extends HTMLAttributes<HTMLLabelElement> {
-  variant?: LegitOpinionType;
+  opinion?: LegitOpinionType;
   text: string;
+  size?: Extract<Size, 'xsmall' | 'small'>;
   customStyle?: CustomStyle;
 }
 
-function LegitLabel({ variant = 'authentic', text, customStyle, ...props }: LegitLabelProps) {
+function LegitLabel({ opinion = 'authentic', text, size, customStyle, ...props }: LegitLabelProps) {
   return (
-    <StyledLegitLabel variant={variant} {...props} css={customStyle}>
-      {variant === 'authentic' && <Icon name="OpinionAuthenticFilled" width={15} height={15} />}
-      {variant === 'fake' && <Icon name="OpinionFakeFilled" width={15} height={15} />}
-      {variant === 'impossible' && <Icon name="OpinionImpossibleFilled" width={15} height={15} />}
-      <Text variant="small1" weight="medium">
-        {text}
-      </Text>
-    </StyledLegitLabel>
+    <StyledLegitLabel
+      {...props}
+      variant="solid"
+      opinion={opinion}
+      text={text}
+      size={size}
+      startIcon={
+        <>
+          {opinion === 'authentic' && <Icon name="OpinionAuthenticFilled" width={16} height={16} />}
+          {opinion === 'fake' && <Icon name="OpinionFakeFilled" width={16} height={16} />}
+          {opinion === 'impossible' && (
+            <Icon name="OpinionImpossibleFilled" width={16} height={16} />
+          )}
+        </>
+      }
+      css={customStyle}
+    />
   );
 }
 

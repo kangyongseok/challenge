@@ -1,3 +1,5 @@
+import { InvalidReason } from '@dto/user';
+
 export const GENDER = {
   male: '남성',
   female: '여성'
@@ -18,7 +20,7 @@ export const SELLER_STATUS = {
 
 export const USER_DEFAULT_SIZE = {
   female: {
-    top: [
+    tops: [
       { categorySizeId: 12, viewSize: 'XS' },
       { categorySizeId: 13, viewSize: 'S' },
       { categorySizeId: 14, viewSize: 'M' },
@@ -26,7 +28,7 @@ export const USER_DEFAULT_SIZE = {
       { categorySizeId: 16, viewSize: 'XL' },
       { categorySizeId: 17, viewSize: 'XXL' }
     ],
-    bottom: [
+    bottoms: [
       { categorySizeId: 457, viewSize: '26' },
       { categorySizeId: 458, viewSize: '27' },
       { categorySizeId: 348, viewSize: '28' },
@@ -34,8 +36,8 @@ export const USER_DEFAULT_SIZE = {
       { categorySizeId: 350, viewSize: '30' },
       { categorySizeId: 351, viewSize: '31' },
       { categorySizeId: 352, viewSize: '32' },
-      { categorySizeId: 353, viewSize: '34' },
-      { categorySizeId: 354, viewSize: '36' }
+      { categorySizeId: 354, viewSize: '34' },
+      { categorySizeId: 356, viewSize: '36' }
     ],
     shoes: [
       { categorySizeId: 88, viewSize: '225' },
@@ -50,7 +52,7 @@ export const USER_DEFAULT_SIZE = {
     ]
   },
   male: {
-    top: [
+    tops: [
       { categorySizeId: 12, viewSize: 'XS' },
       { categorySizeId: 13, viewSize: 'S' },
       { categorySizeId: 14, viewSize: 'M' },
@@ -58,14 +60,14 @@ export const USER_DEFAULT_SIZE = {
       { categorySizeId: 16, viewSize: 'XL' },
       { categorySizeId: 17, viewSize: 'XXL' }
     ],
-    bottom: [
+    bottoms: [
       { categorySizeId: 349, viewSize: '29' },
       { categorySizeId: 350, viewSize: '30' },
       { categorySizeId: 351, viewSize: '31' },
       { categorySizeId: 352, viewSize: '32' },
-      { categorySizeId: 353, viewSize: '34' },
-      { categorySizeId: 354, viewSize: '36' },
-      { categorySizeId: 355, viewSize: '38' }
+      { categorySizeId: 354, viewSize: '34' },
+      { categorySizeId: 356, viewSize: '36' },
+      { categorySizeId: 784, viewSize: '38' }
     ],
     shoes: [
       { categorySizeId: 94, viewSize: '255' },
@@ -109,4 +111,20 @@ export const userReportTypeAtt = {
 export const channelUserType = {
   0: '구매자',
   1: '판매자'
+};
+
+export const PROFILE_EDIT_ERROR_MESSAGE: Record<
+  Exclude<InvalidReason['type'], 'DUPLICATE'>,
+  string
+> = {
+  BAN: '욕설 및 비속어는 사용할 수 없어요!',
+  ADMIN: '관리자로 오해할 수 있는 단어는 쓸 수 없어요.'
+};
+
+// 2301 신규로 추가 및 정리된 타입 항목
+export const productSellerType = {
+  collection: 0,
+  normal: 1,
+  certification: 2,
+  legit: 3
 };

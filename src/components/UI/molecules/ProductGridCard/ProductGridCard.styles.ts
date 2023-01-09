@@ -22,6 +22,25 @@ export const WishButton = styled.button`
   }
 `;
 
+export const ShopMoreButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px 8px 0 0;
+  z-index: ${({ theme: { zIndex } }) => zIndex.button - 7};
+
+  svg {
+    background-color: ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.overlay20};
+    border-radius: 50%;
+    padding: 4px;
+    margin-top: -4px;
+  }
+`;
+
 export const Title = styled(Typography)`
   display: -webkit-box;
   overflow: hidden;

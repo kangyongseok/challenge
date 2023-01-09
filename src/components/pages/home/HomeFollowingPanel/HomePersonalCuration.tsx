@@ -6,8 +6,12 @@ import { useRouter } from 'next/router';
 import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
 
-import ProductGridCardSkeleton from '@components/UI/molecules/Skeletons/ProductGridCardSkeleton';
-import ProductGridCard from '@components/UI/molecules/ProductGridCard';
+import {
+  NewProductGridCard,
+  NewProductGridCardSkeleton,
+  ProductGridCard,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -20,12 +24,14 @@ import { defaultBanners, femaleBanners, maleBanners } from '@constants/home';
 import { BOTTOM_NAVIGATION_HEIGHT, MOBILE_WEB_FOOTER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { checkAgent } from '@utils/common';
 
 import type { HomeSeasonBannerData } from '@typings/common';
 import { homePersonalCurationBannersState } from '@recoil/home';
 import { eventContentProductsParamsState } from '@recoil/eventFilter';
+import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomePersonalCuration() {
@@ -175,89 +181,214 @@ function HomePersonalCuration() {
           ? '많은 사람들이 보고 있어요'
           : `${(accessUser || {}).userName || '회원'}님이 찾고 있는 매물을 모았어요`}
       </Typography>
-      <Grid container columnGap={16} rowGap={32} customStyle={{ padding: '0 20px' }}>
-        {isLoading &&
-          Array.from({ length: 24 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
-              <Grid item xs={2}>
-                <ProductGridCardSkeleton isRound compact />
-              </Grid>
-              {(index + 1) % 8 === 0 && (
-                <Grid item xs={1}>
-                  <Box
-                    customStyle={{
-                      margin: '0 -20px'
-                    }}
-                  >
-                    <Skeleton height={104} disableAspectRatio />
-                  </Box>
-                </Grid>
-              )}
-            </Fragment>
-          ))}
-        {!isLoading &&
-          products.map((product, index) => {
-            return (
-              <Fragment key={`home-personal-curation-product-${product.id}`}>
+      <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 20px' }}>
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          {isLoading &&
+            Array.from({ length: 24 }).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
                 <Grid item xs={2}>
-                  <ProductGridCard
-                    product={product}
-                    productAtt={{
-                      name: attrProperty.name.MAIN,
-                      title: attrProperty.title.PERSONAL,
-                      id: product.id,
-                      index: index + 1,
-                      brand: product.brand.name,
-                      category: product.category.name,
-                      parentId: product.category.parentId,
-                      site: product.site.name,
-                      price: product.price,
-                      cluster: product.cluster,
-                      source: attrProperty.source.MAIN_PERSONAL
-                    }}
-                    wishAtt={{
-                      name: attrProperty.name.MAIN,
-                      title: attrProperty.title.PERSONAL,
-                      id: product.id,
-                      index: index + 1,
-                      brand: product.brand.name,
-                      category: product.category.name,
-                      parentId: product.category.parentId,
-                      site: product.site.name,
-                      price: product.price,
-                      cluster: product.cluster,
-                      source: attrProperty.source.MAIN_PERSONAL
-                    }}
-                    source={attrProperty.source.MAIN_PERSONAL}
-                    isRound
-                    hideProductLabel
-                    compact
-                  />
+                  <NewProductGridCardSkeleton variant="gridB" isRound />
                 </Grid>
-                {(index + 1) % 16 === 0 && (
-                  <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
+                {(index + 1) % 8 === 0 && (
+                  <Grid item xs={1}>
                     <Box
                       customStyle={{
-                        margin: '0 -20px',
-                        textAlign: 'center',
-                        backgroundColor: banners[index]?.backgroundColor
+                        margin: '0 -20px'
                       }}
                     >
-                      {banners[index]?.src && (
-                        <Image
-                          height={104}
-                          src={banners[index]?.src}
-                          alt="Banner Img"
-                          disableAspectRatio
-                        />
-                      )}
+                      <Skeleton height={104} disableAspectRatio />
                     </Box>
                   </Grid>
                 )}
               </Fragment>
-            );
-          })}
+            ))}
+          {!isLoading &&
+            products.map((product, index) => {
+              return (
+                <Fragment key={`home-personal-curation-product-${product.id}`}>
+                  <Grid item xs={2}>
+                    <NewProductGridCard
+                      variant="gridB"
+                      product={product}
+                      isRound
+                      attributes={{
+                        name: attrProperty.name.MAIN,
+                        title: attrProperty.title.PERSONAL,
+                        source: attrProperty.source.MAIN_PERSONAL
+                      }}
+                    />
+                  </Grid>
+                  {(index + 1) % 16 === 0 && (
+                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
+                      <Box
+                        customStyle={{
+                          margin: '0 -20px',
+                          textAlign: 'center',
+                          backgroundColor: banners[index]?.backgroundColor
+                        }}
+                      >
+                        {banners[index]?.src && (
+                          <Image
+                            height={104}
+                            src={banners[index]?.src}
+                            alt="Banner Img"
+                            disableAspectRatio
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                  )}
+                </Fragment>
+              );
+            })}
+        </ABTestGroup>
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          {isLoading &&
+            Array.from({ length: 24 }).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
+                <Grid item xs={2}>
+                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                </Grid>
+                {(index + 1) % 8 === 0 && (
+                  <Grid item xs={1}>
+                    <Box
+                      customStyle={{
+                        margin: '0 -20px'
+                      }}
+                    >
+                      <Skeleton height={104} disableAspectRatio />
+                    </Box>
+                  </Grid>
+                )}
+              </Fragment>
+            ))}
+          {!isLoading &&
+            products.map((product, index) => {
+              return (
+                <Fragment key={`home-personal-curation-product-${product.id}`}>
+                  <Grid item xs={2}>
+                    <NewProductGridCard
+                      variant="gridB"
+                      product={product}
+                      wishButtonType="B"
+                      isRound
+                      attributes={{
+                        name: attrProperty.name.MAIN,
+                        title: attrProperty.title.PERSONAL,
+                        source: attrProperty.source.MAIN_PERSONAL
+                      }}
+                    />
+                  </Grid>
+                  {(index + 1) % 16 === 0 && (
+                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
+                      <Box
+                        customStyle={{
+                          margin: '0 -20px',
+                          textAlign: 'center',
+                          backgroundColor: banners[index]?.backgroundColor
+                        }}
+                      >
+                        {banners[index]?.src && (
+                          <Image
+                            height={104}
+                            src={banners[index]?.src}
+                            alt="Banner Img"
+                            disableAspectRatio
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                  )}
+                </Fragment>
+              );
+            })}
+        </ABTestGroup>
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+          {isLoading &&
+            Array.from({ length: 24 }).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
+                <Grid item xs={2}>
+                  <ProductGridCardSkeleton isRound compact />
+                </Grid>
+                {(index + 1) % 8 === 0 && (
+                  <Grid item xs={1}>
+                    <Box
+                      customStyle={{
+                        margin: '0 -20px'
+                      }}
+                    >
+                      <Skeleton height={104} disableAspectRatio />
+                    </Box>
+                  </Grid>
+                )}
+              </Fragment>
+            ))}
+          {!isLoading &&
+            products.map((product, index) => {
+              return (
+                <Fragment key={`home-personal-curation-product-${product.id}`}>
+                  <Grid item xs={2}>
+                    <ProductGridCard
+                      product={product}
+                      productAtt={{
+                        name: attrProperty.name.MAIN,
+                        title: attrProperty.title.PERSONAL,
+                        id: product.id,
+                        index: index + 1,
+                        brand: product.brand.name,
+                        category: product.category.name,
+                        parentId: product.category.parentId,
+                        site: product.site.name,
+                        price: product.price,
+                        cluster: product.cluster,
+                        source: attrProperty.source.MAIN_PERSONAL
+                      }}
+                      wishAtt={{
+                        name: attrProperty.name.MAIN,
+                        title: attrProperty.title.PERSONAL,
+                        id: product.id,
+                        index: index + 1,
+                        brand: product.brand.name,
+                        category: product.category.name,
+                        parentId: product.category.parentId,
+                        site: product.site.name,
+                        price: product.price,
+                        cluster: product.cluster,
+                        source: attrProperty.source.MAIN_PERSONAL
+                      }}
+                      source={attrProperty.source.MAIN_PERSONAL}
+                      isRound
+                      hideProductLabel
+                      compact
+                    />
+                  </Grid>
+                  {(index + 1) % 16 === 0 && (
+                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
+                      <Box
+                        customStyle={{
+                          margin: '0 -20px',
+                          textAlign: 'center',
+                          backgroundColor: banners[index]?.backgroundColor
+                        }}
+                      >
+                        {banners[index]?.src && (
+                          <Image
+                            height={104}
+                            src={banners[index]?.src}
+                            alt="Banner Img"
+                            disableAspectRatio
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                  )}
+                </Fragment>
+              );
+            })}
+        </ABTestGroup>
       </Grid>
       {}
     </Box>

@@ -182,7 +182,12 @@ const mypage = {
   CLICK_PERSONAL_INPUT: 'CLICK_PERSONAL_INPUT',
   CLICK_BLOCK_LIST: 'CLICK_BLOCK_LIST',
   VIEW_BLOCK_LIST: 'VIEW_BLOCK_LIST',
-  CLICK_BLOCKUSER: 'CLICK_BLOCKUSER'
+  CLICK_BLOCKUSER: 'CLICK_BLOCKUSER',
+  CLICK_PROFILE_EDIT: 'CLICK_PROFILE_EDIT',
+  CLICK_WISH_LIST: 'CLICK_WISH_LIST',
+  CLICK_MY_STORE: 'CLICK_MY_STORE',
+  CLICK_MYPORTFOLIO: 'CLICK_MYPORTFOLIO',
+  CLICK_ASK: 'CLICK_ASK'
 };
 
 const header = {
@@ -654,6 +659,10 @@ const channel = {
   CLICK_BUYER: 'CLICK_BUYER'
 };
 
+const userShop = {
+  CLICK_PRODUCT_DETAIL: 'CLICK_PRODUCT_DETAIL'
+};
+
 const attrKeys = {
   sendLogApiEvent,
   appsFlyerEvent,
@@ -686,7 +695,8 @@ const attrKeys = {
   debug,
   intro,
   events,
-  channel
+  channel,
+  userShop
 };
 
 export default attrKeys;

@@ -33,8 +33,9 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
       title: attrProperty.title.DELETE,
       att: 'DELETE'
     });
+
     deleteMutation(
-      { productId: Number(router.query.id) || id },
+      { productId: id },
       {
         onSuccess() {
           setToastState({

@@ -324,6 +324,7 @@ export type Product = {
   weekAvgPrices: number[] | null;
   wishCount: number;
   index?: number;
+  sellerType: 0 | 1 | 2 | 3;
 };
 
 export type ProductResult = {
@@ -410,6 +411,7 @@ export type ProductResult = {
   quoteTitle: string;
   description: string;
   isDeleted: boolean | null;
+  sellerType?: 0 | 1 | 2 | 3;
 };
 
 export type PageProduct = Paged<Product>;
@@ -552,6 +554,17 @@ export interface ProductContent {
   contents: Contents;
 }
 
+export interface SellerInfo {
+  curnScore: string | null;
+  maxScore: string | null;
+  image: string | null;
+  name: string;
+  productCount: number;
+  reviewCount: number;
+  site: Site;
+  type: number;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface ProductParams {
   deviceId?: string;
@@ -673,17 +686,6 @@ export interface UserPersonalStyleParams {
   purchaseTypeIds?: number[];
   styleIds?: number[];
   subParentCategoryIds?: number[];
-}
-
-export interface SellerInfo {
-  curnScore: string | null;
-  maxScore: string | null;
-  image: string | null;
-  name: string;
-  productCount: number;
-  reviewCount: number;
-  site: Site;
-  type: number;
 }
 
 export interface RecentSearchParams extends Omit<SearchParams, 'order'> {

@@ -96,6 +96,7 @@ function UserShopProductSoldOutConfirmBottomSheet() {
       <Box customStyle={{ padding: '32px 20px', textAlign: 'center' }}>
         <Box customStyle={{ width: 72, height: 72, margin: 'auto' }}>
           <Image
+            disableOnBackground={false}
             src={product.imageMain || product.imageThumbnail || ''}
             alt="SoldOut Product Img"
             round={12}

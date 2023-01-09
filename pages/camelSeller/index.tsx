@@ -26,7 +26,6 @@ function CamelSeller() {
   return (
     <GeneralTemplate subset header={<CamelSellerHeader />} hideAppDownloadBanner>
       <CamelSellerProductSearch />
-      {/* <CamelSellerSmsDialog /> */}
     </GeneralTemplate>
   );
 }
