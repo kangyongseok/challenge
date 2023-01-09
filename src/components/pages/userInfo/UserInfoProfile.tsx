@@ -8,17 +8,25 @@ import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 
 interface UserInfoProfileProps {
   show: boolean;
+  isCertificationSeller: boolean;
   userName: string;
   userImage: string;
   curnScore: number;
   maxScore: number;
 }
 
-function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: UserInfoProfileProps) {
+function UserInfoProfile({
+  show,
+  isCertificationSeller,
+  userName,
+  userImage,
+  curnScore,
+  maxScore
+}: UserInfoProfileProps) {
   const {
     theme: {
       zIndex,
-      palette: { common }
+      palette: { primary, common }
     }
   } = useTheme();
   const [imageRendered, setImageRendered] = useState(false);
@@ -67,35 +75,47 @@ function UserInfoProfile({ show, userName, userImage, curnScore, maxScore }: Use
           <Icon name="UserFilled" width={24} height={24} customStyle={{ color: common.ui80 }} />
         </UserAvatar>
       )}
-      <Typography variant="h3" weight="bold">
-        {userName}
-      </Typography>
-      {!!curnScore && !!maxScore && (
-        <Flexbox alignment="center" justifyContent="center" gap={1}>
-          {Array.from({ length: 5 }, (_, index) => {
-            return index <
-              (maxScore === 10 ? Math.floor(Number(curnScore) / 2) : Number(curnScore)) ? (
-              <Icon
-                name="StarFilled"
-                width={16}
-                height={16}
-                customStyle={{
-                  color: '#FFD911'
-                }}
-              />
-            ) : (
-              <Icon
-                name="StarOutlined"
-                width={16}
-                height={16}
-                customStyle={{
-                  color: '#FFD911'
-                }}
-              />
-            );
-          })}
+      <Flexbox direction="vertical" gap={8}>
+        <Flexbox direction="vertical" alignment="center" gap={4}>
+          <Typography variant="h3" weight="bold">
+            {userName}
+          </Typography>
+          {isCertificationSeller && (
+            <Flexbox alignment="center" gap={4}>
+              <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
+              <Typography variant="body2" weight="bold" customStyle={{ color: primary.main }}>
+                카멜인증판매자
+              </Typography>
+            </Flexbox>
+          )}
         </Flexbox>
-      )}
+        {!!curnScore && !!maxScore && (
+          <Flexbox alignment="center" justifyContent="center" gap={1}>
+            {Array.from({ length: 5 }, (_, index) => {
+              return index <
+                (maxScore === 10 ? Math.floor(Number(curnScore) / 2) : Number(curnScore)) ? (
+                <Icon
+                  name="StarFilled"
+                  width={16}
+                  height={16}
+                  customStyle={{
+                    color: '#FFD911'
+                  }}
+                />
+              ) : (
+                <Icon
+                  name="StarOutlined"
+                  width={16}
+                  height={16}
+                  customStyle={{
+                    color: '#FFD911'
+                  }}
+                />
+              );
+            })}
+          </Flexbox>
+        )}
+      </Flexbox>
     </Flexbox>
   );
 }

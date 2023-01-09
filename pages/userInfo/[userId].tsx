@@ -50,10 +50,8 @@ function UserInfo() {
   });
 
   const userId = useMemo(() => Number(query.userId || ''), [query.userId]);
-  const { data: { image, name, curnScore, maxScore, productCount, reviewCount } = {} } = useQuery(
-    queryKeys.users.infoByUserId(userId),
-    () => fetchInfoByUserId(userId)
-  );
+  const { data: { image, type, name, curnScore, maxScore, productCount, reviewCount } = {} } =
+    useQuery(queryKeys.users.infoByUserId(userId), () => fetchInfoByUserId(userId));
 
   const { sellerName, scoreText } = useMemo(
     () => ({
@@ -126,6 +124,7 @@ function UserInfo() {
             </Header>
             <UserInfoProfile
               show={!triggered}
+              isCertificationSeller={type === 3}
               userName={sellerName}
               userImage={
                 image ||
