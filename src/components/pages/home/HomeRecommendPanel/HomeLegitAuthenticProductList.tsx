@@ -293,11 +293,11 @@ function HomeLegitAuthenticProductList() {
         <Typography
           variant="h3"
           weight="bold"
-          customStyle={{ margin: !legitTargetCount ? '32px 20px 20px' : '0 20px 20px' }}
+          customStyle={{ margin: !legitTargetCount ? '32px 16px 20px' : '0 16px 20px' }}
         >
           전문가들이 정품의견을 주었어요 🔍
         </Typography>
-        <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 20px' }}>
+        <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
           <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
             {isLoading &&
               Array.from({ length: 8 }).map((_, index) => (

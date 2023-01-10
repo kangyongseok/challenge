@@ -59,7 +59,7 @@ function HomeAuthSellerProducts() {
         alt="Auth Seller Banner Img"
         onClick={handleClick}
       />
-      <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
+      <Box customStyle={{ padding: '32px 16px 20px', overflowX: 'hidden' }}>
         <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 20 }}>
           카멜이 깐깐하게 검증한 판매자에요 🧐
         </Typography>

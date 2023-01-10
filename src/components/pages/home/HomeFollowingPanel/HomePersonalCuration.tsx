@@ -176,12 +176,12 @@ function HomePersonalCuration() {
 
   return (
     <Box customStyle={{ padding: '32px 0', overflowX: 'hidden' }}>
-      <Typography variant="h3" weight="bold" customStyle={{ margin: '0 20px 20px' }}>
+      <Typography variant="h3" weight="bold" customStyle={{ margin: '0 16px 20px' }}>
         {!accessUser
           ? '많은 사람들이 보고 있어요'
           : `${(accessUser || {}).userName || '회원'}님이 찾고 있는 매물을 모았어요`}
       </Typography>
-      <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 20px' }}>
+      <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
         <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
           {isLoading &&
             Array.from({ length: 24 }).map((_, index) => (

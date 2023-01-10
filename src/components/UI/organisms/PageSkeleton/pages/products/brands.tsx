@@ -92,7 +92,7 @@ function BrandProducts() {
           매물 검색 중...
         </Typography>
       </Flexbox>
-      <Grid container rowGap={32}>
+      <Grid container rowGap={20}>
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>

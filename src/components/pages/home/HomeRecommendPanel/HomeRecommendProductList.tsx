@@ -68,7 +68,7 @@ function HomeRecommendProductList() {
         alt="Recommend Product Banner Img"
         onClick={handleClick}
       />
-      <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
+      <Box customStyle={{ padding: '32px 16px 20px', overflowX: 'hidden' }}>
         {isLoading && (
           <Skeleton
             width="100%"

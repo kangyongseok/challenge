@@ -46,7 +46,7 @@ function HomeStyleRecommendProductList() {
       component="section"
       customStyle={{
         marginTop: 32,
-        padding: '32px 20px 20px',
+        padding: '32px 16px 20px',
         borderTop: `1px solid ${common.line01}`,
         overflowX: 'hidden'
       }}

@@ -52,7 +52,7 @@ function HomeQuickSaleProducts() {
         alt="Auth Seller Banner Img"
         onClick={handleClick}
       />
-      <Box customStyle={{ padding: '32px 20px 20px', overflowX: 'hidden' }}>
+      <Box customStyle={{ padding: '32px 16px 20px', overflowX: 'hidden' }}>
         <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 20 }}>
           언제나 매력적인 새로 올라온 매물! 😎
         </Typography>
