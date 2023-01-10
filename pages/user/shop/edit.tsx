@@ -25,6 +25,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import type { UpdateUserProfileData } from '@dto/user';
 import { BanWordParams } from '@dto/user';
 
+import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
@@ -32,6 +33,7 @@ import { fetchBanword, fetchInfoByUserId, putProfile } from '@api/user';
 
 import { PROFILE_EDIT_ERROR_MESSAGE } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
+import { ACCESS_USER } from '@constants/localStorage';
 import {
   APP_TOP_STATUS_HEIGHT,
   CAMEL_SUBSET_FONTFAMILY,
@@ -72,26 +74,28 @@ function UserShopEdit() {
   const { data: myUserInfo } = useQueryMyUserInfo();
 
   const { data: accessUser } = useQueryAccessUser();
-  const {
-    data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {},
-    refetch: refetchInfoByUserId
-  } = useQuery(
-    queryKeys.users.infoByUserId(accessUser?.userId || 0),
-    () => fetchInfoByUserId(accessUser?.userId || 0),
-    {
-      enabled: !!accessUser?.userId
-    }
-  );
+  const { data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {} } =
+    useQuery(
+      queryKeys.users.infoByUserId(accessUser?.userId || 0),
+      () => fetchInfoByUserId(accessUser?.userId || 0),
+      {
+        enabled: !!accessUser?.userId
+      }
+    );
 
   const { mutate: mutateBanWord, isLoading: isLoadingMutateBanWord } = useMutation(fetchBanword);
   const { mutate: mutateProfile, isLoading: isLoadingMutateProfile } = useMutation(putProfile, {
     async onSuccess() {
+      LocalStorage.set(ACCESS_USER, {
+        ...accessUser,
+        userName: userProfileParams.nickName,
+        image: userProfileParams.imageProfile || accessUser?.image || ''
+      });
       await queryClient.invalidateQueries(queryKeys.users.userInfo());
       await queryClient.invalidateQueries(queryKeys.users.myUserInfo());
       await queryClient.invalidateQueries(queryKeys.users.infoByUserId(accessUser?.userId || 0), {
         refetchInactive: true
       });
-      await refetchInfoByUserId();
       setToastState({ type: 'user', status: 'saved' });
       router.back();
     }

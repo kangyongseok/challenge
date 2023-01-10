@@ -1,17 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import type { IconName } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import UserAvatar from '@components/UI/organisms/UserAvatar';
 import { Badge, Gap } from '@components/UI/atoms';
 
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
-import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -27,14 +26,14 @@ function MypageProfile() {
   } = useTheme();
 
   const { data: accessUser } = useQueryAccessUser();
-  const [imageRendered, setImageRendered] = useState(false);
   const { data: myUserInfo } = useQueryMyUserInfo();
-  const { userImage, nickName } = useMemo(() => {
-    const initDefaultImage = myUserInfo?.info?.value?.imageProfile?.split('/').includes('0.png');
-    const snsImage = myUserInfo?.info?.value?.image;
+  const { userImageProfile, nickName } = useMemo(() => {
+    const imageProfile = myUserInfo?.info?.value?.imageProfile;
+    const image = myUserInfo?.info?.value?.image;
 
     return {
-      userImage: initDefaultImage && snsImage ? snsImage : myUserInfo?.info?.value?.imageProfile,
+      userImageProfile:
+        (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '',
       nickName:
         myUserInfo?.info?.value?.nickName ||
         myUserInfo?.info?.value?.name ||
@@ -124,10 +123,6 @@ function MypageProfile() {
     }
   };
 
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
-
   return (
     <Flexbox
       component="section"
@@ -137,23 +132,7 @@ function MypageProfile() {
     >
       <Flexbox gap={20} alignment="center">
         <Box customStyle={{ position: 'relative' }}>
-          <UserAvatar>
-            {userImage && (
-              <Image
-                src={userImage}
-                alt="Profile Image"
-                onLoadingComplete={handleLoadComplete}
-                placeholder="blur"
-                blurDataURL={NEXT_IMAGE_BLUR_URL}
-                layout="fill"
-                objectFit="cover"
-                style={{ borderRadius: 12 }}
-              />
-            )}
-            {(!imageRendered || !userImage) && (
-              <Icon name="UserFilled" width={32} height={32} customStyle={{ color: common.ui80 }} />
-            )}
-          </UserAvatar>
+          <UserAvatar src={userImageProfile} />
           {accessUser?.snsType === 'kakao' && (
             <SnsIconWrap bgColor="#FEE500">
               <Icon name="KakaoFilled" />
@@ -254,17 +233,6 @@ export const EllipsisText = styled(Typography)`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-`;
-
-export const UserAvatar = styled.div`
-  min-width: 64px;
-  width: 64px;
-  height: 64px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme: { palette } }) => palette.common.bg02};
-  border-radius: 12px;
 `;
 
 const SnsIconWrap = styled.div<{ bgColor: string }>`

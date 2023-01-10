@@ -24,6 +24,7 @@ import {
   SellerProfileContents
 } from '@components/pages/legit';
 
+import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
@@ -31,6 +32,7 @@ import { fetchBanword, fetchLegitProfile, fetchMyUserInfo, putProfile } from '@a
 import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
+import { ACCESS_USER } from '@constants/localStorage';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   APP_TOP_STATUS_HEIGHT,
@@ -46,6 +48,7 @@ import { legitProfileEditState } from '@recoil/legitProfile';
 import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationDeleteAccount from '@hooks/useMutationDeleteAccount';
 
 function LegitProfileEdit() {
@@ -54,17 +57,25 @@ function LegitProfileEdit() {
   } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
+
   const { id, targetTab } = router.query;
-  const elementRef = useRef<null | HTMLDivElement>(null);
-  const [tab, setTab] = useState('판매자' as string | number);
-  const { mutate: mutateWitdhdraw } = useMutationDeleteAccount();
+
   const setDialogState = useSetRecoilState(dialogState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const setToastState = useSetRecoilState(toastState);
+
+  const { data: accessUser } = useQueryAccessUser();
   const { data: myUserInfo } = useQueryMyUserInfo();
+
+  const { mutate: mutateWitdhdraw } = useMutationDeleteAccount();
   const { mutate: puUserProfileMuate } = useMutation(putProfile, {
     async onSuccess() {
+      LocalStorage.set(ACCESS_USER, {
+        ...accessUser,
+        userName: sellerEditInfo.nickName,
+        image: sellerEditInfo.imageProfile || accessUser?.image || ''
+      });
       await queryClient.invalidateQueries(queryKeys.users.userInfo());
       await queryClient.invalidateQueries(queryKeys.users.myUserInfo());
       await queryClient.invalidateQueries(queryKeys.users.infoByUserId(Number(id)), {
@@ -113,6 +124,9 @@ function LegitProfileEdit() {
       enabled: !!id
     }
   );
+
+  const [tab, setTab] = useState('판매자' as string | number);
+  const elementRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     if (targetTab === 'legit') {

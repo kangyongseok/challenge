@@ -71,7 +71,7 @@ function UserShop() {
     delay: 0
   });
 
-  const { userimageProfile, labels, tab, nickName, curnScore, maxScore } = useMemo(() => {
+  const { userImageProfile, labels, tab, nickName, curnScore, maxScore } = useMemo(() => {
     const tabLabels = [
       { key: '0', value: `판매중 ${productCount}` },
       { key: '1', value: `판매완료 ${undisplayProductCount}` },
@@ -79,7 +79,7 @@ function UserShop() {
     ];
 
     return {
-      userimageProfile:
+      userImageProfile:
         (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '',
       labels: tabLabels,
       tab: String(router.query.tab || tabLabels[0].key),
@@ -147,7 +147,7 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={userimageProfile}
+              imageProfile={userImageProfile}
               imageBackground={imageBackground || ''}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
@@ -160,7 +160,7 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={userimageProfile}
+              imageProfile={userImageProfile}
               imageBackground={imageBackground || ''}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
