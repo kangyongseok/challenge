@@ -18,7 +18,7 @@ import { fetchUserInfo, postUserSize } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
-// import { getCookies } from '@utils/cookies';
+import { getCookies } from '@utils/cookies';
 
 import type { SelectSize } from '@typings/user';
 
@@ -120,8 +120,11 @@ function SizeInput() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (accessUser) {
     await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);

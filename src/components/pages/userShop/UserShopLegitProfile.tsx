@@ -1,14 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { Button, Flexbox, Icon, Skeleton, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-// import UserAvatar from '@components/UI/organisms/UserAvatar';
+import UserAvatar from '@components/UI/organisms/UserAvatar';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT, NEXT_IMAGE_BLUR_URL } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 
 import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -52,7 +51,6 @@ function UserShopLegitProfile({
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: myUserInfo } = useQueryMyUserInfo();
-  const [imageRendered, setImageRendered] = useState(false);
 
   const handleClickShare = useCallback(() => {
     const shareData = {
@@ -80,10 +78,6 @@ function UserShopLegitProfile({
       router.push(`/legit/profile/${accessUser.userId}/edit`);
     }
   }, [accessUser?.userId, router]);
-
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
 
   return (
     <Wrapper>
@@ -138,28 +132,7 @@ function UserShopLegitProfile({
               gap={12}
               customStyle={{ flex: 1, padding: '0 20px' }}
             >
-              <ProfileImageWrap justifyContent="center" alignment="center">
-                {imageProfile && (
-                  <Image
-                    src={imageProfile}
-                    alt="Profile"
-                    onLoadingComplete={handleLoadComplete}
-                    placeholder="blur"
-                    blurDataURL={NEXT_IMAGE_BLUR_URL}
-                    layout="fill"
-                    objectFit="cover"
-                    style={{ borderRadius: 16 }}
-                  />
-                )}
-                {(!imageRendered || !imageProfile) && (
-                  <Icon
-                    name="UserFilled"
-                    width={50}
-                    height={50}
-                    customStyle={{ color: common.ui80 }}
-                  />
-                )}
-              </ProfileImageWrap>
+              <UserAvatar src={imageProfile} />
               <ThemeProvider theme="dark">
                 <Flexbox direction="vertical" alignment="center" gap={4}>
                   <Flexbox alignment="center" justifyContent="center" gap={4}>
@@ -270,14 +243,6 @@ const Blur = styled.div`
   position: absolute;
   background: ${({ theme: { palette } }) => palette.common.overlay40};
   backdrop-filter: blur(8px);
-`;
-
-const ProfileImageWrap = styled(Flexbox)`
-  position: relative;
-  min-width: 96px;
-  min-height: 96px;
-  border-radius: 16px;
-  background: ${({ theme: { palette } }) => palette.common.bg03};
 `;
 
 const Info = styled.div`

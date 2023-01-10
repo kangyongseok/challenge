@@ -32,10 +32,11 @@ import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MyPage() {
-  const { data: myUserInfo } = useQueryMyUserInfo();
   const { data: accessUser } = useQueryAccessUser();
-  const authLegit =
-    myUserInfo?.roles.includes('PRODUCT_LEGIT') || myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD');
+  const { data: myUserInfo } = useQueryMyUserInfo();
+  const isAuthLegit = myUserInfo?.roles?.some((role) =>
+    ['PRODUCT_LEGIT', 'PRODUCT_LEGIT_HEAD'].includes(role)
+  );
 
   useEffect(() => {
     logEvent(attrKeys.mypage.VIEW_MY, {
@@ -62,7 +63,7 @@ function MyPage() {
       >
         <MypageProfile />
         <MypageActionBanner />
-        {authLegit && (
+        {isAuthLegit && (
           <>
             <MypageLegitInfo />
             <Gap height={1} />

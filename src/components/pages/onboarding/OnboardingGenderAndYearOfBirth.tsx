@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useResetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 
@@ -11,14 +11,14 @@ import GenderYearInput from '@components/UI/organisms/GenderYearInput';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postUserAgeAndGender, postUserSize, postUserStyle } from '@api/user';
+import { postUserAgeAndGender, postUserSize, postUserStyle } from '@api/user';
 
-import queryKeys from '@constants/queryKeys';
 import { SELECTED_MODEL_CARD } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { openState, selectedModelCardState } from '@recoil/onboarding';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import OnboardingStep from './OnboardingStep';
@@ -34,7 +34,7 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
   const { mutateAsync } = useMutation(postUserSize);
   const resetSelectedModelCard = useResetRecoilState(selectedModelCardState);
   const { data: { info: { value: { yearOfBirth = '', gender = '' } = {} } = {} } = {}, remove } =
-    useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+    useQueryUserInfo();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {

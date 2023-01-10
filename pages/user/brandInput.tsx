@@ -24,6 +24,7 @@ import attrKeys from '@constants/attrKeys';
 import { getCookies } from '@utils/cookies';
 
 import type { SelectedHotBrand } from '@typings/brands';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function BrandInput() {
   const {
@@ -50,7 +51,7 @@ function BrandInput() {
       keepPreviousData: true
     }
   );
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
   const [isEmptyBack, setIsEmptyBack] = useState(false);
 
   useEffect(() => {

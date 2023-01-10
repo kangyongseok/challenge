@@ -3,20 +3,16 @@ import { useEffect } from 'react';
 import type { ReactElement } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
 import Sendbird from '@library/sendbird';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
-
 import { isProduction, uuidv4 } from '@utils/common';
 import { getChannelUserName, getUpdatedChannels } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
@@ -29,7 +25,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
   const [state, setState] = useRecoilState(sendbirdState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
   const initialize = useInitializeSendbird();
 
   const sdk = Sendbird.getInstance();

@@ -1,16 +1,14 @@
-import { useQuery } from 'react-query';
 import { Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
+
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function MyPortfolioLanding07({
   isAnimation,
@@ -19,7 +17,8 @@ function MyPortfolioLanding07({
   isAnimation: boolean;
   onClick: () => void;
 }) {
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
+
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
       <Flexbox direction="vertical" alignment="center">

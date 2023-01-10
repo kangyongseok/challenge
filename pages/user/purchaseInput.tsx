@@ -13,6 +13,8 @@ import Initializer from '@library/initializer';
 
 import { postUserStyle } from '@api/user';
 
+import { getCookies } from '@utils/cookies';
+
 import { disabledState, purchaseTypeIdState } from '@recoil/onboarding';
 
 function PurchaseInput() {
@@ -78,8 +80,11 @@ function PurchaseInput() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!accessUser) {
     return {

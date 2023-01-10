@@ -2,14 +2,11 @@ import { useMemo } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 const slideImage = [
   { img: 'new_shoes01', text: '내가 신고있는 스니커즈,' },
@@ -44,7 +41,7 @@ function MyPortfolioLanding01({
     }
   } = useTheme();
   const router = useRouter();
-  const { data: userInfo, isSuccess } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo, isSuccess } = useQueryUserInfo();
 
   const parseSlideImage = useMemo(() => {
     if (isSuccess && userInfo?.info?.value.gender === 'F') {

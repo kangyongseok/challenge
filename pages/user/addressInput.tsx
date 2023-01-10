@@ -17,6 +17,8 @@ import { postArea } from '@api/user';
 
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
+
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function AddressInput() {
@@ -143,8 +145,11 @@ function AddressInput() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!accessUser) {
     return {

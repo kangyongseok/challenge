@@ -12,7 +12,6 @@ import Sendbird from '@library/sendbird';
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
 
-import queryKeys from '@constants/queryKeys';
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
 import { deleteCookie } from '@utils/cookies';
@@ -51,12 +50,8 @@ function Logout() {
 
     LocalStorage.remove(ACCESS_USER);
     LocalStorage.remove(ACCESS_TOKEN);
-    queryClient.removeQueries(queryKeys.userAuth.accessUser(), { exact: true });
-    queryClient.removeQueries(queryKeys.users.userInfo(), { exact: true });
-    queryClient.removeQueries(queryKeys.users.categoryWishes({ deviceId }), { exact: true });
     Axios.clearAccessToken();
-    deleteCookie('accessUser');
-    deleteCookie('accessToken');
+    queryClient.removeQueries();
     resetSendbirdState();
     resetChannelReceivedMessageFilteredState();
     Sendbird.finalize();

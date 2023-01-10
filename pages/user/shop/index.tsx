@@ -28,6 +28,7 @@ import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 
+import { getCookies } from '@utils/cookies';
 import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { toastState } from '@recoil/common';
@@ -53,7 +54,6 @@ function UserShop() {
       shopDescription,
       type,
       productCount = 0,
-      // displayProductCount = 0,
       undisplayProductCount = 0,
       reviewCount = 0
     } = {},
@@ -71,7 +71,7 @@ function UserShop() {
     delay: 0
   });
 
-  const { labels, tab, nickName, curnScore, maxScore } = useMemo(() => {
+  const { userimageProfile, labels, tab, nickName, curnScore, maxScore } = useMemo(() => {
     const tabLabels = [
       { key: '0', value: `판매중 ${productCount}` },
       { key: '1', value: `판매완료 ${undisplayProductCount}` },
@@ -79,6 +79,8 @@ function UserShop() {
     ];
 
     return {
+      userimageProfile:
+        (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '',
       labels: tabLabels,
       tab: String(router.query.tab || tabLabels[0].key),
       nickName: data?.nickName || data?.name || `${accessUser?.userId || '회원'}`,
@@ -91,6 +93,8 @@ function UserShop() {
     data?.maxScore,
     data?.name,
     data?.nickName,
+    image,
+    imageProfile,
     productCount,
     reviewCount,
     router.query.tab,
@@ -110,14 +114,6 @@ function UserShop() {
       refetch();
     }
   }, [setToastState, refetch]);
-
-  const getProfileImage = useMemo(() => {
-    const initDefaultImage = imageProfile?.split('/').includes('0.png');
-    if (initDefaultImage && image) return image;
-    if (!initDefaultImage && imageProfile) return imageProfile;
-    if (image) return image;
-    return '';
-  }, [image, imageProfile]);
 
   return (
     <>
@@ -151,7 +147,7 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={getProfileImage}
+              imageProfile={userimageProfile}
               imageBackground={imageBackground || ''}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
@@ -164,7 +160,7 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={getProfileImage}
+              imageProfile={userimageProfile}
               imageBackground={imageBackground || ''}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
@@ -202,8 +198,11 @@ function UserShop() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!accessUser) {
     return {

@@ -1,21 +1,21 @@
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, putAlarm } from '@api/user';
+import { putAlarm } from '@api/user';
 
-import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function EventMarketingAgree() {
   const router = useRouter();
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
   const setToastState = useSetRecoilState(toastState);
   const { mutate: switchAlarm } = useMutation(putAlarm, {
     onSuccess: () => {

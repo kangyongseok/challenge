@@ -39,6 +39,7 @@ import {
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { legitProfileEditState } from '@recoil/legitProfile';
@@ -396,8 +397,8 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
   if (/^[0-9]+$/.test(userId)) {
     const queryClient = new QueryClient();
 
-    Initializer.initAccessTokenByCookies(req.cookies);
-    Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
+    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     // TODO 의도치 않은 redirect 발생, 임시 비활성화 처리 후 추후 보완
     // if (isEdit && +userId !== accessUser?.userId) {

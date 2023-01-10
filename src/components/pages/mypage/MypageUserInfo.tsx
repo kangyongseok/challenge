@@ -1,6 +1,6 @@
 import { MouseEvent, useEffect } from 'react';
 
-import { useQuery, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
@@ -8,13 +8,13 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
 import queryKeys from '@constants/queryKeys';
 import { purchaseType } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
+
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 const BASE_URL_USER = '/user';
 
@@ -34,7 +34,7 @@ function MypageUserInfo() {
       personalStyle: { purchaseTypes = [], styles = [] } = {},
       maxMoney = -1
     } = {}
-  } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  } = useQueryUserInfo();
 
   const router = useRouter();
 

@@ -40,6 +40,7 @@ import {
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import {
   checkAgent,
   handleClickAppDownload,
@@ -643,8 +644,11 @@ function UserShopEdit() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(req.cookies);
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(req.cookies, queryClient);
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
+    getCookies({ req }),
+    queryClient
+  );
 
   if (!accessUser) {
     return {

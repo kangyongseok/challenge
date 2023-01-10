@@ -1,12 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT, NEXT_IMAGE_BLUR_URL } from '@constants/common';
+import UserAvatar from '@components/UI/organisms/UserAvatar';
+
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 
 import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -43,13 +44,12 @@ function UserShopProfile({
   const router = useRouter();
   const {
     theme: {
-      palette: { primary, common }
+      palette: { primary }
     }
   } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
   const { data: myUserInfo } = useQueryMyUserInfo();
-  const [imageRendered, setImageRendered] = useState(false);
 
   const handleClickShare = useCallback(() => {
     const shareData = {
@@ -75,10 +75,6 @@ function UserShopProfile({
   const handleClickEdit = useCallback(() => {
     router.push('/user/shop/edit');
   }, [router]);
-
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
 
   return (
     <Box component="section">
@@ -127,28 +123,7 @@ function UserShopProfile({
           <>
             <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
               <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: -40 }}>
-                <ProfileImageWrap justifyContent="center" alignment="center">
-                  {imageProfile && (
-                    <Image
-                      src={imageProfile}
-                      alt="Profile"
-                      onLoadingComplete={handleLoadComplete}
-                      placeholder="blur"
-                      blurDataURL={NEXT_IMAGE_BLUR_URL}
-                      layout="fill"
-                      objectFit="cover"
-                      style={{ borderRadius: 16 }}
-                    />
-                  )}
-                  {(!imageRendered || !imageProfile) && (
-                    <Icon
-                      name="UserFilled"
-                      width={50}
-                      height={50}
-                      customStyle={{ color: common.ui80 }}
-                    />
-                  )}
-                </ProfileImageWrap>
+                <UserAvatar src={imageProfile} showBorder />
               </Flexbox>
               <Flexbox direction="vertical" alignment="center" gap={4}>
                 <Flexbox alignment="center" justifyContent="center" gap={2}>
@@ -250,20 +225,6 @@ const Blur = styled.div`
   position: absolute;
   background: ${({ theme: { palette } }) => palette.common.overlay20};
   backdrop-filter: blur(8px);
-`;
-
-const ProfileImageWrap = styled(Flexbox)`
-  position: relative;
-  width: 96px;
-  height: 96px;
-  border-radius: 16px;
-  background: ${({ theme: { palette } }) => palette.common.bg03};
-  border: 2px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.uiWhite};
 `;
 
 const InfoWrapper = styled.div`

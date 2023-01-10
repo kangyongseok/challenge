@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postUserSize } from '@api/user';
+import { postUserSize } from '@api/user';
 
 import { USER_DEFAULT_SIZE } from '@constants/user';
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import OnboardingStep from './OnboardingStep';
@@ -23,9 +23,10 @@ interface OnboardingSizeProps {
 }
 
 function OnboardingSize({ onClick }: OnboardingSizeProps) {
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
-  const { mutateAsync } = useMutation(postUserSize);
   const { data: accessUser } = useQueryAccessUser();
+  const { data: userInfo } = useQueryUserInfo();
+
+  const { mutateAsync } = useMutation(postUserSize);
 
   const [selectedTopList, setSelectedTopList] = useState<number[]>([]);
   const [selectedBottomList, setSelectedBottomList] = useState<number[]>([]);

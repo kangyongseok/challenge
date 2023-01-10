@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
@@ -18,11 +18,12 @@ import { Gender } from '@dto/user';
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postUserAgeAndGender } from '@api/user';
+import { postUserAgeAndGender } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function PersonalInput() {
@@ -34,7 +35,7 @@ function PersonalInput() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
   const { isLoading, mutate } = useMutation(postUserAgeAndGender, {
     onSuccess: () => {
       router.back();

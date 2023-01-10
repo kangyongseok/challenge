@@ -1,15 +1,12 @@
-import { useQuery } from 'react-query';
 import { Box, Image, Typography, useTheme } from 'mrcamel-ui';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function MyPortfolioLanding03() {
   const {
     theme: { palette }
   } = useTheme();
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  const { data: userInfo } = useQueryUserInfo();
 
   return (
     <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>

@@ -1,17 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useQuery } from 'react-query';
 import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
 import type { Gender } from '@dto/user';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
-
 import { SpinnerPicker } from '@utils/onboarding';
 
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import { CenterContents, DatePicker, GenderSelect } from './GenderYearInput.styles';
@@ -30,8 +26,8 @@ function GenderYearInput({
   themeType?: 'normal';
 }) {
   const textRef = useRef(null);
-  const { data: userInfo, isSuccess } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
   const { data: accessUser, refetch } = useQueryAccessUser();
+  const { data: userInfo, isSuccess } = useQueryUserInfo();
   // const [yearOfBirthValue, setYearOfBirthValue] = useState('');
   const [smallHeight, setSmallHeight] = useState(false);
   const {

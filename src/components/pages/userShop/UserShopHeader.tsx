@@ -5,7 +5,7 @@ import { UserAvatar } from '@components/UI/organisms';
 import Header from '@components/UI/molecules/Header';
 import { UserShopTabs } from '@components/pages/userShop/index';
 
-import { HEADER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 
 interface UserShopHeaderProps {
   triggered: boolean;
@@ -40,7 +40,11 @@ function UserShopHeader({
         onClickLeft={() => router.replace('/mypage')}
         titleCustomStyle={{ justifyContent: 'start' }}
       >
-        <Flexbox alignment="center" gap={8} customStyle={{ marginLeft: -48 }}>
+        <Flexbox
+          alignment="center"
+          gap={8}
+          customStyle={{ marginLeft: -APP_DOWNLOAD_BANNER_HEIGHT }}
+        >
           <UserAvatar
             src={imageProfile || ''}
             width={32}

@@ -1,5 +1,4 @@
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -7,9 +6,6 @@ import styled from '@emotion/styled';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { CAMEL_SELLER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -24,6 +20,7 @@ import {
 import type { CamelSellerLocalStorage } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageUserShopCard() {
@@ -42,7 +39,7 @@ function MypageUserShopCard() {
     data: {
       userProductInfo: { displayedUserProductCount = 0, hasUserProduct = false, images = [] } = {}
     } = {}
-  } = useQuery(queryKeys.users.userInfo(), fetchUserInfo);
+  } = useQueryUserInfo();
 
   const handleClickCamelSeller = () => {
     const prevStep = LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage;
