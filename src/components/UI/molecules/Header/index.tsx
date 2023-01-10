@@ -233,7 +233,6 @@ function Header({
         <Wrapper isFixed={isFixed}>
           <Flexbox
             alignment="center"
-            gap={16}
             customStyle={{
               width: '100%',
               minHeight: customHeight || 56,

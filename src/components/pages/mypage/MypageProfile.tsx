@@ -132,7 +132,7 @@ function MypageProfile() {
     >
       <Flexbox gap={20} alignment="center">
         <Box customStyle={{ position: 'relative' }}>
-          <UserAvatar src={userImageProfile} />
+          <UserAvatar src={userImageProfile} width={64} height={64} />
           {accessUser?.snsType === 'kakao' && (
             <SnsIconWrap bgColor="#FEE500">
               <Icon name="KakaoFilled" />
@@ -155,7 +155,7 @@ function MypageProfile() {
           gap={4}
           customStyle={{ maxWidth: 'calc(100% - 172px)' }}
         >
-          <Flexbox alignment="center" gap={2}>
+          <Flexbox alignment="center" gap={2} customStyle={{ flexWrap: 'wrap' }}>
             <EllipsisText variant="h3" weight="bold">
               {nickName}
             </EllipsisText>
@@ -221,7 +221,7 @@ function MypageProfile() {
                 </Badge>
               )}
             </Flexbox>
-            <Typography>{label}</Typography>
+            <Typography customStyle={{ whiteSpace: 'pre' }}>{label}</Typography>
           </Flexbox>
         ))}
       </Flexbox>
