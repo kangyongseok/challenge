@@ -1,16 +1,26 @@
-import { Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-export const UserImage = styled(Image)<{
+export const UserImage = styled.div<{
+  url?: string;
+  width: number;
+  height: number;
   isActive: boolean;
   isRound: boolean;
   showBorder: boolean;
 }>`
-  object-fit: cover;
+  display: flex;
+  flex-direction: column;
+  width: ${({ width }) => width}px;
+  min-width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
   border: ${({ isActive, showBorder, theme: { palette } }) =>
     (isActive && `2px solid ${palette.primary.light}`) ||
     (showBorder && `2px solid ${palette.common.uiWhite}`)};
   border-radius: ${({ isRound }) => (isRound ? '50%' : '16px')};
+  background-image: ${({ url }) => `url(${url})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 export const HiddenImageLoader = styled.img`
