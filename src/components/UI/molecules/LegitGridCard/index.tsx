@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from 'react';
-import { useState } from 'react';
 
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -52,15 +51,13 @@ function LegitGridCard({
     }
   } = useTheme();
 
-  const [
-    {
-      title,
-      imageMain,
-      imageThumbnail,
-      brand: { nameEng = '' },
-      price
-    }
-  ] = useState(product);
+  const {
+    title,
+    imageMain,
+    imageThumbnail,
+    brand: { nameEng = '' },
+    price
+  } = product || {};
 
   return (
     <Flexbox {...props} direction="vertical" css={customStyle}>

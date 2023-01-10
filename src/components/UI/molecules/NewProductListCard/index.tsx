@@ -70,27 +70,25 @@ function NewProductListCard({
     }
   } = useTheme();
 
-  const [
-    {
-      id,
-      title: productTitle = '',
-      imageMain,
-      imageThumbnail,
-      brand: { name: brandName = '', nameEng = '' } = {},
-      category: { name: categoryName = '', parentId = 0 } = {},
-      status,
-      site: { name: siteName = '' } = {},
-      productSeller: { site: { id: siteId = 0 } = {}, type = 0 } = {},
-      wishCount = 0,
-      purchaseCount = 0,
-      datePosted,
-      dateFirstPosted,
-      area,
-      price,
-      cluster
-    }
-  ] = useState(product);
-  const [eventParams] = useState({
+  const {
+    id,
+    title: productTitle = '',
+    imageMain,
+    imageThumbnail,
+    brand: { name: brandName = '', nameEng = '' } = {},
+    category: { name: categoryName = '', parentId = 0 } = {},
+    status,
+    site: { name: siteName = '' } = {},
+    productSeller: { site: { id: siteId = 0 } = {}, type = 0 } = {},
+    wishCount = 0,
+    purchaseCount = 0,
+    datePosted,
+    dateFirstPosted,
+    area,
+    price,
+    cluster
+  } = product || {};
+  const eventParams = {
     id,
     index,
     name,
@@ -105,7 +103,7 @@ function NewProductListCard({
     cluster,
     productType: getProductType(siteId, type),
     ...attributes
-  });
+  };
   const [isWish, setIsWish] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
