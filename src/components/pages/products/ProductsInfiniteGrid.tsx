@@ -253,7 +253,7 @@ function ProductsInfiniteGrid({
   const getProductAttributes = useCallback(
     (product: Product) => {
       return {
-        name: name || attrProperty.productName.PRODUCT_LIST,
+        name: attrProperty.productName.PRODUCT_LIST,
         index: (product.index || 0) + 1,
         id: product.id,
         brand: product.brand.name,
@@ -280,28 +280,25 @@ function ProductsInfiniteGrid({
         sort: getEventPropertySortValue(searchParams.order)
       };
     },
-    [name, searchParams.order]
+    [searchParams.order]
   );
 
-  const getWishAttributes = useCallback(
-    (product: Product) => {
-      return {
-        name: name || attrProperty.productName.PRODUCT_LIST,
-        id: product.id,
-        index: (product?.index || 0) + 1,
-        brand: product.brand.name,
-        category: product.category.name,
-        parentId: product.category.parentId,
-        line: product.line,
-        site: product.site.name,
-        price: product.price,
-        scoreTotal: product.scoreTotal,
-        cluster: product.cluster,
-        source: attrProperty.productSource.PRODUCT_LIST
-      };
-    },
-    [name]
-  );
+  const getWishAttributes = useCallback((product: Product) => {
+    return {
+      name: attrProperty.productName.PRODUCT_LIST,
+      id: product.id,
+      index: (product?.index || 0) + 1,
+      brand: product.brand.name,
+      category: product.category.name,
+      parentId: product.category.parentId,
+      line: product.line,
+      site: product.site.name,
+      price: product.price,
+      scoreTotal: product.scoreTotal,
+      cluster: product.cluster,
+      source: attrProperty.productSource.PRODUCT_LIST
+    };
+  }, []);
 
   const rowRenderer = useCallback(
     ({ index, key, parent, style }: ListRowProps) => {
