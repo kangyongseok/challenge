@@ -42,7 +42,7 @@ function Announce() {
                 alignment="center"
                 onClick={handleClickClose}
                 customStyle={{
-                  padding: 16,
+                  padding: '16px 8px',
                   maxHeight: 56,
                   cursor: 'pointer'
                 }}

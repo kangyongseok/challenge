@@ -11,19 +11,27 @@ import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 function LegitResultOpinionList() {
   const router = useRouter();
   const { id } = router.query;
   const splitIds = String(id).split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
-  const { data: { legitOpinions = [] } = {} } = useQuery(
-    queryKeys.productLegits.legit(productId),
-    () => fetchProductLegit(productId),
-    {
-      enabled: !!id
-    }
-  );
+  const { data: accessUser } = useQueryAccessUser();
+
+  const {
+    data: { legitOpinions = [], userId, productResult: { sellerUserId = 0 } = {}, status } = {}
+  } = useQuery(queryKeys.productLegits.legit(productId), () => fetchProductLegit(productId), {
+    enabled: !!id
+  });
+
+  if (
+    status === 20 &&
+    (!accessUser || (accessUser.userId !== userId && accessUser.userId !== sellerUserId))
+  )
+    return null;
 
   return (
     <Box component="section" customStyle={{ marginTop: 48 }}>

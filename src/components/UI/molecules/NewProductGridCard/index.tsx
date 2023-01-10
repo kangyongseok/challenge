@@ -278,18 +278,21 @@ function NewProductGridCard({
             />
           </WishButtonB>
         )}
-        <Typography variant="body2" weight="bold">
-          {nameEng
-            .split(' ')
-            .map(
-              (splitNameEng) =>
-                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
-                  1,
-                  splitNameEng.length
-                )}`
-            )
-            .join(' ')}
-        </Typography>
+        <Flexbox>
+          <Typography variant="body2" weight="bold" noWrap>
+            {nameEng
+              .split(' ')
+              .map(
+                (splitNameEng) =>
+                  `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                    1,
+                    splitNameEng.length
+                  )}`
+              )
+              .join(' ')}
+          </Typography>
+          <Box customStyle={{ minWidth: 36, height: 'fit-content' }} />
+        </Flexbox>
         <Typography
           variant="body2"
           noWrap

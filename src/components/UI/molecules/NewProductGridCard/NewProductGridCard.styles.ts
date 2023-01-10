@@ -23,7 +23,7 @@ export const WishButtonA = styled.button<Pick<NewProductGridCardProps, 'variant'
 
 export const WishButtonB = styled.button<Pick<NewProductGridCardProps, 'variant'>>`
   position: absolute;
-  top: 0;
+  top: -2px;
   right: ${({ variant }) => (variant === 'gridA' ? 4 : -4)}px;
   display: flex;
   align-items: center;

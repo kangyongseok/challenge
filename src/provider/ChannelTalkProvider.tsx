@@ -17,14 +17,6 @@ function ChannelTalkProvider() {
 
   useEffect(() => {
     ChannelTalk.hideMessenger();
-
-    // const allowPrefixPathNames = [''];
-    ChannelTalk.hideChannelButton();
-    // if (allowPrefixPathNames.includes(router.pathname.split('/')[1])) {
-    //   ChannelTalk.showChannelButton();
-    // } else {
-    //   ChannelTalk.hideChannelButton();
-    // }
   }, [router.pathname]);
 
   useEffect(() => {

@@ -9,7 +9,12 @@ import { debounce, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
-import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
+import {
+  NewProductGridCard,
+  NewProductGridCardSkeleton,
+  ProductGridCard,
+  ProductGridCardSkeleton
+} from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -27,6 +32,7 @@ import { getOnlyObjectValue } from '@utils/common';
 
 import { activeMyFilterState } from '@recoil/productsFilter';
 import { personalGuideListCurrentThemeState } from '@recoil/home';
+import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function HomePersonalGuideProductList() {
@@ -178,30 +184,110 @@ function HomePersonalGuideProductList() {
           minHeight: ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 222 : 286
         }}
       >
-        {isLoading &&
-          Array.from({ length: 10 }).map((_, index) => (
-            <NewProductGridCardSkeleton
-              // eslint-disable-next-line react/no-array-index-key
-              key={`home-personal-guide-product-skeleton-${index}`}
-              variant="swipeX"
-              isRound
-            />
-          ))}
-        {!isLoading &&
-          products[guideProductsNum]?.products?.content.map((product, index) => (
-            <NewProductGridCard
-              key={`home-personal-guide-product-${product.id}`}
-              variant="swipeX"
-              product={product}
-              isRound
-              attributes={{
-                name: attrProperty.name.MAIN,
-                title: attrProperty.title.PERSONAL_GUIDE,
-                source: attrProperty.source.MAIN_PERSONAL_GUIDE,
-                index: index + 1
-              }}
-            />
-          ))}
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          {isLoading &&
+            Array.from({ length: 10 }).map((_, index) => (
+              <NewProductGridCardSkeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={`home-personal-guide-product-skeleton-${index}`}
+                variant="swipeX"
+                isRound
+              />
+            ))}
+          {!isLoading &&
+            products[guideProductsNum]?.products?.content.map((product, index) => (
+              <NewProductGridCard
+                key={`home-personal-guide-product-${product.id}`}
+                variant="swipeX"
+                product={product}
+                isRound
+                attributes={{
+                  name: attrProperty.name.MAIN,
+                  title: attrProperty.title.PERSONAL_GUIDE,
+                  source: attrProperty.source.MAIN_PERSONAL_GUIDE,
+                  index: index + 1
+                }}
+              />
+            ))}
+        </ABTestGroup>
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          {isLoading &&
+            Array.from({ length: 10 }).map((_, index) => (
+              <NewProductGridCardSkeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={`home-personal-guide-product-skeleton-${index}`}
+                variant="swipeX"
+                isRound
+              />
+            ))}
+          {!isLoading &&
+            products[guideProductsNum]?.products?.content.map((product, index) => (
+              <NewProductGridCard
+                key={`home-personal-guide-product-${product.id}`}
+                variant="swipeX"
+                product={product}
+                isRound
+                attributes={{
+                  name: attrProperty.name.MAIN,
+                  title: attrProperty.title.PERSONAL_GUIDE,
+                  source: attrProperty.source.MAIN_PERSONAL_GUIDE,
+                  index: index + 1
+                }}
+              />
+            ))}
+        </ABTestGroup>
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
+          {isLoading &&
+            Array.from({ length: 10 }).map((_, index) => (
+              <ProductGridCardSkeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={`home-personal-guide-product-skeleton-${index}`}
+                isRound
+                hasAreaWithDateInfo={false}
+                hasMetaInfo={false}
+                compact
+                gap={8}
+              />
+            ))}
+          {!isLoading &&
+            products[guideProductsNum]?.products?.content.map((product, index) => (
+              <ProductGridCard
+                key={`home-personal-guide-product-${product.id}`}
+                product={product}
+                isRound
+                compact
+                gap={8}
+                hideProductLabel
+                productAtt={{
+                  name: attrProperty.name.MAIN,
+                  title: attrProperty.title.PERSONAL_GUIDE,
+                  id: product.id,
+                  index: index + 1,
+                  brand: product.brand.name,
+                  category: product.category.name,
+                  parentId: product.category.parentId,
+                  site: product.site.name,
+                  price: product.price,
+                  cluster: product.cluster,
+                  source: attrProperty.source.MAIN_PERSONAL_GUIDE
+                }}
+                wishAtt={{
+                  name: attrProperty.name.MAIN,
+                  title: attrProperty.title.PERSONAL_GUIDE,
+                  id: product.id,
+                  index: index + 1,
+                  brand: product.brand.name,
+                  category: product.category.name,
+                  parentId: product.category.parentId,
+                  site: product.site.name,
+                  price: product.price,
+                  cluster: product.cluster,
+                  source: attrProperty.source.MAIN_PERSONAL_GUIDE
+                }}
+                source={attrProperty.source.MAIN_PERSONAL_GUIDE}
+              />
+            ))}
+        </ABTestGroup>
       </List>
       <Flexbox alignment="center" justifyContent="center" customStyle={{ marginTop: 32 }}>
         <Button

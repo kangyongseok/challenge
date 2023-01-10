@@ -134,7 +134,7 @@ function LegitRequest() {
           header={
             <Header
               rightIcon={
-                <Box onClick={() => router.back()} customStyle={{ padding: 16 }}>
+                <Box onClick={() => router.back()} customStyle={{ padding: '16px 8px' }}>
                   <Icon name="CloseOutlined" />
                 </Box>
               }

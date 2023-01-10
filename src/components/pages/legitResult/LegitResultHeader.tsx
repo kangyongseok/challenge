@@ -105,7 +105,7 @@ function LegitResultHeader() {
             alignment="center"
             onClick={handleClick}
             customStyle={{
-              padding: 16,
+              padding: '0 8px',
               maxHeight: 56,
               cursor: 'pointer'
             }}

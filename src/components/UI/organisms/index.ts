@@ -7,7 +7,6 @@ export { default as OnBoardingSpotlight } from './OnBoardingSpotlight';
 export * from './Popups';
 export { default as ProductLabel } from './ProductLabel';
 export { default as LegitResultSurveyTypeform } from './LegitResultSurveyTypeform';
-export { default as LegitInduceFloatingBanner } from './LegitInduceFloatingBanner';
 export { default as LegitUploadInfoPaper } from './LegitUploadInfoPaper';
 export { default as ImageDetailDialog } from './ImageDetailDialog';
 export { default as LegitStatusCardHolder } from './LegitStatusCardHolder';

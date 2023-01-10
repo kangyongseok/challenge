@@ -7,7 +7,6 @@ import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
-import { LegitInduceFloatingBanner } from '@components/UI/organisms';
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -32,7 +31,6 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import { locales } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
@@ -154,11 +152,6 @@ function Home() {
         {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
-      <LegitInduceFloatingBanner
-        edgeSpacing={20}
-        channelTalkPosition={-60}
-        name={attrProperty.productName.MAIN}
-      />
       <CamelSellerFloatingButton source="MAIN" />
       <HomeLegitContinueDialog />
     </>

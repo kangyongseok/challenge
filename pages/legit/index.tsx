@@ -5,7 +5,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Box, useTheme } from 'mrcamel-ui';
 
-import LegitInduceFloatingBanner from '@components/UI/organisms/LegitInduceFloatingBanner';
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -18,7 +17,6 @@ import {
 } from '@components/pages/legit';
 
 import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -71,14 +69,6 @@ function Legit() {
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}
       </GeneralTemplate>
-      <LegitInduceFloatingBanner
-        themeType="light"
-        bottom={62}
-        halfRound
-        edgeSpacing={-1}
-        channelTalkPosition={-50}
-        name={attrProperty.legitName.LEGIT_MAIN}
-      />
       {tab === 'live' && <LegitFloatingButton />}
     </>
   );

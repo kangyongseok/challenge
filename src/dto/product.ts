@@ -412,6 +412,7 @@ export type ProductResult = {
   description: string;
   isDeleted: boolean | null;
   sellerType?: 0 | 1 | 2 | 3;
+  sellerUserId?: number;
 };
 
 export type PageProduct = Paged<Product>;

@@ -65,6 +65,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
             <LegitResultTimer />
             <LegitResultRequestInfo />
             <LegitResultDetailAlert />
+            <LegitResultOpinionList />
             <Box
               customStyle={{
                 margin: '52px -20px 32px',
