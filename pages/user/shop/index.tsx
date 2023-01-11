@@ -71,35 +71,44 @@ function UserShop() {
     delay: 0
   });
 
-  const { userImageProfile, labels, tab, nickName, curnScore, maxScore } = useMemo(() => {
-    const tabLabels = [
-      { key: '0', value: `판매중 ${productCount}` },
-      { key: '1', value: `판매완료 ${undisplayProductCount}` },
-      { key: '2', value: `후기 ${reviewCount}` }
-    ];
+  const { userImageProfile, userImageBackground, labels, tab, nickName, curnScore, maxScore } =
+    useMemo(() => {
+      const tabLabels = [
+        { key: '0', value: `판매중 ${productCount}` },
+        { key: '1', value: `판매완료 ${undisplayProductCount}` },
+        { key: '2', value: `후기 ${reviewCount}` }
+      ];
+      const userImage =
+        (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
+        (!image?.split('/').includes('0.png') && image) ||
+        '';
 
-    return {
-      userImageProfile:
-        (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '',
-      labels: tabLabels,
-      tab: String(router.query.tab || tabLabels[0].key),
-      nickName: data?.nickName || data?.name || `${accessUser?.userId || '회원'}`,
-      curnScore: Number(data?.curnScore || 0),
-      maxScore: Number(data?.maxScore || 0)
-    };
-  }, [
-    accessUser?.userId,
-    data?.curnScore,
-    data?.maxScore,
-    data?.name,
-    data?.nickName,
-    image,
-    imageProfile,
-    productCount,
-    reviewCount,
-    router.query.tab,
-    undisplayProductCount
-  ]);
+      return {
+        userImageProfile: userImage,
+        userImageBackground:
+          imageBackground ||
+          (userImage.length > 0 && userImage) ||
+          `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`,
+        labels: tabLabels,
+        tab: String(router.query.tab || tabLabels[0].key),
+        nickName: data?.nickName || data?.name || `${accessUser?.userId || '회원'}`,
+        curnScore: Number(data?.curnScore || 0),
+        maxScore: Number(data?.maxScore || 0)
+      };
+    }, [
+      accessUser?.userId,
+      data?.curnScore,
+      data?.maxScore,
+      data?.name,
+      data?.nickName,
+      image,
+      imageBackground,
+      imageProfile,
+      productCount,
+      reviewCount,
+      router.query.tab,
+      undisplayProductCount
+    ]);
   const { title, description } = useMemo(() => {
     return {
       title: `판매자 ${nickName} 후기와 평점 보기 | 카멜`,
@@ -148,7 +157,7 @@ function UserShop() {
               title={title}
               description={description}
               imageProfile={userImageProfile}
-              imageBackground={imageBackground || ''}
+              imageBackground={userImageBackground}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
               maxScore={Number(maxScore || 0)}
@@ -161,7 +170,7 @@ function UserShop() {
               title={title}
               description={description}
               imageProfile={userImageProfile}
-              imageBackground={imageBackground || ''}
+              imageBackground={userImageBackground}
               nickName={nickName}
               curnScore={Number(curnScore || 0)}
               maxScore={Number(maxScore || 0)}

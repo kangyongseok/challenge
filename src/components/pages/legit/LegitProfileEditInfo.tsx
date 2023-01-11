@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import Image from 'next/image';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { TextInput } from '@components/UI/molecules';
-
-// import type { PutUserLegitProfileData } from '@dto/user';
+import UserAvatar from '@components/UI/organisms/UserAvatar';
+import TextInput from '@components/UI/molecules/TextInput';
 
 import { PhotoGuideImage } from '@dto/productLegit';
 
-import { CAMEL_SUBSET_FONTFAMILY, NEXT_IMAGE_BLUR_URL, extractTagRegx } from '@constants/common';
+import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
 
 import {
   checkAgent,
@@ -26,24 +24,22 @@ import { shake } from '@styles/transition';
 import { legitProfileEditState } from '@recoil/legitProfile';
 import { dialogState, toastState } from '@recoil/common';
 
-function LegitProfileEditInfo({ snsImage }: { snsImage?: string }) {
+interface LegitProfileEditInfoProps {
+  userImageProfile: string;
+}
+
+function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
   const nickNameRef = useRef<null | HTMLInputElement>(null);
-  // const userId = useMemo(() => Number(id), [id]);
-  // const { data: accessUser } = useQueryAccessUser();
+
   const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const [isBanWord, setIsBanWord] = useState(false);
-  const [imageRendered, setImageRendered] = useState(false);
-
-  // const { data } = useQuery(queryKeys.users.legitProfile(userId), () => fetchLegitProfile(userId), {
-  //   refetchOnWindowFocus: !isLegitUser || (!!accessUser && userId !== accessUser?.userId)
-  // });
 
   const [{ imageType, isLoadingGetPhoto }, setGetPhotoState] = useState<{
     imageType: 'profile' | 'background';
@@ -217,18 +213,6 @@ function LegitProfileEditInfo({ snsImage }: { snsImage?: string }) {
     });
   };
 
-  const getProfileImage = useMemo(() => {
-    const initDefaultImage = sellerEditInfo.imageProfile?.split('/').includes('0.png');
-    if (initDefaultImage && snsImage) return snsImage;
-    if (!initDefaultImage && sellerEditInfo.imageProfile) return sellerEditInfo.imageProfile;
-
-    return '';
-  }, [sellerEditInfo.imageProfile, snsImage]);
-
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
-
   return (
     <Wrap>
       <Flexbox justifyContent="space-between" alignment="center" gap={18}>
@@ -272,32 +256,15 @@ function LegitProfileEditInfo({ snsImage }: { snsImage?: string }) {
             </Flexbox>
           </TextAreaWrap>
         </Box>
-        <ProfileImageArea
+        <Box
+          customStyle={{ position: 'relative' }}
           onClick={handleChangeImage({ isBackground: false })}
-          alignment="center"
-          justifyContent="center"
         >
-          {getProfileImage && (
-            <Image
-              src={getProfileImage}
-              alt="Profile"
-              onLoadingComplete={handleLoadComplete}
-              placeholder="blur"
-              blurDataURL={NEXT_IMAGE_BLUR_URL}
-              layout="fill"
-              objectFit="cover"
-              style={{ borderRadius: '50%' }}
-              width="96px"
-              height="96px"
-            />
-          )}
-          {(!imageRendered || !getProfileImage) && (
-            <Icon name="UserFilled" width={52} height={52} customStyle={{ color: common.ui80 }} />
-          )}
+          <UserAvatar src={userImageProfile} isRound />
           <IconBox>
             <Icon name="CameraFilled" />
           </IconBox>
-        </ProfileImageArea>
+        </Box>
       </Flexbox>
       <Flexbox direction="vertical" gap={8} customStyle={{ zIndex: 1, marginTop: 33 }}>
         <Button
@@ -321,18 +288,6 @@ const Wrap = styled.div`
   z-index: 1;
   height: calc(305px - 87px);
   padding-top: 30px;
-`;
-
-const ProfileImageArea = styled(Flexbox)`
-  min-width: 96px;
-  min-height: 96px;
-  position: relative;
-  border-radius: 50%;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg03};
 `;
 
 const IconBox = styled.div`

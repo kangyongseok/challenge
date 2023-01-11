@@ -25,7 +25,6 @@ import queryKeys from '@constants/queryKeys';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   APP_TOP_STATUS_HEIGHT,
-  BASIC_BACKGROUND_IMG,
   HEADER_HEIGHT
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
@@ -62,13 +61,6 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   );
   const { data: legitsBrands = [] } = useQuery(queryKeys.models.legitsBrands(), () =>
     fetchLegitsBrands()
-  );
-  const { data: profileInfo } = useQuery(
-    queryKeys.users.legitProfile(Number(id)),
-    () => fetchLegitProfile(Number(id)),
-    {
-      enabled: !!id
-    }
   );
 
   const opinionLegitListRef = useRef<null | HTMLDivElement>(null);
@@ -129,9 +121,6 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
               legitsBrands={legitsBrands}
               cntOpinion={cntOpinion}
               sellerId={roleSeller?.sellerId}
-              backgroundImg={
-                profileInfo?.profile.imageBackground || accessUser?.image || BASIC_BACKGROUND_IMG
-              }
             />
             <LegitProfileOpinionLegitList ref={opinionLegitListRef} userId={userId} />
           </Flexbox>

@@ -33,7 +33,9 @@ function MypageProfile() {
 
     return {
       userImageProfile:
-        (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '',
+        (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
+        (image?.split('/').includes('0.png') && image) ||
+        '',
       nickName:
         myUserInfo?.info?.value?.nickName ||
         myUserInfo?.info?.value?.name ||
@@ -132,7 +134,12 @@ function MypageProfile() {
     >
       <Flexbox gap={20} alignment="center">
         <Box customStyle={{ position: 'relative' }}>
-          <UserAvatar src={userImageProfile} width={64} height={64} />
+          <UserAvatar
+            src={userImageProfile}
+            width={64}
+            height={64}
+            iconCustomStyle={{ width: 32, height: 32 }}
+          />
           {accessUser?.snsType === 'kakao' && (
             <SnsIconWrap bgColor="#FEE500">
               <Icon name="KakaoFilled" />

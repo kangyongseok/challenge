@@ -36,7 +36,6 @@ import { ACCESS_USER } from '@constants/localStorage';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   APP_TOP_STATUS_HEIGHT,
-  BASIC_BACKGROUND_IMG,
   HEADER_HEIGHT
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
@@ -127,12 +126,14 @@ function LegitProfileEdit() {
 
   const [tab, setTab] = useState('판매자' as string | number);
   const elementRef = useRef<null | HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (targetTab === 'legit') {
-      setTab('감정사');
-    }
-  }, [targetTab]);
+  const userImageProfile =
+    (!sellerEditInfo.imageProfile?.split('/').includes('0.png') && sellerEditInfo.imageProfile) ||
+    (!myUserInfo?.info.value.image?.split('/').includes('0.png') && myUserInfo?.info.value.image) ||
+    '';
+  const userImageBackground =
+    sellerEditInfo.imageBackground ||
+    (userImageProfile.length > 0 && userImageProfile) ||
+    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
   const triggered = useScrollTrigger({
     ref: elementRef,
@@ -186,44 +187,6 @@ function LegitProfileEdit() {
       router.back();
     }
   }, [isUpdatedProfileData, router, setDialogState]);
-
-  useEffect(() => {
-    if (isUpdatedProfileData) {
-      router.events.on('routeChangeStart', handleRouteChangeStart);
-    }
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUpdatedProfileData]);
-
-  useEffect(() => {
-    if (profileInfo) {
-      const {
-        name,
-        urlShop,
-        title,
-        targetBrandIds,
-        subTitle,
-        description,
-        image,
-        imageBackground
-      } = profileInfo.profile;
-
-      setSellerEditInfo({
-        nickName: name,
-        shopDescription: profileInfo.shopDescription,
-        legitTitle: title,
-        legitUrlShop: urlShop || '',
-        legitTargetBrandIds: targetBrandIds,
-        legitSubTitle: subTitle,
-        legitDescription: description,
-        imageProfile: image,
-        imageBackground: imageBackground || ''
-      });
-    }
-  }, [profileInfo, setSellerEditInfo]);
 
   const handleChangeValue = (newValue: string | number) => {
     setTab(newValue);
@@ -294,6 +257,50 @@ function LegitProfileEdit() {
   //   }
   // };
 
+  useEffect(() => {
+    if (targetTab === 'legit') {
+      setTab('감정사');
+    }
+  }, [targetTab]);
+
+  useEffect(() => {
+    if (isUpdatedProfileData) {
+      router.events.on('routeChangeStart', handleRouteChangeStart);
+    }
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUpdatedProfileData]);
+
+  useEffect(() => {
+    if (profileInfo) {
+      const {
+        name,
+        urlShop,
+        title,
+        targetBrandIds,
+        subTitle,
+        description,
+        image,
+        imageBackground
+      } = profileInfo.profile;
+
+      setSellerEditInfo({
+        nickName: name,
+        shopDescription: profileInfo.shopDescription,
+        legitTitle: title,
+        legitUrlShop: urlShop || '',
+        legitTargetBrandIds: targetBrandIds,
+        legitSubTitle: subTitle,
+        legitDescription: description,
+        imageProfile: image,
+        imageBackground: imageBackground || ''
+      });
+    }
+  }, [profileInfo, setSellerEditInfo]);
+
   return (
     <GeneralTemplate
       header={
@@ -325,13 +332,10 @@ function LegitProfileEdit() {
         </SaveBtnWrap>
       }
     >
-      <BackgroundImage
-        src={sellerEditInfo.imageBackground || myUserInfo?.info.value.image || BASIC_BACKGROUND_IMG}
-        showAppDownloadBanner={showAppDownloadBanner}
-      >
+      <BackgroundImage src={userImageBackground} showAppDownloadBanner={showAppDownloadBanner}>
         <Blur />
       </BackgroundImage>
-      <LegitProfileEditInfo snsImage={myUserInfo?.info.value.image} />
+      <LegitProfileEditInfo userImageProfile={userImageProfile} />
       <ContetnsWrap ref={elementRef}>
         <TabGroup fullWidth value={tab} onChange={handleChangeValue}>
           <Tab text="판매자 프로필" value="판매자" />

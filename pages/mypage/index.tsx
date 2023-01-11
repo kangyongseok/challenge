@@ -20,9 +20,6 @@ import {
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchMyUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
@@ -89,10 +86,6 @@ export async function getServerSideProps({
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
   Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
-
-  if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo);
-  }
 
   return {
     props: {

@@ -5,7 +5,6 @@ import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { QueryClient, dehydrate, useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import type { GetServerSidePropsContext } from 'next';
 import {
   Box,
@@ -19,6 +18,7 @@ import {
 } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { UserAvatar } from '@components/UI/organisms';
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -34,12 +34,7 @@ import { fetchBanword, fetchInfoByUserId, putProfile } from '@api/user';
 import { PROFILE_EDIT_ERROR_MESSAGE } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import {
-  APP_TOP_STATUS_HEIGHT,
-  CAMEL_SUBSET_FONTFAMILY,
-  HEADER_HEIGHT,
-  NEXT_IMAGE_BLUR_URL
-} from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
@@ -70,7 +65,6 @@ function UserShopEdit() {
   const queryClient = useQueryClient();
   const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
-  const [imageRendered, setImageRendered] = useState(false);
   const { data: myUserInfo } = useQueryMyUserInfo();
 
   const { data: accessUser } = useQueryAccessUser();
@@ -183,6 +177,15 @@ function UserShopEdit() {
     userProfileParams.nickName,
     userProfileParams.shopDescription
   ]);
+  const userImageProfile =
+    (!userProfileParams.imageProfile?.split('/').includes('0.png') &&
+      userProfileParams.imageProfile) ||
+    (!myUserInfo?.info.value.image?.split('/').includes('0.png') && myUserInfo?.info.value.image) ||
+    '';
+  const userImageBackground =
+    userProfileParams.imageBackground ||
+    (userImageProfile.length > 0 && userImageProfile) ||
+    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
   const handleClickBack = useCallback(() => {
     if (isUpdatedProfileData) {
@@ -432,18 +435,6 @@ function UserShopEdit() {
     });
   }, [accessUser?.userId, image, imageBackground, imageProfile, name, nickName, shopDescription]);
 
-  const getProfileImage = useMemo(() => {
-    const initDefaultImage = userProfileParams.imageProfile?.split('/').includes('0.png');
-    const snsImage = myUserInfo?.info.value.image;
-    if (initDefaultImage && snsImage) return snsImage;
-    if (!initDefaultImage && userProfileParams.imageProfile) return userProfileParams.imageProfile;
-    return '';
-  }, [myUserInfo?.info.value.image, userProfileParams.imageProfile]);
-
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
-
   return (
     <GeneralTemplate
       header={
@@ -471,13 +462,7 @@ function UserShopEdit() {
         }}
       >
         <ImageWrapper>
-          <BackgroundImage
-            src={
-              userProfileParams.imageBackground ||
-              userProfileParams.imageProfile ||
-              `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`
-            }
-          >
+          <BackgroundImage src={userImageBackground}>
             <Blur />
           </BackgroundImage>
           <BackgroundImageIcon onClick={handleChangeImage(true)}>
@@ -492,28 +477,7 @@ function UserShopEdit() {
             {isLoadingGetPhoto && imageType === 'profile' ? (
               <Skeleton width={96} height={96} disableAspectRatio round={16} />
             ) : (
-              <ProfileImageWrap justifyContent="center" alignment="center">
-                {getProfileImage && (
-                  <Image
-                    src={getProfileImage}
-                    alt="Profile"
-                    onLoadingComplete={handleLoadComplete}
-                    placeholder="blur"
-                    blurDataURL={NEXT_IMAGE_BLUR_URL}
-                    layout="fill"
-                    objectFit="cover"
-                    style={{ borderRadius: 16 }}
-                  />
-                )}
-                {(!imageRendered || !getProfileImage) && (
-                  <Icon
-                    name="UserFilled"
-                    width={50}
-                    height={50}
-                    customStyle={{ color: common.ui80 }}
-                  />
-                )}
-              </ProfileImageWrap>
+              <UserAvatar src={userImageProfile} showBorder />
             )}
             <ProfileImageIcon>
               <Icon name="CameraFilled" size="medium" />
@@ -828,20 +792,6 @@ const ErrorLabel = styled(Typography)`
   right: 12px;
   display: inline-flex;
   color: ${({ theme: { palette } }) => palette.secondary.red.light};
-`;
-
-const ProfileImageWrap = styled(Flexbox)`
-  position: relative;
-  min-width: 96px;
-  min-height: 96px;
-  border-radius: 16px;
-  background: ${({ theme: { palette } }) => palette.common.bg03};
-  border: 2px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.uiWhite};
 `;
 
 export default UserShopEdit;

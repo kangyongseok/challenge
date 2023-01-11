@@ -25,15 +25,17 @@ function useQueryMyUserInfo(enabled = true) {
     const updatedAccessUser = { ...accessUser };
     const userNickName = useQueryMyUserInfoResult.data?.info?.value?.nickName || '';
     const imageProfile = useQueryMyUserInfoResult.data?.info?.value?.imageProfile;
+    const image = useQueryMyUserInfoResult.data?.info?.value?.image;
     const userImageProfile =
       (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
-      useQueryMyUserInfoResult.data?.info?.value?.image ||
+      (!image?.split('/').includes('0.png') && image) ||
       '';
 
     if (!!accessUser && (userNickName.length > 0 || userImageProfile.length > 0)) {
       if (accessUser.userName !== userNickName) updatedAccessUser.userName = userNickName;
 
-      if (accessUser.image !== userImageProfile) updatedAccessUser.image = userImageProfile;
+      if (accessUser.image && accessUser.image !== userImageProfile)
+        updatedAccessUser.image = userImageProfile;
 
       LocalStorage.set(ACCESS_USER, updatedAccessUser);
 

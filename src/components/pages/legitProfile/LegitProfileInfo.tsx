@@ -1,9 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import {
   Box,
   Button,
@@ -18,7 +17,7 @@ import {
 } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-// import { UserAvatar } from '@components/UI/organisms';
+import UserAvatar from '@components/UI/organisms/UserAvatar';
 
 import type { UserRoleLegit } from '@dto/user';
 import type { LegitsBrand } from '@dto/model';
@@ -28,11 +27,10 @@ import { logEvent } from '@library/amplitude';
 import { fetchLegitProfile } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT, NEXT_IMAGE_BLUR_URL } from '@constants/common';
+import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getFormattedActivatedTime } from '@utils/formats';
 import {
   commaNumber,
   executedShareURl,
@@ -49,15 +47,13 @@ interface LegitProfileInfoProps {
   legitsBrands: LegitsBrand[];
   cntOpinion: number;
   sellerId?: number;
-  backgroundImg: string;
 }
 
 function LegitProfileInfo({
   profile,
   isLoading = false,
   legitsBrands = [],
-  cntOpinion,
-  backgroundImg
+  cntOpinion
 }: LegitProfileInfoProps) {
   const {
     userId,
@@ -76,7 +72,6 @@ function LegitProfileInfo({
   } = useTheme();
   const router = useRouter();
   const setDialogState = useSetRecoilState(dialogState);
-  const [imageRendered, setImageRendered] = useState(false);
   const { data: accessUser } = useQueryAccessUser();
   const { data: profileInfo } = useQuery(
     queryKeys.users.legitProfile(Number(router.query.id)),
@@ -85,9 +80,6 @@ function LegitProfileInfo({
       enabled: !!router.query.id
     }
   );
-
-  const labelText = getFormattedActivatedTime(dateActivated);
-  const isActive = labelText === '접속중';
 
   const targetBrandData = useMemo(
     () =>
@@ -98,6 +90,12 @@ function LegitProfileInfo({
         .slice(0, 15),
     [legitsBrands, targetBrandIds]
   );
+  const userImageProfile =
+    (!profileInfo?.profile.image?.split('/').includes('0.png') && profileInfo?.profile.image) || '';
+  const userImageBackground =
+    (!profile?.imageBackground?.split('/').includes('0.png') && profile?.imageBackground) ||
+    (userImageProfile.length > 0 && userImageProfile) ||
+    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
   const handleClickShare = useCallback(() => {
     const shareData = {
@@ -109,7 +107,7 @@ function LegitProfileInfo({
         cntOpinion > 0
           ? `${cntOpinion}개의 중고명품을 감정한 믿음직한 감정사에요! 중고명품 의심이 되면 감정 의견을 받아보세요.`
           : '중고명품 의심이 되면 감정 의견을 받아보세요.',
-      image: backgroundImg,
+      image: userImageBackground,
       url: `${typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'}${
         router.asPath
       }`
@@ -128,7 +126,7 @@ function LegitProfileInfo({
     ) {
       setDialogState({ type: 'SNSShare', shareData });
     }
-  }, [cntOpinion, backgroundImg, router.asPath, setDialogState]);
+  }, [cntOpinion, userImageBackground, router.asPath, setDialogState]);
 
   const handleClickMoveToShop = () => {
     logEvent(attrKeys.legit.CLICK_SELLER_PRODUCT, {
@@ -155,20 +153,9 @@ function LegitProfileInfo({
     router.push(`/legit/profile/${userId}/edit?targetTab=legit`);
   };
 
-  const getProfileImage = useMemo(() => {
-    const initDefaultImage = profileInfo?.profile.image?.split('/').includes('0.png');
-    if (initDefaultImage && accessUser?.image) return accessUser.image;
-    if (!initDefaultImage && profileInfo?.profile.image) return profileInfo?.profile.image;
-    return '';
-  }, [accessUser?.image, profileInfo?.profile.image]);
-
-  const handleLoadComplete = () => {
-    setImageRendered(true);
-  };
-
   return (
     <Wrapper>
-      <BackgroundImage src={backgroundImg}>
+      <BackgroundImage src={userImageBackground}>
         <Blur />
       </BackgroundImage>
       <Flexbox
@@ -303,47 +290,16 @@ function LegitProfileInfo({
                     dangerouslySetInnerHTML={{ __html: title }}
                   />
                 </Flexbox>
-                <ProfileImageArea alignment="center" justifyContent="center" isActive={isActive}>
-                  {getProfileImage && (
-                    <Image
-                      src={getProfileImage}
-                      alt="Profile"
-                      onLoadingComplete={handleLoadComplete}
-                      placeholder="blur"
-                      blurDataURL={NEXT_IMAGE_BLUR_URL}
-                      layout="fill"
-                      objectFit="cover"
-                      style={{ borderRadius: '50%' }}
-                      width="80px"
-                      height="80px"
-                    />
-                  )}
-                  {(!imageRendered || !getProfileImage) && (
-                    <Icon
-                      name="UserFilled"
-                      width={45}
-                      height={45}
-                      customStyle={{ color: common.ui80 }}
-                    />
-                  )}
-                  {dateActivated?.length > 0 && (
-                    <Status>
-                      <Label
-                        text={labelText}
-                        variant="solid"
-                        brandColor={isActive ? 'blue' : 'black'}
-                        size="xsmall"
-                      />
-                    </Status>
-                  )}
-                </ProfileImageArea>
-                {/* <UserAvatar
-                  src={getProfileImage}
+                <UserAvatar
+                  src={userImageProfile}
                   dateActivated={dateActivated}
-                  customStyle={{ height: 'inherit' }}
+                  width={80}
+                  height={80}
+                  iconCustomStyle={{ width: 40, height: 40 }}
                   isRound
-                  // onClick={() => router.push(`/products/${sellerId}/sellerInfo?tab=products`)}
-                /> */}
+                  showBorder={!dateActivated}
+                  customStyle={{ height: 'inherit' }}
+                />
               </Flexbox>
               <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
                 {targetBrandData.map(({ id, name: brandName }) => (
@@ -455,31 +411,4 @@ const Blur = styled.div`
   backdrop-filter: blur(6px);
 `;
 
-const ProfileImageArea = styled(Flexbox)<{ isActive: boolean }>`
-  width: 80px;
-  height: 80px;
-  position: relative;
-  border-radius: 50%;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg03};
-  border: 2px solid
-    ${({
-      isActive,
-      theme: {
-        palette: { primary }
-      }
-    }) => isActive && primary.light};
-`;
-
-export const Status = styled.div`
-  position: absolute;
-  bottom: -15px;
-  display: inline-flex;
-  justify-content: center;
-  width: 100%;
-  transform: translateY(-50%);
-`;
 export default LegitProfileInfo;
