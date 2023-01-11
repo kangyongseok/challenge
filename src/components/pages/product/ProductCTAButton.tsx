@@ -288,9 +288,30 @@ function ProductCTAButton({
     }
   };
 
+  const attParser = () => {
+    if (product?.sellerType === productSellerType.collection) return 'REDIRECT';
+    if (product?.sellerType === productSellerType.certification) return 'SMS';
+    if (product?.sellerType === productSellerType.normal) return 'CHANNEL';
+    return '';
+  };
+
   const handleClickCTAButton = async () => {
     if (isLoadingMutateCreateChannel || pendingCreateChannel || !product) return;
+    let conversionId = 0;
+    const { source: productDetailSource } =
+      SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
+      {};
 
+    if (product.sellerType === productSellerType.normal) {
+      conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
+    }
+
+    productDetailAtt({
+      key: attrKeys.products.CLICK_PURCHASE,
+      product,
+      source: productDetailSource || undefined,
+      rest: { conversionId, att: attParser() }
+    });
     if (isBlockedUser) {
       setDialogState({
         type: 'unblockBlockedUser',
@@ -328,7 +349,13 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     if (roleSeller?.userId) {
-      logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.productDetail });
+      logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, {
+        name: attrProperty.name.productDetail,
+        sellerType: product.sellerType,
+        productSellerId: product.productSeller.id,
+        productSellerType: product.productSeller.type,
+        productSellerAccount: product.productSeller.account
+      });
 
       const createChannelParams = {
         targetUserId: String(roleSeller.userId || 0),
@@ -386,26 +413,6 @@ function ProductCTAButton({
       return;
     }
 
-    let conversionId = 0;
-    const { source: productDetailSource } =
-      SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
-      {};
-
-    if (
-      product &&
-      product.productSeller &&
-      product.productSeller.site &&
-      (product.productSeller.site.id === 24 || product.productSeller.type === 3)
-    ) {
-      conversionId = Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
-      productDetailAtt({
-        key: attrKeys.products.CLICK_PURCHASE,
-        product,
-        source: productDetailSource || undefined,
-        rest: { conversionId }
-      });
-    }
-
     if (isSoldOut && !isReserving && (!isDup || !hasTarget)) {
       setToastState({ type: 'product', status: 'soldout' });
 
@@ -445,13 +452,6 @@ function ProductCTAButton({
       if (product) push(getProductDetailUrl({ type: 'targetProduct', product }));
       return;
     }
-
-    productDetailAtt({
-      key: attrKeys.products.CLICK_PURCHASE,
-      product,
-      source: productDetailSource || undefined,
-      rest: { conversionId }
-    });
 
     let userAgent = 0;
 

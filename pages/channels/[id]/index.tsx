@@ -228,11 +228,21 @@ function Chanel() {
           data: { channelId: channel.id, content: message, event: 'LAST_MESSAGE' },
           channelUrl: channel.externalId,
           isTargetUserNoti,
+          userId: targetUserId,
+          productId,
           callback: updateNewMessage
         });
       }
     };
-  }, [channel?.externalId, channel?.id, isTargetUserNoti, mutateSendMessage, updateNewMessage]);
+  }, [
+    channel?.externalId,
+    channel?.id,
+    isTargetUserNoti,
+    mutateSendMessage,
+    productId,
+    targetUserId,
+    updateNewMessage
+  ]);
 
   useEffect(() => {
     window.getPhotoAttach = async (fileUrls: string[]) => {
@@ -245,7 +255,6 @@ function Chanel() {
           },
           channelUrl: channel.externalId,
           isTargetUserNoti,
-          fileUrls,
           callback: updateNewMessage
         });
       }
@@ -376,6 +385,8 @@ function Chanel() {
                     isTargetUserBlocked={isTargetUserBlocked}
                     scrollToBottom={scrollToBottom}
                     updateNewMessage={updateNewMessage}
+                    productId={productId}
+                    targetUserId={targetUserId}
                   />
                 )}
               </FooterWrapper>

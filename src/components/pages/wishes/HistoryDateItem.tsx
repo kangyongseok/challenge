@@ -11,6 +11,7 @@ import { Product } from '@dto/product';
 import { logEvent } from '@library/amplitude';
 
 // import { FIRST_CATEGORIES } from '@constants/category';
+import { productSellerType } from '@constants/user';
 import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -88,7 +89,12 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
                     scorePriceAvg: product.scorePriceAvg,
                     scorePriceCount: product.scorePriceCount,
                     scorePriceRate: product.scorePriceRate,
-                    source: attrProperty.productSource.RECENT_LIST
+                    source: attrProperty.productSource.RECENT_LIST,
+                    sellerType: product.sellerType,
+                    productSellerId: product.productSeller.id,
+                    productSellerType: product.productSeller.type,
+                    productSellerAccount: product.productSeller.account,
+                    useChat: product.sellerType !== productSellerType.collection
                   }}
                 />
               );

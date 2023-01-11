@@ -150,7 +150,8 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
           logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
             name: attrProperty.name.EDITPRODUCT_MAIN,
             value: query.id,
-            ...getAttProperty
+            ...getAttProperty,
+            ...submitPutData
           });
 
           resetTempData();
@@ -183,7 +184,8 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       onSuccess(id) {
         logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
           name: attrProperty.name.NEWPRODUCT_MAIN,
-          value: id
+          value: id,
+          ...data
         });
 
         setToastState({

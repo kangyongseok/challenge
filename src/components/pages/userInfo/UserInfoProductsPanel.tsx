@@ -24,6 +24,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchProductsByUserId } from '@api/user';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -115,15 +116,24 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
       price: product.price,
       cluster: product.cluster,
       source: attrProperty.source.MAIN_PERSONAL,
-      sellerType: product.sellerType
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     };
   };
 
   const handleClickProduct = useCallback(
-    (id: number) => () => {
+    (product: ProductResult, id: number) => () => {
       logEvent(attrKeys.userShop.CLICK_PRODUCT_DETAIL, {
         name: attrProperty.productName.USER_SHOP,
-        title: attrProperty.productTitle.PRODUCT
+        title: attrProperty.productTitle.PRODUCT,
+        sellerType: product.sellerType,
+        productSellerId: product.productSeller.id,
+        productSellerType: product.productSeller.type,
+        productSellerAccount: product.productSeller.account,
+        useChat: product.sellerType !== productSellerType.collection
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.USER_SHOP_PRODUCT
@@ -167,7 +177,7 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
                   productAtt={handleProductAtt(firstProduct, index)}
                   name={attrProperty.productName.USER_SHOP}
                   source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(firstProduct.id)}
+                  onClick={handleClickProduct(firstProduct, firstProduct.id)}
                 />
               )}
               {secondProduct && (
@@ -178,7 +188,7 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
                   productAtt={handleProductAtt(firstProduct, index)}
                   name={attrProperty.productName.USER_SHOP}
                   source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(secondProduct.id)}
+                  onClick={handleClickProduct(secondProduct, secondProduct.id)}
                 />
               )}
             </ProductGridCardBox>

@@ -11,6 +11,7 @@ import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { productSellerType } from '@constants/user';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
 import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -78,7 +79,12 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.name.MY_STORE,
       title: getTitle,
-      productType: 'original'
+      productType: 'original',
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     });
 
     router.push(`/products/${id}`);

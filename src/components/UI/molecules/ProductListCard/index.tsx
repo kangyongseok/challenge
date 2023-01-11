@@ -30,6 +30,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
@@ -200,7 +201,12 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
       ...productAtt,
-      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type),
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     });
 
     if (source) {
@@ -272,7 +278,12 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
       site: siteName,
       price: targetProductPrice,
       scoreTotal,
-      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type),
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     });
 
     if (!showDuplicateUploadAlert && showDuplicateWithPriceDownAlert) {

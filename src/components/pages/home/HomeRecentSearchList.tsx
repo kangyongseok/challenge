@@ -21,6 +21,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchSearch } from '@api/product';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
@@ -160,7 +161,12 @@ function HomeRecentSearchList() {
         parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
         site: product.site.name,
         price: product.price,
-        productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+        productType: getProductType(product.productSeller.site.id, product.productSeller.type),
+        sellerType: product.sellerType,
+        productSellerId: product.productSeller.id,
+        productSellerType: product.productSeller.type,
+        productSellerAccount: product.productSeller.account,
+        useChat: product.sellerType !== productSellerType.collection
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.MAIN_RECENT

@@ -10,6 +10,7 @@ import { ProductResult } from '@dto/product';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -68,7 +69,8 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
       price,
       cluster,
       priceBefore,
-      productSeller
+      productSeller,
+      sellerType
     } = productResult || {};
     logEvent(attrKeys.home.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.name.MAIN,
@@ -81,7 +83,12 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
       site,
       price,
       cluster,
-      productType: getProductType(productSeller.site.id, productSeller.type)
+      productType: getProductType(productSeller.site.id, productSeller.type),
+      sellerType,
+      productSellerId: productSeller.id,
+      productSellerType: productSeller.type,
+      productSellerAccount: productSeller.account,
+      useChat: sellerType !== productSellerType.collection
     });
     SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
       source: attrProperty.source.MAIN_WISH

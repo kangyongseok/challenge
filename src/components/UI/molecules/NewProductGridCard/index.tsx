@@ -14,7 +14,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { SELLER_STATUS } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
@@ -110,6 +110,11 @@ function NewProductGridCard({
     price,
     cluster,
     productType: getProductType(siteId, sellerType),
+    sellerType: product.sellerType,
+    productSellerId: product.productSeller.id,
+    productSellerType: product.productSeller.type,
+    productSellerAccount: product.productSeller.account,
+    useChat: product.sellerType !== productSellerType.collection,
     ...attributes
   };
   const [isWish, setIsWish] = useState(false);

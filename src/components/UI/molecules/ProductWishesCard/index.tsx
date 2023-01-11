@@ -133,6 +133,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       e.stopPropagation();
 
       logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
+        ...productAtt,
         name: 'WISH_LIST',
         att: isPriceDown ? 'PRICELOW' : 'SAME',
         index,

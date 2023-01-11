@@ -26,6 +26,9 @@ interface ChannelMessageInputProps {
   isTargetUserNoti: boolean | undefined;
   scrollToBottom(behavior?: ScrollBehavior): void;
   updateNewMessage: (msg: SendableMessage) => void;
+  targetUserId: number;
+  productId: number;
+  fileUrl?: string;
 }
 
 function ChannelMessageInput({
@@ -37,7 +40,10 @@ function ChannelMessageInput({
   isTargetUserBlocked,
   isTargetUserNoti,
   scrollToBottom,
-  updateNewMessage
+  updateNewMessage,
+  targetUserId,
+  productId,
+  fileUrl
 }: ChannelMessageInputProps) {
   const {
     theme: {
@@ -66,17 +72,29 @@ function ChannelMessageInput({
 
     hiddenInputRef.current?.focus();
     textareaAutosizeRef.current?.focus();
-
     await mutateSendMessage({
       data: { channelId, content: message, event: 'LAST_MESSAGE' },
       channelUrl,
       isTargetUserNoti,
+      userId: targetUserId,
+      productId,
+      fileUrl,
       callback: (msg) => {
         updateNewMessage(msg);
         setMessage('');
       }
     });
-  }, [channelId, channelUrl, isTargetUserNoti, message, mutateSendMessage, updateNewMessage]);
+  }, [
+    channelId,
+    channelUrl,
+    fileUrl,
+    isTargetUserNoti,
+    message,
+    mutateSendMessage,
+    productId,
+    targetUserId,
+    updateNewMessage
+  ]);
 
   useEffect(() => {
     throttleInputHeight.current(

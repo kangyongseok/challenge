@@ -110,7 +110,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
     productDetailAtt({
       key: attrKeys.products.CLICK_SEND_MESSAGE,
       product,
-      rest: { att: 'SMS', conversionId }
+      rest: { att: 'SMS', conversionId, title: 'SMS', name: 'PRODUCT_LIST' }
     });
     onClickSMS({
       siteId: product.site?.id,

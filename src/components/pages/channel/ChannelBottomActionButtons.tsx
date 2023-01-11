@@ -133,6 +133,8 @@ function ChannelBottomActionButtons({
         channelUrl,
         isTargetUserNoti,
         file,
+        userId: targetUserId,
+        productId,
         callback: (msg) => {
           updateNewMessage(msg);
           e.target.value = '';

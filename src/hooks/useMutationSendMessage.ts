@@ -7,8 +7,12 @@ import type { FileCompat } from '@sendbird/chat';
 import type { PostHistoryManageData } from '@dto/channel';
 
 import Sendbird from '@library/sendbird';
+import { logEvent } from '@library/amplitude';
 
 import { postHistoryManage } from '@api/channel';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { urlToBlob } from '@utils/common';
 
@@ -23,7 +27,9 @@ function useMutationSendMessage() {
     fileUrl,
     fileUrls,
     callback,
-    options
+    options,
+    userId,
+    productId
   }: {
     data: PostHistoryManageData;
     isTargetUserNoti: boolean | undefined;
@@ -31,6 +37,8 @@ function useMutationSendMessage() {
     file?: FileCompat | undefined;
     fileUrl?: string;
     fileUrls?: string[];
+    userId?: number;
+    productId?: number;
     callback?: (message: SendableMessage) => void;
     options?:
       | Omit<UseMutationOptions<void, unknown, PostHistoryManageData, unknown>, 'mutationFn'>
@@ -48,6 +56,14 @@ function useMutationSendMessage() {
     await mutatePostHistoryManage(data, {
       async onSuccess() {
         if (!data.content) return;
+        logEvent(attrKeys.channel.SUBMIT_MESSAGE, {
+          name: attrProperty.name.CHANNEL_DETAIL,
+          att: 'USER',
+          channelId: data.channelId,
+          message: fileUrl || data.content,
+          userId,
+          productId
+        });
 
         if (file) {
           await Sendbird.sendFile({

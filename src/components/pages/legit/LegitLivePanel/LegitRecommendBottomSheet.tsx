@@ -15,6 +15,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserLegitTargets } from '@api/user';
 import { postRequestProductLegits } from '@api/productLegit';
 
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -58,7 +59,12 @@ function LegitRecommendBottomSheet() {
     logEvent(attrKeys.legit.CLICK_PRODUCT_DETAIL, {
       name: attrProperty.legitName.LEGIT_MAIN,
       title: attrProperty.legitTitle.WISHRECENT_LEGIT,
-      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type),
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     });
     SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
       source: attrProperty.legitSource.LEGIT_TARGET

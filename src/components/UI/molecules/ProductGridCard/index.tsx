@@ -216,7 +216,12 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const handleClick = () => {
     logEvent(attrKeys.wishes.CLICK_PRODUCT_DETAIL, {
       ...productAtt,
-      productType: getProductType(product.productSeller.site.id, product.productSeller.type)
+      productType: getProductType(product.productSeller.site.id, product.productSeller.type),
+      sellerType: product.sellerType,
+      productSellerId: product.productSeller.id,
+      productSellerType: product.productSeller.type,
+      productSellerAccount: product.productSeller.account,
+      useChat: product.sellerType !== productSellerType.collection
     });
 
     if (source) {
