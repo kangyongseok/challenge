@@ -102,6 +102,16 @@ function ProductSellerProductList({
         },
         source: attrProperty.productSource.PRODUCT_LIST
       });
+
+    // 내 매물 shop
+    if (roleSellerUserId === accessUser?.userId) {
+      router.push({
+        pathname: '/user/shop',
+        query: { tab: 0 }
+      });
+      return;
+    }
+
     // 크롤링 판매자 정보 sellerInfo
     // 일반 or 인증 사용자 정보 userInfo
     router.push({

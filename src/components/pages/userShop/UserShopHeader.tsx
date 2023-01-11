@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { Flexbox, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
 
 import { UserAvatar } from '@components/UI/organisms';
@@ -26,7 +25,6 @@ function UserShopHeader({
   soldoutCount,
   reviewCount
 }: UserShopHeaderProps) {
-  const router = useRouter();
   const {
     theme: { zIndex }
   } = useTheme();
@@ -37,7 +35,6 @@ function UserShopHeader({
         hideHeart
         showRight={false}
         isTransparent={!triggered}
-        onClickLeft={() => router.replace('/mypage')}
         titleCustomStyle={{ justifyContent: 'start' }}
       >
         <Flexbox
@@ -72,7 +69,7 @@ function UserShopHeader({
     </>
   ) : (
     <ThemeProvider theme="dark">
-      <Header hideHeart isTransparent onClickLeft={() => router.replace('/mypage')} />
+      <Header hideHeart isTransparent />
     </ThemeProvider>
   );
 }
