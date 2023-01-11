@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { QueryClient, dehydrate } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 
@@ -17,13 +16,10 @@ import {
   MypageSetting
 } from '@components/pages/mypage';
 
-import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
-
-import { getCookies } from '@utils/cookies';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -31,7 +27,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function MyPage() {
   const { data: accessUser } = useQueryAccessUser();
   const { data: myUserInfo } = useQueryMyUserInfo();
-  const isAuthLegit = myUserInfo?.roles?.some((role) =>
+  const isAuthLegit = ((myUserInfo || {})?.roles || [])?.some((role) =>
     ['PRODUCT_LEGIT', 'PRODUCT_LEGIT_HEAD'].includes(role)
   );
 
@@ -78,19 +74,12 @@ function MyPage() {
 }
 
 export async function getServerSideProps({
-  req,
   locale,
   defaultLocale = locales.ko.lng
 }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
-
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
-      dehydratedState: dehydrate(queryClient)
+      ...(await serverSideTranslations(locale || defaultLocale))
     }
   };
 }
