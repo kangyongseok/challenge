@@ -126,7 +126,9 @@ function HomeQuickSaleProducts() {
                         parentId: product.category.parentId,
                         site: product.site.name,
                         price: product.price,
-                        cluster: product.cluster
+                        cluster: product.cluster,
+                        source: attrProperty.source.MAIN_GENERAL_SELLER,
+                        sellerType: product.sellerType
                       }}
                       productAtt={{
                         name: attrProperty.name.MAIN,
@@ -137,8 +139,11 @@ function HomeQuickSaleProducts() {
                         category: product.category.name,
                         parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
                         site: product.site.name,
-                        price: product.price
+                        price: product.price,
+                        source: attrProperty.source.MAIN_GENERAL_SELLER,
+                        sellerType: product.sellerType
                       }}
+                      source={attrProperty.source.MAIN_GENERAL_SELLER}
                       compact
                       isRound
                       customStyle={{ minWidth: 144, flex: 1 }}

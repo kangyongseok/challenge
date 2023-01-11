@@ -10,7 +10,10 @@ import TextInput from '@components/UI/molecules/TextInput';
 
 import { PhotoGuideImage } from '@dto/productLegit';
 
+import { logEvent } from '@library/amplitude';
+
 import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
+import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
@@ -101,6 +104,15 @@ function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
 
         if (isLoadingGetPhoto) return; // isLoadingMutate ||
 
+        logEvent(
+          isBackground
+            ? attrKeys.legitProfile.CLICK_BG_EDIT
+            : attrKeys.legitProfile.CLICK_PROFILE_PHOTO_EDIT,
+          {
+            att: 'LEGIT_SELLER'
+          }
+        );
+
         if (!checkAgent.isMobileApp()) {
           appDownLoadDialog();
           return;
@@ -116,6 +128,9 @@ function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
           return;
         }
 
+        logEvent(attrKeys.legitProfile.VIEW_PROFILE_CAMERA, {
+          att: isBackground ? 'BG' : 'PROFILE_PHOTO'
+        });
         setGetPhotoState((prevState) => ({
           ...prevState,
           imageType: isBackground ? 'background' : 'profile'
@@ -229,6 +244,11 @@ function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
               <TextInputArea
                 ref={nickNameRef}
                 ban={isBanWord}
+                onClick={() =>
+                  logEvent(attrKeys.legitProfile.CLICK_NICKNAME_EDIT, {
+                    att: 'LEGIT_SELLER'
+                  })
+                }
                 onChange={handleChange}
                 value={(sellerEditInfo.nickName || '').replace(extractTagRegx, '')}
                 type="search"

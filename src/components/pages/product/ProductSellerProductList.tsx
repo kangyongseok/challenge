@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { Divider, ProductGridCard } from '@components/UI/molecules';
 
 import type { AccessUser } from '@dto/userAuth';
-import type { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
@@ -19,6 +19,7 @@ import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
 import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -79,26 +80,19 @@ function ProductSellerProductList({
       staleTime: 5 * 60 * 1000
     }
   ]);
-
-  useEffect(() => {
-    if (sellerProductsParams.sellerId !== sellerId) {
-      setSellerProductsParams({
-        ...sellerProductsParams,
-        sellerId
-      });
-      setReviewInfoParams({ ...reviewInfoParams, sellerId });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sellerId]);
+  const isCamelSeller =
+    reviewInfo &&
+    SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
+      SELLER_STATUS['3'];
+  const isNormalseller = product?.sellerType === productSellerType.normal;
 
   const handleClickMoreList = () => {
-    const { collection } = productSellerType;
     if (product)
       productDetailAtt({
         key: attrKeys.products.CLICK_SELLER_PRODUCT,
         product,
         rest: {
-          attr: 'ALL'
+          att: 'ALL'
         },
         source: attrProperty.productSource.PRODUCT_LIST
       });
@@ -116,7 +110,7 @@ function ProductSellerProductList({
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
       pathname:
-        product?.sellerType === collection
+        product?.sellerType === productSellerType.collection
           ? `/sellerInfo/${sellerId}`
           : `/userInfo/${roleSellerUserId}`,
       query: {
@@ -125,12 +119,50 @@ function ProductSellerProductList({
     });
   };
 
-  const isCamelSeller =
-    reviewInfo &&
-    SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
-      SELLER_STATUS['3'];
+  const handleWishAtt = (productResult: ProductResult, i: number) => {
+    return {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.SELLER_INFO,
+      id: productResult.id,
+      index: i + 1,
+      brand: productResult.brand.name,
+      category: productResult.category.name,
+      parentId: productResult.category.parentId,
+      site: productResult.site.name,
+      price: productResult.price,
+      scoreTotal: productResult.scoreTotal,
+      cluster: productResult.cluster,
+      source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO,
+      sellerType: productResult.sellerType
+    };
+  };
 
-  const isNormalseller = product?.sellerType === productSellerType.normal;
+  const handleProductAtt = (productResult: ProductResult, i: number) => {
+    return {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.SELLER_INFO,
+      index: i + 1,
+      id: productResult.id,
+      brand: productResult.brand.name,
+      category: productResult.category.name,
+      parentCategory: FIRST_CATEGORIES[productResult.category.parentId as number],
+      site: productResult.site.name,
+      price: productResult.price,
+      source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO,
+      sellerType: productResult.sellerType
+    };
+  };
+
+  useEffect(() => {
+    if (sellerProductsParams.sellerId !== sellerId) {
+      setSellerProductsParams({
+        ...sellerProductsParams,
+        sellerId
+      });
+      setReviewInfoParams({ ...reviewInfoParams, sellerId });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sellerId]);
 
   return sellerProductsIsLoading ||
     reviewInfoIsLoading ||
@@ -184,7 +216,7 @@ function ProductSellerProductList({
               {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
             </Typography>
           </Flexbox>
-          <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5 }}>
+          <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
             <Typography weight="medium" variant="small1">
               더보기
             </Typography>
@@ -197,15 +229,17 @@ function ProductSellerProductList({
           ? Array.from({ length: 5 }, (_, index) => (
               <ImageSkeleton key={`seller-product-${index}`} />
             ))
-          : sellerProducts.content.map((sellerProduct) => (
+          : sellerProducts.content.map((sellerProduct, i) => (
               <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
                 <ProductGridCard
                   product={sellerProduct}
+                  wishAtt={handleWishAtt(sellerProduct, i)}
+                  productAtt={handleProductAtt(sellerProduct, i)}
                   name={attrProperty.productName.PRODUCT_DETAIL}
                   isRound
                   compact
                   gap={17}
-                  source={attrProperty.productSource.LIST_RELATED}
+                  source={attrProperty.source.PRODUCT_DETAIL_SELLER_INFO}
                   hideProductLabel
                   hideAreaWithDateInfo
                   hideWishButton={roleSellerUserId === accessUser?.userId}

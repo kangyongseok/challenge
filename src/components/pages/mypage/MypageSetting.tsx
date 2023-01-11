@@ -1,8 +1,15 @@
+import { useCallback, useMemo } from 'react';
+
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Icon } from 'mrcamel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
+
+import { logEvent } from '@library/amplitude';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
 
@@ -12,19 +19,15 @@ function MypageSetting() {
   const router = useRouter();
   const setDialogState = useSetRecoilState(dialogState);
 
-  const appDownLoadDialog = () => {
-    setDialogState({
-      type: 'featureIsMobileAppDown',
-      customStyleTitle: { minWidth: 311 },
-      secondButtonAction() {
-        handleClickAppDownload({});
-      }
-    });
-  };
-
-  const handleClickAlarmSetting = () => {
+  const handleClickAlarmSetting = useCallback(() => {
     if (!checkAgent.isMobileApp()) {
-      appDownLoadDialog();
+      setDialogState({
+        type: 'featureIsMobileAppDown',
+        customStyleTitle: { minWidth: 311 },
+        secondButtonAction() {
+          handleClickAppDownload({});
+        }
+      });
       return;
     }
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
@@ -44,24 +47,28 @@ function MypageSetting() {
     window.getAuthPush = (result: string) => {
       router.push(`/mypage/settings/alarm?setting=${result}`);
     };
-  };
+  }, [router, setDialogState]);
+
+  const handleClickBlockedUsers = useCallback(() => {
+    logEvent(attrKeys.mypage.CLICK_BLOCK_LIST, { name: attrProperty.name.MY });
+    router.push('/mypage/settings/blockedUsers');
+  }, [router]);
+
+  const settingMenu = useMemo(
+    () => [
+      { label: '알림 설정', onClick: handleClickAlarmSetting },
+      { label: '차단 사용자 관리', onClick: handleClickBlockedUsers }
+    ],
+    [handleClickAlarmSetting, handleClickBlockedUsers]
+  );
 
   return (
     <Menu id="mypage-setting" title="설정">
-      {[
-        { label: '알림 설정', url: '/mypage/settings/alarm', handleClick: handleClickAlarmSetting },
-        { label: '차단 사용자 관리', url: '/mypage/settings/blockedUsers' }
-      ].map(({ label, url, handleClick }) => (
+      {settingMenu.map(({ label, onClick }) => (
         <MenuItem
           key={`info-menu-${label}`}
           action={<Icon name="Arrow2RightOutlined" size="small" />}
-          onClick={() => {
-            if (handleClick) {
-              handleClick();
-              return;
-            }
-            router.push(url);
-          }}
+          onClick={onClick}
         >
           {label}
         </MenuItem>

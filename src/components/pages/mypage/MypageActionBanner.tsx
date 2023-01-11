@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { Gap } from '@components/UI/atoms';
 
 import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
 
 import {
   CAMEL_SELLER,
@@ -16,6 +17,8 @@ import {
   LISTING_TECH_DATE,
   PORTFOLIO_DATE
 } from '@constants/localStorage';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
@@ -163,7 +166,8 @@ function MypageActionBanner() {
       bgColor: secondary.red.light,
       isView: authLegit && notProcessedLegitCount >= 2,
       onClick: handleClickLegit,
-      localStorageName: LEGIT_DATE
+      localStorageName: LEGIT_DATE,
+      att: 'LEGIT'
     },
     {
       type: 'listingTech',
@@ -171,14 +175,16 @@ function MypageActionBanner() {
       bgColor: primary.light,
       isView: isSaveSellerData,
       onClick: handleClickListingTech,
-      localStorageName: LISTING_TECH_DATE
+      localStorageName: LISTING_TECH_DATE,
+      att: 'PRODUCT_MAIN'
     },
     {
       type: 'portfolio',
       text: '💡 내 포트폴리오에 계속해서 등록할까요?',
       bgColor: secondary.purple.main,
       isView: false, // TODO 추후 개발 필요
-      localStorageName: PORTFOLIO_DATE
+      localStorageName: PORTFOLIO_DATE,
+      att: 'PORTFOLIO'
     },
     {
       type: 'crowd',
@@ -186,7 +192,8 @@ function MypageActionBanner() {
       bgColor: common.ui20,
       isView: !!LocalStorage.get(CROWD_DATE),
       onClick: handleClickCrowd,
-      localStorageName: CROWD_DATE
+      localStorageName: CROWD_DATE,
+      att: 'LEGIT_PROCESS'
     }
   ];
 
@@ -196,8 +203,14 @@ function MypageActionBanner() {
   })[0];
 
   useEffect(() => {
-    if (firstViewData && !LocalStorage.get(firstViewData.localStorageName)) {
-      LocalStorage.set(firstViewData.localStorageName, dayjs().format('YYYY-MM-DD'));
+    if (firstViewData) {
+      logEvent(attrKeys.mypage.VIEW_BANNER, {
+        name: attrProperty.name.MY,
+        att: firstViewData.att
+      });
+
+      if (!LocalStorage.get(firstViewData.localStorageName))
+        LocalStorage.set(firstViewData.localStorageName, dayjs().format('YYYY-MM-DD'));
     }
   }, [firstViewData]);
 
@@ -209,7 +222,13 @@ function MypageActionBanner() {
       alignment="center"
       customStyle={{ background: firstViewData.bgColor, height: 53, padding: '0 20px' }}
       key={firstViewData.type}
-      onClick={firstViewData.onClick}
+      onClick={() => {
+        logEvent(attrKeys.mypage.CLICK_BANNER, {
+          name: attrProperty.name.MY,
+          att: firstViewData.att
+        });
+        firstViewData?.onClick?.();
+      }}
     >
       <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
         {firstViewData.text}

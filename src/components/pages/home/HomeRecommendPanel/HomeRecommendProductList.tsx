@@ -159,7 +159,8 @@ function HomeRecommendProductList() {
                       site: product.site.name,
                       price: product.price,
                       cluster: product.cluster,
-                      source: attrProperty.source.MAIN_RECOMM
+                      source: attrProperty.source.MAIN_RECOMM,
+                      sellerType: product.sellerType
                     }}
                     productAtt={{
                       name: attrProperty.name.MAIN,
@@ -172,7 +173,8 @@ function HomeRecommendProductList() {
                       site: product.site.name,
                       price: product.price,
                       cluster: product.cluster,
-                      source: attrProperty.source.MAIN_RECOMM
+                      source: attrProperty.source.MAIN_RECOMM,
+                      sellerType: product.sellerType
                     }}
                     source={attrProperty.source.MAIN_RECOMM}
                     compact

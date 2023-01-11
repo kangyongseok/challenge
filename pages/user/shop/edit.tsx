@@ -215,6 +215,13 @@ function UserShopEdit() {
     (isBackground: boolean) => () => {
       if (isLoadingMutateBanWord || isLoadingMutateProfile || isLoadingGetPhoto) return;
 
+      logEvent(
+        isBackground ? attrKeys.userShop.CLICK_BG_EDIT : attrKeys.userShop.CLICK_PROFILE_PHOTO_EDIT,
+        {
+          att: 'SELLER'
+        }
+      );
+
       if (!checkAgent.isMobileApp()) {
         appDownLoadDialog();
         return;
@@ -244,6 +251,9 @@ function UserShopEdit() {
         return;
       }
 
+      logEvent(attrKeys.userShop.VIEW_PROFILE_CAMERA, {
+        att: isBackground ? 'BG' : 'PROFILE_PHOTO'
+      });
       setGetPhotoState((prevState) => ({
         ...prevState,
         imageType: isBackground ? 'background' : 'profile'
@@ -330,6 +340,8 @@ function UserShopEdit() {
       descriptionError.message.length > 0
     )
       return;
+
+    logEvent(attrKeys.userShop.SUBMIT_PROFILE, { att: 'SELLER' });
 
     const banwordParams: BanWordParams = {};
 
@@ -427,6 +439,12 @@ function UserShopEdit() {
   }, [mutateWitdhdraw, setDialogState]);
 
   useEffect(() => {
+    logEvent(attrKeys.userShop.VIEW_PROFILE_EDIT, {
+      att: 'SELLER'
+    });
+  }, []);
+
+  useEffect(() => {
     setUserProfileParams({
       nickName: nickName || name || `${accessUser?.userId || '회원'}`,
       imageProfile: imageProfile || image,
@@ -495,6 +513,11 @@ function UserShopEdit() {
                   type="search"
                   placeholder="닉네임을 입력해주세요"
                   value={userProfileParams.nickName}
+                  onClick={() =>
+                    logEvent(attrKeys.userShop.CLICK_NICKNAME_EDIT, {
+                      att: 'SELLER'
+                    })
+                  }
                   onChange={handleChangeNickName}
                   customStyle={{
                     padding: 12,
@@ -546,6 +569,11 @@ function UserShopEdit() {
                   className={descriptionError.text.length > 0 ? 'invalid' : ''}
                   placeholder="상점 소개를 입력해주세요"
                   value={userProfileParams.shopDescription}
+                  onClick={() =>
+                    logEvent(attrKeys.userShop.CLICK_STORE_EDIT, {
+                      att: 'SELLER'
+                    })
+                  }
                   onChange={handleChangeDescription}
                   style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
                 />

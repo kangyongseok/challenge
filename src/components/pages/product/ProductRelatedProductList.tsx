@@ -73,7 +73,7 @@ function ProductRelatedProductList({
   const handleWishAtt = (product: Product, i: number) => {
     return {
       name: attrProperty.productName.PRODUCT_DETAIL,
-      title: attrProperty.productTitle.RELATED,
+      title: attrProperty.title.LIST_RELATED,
       id: product.id,
       index: i + 1,
       brand: product.brand.name,
@@ -84,7 +84,8 @@ function ProductRelatedProductList({
       price: product.price,
       scoreTotal: product.scoreTotal,
       cluster: product.cluster,
-      source: attrProperty.productSource.LIST_RELATED
+      source: attrProperty.source.PRODUCT_DETAIL_LIST_RELATED,
+      sellerType: product.sellerType
     };
   };
 
@@ -92,7 +93,7 @@ function ProductRelatedProductList({
     if (prevProduct) {
       return {
         name: attrProperty.productName.PRODUCT_DETAIL,
-        title: attrProperty.productTitle.RELATED,
+        title: attrProperty.title.LIST_RELATED,
         index: i + 1,
         id: prevProduct.id,
         brand: prevProduct.brand.name,
@@ -108,7 +109,8 @@ function ProductRelatedProductList({
         scorePriceAvg: prevProduct.scorePriceAvg,
         scorePriceCount: prevProduct.scorePriceCount,
         scorePriceRate: prevProduct.scorePriceRate,
-        source: attrProperty.productSource.LIST_RELATED,
+        source: attrProperty.source.PRODUCT_DETAIL_LIST_RELATED,
+        sellerType: product.sellerType,
         nextId: product.id,
         nextBrand: product.brand.name,
         nextCategory: product.category.name,

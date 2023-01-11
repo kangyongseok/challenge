@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
     const { disableFallback } = this.props;
 
     logEvent(
-      disableFallback ? attrKeys.commonEvent.minorScriptError : attrKeys.commonEvent.scriptError,
+      disableFallback ? attrKeys.commonEvent.MINOR_SCRIPT_ERROR : attrKeys.commonEvent.SCRIPT_ERROR,
       {
         title: 'client-500',
         userAgent: window.navigator.userAgent,

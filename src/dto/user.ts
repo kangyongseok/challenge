@@ -1,4 +1,4 @@
-import type { channelUserType } from '@constants/user';
+import type { channelUserType, productSellerType } from '@constants/user';
 
 import type { Product, ProductResult, SearchParams } from './product';
 import type { Paged } from './common';
@@ -253,7 +253,8 @@ export type UserInfo = {
   productCount: number;
   reviewCount: number;
   shopDescription: string | null;
-  type: 0 | 1 | 2 | 3;
+  sellerType: typeof productSellerType[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  type: 0 | 1 | 2 | 3; // 0: 기본값 1: 블락 3: 카멜인증판매자
   undisplayProductCount: number;
   userRoleLegit: UserRoleLegit | null;
   userRoleSeller: UserRoleSeller | null;

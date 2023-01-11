@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
@@ -10,8 +12,12 @@ import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import Initializer from '@library/initializer';
+import { logEvent } from '@library/amplitude';
 
 import { postUserStyle } from '@api/user';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 
@@ -31,6 +37,10 @@ function LikeModelInput() {
   const { mutate: styleMutate } = useMutation(postUserStyle);
 
   const handleClickNext = () => {
+    logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
+      name: attrProperty.name.STYLE_MODEL,
+      title: attrProperty.title.SAVE
+    });
     styleMutate(
       {
         styleIds: selectedModelCard.map((model) => model.id)
@@ -43,6 +53,13 @@ function LikeModelInput() {
       }
     );
   };
+
+  useEffect(() => {
+    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, {
+      name: attrProperty.name.STYLE_MODEL
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <GeneralTemplate

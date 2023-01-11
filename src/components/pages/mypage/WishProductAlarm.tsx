@@ -6,9 +6,12 @@ import { Flexbox, Switch } from 'mrcamel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { putAlarm } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrKeys from '@constants/attrKeys';
 
 import { AllAlarmControllState } from '@recoil/mypage';
 
@@ -35,6 +38,7 @@ function WishProductAlarm({
   }, [saveProductAlarm, wishAlarm]);
 
   const handleSaveProductsSwitch = () => {
+    logEvent(attrKeys.mypage.CLICK_MYLIST_ALARM, { att: isSaveAlarm ? 'OFF' : 'ON' });
     setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiProductList: !isSaveAlarm });
 
     switchAlarm(
@@ -50,6 +54,7 @@ function WishProductAlarm({
   };
 
   const handleWishSwitch = () => {
+    logEvent(attrKeys.mypage.CLICK_WISH_ALARM, { att: isWishAlarm ? 'OFF' : 'ON' });
     setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiProductWish: !isWishAlarm });
 
     switchAlarm(

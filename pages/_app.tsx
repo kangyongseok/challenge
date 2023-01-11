@@ -138,7 +138,7 @@ function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    logEvent(attrKeys.commonEvent.viewAll, {
+    logEvent(attrKeys.commonEvent.VIEW_ALL, {
       origin: window.location.origin,
       path: window.location.pathname,
       params: window.location.search

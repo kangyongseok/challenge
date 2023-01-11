@@ -135,6 +135,18 @@ function LegitProfileEdit() {
     (userImageProfile.length > 0 && userImageProfile) ||
     `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
+  useEffect(() => {
+    logEvent(attrKeys.legitProfile.VIEW_PROFILE_EDIT, {
+      att: 'LEGIT_SELLER'
+    });
+  }, []);
+
+  useEffect(() => {
+    if (targetTab === 'legit') {
+      setTab('감정사');
+    }
+  }, [targetTab]);
+
   const triggered = useScrollTrigger({
     ref: elementRef,
     additionalOffsetTop:
@@ -208,8 +220,10 @@ function LegitProfileEdit() {
 
   const handleClickSave = () => {
     if (tab === '판매자') {
+      logEvent(attrKeys.userShop.SUBMIT_PROFILE, { att: 'SELLER' });
       sellerInfoSave();
     } else {
+      logEvent(attrKeys.userShop.SUBMIT_PROFILE, { att: 'LEGIT_SELLER' });
       legitInfoSave();
     }
   };
@@ -369,7 +383,7 @@ const Blur = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  background: ${({ theme: { palette } }) => palette.common.overlay20};
+  background: ${({ theme: { palette } }) => palette.common.overlay40};
   backdrop-filter: blur(8px);
 `;
 

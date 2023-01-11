@@ -69,7 +69,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
 
   const handleWishAtt = (product: Product, i: number) => {
     return {
-      name: attrProperty.productName.PRODUCT_DETAIL,
+      name: attrProperty.name.PRODUCT_DETAIL,
       title: attrProperty.title.LOWPRICE_PRODUCT,
       type: attrProperty.type.RECOMM,
       id: product.id,
@@ -82,14 +82,15 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
       price: product.price,
       scoreTotal: product.scoreTotal,
       cluster: product.cluster,
-      source: attrProperty.productSource.LIST_RELATED
+      source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
+      sellerType: product.sellerType
     };
   };
 
   const handleProductAtt = (product: Product, i: number) => {
     if (data?.product) {
       return {
-        name: attrProperty.productName.PRODUCT_DETAIL,
+        name: attrProperty.name.PRODUCT_DETAIL,
         title: attrProperty.title.LOWPRICE_PRODUCT,
         type: attrProperty.type.RECOMM,
         index: i + 1,
@@ -107,7 +108,8 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
         scorePriceAvg: data?.product.scorePriceAvg,
         scorePriceCount: data?.product.scorePriceCount,
         scorePriceRate: data?.product.scorePriceRate,
-        source: attrProperty.productSource.LIST_RELATED,
+        source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
+        sellerType: product.sellerType,
         nextId: product.id,
         nextBrand: product.brand.name,
         nextCategory: product.category.name,

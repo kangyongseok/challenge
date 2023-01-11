@@ -90,8 +90,30 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
             <ProductListCard
               product={product}
               productAtt={{
-                name: attrKeys.products.SELLER_PRODUCT,
-                ...product
+                name: attrProperty.name.SELLER_INFO,
+                title: attrProperty.title.SELLER_PRODUCT,
+                id: product.id,
+                index: index + 1,
+                brand: product.brand.name,
+                category: product.category.name,
+                parentId: product.category.parentId,
+                site: product.site.name,
+                price: product.price,
+                cluster: product.cluster,
+                source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT
+              }}
+              wishAtt={{
+                name: attrProperty.name.SELLER_INFO,
+                title: attrProperty.title.SELLER_PRODUCT,
+                id: product.id,
+                index: index + 1,
+                brand: product.brand.name,
+                category: product.category.name,
+                parentId: product.category.parentId,
+                site: product.site.name,
+                price: product.price,
+                cluster: product.cluster,
+                source: attrProperty.source.MAIN_PERSONAL
               }}
               isRound
               source={attrProperty.productSource.SELLER_PRODUCT}

@@ -55,7 +55,11 @@ function AddressInput() {
         {
           onSuccess: () => {
             refetch();
-            logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, { name: 'ADDRESS', title: 'INPUT' });
+            logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
+              name: 'ADDRESS',
+              title: 'INPUT',
+              address
+            });
             router.back();
           }
         }
@@ -66,6 +70,7 @@ function AddressInput() {
   const handleChangeSwitch = useCallback(() => {
     if (isLoadingMutatePostArea) return;
 
+    logEvent(attrKeys.userInput.CLICK_ADDRESS_OPEN, { att: publicAddressOnShop ? 'OFF' : 'ON' });
     mutate(
       { isAreaOpen: !publicAddressOnShop },
       {

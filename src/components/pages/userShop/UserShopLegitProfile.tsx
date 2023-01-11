@@ -7,7 +7,11 @@ import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 
+import { logEvent } from '@library/amplitude';
+
 import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -53,6 +57,11 @@ function UserShopLegitProfile({
   const { data: myUserInfo } = useQueryMyUserInfo();
 
   const handleClickShare = useCallback(() => {
+    logEvent(attrKeys.userShop.CLICK_SHARE, {
+      name: attrProperty.name.MY_STORE,
+      att: 'LEGIT_SELLER'
+    });
+
     const shareData = {
       title,
       description,
@@ -74,6 +83,11 @@ function UserShopLegitProfile({
   }, [description, imageProfile, router.asPath, setDialogState, title]);
 
   const handleClickEdit = useCallback(() => {
+    logEvent(attrKeys.userShop.CLICK_PROFILE_EDIT, {
+      name: attrProperty.name.MY_STORE,
+      att: 'LEGIT_SELLER'
+    });
+
     if (accessUser?.userId) {
       router.push(`/legit/profile/${accessUser.userId}/edit`);
     }
@@ -190,7 +204,6 @@ function UserShopLegitProfile({
                 )}
               </ThemeProvider>
             </Flexbox>
-
             <Flexbox
               alignment="center"
               gap={8}
@@ -251,6 +264,7 @@ const Info = styled.div`
   position: relative;
   flex: 1;
   padding-top: ${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20}px;
+  user-select: none;
 `;
 
 const BadgeLabel = styled.label`

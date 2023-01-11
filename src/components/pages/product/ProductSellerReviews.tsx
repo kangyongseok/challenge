@@ -12,6 +12,7 @@ import type { Product } from '@dto/product';
 
 import { fetchReviewInfo } from '@api/product';
 
+import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
@@ -87,15 +88,16 @@ function ProductSellerReviews({
               key: attrKeys.products.CLICK_SELLER_REVIEW,
               product,
               rest: {
-                attr: 'ALL'
+                att: 'ALL'
               },
               source: attrProperty.productSource.PRODUCT_LIST
             });
 
           router.push({
-            pathname: roleSellerUserId
-              ? `/userInfo/${roleSellerUserId}`
-              : `/sellerInfo/${sellerId}`,
+            pathname:
+              product?.sellerType === productSellerType.collection
+                ? `/sellerInfo/${sellerId}`
+                : `/userInfo/${roleSellerUserId}`,
             query: {
               tab: 'reviews'
             }

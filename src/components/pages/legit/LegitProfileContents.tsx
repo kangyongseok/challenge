@@ -9,10 +9,13 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
 import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
+import attrKeys from '@constants/attrKeys';
 
 import { shake } from '@styles/transition';
 
@@ -82,6 +85,11 @@ function LegitProfileContents() {
       <TextAreaWrap ban={isBanWord}>
         <AutoTextArea
           ref={descriptionRef}
+          onClick={() =>
+            logEvent(attrKeys.legitProfile.CLICK_LEGIT_PROFILE_EDIT, {
+              att: 'LEGIT_SELLER'
+            })
+          }
           onChange={handleChange}
           value={(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '')}
           ban={isBanWord}

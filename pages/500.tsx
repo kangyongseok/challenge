@@ -23,7 +23,7 @@ function Error500({ logging = true }: Error500Props) {
   } = useTheme();
 
   const handleClick = () => {
-    logEvent(attrKeys.commonEvent.clickBack, {
+    logEvent(attrKeys.commonEvent.CLICK_BACK, {
       name: 'ERROR',
       title: 500
     });
@@ -32,7 +32,7 @@ function Error500({ logging = true }: Error500Props) {
 
   useEffect(() => {
     if (logging) {
-      logEvent(attrKeys.commonEvent.scriptError, {
+      logEvent(attrKeys.commonEvent.SCRIPT_ERROR, {
         title: 500,
         userAgent: window.navigator.userAgent,
         url: window.location.href

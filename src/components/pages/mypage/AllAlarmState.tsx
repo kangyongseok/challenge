@@ -6,9 +6,12 @@ import { Flexbox, Switch, Typography } from 'mrcamel-ui';
 
 import type { AlarmsParams } from '@dto/user';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchMyUserInfo, putAlarm } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrKeys from '@constants/attrKeys';
 
 import { AllAlarmControllState } from '@recoil/mypage';
 
@@ -62,6 +65,10 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
   }, [excludeAuthAlarm, recoilAllAlarmCheck]);
 
   const handleChange = () => {
+    logEvent(attrKeys.mypage.CLICK_PUSH, {
+      atr: allAlarm ? 'OFF' : 'ON'
+    });
+
     if (allAlarm) {
       switchAlarm({
         isNotiChannel: false,

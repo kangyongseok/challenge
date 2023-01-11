@@ -233,9 +233,10 @@ function Header({
         <Wrapper isFixed={isFixed}>
           <Flexbox
             alignment="center"
+            gap={8}
             customStyle={{
               width: '100%',
-              minHeight: customHeight || 56,
+              minHeight: customHeight || HEADER_HEIGHT,
               backgroundColor: 'inherit',
               borderBottom: !hideLine ? `1px solid ${common.line01}` : undefined
             }}
@@ -264,7 +265,7 @@ function Header({
                   <Icon
                     name="LogoText_96_20"
                     onClick={onClickTitle || handleClickLogo}
-                    customStyle={{ cursor: 'pointer' }}
+                    customStyle={{ height: 16, cursor: 'pointer' }}
                   />
                 ))}
             </Title>

@@ -39,12 +39,16 @@ const UserShopTabs = forwardRef<HTMLDivElement, UserShopTabsProps>(function User
 
   const handleChange = (newValue: string | number) => {
     router
-      .replace({
-        pathname: '/user/shop',
-        query: {
-          tab: newValue
-        }
-      })
+      .replace(
+        {
+          pathname: '/user/shop',
+          query: {
+            tab: newValue
+          }
+        },
+        undefined,
+        { shallow: true }
+      )
       .then(() => {
         window.scrollTo(0, 0);
       });

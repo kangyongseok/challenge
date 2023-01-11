@@ -5,7 +5,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
+import { logEvent } from '@library/amplitude';
+
 import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
+import attrKeys from '@constants/attrKeys';
 
 import { shake } from '@styles/transition';
 
@@ -57,6 +60,11 @@ function SellerProfileContents() {
       <TextAreaWrap ban={isBanWord}>
         <AutoTextArea
           ref={shopDescriptionRef}
+          onClick={() =>
+            logEvent(attrKeys.legitProfile.CLICK_STORE_EDIT, {
+              att: 'LEGIT_SELLER'
+            })
+          }
           onChange={handleChange}
           value={(sellerEditInfo.shopDescription || '').replace(extractTagRegx, '')}
           ban={isBanWord}

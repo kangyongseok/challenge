@@ -21,12 +21,15 @@ import {
 } from '@components/pages/userShop';
 
 import Initializer from '@library/initializer';
+import { logEvent } from '@library/amplitude';
 
 import { fetchInfoByUserId } from '@api/user';
 
 import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
@@ -52,7 +55,7 @@ function UserShop() {
       imageBackground,
       area,
       shopDescription,
-      type,
+      sellerType,
       productCount = 0,
       undisplayProductCount = 0,
       reviewCount = 0
@@ -124,6 +127,20 @@ function UserShop() {
     }
   }, [setToastState, refetch]);
 
+  useEffect(() => {
+    if (tab === '2') {
+      logEvent(attrKeys.userShop.VIEW_MY_STORE, {
+        name: attrProperty.name.MY_STORE,
+        title: attrProperty.title.REVIEW
+      });
+    } else {
+      logEvent(attrKeys.userShop.VIEW_MY_STORE, {
+        name: attrProperty.name.MY_STORE,
+        title: attrProperty.title.PRODUCT
+      });
+    }
+  }, [tab, userId]);
+
   return (
     <>
       <PageHead
@@ -151,7 +168,7 @@ function UserShop() {
           direction="vertical"
           customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
         >
-          {userRoleLegit ? ( // userRoleLegit
+          {userRoleLegit ? (
             <UserShopLegitProfile
               isLoading={isLoading}
               title={title}
@@ -176,7 +193,7 @@ function UserShop() {
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
               shopDescription={shopDescription || ''}
-              isCertificationSeller={type === productSellerType.certification}
+              isCertificationSeller={sellerType === productSellerType.certification}
             />
           )}
           <UserShopTabs

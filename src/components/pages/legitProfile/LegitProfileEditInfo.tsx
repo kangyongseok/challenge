@@ -431,7 +431,8 @@ const Blur = styled.div`
   align-items: center;
   position: absolute;
   margin: -20px;
-  backdrop-filter: blur(6px);
+  background: ${({ theme: { palette } }) => palette.common.overlay40};
+  backdrop-filter: blur(8px);
   z-index: -1;
 `;
 

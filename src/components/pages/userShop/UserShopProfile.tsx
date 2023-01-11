@@ -7,7 +7,11 @@ import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 
+import { logEvent } from '@library/amplitude';
+
 import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -52,6 +56,11 @@ function UserShopProfile({
   const { data: myUserInfo } = useQueryMyUserInfo();
 
   const handleClickShare = useCallback(() => {
+    logEvent(attrKeys.userShop.CLICK_SHARE, {
+      name: attrProperty.name.MY_STORE,
+      att: 'SELLER'
+    });
+
     const shareData = {
       title,
       description,
@@ -73,6 +82,11 @@ function UserShopProfile({
   }, [description, imageProfile, router.asPath, setDialogState, title]);
 
   const handleClickEdit = useCallback(() => {
+    logEvent(attrKeys.userShop.CLICK_PROFILE_EDIT, {
+      name: attrProperty.name.MY_STORE,
+      att: 'SELLER'
+    });
+
     router.push('/user/shop/edit');
   }, [router]);
 
@@ -169,7 +183,13 @@ function UserShopProfile({
                   </Flexbox>
                 )}
               </Flexbox>
-              {!!shopDescription && <Description>{shopDescription}</Description>}
+              {!!shopDescription && (
+                <Description
+                  dangerouslySetInnerHTML={{
+                    __html: shopDescription.replaceAll(/\r?\n/gi, '<br />')
+                  }}
+                />
+              )}
             </Flexbox>
             <Flexbox
               direction="vertical"

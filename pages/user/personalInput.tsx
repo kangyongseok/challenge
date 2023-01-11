@@ -21,6 +21,7 @@ import { logEvent } from '@library/amplitude';
 import { postUserAgeAndGender } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -88,8 +89,8 @@ function PersonalInput() {
     const target = e.currentTarget as HTMLDivElement;
     const selectedGender = target.dataset.gender as 'M' | 'F' | null;
     logEvent(attrKeys.userInput.SELECT_ITEM, {
-      name: 'INFO',
-      title: 'GENDER',
+      name: attrProperty.name.INFO,
+      title: attrProperty.title.gender,
       att: selectedGender === 'F' ? 'FEMALE' : 'MALE'
     });
     if (genderValue === selectedGender) {
@@ -100,6 +101,11 @@ function PersonalInput() {
   };
 
   const handleChangeYear = debounce((value: string) => {
+    logEvent(attrKeys.userInput.SELECT_ITEM, {
+      name: attrProperty.name.INFO,
+      title: attrProperty.title.AGE,
+      att: value
+    });
     setYearOfBirthValue(String(value));
   }, 500);
 

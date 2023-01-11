@@ -6,9 +6,12 @@ import { Flexbox, Switch } from 'mrcamel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { putAlarm } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrKeys from '@constants/attrKeys';
 
 import { AllAlarmControllState } from '@recoil/mypage';
 
@@ -29,35 +32,25 @@ function ChatAlarm({ alarm }: { alarm?: boolean }) {
   }, [alarm]);
 
   const handleChange = () => {
+    logEvent(attrKeys.mypage.CLICK_CHANNEL_ALARM, { att: isChatAlarm ? 'OFF' : 'ON' });
     setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiChannel: !isChatAlarm });
     switchAlarm({
       isNotiChannel: !isChatAlarm
     });
   };
 
-  const infoMenu = [
-    {
-      label: '메세지 받았을 때',
-      check: isChatAlarm,
-      onSwitch: handleChange
-    }
-  ];
-
   return (
     <Menu title="채팅 알림" gap={12}>
-      {infoMenu.map(({ label, onSwitch, check }) => (
-        <MenuItem
-          key={`info-menu-${label}`}
-          weight="regular"
-          action={
-            <Flexbox gap={4} alignment="center">
-              <Switch checked={check} onChange={onSwitch} />
-            </Flexbox>
-          }
-        >
-          {label}
-        </MenuItem>
-      ))}
+      <MenuItem
+        weight="regular"
+        action={
+          <Flexbox gap={4} alignment="center">
+            <Switch checked={isChatAlarm} onChange={handleChange} />
+          </Flexbox>
+        }
+      >
+        메세지 받았을 때
+      </MenuItem>
     </Menu>
   );
 }

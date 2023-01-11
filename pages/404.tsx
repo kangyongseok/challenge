@@ -19,7 +19,7 @@ function Error404() {
   } = useTheme();
 
   const handleClick = () => {
-    logEvent(attrKeys.commonEvent.clickBack, {
+    logEvent(attrKeys.commonEvent.CLICK_BACK, {
       name: 'ERROR',
       title: 404
     });
@@ -27,7 +27,7 @@ function Error404() {
   };
 
   useEffect(() => {
-    logEvent(attrKeys.commonEvent.pageNotFoundError, {
+    logEvent(attrKeys.commonEvent.PAGE_NOT_FOUND_ERROR, {
       title: 404,
       userAgent: window.navigator.userAgent,
       url: window.location.href

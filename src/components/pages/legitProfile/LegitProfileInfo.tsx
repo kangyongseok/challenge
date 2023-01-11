@@ -407,8 +407,8 @@ const Blur = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(6px);
+  background: ${({ theme: { palette } }) => palette.common.overlay40};
+  backdrop-filter: blur(8px);
 `;
 
 export default LegitProfileInfo;

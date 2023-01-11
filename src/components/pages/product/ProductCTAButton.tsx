@@ -175,8 +175,8 @@ function ProductCTAButton({
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
       isCamelSelfSeller: product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id,
-      isCamelSeller: product && product.productSeller.type === productSellerType.certification,
-      isNormalSeller: product && product.productSeller.type === productSellerType.normal,
+      isCamelSeller: product && product.sellerType === productSellerType.certification,
+      isNormalSeller: product && product.sellerType === productSellerType.normal,
       isSoldOut: product && product.status === productStatusCode.soldOut,
       isReserving: product && product.status === productStatusCode.reservation,
       isHiding: product && product.status === productStatusCode.hidden,
@@ -707,7 +707,7 @@ function ProductCTAButton({
             같이 찜해두면 좋은 매물
           </Typography>
           <ProductCardList onScroll={handleScroll}>
-            {relatedProducts?.content.map((relatedProduct) => (
+            {relatedProducts?.content.map((relatedProduct, index) => (
               <ProductGridCard
                 key={`related-product-card-${relatedProduct.id}`}
                 product={relatedProduct}
@@ -717,6 +717,33 @@ function ProductCTAButton({
                 name={attrProperty.productName.WISH_MODAL}
                 isRound
                 gap={8}
+                wishAtt={{
+                  name: attrProperty.name.PRODUCT_DETAIL,
+                  title: attrProperty.title.RELATED_LIST,
+                  id: relatedProduct.id,
+                  index: index + 1,
+                  brand: relatedProduct.brand.name,
+                  category: relatedProduct.category.name,
+                  parentId: relatedProduct.category.parentId,
+                  site: relatedProduct.site.name,
+                  price: relatedProduct.price,
+                  cluster: relatedProduct.cluster,
+                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
+                  sellerType: relatedProduct.sellerType
+                }}
+                productAtt={{
+                  name: attrProperty.name.PRODUCT_DETAIL,
+                  title: attrProperty.title.RELATED_LIST,
+                  index: index + 1,
+                  id: relatedProduct.id,
+                  brand: relatedProduct.brand.name,
+                  category: relatedProduct.category.name,
+                  parentCategory: FIRST_CATEGORIES[relatedProduct.category.parentId as number],
+                  site: relatedProduct.site.name,
+                  price: relatedProduct.price,
+                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
+                  sellerType: relatedProduct.sellerType
+                }}
                 source={attrProperty.productSource.PRODUCT_RELATED_LIST}
               />
             ))}

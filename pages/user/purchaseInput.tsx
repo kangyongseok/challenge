@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
@@ -10,8 +12,13 @@ import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import Initializer from '@library/initializer';
+import { logEvent } from '@library/amplitude';
 
 import { postUserStyle } from '@api/user';
+
+import { purchaseType } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 
@@ -31,6 +38,10 @@ function PurchaseInput() {
   const { mutate: styleMutate } = useMutation(postUserStyle);
 
   const handleSave = () => {
+    logEvent(attrKeys.userInput.SUBMIT_PERSONAL_INPUT, {
+      name: attrProperty.name.BUYINGTYPE,
+      att: purchaseType.find(({ value }) => value === purchaseTypeId)?.title || ''
+    });
     styleMutate(
       {
         purchaseTypeIds: purchaseTypeId ? [purchaseTypeId] : []
@@ -42,6 +53,13 @@ function PurchaseInput() {
       }
     );
   };
+
+  useEffect(() => {
+    logEvent(attrKeys.userInput.VIEW_PERSONAL_INPUT, {
+      name: attrProperty.name.BUYINGTYPE
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <GeneralTemplate

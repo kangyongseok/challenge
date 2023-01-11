@@ -80,12 +80,6 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     }
   );
 
-  useEffect(() => {
-    if (setToastState.status) {
-      refetch();
-    }
-  }, [setToastState, refetch]);
-
   const groupedProducts = useMemo(() => {
     const contents = pages.flatMap(({ content }) => content);
     const newGroupedProductsLength =
@@ -101,8 +95,8 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
 
   const handleWishAtt = (product: ProductResult, i: number) => {
     return {
-      name: attrProperty.productName.MAIN,
-      title: attrProperty.productTitle.PERSONAL,
+      name: attrProperty.name.USER_SHOP,
+      title: attrProperty.title.PRODUCT,
       id: product.id,
       index: i + 1,
       brand: product.brand.name,
@@ -111,14 +105,15 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
       site: product.site.name,
       price: product.price,
       cluster: product.cluster,
-      source: attrProperty.productSource.MAIN_PERSONAL
+      source: attrProperty.source.USER_SHOP_PRODUCT,
+      sellerType: product.sellerType
     };
   };
 
   const handleProductAtt = (product: ProductResult, i: number) => {
     return {
-      name: attrProperty.productName.MAIN,
-      title: attrProperty.productTitle.PERSONAL,
+      name: attrProperty.name.USER_SHOP,
+      title: attrProperty.title.PRODUCT,
       index: i + 1,
       id: product.id,
       brand: product.brand.name,
@@ -126,7 +121,8 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
       parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
       site: product.site.name,
       price: product.price,
-      source: attrProperty.productSource.MAIN_PERSONAL
+      source: attrProperty.source.USER_SHOP_PRODUCT,
+      sellerType: product.sellerType
     };
   };
 
@@ -205,6 +201,12 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     },
     [groupedProducts, handleClickProduct]
   );
+
+  useEffect(() => {
+    if (setToastState.status) {
+      refetch();
+    }
+  }, [setToastState, refetch]);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);

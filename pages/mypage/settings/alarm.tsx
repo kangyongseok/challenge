@@ -7,11 +7,19 @@ import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { MypageAlarmSetting, MypageAlarmSettingOff } from '@components/pages/mypage';
 
+import { logEvent } from '@library/amplitude';
+
+import attrKeys from '@constants/attrKeys';
+
 import { checkAgent } from '@utils/common';
 
 function SettingAlarm() {
   const router = useRouter();
   const [systemSetting, setSystemSetting] = useState(false);
+
+  useEffect(() => {
+    logEvent(attrKeys.mypage.VIEW_ALARM_MANAGE);
+  }, []);
 
   useEffect(() => {
     setSystemSetting(router.query.setting === 'true');

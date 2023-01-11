@@ -47,11 +47,8 @@ function ProductInfo({
   const [hoistingState, setHoistingState] = useState(false);
   const [getToastState] = useRecoilState(toastState);
   const isCamelProduct = product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id;
-
   const isNormalseller = product?.sellerType === productSellerType.normal;
-
-  const isCertificationSeller =
-    product && product.productSeller.type === productSellerType.certification;
+  const isCertificationSeller = product?.sellerType === productSellerType.certification;
 
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(

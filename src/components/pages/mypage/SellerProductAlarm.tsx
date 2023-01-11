@@ -6,9 +6,13 @@ import { Flexbox, Switch } from 'mrcamel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { putAlarm } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import { AllAlarmControllState } from '@recoil/mypage';
 
@@ -23,6 +27,10 @@ function SellerProductAlarm({ alarm }: { alarm?: boolean }) {
   }, [alarm]);
 
   const handleSellerProductSwitch = () => {
+    logEvent(attrKeys.mypage.CLICK_SELLER_ALARM, {
+      title: attrProperty.title.WISH,
+      att: isSellerProductAlarm ? 'OFF' : 'ON'
+    });
     setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiMyProductWish: !isSellerProductAlarm });
     switchAlarm(
       {
@@ -37,29 +45,18 @@ function SellerProductAlarm({ alarm }: { alarm?: boolean }) {
     );
   };
 
-  const infoMenu = [
-    {
-      label: '내 매물 찜 되었을 때',
-      check: isSellerProductAlarm,
-      onSwitch: handleSellerProductSwitch
-    }
-  ];
-
   return (
     <Menu title="판매 매물" gap={12}>
-      {infoMenu.map(({ label, check, onSwitch }) => (
-        <MenuItem
-          key={`info-menu-${label}`}
-          weight="regular"
-          action={
-            <Flexbox gap={4} alignment="center">
-              <Switch checked={check} onChange={onSwitch} />
-            </Flexbox>
-          }
-        >
-          {label}
-        </MenuItem>
-      ))}
+      <MenuItem
+        weight="regular"
+        action={
+          <Flexbox gap={4} alignment="center">
+            <Switch checked={isSellerProductAlarm} onChange={handleSellerProductSwitch} />
+          </Flexbox>
+        }
+      >
+        내 매물 찜 되었을 때
+      </MenuItem>
     </Menu>
   );
 }

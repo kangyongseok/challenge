@@ -1,3 +1,5 @@
+import type { productSellerType } from '@constants/user';
+
 export type ProductLabel = '카멜인증' | '새상품급' | '시세이하';
 
 export interface WishAtt {
@@ -16,4 +18,5 @@ export interface WishAtt {
   source?: string;
   att?: string;
   att2?: string;
+  sellerType?: typeof productSellerType[keyof typeof productSellerType];
 }
