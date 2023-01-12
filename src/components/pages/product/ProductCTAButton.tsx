@@ -289,9 +289,9 @@ function ProductCTAButton({
   };
 
   const attParser = () => {
+    if (product?.sellerType === productSellerType.normal || roleSeller?.userId) return 'CHANNEL';
     if (product?.sellerType === productSellerType.collection) return 'REDIRECT';
     if (product?.sellerType === productSellerType.certification) return 'SMS';
-    if (product?.sellerType === productSellerType.normal) return 'CHANNEL';
     return '';
   };
 
@@ -349,13 +349,17 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     if (roleSeller?.userId) {
-      logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, {
-        name: attrProperty.name.productDetail,
-        sellerType: product.sellerType,
-        productSellerId: product.productSeller.id,
-        productSellerType: product.productSeller.type,
-        productSellerAccount: product.productSeller.account
+      productDetailAtt({
+        key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
+        product
       });
+      // logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, {
+      //   name: attrProperty.name.productDetail,
+      //   sellerType: product.sellerType,
+      //   productSellerId: product.productSeller.id,
+      //   productSellerType: product.productSeller.type,
+      //   productSellerAccount: product.productSeller.account
+      // });
 
       const createChannelParams = {
         targetUserId: String(roleSeller.userId || 0),
