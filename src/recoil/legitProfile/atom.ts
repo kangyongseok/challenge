@@ -28,3 +28,8 @@ export const legitProfileEditState = atom<UpdateUserProfileData>({
     nickName: ''
   }
 });
+
+export const legitProfileUpdatedProfileDataState = atom<boolean>({
+  key: 'legitProfile/updatedProfileDataState',
+  default: false
+});

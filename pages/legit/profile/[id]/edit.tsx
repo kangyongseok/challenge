@@ -43,7 +43,7 @@ import attrKeys from '@constants/attrKeys';
 import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-import { legitProfileEditState } from '@recoil/legitProfile';
+import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -59,9 +59,12 @@ function LegitProfileEdit() {
 
   const { id, targetTab } = router.query;
 
-  const setDialogState = useSetRecoilState(dialogState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const setLegitProfileUpdatedProfileDataState = useSetRecoilState(
+    legitProfileUpdatedProfileDataState
+  );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
+  const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
 
   const { data: accessUser } = useQueryAccessUser();
@@ -81,7 +84,7 @@ function LegitProfileEdit() {
         refetchInactive: true
       });
       setToastState({ type: 'user', status: 'saved' });
-      router.events.off('routeChangeStart', handleRouteChangeStart);
+      setLegitProfileUpdatedProfileDataState(false);
       router.back();
     }
   });
@@ -135,18 +138,6 @@ function LegitProfileEdit() {
     (userImageProfile.length > 0 && userImageProfile) ||
     `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
-  useEffect(() => {
-    logEvent(attrKeys.legitProfile.VIEW_PROFILE_EDIT, {
-      att: 'LEGIT_SELLER'
-    });
-  }, []);
-
-  useEffect(() => {
-    if (targetTab === 'legit') {
-      setTab('감정사');
-    }
-  }, [targetTab]);
-
   const triggered = useScrollTrigger({
     ref: elementRef,
     additionalOffsetTop:
@@ -155,14 +146,6 @@ function LegitProfileEdit() {
       -HEADER_HEIGHT,
     delay: 0
   });
-
-  useEffect(() => {
-    document.body.className = `legit-${mode}`;
-
-    return () => {
-      document.body.removeAttribute('class');
-    };
-  }, [mode]);
 
   const isUpdatedProfileData = useMemo(() => {
     if (profileInfo) {
@@ -180,25 +163,6 @@ function LegitProfileEdit() {
     }
     return false;
   }, [profileInfo, sellerEditInfo]);
-
-  const handleRouteChangeStart = useCallback(() => {
-    if (isUpdatedProfileData) {
-      window.history.pushState('', '', `/${router.locale}${router.asPath}`);
-      setDialogState({
-        type: 'leaveEditProfile',
-        secondButtonAction() {
-          router.events.off('routeChangeStart', handleRouteChangeStart);
-          router.back();
-        },
-        customStyleTitle: { minWidth: 270 }
-      });
-
-      // eslint-disable-next-line no-throw-literal
-      throw '프로필 수정 뒤로가기 방지';
-    } else {
-      router.back();
-    }
-  }, [isUpdatedProfileData, router, setDialogState]);
 
   const handleChangeValue = (newValue: string | number) => {
     setTab(newValue);
@@ -257,19 +221,11 @@ function LegitProfileEdit() {
     });
   }, [mutateWitdhdraw, setDialogState]);
 
-  // const handleClickBack = () => {
-  //   if (isUpdatedProfileData) {
-  //     setDialogState({
-  //       type: 'leaveEditProfile',
-  //       secondButtonAction() {
-  //         router.back();
-  //       },
-  //       customStyleTitle: { minWidth: 270 }
-  //     });
-  //   } else {
-  //     router.back();
-  //   }
-  // };
+  useEffect(() => {
+    logEvent(attrKeys.legitProfile.VIEW_PROFILE_EDIT, {
+      att: 'LEGIT_SELLER'
+    });
+  }, []);
 
   useEffect(() => {
     if (targetTab === 'legit') {
@@ -278,15 +234,12 @@ function LegitProfileEdit() {
   }, [targetTab]);
 
   useEffect(() => {
-    if (isUpdatedProfileData) {
-      router.events.on('routeChangeStart', handleRouteChangeStart);
-    }
+    document.body.className = `legit-${mode}`;
 
     return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
+      document.body.removeAttribute('class');
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUpdatedProfileData]);
+  }, [mode]);
 
   useEffect(() => {
     if (profileInfo) {
@@ -314,6 +267,10 @@ function LegitProfileEdit() {
       });
     }
   }, [profileInfo, setSellerEditInfo]);
+
+  useEffect(() => {
+    setLegitProfileUpdatedProfileDataState(isUpdatedProfileData);
+  }, [isUpdatedProfileData, setLegitProfileUpdatedProfileDataState]);
 
   return (
     <GeneralTemplate

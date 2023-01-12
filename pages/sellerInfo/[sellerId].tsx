@@ -41,7 +41,10 @@ function SellerInfo() {
     query
   } = useRouter();
   const {
-    theme: { zIndex }
+    theme: {
+      palette: { common },
+      zIndex
+    }
   } = useTheme();
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -97,9 +100,17 @@ function SellerInfo() {
           <>
             <Header
               hideTitle={!triggered}
-              customStyle={{ zIndex: triggered ? zIndex.header + 1 : 0 }}
+              customStyle={{
+                zIndex: triggered ? zIndex.header + 1 : 0,
+                color: common.cmnW,
+                overflow: 'hidden'
+              }}
             >
-              <Typography variant="h3" weight="bold">
+              <Typography
+                variant="h3"
+                weight="bold"
+                customStyle={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+              >
                 {sellerName}
               </Typography>
             </Header>

@@ -42,3 +42,8 @@ export const userShopSelectProductManageState = atom<ProductResult & Product>({
   key: 'users/userShopSelectProductManageState',
   default: {} as ProductResult & Product
 });
+
+export const userShopUpdatedProfileDataState = atom<boolean>({
+  key: 'userShop/updatedProfileDataState',
+  default: false
+});

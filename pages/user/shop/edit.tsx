@@ -48,6 +48,7 @@ import {
 
 import { shake } from '@styles/transition';
 
+import { userShopUpdatedProfileDataState } from '@recoil/userShop';
 import { dialogState, toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -63,11 +64,13 @@ function UserShopEdit() {
     }
   } = useTheme();
   const queryClient = useQueryClient();
+
   const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
-  const { data: myUserInfo } = useQueryMyUserInfo();
+  const setUserShopUpdatedProfileDataState = useSetRecoilState(userShopUpdatedProfileDataState);
 
   const { data: accessUser } = useQueryAccessUser();
+  const { data: myUserInfo } = useQueryMyUserInfo();
   const { data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {} } =
     useQuery(
       queryKeys.users.infoByUserId(accessUser?.userId || 0),
@@ -186,20 +189,6 @@ function UserShopEdit() {
     userProfileParams.imageBackground ||
     (userImageProfile.length > 0 && userImageProfile) ||
     `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
-
-  const handleClickBack = useCallback(() => {
-    if (isUpdatedProfileData) {
-      setDialogState({
-        type: 'leaveEditProfile',
-        secondButtonAction() {
-          router.back();
-        },
-        customStyleTitle: { minWidth: 270 }
-      });
-    } else {
-      router.back();
-    }
-  }, [isUpdatedProfileData, router, setDialogState]);
 
   const appDownLoadDialog = useCallback(() => {
     setDialogState({
@@ -453,6 +442,10 @@ function UserShopEdit() {
     });
   }, [accessUser?.userId, image, imageBackground, imageProfile, name, nickName, shopDescription]);
 
+  useEffect(() => {
+    setUserShopUpdatedProfileDataState(isUpdatedProfileData);
+  }, [isUpdatedProfileData, setUserShopUpdatedProfileDataState]);
+
   return (
     <GeneralTemplate
       header={
@@ -461,7 +454,6 @@ function UserShopEdit() {
             isTransparent={!triggered}
             titleCustomStyle={{ color: common.cmnW }}
             showRight={false}
-            onClickLeft={handleClickBack}
           >
             <Typography variant="h3" weight="bold">
               프로필 수정

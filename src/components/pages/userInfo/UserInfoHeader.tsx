@@ -27,7 +27,10 @@ function UserInfoHeader({
   reviewCount
 }: UserInfoHeaderProps) {
   const {
-    theme: { zIndex }
+    theme: {
+      palette: { common },
+      zIndex
+    }
   } = useTheme();
 
   return triggered ? (
@@ -36,7 +39,12 @@ function UserInfoHeader({
         <Flexbox
           alignment="center"
           gap={8}
-          customStyle={{ marginLeft: -APP_DOWNLOAD_BANNER_HEIGHT }}
+          customStyle={{
+            marginLeft: -APP_DOWNLOAD_BANNER_HEIGHT,
+            color: common.cmnW,
+            overflow: 'hidden',
+            width: 'calc(100vw - 88px)'
+          }}
         >
           <UserAvatar
             src={userImage}
@@ -45,7 +53,11 @@ function UserInfoHeader({
             isRound
             iconCustomStyle={{ width: 16, height: 16 }}
           />
-          <Typography variant="h3" weight="bold">
+          <Typography
+            variant="h3"
+            weight="bold"
+            customStyle={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+          >
             {userName}
           </Typography>
         </Flexbox>

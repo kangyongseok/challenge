@@ -6,8 +6,10 @@ import { useRouter } from 'next/router';
 
 import { getPathNameByAsPath } from '@utils/common';
 
+import { userShopUpdatedProfileDataState } from '@recoil/userShop';
 import { productsFilterProgressDoneState } from '@recoil/productsFilter';
-import { historyState, isGoBackState } from '@recoil/common';
+import { legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
+import { dialogState, historyState, isGoBackState } from '@recoil/common';
 
 const serverSideRenderPages = [
   '/products/categories/[keyword]',
@@ -21,7 +23,14 @@ function HistoryProvider({ children }: PropsWithChildren) {
 
   const [history, setHistoryState] = useRecoilState(historyState);
   const [isGoBack, setIsGoBack] = useRecoilState(isGoBackState);
+  const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
+    legitProfileUpdatedProfileDataState
+  );
+  const [userShopUpdatedProfileData, setUserShopUpdatedProfileDataState] = useRecoilState(
+    userShopUpdatedProfileDataState
+  );
   const setProductsFilterProgressDoneState = useSetRecoilState(productsFilterProgressDoneState);
+  const setDialogState = useSetRecoilState(dialogState);
 
   useEffect(() => {
     router.beforePopState(({ url }) => {
@@ -35,9 +44,45 @@ function HistoryProvider({ children }: PropsWithChildren) {
         document.cookie = 'isGoBack=true;path=/';
       }
 
+      if (router.pathname === '/user/shop/edit' && userShopUpdatedProfileData) {
+        setDialogState({
+          type: 'leaveEditProfile',
+          secondButtonAction() {
+            setUserShopUpdatedProfileDataState(false);
+            router.back();
+          },
+          customStyleTitle: { minWidth: 270 }
+        });
+
+        return false;
+      }
+
+      if (router.pathname === '/legit/profile/[id]/edit' && legitProfileUpdatedProfileData) {
+        setDialogState({
+          type: 'leaveEditProfile',
+          secondButtonAction() {
+            setLegitProfileUpdatedProfileDataState(false);
+            router.back();
+          },
+          customStyleTitle: { minWidth: 270 }
+        });
+
+        return false;
+      }
+
       return true;
     });
-  }, [setIsGoBack, setProductsFilterProgressDoneState, router, history]);
+  }, [
+    setIsGoBack,
+    setProductsFilterProgressDoneState,
+    router,
+    history,
+    setDialogState,
+    legitProfileUpdatedProfileData,
+    setLegitProfileUpdatedProfileDataState,
+    userShopUpdatedProfileData,
+    setUserShopUpdatedProfileDataState
+  ]);
 
   useEffect(() => {
     const handleRouteChangeStart = (url: string) => {
