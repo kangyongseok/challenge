@@ -24,6 +24,7 @@ function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
       <FormattedText variant="body2" customStyle={{ marginTop: 16 }} id="info.address" />
       <FormattedText variant="body2" id="info.businessRegistrationNumber" />
       <FormattedText variant="body2" id="info.mailOrderBusinessReportNumber" />
+      <FormattedText variant="body2" id="info.serviceCenterNumber" />
       <Typography variant="small2" customStyle={{ color: common.ui60, margin: '10px 0 28px 0' }}>
         (주)미스터카멜은 통신판매중개자로서 중고 명품 전문 거래 마켓플레이스 카멜의 거래당사자가
         아니며, 입점판매자가 등록한 상품정보 및 거래에 대해 책임을 지지 않습니다.
