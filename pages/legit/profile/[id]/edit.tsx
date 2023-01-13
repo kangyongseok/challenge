@@ -149,7 +149,7 @@ function LegitProfileEdit() {
 
   const isUpdatedProfileData = useMemo(() => {
     if (profileInfo) {
-      const { name, urlShop, title, targetBrandIds, image, imageBackground } = profileInfo.profile;
+      const { name, title, targetBrandIds, image, imageBackground } = profileInfo.profile;
 
       if (sellerEditInfo.nickName !== name) return true;
       if (sellerEditInfo.shopDescription !== profileInfo?.shopDescription) return true;
@@ -158,7 +158,6 @@ function LegitProfileEdit() {
       if (sellerEditInfo.legitTitle !== title) return true;
       if (JSON.stringify(sellerEditInfo.legitTargetBrandIds) !== JSON.stringify(targetBrandIds))
         return true;
-      if (sellerEditInfo.legitUrlShop !== urlShop) return true;
       return false;
     }
     return false;
@@ -243,22 +242,13 @@ function LegitProfileEdit() {
 
   useEffect(() => {
     if (profileInfo) {
-      const {
-        name,
-        urlShop,
-        title,
-        targetBrandIds,
-        subTitle,
-        description,
-        image,
-        imageBackground
-      } = profileInfo.profile;
+      const { name, title, targetBrandIds, subTitle, description, image, imageBackground } =
+        profileInfo.profile;
 
       setSellerEditInfo({
         nickName: name,
         shopDescription: profileInfo.shopDescription,
         legitTitle: title,
-        legitUrlShop: urlShop || '',
         legitTargetBrandIds: targetBrandIds,
         legitSubTitle: subTitle,
         legitDescription: description,

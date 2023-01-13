@@ -97,14 +97,6 @@ function ProductDetailLegitImageBottomBanner({
           router.push(`/legit/${router.query.id}`);
         }}
       >
-        {!data?.status && (
-          <>
-            <Typography weight="medium">🔎</Typography>
-            <Typography weight="medium" customStyle={{ color: common.cmnW }}>
-              보고있는 이 매물이 정품인지 궁금하다면?
-            </Typography>
-          </>
-        )}
         {data?.status && (
           <Typography weight="medium" customStyle={{ color: common.cmnW }}>
             {renderDescription()}

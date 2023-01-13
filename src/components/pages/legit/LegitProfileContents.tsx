@@ -7,8 +7,6 @@ import { useQuery } from 'react-query';
 import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { TextInput } from '@components/UI/molecules';
-
 import { logEvent } from '@library/amplitude';
 
 import { fetchLegitsBrands } from '@api/model';
@@ -25,8 +23,7 @@ import { toastState } from '@recoil/common';
 function LegitProfileContents() {
   const {
     theme: {
-      palette: { common, secondary },
-      typography
+      palette: { common, secondary }
     }
   } = useTheme();
   const descriptionRef = useRef<null | HTMLTextAreaElement>(null);
@@ -145,25 +142,6 @@ function LegitProfileContents() {
             </Chip>
           ))}
         </Flexbox>
-      </Box>
-      <Box customStyle={{ marginTop: 32 }}>
-        <Typography weight="bold" customStyle={{ color: common.ui80, marginBottom: 12 }}>
-          웹사이트
-        </Typography>
-        <TextInput
-          type="search"
-          customStyle={{
-            padding: 12,
-            height: 44,
-            border: `1px solid ${common.ui90}`,
-            borderRadius: 8
-          }}
-          inputStyle={{ height: 20, width: '100%', fontSize: typography.h4.size }}
-          value={sellerEditInfo.legitUrlShop}
-          onChange={(e) =>
-            setSellerEditInfo({ ...sellerEditInfo, legitUrlShop: e.target.value.trim() })
-          }
-        />
       </Box>
     </Wrap>
   );

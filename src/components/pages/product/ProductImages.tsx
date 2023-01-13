@@ -374,7 +374,7 @@ function ProductImages({
             </Pagination>
           )}
         </Swiper>
-        {(isProductLegit || product?.productLegit) && (
+        {(isProductLegit || product?.productLegit) && product?.productLegit?.status && (
           <ProductDetailLegitImageBottomBanner
             product={product as Product}
             data={product?.productLegit}

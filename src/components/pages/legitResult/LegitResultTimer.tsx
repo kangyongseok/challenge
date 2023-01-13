@@ -37,7 +37,6 @@ function LegitResultTimer() {
       timerRef.current = setInterval(() => {
         const completeDate = dayjs(dateCompleted);
         const currentDate = dayjs();
-
         const diff = dayjs(completeDate).diff(currentDate);
 
         const newTimer = {

@@ -42,6 +42,7 @@ interface LegitProfileEditInfoProps extends PutUserLegitProfileData {
   onCloseEditMode: () => void;
 }
 
+// TODO 안쓰는것같은데 지워도 되는지?? 230111 noah
 function LegitProfileEditInfo({
   legitsBrands,
   onCloseEditMode,

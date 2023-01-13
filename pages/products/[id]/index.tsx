@@ -27,7 +27,6 @@ import {
   ProductActions,
   ProductCTAButton,
   ProductDetailFooter,
-  ProductDetailLegitBanner,
   ProductDetailLegitBottomSheet,
   ProductImages,
   ProductInfo,
@@ -542,9 +541,6 @@ function ProductDetail() {
                 )}
                 {isCamelSellerProduct && <DivideLine />}
               </>
-            )}
-            {data && data.product.productLegit && (
-              <ProductDetailLegitBanner data={data.product.productLegit} product={data.product} />
             )}
             <ProductMowebAppContents data={data} />
             <ProductRelatedProductList

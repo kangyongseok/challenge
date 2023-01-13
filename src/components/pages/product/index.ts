@@ -6,7 +6,6 @@ export { default as ProductInfoSkeleton } from './ProductInfoSkeleton';
 export { default as ProductRedirect } from './ProductRedirect';
 export { default as ProductFixedSummary } from './ProductFixedSummary';
 export { default as ProductRelatedProductList } from './ProductRelatedProductList';
-export { default as ProductDetailLegitBanner } from './ProductDetailLegitBanner';
 export { default as ProductDetailLegitImageBottomBanner } from './ProductDetailLegitImageBottomBanner';
 export { default as ProductDetailLegitBottomSheet } from './ProductDetailLegitBottomSheet';
 export { default as ProductSellerBottomMenu } from './ProductSellerBottomMenu';

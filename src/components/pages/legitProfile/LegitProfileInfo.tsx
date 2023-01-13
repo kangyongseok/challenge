@@ -336,12 +336,6 @@ function LegitProfileInfo({
                     SHOP
                   </Button>
                 )}
-                {/* 추후 활성화 */}
-                {/* {(urlShop || '').trim().length > 0 && ( */}
-                {/*  <Button size="large" onClick={handleClickMoveUrlShop}> */}
-                {/*    <Icon name="HyperlinkOutlined" /> */}
-                {/*  </Button> */}
-                {/* )} */}
                 <Button size="large" onClick={handleClickShare}>
                   <Icon name="ShareOutlined" />
                 </Button>
