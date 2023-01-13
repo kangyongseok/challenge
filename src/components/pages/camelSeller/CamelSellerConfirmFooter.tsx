@@ -13,7 +13,6 @@ import { fetchProduct, postProducts, putProductEdit } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -69,23 +68,6 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
       refetchOnMount: 'always'
     }
   );
-
-  const getAttProperty = {
-    id: editData?.product.id,
-    brand: editData?.product.brand.name,
-    category: editData?.product.category.name,
-    parentCategory: FIRST_CATEGORIES[editData?.product.category.id as number],
-    line: editData?.product.line,
-    site: editData?.product.site.name,
-    price: editData?.product.price,
-    scoreTotal: editData?.product.scoreTotal,
-    scoreStatus: editData?.product.scoreStatus,
-    scoreSeller: editData?.product.scoreSeller,
-    scorePrice: editData?.product.scorePrice,
-    scorePriceAvg: editData?.product.scorePriceAvg,
-    scorePriceCount: editData?.product.scorePriceCount,
-    scorePriceRate: editData?.product.scorePriceRate
-  };
 
   const isExternalNormalSeller = editData?.product.productSeller.type === 4;
 
@@ -150,7 +132,6 @@ function CamelSellerConfirmFooter({ footerRef }: CamelSellerConfirmFooterProps) 
           logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
             name: attrProperty.name.EDITPRODUCT_MAIN,
             value: query.id,
-            ...getAttProperty,
             ...submitPutData
           });
 
