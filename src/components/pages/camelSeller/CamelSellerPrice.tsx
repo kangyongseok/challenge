@@ -269,14 +269,6 @@ function CamelSellerPrice({ footerRef }: CamelSellerPriceProps) {
           min={1000}
         />
       </Flexbox>
-      {changePrice && changePrice > 0 ? (
-        <Typography customStyle={{ color: common.ui60, minWidth: 'fit-content', marginLeft: 34 }}>
-          {commaNumber(getTenThousandUnitPrice(changePrice as number))} 만원
-        </Typography>
-      ) : (
-        ''
-      )}
-
       {isFocus ? ( // isFocus
         <PriceCardList alignment="center" gap={8}>
           {searchHistory?.page?.content.slice(0, 5).map((product, i) => (
