@@ -1,11 +1,9 @@
-import { useState } from 'react';
-
 import { Box, Icon, Label, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { getFormattedActivatedTime } from '@utils/formats';
 
-import { HiddenImageLoader, IconBox, Status, UserImage } from './UserAvatar.styles';
+import { IconBox, Status, UserImage } from './UserAvatar.styles';
 
 interface UserAvatarProps {
   src: string;
@@ -34,14 +32,12 @@ function UserAvatar({
     }
   } = useTheme();
 
-  const [imageRendered, setImageRendered] = useState(false);
-
   const labelText = getFormattedActivatedTime(dateActivated);
   const isActive = labelText === '접속중';
 
   return (
     <Box customStyle={{ position: 'relative', ...customStyle }}>
-      {src && imageRendered ? (
+      {src ? (
         <UserImage
           url={src}
           width={width}
@@ -58,7 +54,7 @@ function UserAvatar({
           />
         </IconBox>
       )}
-      <HiddenImageLoader src={src} onLoad={() => setImageRendered(true)} />
+
       {dateActivated?.length > 0 && (
         <Status>
           <Label
