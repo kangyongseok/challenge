@@ -75,7 +75,7 @@ const ABTest = {
   getBelong(name: string) {
     const findTask = tasks.find((task) => task.name === name);
 
-    if (!identifier[name] || !findTask) return null;
+    if (!identifier[name] || !findTask) return 'A';
 
     const {
       ratio: { A, B, C },
