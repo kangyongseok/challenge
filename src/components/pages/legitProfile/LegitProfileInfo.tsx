@@ -287,7 +287,7 @@ function LegitProfileInfo({
                   <Typography
                     variant="body1"
                     customStyle={{ color: common.cmnW }}
-                    dangerouslySetInnerHTML={{ __html: title }}
+                    dangerouslySetInnerHTML={{ __html: title.replaceAll(/\r?\n/gi, '<br />') }}
                   />
                 </Flexbox>
                 <UserAvatar
