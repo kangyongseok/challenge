@@ -76,14 +76,12 @@ function Notices() {
           showRight={tab !== '활동알림'}
           rightIcon={
             tab === '활동알림' ? (
-              <Button
-                onClick={handleClickAllRead}
-                customStyle={{ border: 'none', marginRight: 8, padding: 0, fontSize: 12 }}
-              >
+              <Button onClick={handleClickAllRead} customStyle={{ border: 'none', fontSize: 12 }}>
                 모두 읽음
               </Button>
             ) : undefined
           }
+          customStyle={tab === '활동알림' ? { '> div > div> div': { minWidth: 110 } } : {}}
         />
       }
       footer={<BottomNavigation />}
