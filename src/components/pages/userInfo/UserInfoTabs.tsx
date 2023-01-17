@@ -66,8 +66,8 @@ const UserInfoTabs = forwardRef<HTMLDivElement, UserInfoTabsProps>(function User
         onChange={handleChange}
         customStyle={{ background: common.uiWhite }}
       >
-        <Tab text={`매물 ${productCount || 0}개`} value="products" />
-        <Tab text={`후기 ${reviewCount || 0}개`} value="reviews" />
+        <Tab text={`매물 ${productCount || 0}`} value="products" />
+        <Tab text={`후기 ${reviewCount || 0}`} value="reviews" />
       </TabGroup>
     </TabWrapper>
   );
