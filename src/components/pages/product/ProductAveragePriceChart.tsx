@@ -110,7 +110,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
     if (product?.weekAvgPrices) {
       return (
         product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v) > 0 &&
-        product.scorePriceCount > 20
+        product.scorePriceCount > 0
       );
     }
 
