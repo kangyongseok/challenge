@@ -259,6 +259,7 @@ function ProductsInfiniteGrid({
         brand: product.brand.name,
         category: product.category.name,
         parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+        parentId: product.category.parentId,
         line: product.line,
         site: product.site.name,
         price: product.price,
@@ -282,23 +283,6 @@ function ProductsInfiniteGrid({
     },
     [searchParams.order]
   );
-
-  const getWishAttributes = useCallback((product: Product) => {
-    return {
-      name: attrProperty.productName.PRODUCT_LIST,
-      id: product.id,
-      index: (product?.index || 0) + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      line: product.line,
-      site: product.site.name,
-      price: product.price,
-      scoreTotal: product.scoreTotal,
-      cluster: product.cluster,
-      source: attrProperty.productSource.PRODUCT_LIST
-    };
-  }, []);
 
   const rowRenderer = useCallback(
     ({ index, key, parent, style }: ListRowProps) => {
@@ -458,7 +442,7 @@ function ProductsInfiniteGrid({
                         name={name}
                         source={attrProperty.productSource.PRODUCT_LIST}
                         productAtt={getProductAttributes(firstProduct)}
-                        wishAtt={getWishAttributes(firstProduct)}
+                        wishAtt={getProductAttributes(firstProduct)}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
                       />
                     </Grid>
@@ -471,7 +455,7 @@ function ProductsInfiniteGrid({
                         name={name}
                         source={attrProperty.productSource.PRODUCT_LIST}
                         productAtt={getProductAttributes(secondProduct)}
-                        wishAtt={getWishAttributes(secondProduct)}
+                        wishAtt={getProductAttributes(secondProduct)}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
                       />
                     </Grid>
@@ -492,7 +476,6 @@ function ProductsInfiniteGrid({
       handleWishAfterChangeCallback,
       variant,
       name,
-      getWishAttributes,
       hasSelectedSearchOptions,
       isFetched
     ]

@@ -32,9 +32,9 @@ const tasks: ABTestTask[] = [
       C: '2301_RECOMMEND_C'
     },
     ratio: {
-      A: 33.3,
-      B: 33.3,
-      C: 33.3
+      A: 50,
+      B: 0,
+      C: 50
     },
     running: true,
     defaultBelong: 'A'
