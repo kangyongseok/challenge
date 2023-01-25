@@ -56,7 +56,7 @@ function UserShop() {
       area,
       shopDescription,
       sellerType,
-      productCount = 0,
+      displayProductCount = 0,
       undisplayProductCount = 0,
       reviewCount = 0
     } = {},
@@ -77,7 +77,7 @@ function UserShop() {
   const { userImageProfile, userImageBackground, labels, tab, nickName, curnScore, maxScore } =
     useMemo(() => {
       const tabLabels = [
-        { key: '0', value: `판매중 ${productCount}` },
+        { key: '0', value: `판매중 ${displayProductCount}` },
         { key: '1', value: `판매완료 ${undisplayProductCount}` },
         { key: '2', value: `후기 ${reviewCount}` }
       ];
@@ -107,7 +107,7 @@ function UserShop() {
       image,
       imageBackground,
       imageProfile,
-      productCount,
+      displayProductCount,
       reviewCount,
       router.query.tab,
       undisplayProductCount
@@ -117,9 +117,9 @@ function UserShop() {
       title: `판매자 ${nickName} 후기와 평점 보기 | 카멜`,
       description: `평점 ${maxScore} 만점에 ${curnScore}점을 받은 판매자에요. 총 ${commaNumber(
         reviewCount
-      )}의 후기를 받았고, ${commaNumber(productCount)}개의 매물을 팔고 있어요.`
+      )}의 후기를 받았고, ${commaNumber(displayProductCount)}개의 매물을 팔고 있어요.`
     };
-  }, [curnScore, maxScore, nickName, productCount, reviewCount]);
+  }, [curnScore, maxScore, nickName, displayProductCount, reviewCount]);
 
   useEffect(() => {
     if (setToastState.status) {
@@ -157,7 +157,7 @@ function UserShop() {
             imageProfile={imageProfile || image || ''}
             nickName={nickName}
             currentTab={tab}
-            sellCount={productCount}
+            sellCount={displayProductCount}
             soldoutCount={undisplayProductCount}
             reviewCount={reviewCount}
           />
@@ -199,7 +199,7 @@ function UserShop() {
           <UserShopTabs
             ref={tabRef}
             value={tab}
-            sellCount={productCount}
+            sellCount={displayProductCount}
             soldoutCount={undisplayProductCount}
             reviewCount={reviewCount}
           />
