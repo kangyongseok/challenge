@@ -527,6 +527,8 @@ function ProductCTAButton({
     setIsOpenRelatedProductListBottomSheet(false);
   }, [id]);
 
+  if (!!accessUser && roleSeller?.userId === accessUser.userId) return null;
+
   return (
     <>
       <Box customStyle={{ minHeight: 76 }} />

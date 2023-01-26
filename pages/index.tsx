@@ -105,6 +105,8 @@ function Home() {
     ) {
       SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams);
 
+      if (accessUser.userId !== +savedCreateChannelParams.targetUserId) return;
+
       fetchProduct({ productId: +savedCreateChannelParams.productId }).then((resultProduct) => {
         const channelId = (resultProduct.channels || []).find(
           (channel) => channel.userId === accessUser.userId
