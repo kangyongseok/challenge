@@ -207,7 +207,10 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         productStatus[(product?.status || 0) as keyof typeof productStatus] === productStatus[0] &&
         !!findAppointment,
       targetUserId: channelTargetUserId,
-      targetUserName: getUserName(channelTargetUser?.user?.name, channelTargetUserId),
+      targetUserName: getUserName(
+        channelTargetUser?.user?.nickName || channelTargetUser?.user?.name,
+        channelTargetUserId
+      ),
       isTargetUserBlocked: !!userBlocks?.some(
         (blockedUser) =>
           blockedUser.userId === accessUser?.userId &&

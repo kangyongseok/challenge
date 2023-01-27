@@ -299,6 +299,7 @@ export type User = {
   id: number;
   image: string;
   imageProfile: string;
+  imageBackground: string;
   isChannelNoti: boolean;
   isNightAlarm: boolean;
   lastLoginDate: string;
@@ -307,6 +308,7 @@ export type User = {
   method: number;
   mrcamelId: string;
   name: string;
+  nickName: string;
   phone: string;
   status: boolean;
   userSns: UserSns;

@@ -180,7 +180,8 @@ function ChannelsSwipeActionList({
 
       const productId = camelChannel.product.id;
       const targetUserId = camelChannel.channelTargetUser.user?.id;
-      const targetUserName = camelChannel.channelTargetUser.user?.name;
+      const targetUserName =
+        camelChannel.channelTargetUser.user?.nickName || camelChannel.channelTargetUser.user?.name;
       const isTargetUserSeller =
         channelUserType[camelChannel.channelTargetUser.type as keyof typeof channelUserType] ===
         channelUserType[1];

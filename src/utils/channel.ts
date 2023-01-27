@@ -42,7 +42,8 @@ export const getChannelTitle = ({
 
     if (targetUser.user.isDeleted) suffix = ' (탈퇴)';
 
-    if (targetUser.user.name) return `${targetUser.user.name}${suffix}`;
+    if (targetUser.user.nickName || targetUser.user.name)
+      return `${targetUser.user.nickName || targetUser.user.name}${suffix}`;
 
     return `회원${targetUser.user.id}${suffix}`;
   }
