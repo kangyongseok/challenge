@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { PropsWithChildren, ReactElement } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 
 import { getPathNameByAsPath } from '@utils/common';
@@ -9,6 +9,7 @@ import { getPathNameByAsPath } from '@utils/common';
 import { userShopUpdatedProfileDataState } from '@recoil/userShop';
 import { productsFilterProgressDoneState } from '@recoil/productsFilter';
 import { legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
+import { eventContentDogHoneyFilterState } from '@recoil/eventFilter';
 import { dialogState, historyState, isGoBackState } from '@recoil/common';
 
 const serverSideRenderPages = [
@@ -31,6 +32,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
   );
   const setProductsFilterProgressDoneState = useSetRecoilState(productsFilterProgressDoneState);
   const setDialogState = useSetRecoilState(dialogState);
+  const resetEventContentDogHoneyFilterState = useResetRecoilState(eventContentDogHoneyFilterState);
 
   useEffect(() => {
     router.beforePopState(({ url }) => {
@@ -70,6 +72,10 @@ function HistoryProvider({ children }: PropsWithChildren) {
         return false;
       }
 
+      if (router.pathname === '/events/[id]' && router.query.id === '실시간-개꿀매-17') {
+        resetEventContentDogHoneyFilterState();
+      }
+
       return true;
     });
   }, [
@@ -81,7 +87,8 @@ function HistoryProvider({ children }: PropsWithChildren) {
     legitProfileUpdatedProfileData,
     setLegitProfileUpdatedProfileDataState,
     userShopUpdatedProfileData,
-    setUserShopUpdatedProfileDataState
+    setUserShopUpdatedProfileDataState,
+    resetEventContentDogHoneyFilterState
   ]);
 
   useEffect(() => {

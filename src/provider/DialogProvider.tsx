@@ -61,6 +61,7 @@ function DialogProvider() {
       case 'legitPhotoGuide':
       case 'loginProviderError':
       case 'requiredAppUpdateForChat':
+      case 'locationInfo':
         return 'textWithOneButton';
       case 'appAuthCheck':
       case 'unblockBlockedUser':

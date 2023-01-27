@@ -504,7 +504,7 @@ export function getPathNameByAsPath(asPath: string) {
 }
 
 export function isExtendedLayoutIOSVersion() {
-  return checkAgent.isIOSApp() && getAppVersion() >= 1150;
+  return checkAgent.isIOSApp() && getAppVersion() >= 1199;
 }
 
 export const isProduction = process.env.NEXT_JS_API_BASE_URL === 'https://mrcamel.co.kr/api';

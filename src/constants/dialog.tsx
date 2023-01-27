@@ -58,7 +58,8 @@ export const dialogTitle: Record<
     </Box>
   ),
   leaveEditProfile: <Box customStyle={{ marginTop: 12 }}>페이지를 나가시겠어요?</Box>,
-  featureIsMobileAppDown: '이 기능은 앱에서만 할 수 있어요!'
+  featureIsMobileAppDown: '이 기능은 앱에서만 할 수 있어요!',
+  locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>
 };
 
 export const dialogContent = {
@@ -135,7 +136,14 @@ export const dialogContent = {
       그래도 떠나시나요?
     </Box>
   ),
-  featureIsMobileAppDown: '지금 바로 앱을 다운받아볼까요?'
+  featureIsMobileAppDown: '지금 바로 앱을 다운받아볼까요?',
+  locationInfo: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      주변에 있는 당근마켓의 꿀매물을
+      <br />
+      보시려면 허용해주세요!
+    </Box>
+  )
 };
 
 export const firstButtonText: Record<
@@ -205,6 +213,7 @@ export const secondButtonText: Record<
     | 'deleteAccount'
     | 'leaveEditProfile'
     | 'featureIsMobileAppDown'
+    | 'locationInfo'
   >,
   string | number | ReactElement
 > = {
@@ -231,7 +240,8 @@ export const secondButtonText: Record<
   loginProviderError: '확인',
   deleteAccount: '회원정보 유지',
   leaveEditProfile: '나가기',
-  featureIsMobileAppDown: '3초 앱 다운로드'
+  featureIsMobileAppDown: '3초 앱 다운로드',
+  locationInfo: '동의하고 매물보기'
 };
 
 const dialog = {

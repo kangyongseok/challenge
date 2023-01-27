@@ -45,6 +45,7 @@ function Header({
   showLeft = true,
   hideTitle = false,
   showRight = true,
+  hideHeart = false,
   leftIcon,
   rightIcon,
   onClickLeft,
@@ -275,7 +276,12 @@ function Header({
                 onClick={() => router.push('/wishes')}
                 css={{ padding: showRight ? '16px 8px' : 0 }}
               >
-                {showRight && <Icon name="HeartOutlined" />}
+                {showRight && (
+                  <Icon
+                    name="HeartOutlined"
+                    customStyle={{ visibility: hideHeart ? 'hidden' : 'visible' }}
+                  />
+                )}
               </IconBox>
               {rightIcon || (
                 <IconBox

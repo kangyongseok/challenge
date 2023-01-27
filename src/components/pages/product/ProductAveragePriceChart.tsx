@@ -109,7 +109,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   const isShowChart = useMemo(() => {
     if (product?.weekAvgPrices) {
       return (
-        product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v) > 0 &&
+        product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v, 0) > 0 &&
         product.scorePriceCount > 0
       );
     }
@@ -136,7 +136,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   };
 
   useEffect(() => {
-    const slicedValues = chartValues.slice(3, 7);
+    const slicedValues = chartValues.slice(1, 7);
     if (slicedValues.length > 0) {
       const suggestedMax = Number(((105 / 100) * Math.max(...slicedValues)).toFixed(1));
       const suggestedMin = Number(((95 / 100) * Math.min(...slicedValues)).toFixed(1));
@@ -144,7 +144,10 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
 
       setData({
         labels: [
-          `${dayjs().set('month', -4).format('YY년')} ${dayjs().set('month', -4).format('M')}월`,
+          // `${dayjs().set('month', -6).format('YY년')} ${dayjs().set('month', -6).format('M')}월`,
+          `${dayjs().set('month', -6).format('M')}월`,
+          `${dayjs().set('month', -5).format('M')}월`,
+          `${dayjs().set('month', -4).format('M')}월`,
           `${dayjs().set('month', -3).format('M')}월`,
           `${dayjs().set('month', -2).format('M')}월`,
           `${dayjs().set('month', -1).format('M')}월`
@@ -152,10 +155,17 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         datasets: [
           {
             data: slicedValues,
-            pointRadius: [4, 4, 4, 7],
+            pointRadius: [4, 4, 4, 4, 4, 7],
             borderColor: common.bg02,
-            pointBackgroundColor: [common.ui80, common.ui80, common.ui80, primary.light],
-            pointBorderWidth: [0, 0, 0, 0]
+            pointBackgroundColor: [
+              common.ui80,
+              common.ui80,
+              common.ui80,
+              common.ui80,
+              common.ui80,
+              primary.light
+            ],
+            pointBorderWidth: [0, 0, 0, 0, 0, 0]
           }
         ]
       });
@@ -176,14 +186,14 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             ticks: {
               autoSkip: false,
               maxRotation: 0,
-              align: 'inner',
+              // align: 'inner',
               font: {
                 size: 12,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                weight: ['400', '400', '400', '700']
+                weight: ['400', '400', '400', '400', '400', '700']
               },
-              color: [common.ui60, common.ui60, common.ui60, common.ui20]
+              color: [common.ui60, common.ui60, common.ui60, common.ui60, common.ui60, common.ui20]
             },
             grid: {
               display: false
@@ -232,7 +242,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               ctx.textAlign = 'center';
               ctx.textBaseline = 'bottom';
               ctx.fillText(
-                slicedValues[index] ? `${String(slicedValues[index])}만원` : '',
+                slicedValues[index] ? `${String(slicedValues[index])}` : '',
                 chartElement.x,
                 chartElement.y - 18
               );

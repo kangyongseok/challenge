@@ -24,6 +24,7 @@ export const extractTagRegx = /(<([^>]+)>)/gi;
 export const NEXT_IMAGE_BLUR_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 export const BASIC_BACKGROUND_IMG = `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-background.png`;
+export const EVENT_NEW_YEAR_FILTER_INFO_HEIGHT = 80;
 
 export const locales = {
   ko: {
@@ -89,4 +90,11 @@ export const SUPPORTED_MIMES = {
     'audio/3gpp2',
     'audio/mp3'
   ]
+};
+
+export const EventStatus = {
+  DEFAULT: 0,
+  READY: 1,
+  PROGRESS: 2,
+  CLOSED: 3
 };

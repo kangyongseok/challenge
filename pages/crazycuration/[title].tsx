@@ -29,6 +29,7 @@ import { fetchContentsProducts } from '@api/common';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { EventStatus } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -39,13 +40,6 @@ import { checkAgent, executedShareURl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useContentsProducts from '@hooks/useContentsProducts';
-
-const eventStatus = {
-  default: 0,
-  ready: 1,
-  progress: 2,
-  closed: 3
-};
 
 const colorData = {
   1: {
@@ -862,17 +856,17 @@ export async function getServerSideProps({
         );
       const { status = 0, url: eventUrl = '', title: eventTitle = '' } = targetContents || {};
 
-      if (currentEventStatus === eventStatus.closed) {
+      if (currentEventStatus === EventStatus.CLOSED) {
         isClosedEvent = true;
 
         switch (status) {
           // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
-          case eventStatus.ready: {
+          case EventStatus.READY: {
             hasNextEvent = true;
             break;
           }
           // 진입한 이벤트 마감, 진행중 이벤트가 있음
-          case eventStatus.progress: {
+          case EventStatus.PROGRESS: {
             hasNextEvent = true;
             nextEventUrl = encodeURI(eventUrl);
             nextEventTitle = eventTitle;

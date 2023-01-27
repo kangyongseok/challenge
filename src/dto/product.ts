@@ -388,6 +388,7 @@ export type ProductResult = {
   siteUrl: SiteUrl;
   status: number;
   scoreTotal: number;
+  scorePriceRate: number | null;
   title: string;
   viewCount: number;
   wishCount: number;
@@ -415,6 +416,7 @@ export type ProductResult = {
   isDeleted: boolean | null;
   sellerType?: 0 | 1 | 2 | 3;
   sellerUserId?: number;
+  size: string | null;
 };
 
 export type PageProduct = Paged<Product>;

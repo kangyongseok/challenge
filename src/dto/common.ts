@@ -180,8 +180,14 @@ export interface StyleDetails {
   category: Category;
 }
 
+export type Model = {
+  keyword: string;
+  priceAvg: number;
+};
+
 export interface Content {
   brands: Brand[];
+  models: Model[];
   description: string;
   imageMain: string;
   title: string;
@@ -219,6 +225,7 @@ export interface PhotoGuideParams {
 export interface ContentProductsParams {
   id: number;
   brandIds?: number[];
+  keyword?: string;
   page?: number;
   size?: number;
   sort?: string;

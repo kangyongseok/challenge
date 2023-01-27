@@ -36,7 +36,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
   const isShowChart = useMemo(() => {
     if (data?.product?.weekAvgPrices) {
       return (
-        data.product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v) > 0 &&
+        data.product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v, 0) > 0 &&
         data.product.scorePriceCount > 20
       );
     }

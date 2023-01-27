@@ -179,7 +179,8 @@ export type DialogType =
   | 'loginProviderError'
   | 'deleteAccount'
   | 'featureIsMobileAppDown'
-  | 'leaveEditProfile';
+  | 'leaveEditProfile'
+  | 'locationInfo';
 
 export type ShareData = {
   title: string;
