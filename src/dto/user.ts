@@ -298,6 +298,7 @@ export type User = {
   gender: Gender;
   id: number;
   image: string;
+  imageProfile: string;
   isChannelNoti: boolean;
   isNightAlarm: boolean;
   lastLoginDate: string;

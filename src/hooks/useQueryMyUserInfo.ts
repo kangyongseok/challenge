@@ -34,7 +34,8 @@ function useQueryMyUserInfo(enabled = true) {
       )
     }),
     [
-      accessUser,
+      accessUser?.userId,
+      accessUser?.userName,
       useQueryMyUserInfoResult.data?.info?.value?.name,
       useQueryMyUserInfoResult.data?.info?.value?.nickName
     ]

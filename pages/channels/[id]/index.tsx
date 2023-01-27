@@ -38,7 +38,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent, getProductDetailUrl } from '@utils/common';
+import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
@@ -280,7 +280,13 @@ function Chanel() {
                   isLoading={isLoading || !isFetched}
                   isTargetUserSeller={!isSeller}
                   isDeletedTargetUser={isDeletedTargetUser}
-                  targetUserImage={channelTargetUser?.user?.image}
+                  targetUserImage={
+                    (hasImageFile(channelTargetUser?.user?.imageProfile) &&
+                      channelTargetUser?.user?.imageProfile) ||
+                    (hasImageFile(channelTargetUser?.user?.image) &&
+                      channelTargetUser?.user?.image) ||
+                    ''
+                  }
                   targetUserName={targetUserName}
                   targetUserId={targetUserId}
                 />

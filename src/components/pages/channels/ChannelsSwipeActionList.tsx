@@ -32,7 +32,7 @@ import { PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, hasImageFile } from '@utils/common';
 import {
   getChannelTitle,
   getLastMessage,
@@ -251,10 +251,13 @@ function ChannelsSwipeActionList({
       >
         <ListItem
           avatarUrl={
-            camelChannel.channelTargetUser?.user?.image &&
             !camelChannel.channelTargetUser?.user?.isDeleted
-              ? camelChannel.channelTargetUser.user.image
-              : ' '
+              ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
+                  camelChannel?.channelTargetUser?.user?.imageProfile) ||
+                (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
+                  camelChannel?.channelTargetUser?.user?.image) ||
+                ''
+              : ''
           }
           title={getChannelTitle({
             targetUser: camelChannel.channelTargetUser,
