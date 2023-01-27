@@ -11,8 +11,8 @@ import { postChannel } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
+import { getUserName } from '@utils/user';
 import { checkAgent } from '@utils/common';
-import { getChannelUserName } from '@utils/channel';
 
 import type { CreateChannelParams } from '@typings/channel';
 import { toastState } from '@recoil/common';
@@ -39,7 +39,7 @@ function useMutationCreateChannel() {
     if (!!accessUser && !state.initialized) {
       await initializeSendbird(
         accessUser.userId.toString(),
-        getChannelUserName(accessUser.userName, accessUser.userId),
+        getUserName(accessUser.userName, accessUser.userId),
         accessUser.image
       );
     }

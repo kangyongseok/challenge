@@ -21,6 +21,7 @@ import attrKeys from '@constants/attrKeys';
 import { copyToClipboard } from '@utils/common';
 
 import { toastState } from '@recoil/common';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusFailContents() {
@@ -35,6 +36,7 @@ function LegitStatusFailContents() {
   } = useTheme();
 
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const setToastState = useSetRecoilState(toastState);
 
@@ -141,7 +143,7 @@ function LegitStatusFailContents() {
           weight="bold"
           customStyle={{ '& > strong': { color: secondary.red.light } }}
         >
-          카멜이 {(accessUser || {}).userName || '회원'}님 <strong>대신</strong>
+          카멜이 {userNickName}님 <strong>대신</strong>
           <br /> <strong>부족한 사진을 받아</strong>
           <br />
           <strong>감정</strong>을 계속할까요?

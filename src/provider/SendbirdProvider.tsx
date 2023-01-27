@@ -8,8 +8,9 @@ import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
 import Sendbird from '@library/sendbird';
 
+import { getUserName } from '@utils/user';
 import { isProduction, uuidv4 } from '@utils/common';
-import { getChannelUserName, getUpdatedChannels } from '@utils/channel';
+import { getUpdatedChannels } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -38,7 +39,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
     ) {
       initialize(
         accessUser.userId.toString(),
-        getChannelUserName(accessUser.userName, accessUser.userId),
+        getUserName(accessUser.userName, accessUser.userId),
         accessUser.image
       );
     }

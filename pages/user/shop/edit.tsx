@@ -37,10 +37,12 @@ import { ACCESS_USER } from '@constants/localStorage';
 import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { getUserName } from '@utils/user';
 import { getCookies } from '@utils/cookies';
 import {
   checkAgent,
   handleClickAppDownload,
+  hasImageFile,
   isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
@@ -70,7 +72,7 @@ function UserShopEdit() {
   const setUserShopUpdatedProfileDataState = useSetRecoilState(userShopUpdatedProfileDataState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo } = useQueryMyUserInfo();
+  const { data: myUserInfo, userId } = useQueryMyUserInfo();
   const { data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {} } =
     useQuery(
       queryKeys.users.infoByUserId(accessUser?.userId || 0),
@@ -181,9 +183,8 @@ function UserShopEdit() {
     userProfileParams.shopDescription
   ]);
   const userImageProfile =
-    (!userProfileParams.imageProfile?.split('/').includes('0.png') &&
-      userProfileParams.imageProfile) ||
-    (!myUserInfo?.info.value.image?.split('/').includes('0.png') && myUserInfo?.info.value.image) ||
+    (hasImageFile(userProfileParams?.imageProfile) && userProfileParams?.imageProfile) ||
+    (hasImageFile(myUserInfo?.info?.value?.image) && myUserInfo?.info?.value?.image) ||
     '';
   const userImageBackground =
     userProfileParams.imageBackground ||
@@ -435,12 +436,12 @@ function UserShopEdit() {
 
   useEffect(() => {
     setUserProfileParams({
-      nickName: nickName || name || `${accessUser?.userId || '회원'}`,
+      nickName: getUserName(nickName || name, userId),
       imageProfile: imageProfile || image,
       imageBackground: imageBackground || '',
       shopDescription: shopDescription || ''
     });
-  }, [accessUser?.userId, image, imageBackground, imageProfile, name, nickName, shopDescription]);
+  }, [image, imageBackground, imageProfile, name, nickName, shopDescription, userId]);
 
   useEffect(() => {
     setUserShopUpdatedProfileDataState(isUpdatedProfileData);

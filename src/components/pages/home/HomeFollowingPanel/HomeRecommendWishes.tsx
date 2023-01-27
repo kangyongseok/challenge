@@ -26,6 +26,7 @@ import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 import { groupingProducts } from '@utils/products';
 
 import { ABTestGroup } from '@provider/ABTestProvider';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import HomeRecommendWishCard from '../HomeRecommendWishCard';
@@ -42,6 +43,7 @@ function HomeRecommendWishes() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const { data = [], isLoading } = useQuery(queryKeys.users.recommWishes(), fetchRecommWishes, {
     enabled: !!accessUser,
@@ -137,7 +139,7 @@ function HomeRecommendWishes() {
             검색하고 매물목록을 저장해보세요
           </Typography>
           <Typography variant="h4" customStyle={{ marginTop: 8 }}>
-            {`${(accessUser || {}).userName || '회원'}님이 찾으시는 아이템 여기다 모아드릴거예요.`}
+            {userNickName}님이 찾으시는 아이템 여기다 모아드릴거예요.
           </Typography>
           <Button
             variant="ghost"

@@ -8,7 +8,6 @@ import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import styled from '@emotion/styled';
 
-import { fetchUserInfo } from '@api/user';
 import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
@@ -22,7 +21,8 @@ import {
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
 import type { SelectedSearchOptions } from '@recoil/searchHelper';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 interface SearchHelperBannerProps {
   showText?: boolean;
@@ -54,12 +54,8 @@ function SearchHelperBanner({
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );
-  const { data: accessUser } = useQueryAccessUser();
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo,
-    { enabled: !!accessUser }
-  );
+  const { userNickName } = useQueryMyUserInfo();
+  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
   const parentCategory = parentCategories.find((item) => item.parentCategory.id === parentId);
   const parentName = parentCategory?.parentCategory.name.replace('(P)', '') || '';
   const subParentName =
@@ -133,7 +129,7 @@ function SearchHelperBanner({
             </Typography>
           </Flexbox>
           <Typography variant="body2" weight="medium">
-            {accessUser?.userName || '회원'}님을 위한 득템 파트너
+            {userNickName}님을 위한 득템 파트너
           </Typography>
         </Flexbox>
         <Chip variant="solid" brandColor="primary" onClick={handleClickStart} size="small">

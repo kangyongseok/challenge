@@ -35,6 +35,7 @@ import {
   commaNumber,
   executedShareURl,
   getRandomNumber,
+  hasImageFile,
   isExtendedLayoutIOSVersion
 } from '@utils/common';
 
@@ -91,9 +92,9 @@ function LegitProfileInfo({
     [legitsBrands, targetBrandIds]
   );
   const userImageProfile =
-    (!profileInfo?.profile.image?.split('/').includes('0.png') && profileInfo?.profile.image) || '';
+    (hasImageFile(profileInfo?.profile?.image) && profileInfo?.profile?.image) || '';
   const userImageBackground =
-    (!profile?.imageBackground?.split('/').includes('0.png') && profile?.imageBackground) ||
+    (hasImageFile(profile?.imageBackground) && profile?.imageBackground) ||
     (userImageProfile.length > 0 && userImageProfile) ||
     `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 

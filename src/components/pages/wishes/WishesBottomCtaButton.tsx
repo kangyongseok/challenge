@@ -17,8 +17,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { deviceIdState, toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function WishesBottomCtaButton() {
   const router = useRouter();
@@ -36,7 +36,7 @@ function WishesBottomCtaButton() {
   const [open, setOpen] = useState(false);
 
   const { refetch } = useQueryUserInfo();
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const { data: { userWishes = [] } = {} } = useQueryCategoryWishes({
     size: 200,
     sort: [order],
@@ -121,8 +121,8 @@ function WishesBottomCtaButton() {
       <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>
         <Box customStyle={{ padding: '24px 20px 20px' }}>
           <Typography variant="h4">
-            {(accessUser || {}).userName || '회원'}님이 찜한 상품 중 사진감정 가능한{' '}
-            {userWishes.length}건 모두 <strong>실시간 정가품 의견</strong> 받아보시겠어요?
+            {userNickName}님이 찜한 상품 중 사진감정 가능한 {userWishes.length}건 모두
+            <strong> 실시간 정가품 의견</strong> 받아보시겠어요?
           </Typography>
           <Typography weight="medium" customStyle={{ marginTop: 16, color: common.ui60 }}>
             🤑 감정비용은 무료입니다!

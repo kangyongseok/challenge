@@ -25,6 +25,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function PersonalInput() {
@@ -36,6 +37,7 @@ function PersonalInput() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const { data: userInfo } = useQueryUserInfo();
   const { isLoading, mutate } = useMutation(postUserAgeAndGender, {
     onSuccess: () => {
@@ -132,7 +134,7 @@ function PersonalInput() {
       <Box component="section" customStyle={{ marginTop: 20 }}>
         <Box customStyle={{ marginBottom: 32, textAlign: 'center' }}>
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
-            {accessUser?.userName || '회원'}님에 대해 알려주세요.
+            {userNickName}님에 대해 알려주세요.
           </Typography>
           <Typography customStyle={{ color: common.ui60 }}>
             딱 맞는 매물을 저희가 추천해드릴게요.

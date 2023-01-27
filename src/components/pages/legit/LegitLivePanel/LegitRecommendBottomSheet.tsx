@@ -26,6 +26,7 @@ import { getCookie, setCookie } from '@utils/common';
 
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { deviceIdState } from '@recoil/common';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitRecommendBottomSheet() {
@@ -43,6 +44,7 @@ function LegitRecommendBottomSheet() {
   );
 
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const { data: products = [] } = useQuery(
     queryKeys.users.userLegitTargets(),
@@ -148,7 +150,7 @@ function LegitRecommendBottomSheet() {
             MY CURATION
           </Typography>
           <Typography variant="h3" weight="bold">
-            {accessUser.userName || '회원'}님의 찜/최근 매물 중
+            {userNickName}님의 찜/최근 매물 중
             <br />
             사진감정가능한 3개를 추렸어요
           </Typography>

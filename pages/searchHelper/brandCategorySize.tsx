@@ -37,7 +37,7 @@ import {
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function BrandCategorySize() {
   const router = useRouter();
@@ -52,7 +52,7 @@ function BrandCategorySize() {
   );
   const { brandLabel, categoryLabel } = useRecoilValue(allSelectedSearchOptionsSelector);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const { data: userInfo } = useQueryUserInfo();
   const [brandsSuggestParams, setBrandsSuggestParams] = useState({ keyword: '' });
   const { data: keywordsSuggest, isFetching: isFetchingKeywordsSuggest } = useQuery(
@@ -476,7 +476,7 @@ function BrandCategorySize() {
           placement="bottom"
           message={
             <Typography variant="body1" weight="bold">
-              <span>{accessUser?.userName || '회원'}님의 사이즈</span>를 불러왔어요!
+              <span>{userNickName}님의 사이즈</span>를 불러왔어요!
             </Typography>
           }
         />

@@ -32,10 +32,13 @@ import type { HomeSeasonBannerData } from '@typings/common';
 import { homePersonalCurationBannersState } from '@recoil/home';
 import { eventContentProductsParamsState } from '@recoil/eventFilter';
 import { ABTestGroup } from '@provider/ABTestProvider';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomePersonalCuration() {
   const router = useRouter();
+
+  const { userNickName } = useQueryMyUserInfo();
   const { data: accessUser } = useQueryAccessUser();
 
   const [banners, setHomePersonalCurationBannersState] = useRecoilState(
@@ -179,7 +182,7 @@ function HomePersonalCuration() {
       <Typography variant="h3" weight="bold" customStyle={{ margin: '0 16px 20px' }}>
         {!accessUser
           ? '많은 사람들이 보고 있어요'
-          : `${(accessUser || {}).userName || '회원'}님이 찾고 있는 매물을 모았어요`}
+          : `${userNickName}님이 찾고 있는 매물을 모았어요`}
       </Typography>
       <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
         <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">

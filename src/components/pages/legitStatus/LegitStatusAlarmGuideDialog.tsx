@@ -15,7 +15,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { legitStatusBottomSheetOpenTriggerState } from '@recoil/legitStatus';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function LegitStatusAlarmGuideDialog() {
   const router = useRouter();
@@ -32,7 +32,7 @@ function LegitStatusAlarmGuideDialog() {
 
   const callAuthPushTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_LEGIT_POPUP, {
@@ -125,7 +125,7 @@ function LegitStatusAlarmGuideDialog() {
   return (
     <Dialog open={open} onClose={handleClose} customStyle={{ width: '100%', maxWidth: 303 }}>
       <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
-        {(accessUser || {}).userName || '회원'}님, 알림이 꺼져있어요!
+        {userNickName}님, 알림이 꺼져있어요!
         <br />
         감정결과 받으려면 알림을 ON 해주세요
       </Typography>

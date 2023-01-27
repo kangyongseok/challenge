@@ -33,14 +33,14 @@ import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function CrmProducts() {
   const {
     query: { notice }
   } = useRouter();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   return (
@@ -54,7 +54,7 @@ function CrmProducts() {
             {notice && (
               <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
                 <Typography variant="h4" weight="bold">
-                  {`${(accessUser || {}).userName || '회원'}님`}
+                  {userNickName}님
                 </Typography>
                 <Typography variant="h4" weight="bold" brandColor="primary">
                   {notice}

@@ -22,8 +22,9 @@ import { channelUserType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { productStatus } from '@constants/channel';
 
+import { getUserName } from '@utils/user';
 import { isProduction, uuidv4 } from '@utils/common';
-import { compareIds, getChannelUserName, isAdminMessage, scrollIntoLast } from '@utils/channel';
+import { compareIds, isAdminMessage, scrollIntoLast } from '@utils/channel';
 
 import type { CoreMessageType } from '@typings/channel';
 import { sendbirdState } from '@recoil/channel';
@@ -196,7 +197,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       channelUserType[channelUser.type as keyof typeof channelUserType] === channelUserType[1];
 
     return {
-      userName: getChannelUserName(channelUser?.user.name, channelUser?.user.id || 0),
+      userName: getUserName(channelUser?.user.name, channelUser?.user.id || 0),
       isSeller,
       appointment: findAppointment,
       showAppointmentBanner:
@@ -206,7 +207,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         productStatus[(product?.status || 0) as keyof typeof productStatus] === productStatus[0] &&
         !!findAppointment,
       targetUserId: channelTargetUserId,
-      targetUserName: getChannelUserName(channelTargetUser?.user?.name, channelTargetUserId),
+      targetUserName: getUserName(channelTargetUser?.user?.name, channelTargetUserId),
       isTargetUserBlocked: !!userBlocks?.some(
         (blockedUser) =>
           blockedUser.userId === accessUser?.userId &&

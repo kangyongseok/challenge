@@ -590,3 +590,7 @@ export function isNeedUpdateImageUploadIOSVersion() {
 export function isNeedUpdateImageUploadAOSVersion() {
   return checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction;
 }
+
+export function hasImageFile(url: string | undefined | null): boolean {
+  return ['0.png', 'noimage.png'].every((fileName) => !url?.endsWith(fileName));
+}

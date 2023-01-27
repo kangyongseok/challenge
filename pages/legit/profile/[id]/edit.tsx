@@ -41,7 +41,7 @@ import {
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
+import { hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
@@ -130,8 +130,8 @@ function LegitProfileEdit() {
   const [tab, setTab] = useState('판매자' as string | number);
   const elementRef = useRef<null | HTMLDivElement>(null);
   const userImageProfile =
-    (!sellerEditInfo.imageProfile?.split('/').includes('0.png') && sellerEditInfo.imageProfile) ||
-    (!myUserInfo?.info.value.image?.split('/').includes('0.png') && myUserInfo?.info.value.image) ||
+    (hasImageFile(myUserInfo?.info?.value?.image) && myUserInfo?.info?.value?.image) ||
+    (hasImageFile(sellerEditInfo?.imageProfile) && sellerEditInfo?.imageProfile) ||
     '';
   const userImageBackground =
     sellerEditInfo.imageBackground ||

@@ -12,3 +12,7 @@ export function getUserScoreText(curnScore: number, maxScore: number, siteId: nu
   }
   return `평점 ${maxScore}점 만점에 ${curnScore}점을 받은 판매자에요.`;
 }
+
+export const getUserName = (name: string | undefined, id: number | undefined): string => {
+  return name || `회원${id || ''}`;
+};

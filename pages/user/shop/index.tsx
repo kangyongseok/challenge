@@ -31,8 +31,9 @@ import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getUserName } from '@utils/user';
 import { getCookies } from '@utils/cookies';
-import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
+import { commaNumber, hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -82,9 +83,7 @@ function UserShop() {
         { key: '2', value: `후기 ${reviewCount}` }
       ];
       const userImage =
-        (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
-        (!image?.split('/').includes('0.png') && image) ||
-        '';
+        (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
 
       return {
         userImageProfile: userImage,
@@ -94,23 +93,23 @@ function UserShop() {
           `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`,
         labels: tabLabels,
         tab: String(router.query.tab || tabLabels[0].key),
-        nickName: data?.nickName || data?.name || `${accessUser?.userId || '회원'}`,
+        nickName: getUserName(data?.nickName || data?.name, userId),
         curnScore: Number(data?.curnScore || 0),
         maxScore: Number(data?.maxScore || 0)
       };
     }, [
-      accessUser?.userId,
-      data?.curnScore,
-      data?.maxScore,
-      data?.name,
-      data?.nickName,
+      displayProductCount,
+      undisplayProductCount,
+      reviewCount,
+      imageProfile,
       image,
       imageBackground,
-      imageProfile,
-      displayProductCount,
-      reviewCount,
       router.query.tab,
-      undisplayProductCount
+      data?.nickName,
+      data?.name,
+      data?.curnScore,
+      data?.maxScore,
+      userId
     ]);
   const { title, description } = useMemo(() => {
     return {
@@ -119,7 +118,7 @@ function UserShop() {
         reviewCount
       )}의 후기를 받았고, ${commaNumber(displayProductCount)}개의 매물을 팔고 있어요.`
     };
-  }, [curnScore, maxScore, nickName, displayProductCount, reviewCount]);
+  }, [nickName, maxScore, curnScore, reviewCount, displayProductCount]);
 
   useEffect(() => {
     if (setToastState.status) {

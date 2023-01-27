@@ -83,6 +83,7 @@ export interface MyUserInfoValue {
   nickName: string;
   shopDescription: string;
   yearOfBirth: number;
+  snsType: string;
 }
 
 export type MyUserInfoInfo = {

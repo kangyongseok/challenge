@@ -35,10 +35,9 @@ import {
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getUserScoreText } from '@utils/user';
+import { getUserName, getUserScoreText } from '@utils/user';
 import { getCookies } from '@utils/cookies';
-import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
-import { getChannelUserName } from '@utils/channel';
+import { commaNumber, hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -86,13 +85,14 @@ function UserInfo() {
     scoreText,
     isCertificationSeller
   } = useMemo(() => {
-    const userImage = (!imageProfile?.split('/').includes('0.png') && imageProfile) || image || '';
+    const userImage =
+      (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
 
     return {
-      userName: getChannelUserName(name, userId),
+      userName: getUserName(name, userId),
       userImageProfile: userImage,
       userImageBackground:
-        (!imageBackground?.split('/').includes('0.png') && imageBackground) ||
+        (hasImageFile(imageBackground) && imageBackground) ||
         (userImage.length > 0 && userImage) ||
         `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`,
       userArea: area?.name || '',

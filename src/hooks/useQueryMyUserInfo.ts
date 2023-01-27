@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useQuery } from 'react-query';
 
-import { AccessUser } from '@dto/userAuth';
+import type { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 
@@ -10,6 +10,9 @@ import { fetchMyUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
+
+import { getUserName } from '@utils/user';
+import { hasImageFile } from '@utils/common';
 
 function useQueryMyUserInfo(enabled = true) {
   const { data: accessUser, refetch } = useQuery(queryKeys.userAuth.accessUser(), () =>
@@ -20,19 +23,34 @@ function useQueryMyUserInfo(enabled = true) {
     enabled: !!accessUser && enabled
   });
 
+  const { userId, userNickName } = useMemo(
+    () => ({
+      userId: accessUser?.userId,
+      userNickName: getUserName(
+        useQueryMyUserInfoResult.data?.info?.value?.nickName ||
+          useQueryMyUserInfoResult.data?.info?.value?.name ||
+          accessUser?.userName,
+        accessUser?.userId
+      )
+    }),
+    [
+      accessUser,
+      useQueryMyUserInfoResult.data?.info?.value?.name,
+      useQueryMyUserInfoResult.data?.info?.value?.nickName
+    ]
+  );
+
   // 닉네임 변경 후 accessUser data 반영 되지 않은 유저들 처리 추후 제거
   useEffect(() => {
     const updatedAccessUser = { ...accessUser };
-    const userNickName = useQueryMyUserInfoResult.data?.info?.value?.nickName || '';
+    const nickName = useQueryMyUserInfoResult.data?.info?.value?.nickName || '';
     const imageProfile = useQueryMyUserInfoResult.data?.info?.value?.imageProfile;
     const image = useQueryMyUserInfoResult.data?.info?.value?.image;
     const userImageProfile =
-      (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
-      (!image?.split('/').includes('0.png') && image) ||
-      '';
+      (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
 
-    if (!!accessUser && (userNickName.length > 0 || userImageProfile.length > 0)) {
-      if (accessUser.userName !== userNickName) updatedAccessUser.userName = userNickName;
+    if (!!accessUser && (nickName.length > 0 || userImageProfile.length > 0)) {
+      if (accessUser.userName !== nickName) updatedAccessUser.userName = nickName;
 
       if (accessUser.image && accessUser.image !== userImageProfile)
         updatedAccessUser.image = userImageProfile;
@@ -45,7 +63,7 @@ function useQueryMyUserInfo(enabled = true) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useQueryMyUserInfoResult.data?.info?.value?.nickName]);
 
-  return useQueryMyUserInfoResult;
+  return { ...useQueryMyUserInfoResult, userNickName, userId };
 }
 
 export default useQueryMyUserInfo;

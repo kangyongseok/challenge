@@ -27,10 +27,9 @@ import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, TAB_HEIGHT, locales } from '
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getUserScoreText } from '@utils/user';
+import { getUserName, getUserScoreText } from '@utils/user';
 import { getCookies } from '@utils/cookies';
 import { commaNumber } from '@utils/common';
-import { getChannelUserName } from '@utils/channel';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -64,7 +63,7 @@ function SellerInfo() {
 
   const { sellerName, scoreText, sellerProductCount, sellerReviewCount } = useMemo(
     () => ({
-      sellerName: getChannelUserName(name, sellerId),
+      sellerName: getUserName(name, sellerId),
       scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), site?.id || 0),
       sellerProductCount: commaNumber(productCount || 0),
       sellerReviewCount: commaNumber(reviewCount || 0)

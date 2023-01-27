@@ -33,7 +33,7 @@ import { getProductType } from '@utils/products';
 import { RecentItems } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 import { homeSelectedTabStateFamily } from '@recoil/home';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function HomeRecentSearchList() {
   const router = useRouter();
@@ -44,7 +44,7 @@ function HomeRecentSearchList() {
   );
   const savedRecentSearchList = useRecoilValue(searchRecentSearchListState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const [searchParams, setSearchParams] = useState<SearchParams>({ logging: false });
   const {
     isLoading: isLoadingSearch,
@@ -223,7 +223,7 @@ function HomeRecentSearchList() {
     >
       <FormattedText
         id="home.recentSearchList.title"
-        params={{ userName: accessUser?.userName || '회원' }}
+        params={{ userName: userNickName }}
         variant="h3"
         weight="bold"
         customStyle={{ padding: '0 20px' }}

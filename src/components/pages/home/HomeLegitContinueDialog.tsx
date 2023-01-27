@@ -14,11 +14,13 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeLegitContinueDialog() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const setLegitRequestState = useSetRecoilState(legitRequestState);
   const setProductLegitParamsState = useSetRecoilState(productLegitParamsState);
@@ -102,7 +104,7 @@ function HomeLegitContinueDialog() {
           textAlign: 'center'
         }}
       >
-        {(accessUser || {}).userName || '회원'}님! 사진감정신청을
+        {userNickName}님! 사진감정신청을
         <br />
         이어서 진행하시겠습니까?
       </Typography>

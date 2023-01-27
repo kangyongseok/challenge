@@ -17,14 +17,15 @@ import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { hasHomeTabChangeState } from '@recoil/home';
 import { ABTestGroup } from '@provider/ABTestProvider';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function HomeStyleRecommendProductList() {
   const params = {
     size: 200,
     useStyle: true
   };
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { userNickName } = useQueryMyUserInfo();
   const hasHomeTab = useRecoilValue(hasHomeTabChangeState);
 
   const {
@@ -52,7 +53,7 @@ function HomeStyleRecommendProductList() {
       }}
     >
       <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
-        {(accessUser || {}).userName || '회원'}님을 위한 추천
+        {userNickName}님을 위한 추천
       </Typography>
       <Grid container rowGap={20} columnGap={12}>
         <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">

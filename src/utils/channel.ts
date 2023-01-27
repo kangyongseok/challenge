@@ -24,10 +24,6 @@ import type { SendbirdState } from '@recoil/channel';
 
 export const getUnreadMessagesCount = (count: number): string => (count > 99 ? '+99' : `${count}`);
 
-export const getChannelUserName = (name: string | undefined, id: number | undefined): string => {
-  return name || `회원${id || ''}`;
-};
-
 export const getChannelTitle = ({
   targetUser,
   groupChannel,

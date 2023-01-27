@@ -14,8 +14,9 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { hasImageFile } from '@utils/common';
+
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageProfile() {
   const router = useRouter();
@@ -25,29 +26,13 @@ function MypageProfile() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo } = useQueryMyUserInfo();
-  const { userImageProfile, nickName } = useMemo(() => {
+  const { data: myUserInfo, userNickName, userId } = useQueryMyUserInfo();
+  const userImageProfile = useMemo(() => {
     const imageProfile = myUserInfo?.info?.value?.imageProfile;
     const image = myUserInfo?.info?.value?.image;
 
-    return {
-      userImageProfile:
-        (!imageProfile?.split('/').includes('0.png') && imageProfile) ||
-        (image?.split('/').includes('0.png') && image) ||
-        '',
-      nickName:
-        myUserInfo?.info?.value?.nickName ||
-        myUserInfo?.info?.value?.name ||
-        `${accessUser?.userId || '회원'}`
-    };
-  }, [
-    accessUser?.userId,
-    myUserInfo?.info?.value?.image,
-    myUserInfo?.info?.value?.imageProfile,
-    myUserInfo?.info?.value?.name,
-    myUserInfo?.info?.value?.nickName
-  ]);
+    return (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
+  }, [myUserInfo?.info?.value?.image, myUserInfo?.info?.value?.imageProfile]);
 
   const TAB_MENU: {
     iconName: IconName;
@@ -119,7 +104,7 @@ function MypageProfile() {
       myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
       myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD')
     ) {
-      router.push(`/legit/profile/${accessUser?.userId}/edit`);
+      router.push(`/legit/profile/${userId}/edit`);
     } else {
       router.push('/user/shop/edit');
     }
@@ -140,17 +125,17 @@ function MypageProfile() {
             height={64}
             iconCustomStyle={{ width: 32, height: 32 }}
           />
-          {accessUser?.snsType === 'kakao' && (
+          {myUserInfo?.info?.value?.snsType === 'kakao' && (
             <SnsIconWrap bgColor="#FEE500">
               <Icon name="KakaoFilled" />
             </SnsIconWrap>
           )}
-          {accessUser?.snsType === 'facebook' && (
+          {myUserInfo?.info?.value?.snsType === 'facebook' && (
             <SnsIconWrap bgColor="#528BFF">
               <Icon name="BrandFacebookFilled" customStyle={{ color: common.uiWhite }} />
             </SnsIconWrap>
           )}
-          {accessUser?.snsType === 'apple' && (
+          {myUserInfo?.info?.value?.snsType === 'apple' && (
             <SnsIconWrap bgColor="#313438">
               <Icon name="AppleFilled" customStyle={{ color: common.uiWhite }} />
             </SnsIconWrap>
@@ -164,7 +149,7 @@ function MypageProfile() {
         >
           <Flexbox alignment="center" gap={2} customStyle={{ flexWrap: 'wrap' }}>
             <EllipsisText variant="h3" weight="bold">
-              {nickName}
+              {userNickName}
             </EllipsisText>
             {myUserInfo?.isCertifiedSeller && <Icon name="SafeFilled" color={primary.light} />}
             {(myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
@@ -185,7 +170,7 @@ function MypageProfile() {
             )}
           </Flexbox>
           <Typography variant="body1" customStyle={{ color: common.ui60 }}>
-            ID: {accessUser?.userId}
+            ID: {userId}
           </Typography>
         </Flexbox>
         <Button

@@ -19,9 +19,10 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getUserName } from '@utils/user';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
-import { getChannelUserName, getUnreadMessagesCount } from '@utils/channel';
+import { getUnreadMessagesCount } from '@utils/channel';
 
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
@@ -184,7 +185,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         if (!initialized) {
           await initializeSendbird(
             accessUser.userId.toString(),
-            getChannelUserName(accessUser.userName, accessUser.userId),
+            getUserName(accessUser.userName, accessUser.userId),
             accessUser.image
           );
           return;

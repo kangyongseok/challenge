@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import { commaNumber } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 interface SearchHelperLinearProgressProps {
   value: number;
@@ -25,7 +25,7 @@ function SearchHelperLinearProgress({
       palette: { primary }
     }
   } = useTheme();
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   return (
     <Box component="section">
@@ -41,7 +41,7 @@ function SearchHelperLinearProgress({
             weight="medium"
             customStyle={{ '& > span': { color: primary.main } }}
           >
-            {accessUser?.userName || '회원'}님을 위한 매물
+            {userNickName}님을 위한 매물
             <span> {commaNumber(productTotal)}</span>
           </Typography>
         )}

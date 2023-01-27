@@ -30,6 +30,7 @@ import {
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
 import { homeSelectedTabStateFamily } from '@recoil/home';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Searching() {
@@ -67,6 +68,7 @@ function Searching() {
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const props = useSpring({ val: 0, from: { val: 235908 }, config: { duration: 2000 } });
   const { mutate } = useMutation(postProductKeyword);
 
@@ -190,7 +192,7 @@ function Searching() {
       >
         검색 집사가
         <br />
-        {accessUser?.userName || '회원'}님의 꿀매물을 찾고 있어요!
+        {userNickName}님의 꿀매물을 찾고 있어요!
       </Typography>
       <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
         {[
