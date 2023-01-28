@@ -76,24 +76,27 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
       enabled: !!eventContentProductsParams.id,
       onSuccess(successData) {
         const { pages: successDataPages = [] } = successData;
-        const pageNumber = successDataPages.length - 1;
+        const pageNumber = successDataPages.length;
+        const keyword =
+          eventContentProductsParams.keyword === '' ? '전체' : eventContentProductsParams.keyword;
 
-        if (pageNumber === 0) {
+        if (pageNumber === 1) {
           logEvent(attrKeys.events.VIEW_PRODUCT_LIST, {
             name: attrProperty.name.EVENT_DETAIL,
             title: '2301_DOG_HONEY',
             type: attrProperty.type.GUIDED,
-            keyword: eventContentProductsParams.keyword
+            keyword,
+            page: pageNumber
           });
         } else {
           logEvent(attrKeys.events.LOAD_PRODUCT_LIST, {
             name: attrProperty.name.EVENT_DETAIL,
             title: '2301_DOG_HONEY',
             type: attrProperty.type.GUIDED,
-            keyword: eventContentProductsParams.keyword,
+            keyword,
             page: pageNumber,
-            productTotal: successDataPages[pageNumber].totalElements,
-            data: successDataPages[pageNumber].content
+            productTotal: successDataPages[pageNumber - 1].totalElements,
+            data: successDataPages[pageNumber - 1].content
           });
         }
 
@@ -119,7 +122,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
   }, [pages]);
 
   const loadMoreRows = useCallback(async () => {
-    if (isLoading || !hasNextPage || isFetchingNextPage) return;
+    if (isLoading || isFetchingNextPage || !hasNextPage) return;
 
     await fetchNextPage();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, isLoading]);

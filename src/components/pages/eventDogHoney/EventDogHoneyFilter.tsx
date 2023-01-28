@@ -1,12 +1,14 @@
 import { UIEvent, useCallback, useEffect, useRef } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { useQueryClient } from 'react-query';
 import { Box, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
+import queryKeys from '@constants/queryKeys';
 import { EVENT_NEW_YEAR_FILTER_INFO_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -24,12 +26,16 @@ interface EventDogHoneyFilterProps {
 }
 
 function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
+  const queryClient = useQueryClient();
+
   const [eventContentDogHoneyFilterOffsetTop, setEventContentDogHoneyFilterOffsetTopState] =
     useRecoilState(eventContentDogHoneyFilterOffsetTopState);
   const [{ selectedIndex, prevScroll }, setEventContentDogHoneyFilterState] = useRecoilState(
     eventContentDogHoneyFilterState
   );
-  const setEventContentProductsParamsState = useSetRecoilState(eventContentProductsParamsState);
+  const [eventContentProductsParams, setEventContentProductsParamsState] = useRecoilState(
+    eventContentProductsParamsState
+  );
 
   const { isLoading, data: { models = [] } = {} } = useQueryContents();
 
@@ -61,6 +67,7 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
         title: '2301_DOG_HONEY',
         att: { keyword: newKeyword.length > 0 ? newKeyword : '전체', priceAvg }
       });
+
       setEventContentDogHoneyFilterState((currVal) => ({
         ...currVal,
         selectedIndex: index,
@@ -71,8 +78,15 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
         keyword: newKeyword
       }));
       onMoveFixedInfo();
+      queryClient.removeQueries(queryKeys.commons.contentProducts(eventContentProductsParams));
     },
-    [onMoveFixedInfo, setEventContentDogHoneyFilterState, setEventContentProductsParamsState]
+    [
+      eventContentProductsParams,
+      onMoveFixedInfo,
+      queryClient,
+      setEventContentDogHoneyFilterState,
+      setEventContentProductsParamsState
+    ]
   );
 
   useEffect(() => {

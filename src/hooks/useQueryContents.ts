@@ -3,38 +3,23 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 
-import { logEvent } from '@library/amplitude';
+import { Content } from '@dto/common';
 
 import { fetchContent } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
-import {
-  eventContentDogHoneyFilterState,
-  eventContentProductsParamsState
-} from '@recoil/eventFilter';
+import { eventContentProductsParamsState } from '@recoil/eventFilter';
 
-function useQueryContents() {
+function useQueryContents(onSuccess?: (successData: Content) => void) {
   const eventContentProductsParams = useRecoilValue(eventContentProductsParamsState);
-  const eventContentDogHoneyFilter = useRecoilValue(eventContentDogHoneyFilterState);
 
   const { data, ...useQueryResult } = useQuery(
     queryKeys.commons.content(eventContentProductsParams.id),
     () => fetchContent(eventContentProductsParams.id),
     {
       enabled: !!eventContentProductsParams.id,
-      onSuccess(successData) {
-        if (successData) {
-          logEvent(attrKeys.events.LOAD_EVENT_DETAIL, {
-            name: attrProperty.name.EVENT_DETAIL,
-            title: '2301_DOG_HONEY',
-            data: successData,
-            sort: eventContentDogHoneyFilter.selectedIndex + 1
-          });
-        }
-      }
+      onSuccess
     }
   );
 

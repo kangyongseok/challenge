@@ -6,10 +6,15 @@ import { TopButton } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import { logEvent } from '@library/amplitude';
+
 import { EVENT_NEW_YEAR_FILTER_INFO_HEIGHT } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import {
   eventContentDogHoneyFilterOffsetTopState,
+  eventContentDogHoneyFilterState,
   eventContentProductsParamsState
 } from '@recoil/eventFilter';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -23,12 +28,25 @@ import EventDogHoneyBanner from './EventDogHoneyBanner';
 
 function EventDogHoneyMain() {
   const setEventContentProductsParamsState = useSetRecoilState(eventContentProductsParamsState);
+  const eventContentDogHoneyFilter = useRecoilValue(eventContentDogHoneyFilterState);
   const eventContentDogHoneyFilterOffsetTop = useRecoilValue(
     eventContentDogHoneyFilterOffsetTopState
   );
 
-  const { isLoading, data: { title: ogTitle, description: ogDescription } = {} } =
-    useQueryContents();
+  const { isLoading, data: { title: ogTitle, description: ogDescription } = {} } = useQueryContents(
+    (successData) => {
+      if (successData) {
+        logEvent(attrKeys.events.LOAD_EVENT_DETAIL, {
+          name: attrProperty.name.EVENT_DETAIL,
+          title: '2301_DOG_HONEY',
+          data: successData.models.map((model) => ({
+            ...model,
+            sort: eventContentDogHoneyFilter.selectedIndex + 1
+          }))
+        });
+      }
+    }
+  );
 
   const reverseScrollTriggered = useReverseScrollTrigger();
 

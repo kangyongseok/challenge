@@ -76,9 +76,10 @@ function HomeMainBanner() {
   const handleClickDogHoneyEvent = () => {
     resetEventContentDogHoneyFilterState();
     queryClient.refetchQueries(queryKeys.commons.contentProducts(eventContentProductsParams));
-    logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
+    logEvent(attrKeys.home.CLICK_BANNER, {
       name: attrProperty.name.MAIN,
-      title: attrProperty.title.BANNER
+      title: attrProperty.title.EVENT_DETAIL,
+      att: '2301_DOG_HONEY'
     });
 
     if (!!accessUser && !areaValues?.length) {
