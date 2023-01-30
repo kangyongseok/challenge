@@ -198,7 +198,7 @@ function HomeMainBanner() {
         }}
         loop
         autoplay={{
-          delay: 5000,
+          delay: 10000,
           disableOnInteraction: false
         }}
         modules={[Pagination, Autoplay]}

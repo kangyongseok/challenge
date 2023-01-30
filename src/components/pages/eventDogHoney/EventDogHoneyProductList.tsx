@@ -80,25 +80,15 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
         const keyword =
           eventContentProductsParams.keyword === '' ? '전체' : eventContentProductsParams.keyword;
 
-        if (pageNumber === 1) {
-          logEvent(attrKeys.events.VIEW_PRODUCT_LIST, {
-            name: attrProperty.name.EVENT_DETAIL,
-            title: '2301_DOG_HONEY',
-            type: attrProperty.type.GUIDED,
-            keyword,
-            page: pageNumber
-          });
-        } else {
-          logEvent(attrKeys.events.LOAD_PRODUCT_LIST, {
-            name: attrProperty.name.EVENT_DETAIL,
-            title: '2301_DOG_HONEY',
-            type: attrProperty.type.GUIDED,
-            keyword,
-            page: pageNumber,
-            productTotal: successDataPages[pageNumber - 1].totalElements,
-            data: successDataPages[pageNumber - 1].content
-          });
-        }
+        logEvent(attrKeys.events.LOAD_PRODUCT_LIST, {
+          name: attrProperty.name.EVENT_DETAIL,
+          title: '2301_DOG_HONEY',
+          type: attrProperty.type.GUIDED,
+          keyword,
+          page: pageNumber,
+          productTotal: successDataPages[pageNumber - 1].totalElements,
+          data: successDataPages[pageNumber - 1].content
+        });
 
         setEventContentDogHoneyFilterState((currVal) => ({
           ...currVal,
@@ -321,6 +311,16 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
       eventContentDogHoneyScrollTopRef.current = 0;
     }
   }, []);
+
+  useEffect(() => {
+    logEvent(attrKeys.events.VIEW_PRODUCT_LIST, {
+      name: attrProperty.name.EVENT_DETAIL,
+      title: '2301_DOG_HONEY',
+      type: attrProperty.type.GUIDED,
+      keyword:
+        eventContentProductsParams.keyword === '' ? '전체' : eventContentProductsParams.keyword
+    });
+  }, [eventContentProductsParams.keyword]);
 
   return (
     <Flexbox
