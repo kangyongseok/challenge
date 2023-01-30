@@ -14,7 +14,6 @@ import attrKeys from '@constants/attrKeys';
 
 import {
   eventContentDogHoneyFilterOffsetTopState,
-  eventContentDogHoneyFilterState,
   eventContentProductsParamsState
 } from '@recoil/eventFilter';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -28,7 +27,6 @@ import EventDogHoneyBanner from './EventDogHoneyBanner';
 
 function EventDogHoneyMain() {
   const setEventContentProductsParamsState = useSetRecoilState(eventContentProductsParamsState);
-  const eventContentDogHoneyFilter = useRecoilValue(eventContentDogHoneyFilterState);
   const eventContentDogHoneyFilterOffsetTop = useRecoilValue(
     eventContentDogHoneyFilterOffsetTopState
   );
@@ -39,9 +37,9 @@ function EventDogHoneyMain() {
         logEvent(attrKeys.events.LOAD_EVENT_DETAIL, {
           name: attrProperty.name.EVENT_DETAIL,
           title: '2301_DOG_HONEY',
-          data: successData.models.map((model) => ({
+          data: successData.models.map((model, index) => ({
             ...model,
-            sort: eventContentDogHoneyFilter.selectedIndex + 1
+            sort: index + 2
           }))
         });
       }

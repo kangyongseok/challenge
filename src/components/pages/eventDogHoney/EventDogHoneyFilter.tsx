@@ -6,6 +6,8 @@ import { Box, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import styled from '@emotion/styled';
 
+import { Model } from '@dto/common';
+
 import { logEvent } from '@library/amplitude';
 
 import queryKeys from '@constants/queryKeys';
@@ -61,25 +63,38 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
   };
 
   const handleClickFilter = useCallback(
-    (newKeyword: string, priceAvg: number, index: number) => () => {
-      logEvent(attrKeys.events.CLICK_TAG, {
-        name: attrProperty.name.EVENT_DETAIL,
-        title: '2301_DOG_HONEY',
-        att: { keyword: newKeyword.length > 0 ? newKeyword : '전체', priceAvg }
-      });
+    ({
+        keyword,
+        priceAvg,
+        priceCnt,
+        index
+      }: Model & {
+        index: number;
+      }) =>
+      () => {
+        logEvent(attrKeys.events.CLICK_TAG, {
+          name: attrProperty.name.EVENT_DETAIL,
+          title: '2301_DOG_HONEY',
+          att: {
+            keyword: keyword.length > 0 ? keyword : '전체',
+            priceAvg,
+            priceCnt,
+            sort: index + 1
+          }
+        });
 
-      setEventContentDogHoneyFilterState((currVal) => ({
-        ...currVal,
-        selectedIndex: index,
-        totalElements: 0
-      }));
-      setEventContentProductsParamsState((currVal) => ({
-        ...currVal,
-        keyword: newKeyword
-      }));
-      onMoveFixedInfo();
-      queryClient.removeQueries(queryKeys.commons.contentProducts(eventContentProductsParams));
-    },
+        setEventContentDogHoneyFilterState((currVal) => ({
+          ...currVal,
+          selectedIndex: index,
+          totalElements: 0
+        }));
+        setEventContentProductsParamsState((currVal) => ({
+          ...currVal,
+          keyword
+        }));
+        onMoveFixedInfo();
+        queryClient.removeQueries(queryKeys.commons.contentProducts(eventContentProductsParams));
+      },
     [
       eventContentProductsParams,
       onMoveFixedInfo,
@@ -132,7 +147,12 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
                   variant="h3"
                   weight="bold"
                   isSelected={selectedIndex === 0}
-                  onClick={handleClickFilter('', 0, 0)}
+                  onClick={handleClickFilter({
+                    keyword: '',
+                    priceAvg: 0,
+                    priceCnt: 0,
+                    index: 0
+                  })}
                 >
                   전체
                 </FilterItemAll>
@@ -142,7 +162,7 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
                     variant="h4"
                     weight="bold"
                     isSelected={index + 1 === selectedIndex}
-                    onClick={handleClickFilter(model.keyword, model.priceAvg, index + 1)}
+                    onClick={handleClickFilter({ ...model, index: index + 1 })}
                   >
                     {model.keyword.split(' ')[0]}
                     <br />

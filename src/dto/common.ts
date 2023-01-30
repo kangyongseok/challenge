@@ -183,6 +183,7 @@ export interface StyleDetails {
 export type Model = {
   keyword: string;
   priceAvg: number;
+  priceCnt: number;
 };
 
 export interface Content {
