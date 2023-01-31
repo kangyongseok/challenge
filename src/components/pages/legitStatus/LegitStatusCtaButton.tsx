@@ -119,6 +119,7 @@ function LegitStatusCtaButton() {
   const handleClickContinue = () => {
     logEvent(attrKeys.legit.SUBMIT_LEGIT_PROCESS, {
       name: attrProperty.name.PRE_CONFIRM_EDIT,
+      type: 'EDIT',
       att: '크롤링매물'
     });
     preConfirmEditDoneMutate(

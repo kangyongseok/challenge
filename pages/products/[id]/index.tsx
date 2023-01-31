@@ -626,10 +626,7 @@ function ProductDetail() {
           </Typography>
         </Flexbox>
       </Toast>
-      <ProductDetailLegitBottomSheet
-        title={String(data?.product.title)}
-        thumbnail={data?.product.imageThumbnail || (data?.product.imageMain as string)}
-      />
+      <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
     </>

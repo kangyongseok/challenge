@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import type { Product } from '@dto/product';
+
 import { logEvent } from '@library/amplitude';
 
 import { postRequestProductLegits } from '@api/productLegit';
@@ -16,10 +18,11 @@ import attrKeys from '@constants/attrKeys';
 import { productLegitToggleBottomSheetState } from '@recoil/productLegit';
 import { deviceIdState } from '@recoil/common';
 
-function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; thumbnail: string }) {
+function ProductDetailLegitBottomSheet({ product }: { product?: Product }) {
   const router = useRouter();
   const splitIds = String(router.query.id || '').split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
+  const { title, imageThumbnail, imageMain } = product || {};
   const {
     theme: {
       palette: { common }
@@ -80,7 +83,7 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
             width={80}
           />
           <MockBackground alignment="center" justifyContent="center">
-            <Image disableAspectRatio src={thumbnail} alt="Thumbnail Img" />
+            <Image disableAspectRatio src={imageThumbnail || imageMain || ''} alt="Thumbnail Img" />
           </MockBackground>
         </Box>
       </ImageBox>
@@ -130,10 +133,10 @@ function ProductDetailLegitBottomSheet({ title, thumbnail }: { title: string; th
           fullWidth
           brandColor="primary"
           onClick={() => {
-            logEvent(attrKeys.legit.CLICK_LEGIT_MODAL, {
+            logEvent(attrKeys.legit.SUBMIT_LEGIT_PROCESS, {
               name: attrProperty.productTitle.PRODUCT_DETAIL,
-              title: attrProperty.productTitle.ABOUT_CTA,
-              att: 'OK'
+              type: 'PRODUCT',
+              data: product
             });
             atomLegitBottomSheet(false);
             postProductLegitsMutate(

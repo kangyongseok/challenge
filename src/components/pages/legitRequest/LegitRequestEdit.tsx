@@ -253,6 +253,7 @@ function LegitRequestEdit() {
   const handleSubmit = useCallback(() => {
     logEvent(attrKeys.legit.SUBMIT_LEGIT_PROCESS, {
       name: attrProperty.name.PRE_CONFIRM_EDIT,
+      type: 'EDIT',
       att: '사진으로 감정신청'
     });
 

@@ -161,6 +161,7 @@ function LegitRequestForm() {
   const handleSubmit = useCallback(() => {
     logEvent(attrKeys.legit.SUBMIT_LEGIT_PROCESS, {
       name: attrProperty.legitName.AUTHORIZED,
+      type: 'AUTHORIZED',
       data: productLegitParams
     });
 
