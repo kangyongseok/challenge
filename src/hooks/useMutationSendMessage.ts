@@ -37,8 +37,8 @@ function useMutationSendMessage() {
     file?: FileCompat | undefined;
     fileUrl?: string;
     fileUrls?: string[];
-    userId?: number;
-    productId?: number;
+    userId: number;
+    productId: number;
     callback?: (message: SendableMessage) => void;
     options?:
       | Omit<UseMutationOptions<void, unknown, PostHistoryManageData, unknown>, 'mutationFn'>
@@ -56,6 +56,7 @@ function useMutationSendMessage() {
     await mutatePostHistoryManage(data, {
       async onSuccess() {
         if (!data.content) return;
+
         logEvent(attrKeys.channel.SUBMIT_MESSAGE, {
           name: attrProperty.name.CHANNEL_DETAIL,
           att: 'USER',

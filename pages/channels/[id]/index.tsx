@@ -255,6 +255,9 @@ function Chanel() {
           },
           channelUrl: channel.externalId,
           isTargetUserNoti,
+          fileUrls,
+          userId: targetUserId,
+          productId,
           callback: updateNewMessage
         });
       }
@@ -264,6 +267,8 @@ function Chanel() {
     channel?.id,
     isTargetUserNoti,
     mutateSendMessage,
+    productId,
+    targetUserId,
     updateNewMessage,
     userName
   ]);

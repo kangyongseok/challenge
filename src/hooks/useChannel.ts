@@ -197,7 +197,10 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       channelUserType[channelUser.type as keyof typeof channelUserType] === channelUserType[1];
 
     return {
-      userName: getUserName(channelUser?.user.name, channelUser?.user.id || 0),
+      userName: getUserName(
+        channelUser?.user.nickName || channelUser?.user.name,
+        channelUser?.user.id || 0
+      ),
       isSeller,
       appointment: findAppointment,
       showAppointmentBanner:
