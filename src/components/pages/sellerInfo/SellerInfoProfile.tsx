@@ -8,7 +8,7 @@ interface SellerInfoProfileProps {
   platformId: number;
   platformImage: string;
   userName: string;
-  curnScore: number;
+  curnScore: string | null | undefined;
   maxScore: number;
 }
 

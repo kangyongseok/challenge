@@ -43,7 +43,7 @@ function UserShop() {
   useRedirectVC('/user/shop');
 
   const { userId = 0, userNickName, userImageProfile, userImageBackground } = useQueryMyUserInfo();
-  const setToastState = useRecoilValue(toastState);
+  // const setToastState = useRecoilValue(toastState);
 
   const {
     isLoading,

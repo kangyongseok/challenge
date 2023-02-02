@@ -676,6 +676,7 @@ export interface SellerReportParams {
   reportType: number;
   reviewId?: number;
   userId?: number;
+  sellerId?: number;
 }
 
 export interface SearchRelatedProductsParams {

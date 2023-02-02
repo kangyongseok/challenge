@@ -137,7 +137,7 @@ function SellerInfo() {
           platformId={site?.id || 0}
           platformImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${site?.id}.png`}
           userName={sellerName}
-          curnScore={Number(curnScore || '')}
+          curnScore={curnScore}
           maxScore={Number(maxScore || '')}
         />
         <SellerInfoTabs

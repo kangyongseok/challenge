@@ -103,7 +103,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
   }, []);
 
   const handleClickBlock = useCallback(
-    (productId: number, creator: string) => () => {
+    (productId: number, reviewId: number) => () => {
       if (isLoadingMutation) return;
 
       if (!accessUser) {
@@ -113,10 +113,11 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
 
       muatePostSellerReport(
         {
-          creator,
           deviceId,
           productId,
           reportType: 0,
+          reviewId,
+          sellerId,
           userId: accessUser.userId
         },
         {
@@ -151,13 +152,14 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       params,
       queryClient,
       router,
+      sellerId,
       setReviewBlockState,
       setToastState
     ]
   );
 
   const handleClickReport = useCallback(
-    (productId: number) => () => {
+    (productId: number, creator: string) => () => {
       if (isLoadingMutation) return;
 
       if (!accessUser) {
@@ -170,7 +172,8 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
           deviceId,
           productId,
           reportType: 0,
-          reviewId: sellerId,
+          creator,
+          sellerId,
           userId: accessUser.userId
         },
         {
@@ -228,8 +231,8 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
               curnScore={Number(firstReviewInfo.curnScore || '')}
               maxScore={Number(firstReviewInfo.maxScore || '')}
               siteId={firstReviewInfo.site?.id || 0}
-              onClickBlock={handleClickBlock(review.productId, review.creator)}
-              onClickReport={handleClickReport(review.productId)}
+              onClickBlock={handleClickBlock(review.productId, review.id)}
+              onClickReport={handleClickReport(review.productId, review.creator)}
             />
           </div>
         </CellMeasurer>
