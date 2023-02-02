@@ -1,8 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
-import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -16,14 +15,12 @@ import attrKeys from '@constants/attrKeys';
 
 import { getLogEventAtt, getLogEventTitle } from '@utils/channel';
 
-import { putProductUpdateStatusParams } from '@typings/products';
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 
 interface ChannelProductStatusBottomSheetProps {
   id: number;
   status: number;
   targetUserId?: number;
-  isNoSellerReviewAndHasTarget?: boolean;
   isChannel?: boolean;
   onSuccessProductUpdateStatus?: () => void;
 }
@@ -31,14 +28,14 @@ interface ChannelProductStatusBottomSheetProps {
 function ChannelProductStatusBottomSheet({
   id,
   status,
-  targetUserId,
-  isNoSellerReviewAndHasTarget = false,
-  isChannel = true,
+  isChannel = false,
   onSuccessProductUpdateStatus
 }: ChannelProductStatusBottomSheetProps) {
-  const router = useRouter();
   const [{ open }, setProductStatusBottomSheetState] = useRecoilState(
     channelBottomSheetStateFamily('productStatus')
+  );
+  const setSelectTargetUserBottomSheetState = useSetRecoilState(
+    channelBottomSheetStateFamily('selectTargetUser')
   );
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
@@ -66,46 +63,36 @@ function ChannelProductStatusBottomSheet({
         att: status === 8 && newStatus === 0 ? 'SHOW' : getLogEventAtt(newStatus)
       });
 
-      const params: putProductUpdateStatusParams = { productId: id, status: newStatus };
+      setProductStatusBottomSheetState({ open: false, isChannel });
+      mutatePutProductUpdateStatus(
+        { productId: id, status: newStatus },
+        {
+          onSuccess() {
+            if (onSuccessProductUpdateStatus) onSuccessProductUpdateStatus();
 
-      if (newStatus === 1 && !!targetUserId) {
-        params.soldType = 1;
-        params.targetUserId = targetUserId;
-      }
-
-      mutatePutProductUpdateStatus(params, {
-        onSuccess() {
-          if (onSuccessProductUpdateStatus) onSuccessProductUpdateStatus();
-
-          setProductStatusBottomSheetState({ open: false, isChannel });
-
-          if (newStatus === 1 && isNoSellerReviewAndHasTarget) {
-            router.push(
-              {
-                pathname: '/channels',
-                query: {
-                  productId: id,
-                  isSelectTargetUser: true
-                }
-              },
-              undefined,
-              { shallow: true }
-            );
+            if (newStatus === 1)
+              setTimeout(
+                () =>
+                  setSelectTargetUserBottomSheetState({
+                    open: true,
+                    isChannel,
+                    location: 'CHANNEL_DETAIL'
+                  }),
+                500
+              );
           }
         }
-      });
+      );
     },
     [
       id,
       isChannel,
       isLoading,
-      isNoSellerReviewAndHasTarget,
       mutatePutProductUpdateStatus,
       onSuccessProductUpdateStatus,
-      router,
       setProductStatusBottomSheetState,
-      status,
-      targetUserId
+      setSelectTargetUserBottomSheetState,
+      status
     ]
   );
 

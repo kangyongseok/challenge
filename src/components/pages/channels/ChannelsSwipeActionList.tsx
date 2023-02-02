@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import {
   Type as ListType,
   SwipeAction,
@@ -41,7 +41,7 @@ import {
 } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import { channelPushPageState } from '@recoil/channel';
+import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
 import useMutationChannelNoti from '@hooks/useMutationChannelNoti';
@@ -64,6 +64,9 @@ function ChannelsSwipeActionList({
   } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
+  const [{ location }, setSelectTargetUserBottomSheetState] = useRecoilState(
+    channelBottomSheetStateFamily('selectTargetUser')
+  );
   const resetChannelPushPageState = useResetRecoilState(channelPushPageState);
 
   const { data: accessUser } = useQueryAccessUser();
@@ -152,6 +155,7 @@ function ChannelsSwipeActionList({
     if (!camelChannel.channel) return;
 
     logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.CHANNEL });
+
     SessionStorage.remove(sessionStorageKeys.pushToSavedRedirectChannel);
     resetChannelPushPageState();
 
@@ -169,8 +173,10 @@ function ChannelsSwipeActionList({
   const handleClickSelectTargetUser = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
-      logEvent(attrKeys.channel.CLICK_BUYER, {
-        name: attrProperty.name.VIEW_SELECT_BUYER
+
+      logEvent(attrKeys.channel.CLICK_CAMEL, {
+        name: attrProperty.name.VIEW_SELECT_BUYER,
+        att: location
       });
 
       if (
@@ -179,6 +185,11 @@ function ChannelsSwipeActionList({
         !camelChannel.channelTargetUser
       )
         return;
+
+      setSelectTargetUserBottomSheetState((currVal) => ({
+        open: false,
+        isChannel: currVal.isChannel
+      }));
 
       const productId = camelChannel.product.id;
       const targetUserId = camelChannel.channelTargetUser.user?.id;
@@ -199,12 +210,12 @@ function ChannelsSwipeActionList({
           onSuccess() {
             const queryClient = new QueryClient();
 
-            queryClient.invalidateQueries(queryKeys.products.product({ productId }));
+            queryClient.refetchQueries(queryKeys.products.product({ productId }));
             queryClient.invalidateQueries(queryKeys.channels.channels({ type: 1, size: 100 }));
             queryClient.invalidateQueries(queryKeys.users.products({ page: 0, status: [0, 4] }));
           },
           onSettled() {
-            router.replace({
+            router.push({
               pathname: '/user/reviews/form',
               query: {
                 productId,
@@ -221,8 +232,10 @@ function ChannelsSwipeActionList({
       camelChannel.channelTargetUser,
       camelChannel.product,
       isLoadingMutatePutProductUpdateStatus,
+      location,
       mutatePutProductUpdateStatus,
-      router
+      router,
+      setSelectTargetUserBottomSheetState
     ]
   );
 
@@ -230,7 +243,48 @@ function ChannelsSwipeActionList({
     setNotiStatus(!!camelChannel.channelUser?.isNoti);
   }, [camelChannel.channelUser?.isNoti]);
 
-  return (
+  return isSelectTargetUser ? (
+    <ListItem
+      avatarUrl={
+        !camelChannel.channelTargetUser?.user?.isDeleted
+          ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
+              camelChannel?.channelTargetUser?.user?.imageProfile) ||
+            (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
+              camelChannel?.channelTargetUser?.user?.image) ||
+            ''
+          : ''
+      }
+      title={getChannelTitle({
+        targetUser: camelChannel.channelTargetUser,
+        groupChannel: sendbirdChannel,
+        isTargetUserBlocked,
+        currentUserId: String(accessUser?.userId || '')
+      })}
+      description={
+        camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
+          ? camelChannel.lastMessageManage.content
+          : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
+      }
+      descriptionCustomStyle={{
+        fontSize: typography.h4.size,
+        lineHeight: typography.h4.lineHeight,
+        letterSpacing: typography.h4.letterSpacing
+      }}
+      time={getLastMessageCreatedAt(camelChannel.lastMessageManage, sendbirdChannel)}
+      action={
+        <Button
+          size="large"
+          variant="ghost"
+          brandColor="black"
+          onClick={handleClickSelectTargetUser}
+          customStyle={{ minWidth: 55 }}
+        >
+          선택
+        </Button>
+      }
+      customStyle={{ cursor: 'default' }}
+    />
+  ) : (
     <SwipeableList fullSwipe={false} type={ListType.IOS}>
       <SwipeableListItem
         onSwipeStart={() => logEvent(attrKeys.channel.SWIPE_X_CHANNEL_LIST)}
@@ -282,38 +336,23 @@ function ChannelsSwipeActionList({
           showNotificationOffIcon={!notiStatus}
           onClick={handleClickChannel}
           action={
-            isSelectTargetUser ? (
-              <Button
-                size="medium"
-                variant="ghost"
-                brandColor="black"
-                onClick={handleClickSelectTargetUser}
-                customStyle={{ minWidth: 43 }}
-              >
-                선택
-              </Button>
-            ) : (
-              <>
-                {!!sendbirdChannel?.unreadMessageCount && (
-                  <Badge
-                    variant="solid"
-                    brandColor="red"
-                    text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
-                  />
-                )}
-                {camelChannel.channel?.userId !== 100 && (
-                  <ProductImage
-                    url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
-                    isVisible={
-                      !!camelChannel.product?.status &&
-                      PRODUCT_STATUS[
-                        camelChannel.product?.status as keyof typeof PRODUCT_STATUS
-                      ] === PRODUCT_STATUS['3']
-                    }
-                  />
-                )}
-              </>
-            )
+            <>
+              {!!sendbirdChannel?.unreadMessageCount && (
+                <Badge
+                  variant="solid"
+                  brandColor="red"
+                  text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
+                />
+              )}
+              <ProductImage
+                url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
+                isVisible={
+                  !!camelChannel.product?.status &&
+                  PRODUCT_STATUS[camelChannel.product?.status as keyof typeof PRODUCT_STATUS] ===
+                    PRODUCT_STATUS['3']
+                }
+              />
+            </>
           }
           disabled={
             camelChannel.channelTargetUser?.user?.isDeleted ||

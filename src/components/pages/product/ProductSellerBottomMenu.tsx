@@ -26,18 +26,16 @@ import { getUnreadMessagesCount } from '@utils/channel';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { dialogState, toastState } from '@recoil/common';
-import { sendbirdState } from '@recoil/channel';
+import { channelBottomSheetStateFamily, sendbirdState } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function ProductSellerBottomMenu({
   status,
   product,
-  noSellerReviewAndHasTarget,
   refresh
 }: {
   status: number;
   product: Product | undefined;
-  noSellerReviewAndHasTarget: boolean;
   refresh: () => void;
 }) {
   const {
@@ -60,8 +58,10 @@ function ProductSellerBottomMenu({
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
-  const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
+  const setSelectTargetUserBottomSheetState = useSetRecoilState(
+    channelBottomSheetStateFamily('selectTargetUser')
+  );
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
@@ -107,32 +107,29 @@ function ProductSellerBottomMenu({
 
   const handleClickStatus = (e: MouseEvent<HTMLDivElement>) => {
     const { dataset } = e.currentTarget as HTMLDivElement;
+
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: getTitle,
       att: getAtt(Number(dataset.statusId)),
       ...getAttProperty
     });
+
     if (Number(dataset.statusId) === 1) {
       setOpenChangeStatus(false);
+
       updateMutation(
         { productId: parameter.productId, status: 1 },
         {
           onSuccess() {
-            if (noSellerReviewAndHasTarget) {
-              router.push({
-                pathname: '/channels',
-                query: {
-                  productId: parameter.productId,
-                  isSelectTargetUser: true
-                }
+            setTimeout(() => {
+              setSelectTargetUserBottomSheetState({
+                open: true,
+                isChannel: false,
+                location: 'PRODUCT_DETAIL'
               });
-            } else {
-              setOpenSoldOutFeedbackState(({ type }) => ({
-                type,
-                open: true
-              }));
-            }
+            }, 500);
+            refresh();
           }
         }
       );
@@ -312,11 +309,7 @@ function ProductSellerBottomMenu({
           customStyle={{ flex: 1 }}
           onClick={() => {
             setOpenChangeStatus(true);
-            if (product)
-              setUserShopSelectedProductState({
-                ...product,
-                isNoSellerReviewAndHasTarget: noSellerReviewAndHasTarget
-              });
+            if (product) setUserShopSelectedProductState(product);
           }}
         >
           <IconChangeStatus />

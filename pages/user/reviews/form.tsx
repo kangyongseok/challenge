@@ -32,13 +32,19 @@ function ReviewForm() {
   } = useTheme();
   const router = useRouter();
 
-  const { productId, userId, isSeller } = useMemo(
+  const { productId, userId, userName, isSeller } = useMemo(
     () => ({
       productId: Number(router.query.productId || ''),
       userId: Number(router.query.targetUserId || ''),
+      userName: String(router.query.targetUserName || ''),
       isSeller: router.query.isTargetUserSeller || false
     }),
-    [router.query.isTargetUserSeller, router.query.productId, router.query.targetUserId]
+    [
+      router.query.isTargetUserSeller,
+      router.query.productId,
+      router.query.targetUserId,
+      router.query.targetUserName
+    ]
   );
 
   const setToastState = useSetRecoilState(toastState);
@@ -100,7 +106,7 @@ function ReviewForm() {
         <FixedProductInfo
           isLoading={isLoading}
           image={product?.imageThumbnail || product?.imageMain || ''}
-          status={product?.status || 0}
+          status={1}
           title={product?.title || ''}
           price={product?.price || 0}
         />
@@ -112,48 +118,53 @@ function ReviewForm() {
         gap={32}
         customStyle={{ padding: '52px 20px', flex: 1 }}
       >
-        <Flexbox>
-          {Array.from({ length: 5 }, (_, index) => {
-            return index < Number(params.score) / 2 ? (
-              <Icon
-                name="StarFilled"
-                width={23}
-                height={23}
-                customStyle={{
-                  color: '#FFD911',
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  setParams((prevState) => ({
-                    ...prevState,
-                    score:
-                      Number(params.score) / 2 === 1 && index === 0
-                        ? '0'
-                        : ((index + 1) * 2).toString()
-                  }));
-                }}
-              />
-            ) : (
-              <Icon
-                name="StarOutlined"
-                width={23}
-                height={23}
-                customStyle={{
-                  color: '#FFD911',
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  setParams((prevState) => ({
-                    ...prevState,
-                    score:
-                      Number(params.score) / 2 === 1 && index === 0
-                        ? '0'
-                        : ((index + 1) * 2).toString()
-                  }));
-                }}
-              />
-            );
-          })}
+        <Flexbox direction="vertical" alignment="center" gap={20}>
+          <Typography variant="h3" weight="bold">
+            {userName}님과의 거래는 어떠셨나요?
+          </Typography>
+          <Flexbox>
+            {Array.from({ length: 5 }, (_, index) => {
+              return index < Number(params.score) / 2 ? (
+                <Icon
+                  name="StarFilled"
+                  width={23}
+                  height={23}
+                  customStyle={{
+                    color: '#FFD911',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => {
+                    setParams((prevState) => ({
+                      ...prevState,
+                      score:
+                        Number(params.score) / 2 === 1 && index === 0
+                          ? '0'
+                          : ((index + 1) * 2).toString()
+                    }));
+                  }}
+                />
+              ) : (
+                <Icon
+                  name="StarOutlined"
+                  width={23}
+                  height={23}
+                  customStyle={{
+                    color: '#FFD911',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => {
+                    setParams((prevState) => ({
+                      ...prevState,
+                      score:
+                        Number(params.score) / 2 === 1 && index === 0
+                          ? '0'
+                          : ((index + 1) * 2).toString()
+                    }));
+                  }}
+                />
+              );
+            })}
+          </Flexbox>
         </Flexbox>
         <Description>
           <TextareaAutosize

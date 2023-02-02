@@ -8,6 +8,7 @@ import type { GetServerSidePropsContext } from 'next';
 import { Chip, Flexbox, Icon } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import FixedProductInfo from '@components/UI/molecules/FixedProductInfo';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -422,6 +423,7 @@ function Chanel() {
                     isTargetUserSeller={!isSeller}
                     targetUserId={targetUserId}
                     targetUserName={targetUserName}
+                    product={product}
                     productId={productId}
                     status={productStatus}
                     isDeletedProduct={isDeletedProduct}
@@ -456,9 +458,10 @@ function Chanel() {
       <ChannelProductStatusBottomSheet
         id={productId}
         status={productStatus}
-        targetUserId={targetUserId}
         onSuccessProductUpdateStatus={refetch}
+        isChannel
       />
+      <SelectTargetUserBottomSheet productId={productId} isChannel />
       {!!channel && (
         <ChannelMoreMenuBottomSheet
           channelId={channel.id}

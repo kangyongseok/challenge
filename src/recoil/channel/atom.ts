@@ -37,8 +37,9 @@ export const channelBottomSheetStateFamily = atomFamily<
   {
     open: boolean;
     isChannel: boolean;
+    location?: string;
   },
-  'more' | 'productStatus'
+  'more' | 'productStatus' | 'selectTargetUser'
 >({
   key: 'channel/bottomSheetStateFamily',
   default: {
@@ -48,7 +49,7 @@ export const channelBottomSheetStateFamily = atomFamily<
   effects: [
     ({ onSet }) => {
       onSet(({ open, isChannel }, _, isReset) => {
-        if (checkAgent.isIOSApp() && isChannel) {
+        if (!!checkAgent.isIOSApp() && isChannel) {
           if (open || isReset) {
             window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
           } else {

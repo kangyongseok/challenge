@@ -31,9 +31,7 @@ export const userShopOpenStateFamily = atomFamily<
   })
 });
 
-export const userShopSelectedProductState = atom<
-  Partial<Product & { isNoSellerReviewAndHasTarget?: boolean }> | Partial<ProductResult>
->({
+export const userShopSelectedProductState = atom<Partial<Product> | Partial<ProductResult>>({
   key: 'users/userShopSelectedProductState',
   default: {}
 });

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -34,7 +33,6 @@ import attrKeys from '@constants/attrKeys';
 import { getCookies } from '@utils/cookies';
 import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
-import { toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -49,7 +47,7 @@ function UserShop() {
 
   const {
     isLoading,
-    refetch,
+    refetch: refreshInfoByUserId,
     data: {
       userRoleLegit,
       area,
@@ -102,12 +100,6 @@ function UserShop() {
       )}의 후기를 받았고, ${commaNumber(displayProductCount)}개의 매물을 팔고 있어요.`
     };
   }, [curnScore, displayProductCount, maxScore, reviewCount, userNickName]);
-
-  useEffect(() => {
-    if (setToastState.status) {
-      refetch();
-    }
-  }, [setToastState, refetch]);
 
   useEffect(() => {
     if (tab === '2') {
@@ -185,7 +177,9 @@ function UserShop() {
             soldoutCount={undisplayProductCount}
             reviewCount={reviewCount}
           />
-          {[labels[0].key, labels[1].key].includes(tab) && <UserShopProductList tab={tab} />}
+          {[labels[0].key, labels[1].key].includes(tab) && (
+            <UserShopProductList tab={tab} refreshInfoByUserId={refreshInfoByUserId} />
+          )}
           {tab === labels[2].key && (
             <UserShopReviewList
               userId={userId}

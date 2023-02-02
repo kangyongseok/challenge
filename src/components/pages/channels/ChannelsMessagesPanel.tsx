@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 
 import { AutoSizer, InfiniteLoader, List, WindowScroller } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
 
@@ -21,10 +21,12 @@ interface ChannelsMessagesPanelProps {
   type: keyof typeof channelType;
   productId?: number;
   isSelectTargetUser?: boolean;
+  customStyle?: CustomStyle;
 }
 
 function ChannelsMessagesPanel({
   isSelectTargetUser = false,
+  customStyle,
   ...props
 }: ChannelsMessagesPanelProps) {
   const {
@@ -67,7 +69,15 @@ function ChannelsMessagesPanel({
   }, []);
 
   return isLoading || (isFetched && channels.length > 0) ? (
-    <Flexbox component="section" direction="vertical" customStyle={{ margin: '12px 0', flex: 1 }}>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      customStyle={{
+        margin: '12px 0',
+        flex: 1,
+        ...customStyle
+      }}
+    >
       {channels.length === 0 && isLoading ? (
         Array.from({ length: 10 }, (__, j) => <ChannelListSkeleton key={`channel-skeleton-${j}`} />)
       ) : (

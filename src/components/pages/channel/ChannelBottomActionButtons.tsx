@@ -10,16 +10,19 @@ import dayjs from 'dayjs';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
+import type { ProductResult } from '@dto/product';
 import type { ChannelAppointmentResult, ChannelDetail, UserReview } from '@dto/channel';
 
 import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
 
+import { productSellerType } from '@constants/user';
 import { photoActionType, productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { checkAgent } from '@utils/common';
 
 import { dialogState, toastState } from '@recoil/common';
@@ -34,6 +37,7 @@ interface ChannelBottomActionButtonsProps {
   isTargetUserSeller: boolean;
   targetUserName: string;
   targetUserId: number;
+  product: ProductResult | null | undefined;
   productId: number;
   status: number | undefined;
   isDeletedProduct: boolean;
@@ -56,6 +60,7 @@ function ChannelBottomActionButtons({
   isTargetUserSeller,
   targetUserId,
   targetUserName,
+  product,
   productId,
   status,
   isDeletedProduct,
@@ -207,9 +212,26 @@ function ChannelBottomActionButtons({
       firstButtonAction() {
         if (isLoading) return;
 
-        logEvent(attrKeys.channel.CLICK_REVIEW_SEND_POPUP, {
+        logEvent(attrKeys.channel.CLICK_CAMEL, {
           name: attrProperty.name.REVIEW_SEND,
-          att: isTargetUserSeller ? 'BUYER' : 'SELLER'
+          title: attrProperty.title.CHANNEL_DETAIL,
+          att: isTargetUserSeller ? 'BUYER' : 'SELLER',
+          id: product?.id,
+          brand: product?.brand.name,
+          category: product?.category.name,
+          parentId: product?.category.parentId,
+          site: product?.site.name,
+          price: product?.price,
+          cluster: product?.cluster,
+          source: attrProperty.source.MAIN_PERSONAL,
+          productType: product
+            ? getProductType(product.productSeller.site.id, product.productSeller.type)
+            : undefined,
+          sellerType: product?.sellerType,
+          productSellerId: product?.productSeller.id,
+          productSellerType: product?.productSeller.type,
+          productSellerAccount: product?.productSeller.account,
+          useChat: product?.sellerType !== productSellerType.collection
         });
 
         if (isTargetUserSeller) {

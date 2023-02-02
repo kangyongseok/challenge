@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Avatar, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, CustomStyle, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 
 import { PRODUCT_INFORMATION_HEIGHT } from '@constants/common';
 import { productStatus } from '@constants/channel';
@@ -24,6 +24,7 @@ interface FixedProductInfoProps {
   price: number;
   onClick?: () => void;
   onClickStatus?: () => void;
+  customStyle?: CustomStyle;
 }
 
 function FixedProductInfo({
@@ -36,7 +37,8 @@ function FixedProductInfo({
   status,
   price,
   onClick,
-  onClickStatus
+  onClickStatus,
+  customStyle
 }: FixedProductInfoProps) {
   const {
     theme: {
@@ -61,7 +63,11 @@ function FixedProductInfo({
       component="section"
       alignment="center"
       gap={12}
-      customStyle={{ padding: '4px 20px 12px', borderBottom: `1px solid ${common.line01}` }}
+      customStyle={{
+        padding: '4px 20px 12px',
+        borderBottom: `1px solid ${common.line01}`,
+        ...customStyle
+      }}
     >
       <Skeleton width={48} height={48} round={8} disableAspectRatio />
       <Flexbox direction="vertical" gap={4}>
@@ -76,7 +82,11 @@ function FixedProductInfo({
     <Flexbox
       component="section"
       onClick={onClick}
-      customStyle={{ minHeight: PRODUCT_INFORMATION_HEIGHT, position: 'relative' }}
+      customStyle={{
+        minHeight: PRODUCT_INFORMATION_HEIGHT,
+        position: 'relative',
+        ...customStyle
+      }}
     >
       <Wrapper>
         <Avatar

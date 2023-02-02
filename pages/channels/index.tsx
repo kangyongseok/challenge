@@ -1,37 +1,26 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
+import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { Typography } from 'mrcamel-ui';
 
-import { BottomNavigation, FixedProductInfo, Header } from '@components/UI/molecules';
+import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ChannelsFilteredMessagesPanel,
   ChannelsMessagesPanel,
   ChannelsTabs
 } from '@components/pages/channels';
-import { ChannelProductStatusBottomSheet } from '@components/pages/channel';
 
-import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
-import { logEvent } from '@library/amplitude';
 
-import { fetchProduct } from '@api/product';
-
-import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import { locales } from '@constants/common';
 import { channelType } from '@constants/channel';
-import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent, getProductDetailUrl, needUpdateChatIOSVersion } from '@utils/common';
-import { getLogEventTitle } from '@utils/channel';
+import { checkAgent, needUpdateChatIOSVersion } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
@@ -49,32 +38,12 @@ function Channels() {
     channelBottomSheetStateFamily('productStatus')
   );
 
-  const { type, productId, isSelectTargetUser } = useMemo(
+  const { type } = useMemo(
     () => ({
-      type: Number(router.query.type || labels[0].key) as keyof typeof channelType,
-      productId: Number(router.query.productId || 0),
-      isSelectTargetUser: Boolean(router.query.isSelectTargetUser)
+      type: Number(router.query.type || labels[0].key) as keyof typeof channelType
     }),
-    [router.query.isSelectTargetUser, router.query.productId, router.query.type]
+    [router.query.type]
   );
-
-  const {
-    data: { product, noSellerReviewAndHasTarget } = {},
-    isLoading,
-    refetch
-  } = useQuery(queryKeys.products.product({ productId }), () => fetchProduct({ productId }), {
-    enabled: !!productId
-  });
-
-  const handleClickProduct = useCallback(() => {
-    if (!product || product.isDeleted) return;
-
-    SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
-      source: attrProperty.source.CHANNEL
-    });
-
-    router.push(getProductDetailUrl({ product }));
-  }, [product, router]);
 
   useEffect(() => {
     const { channelId, isCamelChannel } = router.query;
@@ -109,70 +78,14 @@ function Channels() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (productId) {
-      logEvent(attrKeys.channel.VIEW_SELECT_BUYER);
-    }
-  }, [productId]);
-
   return channelPushPage ? (
     <div />
   ) : (
-    <GeneralTemplate
-      header={
-        <Header>
-          {isSelectTargetUser && (
-            <Typography variant="h3" weight="bold">
-              거래자 선택
-            </Typography>
-          )}
-        </Header>
-      }
-      footer={<BottomNavigation />}
-      disablePadding
-      subset
-    >
-      {productId ? (
-        <>
-          <FixedProductInfo
-            isLoading={isLoading}
-            isEditableProductStatus={!isSelectTargetUser}
-            isChannel={false}
-            image={product?.imageThumbnail || product?.imageMain || ''}
-            status={product?.status || 0}
-            title={product?.title || ''}
-            price={product?.price || 0}
-            onClick={handleClickProduct}
-            onClickStatus={() =>
-              logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                name: attrProperty.name.MY_STORE,
-                title: getLogEventTitle(product?.status || 0)
-              })
-            }
-          />
-          <ChannelsMessagesPanel
-            type={1}
-            productId={productId}
-            isSelectTargetUser={isSelectTargetUser}
-          />
-          {!!product && (
-            <ChannelProductStatusBottomSheet
-              id={product.id}
-              status={product.status}
-              isNoSellerReviewAndHasTarget={noSellerReviewAndHasTarget || false}
-              isChannel={false}
-              onSuccessProductUpdateStatus={refetch}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          <ChannelsTabs labels={labels} value={type.toString()} />
-          {type === +labels[0].key && <ChannelsMessagesPanel type={0} />}
-          {type === +labels[1].key && <ChannelsFilteredMessagesPanel />}
-          {type === +labels[2].key && <ChannelsMessagesPanel type={2} />}
-        </>
-      )}
+    <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding subset>
+      <ChannelsTabs labels={labels} value={type.toString()} />
+      {type === +labels[0].key && <ChannelsMessagesPanel type={0} />}
+      {type === +labels[1].key && <ChannelsFilteredMessagesPanel />}
+      {type === +labels[2].key && <ChannelsMessagesPanel type={2} />}
     </GeneralTemplate>
   );
 }

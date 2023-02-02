@@ -22,12 +22,17 @@ import { checkAgent } from '@utils/common';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { toastState } from '@recoil/common';
+import { channelBottomSheetStateFamily } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const TOAST_BOTTOM = 20;
 
-function UserShopProductManageBottomSheet() {
+interface UserShopProductManageBottomSheetProps {
+  refetchData: () => Promise<void>;
+}
+
+function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManageBottomSheetProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
@@ -54,11 +59,8 @@ function UserShopProductManageBottomSheet() {
     scorePrice,
     scorePriceAvg,
     scorePriceCount,
-    scorePriceRate,
-    isNoSellerReviewAndHasTarget = false
-  } = useRecoilValue(userShopSelectedProductState) as Product & {
-    isNoSellerReviewAndHasTarget?: boolean;
-  };
+    scorePriceRate
+  } = useRecoilValue(userShopSelectedProductState) as Product;
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
@@ -68,6 +70,9 @@ function UserShopProductManageBottomSheet() {
   const setToastState = useSetRecoilState(toastState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
+  const setSelectTargetUserBottomSheetState = useSetRecoilState(
+    channelBottomSheetStateFamily('selectTargetUser')
+  );
 
   const { isSale, isSoldOut, isReserving, isHiding } = useMemo(
     () => ({
@@ -171,29 +176,31 @@ function UserShopProductManageBottomSheet() {
       updateMutation(
         { productId: id, status: 1 },
         {
+          onSuccess() {
+            setTimeout(
+              () =>
+                setSelectTargetUserBottomSheetState({
+                  open: true,
+                  isChannel: false,
+                  location: 'STORE'
+                }),
+              300
+            );
+          },
           onSettled() {
             setToastState({
               type: 'sellerProductState',
               status: 'soldout',
               customStyle: { bottom: TOAST_BOTTOM }
             });
-          },
-          onSuccess() {
-            if (isNoSellerReviewAndHasTarget) {
-              router.push({
-                pathname: '/channels',
-                query: {
-                  productId: id,
-                  isSelectTargetUser: true
-                }
-              });
-            }
+            setTimeout(() => refetchData(), 500);
           }
         }
       );
 
       return;
     }
+
     updateMutation(
       { productId: id, status: dataStatus },
       {
@@ -222,6 +229,7 @@ function UserShopProductManageBottomSheet() {
             type,
             open: false
           }));
+          setTimeout(() => refetchData(), 500);
         }
       }
     );

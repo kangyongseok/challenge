@@ -11,13 +11,16 @@ import {
   WindowScroller
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 import { NewProductListCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 
+import type { UserInfo } from '@dto/user';
 import type { ProductResult } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
@@ -31,7 +34,7 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
 import type { SavedLegitDataProps } from '@typings/product';
-import { toastState } from '@recoil/common';
+import { userShopSelectedProductState } from '@recoil/userShop';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
@@ -45,15 +48,19 @@ const cache = new CellMeasurerCache({
 
 interface UserShopProductListProps {
   tab: string;
+  refreshInfoByUserId: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<UserInfo, unknown>>;
 }
 
-function UserShopProductList({ tab }: UserShopProductListProps) {
+function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListProps) {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const getSavedLegitData: SavedLegitDataProps | null = LocalStorage.get(
     String(accessUser?.userId)
   );
-  const setToastState = useRecoilValue(toastState);
+  const { id: productId } = useRecoilValue(userShopSelectedProductState);
+
   const userProductsParams = useMemo(
     () => ({
       page: 0,
@@ -68,7 +75,7 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    refetch
+    refetch: refetchUserProducts
   } = useInfiniteQuery(
     queryKeys.users.products(userProductsParams),
     ({ pageParam = 0 }) =>
@@ -120,7 +127,7 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
 
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
-      const shopBannerList = contents[index].labels.filter((label) => label.codeId === 17);
+      const shopBannerList = contents[index].labels?.filter((label) => label.codeId === 17);
       const isSale = contents[index].status === productStatusCode.sale;
       const isSavedLegitRequest =
         getSavedLegitData?.savedLegitRequest?.state?.productId === contents[index].id;
@@ -144,7 +151,7 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
                 hideWishButton
                 showShopManageButton
               />
-              {(!!shopBannerList.length || isSavedLegitRequest) && isSale ? (
+              {(!!shopBannerList?.length || isSavedLegitRequest) && isSale ? (
                 <UserShopProductActionBanner
                   labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
                   productId={contents[index].id}
@@ -165,13 +172,13 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
 
   useEffect(() => {
     cache.clearAll();
-  }, [router, setToastState, refetch, pages]);
+  }, [router, pages]);
 
-  useEffect(() => {
-    if (setToastState.status) {
-      refetch();
-    }
-  }, [setToastState, refetch]);
+  const handleUpdateProductStatus = useCallback(async () => {
+    await refreshInfoByUserId();
+    await refetchUserProducts();
+    cache.clearAll();
+  }, [refetchUserProducts, refreshInfoByUserId]);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -231,7 +238,8 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
           )}
         </InfiniteLoader>
       )}
-      <UserShopProductManageBottomSheet />
+      <UserShopProductManageBottomSheet refetchData={handleUpdateProductStatus} />
+      {!!productId && <SelectTargetUserBottomSheet productId={productId} />}
       <UserShopProductSoldOutConfirmBottomSheet />
     </Flexbox>
   );
