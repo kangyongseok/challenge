@@ -180,6 +180,13 @@ export type DialogType =
   | 'deleteAccount'
   | 'featureIsMobileAppDown'
   | 'leaveEditProfile'
+  | 'legitSampleGuid'
+  | 'legitPermissionCheck'
+  | 'leaveLegitRequest'
+  | 'productSoldout'
+  | 'productDelete'
+  | 'productHidden'
+  | 'productReservation'
   | 'locationInfo';
 
 export type ShareData = {

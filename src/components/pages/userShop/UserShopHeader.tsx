@@ -11,9 +11,9 @@ interface UserShopHeaderProps {
   imageProfile: string;
   nickName: string;
   currentTab: string;
+  reviewCount: number;
   sellCount: number;
   soldoutCount: number;
-  reviewCount: number;
 }
 
 function UserShopHeader({
@@ -21,9 +21,9 @@ function UserShopHeader({
   imageProfile,
   nickName,
   currentTab,
+  reviewCount,
   sellCount,
-  soldoutCount,
-  reviewCount
+  soldoutCount
 }: UserShopHeaderProps) {
   const {
     theme: { zIndex }

@@ -7,7 +7,7 @@ function RecentBottomSheetEmptyResult({ title }: { title: string }) {
       justifyContent="center"
       alignment="center"
       direction="vertical"
-      customStyle={{ height: '40%' }}
+      customStyle={{ marginTop: 160 }}
     >
       <EmptyResultEmoji justifyContent="center" alignment="center">
         😮

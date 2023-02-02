@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Image, Skeleton, Typography, light } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Skeleton, Typography, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
@@ -19,7 +19,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchSearchRelatedProducts } from '@api/product';
 
-import { productSellerType } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -247,27 +247,45 @@ function ProductImages({
           {product && !lowerPriceDisplay() && (
             <>
               {getProductImageOverlay({ status: product.status })}
-              {!isCamelSellerProduct && !isNormalseller && (
-                <Platform>
-                  <Avatar
-                    width={20}
-                    height={20}
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                      (product.siteUrl?.hasImage && product.siteUrl?.id) ||
-                      (product.site?.hasImage && product.site?.id) ||
-                      ''
-                    }.png`}
-                    alt={`${product.siteUrl?.name || '플랫폼'} 로고 이미지`}
-                  />
-                  <Typography
-                    variant="body2"
-                    weight="bold"
-                    customStyle={{ marginLeft: 6, color: light.palette.common.ui20 }}
-                  >
-                    {product.siteUrl?.name || product.site.name}
-                  </Typography>
-                </Platform>
+              {SELLER_STATUS[product.sellerType as keyof typeof SELLER_STATUS] ===
+                SELLER_STATUS['3'] && (
+                <Label
+                  variant="solid"
+                  brandColor="black"
+                  startIcon={<Icon name="ShieldFilled" />}
+                  text="인증판매자"
+                  customStyle={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    zIndex: 1
+                  }}
+                />
               )}
+              {!isCamelSellerProduct &&
+                SELLER_STATUS[product.sellerType as keyof typeof SELLER_STATUS] !==
+                  SELLER_STATUS['3'] &&
+                !isNormalseller && (
+                  <Platform alignment="center" justifyContent="center">
+                    <Avatar
+                      width={16}
+                      height={16}
+                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                        (product.siteUrl?.hasImage && product.siteUrl?.id) ||
+                        (product.site?.hasImage && product.site?.id) ||
+                        ''
+                      }.png`}
+                      alt={`${product.siteUrl?.name || '플랫폼'} 로고 이미지`}
+                    />
+                    <Typography
+                      variant="body2"
+                      weight="bold"
+                      customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
+                    >
+                      {product.siteUrl?.name || product.site.name}
+                    </Typography>
+                  </Platform>
+                )}
             </>
           )}
           <SwiperSlide>
@@ -393,33 +411,32 @@ function ProductImages({
   );
 }
 
-const Platform = styled.div`
+const Platform = styled(Flexbox)`
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 12px;
+  left: 12px;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px 6px 10px;
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: ${({ theme }) => theme.box.round['8']};
-  height: 32px;
+  padding: 4px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
+  border-radius: 4px;
 `;
 
 const Pagination = styled.div`
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: 12px;
+  right: 12px;
   z-index: 1;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   border-radius: ${({ theme }) => theme.box.round['16']};
   padding: 6px 12px;
   font-size: ${({ theme: { typography } }) => typography.body2.size};
-  font-weight: ${({ theme: { typography } }) => typography.body2.weight.bold};
   line-height: ${({ theme: { typography } }) => typography.body2.lineHeight};
   letter-spacing: ${({ theme: { typography } }) => typography.body2.letterSpacing};
-  color: ${light.palette.common.ui20};
+  color: ${light.palette.common.uiWhite};
 `;
 
 const Img = styled.img``;

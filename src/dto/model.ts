@@ -1,4 +1,6 @@
-import { Brand } from './brand';
+import type { ParentCategory } from '@dto/category';
+
+import type { Brand } from './brand';
 
 export interface DateGroup {
   date: number;
@@ -89,6 +91,7 @@ export interface Models {
   modelNo: string;
   name: string;
   sort: number;
+  productParentCategory: ParentCategory;
   subParentCategoryName: string;
   tmpBrands: TempBrands[];
   tmpCategories: TempCategorys[];
@@ -142,6 +145,7 @@ export interface ModelSuggestParams {
   brandIds?: number[];
   categoryIds?: number[];
   keyword: string;
+  useBrandCategory?: boolean;
 }
 
 export type LegitsBrandsParams = {

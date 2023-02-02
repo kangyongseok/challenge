@@ -33,6 +33,9 @@ function LegitResultHeader() {
 
   const setDialogState = useSetRecoilState(dialogState);
 
+  const isRequestLegit =
+    (productResult || {}).sellerType !== 0 && (productResult || {}).status === 7;
+
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_SHARE, {
       name: attrProperty.legitName.LEGIT_INFO,
@@ -96,7 +99,7 @@ function LegitResultHeader() {
     });
   };
 
-  if (status === 20 || (productResult || {}).postType === 2) {
+  if (status === 20 || isRequestLegit) {
     return (
       <Header
         rightIcon={

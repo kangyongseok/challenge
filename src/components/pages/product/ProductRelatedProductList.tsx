@@ -10,6 +10,7 @@ import type { Product, SearchRelatedProductsParams } from '@dto/product';
 import { fetchSearchRelatedProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
@@ -123,10 +124,14 @@ function ProductRelatedProductList({
     return {};
   };
 
+  if (!searchRelatedProducts?.page.content.length) return <Box customStyle={{ marginTop: -1 }} />;
+
   return (
     <Box customStyle={{ margin: '32px 0' }}>
       <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
-        보고 있는 매물과 비슷해요
+        {prevProduct?.status === productStatusCode.deleted
+          ? '이런 매물은 어때요?'
+          : '보고 있는 매물과 비슷해요'}
       </Typography>
       <Grid container rowGap={32} columnGap={12}>
         {isLoading

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
@@ -11,7 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SELLER, SOURCE } from '@constants/localStorage';
+import { SAVED_CAMEL_SELLER_PRODUCT_DATA, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -21,9 +21,14 @@ import {
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
-import type { CamelSellerLocalStorage } from '@typings/camelSeller';
+import type { SaveCamelSellerProductData } from '@typings/camelSeller';
 import { dialogState } from '@recoil/common';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import {
+  camelSellerDialogStateFamily,
+  camelSellerHasOpenedSurveyBottomSheetState,
+  camelSellerSurveyState,
+  camelSellerTempSaveDataState
+} from '@recoil/camelSeller';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -40,6 +45,12 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setDialogState = useSetRecoilState(dialogState);
   const setContinueDialog = useSetRecoilState(camelSellerDialogStateFamily('continue'));
+  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
+  const resetHasOpenedSurveyBottomSheetState = useResetRecoilState(
+    camelSellerHasOpenedSurveyBottomSheetState
+  );
+  const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
+
   const { data: { roles = [], notProcessedLegitCount = 0 } = {} } = useQuery(
     queryKeys.users.userInfo(),
     fetchUserInfo
@@ -61,13 +72,21 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
     return '';
   };
 
+  /**
+   *
+   * @prevStep 임시저장한 매물등록
+   * @SOURCE 판매등록하기의 진입점 (홈, 마이, 상점)
+   */
   const handleClickMoveToCamelSeller = () => {
-    const prevStep = LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage;
+    const savedCamelSellerProductData = LocalStorage.get<SaveCamelSellerProductData>(
+      SAVED_CAMEL_SELLER_PRODUCT_DATA
+    );
     LocalStorage.set(SOURCE, source);
     logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
       name: getAttName()
     });
 
+    // 개발 모드에서는 모웹에서도 테스트하기 위해 분기처리
     if (process.env.NODE_ENV !== 'development') {
       if (!(checkAgent.isIOSApp() || checkAgent.isAndroidApp())) {
         setOpenAppDown(({ type }) => ({
@@ -134,12 +153,20 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
       }
     }
 
-    if (accessUser && prevStep) {
+    // 이어하기 다이얼로그 띄우는 조건
+    if (
+      accessUser &&
+      savedCamelSellerProductData &&
+      savedCamelSellerProductData[accessUser.snsType]
+    ) {
       setContinueDialog(({ type }) => ({ type, open: true }));
       return;
     }
 
-    router.push('/camelSeller');
+    resetTempData();
+    resetSurveyState();
+    resetHasOpenedSurveyBottomSheetState();
+    router.push('/camelSeller/registerConfirm');
   };
 
   // eslint-disable-next-line no-constant-condition

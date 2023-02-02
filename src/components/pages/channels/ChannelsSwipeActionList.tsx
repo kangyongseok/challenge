@@ -157,7 +157,9 @@ function ChannelsSwipeActionList({
 
     if (checkAgent.isIOSApp()) {
       window.webkit?.messageHandlers?.callChannel?.postMessage?.(
-        `/channels/${camelChannel.channel.id}`
+        `/channels/${camelChannel.channel.id}${
+          camelChannel.channel.userId === 100 ? '?isCamelChannel=true' : ''
+        }`
       );
     } else {
       router.push(`/channels/${camelChannel.channel.id}`);
@@ -299,14 +301,17 @@ function ChannelsSwipeActionList({
                     text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
                   />
                 )}
-                <ProductImage
-                  url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
-                  isVisible={
-                    !!camelChannel.product?.status &&
-                    PRODUCT_STATUS[camelChannel.product?.status as keyof typeof PRODUCT_STATUS] ===
-                      PRODUCT_STATUS['3']
-                  }
-                />
+                {camelChannel.channel?.userId !== 100 && (
+                  <ProductImage
+                    url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
+                    isVisible={
+                      !!camelChannel.product?.status &&
+                      PRODUCT_STATUS[
+                        camelChannel.product?.status as keyof typeof PRODUCT_STATUS
+                      ] === PRODUCT_STATUS['3']
+                    }
+                  />
+                )}
               </>
             )
           }

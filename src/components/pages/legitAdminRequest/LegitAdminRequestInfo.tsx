@@ -48,13 +48,14 @@ function LegitAdminRequestInfo() {
     additionalIds = [],
     productResult: {
       brand: { nameEng = '' } = {},
-      postType = 0,
       quoteTitle = '',
       imageModel = '',
-      photoGuideDetails = []
+      photoGuideDetails = [],
+      status: productStatus = 0,
+      sellerType = 0
     } = {}
   } = productLegit || {};
-
+  const isRequestLegit = sellerType !== 0 && productStatus === 7;
   const brandLogo =
     mode === 'light'
       ? `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/${nameEng
@@ -86,7 +87,7 @@ function LegitAdminRequestInfo() {
 
   if (!productLegit) return null;
 
-  if (postType === 2) {
+  if (isRequestLegit) {
     return (
       <>
         <LegitUploadInfoPaper

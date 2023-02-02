@@ -35,6 +35,7 @@ interface ChannelMessagesProps {
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
+  isCamelAdminUser?: boolean;
   messagesRef: MutableRefObject<HTMLDivElement | null>;
   hasMorePrev: boolean;
   fetchPrevMessages: () => Promise<void>;
@@ -54,6 +55,7 @@ function ChannelMessages({
   showActionButtons,
   messagesRef,
   hasMorePrev,
+  isCamelAdminUser,
   fetchPrevMessages,
   scrollToBottom,
   refetchChannel
@@ -71,7 +73,6 @@ function ChannelMessages({
           const hasSeparator = !(
             previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'date')
           );
-
           return message ? (
             <Box className="message-scroll" key={`message-${message.messageId}`}>
               {hasSeparator && (
@@ -139,6 +140,7 @@ function ChannelMessages({
         <Content
           showAppointmentBanner={showAppointmentBanner}
           showNewMessageNotification={showNewMessageNotification}
+          isCamelAdminUser={isCamelAdminUser}
         >
           {memorizedAllMessages}
           <Box
@@ -166,14 +168,15 @@ const ScrollElement = styled.div`
 const Content = styled.div<{
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
+  isCamelAdminUser?: boolean;
 }>`
-  padding: ${({ showAppointmentBanner, showNewMessageNotification }) =>
+  padding: ${({ showAppointmentBanner, showNewMessageNotification, isCamelAdminUser }) =>
     `${
       HEADER_HEIGHT +
-      PRODUCT_INFORMATION_HEIGHT +
+      (!isCamelAdminUser ? PRODUCT_INFORMATION_HEIGHT : 0) +
       (showAppointmentBanner ? MESSAGE_APPOINTMENT_BANNER_HEIGHT : 0) +
       (showNewMessageNotification ? MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT : 0)
-    }px 16px 0px`};
+    }px 20px 0px`};
   transition: all 0.3s;
   position: relative;
   width: 100%;

@@ -38,6 +38,7 @@ type ReportType =
 interface ProductActionsProps {
   product?: Product;
   hasRoleSeller: boolean;
+  isCamelSellerProduct: boolean;
   onClickSMS: ({
     siteId,
     sellerType,
@@ -53,7 +54,12 @@ interface ProductActionsProps {
   }) => void;
 }
 
-function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsProps) {
+function ProductActions({
+  product,
+  hasRoleSeller,
+  isCamelSellerProduct,
+  onClickSMS
+}: ProductActionsProps) {
   const {
     theme: {
       palette: { primary, common }
@@ -250,10 +256,12 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
           <Icon name="ShareFilled" />
           <Typography weight="medium">공유</Typography>
         </ActionButton>
-        <ActionButton size="small" disabled={!product} onClick={handleClickReport}>
-          <Icon name="NotiFilled" />
-          <Typography weight="medium">신고</Typography>
-        </ActionButton>
+        {!isCamelSellerProduct && (
+          <ActionButton size="small" disabled={!product} onClick={handleClickReport}>
+            <Icon name="NotiFilled" />
+            <Typography weight="medium">신고</Typography>
+          </ActionButton>
+        )}
       </ActionButtons>
       <ReportTooltip open={isOpenReportTooltip}>
         {Object.values(reportOptions).map(({ type, label, count, checked, reported }) => (
@@ -319,7 +327,7 @@ const ActionButtonWrap = styled.div`
     }) => common.bg02};
   width: calc(100% + 40px);
   margin: 20px 0 32px;
-  padding: 20px 0;
+  padding: 10px 0;
 `;
 
 const ActionButtons = styled.div`

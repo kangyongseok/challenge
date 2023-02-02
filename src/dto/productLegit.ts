@@ -105,6 +105,7 @@ export type PostProductLegitData = {
   description?: string;
   photoGuideImages: PhotoGuideImage[];
   additionalIds?: (10 | 11 | 12 | 13)[]; // 10: 박스없음, 11: 대체 부속품 없음, 12: 영수증 잃어버림, 13: 구매날짜, 장소를 몰라요
+  productId?: number;
 };
 
 export type PutProductLegitData = PostProductLegitData & {

@@ -14,3 +14,4 @@ export { default as ProductMowebAppContents } from './ProductMowebAppContents';
 export { default as ProductSoldoutCard } from './ProductSoldoutCard';
 export { default as ProductDetailFooter } from './ProductDetailFooter';
 export { default as ProductStructuredData } from './ProductStructuredData';
+export { default as ProductDeletedCard } from './ProductDeletedCard';

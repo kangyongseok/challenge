@@ -45,7 +45,6 @@ function ChannelsMessagesPanel({
   const rowRenderer = useCallback(
     ({ key, index, style }: ListRowProps) => {
       const channel = channels[index];
-
       return channel ? (
         <div key={key} style={style}>
           <ChannelsSwipeActionList channel={channel} isSelectTargetUser={isSelectTargetUser} />

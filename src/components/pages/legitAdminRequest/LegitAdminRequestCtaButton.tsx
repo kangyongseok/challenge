@@ -55,7 +55,7 @@ function LegitAdminRequestCtaButton() {
   const {
     data: {
       status,
-      productResult: { postType = 0, photoGuideDetails = [] } = {},
+      productResult: { photoGuideDetails = [], sellerType = 0, status: productStatus = 0 } = {},
       legitOpinions = [],
       isLegitHead
     } = {},
@@ -78,6 +78,8 @@ function LegitAdminRequestCtaButton() {
     [legitOpinions, accessUser]
   );
 
+  const isRequestLegit = sellerType !== 0 && productStatus === 7;
+
   const handleClick = () => {
     if (myLegitOpinion) {
       router.push({
@@ -86,7 +88,7 @@ function LegitAdminRequestCtaButton() {
           tab: 'request'
         }
       });
-    } else if (isLegitHead && postType === 2 && result === 3) {
+    } else if (isLegitHead && isRequestLegit && result === 3) {
       setOpen(true);
     } else {
       mutate(
@@ -198,14 +200,14 @@ function LegitAdminRequestCtaButton() {
   useEffect(() => {
     if ((status === 10 || status === 12) && result) {
       setDisabled(false);
-    } else if ((isLegitHead && postType === 2 && result === 3) || status === 12) {
+    } else if ((isLegitHead && isRequestLegit && result === 3) || status === 12) {
       setDisabled(false);
     } else if ((!result || !description) && !myLegitOpinion) {
       setDisabled(true);
     } else {
       setDisabled(false);
     }
-  }, [isLegitHead, description, myLegitOpinion, postType, result, status]);
+  }, [isLegitHead, description, myLegitOpinion, isRequestLegit, result, status]);
 
   if (editable && myLegitOpinion) {
     return (

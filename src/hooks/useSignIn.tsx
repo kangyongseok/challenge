@@ -8,7 +8,13 @@ import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
 
-import { AccessUser, AppleAccount, FacebookAccount, KakaoAppAccount } from '@dto/userAuth';
+import type {
+  AccessUser,
+  AppleAccount,
+  FacebookAccount,
+  KakaoAppAccount,
+  UserSnsLoginResult
+} from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -118,6 +124,101 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
     );
   }, [mutatePostArea, returnUrl, router, state]);
 
+  const successLogin = useCallback(
+    (userSnsLoginResult: UserSnsLoginResult) => {
+      LocalStorage.set(ACCESS_USER, userSnsLoginResult.accessUser);
+      LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
+      LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
+      Axios.setAccessToken(userSnsLoginResult.jwtToken);
+      amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
+      Initializer.initAccessUserInAmplitude(amplitude.getInstance());
+      Initializer.initAccessUserInBraze();
+
+      fetchUserInfo().then((userInfo) => {
+        const userId = LocalStorage.get<AccessUser>(ACCESS_USER)?.userId;
+        const skipUserIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
+
+        if (!skipUserIds.includes(Number(userId)) && !userInfo.area.values.length) {
+          LocalStorage.set(SIGN_UP_STEP, 0);
+          router.replace('/onboarding?step=0');
+          return;
+        }
+        // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
+        if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
+          LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
+
+          if (checkAgent.isAndroidApp()) {
+            // window.webview.callAuthPush();
+            // window.webview.callAuthLocation();
+            // return;
+          } else if (
+            checkAgent.isIOSApp() &&
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callAuthPush &&
+            window.webkit.messageHandlers.callAuthLocation
+          ) {
+            window.webkit.messageHandlers.callAuthPush.postMessage(0);
+            window.webkit.messageHandlers.callAuthLocation.postMessage(0);
+            return;
+          } else {
+            updateUserArea();
+          }
+        }
+
+        // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
+        if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
+          LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
+          router.replace({
+            pathname: `/products/search/${keyword}`,
+            query: omitBy(
+              {
+                brandIds,
+                parentIds,
+                subParentIds,
+                categorySizeIds,
+                lineIds,
+                minPrice,
+                maxPrice,
+                idFilterIds,
+                siteUrlIds,
+                colorIds,
+                seasonIds,
+                materialIds
+              },
+              isUndefined
+            )
+          });
+          resetSearchParams();
+          return;
+        }
+
+        router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
+      });
+      setLoading(false);
+    },
+    [
+      brandIds,
+      categorySizeIds,
+      colorIds,
+      idFilterIds,
+      keyword,
+      lineIds,
+      materialIds,
+      maxPrice,
+      minPrice,
+      parentIds,
+      resetSearchParams,
+      returnUrl,
+      router,
+      seasonIds,
+      siteUrlIds,
+      state,
+      subParentIds,
+      updateUserArea
+    ]
+  );
+
   const authLogin = useCallback(
     async (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => {
       try {
@@ -133,76 +234,8 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
           att: 'SUCCESS',
           successData: userSnsLoginInfo
         });
-        LocalStorage.set(ACCESS_USER, userSnsLoginResult.accessUser);
-        LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
-        LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
-        Axios.setAccessToken(userSnsLoginResult.jwtToken);
-        amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
-        Initializer.initAccessUserInAmplitude(amplitude.getInstance());
-        Initializer.initAccessUserInBraze();
 
-        fetchUserInfo().then((userInfo) => {
-          const userId = LocalStorage.get<AccessUser>(ACCESS_USER)?.userId;
-          const skipUserIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
-
-          if (!skipUserIds.includes(Number(userId)) && !userInfo.area.values.length) {
-            LocalStorage.set(SIGN_UP_STEP, 0);
-            router.replace('/onboarding?step=0');
-            return;
-          }
-          // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
-          if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
-            LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
-
-            if (checkAgent.isAndroidApp()) {
-              // window.webview.callAuthPush();
-              // window.webview.callAuthLocation();
-              // return;
-            } else if (
-              checkAgent.isIOSApp() &&
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callAuthPush &&
-              window.webkit.messageHandlers.callAuthLocation
-            ) {
-              window.webkit.messageHandlers.callAuthPush.postMessage(0);
-              window.webkit.messageHandlers.callAuthLocation.postMessage(0);
-              return;
-            } else {
-              updateUserArea();
-            }
-          }
-
-          // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
-          if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
-            LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
-            router.replace({
-              pathname: `/products/search/${keyword}`,
-              query: omitBy(
-                {
-                  brandIds,
-                  parentIds,
-                  subParentIds,
-                  categorySizeIds,
-                  lineIds,
-                  minPrice,
-                  maxPrice,
-                  idFilterIds,
-                  siteUrlIds,
-                  colorIds,
-                  seasonIds,
-                  materialIds
-                },
-                isUndefined
-              )
-            });
-            resetSearchParams();
-            return;
-          }
-
-          router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
-        });
-        setLoading(false);
+        successLogin(userSnsLoginResult);
 
         if (authLoginCallback) authLoginCallback();
       } catch (error) {
@@ -222,28 +255,7 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
         });
       }
     },
-    [
-      authLoginCallback,
-      brandIds,
-      categorySizeIds,
-      colorIds,
-      idFilterIds,
-      keyword,
-      lineIds,
-      materialIds,
-      maxPrice,
-      minPrice,
-      parentIds,
-      resetSearchParams,
-      returnUrl,
-      router,
-      seasonIds,
-      setDialogState,
-      siteUrlIds,
-      state,
-      subParentIds,
-      updateUserArea
-    ]
+    [authLoginCallback, setDialogState, successLogin]
   );
 
   useEffect(() => {
@@ -441,7 +453,8 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
     code,
     loading,
     setLoading,
-    authLogin
+    authLogin,
+    successLogin
   };
 }
 

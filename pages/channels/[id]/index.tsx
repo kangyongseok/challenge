@@ -27,13 +27,14 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchChannel } from '@api/channel';
 
-import { channelUserType } from '@constants/user';
+import { channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import {
   MESSAGE_INPUT_HEIGHT,
   MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
   locales
 } from '@constants/common';
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -68,6 +69,7 @@ function Chanel() {
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const {
+    useQueryChannel,
     useQueryChannel: {
       data: {
         channel,
@@ -93,6 +95,7 @@ function Chanel() {
       isTargetUserBlocked,
       isDeletedTargetUser,
       isDeletedProduct,
+      isCamelAdminUser,
       productId,
       productStatus
     },
@@ -107,10 +110,16 @@ function Chanel() {
   const [isFocused, setIsFocused] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messageInputHeight, setMessageInputHeight] = useState(MESSAGE_INPUT_HEIGHT);
-
-  const showMessageInput = useMemo(
-    () => (!checkAgent.isIOSApp() && isFetched) || isTargetUserBlocked || isDeletedTargetUser,
-    [isDeletedTargetUser, isFetched, isTargetUserBlocked]
+  const { showMessageInput, showActionButtons } = useMemo(
+    () => ({
+      showMessageInput:
+        (!checkAgent.isIOSApp() && isFetched) ||
+        isTargetUserBlocked ||
+        isDeletedTargetUser ||
+        isCamelAdminUser,
+      showActionButtons: !isDeletedTargetUser && !isTargetUserBlocked && !isCamelAdminUser
+    }),
+    [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked]
   );
 
   const scrollToBottom = useCallback((behavior?: ScrollBehavior) => {
@@ -166,7 +175,8 @@ function Chanel() {
   useEffect(() => {
     document.body.classList.add('channel-body');
 
-    if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
+    if (checkAgent.isIOSApp() && !isCamelAdminUser)
+      window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
 
     return () => {
       document.body.classList.remove('channel-body');
@@ -180,14 +190,50 @@ function Chanel() {
 
   useEffect(() => {
     if (typeof channelUser?.type === 'number') {
+      const adminUser = channel?.userId === 100;
+      const getUserType = channelUserType[channelUser.type];
+      const attParser = () => {
+        if (adminUser) return 'ADMIN';
+        if (getUserType === channelUserType[1]) return 'SELLER';
+        return 'BUYER';
+      };
+
       logEvent(attrKeys.channel.VIEW_CHANNEL_DETAIL, {
-        att:
-          channelUserType[channelUser.type as keyof typeof channelUserType] === channelUserType[1]
-            ? 'SELLR'
-            : 'BUYER'
+        att: attParser(),
+        id: product?.id,
+        brand: product?.brand?.name,
+        category: product?.category?.name,
+        parentCategory: FIRST_CATEGORIES[product?.category?.id as number],
+        site: product?.site?.name,
+        price: product?.price,
+        source: 'CHANNEL_DETAIL',
+        sellerType: product?.sellerType,
+        productSellerId: product?.productSeller?.id,
+        productSellerType: product?.productSeller?.type,
+        productSellerAccount: product?.productSeller?.account,
+        useChat: product?.sellerType !== productSellerType.collection,
+        channel: useQueryChannel.data?.channel,
+        channelTargetUser: useQueryChannel.data?.channelTargetUser?.user,
+        channelUser: useQueryChannel.data?.channelUser?.user,
+        isTargetUserNoti: useQueryChannel.data?.isTargetUserNoti,
+        lastMessageManage: useQueryChannel.data?.lastMessageManage
       });
     }
-  }, [channelUser?.type]);
+  }, [
+    channel?.userId,
+    channelUser?.type,
+    product?.brand?.name,
+    product?.category?.id,
+    product?.category?.name,
+    product?.id,
+    product?.price,
+    product?.productSeller?.account,
+    product?.productSeller?.id,
+    product?.productSeller?.type,
+    product?.sellerType,
+    product?.site?.name,
+    useQueryChannel
+  ]);
 
   useEffect(() => {
     if (messagesRef.current) {
@@ -213,13 +259,13 @@ function Chanel() {
 
   useEffect(() => {
     if (checkAgent.isIOSApp()) {
-      if (isTargetUserBlocked || isDeletedTargetUser) {
+      if (isTargetUserBlocked || isDeletedTargetUser || isCamelAdminUser) {
         window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
       } else {
         window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
       }
     }
-  }, [isDeletedTargetUser, isTargetUserBlocked]);
+  }, [isCamelAdminUser, isDeletedTargetUser, isTargetUserBlocked]);
 
   useEffect(() => {
     window.getChannelMessage = (message: string) => {
@@ -295,24 +341,25 @@ function Chanel() {
                   targetUserName={targetUserName}
                   targetUserId={targetUserId}
                 />
-                {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) && (
-                  <FixedProductInfo
-                    isLoading={isLoading || !isFetched}
-                    isEditableProductStatus={isSeller}
-                    isDeletedProduct={isDeletedProduct}
-                    image={product?.imageThumbnail || product?.imageMain || ''}
-                    status={productStatus}
-                    title={product?.title || ''}
-                    price={product?.price || 0}
-                    onClick={handleClickProduct}
-                    onClickStatus={() =>
-                      logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                        name: attrProperty.name.CHANNEL_DETAIL,
-                        title: getLogEventTitle(product?.status || 0)
-                      })
-                    }
-                  />
-                )}
+                {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
+                  !isCamelAdminUser && (
+                    <FixedProductInfo
+                      isLoading={isLoading || !isFetched}
+                      isEditableProductStatus={isSeller}
+                      isDeletedProduct={isDeletedProduct}
+                      image={product?.imageThumbnail || product?.imageMain || ''}
+                      status={productStatus}
+                      title={product?.title || ''}
+                      price={product?.price || 0}
+                      onClick={handleClickProduct}
+                      onClickStatus={() =>
+                        logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
+                          name: attrProperty.name.CHANNEL_DETAIL,
+                          title: getLogEventTitle(product?.status || 0)
+                        })
+                      }
+                    />
+                  )}
                 {!!appointment && showAppointmentBanner && (
                   <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
                 )}
@@ -354,17 +401,18 @@ function Chanel() {
                     targetUserId={targetUserId}
                     showAppointmentBanner={showAppointmentBanner}
                     showNewMessageNotification={unreadCount > 0}
-                    showActionButtons={!isDeletedTargetUser && !isTargetUserBlocked}
+                    showActionButtons={showActionButtons}
                     messagesRef={messagesRef}
                     hasMorePrev={hasMorePrev}
                     fetchPrevMessages={fetchPrevMessages}
                     scrollToBottom={scrollToBottom}
                     refetchChannel={refetch}
+                    isCamelAdminUser={isCamelAdminUser}
                   />
                 )}
               </ContentWrapper>
               <FooterWrapper showInputMessage={showMessageInput} isFocused={isFocused}>
-                {!!channel && !isDeletedTargetUser && !isTargetUserBlocked && (
+                {!!channel && showActionButtons && (
                   <ChannelBottomActionButtons
                     messageInputHeight={messageInputHeight}
                     channelId={channel.id}
@@ -392,7 +440,7 @@ function Chanel() {
                     setMessageInputHeight={setMessageInputHeight}
                     setIsFocused={setIsFocused}
                     isTargetUserNoti={isTargetUserNoti}
-                    isDeletedTargetUser={isDeletedTargetUser}
+                    isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
                     isTargetUserBlocked={isTargetUserBlocked}
                     scrollToBottom={scrollToBottom}
                     updateNewMessage={updateNewMessage}
@@ -422,6 +470,7 @@ function Chanel() {
           isDeletedTargetUser={isDeletedTargetUser}
           isNotiOn={!!channelUser?.isNoti}
           refetchChannel={refetch}
+          isCamelAdminUser={isCamelAdminUser}
         />
       )}
       <ImageDetailDialog

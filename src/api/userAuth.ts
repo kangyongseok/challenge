@@ -61,3 +61,9 @@ export async function postLogin({
 export async function postWithdraw() {
   await Axios.getInstance().post(`${BASE_PATH}/withdraw`);
 }
+
+export async function fetchDevLogin(userId: string) {
+  const { data } = await Axios.getInstance().get<UserSnsLoginResult>(`/test/devlogin/${userId}`);
+
+  return data;
+}

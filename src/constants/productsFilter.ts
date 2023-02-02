@@ -71,7 +71,18 @@ export const filterImageColorNames = [
   'metal',
   'neon',
   'gold-deco',
-  'silver-deco'
+  'silver-deco',
+  'transparent',
+  'pattern',
+  'multicolor'
+];
+
+export const needReverseCheckFilterColorNames = [
+  'ivory',
+  'white',
+  'transparent',
+  'pattern',
+  'EMPTY'
 ];
 
 export const idFilterIds = {

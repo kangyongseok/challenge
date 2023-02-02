@@ -50,7 +50,7 @@ function SearchHelperBanner({
   } = useTheme();
   const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
   const setSearchParams = useSetRecoilState(searchParamsState);
-  const { data: parentCategories = [] } = useQuery(
+  const { data: { parentCategories = [] } = {} } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );

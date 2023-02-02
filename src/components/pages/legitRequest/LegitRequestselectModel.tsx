@@ -30,7 +30,8 @@ function LegitRequestSelectModel() {
     }
   } = useTheme();
 
-  const [{ brandId, categoryId }, setLegitRequestState] = useRecoilState(legitRequestState);
+  const [{ brandId, categoryId, productId }, setLegitRequestState] =
+    useRecoilState(legitRequestState);
   const setProductLegitParamsState = useSetRecoilState(productLegitParamsState);
 
   const modelsSuggestParams = useMemo(
@@ -66,12 +67,12 @@ function LegitRequestSelectModel() {
           setLegitRequestState((currVal) => ({
             ...currVal,
             modelImage,
-            isViewedSampleGuide: false
+            isViewedSampleGuide: !!currVal?.productId
           }));
         } else {
           setLegitRequestState((currVal) => ({
             ...currVal,
-            isViewedSampleGuide: false
+            isViewedSampleGuide: !!currVal?.productId
           }));
         }
 
@@ -84,10 +85,12 @@ function LegitRequestSelectModel() {
 
         if (modelId) newProductLegitParamsState.modelId = modelId;
 
+        if (productId) newProductLegitParamsState.productId = productId;
+
         setProductLegitParamsState(newProductLegitParamsState);
         router.push('/legit/request/form', undefined, { shallow: true });
       },
-    [brandId, categoryId, router, setLegitRequestState, setProductLegitParamsState]
+    [brandId, categoryId, productId, router, setLegitRequestState, setProductLegitParamsState]
   );
 
   useEffect(() => {

@@ -9,6 +9,8 @@ const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
 const personalProductsCache = 'personalProductsCache';
 const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
 const savedCreateChannelParams = 'savedCreateChannelParams';
+const camelSellerSelectBrandSource = 'camelSellerSelectBrandSource';
+const submitLegitProcessName = 'submitLegitProcessName';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -21,7 +23,9 @@ const sessionStorageKeys = {
   hideCrazyCurationEventBannerIds,
   personalProductsCache,
   pushToSavedRedirectChannel,
-  savedCreateChannelParams
+  savedCreateChannelParams,
+  camelSellerSelectBrandSource,
+  submitLegitProcessName
 };
 
 export default sessionStorageKeys;

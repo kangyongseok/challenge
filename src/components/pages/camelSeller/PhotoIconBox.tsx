@@ -20,15 +20,15 @@ function PhotoIconBox({
 
   return (
     <PhotoBox onClick={onClick} data-id={0}>
-      <Icon name="CameraFilled" customStyle={{ color: common.ui80 }} />
+      <Icon name="CameraFilled" width={32} height={32} color={common.ui80} />
       <Flexbox customStyle={{ marginTop: 8 }} gap={3}>
-        <Typography weight="bold" variant="small2" customStyle={{ color: common.ui20 }}>
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui20 }}>
           {count}
         </Typography>
-        <Typography customStyle={{ color: common.ui60 }} weight="bold" variant="small2">
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
           /
         </Typography>
-        <Typography customStyle={{ color: common.ui60 }} weight="bold" variant="small2">
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
           {totalImageCount}
         </Typography>
       </Flexbox>
@@ -37,13 +37,13 @@ function PhotoIconBox({
 }
 
 const PhotoBox = styled.div`
-  min-width: 72px;
-  height: 72px;
+  min-width: 84px;
+  height: 84px;
   background: ${({
     theme: {
       palette: { common }
     }
-  }) => common.uiWhite};
+  }) => common.bg02};
   border-radius: 8px;
   display: flex;
   flex-direction: column;

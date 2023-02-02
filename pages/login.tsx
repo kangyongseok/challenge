@@ -20,7 +20,7 @@ function Login() {
 
   const returnUrl = String(router.query.returnUrl || '/');
 
-  const { code, loading, setLoading, authLogin } = useSignIn({ returnUrl });
+  const { code, loading, setLoading, authLogin, successLogin } = useSignIn({ returnUrl });
 
   const [show, setShow] = useState(true);
 
@@ -51,6 +51,7 @@ function Login() {
                   <LoginMainContent />
                   <LoginButtonList
                     authLogin={authLogin}
+                    successLogin={successLogin}
                     returnUrl={returnUrl}
                     setShow={setShow}
                     setLoading={setLoading}

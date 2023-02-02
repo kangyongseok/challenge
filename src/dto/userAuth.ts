@@ -76,7 +76,7 @@ export interface AccessUser {
   phone: string;
   image: string;
   mrcamelId: string;
-  snsType: string;
+  snsType: 'kakao' | 'facebook' | 'apple';
   userAuthStatus: boolean;
   userId: number;
   userName: string;

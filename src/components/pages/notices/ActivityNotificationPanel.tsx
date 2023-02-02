@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { useResetRecoilState } from 'recoil';
 import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, IconName, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
@@ -17,16 +18,27 @@ import { fetchProductKeywords, putProductKeywordView } from '@api/user';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { PROMOTION_ATT } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime } from '@utils/formats';
 
+import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LabelData {
-  id: 10 | 20 | 30 | 40 | 50;
-  text: '찜한매물' | '사진감정' | '가격하락' | '이벤트' | '카멜추천';
+  id: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90;
+  text:
+    | '찜한매물'
+    | '사진감정'
+    | '가격하락'
+    | '이벤트'
+    | '카멜추천'
+    | '가격조정'
+    | '감정요청'
+    | '내 매물 등록'
+    | '끌올';
   iconName: IconName;
   bgColor: string;
   color: string;
@@ -39,6 +51,8 @@ function ActivityNotificationPanel() {
       palette: { common, secondary, primary }
     }
   } = useTheme();
+  const resetCamelSellerMoveScroll = useResetRecoilState(camelSellerIsMovedScrollState);
+
   const labelData: LabelData[] = [
     {
       id: 10,
@@ -68,6 +82,34 @@ function ActivityNotificationPanel() {
       iconName: 'SafeFilled',
       bgColor: primary.highlight,
       color: secondary.blue.light
+    },
+    {
+      id: 60,
+      text: '가격조정',
+      iconName: 'WonFilled',
+      bgColor: primary.highlight,
+      color: primary.light
+    },
+    {
+      id: 70,
+      text: '감정요청',
+      iconName: 'LegitFilled',
+      bgColor: primary.highlight,
+      color: primary.light
+    },
+    {
+      id: 80,
+      text: '내 매물 등록',
+      iconName: 'Arrow4UpFilled',
+      bgColor: primary.highlight,
+      color: primary.light
+    },
+    {
+      id: 90,
+      text: '끌올',
+      iconName: 'Arrow4UpFilled',
+      bgColor: primary.highlight,
+      color: primary.light
     }
   ];
   const params = {
@@ -156,6 +198,7 @@ function ActivityNotificationPanel() {
   };
 
   const handleClick = (activityInfo: UserNoti) => {
+    const promotionNoti = activityInfo.type === 100;
     const logTitleParser = () => {
       const splitParameter = activityInfo.parameter.split('/');
       if (activityInfo.parameter.indexOf('productList') === 1)
@@ -167,14 +210,42 @@ function ActivityNotificationPanel() {
       return 'undefined parameter';
     };
 
-    logEvent(attrKeys.noti.CLICK_BEHAVIOR, {
-      title: logTitleParser(),
-      id: activityInfo.id,
-      targetId: activityInfo.targetId,
-      type: activityInfo.type,
-      keyword: activityInfo.keyword,
-      parameter: activityInfo.parameter
-    });
+    const promotionAttParser = (text: string) => {
+      if (text === '가격조정') return PROMOTION_ATT.PRICE;
+      if (text === '감정요청') return PROMOTION_ATT.LEGIT;
+      if (text === '내 매물 등록') return PROMOTION_ATT.INFO;
+      if (text === '끌올') return PROMOTION_ATT.UPDATE;
+      return 'undefined parameter';
+    };
+
+    if (
+      activityInfo.label.description === '가격조정' ||
+      activityInfo.label.description === '내 매물 등록'
+    ) {
+      resetCamelSellerMoveScroll();
+    }
+
+    if (promotionNoti) {
+      logEvent(attrKeys.noti.CLICK_BEHAVIOR, {
+        name: attrProperty.name.BEHAVIOR_NOTI_LIST,
+        title: attrProperty.title.SALES_PROMOTION,
+        att: promotionAttParser(activityInfo.label.description),
+        id: activityInfo.id,
+        targetId: activityInfo.targetId,
+        type: activityInfo.type,
+        keyword: activityInfo.keyword,
+        parameter: activityInfo.parameter
+      });
+    } else {
+      logEvent(attrKeys.noti.CLICK_BEHAVIOR, {
+        title: logTitleParser(),
+        id: activityInfo.id,
+        targetId: activityInfo.targetId,
+        type: activityInfo.type,
+        keyword: activityInfo.keyword,
+        parameter: activityInfo.parameter
+      });
+    }
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
       name: attrProperty.productName.HISTORY,
@@ -294,7 +365,7 @@ function ActivityNotificationPanel() {
                       disableAspectRatio
                     />
                   )}
-                  <Image
+                  <ProductImage
                     src={activityInfo.image}
                     alt="ActivityInfo Img"
                     disableAspectRatio
@@ -316,7 +387,8 @@ function ActivityNotificationPanel() {
 }
 
 const ActivityNotiLabel = styled(Flexbox)<{ bgColor: string }>`
-  max-width: 59px;
+  min-width: fit-content;
+  max-width: fit-content;
   padding: 3.5px 4px;
   border-radius: 4px;
   background: ${({ bgColor }) => bgColor};
@@ -334,7 +406,7 @@ const NewIcon = styled(Image)`
 `;
 
 const ItemContentsText = styled(Typography)`
-  p:first-child {
+  p:first-of-type {
     font-size: ${({ theme: { typography } }) => typography.h4.size};
     font-weight: ${({ theme: { typography } }) => typography.h4.weight.medium};
     margin-bottom: 4px;
@@ -342,6 +414,13 @@ const ItemContentsText = styled(Typography)`
   p:last-child {
     color: ${({ theme: { palette } }) => palette.common.ui60};
     margin-bottom: 8px;
+  }
+`;
+
+const ProductImage = styled(Image)`
+  img {
+    height: auto;
+    min-height: 64px;
   }
 `;
 

@@ -68,9 +68,10 @@ function LegitStatusCardHolder({
       brand: { nameEng = '' },
       site,
       siteUrl,
-      postType,
       photoGuideDetails = [],
-      productSeller
+      productSeller,
+      sellerType,
+      status: productStatus
     }
   },
   title,
@@ -93,7 +94,13 @@ function LegitStatusCardHolder({
 
   const swiperRef = useRef<SwiperClass | null>();
 
-  const isNormalseller = (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3;
+  const { isNormalseller, isRequestLegit } = useMemo(
+    () => ({
+      isNormalseller: (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3,
+      isRequestLegit: sellerType !== 0 && productStatus === 7
+    }),
+    [productSeller.type, productStatus, sellerType, siteId]
+  );
 
   const images = useMemo(() => {
     let newImages: string[] = [];
@@ -332,9 +339,9 @@ function LegitStatusCardHolder({
               variant="h4"
               customStyle={{ marginTop: 32, textAlign: 'center', color: common.cmnW }}
             >
-              {postType === 2 ? quoteTitle : productTitle}
+              {isRequestLegit ? quoteTitle : productTitle}
             </Typography>
-            {postType === 2 ? (
+            {isRequestLegit ? (
               <Typography variant="body2" customStyle={{ marginTop: 4, color: common.ui80 }}>
                 신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>

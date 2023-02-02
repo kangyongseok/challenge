@@ -1,33 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { MouseEvent } from 'react';
+import type { UIEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useInfiniteQuery, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import {
+  BottomSheet,
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
+import { isEmpty } from 'lodash-es';
 import styled from '@emotion/styled';
 
-import { DropDownSelect } from '@components/UI/molecules';
+import type { RecentSearchParams } from '@dto/product';
 
-import { RecentSearchParams } from '@dto/product';
-
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchProduct, fetchSearchHistory } from '@api/product';
-
-import queryKeys from '@constants/queryKeys';
-import { SELLER_PROCESS_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { deviceIdState } from '@recoil/common';
+import { getTenThousandUnitPrice } from '@utils/formats';
+
 import {
   camelSellerBooleanStateFamily,
   camelSellerDialogStateFamily,
-  camelSellerTempSaveDataState,
-  recentPriceCardTabNumState
+  camelSellerModifiedPriceState,
+  camelSellerRecentPriceCardTabNumState,
+  camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
+import useQuerySearchHistory from '@hooks/useQuerySearchHistory';
+import useDebounce from '@hooks/useDebounce';
 
 import RecentBottomSheetEmptyResult from './RecentBottomSheetEmptyResult';
 import CamelSellerProductCard from './CamelSellerProductCard';
@@ -36,49 +42,95 @@ import CamelSellerFilter from './CamelSellerFilter';
 function CamelSellerRecentBottomSheet() {
   const {
     theme: {
-      palette: { common }
+      palette: { primary, common }
     }
   } = useTheme();
-  const { query, beforePopState, push, asPath } = useRouter();
-  const observerRef = useRef<IntersectionObserver>();
-  const targetRef = useRef(null);
-  const deviceId = useRecoilValue(deviceIdState);
-  const productId = Number(query.id || 0);
+  const { beforePopState, push, asPath } = useRouter();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [viewRecentPriceList, setViewRecentPriceList] = useRecoilState(
     camelSellerDialogStateFamily('recentPrice')
   );
+  const [open, setOpen] = useState(false);
   const [fetchData, setFetchData] = useState<RecentSearchParams>({});
-  const [filterType, setFilterType] = useState('');
-  const [order, setOrder] = useState({ name: '최근 거래순', id: 'updatedDesc' });
   const resetFilter = useSetRecoilState(camelSellerBooleanStateFamily('filterReset'));
-  const recentPriceCardTabNum = useRecoilValue(recentPriceCardTabNumState);
-  const bottomSheetRef = useRef<HTMLDivElement>(null);
-  const tempData = useRecoilValue(camelSellerTempSaveDataState);
-  const { data: editData } = useQuery(
-    queryKeys.products.sellerEditProducs({ productId, deviceId }),
-    () => fetchProduct({ productId, deviceId }),
-    {
-      enabled: !!productId
+  const setCamelSellerModifiedPriceState = useSetRecoilState(camelSellerModifiedPriceState);
+  const recentPriceCardTabNum = useRecoilValue(camelSellerRecentPriceCardTabNumState);
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+
+  const debouncedOpen = useDebounce(open, 300);
+  const {
+    infinitQuery: { pages, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, status }
+  } = useQuerySearchHistory({ fetchData, type: 'infinit' });
+
+  const lastPage = pages[pages.length - 1];
+  const {
+    productTotal = 0,
+    avgPrice = 0,
+    avgLatency = 0,
+    minLatencyPrice = 0,
+    minLatency = 0
+  } = lastPage?.baseSearchOptions || {};
+
+  const handleClickFilterReset = useCallback(() => {
+    if (tempData) {
+      setFetchData({
+        brandIds: tempData.brandIds,
+        categoryIds: tempData.category.id ? [tempData.category.id] : [],
+        keyword: tempData.title,
+        conditionIds: [],
+        colorIds: [],
+        sizeIds: [],
+        order: 'postedAllDesc'
+      });
     }
+    resetFilter(({ type }) => ({ type, isState: true }));
+  }, [tempData, resetFilter]);
+
+  const handleClickFilterSelect = ({ type, id }: { type: string; id: number }) => {
+    setFetchData((props) => ({
+      ...props,
+      [type]: id ? [id] : []
+    }));
+  };
+
+  const handleClickFilterResetButton = () => {
+    logEvent(attrKeys.camelSeller.CLICK_RESET, {
+      name: attrProperty.name.MARKET_PRICE,
+      title: attrProperty.title.PRODUCT_LIST
+    });
+    handleClickFilterReset();
+  };
+
+  const handleScroll = useCallback(
+    async (e: UIEvent<HTMLDivElement>) => {
+      const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+
+      const isFloor = scrollTop + clientHeight >= scrollHeight;
+
+      if (hasNextPage && !isFetchingNextPage && isFloor) await fetchNextPage();
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
-  const {
-    data: { pages = [] } = {},
-    isSuccess,
-    isLoading,
-    fetchNextPage,
-    isFetchingNextPage,
-    status
-  } = useInfiniteQuery(
-    queryKeys.products.searchHistory(fetchData),
-    ({ pageParam = 0 }) => fetchSearchHistory({ ...fetchData, page: pageParam }),
-    {
-      getNextPageParam: (nextData) => {
-        const { number = 0, totalPages = 0 } = nextData.page || {};
-        return number < totalPages - 1 ? number + 1 : undefined;
-      }
-    }
-  );
+  const handleClose = () => {
+    setViewRecentPriceList(({ type }) => ({ type, open: false }));
+    handleClickFilterReset();
+  };
+
+  const handleClick = (price: number, title: string) => () => {
+    logEvent(attrKeys.camelSeller.CLICK_MARKET_PRICE, {
+      name: attrProperty.name.MARKET_PRICE,
+      title,
+      price
+    });
+
+    setTempData({
+      ...tempData,
+      price
+    });
+    setCamelSellerModifiedPriceState(price);
+    setViewRecentPriceList(({ type }) => ({ type, open: false }));
+  };
 
   useEffect(() => {
     if (viewRecentPriceList.open) {
@@ -90,320 +142,377 @@ function CamelSellerRecentBottomSheet() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beforePopState, push, query, viewRecentPriceList.open]);
-
-  const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        io.unobserve(entry.target);
-        fetchNextPage();
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-    observerRef.current = new IntersectionObserver(intersectionObserver);
-    if (targetRef.current) {
-      observerRef.current.observe(targetRef.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pages]);
+  }, [beforePopState, push, viewRecentPriceList.open]);
 
   useEffect(() => {
     if (viewRecentPriceList.open) {
-      logEvent(attrKeys.camelSeller.VIEW_MAKET_PRICE, {
+      logEvent(attrKeys.camelSeller.VIEW_MARKET_PRICE, {
         name: attrProperty.name.PRODUCT_MAIN
       });
     }
-  }, [viewRecentPriceList]);
-
-  const handleClickFilterReset = useCallback(() => {
-    if (tempData) {
-      const brandIds = () => {
-        if (tempData.brand.id) return [tempData.brand.id];
-        if (query.brandIds) {
-          if (typeof query.brandIds === 'string') {
-            return [Number(query.brandIds)];
-          }
-          return query.brandIds.map((id) => Number(id));
-        }
-        return [];
-      };
-
-      setFetchData({
-        brandIds: brandIds(),
-        categoryIds: [tempData.category.id || Number(query.categoryIds)],
-        keyword: tempData.quoteTitle,
-        conditionIds: [],
-        colorIds: [],
-        sizeIds: [],
-        order: 'postedAllDesc'
-      });
-    }
-    resetFilter(({ type }) => ({ type, isState: true }));
-  }, [tempData, resetFilter, query.brandIds, query.categoryIds]);
-
-  const getScrollTop = useCallback((index: number) => {
-    if (index === 0) return 52;
-    if (index === 1) return 2 * 90;
-    if (index === 2) return 3 * 100;
-    if (index === 3) return 4 * 105;
-    if (index === 4) return 5 * 107;
-    return 0;
-  }, []);
-
-  useEffect(() => {
-    if (viewRecentPriceList.open && recentPriceCardTabNum) {
-      setTimeout(() => {
-        ((bottomSheetRef.current as HTMLElement).parentNode as HTMLElement).scrollTo({
-          top: getScrollTop(recentPriceCardTabNum.index),
-          behavior: 'smooth'
-        });
-      }, 500);
-    }
-  }, [getScrollTop, recentPriceCardTabNum, viewRecentPriceList]);
-
-  const getKeyword = useCallback(() => {
-    if (LocalStorage.get(SELLER_PROCESS_TYPE)) {
-      return `${query.brandName} ${query.categoryName}`;
-    }
-    if (!tempData.quoteTitle) {
-      return query.brandName;
-    }
-    return tempData.quoteTitle;
-  }, [query.brandName, query.categoryName, tempData.quoteTitle]);
+  }, [viewRecentPriceList.open]);
 
   useEffect(() => {
     if (viewRecentPriceList.open) {
-      if (editData) {
-        setFetchData({
-          brandIds: [editData.product.brand.id].concat(
-            editData.product?.productBrands?.map(({ brand }) => brand.id) || []
-          ),
-          categoryIds: [editData.product.category.id || 0],
-          keyword: editData.product.quoteTitle,
-          conditionIds: editData.product.labels?.map((label) => label.id),
-          colorIds: editData.product.colors?.map((color) => color.id),
-          sizeIds: editData.product.categorySizes?.map((size) => size.id),
-          order: 'postedAllDesc' // updatedDesc
-        });
-      } else if (query.title) {
-        setFetchData({
-          brandIds:
-            typeof query.brandIds === 'string'
-              ? [Number(query.brandIds)]
-              : (query.brandIds?.map((id) => Number(id)) as number[]),
-          categoryIds: [Number(query.categoryIds)],
-          keyword: getKeyword() as string,
-          conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
-          colorIds: tempData.color.id ? [tempData.color.id] : [],
-          sizeIds: tempData.size.id ? [tempData.size.id] : [],
-          order: 'postedAllDesc' // updatedDesc
-        });
+      let newKeyword = tempData.title;
+      if (!newKeyword && tempData.brand.name && tempData.category.name) {
+        newKeyword = `${tempData.brand.name} ${tempData.category.name}`;
       }
+      setFetchData({
+        brandIds: tempData.brandIds || [],
+        categoryIds: tempData.category.id ? [tempData.category.id] : [],
+        keyword: newKeyword,
+        conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
+        categorySizeIds: tempData.categorySizeIds,
+        order: 'postedAllDesc' // updatedDesc
+      });
     }
   }, [
-    editData,
-    getKeyword,
-    query.brandIds,
-    query.brandName,
-    query.categoryIds,
-    query.categoryName,
-    query.id,
-    query.title,
-    tempData.color.id,
+    tempData.brandIds,
+    tempData.category.id,
     tempData.condition.id,
-    tempData.quoteTitle,
+    tempData.categorySizeIds,
+    tempData.brand.name,
+    tempData.category.name,
     tempData.size.id,
-    viewRecentPriceList.open
+    viewRecentPriceList.open,
+    tempData.title
   ]);
 
-  const handleClickFilterSelect = ({ type, id }: { type: string; id: number }) => {
-    setFetchData((props) => ({
-      ...props,
-      [type]: id ? [id] : []
-    }));
-  };
+  useEffect(() => {
+    if (debouncedOpen && dialogRef.current && recentPriceCardTabNum && !isLoading) {
+      const { children } = dialogRef.current;
+      const { children: contentChildren } = children[0];
+      const { id } = recentPriceCardTabNum;
 
-  const handleClickFilterButton = (type: string) => {
-    logEvent(attrKeys.camelSeller.CLICK_SORT, {
-      name: attrProperty.name.MARKET_PRICE
-    });
+      Array.from(contentChildren[0].getElementsByClassName(`recent-product-${id}`)).forEach(
+        (element) => {
+          contentChildren[0].scrollTo({
+            top: ((element as HTMLDivElement).offsetTop || 0) - 160, // -Header
+            behavior: 'smooth'
+          });
+        }
+      );
+    }
+  }, [debouncedOpen, recentPriceCardTabNum, isLoading]);
 
-    setFilterType(type);
-  };
+  useEffect(() => {
+    setOpen(viewRecentPriceList.open);
+  }, [viewRecentPriceList.open]);
 
-  const handleClickSelect = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const { item } = target.dataset;
-    const selectItem = JSON.parse(item as string);
-    logEvent(attrKeys.camelSeller.SELECT_SORT, {
-      name: attrProperty.name.MARKET_PRICE
-    });
-
-    setFilterType('');
-    setOrder(selectItem);
-    setFetchData((props) => ({
-      ...props,
-      order: selectItem.id
-    }));
-  };
-
-  const emptyList =
-    status === 'error' || (isSuccess && pages[0]?.page && pages[0].page.content.length === 0);
+  useEffect(() => {
+    if (viewRecentPriceList.open) {
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.documentElement.removeAttribute('style');
+    }
+  }, [viewRecentPriceList.open]);
 
   return (
     <BottomSheet
+      ref={dialogRef}
+      fullScreen
       open={viewRecentPriceList.open}
-      onClose={() => {
-        setViewRecentPriceList(({ type }) => ({ type, open: false }));
-        handleClickFilterReset();
-      }}
-      customStyle={{ height: 'calc(100% - 56px)' }}
+      onClose={handleClose}
+      onScroll={handleScroll}
+      disableSwipeable
     >
-      <FilterHeaderFix ref={bottomSheetRef}>
-        <Flexbox>
-          <Typography brandColor="primary" weight="bold" variant="h3">
-            {getKeyword()}
-            <Typography weight="bold" variant="h3" customStyle={{ display: 'inline-block' }}>
-              의 최근 거래가
-            </Typography>
+      <FilterHeaderFix>
+        <Typography>{`${
+          pages[0]?.baseSearchOptions?.searchKeyword ||
+          `${tempData.brand.name} ${tempData.category.name}`
+        }`}</Typography>
+        <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginTop: 8 }}>
+          <Typography weight="bold" variant="h2">
+            최근 실거래가
           </Typography>
+          <Typography customStyle={{ color: common.ui60 }}>최근 6개월 기준</Typography>
         </Flexbox>
         <CamelSellerFilter
-          baseSearchOptions={pages[0]?.baseSearchOptions}
-          searchOptions={pages[0]?.searchOptions}
           onClick={handleClickFilterSelect}
+          onClickReset={handleClickFilterReset}
+          fetchData={fetchData}
+          baseSearchInfinitData={pages[0]?.baseSearchOptions || null}
+          searchInfinitData={pages[0]?.searchOptions || null}
         />
       </FilterHeaderFix>
-      <Flexbox
-        justifyContent="space-between"
-        alignment="center"
-        customStyle={{ padding: '0 20px', marginTop: 116, height: 52 }}
-      >
-        <DropDownSelect
-          disabledBorder
-          disabledCount
-          disabledBg
-          title="최근 거래순"
-          type="recent"
-          lists={[
-            { name: '최근 거래순', id: 'postedAllDesc' },
-            { name: '높은 가격순', id: 'priceDesc' },
-            { name: '낮은 가격순', id: 'priceAsc' }
-          ]}
-          currnetType={filterType}
-          selectValue={order.id}
-          onClick={handleClickFilterButton}
-          onClickSelect={handleClickSelect}
-        />
-        <Button
-          customStyle={{ border: 'none', padding: 0 }}
-          startIcon={<Icon name="RotateOutlined" customStyle={{ marginRight: 4 }} />}
-          onClick={() => {
-            logEvent(attrKeys.camelSeller.CLICK_RESET, {
-              name: attrProperty.name.MARKET_PRICE,
-              title: attrProperty.title.TOP
-            });
-            handleClickFilterReset();
-          }}
-        >
-          <Typography variant="body1">필터 재설정</Typography>
-        </Button>
-      </Flexbox>
-      {!!emptyList && (
+      {(status === 'error' || (!isLoading && !lastPage)) && (
         <RecentBottomSheetEmptyResult
-          title={(query.title as string) || editData?.product.title || ''}
+          title={tempData.quoteTitle || `${tempData.brand.name} ${tempData.category.name}`}
         />
       )}
-      <Flexbox direction="vertical" gap={20} customStyle={{ padding: '0 20px' }}>
+      <Flexbox
+        direction="vertical"
+        gap={20}
+        customStyle={{ marginTop: 160, padding: '0 20px 20px' }}
+      >
+        {isLoading && (
+          <>
+            <Skeleton width="100%" height={125} round={8} disableAspectRatio />
+            <Skeleton width="100%" height={125} round={8} disableAspectRatio />
+          </>
+        )}
         {isLoading &&
           Array.from({ length: 8 }, (_, i) => i + 1).map((value) => (
-            <Flexbox gap={12} key={`skeleton-card-${value}`}>
-              <Skeleton width={100} height={100} round={8} disableAspectRatio />
-              <Flexbox direction="vertical" gap={5}>
-                <Skeleton disableAspectRatio width={150} height={18} />
-                <Skeleton disableAspectRatio width={100} height={15} />
-                <Skeleton disableAspectRatio width={80} height={21} />
-                <Skeleton disableAspectRatio width={80} height={21} />
-              </Flexbox>
+            <Flexbox gap={16} key={`skeleton-card-${value}`}>
+              <Box
+                customStyle={{
+                  minWidth: 100
+                }}
+              >
+                <Skeleton ratio="5:6" round={8} />
+              </Box>
+              <Box>
+                <Flexbox gap={4} alignment="baseline">
+                  <Skeleton width={70} height={24} round={8} disableAspectRatio />
+                  <Skeleton width={70} height={16} round={8} disableAspectRatio />
+                </Flexbox>
+                <Skeleton
+                  width={80}
+                  height={12}
+                  round={8}
+                  disableAspectRatio
+                  customStyle={{
+                    marginTop: 8
+                  }}
+                />
+                <Skeleton
+                  width={112}
+                  height={36}
+                  round={8}
+                  disableAspectRatio
+                  customStyle={{
+                    marginTop: 12
+                  }}
+                />
+              </Box>
             </Flexbox>
           ))}
-        {isSuccess &&
+        {!isLoading && productTotal > 5 && (
+          <>
+            {!!avgPrice && (
+              <Box
+                customStyle={{
+                  padding: 20,
+                  borderRadius: 8,
+                  backgroundColor: common.bg02
+                }}
+              >
+                <Flexbox gap={20} alignment="center" justifyContent="space-between">
+                  <Flexbox direction="vertical" gap={4}>
+                    <Typography
+                      variant="body2"
+                      weight="medium"
+                      customStyle={{
+                        color: primary.light
+                      }}
+                    >
+                      최근 실거래가의 평균이에요.
+                    </Typography>
+                    <Flexbox gap={4} alignment="baseline">
+                      <Typography variant="h3" weight="bold">
+                        {getTenThousandUnitPrice(avgPrice)}만원
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        customStyle={{
+                          color: common.ui60
+                        }}
+                      >
+                        예상 판매기간 {avgLatency}일
+                      </Typography>
+                    </Flexbox>
+                  </Flexbox>
+                  <Button
+                    variant="solid"
+                    brandColor="white"
+                    onClick={handleClick(avgPrice, 'LAST_PRICE')}
+                    customStyle={{
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    이 가격으로 판매
+                  </Button>
+                </Flexbox>
+                <Box
+                  customStyle={{
+                    height: 1,
+                    margin: '12px 0',
+                    backgroundColor: common.line01
+                  }}
+                />
+                <Flexbox gap={4}>
+                  <Icon name="BangCircleFilled" width={16} height={16} color={common.ui60} />
+                  <Typography
+                    variant="body2"
+                    customStyle={{
+                      color: common.ui60
+                    }}
+                  >
+                    적당한 가격을 원한다면 이 가격으로 판매해보세요.
+                  </Typography>
+                </Flexbox>
+              </Box>
+            )}
+            {!!minLatencyPrice && (
+              <Box
+                customStyle={{
+                  padding: 20,
+                  borderRadius: 8,
+                  backgroundColor: common.bg02
+                }}
+              >
+                <Flexbox gap={20} alignment="center" justifyContent="space-between">
+                  <Flexbox direction="vertical" gap={4}>
+                    <Typography
+                      variant="body2"
+                      weight="medium"
+                      customStyle={{
+                        color: primary.light
+                      }}
+                    >
+                      가장 빨리 팔리는 가격이에요!
+                    </Typography>
+                    <Flexbox gap={4} alignment="baseline">
+                      <Typography variant="h3" weight="bold">
+                        {getTenThousandUnitPrice(minLatencyPrice)}
+                        만원
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        customStyle={{
+                          color: common.ui60
+                        }}
+                      >
+                        예상 판매기간 {minLatency}일
+                      </Typography>
+                    </Flexbox>
+                  </Flexbox>
+                  <Button
+                    variant="solid"
+                    brandColor="white"
+                    onClick={handleClick(minLatencyPrice, 'FAST_PRICE')}
+                    customStyle={{
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    이 가격으로 판매
+                  </Button>
+                </Flexbox>
+                <Box
+                  customStyle={{
+                    height: 1,
+                    margin: '12px 0',
+                    backgroundColor: common.line01
+                  }}
+                />
+                <Flexbox gap={4}>
+                  <Icon name="BangCircleFilled" width={16} height={16} color={common.ui60} />
+                  <Typography
+                    variant="body2"
+                    customStyle={{
+                      color: common.ui60
+                    }}
+                  >
+                    구매자가 가장 만족스러워하는 가격이에요.
+                  </Typography>
+                </Flexbox>
+              </Box>
+            )}
+          </>
+        )}
+        {!isLoading &&
           pages.map(({ page }) => {
             return page?.content?.map((item) => (
-              <CamelSellerProductCard
-                data={item}
-                key={`product-card-${item.id}`}
-                isActive={recentPriceCardTabNum?.id === item.id}
-              />
+              <CamelSellerProductCard data={item} key={`product-card-${item.id}`} />
             ));
           })}
         {isFetchingNextPage &&
           Array.from({ length: 8 }, (_, i) => i + 1).map((value) => (
-            <Flexbox gap={12} key={`skeleton-card-${value}`}>
-              <Skeleton width={100} height={100} round={8} disableAspectRatio />
-              <Flexbox direction="vertical" gap={5}>
-                <Skeleton disableAspectRatio width={150} height={18} />
-                <Skeleton disableAspectRatio width={100} height={15} />
-                <Skeleton disableAspectRatio width={80} height={21} />
-                <Skeleton disableAspectRatio width={80} height={20} />
-              </Flexbox>
+            <Flexbox gap={16} key={`next-skeleton-card-${value}`}>
+              <Box
+                customStyle={{
+                  minWidth: 100
+                }}
+              >
+                <Skeleton ratio="5:6" round={8} />
+              </Box>
+              <Box>
+                <Flexbox gap={4} alignment="baseline">
+                  <Skeleton width={70} height={24} round={8} disableAspectRatio />
+                  <Skeleton width={70} height={16} round={8} disableAspectRatio />
+                </Flexbox>
+                <Skeleton
+                  width={80}
+                  height={12}
+                  round={8}
+                  disableAspectRatio
+                  customStyle={{
+                    marginTop: 8
+                  }}
+                />
+                <Skeleton
+                  width={112}
+                  height={36}
+                  round={8}
+                  disableAspectRatio
+                  customStyle={{
+                    marginTop: 12
+                  }}
+                />
+              </Box>
             </Flexbox>
           ))}
       </Flexbox>
-      {isSuccess && ((pages[0]?.page && pages[0].page.content.length !== 0) || !pages[0]) && (
-        <Flexbox
-          customStyle={{ margin: '36px 0' }}
-          alignment="center"
-          justifyContent="center"
-          direction="vertical"
-          ref={targetRef}
-        >
-          <Typography weight="medium">더 많은 매물을 보고싶으세요?</Typography>
-          <Typography variant="small1" customStyle={{ color: common.ui60 }}>
-            필터를 재설정해서 더 많은 매물을 볼 수 있어요.
-          </Typography>
-          <Button
-            customStyle={{ marginTop: 20 }}
-            size="small"
-            onClick={() => {
-              logEvent(attrKeys.camelSeller.CLICK_RESET, {
-                name: attrProperty.name.MARKET_PRICE,
-                title: attrProperty.title.PRODUCT_LIST
-              });
-              handleClickFilterReset();
+      {!isLoading &&
+        !hasNextPage &&
+        (!isEmpty(fetchData.sizeIds) || !isEmpty(fetchData.conditionIds)) && (
+          <Box
+            customStyle={{
+              margin: '32px 0',
+              textAlign: 'center'
             }}
           >
-            필터 재설정하기
-          </Button>
-        </Flexbox>
-      )}
+            <Typography variant="h4" weight="medium">
+              더 많은 매물정보를 보고싶으세요?
+            </Typography>
+            <Typography
+              customStyle={{
+                marginTop: 4
+              }}
+            >
+              필터를 재설정해서 더 많은 매물을 볼 수 있어요.
+            </Typography>
+            <Button
+              variant="ghost"
+              brandColor="black"
+              onClick={handleClickFilterResetButton}
+              customStyle={{
+                margin: '20px auto 0'
+              }}
+            >
+              필터 초기화
+            </Button>
+          </Box>
+        )}
     </BottomSheet>
   );
 }
 
 const FilterHeaderFix = styled.div`
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-  padding: 20px 0 20px 20px;
+  padding: 32px 20px 20px;
   position: fixed;
-  top: 20px;
+  top: 0;
   left: 0;
   width: 100%;
+  max-height: 160px;
   background: ${({
     theme: {
       palette: { common }
     }
   }) => common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.dialog};
+  border-radius: 16px 16px 0 0;
 `;
 
 export default CamelSellerRecentBottomSheet;

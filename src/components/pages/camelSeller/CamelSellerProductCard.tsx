@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { Avatar, Box, Button, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
-import styled from '@emotion/styled';
+
+import { ImageDetailDialog } from '@components/UI/organisms';
 
 import type { Product } from '@dto/product';
 
@@ -16,91 +18,176 @@ import attrKeys from '@constants/attrKeys';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
-import CamelSellerProductCardDetail from './CamelSellerProductCardDetail';
+import {
+  camelSellerDialogStateFamily,
+  camelSellerModifiedPriceState,
+  camelSellerTempSaveDataState
+} from '@recoil/camelSeller';
 
-function CamelSellerProductCard({ data, isActive }: { data: Product; isActive: boolean }) {
+function CamelSellerProductCard({ data }: { data: Product }) {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
-  const [openDetail, setOpenDetail] = useState(false);
-  const isNormalseller = data?.sellerType === productSellerType.normal;
 
-  const handleClickRecentProduct = () => {
-    logEvent(attrKeys.camelSeller.CLICK_MARKET_PRODUCT, {
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const setCamelSellerModifiedPriceState = useSetRecoilState(camelSellerModifiedPriceState);
+  const setOpenRecentPriceBottomSheet = useSetRecoilState(
+    camelSellerDialogStateFamily('recentPrice')
+  );
+
+  const [images, setImages] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const bodyOverflowHiddenTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const isNormalSeller = data?.sellerType === productSellerType.normal;
+
+  const handleClick = () => {
+    logEvent(attrKeys.camelSeller.CLICK_MARKET_PRICE, {
       name: attrProperty.name.MARKET_PRICE,
-      title: attrProperty.title.PRODUCT
+      title: attrProperty.title.LIST,
+      att: data.price,
+      data
     });
 
-    setOpenDetail((props) => !props);
+    setTempData({
+      ...tempData,
+      price: data.price
+    });
+    setCamelSellerModifiedPriceState(data.price);
+    setOpenRecentPriceBottomSheet(({ type }) => ({ type, open: false }));
   };
 
-  if (openDetail || isActive) {
-    return <CamelSellerProductCardDetail data={data} />;
-  }
+  const handleClickImage = () => {
+    logEvent(attrKeys.camelSeller.CLICK_PIC, {
+      name: attrProperty.name.MARKET_PRICE,
+      title: attrProperty.title.GALLERY
+    });
+
+    if (!images.length) return;
+
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+
+    if (bodyOverflowHiddenTimerRef.current) {
+      clearTimeout(bodyOverflowHiddenTimerRef.current);
+    }
+
+    bodyOverflowHiddenTimerRef.current = setTimeout(() => {
+      document.body.style.overflow = 'hidden';
+    }, 400);
+  };
+
+  useEffect(() => {
+    const newImages = (data.imageDetails || '').split('|');
+
+    newImages.push(data.imageMain || data.imageThumbnail);
+
+    setImages(newImages.filter((newImage) => newImage));
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      if (bodyOverflowHiddenTimerRef.current) {
+        clearTimeout(bodyOverflowHiddenTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
-      <Flexbox gap={12} onClick={handleClickRecentProduct} alignment="center">
-        <ProductImageBox alignment="center" justifyContent="center">
-          <Img src={data.imageMain} alt={data.title} width={100} />
-        </ProductImageBox>
+      <Flexbox className={`recent-product-${data.id}`} gap={16}>
+        <Box
+          onClick={handleClickImage}
+          customStyle={{
+            position: 'relative',
+            minWidth: 100,
+            borderRadius: 8
+          }}
+        >
+          <Image
+            ratio="5:6"
+            src={data.imageMain || data.imageThumbnail}
+            alt={data.title}
+            round={8}
+            disableOnBackground={false}
+          />
+          {images.length > 0 && (
+            <Label
+              variant="solid"
+              brandColor="black"
+              startIcon={<Icon name="ImageFilled" width={12} height={12} />}
+              size="xsmall"
+              text={String(images.length)}
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8
+              }}
+            />
+          )}
+        </Box>
         <Box>
-          <Typography weight="medium" variant="small1">
-            {data.title}
-          </Typography>
-          <Typography variant="small2">{data.quoteTitle}</Typography>
-          <Flexbox alignment="center" gap={4} customStyle={{ margin: '5px 0 9px' }}>
-            <Typography weight="bold" customStyle={{ minWidth: 'fit-content' }}>
+          <Flexbox alignment="baseline" gap={4}>
+            <Typography variant="h3" weight="bold">
               {commaNumber(getTenThousandUnitPrice(data.price))}만원
             </Typography>
-
-            {data.labels.filter((label) => label.codeId === 14)[0] && (
-              <Label
-                variant="solid"
-                text={data.labels.filter((label) => label.codeId === 14)[0].name}
-                customStyle={{
-                  width: 35,
-                  height: 19,
-                  background: primary.highlight,
-                  color: primary.main
-                }}
-              />
-            )}
-          </Flexbox>
-          <Flexbox alignment="center" gap={3}>
-            {data.site.id && (
-              <Img
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                  isNormalseller ? IMG_CAMEL_PLATFORM_NUMBER : data.site.id
-                }.png`}
-                width="20px"
-                alt={data.site.name}
-              />
-            )}
-            <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
-              {dayjs(new Date(data.dateUpdated)).format('MM월 DD일')} 거래완료
+            <Typography
+              variant="body2"
+              customStyle={{
+                color: common.ui60
+              }}
+            >
+              거래완료까지{' '}
+              {dayjs(data.dateUpdated).diff(data.datePosted, 'days') <= 1
+                ? 1
+                : dayjs(data.dateUpdated).diff(data.datePosted, 'days')}
+              일
             </Typography>
           </Flexbox>
+          <Flexbox
+            gap={2}
+            customStyle={{
+              marginTop: 8
+            }}
+          >
+            <Avatar
+              width={12}
+              height={12}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                isNormalSeller ? IMG_CAMEL_PLATFORM_NUMBER : data.site.id
+              }.png`}
+              alt="플랫폼 이미지"
+            />
+            <Typography
+              variant="small2"
+              customStyle={{
+                color: common.ui60
+              }}
+            >
+              {dayjs(data.dateUpdated).format('MM월 DD일')} 거래완료
+            </Typography>
+          </Flexbox>
+          <Button
+            variant="ghost"
+            brandColor="black"
+            onClick={handleClick}
+            customStyle={{
+              marginTop: 12
+            }}
+          >
+            이 가격으로 판매
+          </Button>
         </Box>
       </Flexbox>
-      {/* {(openDetail || isActive) && <CamelSellerProductCardDetail data={data} />} */}
+      <ImageDetailDialog open={open} onClose={handleClose} images={images} />
     </>
   );
 }
-
-const ProductImageBox = styled(Flexbox)`
-  max-width: 100px;
-  max-height: 100px;
-  min-width: 100px;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-`;
-
-const Img = styled.img`
-  border-radius: 4px;
-`;
 
 export default CamelSellerProductCard;

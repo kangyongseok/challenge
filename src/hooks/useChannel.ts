@@ -181,11 +181,12 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     targetUserName: string;
     isTargetUserBlocked: boolean;
     isDeletedTargetUser: boolean;
+    isCamelAdminUser: boolean;
     productId: number;
     productStatus: number;
     isDeletedProduct: boolean;
   }>(() => {
-    const { product, channelUser, channelTargetUser, channelAppointments, userBlocks } =
+    const { product, channel, channelUser, channelTargetUser, channelAppointments, userBlocks } =
       useQueryResult.data || {};
 
     const findAppointment = channelAppointments?.find(
@@ -220,11 +221,12 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
           blockedUser.targetUser.id === channelTargetUserId
       ),
       isDeletedTargetUser: !!channelTargetUser?.user?.isDeleted,
+      isCamelAdminUser: !!router.query.isCamelChannel || channel?.userId === 100,
       productId: product?.id || 0,
       productStatus: product?.status || 0,
       isDeletedProduct: !!product?.isDeleted
     };
-  }, [accessUser?.userId, useQueryResult.data]);
+  }, [accessUser?.userId, router.query.isCamelChannel, useQueryResult.data]);
   const filteredMessages = useMemo(
     () =>
       messages.filter((message, index) => {

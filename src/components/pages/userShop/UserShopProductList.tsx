@@ -13,29 +13,30 @@ import {
 import type { Index, ListRowProps } from 'react-virtualized';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Flexbox } from 'mrcamel-ui';
+import { Box, Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import { NewProductListCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
 
-import SessionStorage from '@library/sessionStorage';
-import { logEvent } from '@library/amplitude';
+import LocalStorage from '@library/localStorage';
 
 import { fetchUserProducts } from '@api/user';
 
 import { productSellerType } from '@constants/user';
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
+import type { SavedLegitDataProps } from '@typings/product';
 import { toastState } from '@recoil/common';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
 import UserShopProductManageBottomSheet from './UserShopProductManageBottomSheet';
+import UserShopProductActionBanner from './UserShopProductActionBanner';
 import UserShopEmpty from './UserShopEmpty';
 
 const cache = new CellMeasurerCache({
@@ -48,6 +49,10 @@ interface UserShopProductListProps {
 
 function UserShopProductList({ tab }: UserShopProductListProps) {
   const router = useRouter();
+  const { data: accessUser } = useQueryAccessUser();
+  const getSavedLegitData: SavedLegitDataProps | null = LocalStorage.get(
+    String(accessUser?.userId)
+  );
   const setToastState = useRecoilValue(toastState);
   const userProductsParams = useMemo(
     () => ({
@@ -81,35 +86,7 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     }
   );
 
-  const groupedProducts = useMemo(() => {
-    const contents = pages.flatMap(({ content }) => content);
-    const newGroupedProductsLength =
-      Math.floor(contents.length / 2) + (Math.floor(contents.length % 2) > 0 ? 1 : 0);
-    const newGroupedProducts = [];
-
-    for (let i = 0; i <= newGroupedProductsLength; i += 1) {
-      newGroupedProducts.push(contents.splice(0, 2));
-    }
-
-    return newGroupedProducts.filter((product) => product.length);
-  }, [pages]);
-
-  const handleWishAtt = (product: ProductResult, i: number) => {
-    return {
-      name: attrProperty.name.USER_SHOP,
-      title: attrProperty.title.PRODUCT,
-      id: product.id,
-      index: i + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      site: product.site.name,
-      price: product.price,
-      cluster: product.cluster,
-      source: attrProperty.source.USER_SHOP_PRODUCT,
-      sellerType: product.sellerType
-    };
-  };
+  const contents = useMemo(() => pages.flatMap(({ content }) => content), [pages]);
 
   const handleProductAtt = (product: ProductResult, i: number) => {
     return {
@@ -141,76 +118,54 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     cache.clearAll();
   }, []);
 
-  const handleClickProduct = useCallback(
-    (product: ProductResult, id: number) => () => {
-      logEvent(attrKeys.userShop.CLICK_PRODUCT_DETAIL, {
-        name: attrProperty.productName.USER_SHOP,
-        title: attrProperty.productTitle.PRODUCT,
-        sellerType: product.sellerType,
-        productSellerId: product.productSeller.id,
-        productSellerType: product.productSeller.type,
-        productSellerAccount: product.productSeller.account,
-        useChat: product.sellerType !== productSellerType.collection
-      });
-      SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
-        source: attrProperty.productSource.USER_SHOP_PRODUCT
-      });
-      router.push(`/products/${id}`);
-    },
-    [router]
-  );
-
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
-      const groupedProduct = groupedProducts[index] || [];
-      const firstProduct = groupedProduct[0];
-      const secondProduct = groupedProduct[1];
+      const shopBannerList = contents[index].labels.filter((label) => label.codeId === 17);
+      const isSale = contents[index].status === productStatusCode.sale;
+      const isSavedLegitRequest =
+        getSavedLegitData?.savedLegitRequest?.state?.productId === contents[index].id;
 
-      return firstProduct || secondProduct ? (
+      return (
         // @ts-ignore
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          {({ registerChild, measure }) => (
-            <ProductGridCardBox
+          {({ registerChild }) => (
+            <Box
               ref={(ref) => {
                 if (ref && registerChild) registerChild(ref);
               }}
               style={style}
             >
-              {firstProduct && (
-                <ProductGridCard
-                  product={firstProduct}
-                  measure={measure}
-                  wishAtt={handleWishAtt(firstProduct, index)}
-                  productAtt={handleProductAtt(firstProduct, index)}
-                  name={attrProperty.productName.USER_SHOP}
-                  source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(firstProduct, firstProduct.id)}
-                  hideWishButton
-                  showShopManageButton
-                  showMyShopHideOverlay
+              <NewProductListCard
+                key={`user-shop-product-list-${contents[index].id}`}
+                variant="listA"
+                product={contents[index]}
+                attributes={handleProductAtt(contents[index], index)}
+                hideLabel
+                hideWishButton
+                showShopManageButton
+              />
+              {(!!shopBannerList.length || isSavedLegitRequest) && isSale ? (
+                <UserShopProductActionBanner
+                  labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
+                  productId={contents[index].id}
+                  savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
+                  synonyms={shopBannerList[0]?.synonyms || ''}
+                  attributes={handleProductAtt(contents[index], index)}
                 />
+              ) : (
+                <Box customStyle={{ height: 32 }} />
               )}
-              {secondProduct && (
-                <ProductGridCard
-                  product={secondProduct}
-                  measure={measure}
-                  wishAtt={handleWishAtt(secondProduct, index)}
-                  productAtt={handleProductAtt(firstProduct, index)}
-                  name={attrProperty.productName.USER_SHOP}
-                  source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(secondProduct, secondProduct.id)}
-                  hideWishButton
-                  showShopManageButton
-                  showMyShopHideOverlay
-                />
-              )}
-            </ProductGridCardBox>
+            </Box>
           )}
         </CellMeasurer>
-      ) : null;
+      );
     },
-    [groupedProducts, handleClickProduct]
+    [contents, getSavedLegitData?.savedLegitRequest]
   );
+
+  useEffect(() => {
+    cache.clearAll();
+  }, [router, setToastState, refetch, pages]);
 
   useEffect(() => {
     if (setToastState.status) {
@@ -226,10 +181,15 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
     };
   }, [handleResize]);
 
-  return !isLoading && groupedProducts.length === 0 ? (
+  return !isLoading && contents.length === 0 ? (
     <UserShopEmpty tab={tab} />
   ) : (
-    <Flexbox direction="vertical" component="section" gap={20} customStyle={{ paddingBottom: 100 }}>
+    <Flexbox
+      direction="vertical"
+      component="section"
+      gap={20}
+      customStyle={{ padding: '20px 20px 100px 20px' }}
+    >
       {isLoading ? (
         <ProductGridList>
           {Array.from(new Array(6), (_, index) => (
@@ -239,9 +199,9 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
       ) : (
         // @ts-ignore
         <InfiniteLoader
-          isRowLoaded={(params: Index) => !!groupedProducts[params.index]}
+          isRowLoaded={(params: Index) => !!contents[params.index]}
           loadMoreRows={loadMoreRows}
-          rowCount={hasNextPage ? groupedProducts.length + 10 : groupedProducts.length}
+          rowCount={hasNextPage ? contents.length + 10 : contents.length}
         >
           {({ registerChild, onRowsRendered }) => (
             // @ts-ignore
@@ -259,7 +219,7 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
                       height={height}
                       isScrolling={isScrolling}
                       scrollTop={scrollTop}
-                      rowCount={groupedProducts.length}
+                      rowCount={contents.length}
                       rowHeight={cache.rowHeight}
                       rowRenderer={rowRenderer}
                       deferredMeasurementCache={cache}
@@ -280,12 +240,6 @@ function UserShopProductList({ tab }: UserShopProductListProps) {
 const ProductGridList = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-`;
-
-const ProductGridCardBox = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding-bottom: 32px;
 `;
 
 export default UserShopProductList;

@@ -17,25 +17,31 @@ import { productLegitParamsState } from '@recoil/legitRequest';
 
 interface LegitUploadPhotoProps {
   isLoading: boolean;
-  isEdit?: boolean;
+  mode?: 'upload' | 'edit' | 'sample';
+  showPhotoGuide?: boolean;
+  showBanner?: boolean;
   photoGuideDetails: ({ isEdit?: boolean; savedImageUrl?: string } & CommonPhotoGuideDetail)[];
   photoGuideImages: PhotoGuideImage[];
-  onClick: (index: number, isEdit?: boolean) => () => void;
+  onClick?: (index: number, isEdit?: boolean) => () => void;
+  onClickSample?: () => void;
 }
 
 function LegitUploadPhoto({
   isLoading,
-  isEdit = false,
+  mode = 'upload',
+  showPhotoGuide = true,
+  showBanner = false,
   photoGuideDetails = [],
   photoGuideImages,
-  onClick
+  onClick,
+  onClickSample
 }: LegitUploadPhotoProps) {
   const router = useRouter();
   const { brandIds = [], categoryIds = [] } = useRecoilValue(productLegitParamsState);
 
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_UPLOAD_GUIDE, {
-      name: isEdit ? attrProperty.name.PRE_CONFIRM_EDIT : attrProperty.name.LEGIT_UPLOAD,
+      name: mode === 'upload' ? attrProperty.name.LEGIT_UPLOAD : attrProperty.name.PRE_CONFIRM_EDIT,
       title: attrProperty.title.INFO_BTN
     });
 
@@ -49,11 +55,32 @@ function LegitUploadPhoto({
   };
 
   return (
-    <Flexbox direction="vertical" gap={20} customStyle={{ userSelect: 'none' }}>
-      <Title variant="h3" weight="medium">
-        {`사진을 ${isEdit ? '수정' : '업로드'}해주세요!`}
-      </Title>
-      {photoGuideDetails.filter(({ imageSample }) => imageSample).length > 0 && (
+    <Flexbox
+      direction="vertical"
+      gap={mode === 'sample' ? 12 : 20}
+      customStyle={{ userSelect: 'none', position: 'relative' }}
+    >
+      {showBanner && (
+        <Banner variant="body2" weight="medium">
+          👍 가이드에 맞게 앨범에서 선택하거나, 촬영해주세요!
+        </Banner>
+      )}
+      {mode === 'upload' && (
+        <Title variant="h3" weight="medium">
+          사진을 업로드해주세요!
+        </Title>
+      )}
+      {mode === 'edit' && (
+        <Title variant="h3" weight="medium">
+          위 의견을 참고해 사진을 보완해주세요!
+        </Title>
+      )}
+      {mode === 'sample' && (
+        <Typography variant="h4" weight="bold">
+          사진감정 필수사진 예시
+        </Typography>
+      )}
+      {showPhotoGuide && photoGuideDetails.filter(({ imageSample }) => imageSample).length > 0 && (
         <Button
           brandColor="blue"
           startIcon={<Icon name="BangCircleFilled" />}
@@ -71,7 +98,8 @@ function LegitUploadPhoto({
           <Grid key={`photo-guide-detail-${photoGuideDetail.id}`} item xs={3}>
             <LegitPhotoGuideCard
               isDark
-              hideSample
+              hideSample={mode !== 'sample'}
+              hideLabel={mode === 'sample'}
               isLoading={isLoading}
               isInvalid={
                 photoGuideDetail.isRequired &&
@@ -86,7 +114,7 @@ function LegitUploadPhoto({
                   (photoGuideImage) => photoGuideImage.photoGuideId === photoGuideDetail.id
                 )?.imageUrl || ''
               }
-              onClick={onClick(index, photoGuideDetail.isEdit)}
+              onClick={onClick ? onClick(index, photoGuideDetail.isEdit) : onClickSample}
             />
           </Grid>
         ))}
@@ -104,6 +132,15 @@ const Title = styled(Typography)`
       }
     }) => secondary.red.light};
   }
+`;
+
+const Banner = styled(Typography)`
+  background-color: ${({ theme: { palette } }) => palette.primary.main};
+  border-radius: 8px;
+  padding: 12px;
+  position: absolute;
+  top: -72px;
+  width: 100%;
 `;
 
 export default LegitUploadPhoto;

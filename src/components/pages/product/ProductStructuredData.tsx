@@ -21,13 +21,13 @@ interface ProductStructuredDataProps {
 function ProductStructuredData({ product, relatedProducts = [], url }: ProductStructuredDataProps) {
   const router = useRouter();
 
-  const { data: categories } = useQuery(
+  const { data: { parentCategories = [] } = {} } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );
 
   const itemListElement = useMemo(() => {
-    if (!product || !categories || !categories.length) return [];
+    if (!product || !parentCategories || !parentCategories.length) return [];
 
     const { brand, category } = product;
     const baseUrl = `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}`;
@@ -56,7 +56,7 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
 
     if (category) {
       const { parentCategory, subParentCategories = [] } =
-        categories.find(({ parentCategory: { id } }) => id === category.parentId) || {};
+        parentCategories.find(({ parentCategory: { id } }) => id === category.parentId) || {};
       const subParentCategory = subParentCategories.find(
         ({ id, parentId }) => id === category.subParentId && parentId === category.parentId
       );
@@ -89,7 +89,7 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
       ...element,
       position: index + 1
     }));
-  }, [product, categories, router.locale]);
+  }, [product, parentCategories, router.locale]);
 
   if (!product) return null;
 

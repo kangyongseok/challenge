@@ -4,14 +4,29 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Image,
+  ThemeProvider,
+  Tooltip,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import type { FacebookAccount, FacebookLoginResponse } from '@dto/userAuth';
+import { TextInput } from '@components/UI/molecules';
+
+import type { FacebookAccount, FacebookLoginResponse, UserSnsLoginResult } from '@dto/userAuth';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
+import Axios from '@library/axios';
 import { logEvent } from '@library/amplitude';
+
+import { postDevLogin } from '@api/nextJs';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
@@ -20,13 +35,14 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
-import { checkAgent } from '@utils/common';
+import { checkAgent, isProduction } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import { LOGIN_TYPE } from '@hooks/useSignIn';
 
 interface LoginButtonListProps {
   authLogin: (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => Promise<void>;
+  successLogin: (userSnsLoginResult: UserSnsLoginResult) => void;
   returnUrl: string;
   setShow: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
@@ -37,6 +53,7 @@ interface LoginButtonListProps {
 
 function LoginButtonList({
   authLogin,
+  successLogin,
   returnUrl,
   setShow,
   setLoading,
@@ -60,6 +77,23 @@ function LoginButtonList({
   const kakaoLoginButtonRef = useRef<HTMLButtonElement>(null);
 
   const { openLogin, isRequiredLogin } = router.query;
+
+  const handleCLickTestUserLogin = async () => {
+    const testUserId = (document.getElementById('signIn') as HTMLInputElement).value || '';
+
+    if (testUserId) {
+      try {
+        Axios.clearAccessToken();
+
+        const userSnsLoginResult = await postDevLogin({ testUserId });
+
+        successLogin(userSnsLoginResult);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('테스트 환경 로그인 실패', e);
+      }
+    }
+  };
 
   const handleClickKakaoLogin = () => {
     logEvent(attrKeys.login.CLICK_LOGIN_SNS, {
@@ -208,6 +242,30 @@ function LoginButtonList({
 
   return (
     <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
+      {!isProduction && (
+        <ThemeProvider theme="light">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCLickTestUserLogin();
+            }}
+          >
+            <TextInput
+              id="signIn"
+              variant="solid"
+              placeholder="테스트 아이디 입력해주세요"
+              endAdornment={
+                <Icon
+                  name="DownloadFilled"
+                  customStyle={{ cursor: 'pointer', transform: 'rotate(-90deg)' }}
+                  onClick={handleCLickTestUserLogin}
+                />
+              }
+              inputStyle={{ flex: 1 }}
+            />
+          </form>
+        </ThemeProvider>
+      )}
       <TooltipWrapper>
         {lastLoginType === 'kakao' ? (
           <Tooltip
@@ -306,22 +364,5 @@ const TooltipWrapper = styled.div`
     width: 100%;
   }
 `;
-
-// const QuickLoginTooltip = styled(Tooltip)`
-//   & > div {
-//     top: auto;
-//     bottom: -2px;
-//     background-color: ${light.palette.common.ui20};
-//     color: ${({
-//       theme: {
-//         palette: { common }
-//       }
-//     }) => common.cmnW};
-//     z-index: ${({ theme: { zIndex } }) => zIndex.button};
-//     & > svg {
-//       color: ${light.palette.common.ui20};
-//     }
-//   }
-// `;
 
 export default LoginButtonList;

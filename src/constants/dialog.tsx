@@ -59,6 +59,19 @@ export const dialogTitle: Record<
   ),
   leaveEditProfile: <Box customStyle={{ marginTop: 12 }}>페이지를 나가시겠어요?</Box>,
   featureIsMobileAppDown: '이 기능은 앱에서만 할 수 있어요!',
+  legitSampleGuid: '샘플사진을 확인해주세요!',
+  legitPermissionCheck: (
+    <>
+      모든 사진 권한 및 카메라 권한을
+      <br />
+      설정해주세요.
+    </>
+  ),
+  leaveLegitRequest: <Box customStyle={{ marginTop: 12 }}>사진감정 신청을 중단하시겠습니까?</Box>,
+  productSoldout: '판매 완료된 매물입니다',
+  productDelete: '삭제된 매물입니다',
+  productHidden: '숨긴 매물입니다',
+  productReservation: '예약중인 매물입니다',
   locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>
 };
 
@@ -143,7 +156,31 @@ export const dialogContent = {
       <br />
       보시려면 허용해주세요!
     </Box>
-  )
+  ),
+  legitSampleGuid: (
+    <Box customStyle={{ marginBottom: 8 }}>
+      어떻게 등록해야 감정결과를
+      <br />더 빨리 받을 수 있는지 알아보세요.
+    </Box>
+  ),
+  legitPermissionCheck: (
+    <Box customStyle={{ marginBottom: 8 }}>
+      내 물건의 사진을 등록하려면
+      <br />
+      권한이 필요해요
+    </Box>
+  ),
+  leaveLegitRequest: (
+    <Box customStyle={{ marginBottom: 12 }}>
+      매물등록은 완료되며
+      <br />
+      사진감정은 &quot;마이&quot;에서 이어할 수 있습니다.
+    </Box>
+  ),
+  productSoldout: '판매 완료된 매물은 수정이 불가능합니다.',
+  productDelete: '삭제 된 매물은 수정이 불가능합니다.',
+  productHidden: '숨긴 매물은 수정이 불가능합니다.',
+  productReservation: '예약중인 매물은 수정이 불가능합니다.'
 };
 
 export const firstButtonText: Record<
@@ -165,6 +202,8 @@ export const firstButtonText: Record<
     | 'loginError'
     | 'deleteAccount'
     | 'leaveEditProfile'
+    | 'legitPermissionCheck'
+    | 'leaveLegitRequest'
   >,
   string | number | ReactElement
 > = {
@@ -183,7 +222,9 @@ export const firstButtonText: Record<
   cancelAppointment: '약속 취소하기',
   loginError: '확인',
   deleteAccount: '회원탈퇴',
-  leaveEditProfile: '취소'
+  leaveEditProfile: '취소',
+  legitPermissionCheck: '취소',
+  leaveLegitRequest: '취소'
 };
 
 export const secondButtonText: Record<
@@ -214,6 +255,13 @@ export const secondButtonText: Record<
     | 'leaveEditProfile'
     | 'featureIsMobileAppDown'
     | 'locationInfo'
+    | 'legitSampleGuid'
+    | 'legitPermissionCheck'
+    | 'leaveLegitRequest'
+    | 'productSoldout'
+    | 'productDelete'
+    | 'productHidden'
+    | 'productReservation'
   >,
   string | number | ReactElement
 > = {
@@ -241,6 +289,13 @@ export const secondButtonText: Record<
   deleteAccount: '회원정보 유지',
   leaveEditProfile: '나가기',
   featureIsMobileAppDown: '3초 앱 다운로드',
+  legitSampleGuid: '사진 샘플 보기',
+  legitPermissionCheck: '설정으로 이동',
+  leaveLegitRequest: '확인',
+  productSoldout: '확인',
+  productDelete: '확인',
+  productHidden: '확인',
+  productReservation: '확인',
   locationInfo: '동의하고 매물보기'
 };
 

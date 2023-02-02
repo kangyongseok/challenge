@@ -2,8 +2,10 @@ import type {
   CamelProductsParams,
   PageProduct,
   PageProductResult,
+  Product,
   ProductDetail,
   ProductParams,
+  ProductResult,
   RecentSearchParams,
   RecommProductsParams,
   ReviewInfoParams,
@@ -174,7 +176,7 @@ export async function deleteProduct({ productId }: { productId: number }) {
 }
 
 export async function postProducts(parameter: SubmitType) {
-  const { data } = await Axios.getInstance().post(`${BASE_PATH}`, parameter);
+  const { data } = await Axios.getInstance().post<Product>(`${BASE_PATH}`, parameter);
   return data;
 }
 
@@ -187,6 +189,14 @@ export async function fetchRelatedKeywords(params: SearcgRelatedKeywordsParams) 
 export async function fetchSellerInfo(sellerId: number) {
   const { data } = await Axios.getInstance().get<SellerInfo>(
     `${BASE_PATH}/sellers/${sellerId}/info`
+  );
+
+  return data;
+}
+
+export async function fetchProductList(productIds: number[]) {
+  const { data } = await Axios.getInstance().get<ProductResult[]>(
+    `${BASE_PATH}/list?productIds=${productIds.join(',')}`
   );
 
   return data;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
@@ -16,6 +16,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -26,7 +27,7 @@ import { getUnreadMessagesCount } from '@utils/channel';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { dialogState, toastState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function ProductSellerBottomMenu({
   status,
@@ -60,12 +61,15 @@ function ProductSellerBottomMenu({
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
+  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation } = useMutation(putProductUpdateStatus);
 
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
+
+  const isDeletedProduct = productStatusCode.deleted === status;
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;
@@ -176,6 +180,8 @@ function ProductSellerBottomMenu({
       name: attrProperty.name.PRODUCT_DETAIL,
       ...getAttProperty
     });
+
+    resetTempData();
 
     router.push(`/camelSeller/registerConfirm/${parameter.productId}`);
   };
@@ -342,23 +348,25 @@ function ProductSellerBottomMenu({
             </Typography>
           </Flexbox>
         )}
-        <Flexbox
-          direction="vertical"
-          alignment="center"
-          gap={7}
-          customStyle={{ flex: 1 }}
-          onClick={handleClickDelete}
-        >
-          <IconDelete />
-          <Typography
-            draggable={false}
-            variant="small1"
-            weight="medium"
-            customStyle={{ color: common.ui60 }}
+        {!isDeletedProduct && (
+          <Flexbox
+            direction="vertical"
+            alignment="center"
+            gap={7}
+            customStyle={{ flex: 1 }}
+            onClick={handleClickDelete}
           >
-            삭제
-          </Typography>
-        </Flexbox>
+            <IconDelete />
+            <Typography
+              draggable={false}
+              variant="small1"
+              weight="medium"
+              customStyle={{ color: common.ui60 }}
+            >
+              삭제
+            </Typography>
+          </Flexbox>
+        )}
       </SellerBottomNav>
       <BottomSheet
         open={openChangeStatus}

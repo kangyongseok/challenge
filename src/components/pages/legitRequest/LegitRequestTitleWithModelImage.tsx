@@ -9,6 +9,7 @@ interface LegitRequestTitleWithModelImageProps {
   categoryName: string;
   title: string;
   modelImage: string;
+  isEditMode?: boolean;
 }
 
 function LegitRequestTitleWithModelImage({
@@ -16,7 +17,8 @@ function LegitRequestTitleWithModelImage({
   brandName,
   categoryName,
   title,
-  modelImage
+  modelImage,
+  isEditMode = false
 }: LegitRequestTitleWithModelImageProps) {
   const {
     theme: {
@@ -26,7 +28,7 @@ function LegitRequestTitleWithModelImage({
   return (
     <>
       <LegitRequestBrandLogo src={brandLogo} />
-      <Title>
+      <Title isEditMode={isEditMode}>
         <Flexbox direction="vertical" gap={4} customStyle={{ flex: 1 }}>
           <Flexbox alignment="center">
             <Typography variant="h4" customStyle={{ color: common.ui60 }}>
@@ -60,11 +62,11 @@ function LegitRequestTitleWithModelImage({
   );
 }
 
-const Title = styled.section`
+const Title = styled.section<{ isEditMode?: boolean }>`
   display: flex;
   column-gap: 12px;
   align-items: center;
-  padding: 52px 20px 32px;
+  padding: ${({ isEditMode }) => (isEditMode ? '52px 20px 0' : '52px 20px 32px')};
   user-select: none;
 
   & > div:last-of-type {

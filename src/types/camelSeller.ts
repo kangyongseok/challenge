@@ -1,11 +1,5 @@
 import type { CommonPhotoGuideDetail } from '@dto/common';
 
-export interface ModelParams {
-  brandIds?: number[];
-  categoryIds?: number[];
-  keyword: string;
-}
-
 export interface PhotoGuideImages {
   photoGuideId: number;
   imageUrl: string;
@@ -36,15 +30,48 @@ export interface CamelSellerLocalStorage {
 export interface CamelSellerTempData {
   title: string;
   quoteTitle: string;
-  condition: { id: number; name: string };
-  color: { id: number; name: string };
-  size: { id: number; name: string };
+  condition: { id: number; name: string; synonyms: string };
+  size: { id: number; name: string; categorySizeId?: number };
   price: number;
   description: string;
-  photoGuideImages: EditPhotoGuideImages[];
+  images: string[];
   brand: { id: number; name: string };
-  category: { id: number; name: string };
-  brandIds?: number[];
+  brands: string;
+  category: { id: number; parentId: number; parentCategoryName: string; name: string };
+  sizes: string;
+  categorySizeIds: number[];
+  sizeOptionIds: number[];
+  brandIds: number[];
+  useDeliveryPrice: boolean;
+}
+
+export interface SaveCamelSellerProductData {
+  [key: string]: {
+    title: string;
+    quoteTitle: string;
+    brand: { id: number; name: string };
+    brands: string;
+    brandIds: number[];
+    category: { id: number; parentId: number; parentCategoryName: string; name: string };
+    size: { id: number; name: string; count?: number };
+    sizes: string;
+    condition: { name: string; id: number; synonyms: string };
+    price: number;
+    description: string;
+    images: string[];
+    categorySizeIds: number[];
+    sizeOptionIds: number[];
+    unitIds: number[];
+    storeIds: number[];
+    distanceIds: number[];
+    colors: {
+      id: number;
+      name: string;
+      description: string;
+    }[];
+    useDeliveryPrice: boolean;
+    hasOpenedSurveyBottomSheet: boolean;
+  };
 }
 
 export type CommonCodeId = { codeId: number };
@@ -71,10 +98,17 @@ export interface SubmitType {
   conditionId: number;
   colorIds: number[];
   categorySizeIds: number[];
-  photoGuideImages: PhotoGuideImages[];
+  sizes: string;
+  brands: string;
+  sizeOptionIds: number[];
+  images: string[];
   modelId?: number;
   description?: string | null;
   quoteTitle?: string;
+  useDeliveryPrice: boolean;
+  unitIds: number[];
+  storeIds: number[];
+  distanceIds: number[];
 }
 
-export type MergePhotoImages = CommonPhotoGuideDetail & PhotoGuideImages;
+export type SearchHistoryHookType = 'infinit' | 'condition' | 'size' | 'keyword' | null;

@@ -4,8 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
-import styled from '@emotion/styled';
-import { CSSObject } from '@emotion/react';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
 

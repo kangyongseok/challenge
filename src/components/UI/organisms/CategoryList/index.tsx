@@ -47,7 +47,7 @@ function CategoryList({ variant = 'solid', onClickCategory }: CategoryListProps)
     } = {},
     isFetched
   } = useQueryUserInfo();
-  const { data: parentCategories } = useQuery(
+  const { data: { parentCategories = [] } = {} } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );

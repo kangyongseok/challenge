@@ -132,7 +132,7 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
-    Initializer.initRum();
+    // Initializer.initRum();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

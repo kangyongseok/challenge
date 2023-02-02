@@ -78,14 +78,18 @@ function ChannelsFilteredMessagesPanel() {
                   ))}
                 </Flexbox>
               ))
-            : channels.map((channel) => (
-                <Flexbox
-                  key={`channel-list-${(channel.camel.channel as Channel).id}`}
-                  direction="vertical"
-                >
-                  <ChannelsSwipeActionList channel={channel} />
-                </Flexbox>
-              ))}
+            : channels.map((channel) => {
+                const isCamelAdmin = channel.camel.channel?.userId === 100;
+                if (isCamelAdmin) return '';
+                return (
+                  <Flexbox
+                    key={`channel-list-${(channel.camel.channel as Channel).id}`}
+                    direction="vertical"
+                  >
+                    <ChannelsSwipeActionList channel={channel} />
+                  </Flexbox>
+                );
+              })}
           <Typography
             variant="body1"
             customStyle={{ padding: '52px 20px', textAlign: 'center', color: common.ui60 }}

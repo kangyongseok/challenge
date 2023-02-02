@@ -24,7 +24,7 @@ function LoginBottomSheet() {
 
   const returnUrl = router.asPath;
 
-  const { code, loading, setLoading, authLogin } = useSignIn({
+  const { code, loading, setLoading, authLogin, successLogin } = useSignIn({
     returnUrl,
     authLoginCallback() {
       setOpen(false);
@@ -88,6 +88,7 @@ function LoginBottomSheet() {
               </Typography>
               <LoginButtonList
                 authLogin={authLogin}
+                successLogin={successLogin}
                 returnUrl={returnUrl as string}
                 setShow={setShow}
                 setLoading={setLoading}

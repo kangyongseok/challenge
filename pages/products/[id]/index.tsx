@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import type { TypographyVariant } from 'mrcamel-ui';
-import { Flexbox, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
@@ -26,6 +25,7 @@ import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
   ProductCTAButton,
+  ProductDeletedCard,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
   ProductImages,
@@ -59,7 +59,7 @@ import {
   PRODUCT_SOURCE,
   productStatusCode
 } from '@constants/product';
-import { ACCESS_USER, DUPLICATED_PRODUCT_IDS } from '@constants/localStorage';
+import { ACCESS_USER, DUPLICATED_PRODUCT_IDS, SAVED_LEGIT_REQUEST } from '@constants/localStorage';
 import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -73,6 +73,7 @@ import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@
 import { userShopSelectedProductState } from '@recoil/userShop';
 import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
+import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductDetail() {
@@ -89,8 +90,9 @@ function ProductDetail() {
 
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-  const setToastState = useRecoilValue(toastState);
+  const [toast, setToastState] = useRecoilState(toastState);
 
+  const { data: userData, set: setUserDate } = useQueryUserData();
   const {
     data,
     isLoading,
@@ -153,10 +155,10 @@ function ProductDetail() {
   }, [data]);
 
   useEffect(() => {
-    if (setToastState.status === 'soldout' && isCamelSellerProduct) {
+    if (toast.status === 'soldout' && isCamelSellerProduct) {
       refetch();
     }
-  }, [setToastState, refetch, isCamelSellerProduct]);
+  }, [refetch, isCamelSellerProduct, toast.status]);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -183,6 +185,8 @@ function ProductDetail() {
     () => data?.product.status === productStatusCode.soldOut && !(isDup && hasTarget),
     [data?.product.status, hasTarget, isDup]
   );
+  const isSoldOutMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && soldout;
+  const isDeletedProduct = productStatusCode.deleted === data?.product.status;
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading && !isFetching ? data?.product : undefined;
@@ -451,6 +455,27 @@ function ProductDetail() {
     updateAccessUserOnBraze({ ...accessUser, lastProductModel: quoteTitle });
   }, [data, accessUser]);
 
+  useEffect(() => {
+    if (userData?.savedLegitRequest?.showToast) {
+      setToastState({
+        type: 'product',
+        status: 'saleSuccess'
+      });
+      setUserDate({
+        [SAVED_LEGIT_REQUEST]: {
+          ...userData.savedLegitRequest,
+          showToast: false
+        }
+      });
+    }
+  }, [setToastState, setUserDate, userData?.savedLegitRequest]);
+
+  const sizeParser = () => {
+    const selectedMainSize = data?.product?.categorySizes?.map((size) => size.name) || [];
+    const selectedOption = data?.sizeOptions?.map((size) => size.description) || [];
+    return [...selectedMainSize, ...selectedOption];
+  };
+
   return (
     <>
       <PageHead
@@ -484,6 +509,7 @@ function ProductDetail() {
             isRedirectPage={isRedirectPage}
             isCamelSellerProduct={isCamelSellerProduct}
             soldout={soldout}
+            deleted={data?.product.status === productStatusCode.deleted}
             refresh={refetch}
             productButton={
               <ProductCTAButton
@@ -509,9 +535,23 @@ function ProductDetail() {
         hideAppDownloadBanner={isRedirectPage}
       >
         {isRedirectPage && data?.product && <ProductRedirect product={data.product} />}
-        {!isRedirectPage && (
+        {!isRedirectPage && isDeletedProduct && (
           <>
-            {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && soldout && !viewDetail ? (
+            <ProductDeletedCard />
+            <ProductRelatedProductList
+              brandId={data?.product?.brand.id}
+              categoryId={data?.product?.category.id}
+              line={data?.product?.line}
+              prevProduct={data?.product}
+              quoteTitle={data?.product.quoteTitle}
+              price={data?.product.price}
+              productId={data?.product.id}
+            />
+          </>
+        )}
+        {!isRedirectPage && !isDeletedProduct && (
+          <>
+            {isSoldOutMoweb && !viewDetail ? (
               <ProductSoldoutCard
                 product={data?.product}
                 isSafe={isSafe}
@@ -528,18 +568,19 @@ function ProductDetail() {
                 />
                 <ProductInfo
                   contentRef={contentRef}
-                  isSafe={isSafe}
                   product={product}
                   isCamelSellerProduct={isCamelSellerProduct}
+                  sizeData={sizeParser()}
+                  unitText={data?.units[0]?.description}
+                  storeText={data?.stores[0]?.description}
+                  distanceText={data?.distances[0]?.description}
                 />
-                {!isCamelSellerProduct && (
-                  <ProductActions
-                    product={product}
-                    hasRoleSeller={!!data?.roleSeller?.userId}
-                    onClickSMS={handleClickSMS}
-                  />
-                )}
-                {isCamelSellerProduct && <DivideLine />}
+                <ProductActions
+                  product={product}
+                  hasRoleSeller={!!data?.roleSeller?.userId}
+                  onClickSMS={handleClickSMS}
+                  isCamelSellerProduct={isCamelSellerProduct}
+                />
               </>
             )}
             <ProductMowebAppContents data={data} />
@@ -659,10 +700,16 @@ export async function getServerSideProps({
 
     const { id } = query;
 
-    const splitIds = String(id).split('-');
-    const productId = Number(splitIds[splitIds.length - 1] || 0);
+    // TODO getServerSideProps 가 2번 호출되고, null 이 string 으로 들어옴
+    if (!id || id === 'null') {
+      return {
+        props: {
+          ...(await serverSideTranslations(locale || defaultLocale))
+        }
+      };
+    }
 
-    if (query.id === 'undefined') {
+    if (id === 'undefined') {
       return {
         redirect: {
           destination: '/',
@@ -670,6 +717,9 @@ export async function getServerSideProps({
         }
       };
     }
+
+    const splitIds = String(id).split('-');
+    const productId = Number(splitIds[splitIds.length - 1] || 0);
 
     const product = await queryClient.fetchQuery(
       queryKeys.products.product({ productId }),
@@ -720,19 +770,6 @@ const PriceDownText = styled(Typography)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-`;
-
-const DivideLine = styled.div`
-  position: relative;
-  left: -20px;
-  width: calc(100% + 40px);
-  height: 8px;
-  margin-bottom: 30px;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg02};
 `;
 
 export default ProductDetail;

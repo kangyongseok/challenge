@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { BottomSheet, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -16,7 +15,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
-function CamelSellerBottomSheetCondition() {
+function CamelSellerConditionBottomSheet() {
   const {
     theme: {
       palette: { common }
@@ -30,38 +29,38 @@ function CamelSellerBottomSheetCondition() {
     })
   );
 
-  useEffect(() => {
-    if (open) {
-      logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MODAL, {
-        name: attrProperty.name.PRODUCT_MAIN,
-        title: attrProperty.title.CONDITION
-      });
-    }
-  }, [open]);
-
   const handleClickCondition = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
     logEvent(attrKeys.camelSeller.CLICK_PRODUCT_MODAL, {
       name: attrProperty.name.PRODUCT_MAIN,
       title: attrProperty.title.CONDITION,
-      att: target.dataset.name
+      att: target.dataset.value
     });
 
     setOpen(({ type }) => ({ type, open: false }));
     setTempData({
       ...tempData,
-      condition: { id: Number(target.dataset.id), name: target.dataset.name || '' }
+      condition: {
+        id: Number(target.dataset.id),
+        name: target.dataset.name || '',
+        synonyms: target.dataset.value || ''
+      }
     });
   };
 
   return (
     <BottomSheet
       open={open}
+      fullScreen
       onClose={() => setOpen(({ type }) => ({ type, open: false }))}
+      disableSwipeable
       customStyle={{ padding: '0 20px' }}
     >
+      <Typography variant="h2" weight="bold" customStyle={{ margin: '32px 0 20px' }}>
+        매물의 상태를 알려주세요.
+      </Typography>
       {codeDetails &&
-        codeDetails.map(({ id, name, description, synonyms }) => (
+        codeDetails.map(({ id, name, description, synonyms }, index) => (
           <ConditionCard
             key={`condition-card-${id}`}
             data-name={name}
@@ -70,14 +69,17 @@ function CamelSellerBottomSheetCondition() {
             direction="vertical"
             justifyContent="center"
             onClick={handleClickCondition}
+            hideLine={codeDetails.length - 1 === index}
           >
-            <Flexbox alignment="center">
-              <Typography weight="bold" variant="h4">
+            <Flexbox alignment="center" gap={12}>
+              <StateLabel variant="small1" weight="medium">
+                {synonyms}
+              </StateLabel>
+              <Typography weight="medium" variant="h4">
                 {name}
               </Typography>
-              <StateLabel>{synonyms}</StateLabel>
             </Flexbox>
-            <Typography variant="small1" customStyle={{ color: common.ui60, marginTop: 6 }}>
+            <Typography customStyle={{ color: common.ui60, marginTop: 4, marginLeft: 36 }}>
               {description}
             </Typography>
           </ConditionCard>
@@ -86,14 +88,22 @@ function CamelSellerBottomSheetCondition() {
   );
 }
 
-const ConditionCard = styled(Flexbox)`
-  height: 87px;
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
+const ConditionCard = styled(Flexbox)<{
+  hideLine?: boolean;
+}>`
+  padding: 20px 0;
+
+  ${({
+    theme: {
+      palette: { common }
+    },
+    hideLine
+  }): CSSObject =>
+    !hideLine
+      ? {
+          borderBottom: `1px solid ${common.line01}`
+        }
+      : {}}
 `;
 
 const StateLabel = styled(Typography)`
@@ -107,12 +117,12 @@ const StateLabel = styled(Typography)`
       palette: { primary }
     }
   }) => primary.main};
-  width: 19px;
-  height: 19px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
-  font-size: ${({ theme }) => theme.typography.small2.size};
-  text-align: center;
-  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-export default CamelSellerBottomSheetCondition;
+export default CamelSellerConditionBottomSheet;

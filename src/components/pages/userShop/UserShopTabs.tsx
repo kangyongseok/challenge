@@ -14,13 +14,13 @@ import attrKeys from '@constants/attrKeys';
 interface UserShopTabsProps {
   value: string;
   customStyle?: CustomStyle;
-  sellCount?: number;
-  soldoutCount?: number;
-  reviewCount?: number;
+  reviewCount: number;
+  sellCount: number;
+  soldoutCount: number;
 }
 
 const UserShopTabs = forwardRef<HTMLDivElement, UserShopTabsProps>(function UserShopTabs(
-  { value, customStyle, sellCount, soldoutCount, reviewCount },
+  { value, customStyle, reviewCount, sellCount, soldoutCount },
   ref
 ) {
   const {

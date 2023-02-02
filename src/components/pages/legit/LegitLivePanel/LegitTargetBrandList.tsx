@@ -13,6 +13,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchLegit } from '@api/dashboard';
 
 import queryKeys from '@constants/queryKeys';
+import { SAVED_LEGIT_REQUEST } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -25,6 +26,7 @@ import {
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
+import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitTargetBrandList() {
@@ -39,6 +41,7 @@ function LegitTargetBrandList() {
   const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
+  const { data: userData, remove: removeUserDate } = useQueryUserData();
 
   const { data: { targetBrands = [] } = {}, isLoading } = useQuery(
     queryKeys.dashboards.legit(),
@@ -114,6 +117,9 @@ function LegitTargetBrandList() {
         return;
       }
 
+      // 매물등록 후 사진감정 신청 중단한 케이스 있을 경우 초기화
+      if (userData?.[SAVED_LEGIT_REQUEST]?.state?.productId) removeUserDate(SAVED_LEGIT_REQUEST);
+
       setLegitRequestState((currVal) => ({
         ...currVal,
         brandId,
@@ -124,7 +130,7 @@ function LegitTargetBrandList() {
       }));
       router.push('/legit/request/selectCategory');
     },
-    [accessUser, router, setDialogState, setLegitRequestState]
+    [accessUser, removeUserDate, router, setDialogState, setLegitRequestState, userData]
   );
 
   const handleSwiperBrand = () => {

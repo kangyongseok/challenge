@@ -96,9 +96,9 @@ function ProductSellerProductList({
         },
         source: attrProperty.productSource.PRODUCT_LIST
       });
-
     // 내 매물 shop
-    if (roleSellerUserId === accessUser?.userId) {
+
+    if (roleSellerUserId && accessUser?.userId && roleSellerUserId === accessUser?.userId) {
       router.push({
         pathname: '/user/shop',
         query: { tab: 0 }

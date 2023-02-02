@@ -228,9 +228,9 @@ const FooterBottomBackground = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: calc(env(safe-area-inset-bottom,0) + 8px);
-  background-color:  ${({ theme: { palette } }) => palette.common.uiWhite};
-  transform: translateY(calc(env(safe-area-inset-bottom,0) + 8px));
-}`;
+  height: calc(env(safe-area-inset-bottom, 0) + 8px);
+  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
+  transform: translateY(calc(env(safe-area-inset-bottom, 0) + 8px));
+`;
 
 export default ChannelMessageInput;

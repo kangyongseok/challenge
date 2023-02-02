@@ -111,7 +111,8 @@ export const userReportTypeAtt = {
 export const channelUserType = {
   0: '구매자',
   1: '판매자'
-};
+} as const;
+type channelUserType = typeof channelUserType[keyof typeof channelUserType];
 
 export const PROFILE_EDIT_ERROR_MESSAGE: Record<
   Exclude<InvalidReason['type'], 'DUPLICATE'>,

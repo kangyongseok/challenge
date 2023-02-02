@@ -48,7 +48,7 @@ function LegitRequest() {
   const router = useRouter();
   const { id = '' } = router.query;
 
-  const { modelImage, isCompleted } = useRecoilValue(legitRequestState);
+  const { modelImage, isCompleted, productId: savedProductId } = useRecoilValue(legitRequestState);
   const setToastState = useSetRecoilState(toastState);
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
@@ -78,11 +78,19 @@ function LegitRequest() {
   } = useQuery(queryKeys.productLegits.legit(productId), () => fetchProductLegit(productId));
 
   const handleClick = useCallback(() => {
-    if (isCompleted)
-      setToastState({
-        type: 'legit',
-        status: 'successRequest'
-      });
+    if (isCompleted) {
+      if (savedProductId) {
+        setToastState({
+          type: 'product',
+          status: 'saleSuccess'
+        });
+      } else {
+        setToastState({
+          type: 'legit',
+          status: 'successRequest'
+        });
+      }
+    }
 
     resetLegitRequestState();
     resetProductLegitParamsState();
@@ -96,6 +104,7 @@ function LegitRequest() {
     resetProductLegitParamsState,
     roles,
     router,
+    savedProductId,
     setToastState
   ]);
 

@@ -4,9 +4,6 @@ import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
-import type { PostProductLegitData } from '@dto/productLegit';
-
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
@@ -14,13 +11,16 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeLegitContinueDialog() {
   const router = useRouter();
+
   const { data: accessUser } = useQueryAccessUser();
   const { userNickName } = useQueryMyUserInfo();
+  const { data: userData, remove: removeUserData } = useQueryUserData();
 
   const setLegitRequestState = useSetRecoilState(legitRequestState);
   const setProductLegitParamsState = useSetRecoilState(productLegitParamsState);
@@ -31,41 +31,29 @@ function HomeLegitContinueDialog() {
       name: attrProperty.name.LEGIT_RESET,
       att: 'OK'
     });
-    const { state, params } =
-      LocalStorage.get<{
-        state: {
-          brandId: number;
-          brandName: string;
-          brandLogo: string;
-          categoryId: number;
-          categoryName: string;
-          modelImage: string;
-          isCompleted: boolean;
-          isViewedSampleGuide: boolean;
-        };
-        params: PostProductLegitData;
-      }>(SAVED_LEGIT_REQUEST_STATE) || {};
+
+    const { state, params } = userData?.[SAVED_LEGIT_REQUEST_STATE] || {};
 
     if (state) setLegitRequestState(state);
     if (params) setProductLegitParamsState(params);
 
-    LocalStorage.remove(SAVED_LEGIT_REQUEST_STATE);
+    removeUserData(SAVED_LEGIT_REQUEST_STATE);
     router.push('/legit/request/form');
   };
 
   const handleClose = () => {
-    LocalStorage.remove(SAVED_LEGIT_REQUEST_STATE);
+    removeUserData(SAVED_LEGIT_REQUEST_STATE);
     setOpen(false);
   };
 
   useEffect(() => {
-    if (accessUser && LocalStorage.get(SAVED_LEGIT_REQUEST_STATE)) {
+    if (accessUser && !!userData?.[SAVED_LEGIT_REQUEST_STATE]) {
       logEvent(attrKeys.home.VIEW_LEGIT_MODAL, {
         name: attrProperty.name.LEGIT_RESET
       });
       setOpen(true);
     }
-  }, [accessUser]);
+  }, [accessUser, userData]);
 
   return (
     <Dialog

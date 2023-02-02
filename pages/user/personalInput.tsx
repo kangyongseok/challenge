@@ -13,7 +13,7 @@ import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { AccessUser } from '@dto/userAuth';
-import { Gender } from '@dto/user';
+import type { Gender } from '@dto/user';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import { logEvent } from '@library/amplitude';

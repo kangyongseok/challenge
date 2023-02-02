@@ -59,7 +59,9 @@ export interface ParentCategories {
 }
 
 export interface CategorySizes {
+  codeId: number;
   categoryId: number;
+  categorySizeId: number;
   dateCreated: string;
   dateUpdated: string;
   id: number;
@@ -68,4 +70,5 @@ export interface CategorySizes {
   size: string;
   synonyms: string;
   groupId: number;
+  viewSize: string;
 }

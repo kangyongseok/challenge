@@ -1,24 +1,27 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
 import { find } from 'lodash-es';
-import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  CamelSellerBottomSheetCondition,
-  CamelSellerConfirmFooter,
+  CamelSellerCTAButton,
+  CamelSellerCategoryBrand,
+  CamelSellerCondition,
+  CamelSellerConditionBottomSheet,
+  CamelSellerDescription,
   CamelSellerHeader,
-  CamelSellerPhotoGuideEdit,
+  CamelSellerInfo,
   CamelSellerPrice,
-  CamelSellerProductTitle,
+  CamelSellerProductImage,
   CamelSellerRecentBottomSheet,
-  CamelSellerRegisterCondition,
-  CamelSellerRegisterState,
-  CamelSellerRegisterTextForm
+  CamelSellerSize,
+  CamelSellerSizeBottomSheet,
+  CamelSellerSurveyBottomSheet,
+  CamelSellerSurveyForm,
+  CamelSellerTitle
 } from '@components/pages/camelSeller';
 
 import { logEvent } from '@library/amplitude';
@@ -29,20 +32,32 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { CamelSellerTempData } from '@typings/camelSeller';
+import type { CamelSellerTempData } from '@typings/camelSeller';
 import { deviceIdState } from '@recoil/common';
-import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+import {
+  camelSellerBooleanStateFamily,
+  camelSellerHasOpenedSurveyBottomSheetState,
+  camelSellerSurveyState,
+  camelSellerTempSaveDataState
+} from '@recoil/camelSeller';
+import useRedirectVC from '@hooks/useRedirectVC';
 
 function RegisterConfirmEdit() {
   const { query } = useRouter();
   const deviceId = useRecoilValue(deviceIdState);
-  const resetPhotoState = useResetRecoilState(camelSellerBooleanStateFamily('requirePhotoValid'));
   const productId = Number(query.id || 0);
-  const setTempData = useSetRecoilState(camelSellerTempSaveDataState);
-  const footerRef = useRef<HTMLDivElement>(null);
 
-  const { data: editData } = useQuery(
-    queryKeys.products.sellerEditProducs({ productId, deviceId }),
+  useRedirectVC(`/camelSeller/registerConfirm/${query.id}`);
+
+  const resetPhotoState = useResetRecoilState(camelSellerBooleanStateFamily('requirePhotoValid'));
+  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
+  const setSurveyState = useSetRecoilState(camelSellerSurveyState);
+  const setHasOpenedSurveyBottomSheetState = useSetRecoilState(
+    camelSellerHasOpenedSurveyBottomSheetState
+  );
+
+  const { data: editData, isFetching } = useQuery(
+    queryKeys.products.sellerEditProduct({ productId, deviceId }),
     () => fetchProduct({ productId, deviceId }),
     {
       enabled: !!productId,
@@ -50,86 +65,127 @@ function RegisterConfirmEdit() {
     }
   );
 
-  useEffect(() => {
-    logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
-      title: attrProperty.title.EDIT
-    });
+  const [hasTempData, setHasTempData] = useState(true);
 
+  useEffect(() => {
+    const { title, images, category, sizes, brand, brands, categorySizeIds, condition, price } =
+      tempData;
+    setHasTempData(
+      !!images.length ||
+        !!title ||
+        !!category.id ||
+        !!brand.id ||
+        !!brands ||
+        !!categorySizeIds.length ||
+        !!sizes ||
+        !!condition.id ||
+        !!price
+    );
+  }, [tempData]);
+
+  useEffect(() => {
+    if (!isFetching) {
+      logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
+        title: attrProperty.title.EDIT,
+        data: editData
+      });
+    }
+  }, [isFetching, editData]);
+
+  useEffect(() => {
     return () => resetPhotoState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (editData) {
-      const result = editData.product.photoGuideImages?.map((images) => ({
-        ...images,
-        photoGuideId: images.commonPhotoGuideDetail.id
-      }));
-      const size = () => {
-        if (editData.product.categorySizes) {
-          return editData.product.categorySizes[0] || { id: 0, name: 'ONE SIZE' };
+    if (editData && !isFetching && !hasTempData) {
+      const categorySizes = editData.product.categorySizes || [];
+      const directInputSize = categorySizes.find(({ id }) => id === -1);
+      const getSize = () => {
+        if (!directInputSize && categorySizes && categorySizes.length) {
+          return categorySizes[0];
         }
-        return { id: 0, name: '' };
+        return { id: 0, name: '', categorySizeId: 0 };
       };
+
+      setHasOpenedSurveyBottomSheetState(true);
       setTempData({
         title: editData.product.title,
         price: editData.product.price,
         brand: editData.product.brand,
+        brands: '',
         brandIds: [editData.product.brand.id].concat(
-          editData.product?.productBrands?.map(({ brand }) => brand.id) || []
+          editData.product?.productBrands?.map(({ brand: productBrand }) => productBrand.id) || []
         ),
-        category: { id: editData.product.category.id || 0, name: editData.product.category.name },
+        category: {
+          id: editData.product.category.id || 0,
+          parentId: editData.product.category.parentId || 0,
+          parentCategoryName: '',
+          name: editData.product.category.name
+        },
+        size: getSize(),
+        sizes: directInputSize ? directInputSize.name : '',
+        sizeOptionIds: editData.sizeOptions.map(({ name }) => Number(name)),
         condition: find(editData?.product.labels, {
           codeId: 14
         }) as CamelSellerTempData['condition'],
-        color: editData.product.colors ? editData.product.colors[0] : { id: 0, name: '' },
-        size: size(),
-        photoGuideImages: result,
+        categorySizeIds: editData.product.categorySizes
+          ?.filter(({ id }) => id !== -1) // 직접 입력 제외
+          .map(({ categorySizeId, id }) => {
+            if (id === 0) return 0;
+            return categorySizeId;
+          }),
+        images: [
+          editData.product.imageMain || editData.product.imageMain,
+          ...(editData.product.imageDetails || '').split('|')
+        ].filter((image) => image),
         description: editData.product.description || '',
-        quoteTitle: editData.product.quoteTitle || ''
+        quoteTitle: editData.product.quoteTitle || '',
+        useDeliveryPrice: editData.product.labels.some(({ name }) => Number(name) === 33)
       });
+      setSurveyState(({ units, stores, distances }) => ({
+        units: units.map((unit) => ({
+          ...unit,
+          selected: editData.units.some(({ name }) => unit.id === Number(name))
+        })),
+        stores: stores.map((store) => ({
+          ...store,
+          selected: editData.stores.some(({ name }) => store.id === Number(name))
+        })),
+        distances: distances.map((distance) => ({
+          ...distance,
+          selected: editData.distances.some(({ name }) => distance.id === Number(name))
+        })),
+        colors: editData.product.colors || []
+      }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editData]);
+  }, [
+    setHasOpenedSurveyBottomSheetState,
+    setSurveyState,
+    setTempData,
+    editData,
+    isFetching,
+    hasTempData
+  ]);
 
   return (
-    <GeneralTemplate
-      header={<CamelSellerHeader />}
-      footer={<CamelSellerConfirmFooter footerRef={footerRef} />}
-      hideAppDownloadBanner
-      subset
-    >
-      <CamelSellerPhotoGuideEdit />
-      <Box customStyle={{ marginTop: 160 }}>
-        <Content>
-          <CamelSellerProductTitle />
-        </Content>
-        <Content>
-          <CamelSellerRegisterCondition />
-        </Content>
-        <Content>
-          <CamelSellerRegisterState />
-        </Content>
-        <Content>
-          <CamelSellerPrice footerRef={footerRef} />
-        </Content>
-        <CamelSellerRegisterTextForm />
-      </Box>
-      <CamelSellerBottomSheetCondition />
+    <GeneralTemplate header={<CamelSellerHeader />} subset hideAppDownloadBanner>
+      <CamelSellerInfo />
+      <CamelSellerProductImage />
+      <CamelSellerTitle />
+      <CamelSellerCategoryBrand />
+      <CamelSellerCondition />
+      <CamelSellerSize />
+      <CamelSellerPrice />
+      <CamelSellerSurveyForm />
+      <CamelSellerDescription />
+      <CamelSellerCTAButton />
+      <CamelSellerConditionBottomSheet />
+      <CamelSellerSizeBottomSheet />
       <CamelSellerRecentBottomSheet />
+      <CamelSellerSurveyBottomSheet />
     </GeneralTemplate>
   );
 }
-
-const Content = styled.div`
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-`;
 
 export default RegisterConfirmEdit;

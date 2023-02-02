@@ -42,7 +42,12 @@ function LegitAdminRequestOpinionWriter() {
   const { data: accessUser } = useQueryAccessUser();
 
   const {
-    data: { status, legitOpinions = [], productResult: { postType = 0 } = {}, isLegitHead } = {}
+    data: {
+      status,
+      legitOpinions = [],
+      productResult: { status: productStatus = 0, sellerType = 0 } = {},
+      isLegitHead
+    } = {}
   } = useQuery(queryKeys.productLegits.legit(Number(id)), () => fetchProductLegit(Number(id)), {
     enabled: !!id
   });
@@ -51,6 +56,8 @@ function LegitAdminRequestOpinionWriter() {
     () => legitOpinions.find(({ roleLegit: { userId } }) => userId === (accessUser || {}).userId),
     [legitOpinions, accessUser]
   );
+
+  const isRequestLegit = sellerType !== 0 && productStatus === 7;
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const dataResult = Number(e.currentTarget.getAttribute('data-result')) as 0 | 1 | 2 | 3;
@@ -125,27 +132,27 @@ function LegitAdminRequestOpinionWriter() {
               data-result={1}
               onClick={handleClick}
               isActive={result === 1}
-              disabled={postType === 2 && status === 12}
+              disabled={isRequestLegit && status === 12}
             />
             <LegitOpinionButton
               variant="fake"
               data-result={2}
               onClick={handleClick}
               isActive={result === 2}
-              disabled={postType === 2 && status === 12}
+              disabled={isRequestLegit && status === 12}
             />
             <LegitOpinionButton
               variant="impossible"
               data-result={3}
               onClick={handleClick}
               isActive={result === 3 || status === 12}
-              disabled={postType === 2 && status === 12}
+              disabled={isRequestLegit && status === 12}
             />
           </Flexbox>
         </Tooltip>
       </TooltipWrapper>
       <OpinionWriter
-        hide={(isLegitHead && postType === 2 && result === 3) || (postType === 2 && status === 12)}
+        hide={(isLegitHead && isRequestLegit && result === 3) || (isRequestLegit && status === 12)}
         focused={focused}
         onClick={handleFocus}
       >

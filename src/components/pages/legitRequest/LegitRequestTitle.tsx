@@ -5,9 +5,16 @@ interface LegitRequestTitleProps {
   brandName: string;
   categoryName: string;
   title: string;
+  isEditMode?: boolean;
 }
 
-function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitRequestTitleProps) {
+function LegitRequestTitle({
+  brandLogo,
+  brandName,
+  categoryName,
+  title,
+  isEditMode = false
+}: LegitRequestTitleProps) {
   const {
     theme: {
       palette: { common }
@@ -20,7 +27,7 @@ function LegitRequestTitle({ brandLogo, brandName, categoryName, title }: LegitR
       alignment="center"
       gap={12}
       customStyle={{
-        padding: '0 20px 32px',
+        padding: isEditMode ? '0 20px' : '0 20px 32px',
         userSelect: 'none',
         backgroundColor: common.bg03
       }}

@@ -74,10 +74,12 @@ function LegitMyPanel() {
   const handleClick =
     ({ product, status }: { product: ProductResult; status: number }) =>
     () => {
+      const isRequestLegit = product.sellerType !== 0 && product.status === 7;
+
       logEvent(attrKeys.legit.CLICK_LEGIT_INFO, {
         name: attrProperty.legitName.LEGIT_MY,
         title: getLogEventTitle(status),
-        att: product.postType === 0 ? '크롤링' : product.postType === 2 && '사진올려감정신청'
+        att: product.postType === 0 ? '크롤링' : isRequestLegit && '사진올려감정신청'
       });
 
       if (status >= 20) {
@@ -87,7 +89,7 @@ function LegitMyPanel() {
             ''
           )}/result`
         );
-      } else if (status === 12 && postType[product.postType] === postType[2]) {
+      } else if (status === 12 && isRequestLegit) {
         if (isNeedUpdateImageUploadIOSVersion()) {
           setDialogState({
             type: 'appUpdateNotice',

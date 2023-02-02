@@ -178,6 +178,9 @@ export type ProductSearchOption = {
   genderCategories: GenderCategory<CommonCode>[];
   idFilters: CommonCode[];
   productTotal: number;
+  avgLatency: number;
+  minLatencyPrice: number;
+  minLatency: number;
 };
 
 export type ProductSellerReport = {
@@ -241,16 +244,30 @@ export type SiteUrl = {
 
 export type PostType = 0 | 1 | 2; // 0: 크롤링, 1: 판매등록, 2: 감정등록
 
+export type CategorySizes = {
+  id: number;
+  codeId: number;
+  name: string;
+  description: string;
+  synonyms: string;
+  groupId: number;
+  sort: number;
+  count: number;
+  categorySizeId: number;
+  parentCategoryId: number;
+  viewSize: string;
+};
+
 export type Product = {
   area: string;
   brand: Brand;
   brandId: number;
   category: Category;
   categoryId: number;
-  categorySizes: { id: number; name: string }[];
+  categorySizes: CategorySizes[];
   cluster: number;
   color: string | null;
-  colors: { id: number; name: string }[];
+  colors: { id: number; name: string; description: string }[];
   comments: string | null;
   dateChanged: string | null;
   dateCreated: string;
@@ -509,6 +526,10 @@ export interface ProductDetail {
   blockUser: boolean;
   showReviewPrompt: boolean;
   wish: boolean;
+  sizeOptions: CommonCode[];
+  units: CommonCode[];
+  stores: CommonCode[];
+  distances: CommonCode[];
 }
 
 export type ProductSellerReview = {

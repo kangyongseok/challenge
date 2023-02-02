@@ -1,6 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
@@ -13,6 +13,7 @@ import { logEvent } from '@library/amplitude';
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -21,7 +22,7 @@ import { checkAgent } from '@utils/common';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { toastState } from '@recoil/common';
-import { camelSellerDialogStateFamily } from '@recoil/camelSeller';
+import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const TOAST_BOTTOM = 20;
@@ -58,6 +59,7 @@ function UserShopProductManageBottomSheet() {
   } = useRecoilValue(userShopSelectedProductState) as Product & {
     isNoSellerReviewAndHasTarget?: boolean;
   };
+  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
   const { mutate: updateMutation, isLoading: isLoadingMutatePutProductUpdateStatus } =
@@ -161,7 +163,7 @@ function UserShopProductManageBottomSheet() {
 
     queryClient.invalidateQueries(queryKeys.users.infoByUserId(accessUser?.userId || 0));
 
-    if (dataStatus === 1) {
+    if (dataStatus === productStatusCode.soldOut) {
       setOpenState(({ type }) => ({
         type,
         open: false
@@ -169,6 +171,13 @@ function UserShopProductManageBottomSheet() {
       updateMutation(
         { productId: id, status: 1 },
         {
+          onSettled() {
+            setToastState({
+              type: 'sellerProductState',
+              status: 'soldout',
+              customStyle: { bottom: TOAST_BOTTOM }
+            });
+          },
           onSuccess() {
             if (isNoSellerReviewAndHasTarget) {
               router.push({
@@ -189,19 +198,19 @@ function UserShopProductManageBottomSheet() {
       { productId: id, status: dataStatus },
       {
         onSettled: () => {
-          if (dataStatus === 0) {
+          if (dataStatus === productStatusCode.sale) {
             setToastState({
               type: 'sellerProductState',
               status: 'sell',
               customStyle: { bottom: TOAST_BOTTOM }
             });
-          } else if (dataStatus === 4) {
+          } else if (dataStatus === productStatusCode.reservation) {
             setToastState({
               type: 'sellerProductState',
               status: 'reserve',
               customStyle: { bottom: TOAST_BOTTOM }
             });
-          } else if (dataStatus === 8) {
+          } else if (dataStatus === productStatusCode.hidden) {
             setToastState({
               type: 'sellerProductState',
               status: 'hide',
@@ -261,6 +270,8 @@ function UserShopProductManageBottomSheet() {
       att: 'EDIT',
       ...getAttProperty
     });
+
+    resetTempData();
 
     router.push(`/camelSeller/registerConfirm/${id}`);
   };

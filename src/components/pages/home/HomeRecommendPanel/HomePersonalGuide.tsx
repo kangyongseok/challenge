@@ -49,7 +49,8 @@ function HomePersonalGuide() {
     queryKeys.categories.parentCategories(),
     fetchParentCategories,
     {
-      select: (data) => data.flatMap(({ parentCategory }) => parentCategory)
+      select: ({ parentCategories: newParentCategories = [] }) =>
+        (newParentCategories || []).flatMap(({ parentCategory }) => parentCategory)
     }
   );
 

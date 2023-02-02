@@ -14,6 +14,7 @@ function ProductDetailFooter({
   isCamelSellerProduct,
   viewDetail,
   soldout,
+  deleted,
   refresh
 }: {
   data?: ProductDetail;
@@ -22,6 +23,7 @@ function ProductDetailFooter({
   isCamelSellerProduct: boolean;
   viewDetail: boolean;
   soldout: boolean;
+  deleted: boolean;
   refresh: () => void;
 }) {
   const isMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp());
@@ -36,7 +38,7 @@ function ProductDetailFooter({
         refresh={refresh}
       />
     );
-  return !isRedirectPage ? productButton : <Box />;
+  return !isRedirectPage && !deleted ? productButton : <Box />;
 }
 
 export default ProductDetailFooter;

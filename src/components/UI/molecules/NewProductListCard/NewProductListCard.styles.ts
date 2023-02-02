@@ -24,3 +24,8 @@ export const WishButton = styled.button`
   margin-right: -8px;
   z-index: 3;
 `;
+
+export const ShopMoreButton = styled.button`
+  display: flex;
+  align-items: flex-start;
+`;

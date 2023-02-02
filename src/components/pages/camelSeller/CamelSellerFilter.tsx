@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Flexbox } from 'mrcamel-ui';
+import { Button, Flexbox, Icon } from 'mrcamel-ui';
 import { filter, find, sortBy } from 'lodash-es';
 import styled from '@emotion/styled';
 
 import { DropDownSelect } from '@components/UI/molecules';
 
-import type { ProductSearchOption, SiteUrl } from '@dto/product';
-import type { CommonCode } from '@dto/common';
+import type { ProductSearchOption, RecentSearchParams, SiteUrl } from '@dto/product';
+import type { CommonCode, SizeCode } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
@@ -17,39 +17,48 @@ import { globalSizeGroupId } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import type { FilterDropItem, GroupSize } from '@typings/camelSeller';
+import type { FilterDropItem, GroupSize, SearchHistoryHookType } from '@typings/camelSeller';
 import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+import useQuerySearchHistory from '@hooks/useQuerySearchHistory';
 
 function CamelSellerFilter({
-  baseSearchOptions,
-  searchOptions,
-  onClick
+  onClick,
+  onClickReset,
+  fetchData,
+  baseSearchInfinitData,
+  searchInfinitData
 }: {
-  baseSearchOptions: ProductSearchOption | undefined;
-  searchOptions: ProductSearchOption | undefined;
   onClick: (parameters: { type: string; id: number }) => void;
+  onClickReset: () => void;
+  fetchData: RecentSearchParams;
+  baseSearchInfinitData: ProductSearchOption | null;
+  searchInfinitData: ProductSearchOption | null;
 }) {
-  const [filterType, setFilterType] = useState('');
-  const [colors, setColors] = useState<FilterDropItem[]>([]);
-  const [platforms, setPlatforms] = useState<FilterDropItem[]>([]);
+  const [filterType, setFilterType] = useState<SearchHistoryHookType>(null);
   const [sizes, setSizes] = useState<FilterDropItem[]>([]);
-  const [conditionIds, setCondtionIds] = useState<FilterDropItem[]>([]);
+  const [conditionIds, setConditionIds] = useState<FilterDropItem[]>([]);
   const [groupSize, setGroupSize] = useState<GroupSize[]>([]);
   const [isResetFilter, setResetFilter] = useRecoilState(
     camelSellerBooleanStateFamily('filterReset')
   );
-  const [selectColorId, setColor] = useState(0);
   const [selectSizeId, setSize] = useState(0);
-  const [selectPlatform, setPlatform] = useState(0);
   const [selectCondition, setCondition] = useState(0);
+  const [baseSearchData, setBaseSearchData] = useState<ProductSearchOption | null>();
+  const [searchData, setSearchData] = useState<ProductSearchOption | null>();
   const tempData = useRecoilValue(camelSellerTempSaveDataState);
+  const { filterQuery: { baseSearchOptions, searchOptions } = {} } = useQuerySearchHistory({
+    fetchData,
+    type: filterType
+  });
 
   useEffect(() => {
-    if (!selectColorId) {
-      setColor(tempData.color.id);
-    }
+    setBaseSearchData(baseSearchOptions || baseSearchInfinitData);
+    setSearchData(searchOptions || searchInfinitData);
+  }, [baseSearchInfinitData, baseSearchOptions, searchInfinitData, searchOptions]);
+
+  useEffect(() => {
     if (!selectSizeId) {
-      setSize(tempData.size.id);
+      setSize(tempData.size.categorySizeId || 0);
     }
     if (!selectCondition) {
       setCondition(tempData.condition.id);
@@ -62,7 +71,7 @@ function CamelSellerFilter({
       const target = e.target as HTMLElement;
       if (target.parentNode) {
         if (!target.dataset.dropFilter || (target.parentNode as HTMLElement).dataset.dropFilter) {
-          setFilterType('');
+          setFilterType(null);
         }
       }
     });
@@ -71,21 +80,17 @@ function CamelSellerFilter({
 
   useEffect(() => {
     if (isResetFilter.isState) {
-      setColor(0);
       setSize(0);
-      setPlatform(0);
       setCondition(0);
       setResetFilter(({ type }) => ({ type, isState: false }));
     }
   }, [isResetFilter, setResetFilter]);
 
   const countParser = useCallback(
-    (type: 'colors' | 'conditions' | 'sizes' | 'siteUrls') => {
-      if (baseSearchOptions && searchOptions) {
-        return baseSearchOptions[type].map((item) => {
-          const findSearchOption = find(searchOptions[type], { id: item.id }) as
-            | CommonCode
-            | SiteUrl;
+    (type: 'conditions' | 'sizes') => {
+      if (baseSearchData && searchData) {
+        return baseSearchData[type].map((item) => {
+          const findSearchOption = find(searchData[type], { id: item.id }) as CommonCode | SiteUrl;
           if (findSearchOption) {
             return {
               ...item,
@@ -100,20 +105,12 @@ function CamelSellerFilter({
       }
       return [];
     },
-    [baseSearchOptions, searchOptions]
+    [baseSearchData, searchData]
   );
 
   const setFilterItem = useCallback(() => {
-    if (countParser('colors').length) {
-      setColors(
-        countParser('colors').map((color) => ({
-          ...getDefaultObject(color)
-        }))
-      );
-    }
-
     if (countParser('conditions').length) {
-      setCondtionIds(
+      setConditionIds(
         countParser('conditions').map((condi) => ({
           ...getDefaultObject(condi)
         }))
@@ -122,28 +119,21 @@ function CamelSellerFilter({
 
     if (countParser('sizes').length) {
       setSizes(
-        (countParser('sizes') as CommonCode[]).map((size) => ({
+        (countParser('sizes') as SizeCode[]).map((size) => ({
           ...getDefaultObject(size),
+          id: size.categorySizeId,
           groupId: size.groupId
-        }))
-      );
-    }
-
-    if (countParser('siteUrls').length) {
-      setPlatforms(
-        (countParser('siteUrls') as SiteUrl[]).map((platform) => ({
-          ...getDefaultObject(platform),
-          hasImage: platform.hasImage
         }))
       );
     }
   }, [countParser]);
 
-  const getDefaultObject = (item: CommonCode | SiteUrl) => {
+  const getDefaultObject = (item: (CommonCode | SiteUrl) & { synonyms?: string }) => {
     return {
       name: item.name,
       id: item.id,
-      count: item.count
+      count: item.count,
+      synonyms: item.synonyms
     };
   };
 
@@ -175,7 +165,7 @@ function CamelSellerFilter({
   const getTypeKey = (type: string) => {
     switch (type) {
       case 'size':
-        return 'sizeIds';
+        return 'categorySizeIds';
       case 'color':
         return 'colorIds';
       case 'platform':
@@ -187,7 +177,7 @@ function CamelSellerFilter({
     }
   };
 
-  const handleClickFilterButton = (type: string) => {
+  const handleClickFilterButton = (type: SearchHistoryHookType) => {
     setFilterType(type);
   };
 
@@ -198,7 +188,7 @@ function CamelSellerFilter({
     logEvent(attrKeys.camelSeller.SELECT_FILTER, {
       name: attrProperty.name.MARKET_PRICE,
       title: type?.toUpperCase(),
-      att: selectItem.name
+      att: selectItem.synonyms || selectItem.name
     });
 
     if (type) {
@@ -206,21 +196,15 @@ function CamelSellerFilter({
       if (type === 'size') {
         setSize(Number(selectItem?.id));
       }
-      if (type === 'color') {
-        setColor(Number(selectItem?.id));
-      }
-      if (type === 'platform') {
-        setPlatform(Number(selectItem?.id));
-      }
       if (type === 'condition') {
         setCondition(Number(selectItem?.id));
       }
-      setFilterType('');
+      setFilterType(null);
     }
   };
 
   const parseCondition = (name: string) => {
-    if (name === 'N') return '새상품';
+    if (name === 'N') return '새상품(미개봉)';
     if (name === 'S') return '새상품급';
     if (name === 'A') return '상태 좋음';
     if (name === 'B') return '상태 보통';
@@ -234,51 +218,50 @@ function CamelSellerFilter({
   }));
 
   return (
-    <DropDownStyledWrap gap={8} isFilterType={!!filterType}>
-      <DropDownSelect
-        title="상태"
-        type="condition"
-        lists={result}
-        currnetType={filterType}
-        selectValue={selectCondition || 'all'}
-        onClick={handleClickFilterButton}
-        onClickSelect={handleClickSelect}
-        allCount={searchOptions?.productTotal}
-      />
-      <DropDownSelect
-        groupSelect
-        title="사이즈"
-        type="size"
-        lists={sizes}
-        groupSize={groupSize}
-        currnetType={filterType}
-        selectValue={selectSizeId || 'all'}
-        onClick={handleClickFilterButton}
-        onClickSelect={handleClickSelect}
-        allCount={searchOptions?.productTotal}
-      />
-      <DropDownSelect
-        title="색상"
-        type="color"
-        lists={colors}
-        currnetType={filterType}
-        selectValue={selectColorId || 'all'}
-        right={-70}
-        onClick={handleClickFilterButton}
-        onClickSelect={handleClickSelect}
-        allCount={searchOptions?.productTotal}
-      />
-      <DropDownSelect
-        title="플랫폼"
-        type="platform"
-        lists={platforms}
-        currnetType={filterType}
-        selectValue={selectPlatform || 'all'}
-        right={0}
-        onClick={handleClickFilterButton}
-        onClickSelect={handleClickSelect}
-        allCount={searchOptions?.productTotal}
-      />
+    <DropDownStyledWrap justifyContent="space-between" gap={8} isFilterType={!!filterType}>
+      <Flexbox gap={8}>
+        <DropDownSelect
+          title="상태"
+          type="condition"
+          lists={result}
+          currnetType={filterType}
+          selectValue={selectCondition || 'all'}
+          onClick={handleClickFilterButton}
+          onClickSelect={handleClickSelect}
+          allCount={searchOptions?.productTotal}
+        />
+        <DropDownSelect
+          groupSelect
+          title="사이즈"
+          type="size"
+          lists={sizes}
+          groupSize={groupSize}
+          currnetType={filterType}
+          selectValue={selectSizeId || 'all'}
+          onClick={handleClickFilterButton}
+          onClickSelect={handleClickSelect}
+          allCount={searchOptions?.productTotal}
+        />
+      </Flexbox>
+      <Button
+        variant="inline"
+        brandColor="black"
+        startIcon={<Icon name="RotateOutlined" />}
+        onClick={() => {
+          logEvent(attrKeys.camelSeller.CLICK_RESET, {
+            name: attrProperty.name.MARKET_PRICE,
+            title: attrProperty.title.TOP
+          });
+          onClickReset();
+        }}
+        customStyle={{
+          marginRight: -20,
+          paddingLeft: 0,
+          paddingRight: 0
+        }}
+      >
+        필터 초기화
+      </Button>
     </DropDownStyledWrap>
   );
 }

@@ -30,6 +30,7 @@ import {
   filterGenders,
   filterImageColorNames,
   idFilterIds,
+  needReverseCheckFilterColorNames,
   productDynamicFilterEventPropertyTitle,
   productDynamicOptionCodeType,
   productFilterEventPropertyTitle
@@ -464,7 +465,7 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                             size="medium"
                             checked={colorChecked}
                             color={
-                              description === 'white' || description === 'ivory'
+                              needReverseCheckFilterColorNames.includes(description)
                                 ? common.uiBlack
                                 : common.uiWhite
                             }

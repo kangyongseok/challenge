@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { Avatar, Box, Button, Icon, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { filterImageColorNames } from '@constants/productsFilter';
+import { filterImageColorNames, needReverseCheckFilterColorNames } from '@constants/productsFilter';
 
 interface FilterOptionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   checked: boolean;
@@ -55,7 +55,9 @@ function FilterOption({
                   name="CheckOutlined"
                   width={16}
                   height={16}
-                  color={colorName === 'white' ? 'black' : 'white'}
+                  color={
+                    needReverseCheckFilterColorNames.includes(colorName || '') ? 'black' : 'white'
+                  }
                   customStyle={{
                     position: 'absolute',
                     top: '50%',

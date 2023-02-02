@@ -44,6 +44,7 @@ import type { SuggestParams } from '@dto/brand';
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
 import type { SearcgRelatedKeywordsParams } from '@typings/products';
+import type { SearchHistoryHookType } from '@typings/camelSeller';
 
 const brands = {
   all: ['brands'] as const,
@@ -56,6 +57,7 @@ const brands = {
 const categories = {
   all: ['categories'] as const,
   parentCategories: () => [...categories.all, 'parentCategories'] as const,
+  productParentCategories: () => [...categories.all, 'productParentCategories'] as const,
   imageGroups: () => [...categories.all, 'imageGroups'] as const,
   categorySizes: (params: { brandId: number; categoryId: number }) =>
     [...categories.all, 'categorySizes', params] as const
@@ -97,9 +99,9 @@ const products = {
   camelProducts: (params?: CamelProductsParams) =>
     compact([...products.all, 'camelProducts', params]),
   userInfo: () => [...products.all, 'userInfo'] as const,
-  searchHistory: (params?: SearchParams | RecentSearchParams) =>
+  searchHistory: (params?: SearchParams | RecentSearchParams, type?: SearchHistoryHookType) =>
     params
-      ? ([...products.all, 'searchHistory', params] as const)
+      ? ([...products.all, 'searchHistory', params, type] as const)
       : ([...products.all, 'searchHistory'] as const),
   searchHistoryTopFive: (params?: SearchParams | RecentSearchParams) =>
     [...products.all, 'searchHistoryFive', params] as const,
@@ -110,8 +112,9 @@ const products = {
   searchRelatedKeyword: (params: SearcgRelatedKeywordsParams) =>
     [...products.all, 'searchRelatedKeyword', params] as const,
   sellerInfo: (sellerId: number) => [...products.all, 'sellerInfo', sellerId] as const,
-  sellerEditProducs: (params: ProductParams) =>
-    [...products.all, 'sellerEditProducs', params] as const
+  sellerEditProduct: (params: ProductParams) =>
+    [...products.all, 'sellerEditProduct', params] as const,
+  productList: (ids: number[]) => [...products.all, 'productList', ids] as const
 };
 
 const productLegits = {
@@ -159,6 +162,7 @@ const users = {
 const userAuth = {
   all: ['userauth'] as const,
   accessUser: () => [...userAuth.all, 'accessUser'] as const,
+  userData: () => [...userAuth.all, 'userData'] as const,
   logout: () => [...userAuth.all, 'logout'] as const,
   withdraw: () => [...userAuth.all, 'withdraw'] as const
 };

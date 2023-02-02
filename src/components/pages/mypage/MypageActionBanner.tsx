@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import { Gap } from '@components/UI/atoms';
@@ -11,11 +11,12 @@ import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import {
-  CAMEL_SELLER,
   CROWD_DATE,
   LEGIT_DATE,
   LISTING_TECH_DATE,
-  PORTFOLIO_DATE
+  LISTING_TECH_LEGIT_DATE,
+  PORTFOLIO_DATE,
+  SAVED_CAMEL_SELLER_PRODUCT_DATA
 } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -26,10 +27,13 @@ import {
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
-import type { CamelSellerLocalStorage } from '@typings/camelSeller';
+import type { SavedLegitDataProps } from '@typings/product';
+import type { SaveCamelSellerProductData } from '@typings/camelSeller';
+import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageActionBanner() {
   const {
@@ -38,10 +42,12 @@ function MypageActionBanner() {
     }
   } = useTheme();
   const router = useRouter();
+  const { data: accessUser } = useQueryAccessUser();
   const { data: { notProcessedLegitCount = 0, roles = [] } = {} } = useQueryMyUserInfo();
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setDialogState = useSetRecoilState(dialogState);
+  const setLegitRequestState = useSetRecoilState(legitRequestState);
 
   useEffect(() => {
     if (notProcessedLegitCount < 2 && !!LocalStorage.get('legitDate')) {
@@ -54,7 +60,14 @@ function MypageActionBanner() {
     [roles]
   );
 
-  const isSaveSellerData = LocalStorage.get(CAMEL_SELLER);
+  const savedCamelSellerProductData = LocalStorage.get<SaveCamelSellerProductData>(
+    SAVED_CAMEL_SELLER_PRODUCT_DATA
+  );
+
+  const isSavedData =
+    !!savedCamelSellerProductData &&
+    !!accessUser &&
+    savedCamelSellerProductData[accessUser.snsType];
 
   const handleClickLegit = () => {
     router.push('/legit/admin?tab=request');
@@ -66,8 +79,6 @@ function MypageActionBanner() {
   };
 
   const handleClickListingTech = () => {
-    const saveData = LocalStorage.get(CAMEL_SELLER) as CamelSellerLocalStorage;
-
     if (process.env.NODE_ENV !== 'development') {
       if (!(checkAgent.isIOSApp() || checkAgent.isAndroidApp())) {
         setOpenAppDown(({ type }) => ({
@@ -133,30 +144,26 @@ function MypageActionBanner() {
         };
       }
     }
+    if (!isSavedData) return;
+    const { ...props } = savedCamelSellerProductData[accessUser.snsType];
 
     setTempData({
       ...tempData,
-      title: saveData.title,
-      color: saveData.color,
-      size: saveData.size,
-      price: saveData.price,
-      condition: saveData.condition,
-      quoteTitle: saveData.quoteTitle,
-      description: saveData.description,
-      photoGuideImages: saveData.photoGuideImages
+      ...props
     });
 
-    router.push({
-      pathname: '/camelSeller/registerConfirm',
-      query: {
-        title: saveData.title || saveData.quoteTitle || saveData.brand?.name,
-        brandIds: saveData.brand.id,
-        brandName: saveData.brand?.name,
-        categoryIds: saveData.category.id,
-        categoryName: saveData.category.name
-        // subParentCategoryName: data.subParentCategoryName
-      }
-    });
+    router.push('/camelSeller/registerConfirm');
+  };
+
+  const handleClickListingTechLegit = () => {
+    const saveLegitData: SavedLegitDataProps | null = LocalStorage.get(String(accessUser?.userId));
+    if (saveLegitData && saveLegitData.savedLegitRequest) {
+      setLegitRequestState((currVal) => ({
+        ...currVal,
+        ...saveLegitData.savedLegitRequest.state
+      }));
+      router.push('/legit/request/form?already=true', undefined, { shallow: true });
+    }
   };
 
   const bannerInfo = [
@@ -173,9 +180,19 @@ function MypageActionBanner() {
       type: 'listingTech',
       text: '👀 올리던 매물을 이어서 등록할까요? ',
       bgColor: primary.light,
-      isView: isSaveSellerData,
+      isView: isSavedData,
       onClick: handleClickListingTech,
       localStorageName: LISTING_TECH_DATE,
+      att: 'PRODUCT_MAIN'
+    },
+    {
+      type: 'listingTechLegit',
+      text: '🕵️ 사진감정등록 중... 신청을 완료해보세요!',
+      bgColor: dark.palette.common.bg03,
+      isView: !!LocalStorage.get<SavedLegitDataProps | null>(String(accessUser?.userId || ''))
+        ?.savedLegitRequest,
+      onClick: handleClickListingTechLegit,
+      localStorageName: LISTING_TECH_LEGIT_DATE,
       att: 'PRODUCT_MAIN'
     },
     {

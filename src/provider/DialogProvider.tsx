@@ -52,6 +52,7 @@ function DialogProvider() {
       case 'loginError':
       case 'deleteAccount':
       case 'leaveEditProfile':
+      case 'leaveLegitRequest':
         return 'textWithTwoButton';
       case 'legitRequestOnlyInApp':
       case 'featureIsMobileAppDown':
@@ -60,6 +61,11 @@ function DialogProvider() {
       case 'appUpdateNotice':
       case 'legitPhotoGuide':
       case 'loginProviderError':
+      case 'legitSampleGuid':
+      case 'productSoldout':
+      case 'productDelete':
+      case 'productHidden':
+      case 'productReservation':
       case 'requiredAppUpdateForChat':
       case 'locationInfo':
         return 'textWithOneButton';
@@ -68,6 +74,7 @@ function DialogProvider() {
       case 'confirmDeal':
       case 'successMakeAppointment':
       case 'cancelAppointment':
+      case 'legitPermissionCheck':
         return 'textWithTwoVerticalButton';
       default:
         return 'text';

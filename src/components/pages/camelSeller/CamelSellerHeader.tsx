@@ -1,272 +1,329 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Box, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 
-import { IconBox } from '@components/UI/molecules/Header/Header.styles';
 import { Header } from '@components/UI/molecules';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER } from '@constants/localStorage';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { postProducts, putProductEdit } from '@api/product';
+
+import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { SAVED_CAMEL_SELLER_PRODUCT_DATA } from '@constants/localStorage';
+import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { isExtendedLayoutIOSVersion } from '@utils/common';
-
+import type { SaveCamelSellerProductData, SubmitType } from '@typings/camelSeller';
+import { toastState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
+  camelSellerChangeDetectSelector,
   camelSellerDialogStateFamily,
-  camelSellerSubmitState,
+  camelSellerHasOpenedSurveyBottomSheetState,
+  camelSellerIsImageLoadingState,
+  camelSellerSubmitValidatorState,
+  camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function CamelSellerHeader({
-  type,
-  callForm,
-  onClickClose
-}: {
-  type?: string;
-  callForm?: () => void;
-  backEvent?: () => void;
-  onClickClose?: () => void;
-}) {
-  const { pathname, query, back, replace, push, beforePopState, asPath } = useRouter();
-  const resetSubmitData = useResetRecoilState(camelSellerSubmitState);
-  const resetClickState = useResetRecoilState(camelSellerBooleanStateFamily('submitClick'));
-  const tempData = useRecoilValue(camelSellerTempSaveDataState);
-  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
-  const [disabledCallForm, setDisabledCallForm] = useState(false);
-  const viewRecentPriceList = useRecoilValue(camelSellerDialogStateFamily('recentPrice'));
+function CamelSellerHeader() {
+  const { query, back, replace, beforePopState, pathname } = useRouter();
 
   const {
     theme: {
-      typography,
-      palette: { common, primary }
+      palette: { primary, common }
     }
   } = useTheme();
-  const [toggleLaterDialog, setToggleLaterDialog] = useState(false);
+
+  const productId = Number(query.id || 0);
+  const [open, setOpen] = useState(false);
+  const isValid = useRecoilValue(camelSellerSubmitValidatorState);
+  const isChange = useRecoilValue(camelSellerChangeDetectSelector);
+  const viewRecentPriceList = useRecoilValue(camelSellerDialogStateFamily('recentPrice'));
+  const tempData = useRecoilValue(camelSellerTempSaveDataState);
+  const { units, stores, distances, colors } = useRecoilValue(camelSellerSurveyState);
+  const hasOpenedSurveyBottomSheet = useRecoilValue(camelSellerHasOpenedSurveyBottomSheetState);
+  const [openToast, setOpenToast] = useState(false);
+  const [message, setMessage] = useState('');
+  const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
+  const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
+  const resetValidatorPhoto = useResetRecoilState(
+    camelSellerBooleanStateFamily('requirePhotoValid')
+  );
+  const resetHasOpenedSurveyBottomSheetState = useResetRecoilState(
+    camelSellerHasOpenedSurveyBottomSheetState
+  );
+  const setToastState = useSetRecoilState(toastState);
+  const setSubmitClickState = useSetRecoilState(camelSellerBooleanStateFamily('submitClick'));
+  const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
+
+  const { data: accessUser } = useQueryAccessUser();
+  const { mutate: mutatePostRegister, isLoading } = useMutation(postProducts);
+  const { mutate: mutatePutEdit, isLoading: isLoadingEditMutate } = useMutation(putProductEdit);
+
+  const handleClickClose = () => {
+    if (
+      !query.id &&
+      !viewRecentPriceList.open &&
+      pathname.split('/').includes('registerConfirm') &&
+      isChange
+    ) {
+      const data =
+        LocalStorage.get<SaveCamelSellerProductData>(SAVED_CAMEL_SELLER_PRODUCT_DATA) || {};
+      const saveData = {
+        ...tempData,
+        unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+        storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+        distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+        colors,
+        hasOpenedSurveyBottomSheet
+      };
+
+      if (accessUser) {
+        LocalStorage.set(SAVED_CAMEL_SELLER_PRODUCT_DATA, {
+          ...data,
+          [accessUser.snsType]: saveData
+        });
+
+        logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+          name: attrProperty.name.PRODUCT_MAIN,
+          title: attrProperty.title.LEAVE,
+          data: saveData
+        });
+      }
+    }
+    back();
+  };
+
+  const editSubmit = () => {
+    const submitPutData = {
+      title: tempData.title,
+      quoteTitle: tempData.quoteTitle,
+      price: tempData.price,
+      brandIds: tempData.brandIds,
+      brands: tempData.brands,
+      categoryIds: [tempData.category.id],
+      conditionId: tempData.condition.id,
+      categorySizeIds: tempData.categorySizeIds,
+      sizes: tempData.sizes,
+      sizeOptionIds: tempData.sizeOptionIds,
+      images: tempData.images,
+      description: tempData.description,
+      useDeliveryPrice: tempData.useDeliveryPrice,
+      unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+      storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+      distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+      colorIds: colors.map(({ id }) => id)
+    };
+
+    logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      title: attrProperty.title.EDIT,
+      data: submitPutData
+    });
+
+    mutatePutEdit(
+      {
+        productId,
+        parameter: submitPutData as SubmitType
+      },
+      {
+        onSuccess() {
+          window.history.replaceState(null, '', '/user/shop');
+          replace(`/products/${productId}?success=true`).then(() => {
+            resetTempData();
+            resetSurveyState();
+            resetHasOpenedSurveyBottomSheetState();
+            resetValidatorPhoto();
+          });
+        }
+      }
+    );
+  };
+
+  const submit = () => {
+    const data = {
+      title: tempData.title,
+      price: tempData.price,
+      brandIds: tempData.brandIds,
+      brands: tempData.brands,
+      categoryIds: [tempData.category.id],
+      conditionId: tempData.condition.id,
+      categorySizeIds: tempData.categorySizeIds,
+      sizes: tempData.sizes,
+      sizeOptionIds: tempData.sizeOptionIds,
+      images: tempData.images,
+      description: tempData.description,
+      quoteTitle: tempData.quoteTitle,
+      useDeliveryPrice: tempData.useDeliveryPrice,
+      unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+      storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+      distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+      colorIds: colors.map(({ id }) => id)
+    };
+
+    logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      title: attrProperty.title.NEW,
+      data
+    });
+
+    mutatePostRegister(data as SubmitType, {
+      onSuccess({ id, isProductLegit }) {
+        LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+        window.history.replaceState(null, '', '/user/shop');
+        if (isProductLegit) {
+          replace(`/legit/intro?productId=${id}`).then(() => {
+            SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');
+            resetTempData();
+            resetSurveyState();
+            resetHasOpenedSurveyBottomSheetState();
+            resetValidatorPhoto();
+          });
+        } else {
+          replace(`/products/${id}?success=true`).then(() => {
+            setToastState({
+              type: 'product',
+              status: 'saleSuccess',
+              hideDuration: 3000
+            });
+            resetTempData();
+            resetSurveyState();
+            resetHasOpenedSurveyBottomSheetState();
+            resetValidatorPhoto();
+          });
+        }
+      }
+    });
+  };
+
+  const handleClickSubmit = () => {
+    if (isImageLoading) {
+      setOpen(true);
+      return;
+    }
+
+    if (isLoading || isLoadingEditMutate) return;
+
+    const messages = [];
+    if (!tempData.images.length) messages.push('사진');
+    if (!tempData.title) messages.push('제목');
+    if (!tempData.category.id) messages.push('카테고리');
+    if (!tempData.condition.id) messages.push('상태');
+    if (!tempData.categorySizeIds.length && !tempData.sizes) messages.push('사이즈');
+
+    if (messages.length) {
+      setMessage(`${messages.join(', ')}은(는) 필수 입력사항이에요.`);
+      setOpenToast(true);
+      return;
+    }
+
+    if (!isValid) {
+      setSubmitClickState(({ type }) => ({ type, isState: true }));
+      return;
+    }
+
+    if (query.id) {
+      editSubmit();
+    } else {
+      submit();
+    }
+  };
 
   useEffect(() => {
     beforePopState(() => {
       if (
         !query.id &&
         !viewRecentPriceList.open &&
-        pathname.split('/').includes('registerConfirm')
+        pathname.split('/').includes('registerConfirm') &&
+        isChange
       ) {
-        window.history.pushState(null, '', asPath);
-        setToggleLaterDialog(true);
-        return false;
+        const data =
+          LocalStorage.get<SaveCamelSellerProductData>(SAVED_CAMEL_SELLER_PRODUCT_DATA) || {};
+
+        const saveData = {
+          ...tempData,
+          unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+          storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+          distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+          colors,
+          hasOpenedSurveyBottomSheet
+        };
+
+        if (accessUser) {
+          LocalStorage.set(SAVED_CAMEL_SELLER_PRODUCT_DATA, {
+            ...data,
+            [accessUser.snsType]: saveData
+          });
+
+          logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+            name: attrProperty.name.PRODUCT_MAIN,
+            title: attrProperty.title.LEAVE,
+            data: saveData
+          });
+        }
       }
       return true;
     });
-  }, [asPath, beforePopState, pathname, query.id, viewRecentPriceList.open]);
-
-  useEffect(() => {
-    if (toggleLaterDialog) {
-      logEvent(attrKeys.camelSeller.VIEW_PRODUCT_POPUP, {
-        name: pathname,
-        title: attrProperty.title.LATER
-      });
-    }
-  }, [pathname, toggleLaterDialog]);
-
-  const handleClickBack = () => {
-    logEvent(attrKeys.camelSeller.CLICK_CLOSE, {
-      name: attrProperty.name.PRODUCT
-    });
-    if (query.id) {
-      resetSubmitData();
-      resetTempData();
-      back();
-      return;
-    }
-    if (pathname.split('/').includes('registerConfirm')) {
-      setToggleLaterDialog(true);
-    } else {
-      back();
-    }
-  };
-
-  const handleClickLogo = () => {
-    logEvent(attrKeys.camelSeller.CLICK_CLOSE, {
-      name: attrProperty.name.PRODUCT
-    });
-
-    if (query.id) {
-      resetSubmitData();
-      resetTempData();
-      push('/');
-      return;
-    }
-    if (pathname.split('/').includes('registerConfirm')) {
-      setToggleLaterDialog(true);
-    } else {
-      push('/');
-    }
-  };
-
-  const handlClickLater = () => {
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_POPUP, {
-      name: pathname,
-      title: attrProperty.title.LATER,
-      att: 'SAVE'
-    });
-
-    if (!query.id) {
-      LocalStorage.set(CAMEL_SELLER, {
-        ...tempData,
-        brand: { id: query.brandIds, name: query.brandName },
-        category: { id: query.categoryIds, name: query.categoryName }
-      });
-    }
-    resetClickState();
-    replace('/');
-  };
-
-  const handleClickContinue = () => {
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_POPUP, {
-      name: pathname,
-      title: attrProperty.title.LATER,
-      att: 'CONTINUE'
-    });
-
-    setToggleLaterDialog(false);
-  };
-
-  const handleClickCallForm = () => {
-    if (!(disabledCallForm || tempData.description)) {
-      setDisabledCallForm(true);
-      if (callForm) {
-        callForm();
-      }
-    }
-  };
-
-  if (type === 'textarea') {
-    return (
-      <Header
-        customHeader={
-          <>
-            <Box
-              customStyle={{
-                height: 56
-              }}
-            />
-            <Wrap alignment="center" customStyle={{ padding: '0 20px' }}>
-              <Icon onClick={onClickClose} name="ArrowLeftOutlined" size="medium" />
-              <CallFormButton
-                variant="solid"
-                weight="medium"
-                onClick={handleClickCallForm}
-                disabled={!!(disabledCallForm || tempData.description)}
-              >
-                판매 양식 불러오기
-              </CallFormButton>
-            </Wrap>
-          </>
-        }
-      />
-    );
-  }
+  }, [
+    accessUser,
+    beforePopState,
+    colors,
+    distances,
+    hasOpenedSurveyBottomSheet,
+    isChange,
+    pathname,
+    query.id,
+    stores,
+    tempData,
+    units,
+    viewRecentPriceList.open
+  ]);
 
   return (
     <>
       <Header
-        customHeader={
-          <>
-            <Box
-              customStyle={{
-                height: 56 + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)
-              }}
-            />
-            <Wrap alignment="center">
-              <IconBox show onClick={handleClickBack}>
-                <Icon name="CloseOutlined" size="medium" />
-              </IconBox>
-              <Icon
-                name="LogoText_96_20"
-                onClick={handleClickLogo}
-                customStyle={{ marginLeft: -50 }}
-              />
-              <Box />
-            </Wrap>
-          </>
+        leftIcon={
+          <Box onClick={handleClickClose} customStyle={{ padding: 16, maxHeight: HEADER_HEIGHT }}>
+            <Icon name="CloseOutlined" />
+          </Box>
         }
-      />
-      <Dialog
-        open={toggleLaterDialog}
-        onClose={() => setToggleLaterDialog(false)}
-        customStyle={{ width: '100%', paddingTop: 32 }}
-      >
-        <Box customStyle={{ textAlign: 'center' }}>
-          <Typography customStyle={{ color: common.ui20 }} weight="bold" variant="h3">
-            등록하던 내용을 임시저장할까요?
-          </Typography>
-        </Box>
-        <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 32 }}>
-          <Button
-            fullWidth
-            size="large"
-            variant="solid"
-            brandColor="primary"
-            customStyle={{ fontWeight: typography.body1.weight.medium }}
-            onClick={handlClickLater}
-          >
-            임시 저장하기
-          </Button>
-          <Button
-            fullWidth
-            size="large"
-            variant="outline"
+        rightIcon={
+          <Typography
+            weight="medium"
+            variant="h3"
+            onClick={handleClickSubmit}
             customStyle={{
-              fontWeight: typography.body1.weight.medium,
-              background: primary.highlight,
-              color: primary.light
+              color:
+                isValid && !isImageLoading && !isLoading && !isLoadingEditMutate
+                  ? primary.main
+                  : common.ui80,
+              paddingRight: 12
             }}
-            onClick={handleClickContinue}
           >
-            계속 진행하기
-          </Button>
-        </Flexbox>
-      </Dialog>
+            {query.id ? '수정하기' : '등록하기'}
+          </Typography>
+        }
+        hideTitle
+        showRight={false}
+      />
+      <Toast open={open} onClose={() => setOpen(false)}>
+        이미지를 저장하고 있어요!
+        <br />
+        잠시만 기다려 주세요.
+      </Toast>
+      <Toast open={openToast} onClose={() => setOpenToast(false)}>
+        {message}
+      </Toast>
     </>
   );
 }
-
-const Wrap = styled(Flexbox)`
-  width: 100%;
-  height: 56px;
-  background: ${({ theme: { palette } }) => palette.common.uiWhite};
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 11;
-  justify-content: space-between;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT + 10 : 0}px;
-`;
-
-const CallFormButton = styled(Button)<{ disabled: boolean }>`
-  background: ${({
-    theme: {
-      palette: { common, primary }
-    },
-    disabled
-  }) => (disabled ? common.ui80 : primary.highlight)};
-  color: ${({
-    theme: {
-      palette: { common, primary }
-    },
-    disabled
-  }) => (disabled ? common.ui60 : primary.light)};
-  font-size: ${({ theme }) => theme.typography.small1.size};
-  padding: 0 6px;
-  height: 30px;
-  font-weight: 400;
-`;
 
 export default CamelSellerHeader;

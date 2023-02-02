@@ -1,95 +1,90 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
-import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box } from 'mrcamel-ui';
-import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  CamelSellerBottomSheetCondition,
-  CamelSellerConfirmFooter,
+  CamelSellerCTAButton,
+  CamelSellerCategoryBrand,
+  CamelSellerCondition,
+  CamelSellerConditionBottomSheet,
+  CamelSellerDescription,
   CamelSellerHeader,
-  CamelSellerPhotoGuide,
+  CamelSellerInfo,
   CamelSellerPrice,
-  CamelSellerProductTitle,
+  CamelSellerProductImage,
   CamelSellerRecentBottomSheet,
-  CamelSellerRegisterCondition,
-  CamelSellerRegisterState,
-  CamelSellerRegisterTextForm
+  CamelSellerSize,
+  CamelSellerSizeBottomSheet,
+  CamelSellerSurveyBottomSheet,
+  CamelSellerSurveyForm,
+  CamelSellerTitle
 } from '@components/pages/camelSeller';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SELLER, SELLER_PROCESS_TYPE } from '@constants/localStorage';
+import {
+  CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE,
+  SAVED_CAMEL_SELLER_PRODUCT_DATA,
+  SOURCE
+} from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { camelSellerBooleanStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+import { SaveCamelSellerProductData } from '@typings/camelSeller';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function RegisterConfirm() {
-  const { query } = useRouter();
-  const resetSubmitState = useResetRecoilState(camelSellerBooleanStateFamily('submitClick'));
-  const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
-  const footerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const { data: accessUser } = useQueryAccessUser();
 
   useEffect(() => {
-    logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
-      title: attrProperty.title.NEW
-    });
-    return () => LocalStorage.remove(SELLER_PROCESS_TYPE);
-  }, []);
+    const getLocalstorage = LocalStorage.get(SOURCE);
+    const data = LocalStorage.get<SaveCamelSellerProductData>(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+
+    if (accessUser && data && data[accessUser.snsType]) {
+      logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
+        title: attrProperty.title.LEAVE,
+        source: getLocalstorage,
+        data: data[accessUser.snsType]
+      });
+    } else {
+      logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
+        title: attrProperty.title.NEW,
+        source: getLocalstorage
+      });
+    }
+
+    return () => {
+      LocalStorage.remove(SOURCE);
+    };
+  }, [accessUser]);
 
   useEffect(() => {
-    setTempData({
-      ...tempData,
-      title: (tempData.title || `${query.brandName} ${query.categoryName}`) as string,
-      quoteTitle: (tempData.quoteTitle || query.title || query.brandName) as string
-    });
-    LocalStorage.remove(CAMEL_SELLER);
-    return () => resetSubmitState();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE)) {
+      router.push('/camelSeller/guide');
+    }
+  }, [router]);
 
   return (
-    <GeneralTemplate
-      header={<CamelSellerHeader />}
-      footer={<CamelSellerConfirmFooter footerRef={footerRef} />}
-      hideAppDownloadBanner
-      subset
-    >
-      <CamelSellerPhotoGuide />
-      <Box customStyle={{ marginTop: 160 }}>
-        <Content>
-          <CamelSellerProductTitle />
-        </Content>
-        <Content>
-          <CamelSellerRegisterCondition />
-        </Content>
-        <Content>
-          <CamelSellerRegisterState />
-        </Content>
-        <Content>
-          <CamelSellerPrice footerRef={footerRef} />
-        </Content>
-        <CamelSellerRegisterTextForm />
-      </Box>
-      <CamelSellerBottomSheetCondition />
+    <GeneralTemplate header={<CamelSellerHeader />} subset hideAppDownloadBanner>
+      <CamelSellerInfo />
+      <CamelSellerProductImage />
+      <CamelSellerTitle />
+      <CamelSellerCategoryBrand />
+      <CamelSellerCondition />
+      <CamelSellerSize />
+      <CamelSellerPrice />
+      <CamelSellerSurveyForm />
+      <CamelSellerDescription />
+      <CamelSellerCTAButton />
+      <CamelSellerConditionBottomSheet />
+      <CamelSellerSizeBottomSheet />
       <CamelSellerRecentBottomSheet />
+      <CamelSellerSurveyBottomSheet />
     </GeneralTemplate>
   );
 }
-
-const Content = styled.div`
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui90};
-`;
 
 export default RegisterConfirm;

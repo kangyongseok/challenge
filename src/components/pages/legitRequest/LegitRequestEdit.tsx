@@ -10,10 +10,12 @@ import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { PhotoGuideImage, PostProductLegitData, PutProductLegitData } from '@dto/productLegit';
+import { PhotoGuideParams } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
 import { fetchProductLegit, putProductLegit } from '@api/productLegit';
+import { fetchPhotoGuide } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -32,21 +34,18 @@ import LegitRequestBottomButton from './LegitRequestBottomButton';
 
 function LegitRequestEdit() {
   const router = useRouter();
-
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
+  const [productLegitEditParams, setProductLegitEditParamsState] = useRecoilState(
+    productLegitEditParamsState
+  );
   const setDialogState = useSetRecoilState(dialogState);
-
-  const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
-  const [hasCameraAuth, setHasCameraAuth] = useState(false);
-
-  useEffect(() => {
-    logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
-  }, []);
+  const setToastState = useSetRecoilState(toastState);
+  const resetProductLegitEditParamsState = useResetRecoilState(productLegitEditParamsState);
 
   const productId = useMemo(() => Number(router.query?.productId || 0), [router.query?.productId]);
   const {
@@ -54,9 +53,11 @@ function LegitRequestEdit() {
       legitOpinions = [],
       productResult: {
         imageModel = '',
-        brand: { name: brandName = '', nameEng: brandNameEng = '' } = {},
-        category: { name: categoryName = '' } = {},
-        photoGuideDetails = []
+        brand: { id: brandId = 0, name: brandName = '', nameEng: brandNameEng = '' } = {},
+        category: { id: categoryId = 0, name: categoryName = '' } = {},
+        photoGuideDetails = [],
+        sellerType = 0,
+        status = 0
       } = {}
     } = {},
     isLoading: isLoadingProductLegit
@@ -89,11 +90,17 @@ function LegitRequestEdit() {
       }
     }
   });
-  const [productLegitEditParams, setProductLegitEditParamsState] = useRecoilState(
-    productLegitEditParamsState
+
+  const photoGuideParams: PhotoGuideParams = useMemo(
+    () => ({ type: 1, brandId, categoryId }),
+    [brandId, categoryId]
   );
-  const setToastState = useSetRecoilState(toastState);
-  const resetProductLegitEditParamsState = useResetRecoilState(productLegitEditParamsState);
+  const {
+    isLoading: isLoadingSamplePhotoGuideDetails,
+    data: { photoGuideDetails: samplePhotoGuideDetails = [] } = {}
+  } = useQuery(queryKeys.commons.photoGuide(photoGuideParams), () =>
+    fetchPhotoGuide(photoGuideParams)
+  );
 
   const { mutate: mutatePutProductLegit, isLoading: isLoadingMutate } = useMutation(
     putProductLegit,
@@ -110,6 +117,12 @@ function LegitRequestEdit() {
   );
 
   const [isLoadingGetPhoto, setIsLoadingGetPhoto] = useState(false);
+  const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
+  const [hasCameraAuth, setHasCameraAuth] = useState(false);
+
+  useEffect(() => {
+    logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
+  }, []);
 
   const { title, photoGuideImages } = productLegitEditParams;
 
@@ -134,6 +147,16 @@ function LegitRequestEdit() {
         ),
     [photoGuideDetails, photoGuideImages]
   );
+
+  const handleClickSamplePhotoGuide = useCallback(() => {
+    router.push({
+      pathname: '/legit/guide/sample',
+      query: {
+        brandId: photoGuideParams.brandId,
+        categoryId: photoGuideParams.categoryId
+      }
+    });
+  }, [photoGuideParams.brandId, photoGuideParams.categoryId, router]);
 
   const handleClickPhotoGuide = useCallback(
     (index: number, isEdit = false) =>
@@ -166,14 +189,8 @@ function LegitRequestEdit() {
 
         const [firstPhotoGuideDetail] = photoGuideDetails;
 
-        if (
-          checkAgent.isIOSApp() &&
-          window.webkit &&
-          window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.callPhotoGuide &&
-          firstPhotoGuideDetail
-        ) {
-          window.webkit.messageHandlers.callPhotoGuide.postMessage(
+        if (checkAgent.isIOSApp() && firstPhotoGuideDetail) {
+          window.webkit?.messageHandlers?.callPhotoGuide?.postMessage?.(
             JSON.stringify({
               guideId: firstPhotoGuideDetail.commonPhotoGuideDetail.photoGuideId,
               viewMode: 'ALBUM',
@@ -202,18 +219,14 @@ function LegitRequestEdit() {
                     imageUrl: newImageUrl
                   };
                 }
-              )
+              ),
+              isRequired: sellerType !== 0 && status !== 7
             })
           );
         }
 
-        if (
-          checkAgent.isAndroidApp() &&
-          window.webview &&
-          window.webview.callPhotoGuide &&
-          firstPhotoGuideDetail
-        ) {
-          window.webview.callPhotoGuide(
+        if (checkAgent.isAndroidApp() && firstPhotoGuideDetail) {
+          window.webview?.callPhotoGuide?.(
             firstPhotoGuideDetail.commonPhotoGuideDetail.photoGuideId,
             JSON.stringify({
               viewMode: 'ALBUM',
@@ -242,12 +255,21 @@ function LegitRequestEdit() {
                     imageUrl: newImageUrl
                   };
                 }
-              )
+              ),
+              isRequired: sellerType !== 0 && status !== 7
             })
           );
         }
       },
-    [setDialogState, hasCameraAuth, hasPhotoLibraryAuth, photoGuideDetails, photoGuideImages]
+    [
+      hasPhotoLibraryAuth,
+      hasCameraAuth,
+      photoGuideDetails,
+      setDialogState,
+      sellerType,
+      status,
+      photoGuideImages
+    ]
   );
 
   const handleSubmit = useCallback(() => {
@@ -333,7 +355,11 @@ function LegitRequestEdit() {
         />
       }
       disablePadding
-      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg03 }}
+      customStyle={{
+        height: 'auto',
+        minHeight: '100%',
+        backgroundColor: common.bg03
+      }}
     >
       {imageModel ? (
         <LegitRequestTitleWithModelImage
@@ -347,6 +373,7 @@ function LegitRequestEdit() {
           categoryName={categoryName.replace(/\(P\)/g, '')}
           title={title}
           modelImage={imageModel}
+          isEditMode
         />
       ) : (
         <LegitRequestTitle
@@ -359,12 +386,20 @@ function LegitRequestEdit() {
           brandName={brandName}
           categoryName={categoryName.replace(/\(P\)/g, '')}
           title={title}
+          isEditMode
         />
       )}
       <Contents>
+        <LegitRequestOpinion
+          isLoading={isLoadingSamplePhotoGuideDetails}
+          description={legitOpinions[0]?.description || ''}
+          samplePhotoGuideDetails={samplePhotoGuideDetails.filter(({ isRequired }) => isRequired)}
+          onClickSamplePhotoGuide={handleClickSamplePhotoGuide}
+        />
         <LegitUploadPhoto
           isLoading={isLoadingGetPhoto}
-          isEdit
+          mode="edit"
+          showPhotoGuide={false}
           photoGuideDetails={photoGuideDetails.map(
             ({ commonPhotoGuideDetail, imageUrl, isEdit }) => ({
               ...commonPhotoGuideDetail,
@@ -375,9 +410,6 @@ function LegitRequestEdit() {
           photoGuideImages={photoGuideImages}
           onClick={handleClickPhotoGuide}
         />
-        {legitOpinions.length > 0 && (
-          <LegitRequestOpinion description={legitOpinions[0].description} />
-        )}
       </Contents>
       <LegitRequestBottomButton
         onClick={handleSubmit}
@@ -388,7 +420,7 @@ function LegitRequestEdit() {
           !isAllUploadRequiredPhoto ||
           !isAllUploadRequestedEditPhoto
         }
-        text="다시 감정요청하기"
+        text="사진 보완 완료"
         showTooltip={
           photoGuideImages.length > 0 &&
           (!isAllUploadRequiredPhoto || !isAllUploadRequestedEditPhoto)
@@ -403,13 +435,8 @@ const Contents = styled.section`
   display: flex;
   flex-direction: column;
   row-gap: 52px;
-  padding: 32px 20px 52px;
+  padding: 14px 20px 52px;
   flex: 1;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg02};
 `;
 
 export default LegitRequestEdit;

@@ -26,7 +26,7 @@ interface CategoryListProps {
 
 function CategoryList({ selectedParentCategory, setSelectedParentCategory }: CategoryListProps) {
   const router = useRouter();
-  const { data: parentCategories = [] } = useQuery(
+  const { data: { parentCategories = [] } = {} } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
   );

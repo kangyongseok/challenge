@@ -32,6 +32,7 @@ interface ChannelMoreMenuBottomSheetProps {
   isTargetUserSeller: boolean;
   isTargetUserBlocked: boolean;
   isDeletedTargetUser: boolean;
+  isCamelAdminUser?: boolean;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
@@ -46,6 +47,7 @@ function ChannelMoreMenuBottomSheet({
   isTargetUserSeller,
   isTargetUserBlocked,
   isDeletedTargetUser,
+  isCamelAdminUser,
   refetchChannel
 }: ChannelMoreMenuBottomSheetProps) {
   const {
@@ -211,12 +213,16 @@ function ChannelMoreMenuBottomSheet({
               <Menu variant="h3" weight="medium" onClick={handleClickNoti}>
                 {isNotiOn ? '알림 끄기' : '알림 켜기'}
               </Menu>
-              <Menu variant="h3" weight="medium" onClick={handleClickReport}>
-                신고하기
-              </Menu>
-              <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
-                {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
-              </Menu>
+              {!isCamelAdminUser && (
+                <>
+                  <Menu variant="h3" weight="medium" onClick={handleClickReport}>
+                    신고하기
+                  </Menu>
+                  <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
+                    {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
+                  </Menu>
+                </>
+              )}
             </>
           )}
           <RedMenu variant="h3" weight="medium" onClick={handleClickLeave}>

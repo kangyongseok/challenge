@@ -11,6 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import { SAVED_LEGIT_REQUEST } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -25,6 +26,7 @@ import { legitRequestState } from '@recoil/legitRequest';
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { dialogState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitFloatingButton() {
@@ -40,7 +42,9 @@ function LegitFloatingButton() {
   );
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const setDialogState = useSetRecoilState(dialogState);
+
   const { data: accessUser } = useQueryAccessUser();
+  const { data: userData, remove: removeUserDate } = useQueryUserData();
 
   const { isSuccess } = useQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets, {
     enabled: !!accessUser,
@@ -102,13 +106,16 @@ function LegitFloatingButton() {
       return;
     }
 
+    // 매물등록 후 사진감정 신청 중단한 케이스 있을 경우 초기화
+    if (userData?.[SAVED_LEGIT_REQUEST]?.state?.productId) removeUserDate(SAVED_LEGIT_REQUEST);
+
     resetLegitRequestState();
     router.push(
       accessUser
         ? { pathname: '/legit/request/selectCategory' }
         : { pathname: '/login', query: { returnUrl: '/legit' } }
     );
-  }, [accessUser, router, setDialogState, resetLegitRequestState]);
+  }, [userData, removeUserDate, resetLegitRequestState, router, accessUser, setDialogState]);
 
   useEffect(() => {
     if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {

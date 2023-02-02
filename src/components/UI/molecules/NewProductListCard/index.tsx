@@ -18,6 +18,7 @@ import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
+import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
@@ -26,11 +27,12 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { ProductListCardVariant } from '@typings/common';
+import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-import { Overlay, WishButton } from './NewProductListCard.styles';
+import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles';
 
 export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductListCardVariant;
@@ -48,6 +50,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
     index?: number;
   };
   customStyle?: CustomStyle;
+  showShopManageButton?: boolean;
 }
 
 function NewProductListCard({
@@ -59,6 +62,7 @@ function NewProductListCard({
   hideAreaInfo,
   hideMetaInfo,
   hideWishButton,
+  showShopManageButton = false,
   attributes: { name, title, source, index, ...attributes } = {},
   customStyle,
   ...props
@@ -114,6 +118,8 @@ function NewProductListCard({
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+  const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
 
   const queryClient = useQueryClient();
 
@@ -194,6 +200,15 @@ function NewProductListCard({
 
   useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);
 
+  const handleClickManageProduct = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setUserShopSelectedProductState(product as Product & ProductResult);
+    setOpenState(({ type: stateType }) => ({
+      type: stateType,
+      open: true
+    }));
+  };
+
   return (
     <Flexbox
       onClick={handleClick}
@@ -226,12 +241,12 @@ function NewProductListCard({
         )}
         <Image
           ratio="5:6"
-          src={imageMain || imageThumbnail}
+          src={imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL}
           alt={`${productTitle} 이미지`}
           round={8}
           disableOnBackground={false}
         />
-        {variant === 'listA' && (
+        {variant === 'listA' && status !== 0 && (
           <Overlay>
             <Typography
               variant="h4"
@@ -316,30 +331,34 @@ function NewProductListCard({
               marginTop: 6
             }}
           >
-            <Flexbox gap={2}>
-              <Icon name="HeartFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
-                {commaNumber(wishCount)}
-              </Typography>
-            </Flexbox>
-            <Flexbox gap={2}>
-              <Icon name="MessageFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
-                {commaNumber(purchaseCount)}
-              </Typography>
-            </Flexbox>
+            {wishCount > 0 && (
+              <Flexbox gap={2}>
+                <Icon name="HeartFilled" width={12} height={12} color={common.ui80} />
+                <Typography
+                  variant="small2"
+                  weight="medium"
+                  customStyle={{
+                    color: common.ui80
+                  }}
+                >
+                  {commaNumber(wishCount)}
+                </Typography>
+              </Flexbox>
+            )}
+            {purchaseCount > 0 && (
+              <Flexbox gap={2}>
+                <Icon name="MessageFilled" width={12} height={12} color={common.ui80} />
+                <Typography
+                  variant="small2"
+                  weight="medium"
+                  customStyle={{
+                    color: common.ui80
+                  }}
+                >
+                  {commaNumber(purchaseCount)}
+                </Typography>
+              </Flexbox>
+            )}
           </Flexbox>
         )}
         {bottomLabel && (
@@ -366,6 +385,11 @@ function NewProductListCard({
             <Icon name="HeartFilled" color={isWish ? secondary.red.light : common.ui80} />
           </WishButton>
         </Flexbox>
+      )}
+      {showShopManageButton && (
+        <ShopMoreButton onClick={handleClickManageProduct}>
+          <Icon name="MoreHorizFilled" color={common.ui80} />
+        </ShopMoreButton>
       )}
     </Flexbox>
   );

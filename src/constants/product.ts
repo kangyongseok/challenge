@@ -153,7 +153,28 @@ export const PRODUCT_STATUS = {
   8: '숨김'
 };
 
-export const productStatusCode = {
+export const VIEW_PRODUCT_STATUS = {
+  0: '판매중',
+  1: '판매완료',
+  2: '판매완료',
+  3: '판매완료',
+  4: '예약중',
+  7: '판매중',
+  8: '숨김'
+};
+
+type ProductStatusCodeProps = {
+  sale: 0;
+  soldOut: 1;
+  duplicate: 2;
+  deleted: 3;
+  reservation: 4;
+  underPrice: 5;
+  oldProductSixMonth: 6;
+  hidden: 8;
+};
+
+export const productStatusCode: ProductStatusCodeProps = {
   sale: 0,
   soldOut: 1,
   duplicate: 2,
@@ -162,16 +183,6 @@ export const productStatusCode = {
   underPrice: 5,
   oldProductSixMonth: 6,
   hidden: 8
-};
-
-export const VIEW_PRODUCT_STATUS = {
-  0: '판매중',
-  1: '판매완료',
-  2: '판매완료',
-  3: '판매완료',
-  4: '예약중',
-  7: '판매중',
-  8: '판매중지'
 };
 
 export const REPORT_TYPE_FAKE_PRODUCT = 1;
@@ -250,3 +261,12 @@ export const PRODUCT_SOURCE = {
 };
 
 export const productInfoLabels = ['카멜인증', '새상품급', '시세이하'];
+
+export const PROMOTION_ATT = {
+  PRICE: 'PRICE',
+  LEGIT: 'LEGIT',
+  INFO: 'INFO',
+  UPDATE: 'UPDATE',
+  LEGIT_EDIT: 'LEGIT_EDIT',
+  LEGIT_SAVED: 'LEGIT_SAVED'
+};

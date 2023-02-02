@@ -77,7 +77,7 @@ function Channels() {
   }, [product, router]);
 
   useEffect(() => {
-    const { channelId } = router.query;
+    const { channelId, isCamelChannel } = router.query;
 
     if (needUpdateChatIOSVersion()) {
       setDialogState({
@@ -93,7 +93,9 @@ function Channels() {
     } else if (channelId) {
       router.replace('/channels').then(() => {
         if (checkAgent.isIOSApp()) {
-          window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
+          window.webkit?.messageHandlers?.callChannel?.postMessage?.(
+            `/channels/${channelId}${isCamelChannel ? 'isCamelChannel=true' : ''}`
+          );
           return;
         }
 

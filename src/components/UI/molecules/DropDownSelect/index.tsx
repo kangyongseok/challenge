@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Box, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 
 import { logEvent } from '@library/amplitude';
@@ -11,16 +11,16 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
 
-import type { FilterDropItem, GroupSize } from '@typings/camelSeller';
+import type { FilterDropItem, GroupSize, SearchHistoryHookType } from '@typings/camelSeller';
 
 import { DropDownArea, FilterButton, Item, StyledDropDownWrap } from './DropDownSelect.styles';
 
 interface DropDownSelectProps {
   title: string;
-  type: string;
+  type: SearchHistoryHookType;
   lists?: FilterDropItem[];
   groupSize?: GroupSize[];
-  currnetType: string;
+  currnetType: SearchHistoryHookType;
   disabledBorder?: boolean;
   selectValue?: number | string;
   right?: number;
@@ -28,7 +28,7 @@ interface DropDownSelectProps {
   disabledCount?: boolean;
   disabledBg?: boolean;
   groupSelect?: boolean;
-  onClick: (parameter: string) => void;
+  onClick: (parameter: SearchHistoryHookType) => void;
   onClickSelect: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -64,7 +64,7 @@ function DropDownSelect({
           !target?.dataset.dropFilter &&
           !(target.parentNode as HTMLElement)?.dataset.dropFilter
         ) {
-          onClick('');
+          onClick(null);
         }
       }
     });
@@ -74,11 +74,11 @@ function DropDownSelect({
   const handleClickFilterButton = () => {
     logEvent(attrKeys.camelSeller.CLICK_FILTER, {
       name: attrProperty.name.MARKET_PRICE,
-      title: type.toUpperCase()
+      title: type?.toUpperCase()
     });
 
     if (currnetType === type) {
-      onClick('');
+      onClick(null);
     } else {
       onClick(type);
     }
@@ -91,7 +91,7 @@ function DropDownSelect({
       <FilterButton
         disabledBorder={!!disabledBorder}
         data-drop-filter
-        isSelectValue={!!activeValue && type !== 'recent'}
+        isSelectValue={!!activeValue}
         disabledBg={disabledBg}
         variant="solid"
         ref={dropDownIconRef}
@@ -101,33 +101,31 @@ function DropDownSelect({
         <Icon name="DropdownFilled" viewBox="0 0 5 24" />
       </FilterButton>
       <DropDownArea isDisplay={currnetType === type} direction="vertical" right={right as number}>
-        {type !== 'recent' && (
-          <Item
-            isActive={selectValue === 'all'}
-            alignment="center"
-            gap={4}
-            data-drop-filter
-            data-type={type}
-            onClick={onClickSelect}
+        <Item
+          isActive={selectValue === 'all'}
+          alignment="center"
+          gap={4}
+          data-drop-filter
+          data-type={type}
+          onClick={onClickSelect}
+        >
+          <Typography
+            weight="medium"
+            customStyle={{
+              color: common.ui20
+            }}
           >
-            <Typography
-              weight="medium"
-              customStyle={{
-                color: common.ui20
-              }}
-            >
-              전체보기
-            </Typography>
-            <Typography
-              variant="small2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
-              {commaNumber(allCount || 0)}
-            </Typography>
-          </Item>
-        )}
+            전체보기
+          </Typography>
+          <Typography
+            variant="small2"
+            customStyle={{
+              color: common.ui60
+            }}
+          >
+            {commaNumber(allCount || 0)}
+          </Typography>
+        </Item>
 
         {groupSelect &&
           lists &&
@@ -191,14 +189,6 @@ function DropDownSelect({
               data-item={JSON.stringify(list)}
               onClick={onClickSelect}
             >
-              {type === 'platform' && list.hasImage && (
-                <Image
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${list.id}.png`}
-                  alt={list.name}
-                  disableAspectRatio
-                  width={18}
-                />
-              )}
               <Typography
                 weight="medium"
                 customStyle={{

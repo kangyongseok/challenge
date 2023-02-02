@@ -38,9 +38,11 @@ function LegitResultBottomCtaButton() {
       enabled: !!id
     }
   );
+  const isRequestLegit =
+    (productResult || {}).sellerType !== 0 && (productResult || {}).status === 7;
 
   const handleClick = () => {
-    if ((productResult || {}).postType === 2) {
+    if (isRequestLegit) {
       logEvent(attrKeys.legitResult.CLICK_LEGIT_INFO, {
         name: attrProperty.name.AUTHORIZED
       });
@@ -120,7 +122,7 @@ function LegitResultBottomCtaButton() {
     });
   };
 
-  if (commentWriterFocused || ((productResult || {}).postType === 2 && status !== 30)) return null;
+  if (commentWriterFocused || (isRequestLegit && status !== 30)) return null;
 
   return (
     <Box component="nav" customStyle={{ minHeight: 89 }}>
@@ -142,7 +144,7 @@ function LegitResultBottomCtaButton() {
           size="large"
           onClick={handleClick}
         >
-          {(productResult || {}).postType === 2 ? '해당 신청건 바로가기' : '해당 매물로 돌아가기'}
+          {isRequestLegit ? '해당 신청건 바로가기' : '해당 매물 보러가기'}
         </Button>
       </CtaButtonWrapper>
     </Box>

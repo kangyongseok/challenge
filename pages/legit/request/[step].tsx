@@ -12,13 +12,13 @@ import {
   LegitRequestSelectModel
 } from '@components/pages/legitRequest';
 
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitRequest() {
@@ -30,12 +30,14 @@ function LegitRequest() {
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
 
   const { data: accessUser, isSuccess } = useQueryAccessUser();
+  const { remove: removeUserData } = useQueryUserData();
 
   const step = String(router.query?.step || '');
 
   useEffect(() => {
-    LocalStorage.remove(SAVED_LEGIT_REQUEST_STATE);
+    removeUserData(SAVED_LEGIT_REQUEST_STATE);
     logEvent(attrKeys.legit.VIEW_LEGIT_PROCESS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
