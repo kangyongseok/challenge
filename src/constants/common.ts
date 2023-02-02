@@ -74,7 +74,8 @@ export const SUPPORTED_MIMES = {
     'image/png',
     'image/gif',
     'image/svg+xml',
-    'image/webp' // not supported in IE
+    'image/webp', // not supported in IE,
+    'image/heic'
   ],
   VIDEO: ['video/mpeg', 'video/ogg', 'video/webm', 'video/mp4'],
   AUDIO: [

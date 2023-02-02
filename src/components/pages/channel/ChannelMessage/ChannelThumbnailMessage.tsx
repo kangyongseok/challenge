@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import type { FileMessage } from '@sendbird/chat/message';
 import styled from '@emotion/styled';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, heicToBlob } from '@utils/common';
 import { isVideoMessage } from '@utils/channel';
 
 import { channelThumbnailMessageImageState } from '@recoil/channel';
@@ -24,9 +24,10 @@ function ChannelThumbnailMessage({
   isByMe,
   nextMessageUserIsDiff
 }: ChannelFileMessageProps) {
-  const [imageRendered, setImageRendered] = useState(false);
-
   const setChannelThumbnailMessageImageState = useSetRecoilState(channelThumbnailMessageImageState);
+
+  const [imageRendered, setImageRendered] = useState(false);
+  const [imageUrl, setImageUrl] = useState(message.url);
 
   const handleClickImage = () => {
     if (!imageRendered) return;
@@ -36,13 +37,21 @@ function ChannelThumbnailMessage({
     if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
   };
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ['image/heic', 'image/heif'].includes(message.type)) {
+      heicToBlob(message.url, message.name).then((url) => {
+        if (url) setImageUrl(url);
+      });
+    }
+  }, [message.name, message.type, message.url]);
+
   return (
     <ThumbnailMessage isByMe={isByMe} nextMessageUserIsDiff={nextMessageUserIsDiff}>
       {!nextMessageUserIsDiff && (
         <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       )}
       <ImageWrapper onClick={handleClickImage}>
-        <Image url={message.url} />
+        <Image url={imageUrl} />
         <HiddenImageLoader
           src={message.url}
           alt={message?.type}
