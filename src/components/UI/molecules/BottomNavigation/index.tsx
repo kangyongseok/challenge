@@ -19,7 +19,6 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getUserName } from '@utils/user';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
 import { getUnreadMessagesCount } from '@utils/channel';
@@ -36,6 +35,7 @@ import { sendbirdState } from '@recoil/channel';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
@@ -105,6 +105,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
 
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
 
   const { initialized, unreadMessagesCount } = useRecoilValue(sendbirdState);
 
@@ -182,12 +183,8 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
           return;
         }
 
-        if (!initialized) {
-          await initializeSendbird(
-            accessUser.userId.toString(),
-            getUserName(accessUser.userName, accessUser.userId),
-            accessUser.image
-          );
+        if (!initialized && !!userId) {
+          await initializeSendbird(userId.toString(), userNickName, userImageProfile);
           return;
         }
 

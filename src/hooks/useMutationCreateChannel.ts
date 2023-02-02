@@ -11,13 +11,12 @@ import { postChannel } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
-import { getUserName } from '@utils/user';
 import { checkAgent } from '@utils/common';
 
 import type { CreateChannelParams } from '@typings/channel';
 import { toastState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function useMutationCreateChannel() {
@@ -27,7 +26,7 @@ function useMutationCreateChannel() {
   const state = useRecoilValue(sendbirdState);
   const setToastState = useSetRecoilState(toastState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
   const initializeSendbird = useInitializeSendbird();
 
   const { mutate: mutatePostChannel, ...useMutationResult } = useMutation(postChannel);
@@ -36,12 +35,8 @@ function useMutationCreateChannel() {
     params: CreateChannelParams,
     options?: Omit<UseMutationOptions<number, unknown, PostChannelData, unknown>, 'mutationFn'>
   ) => {
-    if (!!accessUser && !state.initialized) {
-      await initializeSendbird(
-        accessUser.userId.toString(),
-        getUserName(accessUser.userName, accessUser.userId),
-        accessUser.image
-      );
+    if (!!userId && !state.initialized) {
+      await initializeSendbird(userId.toString(), userNickName, userImageProfile);
     }
 
     await Sendbird.createChannel(params).then(([groupChannel]) => {

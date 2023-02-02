@@ -17,7 +17,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { selectedSearchOptionsDefault, selectedSearchOptionsState } from '@recoil/searchHelper';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 let callLog = false;
 
@@ -30,7 +30,7 @@ function AnnounceDetail() {
 
   const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
 
   const { data: announce } = useQuery(
@@ -127,10 +127,7 @@ function AnnounceDetail() {
                   variant="h4"
                   weight="bold"
                   dangerouslySetInnerHTML={{
-                    __html: announceDetail.content.replace(
-                      /{userName}/gi,
-                      accessUser?.userName ?? ''
-                    )
+                    __html: announceDetail.content.replace(/{userName}/gi, userNickName ?? '')
                   }}
                 />
               </Box>
@@ -145,10 +142,7 @@ function AnnounceDetail() {
                     letterSpacing: '-0.2px'
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: announceDetail.subContent.replace(
-                      /{userName}/gi,
-                      accessUser?.userName ?? ''
-                    )
+                    __html: announceDetail.subContent.replace(/{userName}/gi, userNickName ?? '')
                   }}
                 />
               </Box>

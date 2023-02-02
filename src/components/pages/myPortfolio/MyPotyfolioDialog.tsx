@@ -12,12 +12,12 @@ import attrKeys from '@constants/attrKeys';
 import { setCookie } from '@utils/common';
 
 import { SuccessDialogState } from '@recoil/myPortfolio';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function MyPotyfolioDialog() {
   const router = useRouter();
   const isOpen = useRecoilValue(SuccessDialogState);
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   useEffect(() => {
     if (isOpen) {
@@ -36,9 +36,7 @@ function MyPotyfolioDialog() {
         <Icon name="LogoText_96_20" height={10} customStyle={{ marginBottom: 10 }} />
         <GradationText />
         <Box customStyle={{ marginTop: 12, textAlign: 'center' }}>
-          <Typography>
-            {accessUser && `${accessUser.userName}님, `}사전예약이 완료되었어요!
-          </Typography>
+          <Typography>{`${userNickName}님, 사전예약이 완료되었어요!`}</Typography>
           <Typography>오픈되면 카카오톡으로 알려드릴게요.</Typography>
         </Box>
         <Button

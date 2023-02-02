@@ -72,7 +72,7 @@ function UserShopEdit() {
   const setUserShopUpdatedProfileDataState = useSetRecoilState(userShopUpdatedProfileDataState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo, userId } = useQueryMyUserInfo();
+  const { data: myUserInfo, userId, userNickName } = useQueryMyUserInfo();
   const { data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {} } =
     useQuery(
       queryKeys.users.infoByUserId(accessUser?.userId || 0),
@@ -146,7 +146,7 @@ function UserShopEdit() {
   const isUpdatedProfileData = useMemo(() => {
     if (
       !!userProfileParams.nickName?.length &&
-      (nickName || name || `${accessUser?.userId || '회원'}`) !== userProfileParams.nickName
+      (nickName || name || userNickName) !== userProfileParams.nickName
     )
       return true;
 
@@ -170,13 +170,13 @@ function UserShopEdit() {
 
     return false;
   }, [
-    accessUser?.userId,
     image,
     imageBackground,
     imageProfile,
     name,
     nickName,
     shopDescription,
+    userNickName,
     userProfileParams.imageBackground,
     userProfileParams.imageProfile,
     userProfileParams.nickName,
@@ -335,7 +335,7 @@ function UserShopEdit() {
 
     const banwordParams: BanWordParams = {};
 
-    if ((nickName || name || `${accessUser?.userId || '회원'}`) !== userProfileParams.nickName) {
+    if ((nickName || name || userNickName) !== userProfileParams.nickName) {
       banwordParams.nickName = userProfileParams.nickName;
     }
 
@@ -384,7 +384,6 @@ function UserShopEdit() {
       }
     });
   }, [
-    accessUser?.userId,
     descriptionError.message.length,
     isLoadingGetPhoto,
     isLoadingMutateBanWord,
@@ -396,6 +395,7 @@ function UserShopEdit() {
     nickName,
     nickNameError.message.length,
     setToastState,
+    userNickName,
     userProfileParams
   ]);
 

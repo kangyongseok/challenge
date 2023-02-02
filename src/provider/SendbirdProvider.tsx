@@ -8,13 +8,12 @@ import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
 import Sendbird from '@library/sendbird';
 
-import { getUserName } from '@utils/user';
 import { isProduction, uuidv4 } from '@utils/common';
 import { getUpdatedChannels } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 interface SendbirdProviderProps {
@@ -25,26 +24,22 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
   const router = useRouter();
   const [state, setState] = useRecoilState(sendbirdState);
 
-  const { data: accessUser } = useQueryAccessUser();
   const { data: userInfo } = useQueryUserInfo();
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
   const initialize = useInitializeSendbird();
 
   const sdk = Sendbird.getInstance();
 
   useEffect(() => {
     if (
-      !!accessUser &&
+      !!userId &&
       (!!userInfo?.hasChannel || router.pathname === '/channels') &&
       !state.initialized
     ) {
-      initialize(
-        accessUser.userId.toString(),
-        getUserName(accessUser.userName, accessUser.userId),
-        accessUser.image
-      );
+      initialize(userId.toString(), userNickName, userImageProfile);
     }
     // eslint-disable-next-line
-  }, [accessUser?.userId, state.initialized, userInfo?.hasChannel]);
+  }, [userId, state.initialized, userInfo?.hasChannel]);
 
   useEffect(() => {
     const typingHandlerId = uuidv4();

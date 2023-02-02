@@ -7,13 +7,13 @@ import { fetchAnnounce } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function AnnouncePageHead() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const { data: announce } = useQuery(
     queryKeys.commons.announce(Number(id)),
     () => fetchAnnounce(Number(id)),
@@ -27,10 +27,10 @@ function AnnouncePageHead() {
       title={`${announce.title} | 카멜`}
       ogTitle={`${announce.title} | 카멜`}
       description={announce.announceDetails[0].subContent
-        .replace(/{userName}/gi, accessUser?.userName ?? '')
+        .replace(/{userName}/gi, userNickName)
         .replace(/<br \/>/g, ' ')}
       ogDescription={announce.announceDetails[0].subContent
-        .replace(/{userName}/gi, accessUser?.userName ?? '')
+        .replace(/{userName}/gi, userNickName)
         .replace(/<br \/>/g, ' ')}
       ogImage={announce.announceDetails[0].images.split('|')[0]}
     />

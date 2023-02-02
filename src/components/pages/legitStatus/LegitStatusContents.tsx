@@ -13,11 +13,13 @@ import { fetchProductLegit } from '@api/productLegit';
 import queryKeys from '@constants/queryKeys';
 
 import { animationKeyframesState, firstUserAnimationState } from '@recoil/legitStatus';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusContents() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
 
   const splitIds = String(router.query.id || '').split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
@@ -58,7 +60,7 @@ function LegitStatusContents() {
         sub: (
           <>
             <Typography>카멜에서 활동하시는 명품감정 전문가들에게</Typography>
-            <Typography>{accessUser?.userName}님의 요청을 전송하고 있어요!</Typography>
+            <Typography>{userNickName}님의 요청을 전송하고 있어요!</Typography>
           </>
         )
       };

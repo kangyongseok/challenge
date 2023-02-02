@@ -21,7 +21,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { selectedSearchOptionsDefault, selectedSearchOptionsState } from '@recoil/searchHelper';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function NoticeNotificationPanel() {
   const {
@@ -33,7 +33,7 @@ function NoticeNotificationPanel() {
   const [openNoticeId, setOpenNoticeId] = useState(0);
   const [targetIndex, setTargetIndex] = useState(0);
   const { data } = useQuery(queryKeys.commons.announces(), fetchAnnounceBase);
-  const { data: accessUser } = useQueryAccessUser();
+  const { userNickName } = useQueryMyUserInfo();
   const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
 
@@ -162,10 +162,7 @@ function NoticeNotificationPanel() {
                         variant="h4"
                         weight="bold"
                         dangerouslySetInnerHTML={{
-                          __html: announceDetail.content.replace(
-                            /{userName}/gi,
-                            accessUser?.userName ?? ''
-                          )
+                          __html: announceDetail.content.replace(/{userName}/gi, userNickName ?? '')
                         }}
                       />
                     </Box>
@@ -182,7 +179,7 @@ function NoticeNotificationPanel() {
                         dangerouslySetInnerHTML={{
                           __html: announceDetail.subContent.replace(
                             /{userName}/gi,
-                            accessUser?.userName ?? ''
+                            userNickName ?? ''
                           )
                         }}
                       />
