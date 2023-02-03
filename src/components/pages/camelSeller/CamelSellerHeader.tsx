@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
@@ -64,11 +64,15 @@ function CamelSellerHeader() {
   const setSubmitClickState = useSetRecoilState(camelSellerBooleanStateFamily('submitClick'));
   const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
 
+  const clickBackRef = useRef(false);
+
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostRegister, isLoading } = useMutation(postProducts);
   const { mutate: mutatePutEdit, isLoading: isLoadingEditMutate } = useMutation(putProductEdit);
 
   const handleClickClose = () => {
+    clickBackRef.current = true;
+
     if (
       !query.id &&
       !viewRecentPriceList.open &&
@@ -98,6 +102,11 @@ function CamelSellerHeader() {
           data: saveData
         });
       }
+    } else {
+      logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+        name: attrProperty.name.PRODUCT_MAIN,
+        title: attrProperty.title.CLOSE
+      });
     }
     back();
   };
@@ -241,6 +250,7 @@ function CamelSellerHeader() {
   useEffect(() => {
     beforePopState(() => {
       if (
+        !clickBackRef.current &&
         !query.id &&
         !viewRecentPriceList.open &&
         pathname.split('/').includes('registerConfirm') &&
@@ -270,6 +280,11 @@ function CamelSellerHeader() {
             data: saveData
           });
         }
+      } else if (!clickBackRef.current) {
+        logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
+          name: attrProperty.name.PRODUCT_MAIN,
+          title: attrProperty.title.CLOSE
+        });
       }
       return true;
     });
