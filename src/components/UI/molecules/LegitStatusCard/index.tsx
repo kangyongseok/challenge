@@ -223,7 +223,7 @@ function LegitStatusCard({
         <Title variant="body2" weight="medium">
           {title}
         </Title>
-        {!postType && (
+        {!postType && !!price && (
           <Typography variant="h4" weight="bold" customStyle={{ marginTop: 4 }}>
             {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
           </Typography>
