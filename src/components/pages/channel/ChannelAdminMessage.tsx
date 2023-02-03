@@ -12,11 +12,13 @@ import styled from '@emotion/styled';
 
 import type { ChannelDetail } from '@dto/channel';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProductList, putProductUpdateStatus } from '@api/product';
 
 import { productSellerType } from '@constants/user';
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PROMOTION_ATT, productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
@@ -219,6 +221,8 @@ function ChannelAdminMessage({
         return;
       }
       resetCamelSellerMoveScroll();
+
+      SessionStorage.set(sessionStorageKeys.legitIntroSource, 'CHANNEL');
 
       router.push(buttonData.action);
     }

@@ -40,19 +40,19 @@ function RegisterConfirm() {
   const { data: accessUser } = useQueryAccessUser();
 
   useEffect(() => {
-    const getLocalstorage = LocalStorage.get(SOURCE);
+    const source = LocalStorage.get(SOURCE);
     const data = LocalStorage.get<SaveCamelSellerProductData>(SAVED_CAMEL_SELLER_PRODUCT_DATA);
 
     if (accessUser && data && data[accessUser.snsType]) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.LEAVE,
-        source: getLocalstorage,
+        source,
         data: data[accessUser.snsType]
       });
     } else {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.NEW,
-        source: getLocalstorage
+        source
       });
     }
 

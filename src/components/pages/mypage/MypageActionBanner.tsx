@@ -56,7 +56,7 @@ function MypageActionBanner() {
   }, [notProcessedLegitCount]);
 
   const authLegit = useMemo(
-    () => roles.includes('PRODUCT_LEGIT') || roles.includes('PRODUCT_LEGIT_HEAD'),
+    () => roles?.includes('PRODUCT_LEGIT') || roles?.includes('PRODUCT_LEGIT_HEAD'),
     [roles]
   );
 

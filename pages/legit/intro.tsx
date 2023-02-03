@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from 'react-query';
@@ -8,9 +8,14 @@ import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import SessionStorage from '@library/sessionStorage';
+import { logEvent } from '@library/amplitude';
+
 import { fetchProduct } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import attrKeys from '@constants/attrKeys';
 
 import { getProductDetailUrl } from '@utils/common';
 
@@ -80,6 +85,16 @@ function LegitIntro() {
       });
     }
   };
+
+  useEffect(() => {
+    logEvent(attrKeys.legitIntro.VIEW_LEGIT_RECOMM, {
+      source: SessionStorage.get(sessionStorageKeys.legitIntroSource) || 'NONE'
+    });
+
+    return () => {
+      SessionStorage.remove(sessionStorageKeys.legitIntroSource);
+    };
+  }, []);
 
   return (
     <GeneralTemplate disablePadding customStyle={{ position: 'relative' }}>

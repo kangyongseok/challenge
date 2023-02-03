@@ -561,6 +561,10 @@ const legitSearch = {
   VIEW_UPLOAD_GUIDE: 'VIEW_UPLOAD_GUIDE'
 };
 
+const legitIntro = {
+  VIEW_LEGIT_RECOMM: 'VIEW_LEGIT_RECOMM'
+};
+
 const crazycuration = {
   viewCrazyWeek: 'VIEW_CRAZYWEEK',
   clickShare: 'CLICK_SHARE',
@@ -743,6 +747,7 @@ const attrKeys = {
   legitGuide,
   legitProfile,
   legitSearch,
+  legitIntro,
   crazycuration,
   camelSeller,
   debug,

@@ -49,8 +49,8 @@ function MypageAlarmSetting() {
         wishAlarm={alarmsInfo?.isNotiProductWish}
         saveProductAlarm={alarmsInfo?.isNotiProductList}
       />
-      {(myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
-        myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD')) && (
+      {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
+        myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
         <>
           <Gap height={1} />
           <LegitAlarm alarm={alarmsInfo?.isNotiLegit} />

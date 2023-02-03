@@ -29,8 +29,8 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
   const excludeAuthAlarm = useCallback(
     (alarmCheck: AlarmsParams) => {
       const isAuthLegit =
-        myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
-        myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD');
+        myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
+        myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD');
 
       const allAlarmCheck = { ...alarmCheck };
 

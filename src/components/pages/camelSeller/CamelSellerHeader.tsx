@@ -180,8 +180,9 @@ function CamelSellerHeader() {
         LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
         window.history.replaceState(null, '', '/user/shop');
         if (isProductLegit) {
-          replace(`/legit/intro?productId=${id}`).then(() => {
-            SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');
+          SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');
+          SessionStorage.set(sessionStorageKeys.legitIntroSource, 'PRODUCT_MAIN');
+          replace(`/legit/intro?productId=${id}&register=true`).then(() => {
             resetTempData();
             resetSurveyState();
             resetHasOpenedSurveyBottomSheetState();

@@ -101,8 +101,8 @@ function MypageProfile() {
       name: attrProperty.name.MY
     });
     if (
-      myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
-      myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD')
+      myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
+      myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')
     ) {
       router.push(`/legit/profile/${userId}/edit`);
     } else {
@@ -152,8 +152,8 @@ function MypageProfile() {
               {userNickName}
             </EllipsisText>
             {myUserInfo?.isCertifiedSeller && <Icon name="SafeFilled" color={primary.light} />}
-            {(myUserInfo?.roles.includes('PRODUCT_LEGIT') ||
-              myUserInfo?.roles.includes('PRODUCT_LEGIT_HEAD')) && (
+            {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
+              myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
                 <Icon
                   name="LegitFilled"

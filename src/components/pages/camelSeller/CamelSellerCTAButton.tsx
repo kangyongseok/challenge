@@ -6,11 +6,13 @@ import { useRouter } from 'next/router';
 import { Button, Toast } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { postProducts, putProductEdit } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { SAVED_CAMEL_SELLER_PRODUCT_DATA } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -135,6 +137,8 @@ function CamelSellerCTAButton() {
           LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
           window.history.replaceState(null, '', '/user/shop');
           if (isProductLegit) {
+            SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');
+            SessionStorage.set(sessionStorageKeys.legitIntroSource, 'PRODUCT_MAIN');
             router.replace(`/legit/intro?productId=${id}&register=true`).then(() => {
               resetTempData();
               resetSurveyState();

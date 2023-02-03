@@ -11,6 +11,7 @@ const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
 const savedCreateChannelParams = 'savedCreateChannelParams';
 const camelSellerSelectBrandSource = 'camelSellerSelectBrandSource';
 const submitLegitProcessName = 'submitLegitProcessName';
+const legitIntroSource = 'legitIntroSource';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -25,7 +26,8 @@ const sessionStorageKeys = {
   pushToSavedRedirectChannel,
   savedCreateChannelParams,
   camelSellerSelectBrandSource,
-  submitLegitProcessName
+  submitLegitProcessName,
+  legitIntroSource
 };
 
 export default sessionStorageKeys;

@@ -4,8 +4,10 @@ import { Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import styled from '@emotion/styled';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { PROMOTION_ATT } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -119,6 +121,8 @@ function UserShopProductActionBanner({
         resetCamelSellerMoveScroll();
         resetSaveData();
       }
+
+      SessionStorage.set(sessionStorageKeys.legitIntroSource, 'MY_STORE');
 
       router.push(findBanner.action);
     }
