@@ -35,19 +35,11 @@ function ProductDetail() {
         <Skeleton />
       </Box>
       <Box customStyle={{ marginTop: 20 }}>
-        <Skeleton width={45} height={18} round={4} disableAspectRatio />
+        <Skeleton width="100%" maxWidth={150} height={20} round={8} disableAspectRatio />
         <Skeleton
           width="100%"
-          maxWidth={150}
-          height={20}
-          round={8}
-          disableAspectRatio
-          customStyle={{ marginTop: 8 }}
-        />
-        <Skeleton
-          width="100%"
-          maxWidth={50}
-          height={24}
+          maxWidth={70}
+          height={32}
           round={8}
           disableAspectRatio
           customStyle={{ marginTop: 4 }}
@@ -56,7 +48,7 @@ function ProductDetail() {
           alignment="center"
           justifyContent="space-between"
           gap={6}
-          customStyle={{ marginTop: 8 }}
+          customStyle={{ marginTop: 12 }}
         >
           <Skeleton width="100%" maxWidth={40} height={12} round={8} disableAspectRatio />
           <Skeleton width="100%" maxWidth={30} height={12} round={8} disableAspectRatio />

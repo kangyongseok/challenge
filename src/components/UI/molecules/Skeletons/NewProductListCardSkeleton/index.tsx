@@ -1,35 +1,42 @@
-import { Flexbox, Skeleton } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, CustomStyle, Flexbox, Skeleton } from 'mrcamel-ui';
 
-import type { ProductGridCardVariant } from '@typings/common';
+import type { ProductListCardVariant } from '@typings/common';
 
-import { Content } from './NewProductGridCardSkeleton.styles';
-
-export interface NewProductGridCardSkeletonProps {
-  variant?: ProductGridCardVariant;
-  isRound?: boolean;
+export interface NewProductListCardSkeletonProps {
+  variant?: ProductListCardVariant;
+  hidePrice?: boolean;
   hasSubText?: boolean;
   hasLabel?: boolean;
-  hidePrice?: boolean;
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
   customStyle?: CustomStyle;
 }
 
-function NewProductGridCardSkeleton({
-  variant = 'gridA',
-  isRound,
+function NewProductListCardSkeleton({
+  variant,
+  hidePrice,
   hasSubText,
   hasLabel,
-  hidePrice,
   hideAreaInfo,
   hideMetaInfo,
   customStyle
-}: NewProductGridCardSkeletonProps) {
+}: NewProductListCardSkeletonProps) {
   return (
-    <Flexbox direction="vertical" customStyle={customStyle}>
-      <Skeleton ratio="5:6" round={isRound ? 8 : 0} />
-      <Content variant={variant}>
+    <Flexbox gap={16} alignment={variant === 'listB' ? 'center' : undefined} css={customStyle}>
+      <Box
+        customStyle={{
+          minWidth: variant === 'listB' ? 60 : 120,
+          maxWidth: variant === 'listB' ? 60 : 120
+        }}
+      >
+        <Skeleton ratio="5:6" round={8} />
+      </Box>
+      <Box
+        customStyle={{
+          position: 'relative',
+          flexGrow: 1
+        }}
+      >
         <Skeleton width={32} height={16} round={8} disableAspectRatio />
         <Skeleton
           width="100%"
@@ -83,9 +90,9 @@ function NewProductGridCardSkeleton({
             <Skeleton width={35} height={18} round={8} disableAspectRatio />
           </Flexbox>
         )}
-      </Content>
+      </Box>
     </Flexbox>
   );
 }
 
-export default NewProductGridCardSkeleton;
+export default NewProductListCardSkeleton;

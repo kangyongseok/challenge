@@ -15,10 +15,10 @@ import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'r
 import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox } from 'mrcamel-ui';
-import styled from '@emotion/styled';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
-import { NewProductListCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import NewProductListCardSkeleton from '@components/UI/molecules/Skeletons/NewProductListCardSkeleton';
+import { NewProductListCard } from '@components/UI/molecules';
 
 import type { UserInfo } from '@dto/user';
 import type { ProductResult } from '@dto/product';
@@ -198,11 +198,11 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
       customStyle={{ padding: '20px 20px 100px 20px' }}
     >
       {isLoading ? (
-        <ProductGridList>
+        <Flexbox direction="vertical" gap={32}>
           {Array.from(new Array(6), (_, index) => (
-            <ProductGridCardSkeleton key={`product-grid-card-skeleton-${index}`} />
+            <NewProductListCardSkeleton key={`product-list-card-skeleton-${index}`} />
           ))}
-        </ProductGridList>
+        </Flexbox>
       ) : (
         // @ts-ignore
         <InfiniteLoader
@@ -244,10 +244,5 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     </Flexbox>
   );
 }
-
-const ProductGridList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-`;
 
 export default UserShopProductList;

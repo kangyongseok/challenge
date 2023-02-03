@@ -78,7 +78,7 @@ function ProductsInfiniteGrid({
   name = attrProperty.productName.PRODUCT_LIST
 }: ProductsInfiniteGridProps) {
   const router = useRouter();
-  const { keyword, parentIds, idFilterIds } = router.query;
+  const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
@@ -100,7 +100,7 @@ function ProductsInfiniteGrid({
   const windowInnerWidthRef = useRef(0);
   const loggedViewProductListLogEventRef = useRef(false);
   const loggedLoadProductListLogEventRef = useRef(false);
-  const listRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const thrHandleResize = useRef(
     throttle(() => {
@@ -128,17 +128,8 @@ function ProductsInfiniteGrid({
   const queryClient = useQueryClient();
 
   const { data: { userProductKeyword } = {}, isFetched: isSearchOptionsFetched } = useQuery(
-    queryKeys.products.searchOptions(
-      idFilterIds
-        ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
-        : searchOptionsParams
-    ),
-    () =>
-      fetchSearchOptions(
-        idFilterIds
-          ? { ...searchOptionsParams, idFilterIds: [Number(idFilterIds)] }
-          : searchOptionsParams
-      ),
+    queryKeys.products.searchOptions(searchOptionsParams),
+    () => fetchSearchOptions(searchOptionsParams),
     {
       keepPreviousData: true,
       enabled: Object.keys(searchOptionsParams).length > 0 && !isEmpty(router.query),

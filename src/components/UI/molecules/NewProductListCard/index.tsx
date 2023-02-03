@@ -39,6 +39,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
   product: Product | ProductResult;
   subText?: string;
   bottomLabel?: ReactElement;
+  hidePrice?: boolean;
   hideLabel?: boolean;
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
@@ -58,6 +59,7 @@ function NewProductListCard({
   product,
   subText,
   bottomLabel,
+  hidePrice,
   hideLabel,
   hideAreaInfo,
   hideMetaInfo,
@@ -289,28 +291,30 @@ function NewProductListCard({
         >
           {productTitle}
         </Typography>
-        <Flexbox
-          gap={4}
-          alignment="baseline"
-          customStyle={{
-            marginTop: 4
-          }}
-        >
-          <Typography variant="h3" weight="bold">
-            {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-          </Typography>
-          {subText && (
-            <Typography
-              variant="body2"
-              weight="medium"
-              customStyle={{
-                color: secondary.red.light
-              }}
-            >
-              {subText}
+        {!hidePrice && (
+          <Flexbox
+            gap={4}
+            alignment="baseline"
+            customStyle={{
+              marginTop: 4
+            }}
+          >
+            <Typography variant="h3" weight="bold">
+              {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
-          )}
-        </Flexbox>
+            {subText && (
+              <Typography
+                variant="body2"
+                weight="medium"
+                customStyle={{
+                  color: secondary.red.light
+                }}
+              >
+                {subText}
+              </Typography>
+            )}
+          </Flexbox>
+        )}
         {!hideAreaInfo && (
           <Typography
             variant="small2"
