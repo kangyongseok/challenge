@@ -583,12 +583,12 @@ export async function urlToBlob(url: string): Promise<Blob | undefined> {
   return blob;
 }
 
-export function isNeedUpdateImageUploadIOSVersion() {
-  return checkAgent.isIOSApp() && getAppVersion() < 1147 && isProduction;
+export function isNeedUpdateImageUploadIOSVersion(version = 1147) {
+  return checkAgent.isIOSApp() && getAppVersion() < version && isProduction;
 }
 
-export function isNeedUpdateImageUploadAOSVersion() {
-  return checkAgent.isAndroidApp() && getAppVersion() < 1145 && isProduction;
+export function isNeedUpdateImageUploadAOSVersion(version = 1145) {
+  return checkAgent.isAndroidApp() && getAppVersion() < version && isProduction;
 }
 
 export function hasImageFile(url: string | undefined | null): boolean {

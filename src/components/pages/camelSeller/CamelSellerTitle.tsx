@@ -38,6 +38,7 @@ function CamelSellerTitle() {
 
   const [value, setValue] = useState(tempData.title);
   const [isFocus, setIsFocus] = useState(false);
+  const [models, setModels] = useState<Models[]>([]);
 
   const debouncedValue = useDebounce(value, 300);
 
@@ -83,9 +84,10 @@ function CamelSellerTitle() {
           ...tempData,
           quoteTitle: '',
           category: {
-            id: tmpCategories[0].subParentId,
+            id: tmpCategories[0].id,
             parentId,
             parentCategoryName,
+            subParentId: tmpCategories[0].subParentId,
             name: tmpCategories[0].name
           },
           size: { id: 0, name: '' },
@@ -113,7 +115,7 @@ function CamelSellerTitle() {
               )
               .join(' ')
           },
-          category: { id: 489, parentId: 0, parentCategoryName: '', name: '기타' }, // 체크 필요
+          category: { id: 489, parentId: 0, parentCategoryName: '', subParentId: 0, name: '기타' },
           brandIds: tmpBrands.map((brand) => brand.id),
           size: { id: 0, name: '' },
           sizes: '',
@@ -140,9 +142,10 @@ function CamelSellerTitle() {
               .join(' ')
           },
           category: {
-            id: tmpCategories[0].subParentId,
+            id: tmpCategories[0].id,
             parentId: id,
             parentCategoryName,
+            subParentId: tmpCategories[0].subParentId,
             name: tmpCategories[0].name
           },
           brandIds: tmpBrands.map((brand) => brand.id),
@@ -159,6 +162,14 @@ function CamelSellerTitle() {
       setValue(tempData.title);
     }
   }, [productId, tempData.title]);
+
+  useEffect(() => {
+    if (data && !isEmpty(data)) setModels(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (!value) setModels([]);
+  }, [value]);
 
   return (
     <Flexbox
@@ -208,9 +219,9 @@ function CamelSellerTitle() {
           paddingRight: 0
         }}
       />
-      {!isLoading && data && !isEmpty(data) && !tempData.category.id && !tempData.brand.id && (
+      {!isLoading && !isEmpty(models) && !tempData.category.id && !tempData.brand.id && (
         <List>
-          {data.slice(0, 10).map((model) => (
+          {models.slice(0, 10).map((model) => (
             <Chip
               key={`brand-category-chip-${model.id}`}
               isRound={false}

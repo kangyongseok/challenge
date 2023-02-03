@@ -8,25 +8,6 @@ export interface PhotoGuideImages {
   commonPhotoGuideDetail: CommonPhotoGuideDetail;
 }
 
-export interface EditPhotoGuideImages {
-  photoGuideId: number;
-  imageUrl: string;
-  commonPhotoGuideDetail: { id: number };
-}
-
-export interface CamelSellerLocalStorage {
-  title: string;
-  quoteTitle: string;
-  brand: { id: number; name: string };
-  category: { id: number; name: string };
-  color: { id: number; name: string; count?: number };
-  size: { id: number; name: string; count?: number };
-  condition: { name: string; id: number };
-  price: number;
-  description: string;
-  photoGuideImages: PhotoGuideImages[];
-}
-
 export interface CamelSellerTempData {
   title: string;
   quoteTitle: string;
@@ -37,7 +18,13 @@ export interface CamelSellerTempData {
   images: string[];
   brand: { id: number; name: string };
   brands: string;
-  category: { id: number; parentId: number; parentCategoryName: string; name: string };
+  category: {
+    id: number;
+    parentId: number;
+    parentCategoryName: string;
+    subParentId: number;
+    name: string;
+  };
   sizes: string;
   categorySizeIds: number[];
   sizeOptionIds: number[];
@@ -52,7 +39,13 @@ export interface SaveCamelSellerProductData {
     brand: { id: number; name: string };
     brands: string;
     brandIds: number[];
-    category: { id: number; parentId: number; parentCategoryName: string; name: string };
+    category: {
+      id: number;
+      parentId: number;
+      parentCategoryName: string;
+      subParentId: number;
+      name: string;
+    };
     size: { id: number; name: string; count?: number };
     sizes: string;
     condition: { name: string; id: number; synonyms: string };

@@ -23,7 +23,7 @@ function Error404() {
       name: 'ERROR',
       title: 404
     });
-    router.push('/');
+    window.location.replace('/');
   };
 
   useEffect(() => {
@@ -33,6 +33,13 @@ function Error404() {
       url: window.location.href
     });
   }, []);
+
+  useEffect(() => {
+    router.beforePopState(() => {
+      window.location.replace('/');
+      return false;
+    });
+  }, [router]);
 
   return (
     <GeneralTemplate customStyle={{ backgroundColor: common.ui98 }} hideAppDownloadBanner>

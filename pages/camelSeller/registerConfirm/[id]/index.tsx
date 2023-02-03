@@ -121,6 +121,7 @@ function RegisterConfirmEdit() {
           id: editData.product.category.id || 0,
           parentId: editData.product.category.parentId || 0,
           parentCategoryName: '',
+          subParentId: editData.product.category.subParentId || 0,
           name: editData.product.category.name
         },
         size: getSize(),

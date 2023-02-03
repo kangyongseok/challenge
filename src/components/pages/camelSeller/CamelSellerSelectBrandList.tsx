@@ -103,7 +103,7 @@ function CamelSellerSelectBrandList({ triggered }: CamelSellerSelectBrandListPro
   }, [brands]);
 
   const handleClick = (brand: AllBrand) => () => {
-    const { id, name, brandIds = [] } = brand;
+    const { id, name, nameEng, brandIds = [] } = brand;
     logEvent(attrKeys.camelSeller.CLICK_BRAND, {
       title: attrProperty.title.BRAND,
       name: attrProperty.name.PRODUCT_MAIN,
@@ -116,7 +116,19 @@ function CamelSellerSelectBrandList({ triggered }: CamelSellerSelectBrandListPro
         ...prevState,
         quoteTitle: `${name} ${category.id ? category.name : prevState.category.name}`,
         category: category.id ? category : prevState.category,
-        brand: { id, name },
+        brand: {
+          id,
+          name: nameEng
+            .split(' ')
+            .map(
+              (splitNameEng) =>
+                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                  1,
+                  splitNameEng.length
+                )}`
+            )
+            .join(' ')
+        },
         brandIds,
         size: { id: 0, name: '' },
         sizes: '',
@@ -128,7 +140,19 @@ function CamelSellerSelectBrandList({ triggered }: CamelSellerSelectBrandListPro
         ...prevState,
         quoteTitle: `${name} ${category.id ? category.name : prevState.category.name}`,
         category: category.id ? category : prevState.category,
-        brand: { id, name },
+        brand: {
+          id,
+          name: nameEng
+            .split(' ')
+            .map(
+              (splitNameEng) =>
+                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                  1,
+                  splitNameEng.length
+                )}`
+            )
+            .join(' ')
+        },
         brandIds
       }));
     }

@@ -69,7 +69,7 @@ function CamelSellerRecentBottomSheet() {
     avgLatency = 0,
     minLatencyPrice = 0,
     minLatency = 0
-  } = lastPage?.baseSearchOptions || {};
+  } = lastPage?.searchOptions || {};
 
   const handleClickFilterReset = useCallback(() => {
     if (tempData) {
@@ -161,6 +161,7 @@ function CamelSellerRecentBottomSheet() {
       setFetchData({
         brandIds: tempData.brandIds || [],
         categoryIds: tempData.category.id ? [tempData.category.id] : [],
+        subParentIds: tempData.category.subParentId ? [tempData.category.subParentId] : [],
         keyword: newKeyword,
         conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
         categorySizeIds: tempData.categorySizeIds,
@@ -170,6 +171,7 @@ function CamelSellerRecentBottomSheet() {
   }, [
     tempData.brandIds,
     tempData.category.id,
+    tempData.category.subParentId,
     tempData.condition.id,
     tempData.categorySizeIds,
     tempData.brand.name,

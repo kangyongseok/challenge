@@ -43,7 +43,6 @@ function UserShop() {
   useRedirectVC('/user/shop');
 
   const { userId = 0, userNickName, userImageProfile, userImageBackground } = useQueryMyUserInfo();
-  // const setToastState = useRecoilValue(toastState);
 
   const {
     isLoading,
@@ -101,18 +100,14 @@ function UserShop() {
     };
   }, [curnScore, displayProductCount, maxScore, reviewCount, userNickName]);
 
+  const logEventTabTitles = ['SALE', 'SOLD', 'REVIEW'];
+
   useEffect(() => {
-    if (tab === '2') {
-      logEvent(attrKeys.userShop.VIEW_MY_STORE, {
-        name: attrProperty.name.MY_STORE,
-        title: attrProperty.title.REVIEW
-      });
-    } else {
-      logEvent(attrKeys.userShop.VIEW_MY_STORE, {
-        name: attrProperty.name.MY_STORE,
-        title: attrProperty.title.PRODUCT
-      });
-    }
+    logEvent(attrKeys.userShop.VIEW_MY_STORE, {
+      name: attrProperty.name.MY_STORE,
+      title: logEventTabTitles[Number(tab)]
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, userId]);
 
   return (

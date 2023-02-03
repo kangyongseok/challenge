@@ -1,15 +1,11 @@
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, CustomStyle, Tab, TabGroup, useTheme } from 'mrcamel-ui';
 
 // import Tabs from '@components/UI/molecules/Tabs';
 
-import { logEvent } from '@library/amplitude';
-
 import { TAB_HEIGHT } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
-import attrKeys from '@constants/attrKeys';
 
 interface UserShopTabsProps {
   value: string;
@@ -29,13 +25,6 @@ const UserShopTabs = forwardRef<HTMLDivElement, UserShopTabsProps>(function User
     }
   } = useTheme();
   const router = useRouter();
-
-  useEffect(() => {
-    logEvent(attrKeys.camelSeller.VIEW_MY_STORE, {
-      name: attrProperty.name.MY_STORE,
-      title: value === '1' ? attrProperty.title.SOLD : attrProperty.title.SALE
-    });
-  }, [value]);
 
   const handleChange = (newValue: string | number) => {
     router

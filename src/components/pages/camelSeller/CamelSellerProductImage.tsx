@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import type { MouseEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { MouseEvent, TouchEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { BottomSheet, Button, Flexbox, Icon, Label, Skeleton, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Label } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
@@ -15,10 +14,10 @@ import { logEvent } from '@library/amplitude';
 import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { checkAgent } from '@utils/common';
 
 import { deviceIdState } from '@recoil/common';
@@ -33,10 +32,25 @@ function CamelSellerProductImage() {
   const [isImageLoading, setIsImageLoadingState] = useRecoilState(camelSellerIsImageLoadingState);
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [imageRendered, setImageRendered] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [openBottomSheet, setOpenBottomSheet] = useState(false);
   const [images, setImages] = useState<string[]>(tempData.images);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+  const startDragIndexRef = useRef(-1);
+  const draggingIndexRef = useRef(-1);
+  const measureRef = useRef([0, 0]);
+  const touchScrollLeftRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const maxScrollWidthRef = useRef(0);
+  const prevDragDirectionRef = useRef('right');
+  const prevTouchClientXRef = useRef(0);
+  const scrollingRef = useRef(false);
+  const listGapRef = useRef(8);
+  const dummyDropElementIdRef = useRef('dummy-drop-element');
+
+  const dragModeTransferTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
   const { data: editData, isLoading } = useQuery(
     queryKeys.products.sellerEditProduct({ productId, deviceId }),
     () => fetchProduct({ productId, deviceId }),
@@ -47,33 +61,6 @@ function CamelSellerProductImage() {
 
   // 전환 판매자 매물
   const isExternalNormalSeller = editData?.product.productSeller.type === 4;
-
-  useEffect(() => {
-    window.getPhotoGuide = () => {
-      setIsImageLoadingState(true);
-    };
-
-    window.getPhotoGuideDone = (result: { imageUrl: string }[]) => {
-      logEvent(attrKeys.camelSeller.LOAD_PHOTO_GUIDE, {
-        name: attrProperty.name.PRODUCT_MAIN,
-        title: attrProperty.title.PRODUCT_MAIN,
-        count: result.length,
-        data: result
-      });
-
-      setIsImageLoadingState(false);
-      setTempData((prevState) => ({
-        ...prevState,
-        images: prevState.images.concat(
-          result.filter(({ imageUrl }) => !!imageUrl).map(({ imageUrl }) => imageUrl)
-        )
-      }));
-    };
-  }, [setIsImageLoadingState, setTempData]);
-
-  useEffect(() => {
-    setImages(tempData.images);
-  }, [tempData.images]);
 
   const isIOSCallMessage = () => {
     return !!(
@@ -125,6 +112,7 @@ function CamelSellerProductImage() {
 
   const handleClickDelete = (newIndex: number) => (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+
     logEvent(attrKeys.camelSeller.CLICK_PIC, {
       name: attrProperty.name.PRODUCT_MAIN,
       title: attrProperty.title.DELETE,
@@ -137,185 +125,329 @@ function CamelSellerProductImage() {
     }));
   };
 
-  const handleLoadComplete = () => {
-    setImageRendered(true);
+  const handleTouchStart = (index: number) => (e: TouchEvent<HTMLDivElement>) => {
+    dragModeTransferTimerRef.current = setTimeout(() => {
+      draggingRef.current = true;
+      if (listRef.current) {
+        listRef.current.style.overflowX = 'hidden';
+
+        // TODO 사파리 환경에서 마지막 위치에 드랍하는 경우, 빈 영역으로 인지되어 자동 스크롤 오동작 하는 문제 임시 대응(추후 수정)
+        if (index === images.length - 1) {
+          const div = document.createElement('div');
+          div.id = dummyDropElementIdRef.current;
+          div.style.width = '84px';
+          div.style.height = '84px';
+          listRef.current.appendChild(div);
+        }
+      }
+      scrollDisable();
+    }, 800);
+
+    startDragIndexRef.current = index;
+    draggingIndexRef.current = index;
+
+    const { offsetLeft, offsetTop, clientWidth } = e.currentTarget;
+    const { clientX, clientY } = e.targetTouches[0];
+
+    measureRef.current = [
+      // 104: 첫번째 이미지 업로드 박스 + Gap 제외
+      offsetLeft - clientX - 104 - clientWidth * index - listGapRef.current * index,
+      // List Padding Top
+      offsetTop - clientY - 20
+    ];
+
+    if (listRef.current) {
+      const { scrollWidth, scrollLeft, clientWidth: listClientWidth } = listRef.current;
+      maxScrollWidthRef.current = scrollWidth - listClientWidth;
+
+      scrollLeftRef.current = scrollLeft;
+    }
   };
 
-  const handleClickImage = (e: MouseEvent<HTMLElement>) => {
-    const target = e.currentTarget;
+  const handleTouchMove = (index: number) => (e: TouchEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
 
-    setCurrentIndex(Number(target.dataset.index));
-    setOpenBottomSheet(true);
+    const { offsetParent, clientWidth } = e.currentTarget;
+    const { clientX, clientY } = e.targetTouches[0];
+
+    if (!offsetParent) return;
+
+    Array.from(offsetParent.children)
+      .filter((element) => element.getAttribute('draggable'))
+      .forEach((element) => {
+        const { offsetWidth } = element as HTMLDivElement;
+        const dataIndex = Number(element.getAttribute('data-index'));
+        const startX = element.getBoundingClientRect().x;
+        const endX = element.clientWidth + element.getBoundingClientRect().x;
+
+        if (clientX >= startX && clientX < endX && index !== dataIndex) {
+          if (draggingIndexRef.current < dataIndex) {
+            // TODO 사파리 환경에서 마지막 위치에 드랍하는 경우, 빈 영역으로 인지되어 자동 스크롤 오동작 하는 문제 임시 대응(추후 수정)
+            if (dataIndex === images.length - 1 && listRef.current) {
+              const hasDummyDrop = listRef.current.querySelector(
+                `#${dummyDropElementIdRef.current}`
+              );
+
+              if (!hasDummyDrop) {
+                const div = document.createElement('div');
+                div.id = dummyDropElementIdRef.current;
+                div.style.width = '84px';
+                div.style.height = '84px';
+                listRef.current.appendChild(div);
+              }
+            }
+
+            element.setAttribute(
+              'style',
+              `transform: translateX(-${offsetWidth + listGapRef.current}px)`
+            );
+            draggingIndexRef.current = dataIndex;
+            prevDragDirectionRef.current = 'right';
+          } else if (draggingIndexRef.current > dataIndex) {
+            element.setAttribute(
+              'style',
+              `transform: translateX(${offsetWidth + listGapRef.current}px)`
+            );
+            draggingIndexRef.current = dataIndex;
+            prevDragDirectionRef.current = 'left';
+          } else {
+            element.removeAttribute('style');
+            draggingIndexRef.current =
+              prevDragDirectionRef.current === 'left' ? dataIndex + 1 : dataIndex - 1;
+          }
+        }
+
+        if (listRef.current) {
+          const { clientWidth: listClientWidth, scrollLeft } = listRef.current;
+
+          // 사이드 감지에 따른 자동 스크롤
+          if (
+            clientX > listClientWidth - clientWidth &&
+            scrollLeft < maxScrollWidthRef.current &&
+            prevTouchClientXRef.current < clientX
+          ) {
+            touchScrollLeftRef.current += 1;
+            scrollLeftRef.current += 1;
+            listRef.current.scrollTo({
+              top: 0,
+              left: scrollLeftRef.current
+            });
+          } else if (clientX < clientWidth && scrollLeft && prevTouchClientXRef.current > clientX) {
+            touchScrollLeftRef.current -= 1;
+            scrollLeftRef.current -= 1;
+            listRef.current.scrollTo({
+              top: 0,
+              left: scrollLeftRef.current
+            });
+          }
+        }
+      });
+
+    e.currentTarget.style.zIndex = '10';
+    e.currentTarget.style.transform = `translate(${
+      clientX + measureRef.current[0] + touchScrollLeftRef.current
+    }px, ${clientY + measureRef.current[1]}px)`;
+    prevTouchClientXRef.current = clientX;
   };
 
-  const handleClickImageDetail = () => {
-    logEvent(attrKeys.camelSeller.CLICK_PIC, {
-      name: attrProperty.name.PRODUCT_MAIN,
-      title: attrProperty.title.GALLERY,
-      index: currentIndex
-    });
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    if (dragModeTransferTimerRef.current) {
+      clearTimeout(dragModeTransferTimerRef.current);
 
-    setOpenBottomSheet(false);
-    setOpenModal(true);
-  };
-
-  const handleClickChangeMainImage = () => {
-    logEvent(attrKeys.camelSeller.CLICK_PIC, {
-      name: attrProperty.name.PRODUCT_MAIN,
-      title: attrProperty.title.SET_FIRST,
-      index: currentIndex
-    });
-
-    const currentImage = tempData.images.find((_, index) => index === currentIndex);
-
-    if (currentImage) {
-      setTempData((prevState) => ({
-        ...prevState,
-        images: [currentImage, ...prevState.images.filter((_, index) => index !== currentIndex)]
-      }));
+      draggingRef.current = false;
+      scrollEnable();
     }
 
-    setOpenBottomSheet(false);
+    if (listRef.current) {
+      listRef.current.style.overflowX = 'auto';
+
+      const copyImages = [...images];
+      const dropImage = copyImages[startDragIndexRef.current];
+
+      copyImages.splice(startDragIndexRef.current, 1);
+      copyImages.splice(draggingIndexRef.current, 0, dropImage);
+
+      setImages(copyImages);
+
+      e.currentTarget.style.zIndex = 'inherit';
+      e.currentTarget.style.transform = '';
+
+      const { offsetParent } = e.currentTarget;
+
+      if (!offsetParent) return;
+
+      Array.from(offsetParent.children).forEach((element) => {
+        element.removeAttribute('style');
+      });
+
+      draggingIndexRef.current = -1;
+      touchScrollLeftRef.current = 0;
+      scrollingRef.current = false;
+
+      const div = listRef.current.querySelector(`#${dummyDropElementIdRef.current}`);
+      if (div) listRef.current.removeChild(div);
+    }
   };
+
+  const handleScroll = () => {
+    if (dragModeTransferTimerRef.current) {
+      clearTimeout(dragModeTransferTimerRef.current);
+    }
+    scrollingRef.current = true;
+  };
+
+  const handleClickImage = (index: number) => () => {
+    if (!draggingRef.current && !scrollingRef.current) {
+      logEvent(attrKeys.camelSeller.CLICK_PIC, {
+        name: attrProperty.name.PRODUCT_MAIN,
+        title: attrProperty.title.GALLERY,
+        index
+      });
+
+      setCurrentIndex(index);
+      setOpenModal(true);
+    }
+  };
+
+  useEffect(() => {
+    window.getPhotoGuide = () => {
+      setIsImageLoadingState(true);
+    };
+
+    window.getPhotoGuideDone = (result: { imageUrl: string }[]) => {
+      const validImages = result
+        .filter(({ imageUrl }) => !!imageUrl)
+        .map(({ imageUrl }) => imageUrl);
+
+      logEvent(attrKeys.camelSeller.LOAD_PHOTO_GUIDE, {
+        name: attrProperty.name.PRODUCT_MAIN,
+        title: attrProperty.title.PRODUCT_MAIN,
+        count: validImages.length,
+        data: result
+      });
+
+      setIsImageLoadingState(false);
+      setTempData((prevState) => ({
+        ...prevState,
+        images: prevState.images.concat(validImages)
+      }));
+    };
+  }, [setIsImageLoadingState, setTempData]);
+
+  useEffect(() => {
+    setImages(tempData.images);
+  }, [tempData.images]);
+
+  useEffect(() => {
+    setTempData((prevState) => ({
+      ...prevState,
+      images
+    }));
+  }, [setTempData, images]);
+
+  useEffect(() => {
+    return () => {
+      if (dragModeTransferTimerRef.current) {
+        clearTimeout(dragModeTransferTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
-      <StyledWrap>
-        <Flexbox
-          alignment="center"
-          gap={8}
-          customStyle={{ flexWrap: 'nowrap', width: 'fit-content' }}
-          onContextMenu={(e) => e.preventDefault()}
-        >
-          {!isExternalNormalSeller && (
-            <PhotoIconBox totalImageCount={10} count={images.length} onClick={handleClickPhoto} />
-          )}
-          {images.map((image, index) => (
-            <ProductImageWrap
-              data-index={index}
-              // eslint-disable-next-line react/no-array-index-key
-              key={`photo-guide-${index}-${image?.split('/')[image.split('/').length - 1]}`}
-              onClick={handleClickImage}
-            >
-              <Image
-                src={image}
-                alt={image?.split('/')[image.split('/').length - 1]}
-                placeholder="blur"
-                blurDataURL={NEXT_IMAGE_BLUR_URL}
-                onLoadingComplete={handleLoadComplete}
-                layout="fill"
-                objectFit="cover"
-                style={{ borderRadius: 8 }}
-                width="84px"
-                height="84px"
-              />
-              {!imageRendered && <Skeleton width={84} height={84} round={8} disableAspectRatio />}
-              <DeleteIconWrap
-                justifyContent="center"
-                alignment="center"
-                onClick={handleClickDelete(index)}
-              >
-                <Icon name="CloseOutlined" />
-              </DeleteIconWrap>
-              {index === 0 && (
-                <Label
-                  variant="outline"
-                  brandColor="black"
-                  size="xsmall"
-                  text="대표사진"
-                  customStyle={{
-                    position: 'absolute',
-                    top: 4,
-                    left: 4,
-                    borderColor: 'transparent'
-                  }}
-                />
-              )}
-            </ProductImageWrap>
-          ))}
-          {isImageLoading && (
-            <Flexbox
+      <List ref={listRef} onScroll={handleScroll} onContextMenu={(e) => e.preventDefault()}>
+        {!isExternalNormalSeller && (
+          <PhotoIconBox totalImageCount={10} count={images.length} onClick={handleClickPhoto} />
+        )}
+        {images.map((image, index) => (
+          <ProductImageWrap
+            // eslint-disable-next-line react/no-array-index-key
+            key={`photo-guide-${index}-${image?.split('/')[image.split('/').length - 1]}`}
+            // onClick={handleClickImage}
+            draggable
+            data-index={index}
+            onTouchStart={handleTouchStart(index)}
+            onTouchMove={handleTouchMove(index)}
+            onTouchEnd={handleTouchEnd}
+          >
+            <Image
+              width={84}
+              height={84}
+              src={image}
+              alt={image?.split('/')[image.split('/').length - 1]}
+              round={8}
+              onClick={handleClickImage(index)}
+              disableAspectRatio
+              disableOnBackground={false}
+            />
+            <DeleteIconWrap
               justifyContent="center"
               alignment="center"
-              customStyle={{
-                position: 'relative',
-                width: 84,
-                height: 84,
-                background: '#eeeeee',
-                borderRadius: 8
-              }}
+              onClick={handleClickDelete(index)}
             >
-              <AnimationLoading
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
-                alt="이미지 로딩중"
-                width="40px"
-                height="40px"
+              <Icon name="CloseOutlined" />
+            </DeleteIconWrap>
+            {index === 0 && (
+              <Label
+                variant="outline"
+                brandColor="black"
+                size="xsmall"
+                text="대표사진"
+                customStyle={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 4,
+                  borderColor: 'transparent'
+                }}
               />
-            </Flexbox>
-          )}
-        </Flexbox>
-        {!isLoading && (
-          <ImageDetailDialog
-            open={openModal}
-            onClose={() => setOpenModal(false)}
-            images={images.map((image) => image)}
-            syncIndex={currentIndex}
-          />
+            )}
+          </ProductImageWrap>
+        ))}
+        {isImageLoading && (
+          <Flexbox
+            justifyContent="center"
+            alignment="center"
+            customStyle={{
+              position: 'relative',
+              width: 84,
+              height: 84,
+              background: '#eeeeee',
+              borderRadius: 8
+            }}
+          >
+            <AnimationLoading
+              width={40}
+              height="auto"
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
+              alt="이미지 로딩중"
+              disableAspectRatio
+            />
+          </Flexbox>
         )}
-      </StyledWrap>
-      <BottomSheet
-        open={openBottomSheet}
-        onClose={() => setOpenBottomSheet(false)}
-        disableSwipeable
-        customStyle={{
-          padding: 20
-        }}
-      >
-        <Flexbox
-          alignment="center"
-          justifyContent="center"
-          onClick={handleClickChangeMainImage}
-          customStyle={{
-            height: 48
-          }}
-        >
-          <Typography variant="h3" weight="medium">
-            대표사진으로 변경
-          </Typography>
-        </Flexbox>
-        <Flexbox
-          alignment="center"
-          justifyContent="center"
-          onClick={handleClickImageDetail}
-          customStyle={{
-            height: 48
-          }}
-        >
-          <Typography variant="h3" weight="medium">
-            사진 상세보기
-          </Typography>
-        </Flexbox>
-        <Button
-          variant="ghost"
-          brandColor="black"
-          size="xlarge"
-          fullWidth
-          customStyle={{
-            marginTop: 20
-          }}
-        >
-          취소
-        </Button>
-      </BottomSheet>
+      </List>
+      {!isLoading && (
+        <ImageDetailDialog
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          images={images.map((image) => image)}
+          syncIndex={currentIndex}
+        />
+      )}
     </>
   );
 }
 
-const StyledWrap = styled.div`
-  width: calc(100% + 40px);
+const List = styled.div`
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  column-gap: 8px;
+  margin: 0 -20px;
   padding: 20px 20px 0 20px;
+  overflow-y: hidden;
   overflow-x: auto;
-  margin-left: -20px;
+  user-select: none;
 `;
 
 const ProductImageWrap = styled.div`

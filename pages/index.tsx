@@ -35,7 +35,7 @@ import { locales } from '@constants/common';
 import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
-import { CreateChannelParams } from '@typings/channel';
+import type { CreateChannelParams } from '@typings/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 

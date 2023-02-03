@@ -141,6 +141,7 @@ function CamelSellerPrice() {
     setFetchData({
       brandIds: tempData.brandIds,
       categoryIds: tempData.category.id ? [tempData.category.id] : [],
+      subParentIds: tempData.category.subParentId ? [tempData.category.subParentId] : [],
       keyword: newKeyword,
       conditionIds: tempData.condition.id ? [tempData.condition.id] : [],
       categorySizeIds: tempData.categorySizeIds,
@@ -149,6 +150,7 @@ function CamelSellerPrice() {
   }, [
     tempData.brandIds,
     tempData.category.id,
+    tempData.category.subParentId,
     tempData.condition.id,
     tempData.brand.name,
     tempData.category.parentCategoryName,

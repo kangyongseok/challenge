@@ -52,6 +52,7 @@ function CamelSellerSelectCategoryGrid() {
         id,
         parentId: 0,
         parentCategoryName: '',
+        subParentId: 0,
         name: name.replace(/\(P\)/g, '')
       }
     }));

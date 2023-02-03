@@ -27,7 +27,7 @@ function Error500({ logging = true }: Error500Props) {
       name: 'ERROR',
       title: 500
     });
-    router.push('/');
+    window.location.replace('/');
   };
 
   useEffect(() => {
@@ -39,6 +39,13 @@ function Error500({ logging = true }: Error500Props) {
       });
     }
   }, [logging]);
+
+  useEffect(() => {
+    router.beforePopState(() => {
+      window.location.replace('/');
+      return false;
+    });
+  }, [router]);
 
   return (
     <GeneralTemplate customStyle={{ backgroundColor: common.ui98 }} hideAppDownloadBanner>

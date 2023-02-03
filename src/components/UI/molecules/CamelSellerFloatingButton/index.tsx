@@ -96,7 +96,7 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
         return;
       }
 
-      if (isNeedUpdateImageUploadIOSVersion()) {
+      if (isNeedUpdateImageUploadIOSVersion(1151)) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },
@@ -115,7 +115,7 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
         return;
       }
 
-      if (isNeedUpdateImageUploadAOSVersion()) {
+      if (isNeedUpdateImageUploadAOSVersion(1147)) {
         setDialogState({
           type: 'appUpdateNotice',
           customStyleTitle: { minWidth: 269 },

@@ -12,7 +12,7 @@ export const camelSellerTempSaveDataState = atom<CamelSellerTempData>({
     size: { id: 0, name: '', categorySizeId: 0 },
     brand: { id: 0, name: '' },
     brands: '',
-    category: { id: 0, parentId: 0, parentCategoryName: '', name: '' },
+    category: { id: 0, parentId: 0, parentCategoryName: '', subParentId: 0, name: '' },
     categorySizeIds: [],
     brandIds: [],
     sizeOptionIds: [],
@@ -25,11 +25,17 @@ export const camelSellerTempSaveDataState = atom<CamelSellerTempData>({
 });
 
 export const camelSellerCategoryBrandState = atom<{
-  category: { id: number; parentId: number; parentCategoryName: string; name: string };
+  category: {
+    id: number;
+    parentId: number;
+    parentCategoryName: string;
+    subParentId: number;
+    name: string;
+  };
 }>({
   key: '@camelSeller/categoryBrandState',
   default: {
-    category: { id: 0, parentId: 0, parentCategoryName: '', name: '' }
+    category: { id: 0, parentId: 0, parentCategoryName: '', subParentId: 0, name: '' }
   }
 });
 
