@@ -290,7 +290,7 @@ function LegitProfileInfo({
                     customStyle={{ color: common.cmnW }}
                     dangerouslySetInnerHTML={{
                       __html: title
-                        .replaceAll(/\r?\n/gi, '<br />')
+                        .replace(/\r?\n/g, '<br />')
                         .split('<br />')
                         .map((text) => text.replace(/^-|^- /, ''))
                         .join('<br />')

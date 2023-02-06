@@ -136,7 +136,7 @@ function LegitHeadAuthenticatorList() {
                         customStyle={{ wordBreak: 'keep-all' }}
                         dangerouslySetInnerHTML={{
                           __html: `${title
-                            .replaceAll(/\r?\n/gi, '<br />')
+                            .replace(/\r?\n/g, '<br />')
                             .split('<br />')
                             .map((text) => text.replace(/^-|^- /, ''))
                             .join('<br />')}`

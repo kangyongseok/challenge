@@ -160,7 +160,7 @@ function LegitStatusFailContents() {
           <Typography
             customStyle={{ marginTop: 8 }}
             dangerouslySetInnerHTML={{
-              __html: description.replaceAll(/\r?\n/gi, '<br />')
+              __html: description.replace(/\r?\n/g, '<br />')
             }}
           />
           {(status === 11 ||

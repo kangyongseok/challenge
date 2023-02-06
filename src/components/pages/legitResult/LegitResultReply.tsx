@@ -202,7 +202,7 @@ function LegitResultReply({
         </Flexbox>
         <Typography
           dangerouslySetInnerHTML={{
-            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+            __html: `${description.replace(/\r?\n/g, '<br />')}`
           }}
           customStyle={{ margin: '10px 0 0 16px', color: common.ui60 }}
         />

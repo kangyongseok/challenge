@@ -363,10 +363,10 @@ function UserShopEdit() {
                 descriptionError: {
                   message: PROFILE_EDIT_ERROR_MESSAGE[type],
                   text: result
-                    .replaceAll(' ', '&nbsp;')
-                    .replaceAll(/\r?\n/gi, '<br />')
-                    .replaceAll('<b>', '<div/><b>')
-                    .replaceAll('</b>', '</b><div>')
+                    .replace(/ /g, '&nbsp;')
+                    .replace(/\r?\n/g, '<br />')
+                    .replace(/<b>/g, '<div/><b>')
+                    .replace(/<\/b>/g, '</b><div>')
                 }
               }));
           });
@@ -552,7 +552,7 @@ function UserShopEdit() {
                     .filter((t) => t)
                     .map(
                       (t) =>
-                        (t.startsWith('<b>') && <b>{t.replaceAll(/<\/?b[^>]*>/gi, '')}</b>) || (
+                        (t.startsWith('<b>') && <b>{t.replace(/<\/?b[^>]*>/g, '')}</b>) || (
                           <span dangerouslySetInnerHTML={{ __html: t }} />
                         )
                     )}

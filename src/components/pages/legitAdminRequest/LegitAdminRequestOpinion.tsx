@@ -59,7 +59,7 @@ function LegitAdminRequestOpinion() {
           <Typography
             variant="h4"
             dangerouslySetInnerHTML={{
-              __html: myLegitOpinion.description.replaceAll(/\r?\n/gi, '<br />')
+              __html: myLegitOpinion.description.replace(/\r?\n/g, '<br />')
             }}
             customStyle={{ marginTop: 8 }}
           />

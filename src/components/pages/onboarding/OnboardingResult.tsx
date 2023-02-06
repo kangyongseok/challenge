@@ -65,8 +65,9 @@ function OnboardingResult() {
   };
 
   const userNameParse = () => {
-    const styleIds = LocalStorage.get(SELECTED_STYLE_CARD_IDS) as number[];
+    const styleIds = (LocalStorage.get(SELECTED_STYLE_CARD_IDS) as number[]) || [];
     if (!accessUser?.userName) {
+      if (!Array.isArray(styleIds)) return '회원님';
       if (styleIds.includes(37)) return '힙쟁이';
       if (styleIds.includes(38) || styleIds.includes(39)) return '명잘알';
       if (styleIds.includes(40)) return '신발매니아';

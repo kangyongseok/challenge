@@ -107,7 +107,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   }, [chartValues]);
 
   const isShowChart = useMemo(() => {
-    if (product?.weekAvgPrices) {
+    if (product?.weekAvgPrices && product?.weekAvgPrices.length > 1) {
       return (
         product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v) > 0 &&
         product.scorePriceCount > 0

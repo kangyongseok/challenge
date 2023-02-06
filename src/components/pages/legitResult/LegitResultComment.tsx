@@ -236,7 +236,7 @@ function LegitResultComment({
         </Flexbox>
         <Typography
           dangerouslySetInnerHTML={{
-            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+            __html: `${description.replace(/\r?\n/g, '<br />')}`
           }}
           customStyle={{ marginTop: 10, color: common.ui60 }}
         />

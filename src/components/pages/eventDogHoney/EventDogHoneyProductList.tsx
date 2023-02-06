@@ -150,9 +150,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                   }}
                   measure={measure}
                   subText={
-                    firstProduct.size
-                      ? `size ${firstProduct.size?.replaceAll('|', ',')}`
-                      : undefined
+                    firstProduct.size ? `size ${firstProduct.size?.replace(/\|/g, ',')}` : undefined
                   }
                   bottomLabel={
                     <Flexbox direction="vertical" gap={4}>
@@ -214,7 +212,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                   measure={measure}
                   subText={
                     secondProduct.size
-                      ? `size ${secondProduct.size?.replaceAll('|', ',')}`
+                      ? `size ${secondProduct.size?.replace(/\|/g, ',')}`
                       : undefined
                   }
                   bottomLabel={

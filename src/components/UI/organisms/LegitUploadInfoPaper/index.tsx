@@ -101,7 +101,7 @@ function LegitUploadInfoPaper({
                   <Typography
                     variant="body2"
                     dangerouslySetInnerHTML={{
-                      __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+                      __html: `${description.replace(/\r?\n/g, '<br />')}`
                     }}
                   />
                 )}

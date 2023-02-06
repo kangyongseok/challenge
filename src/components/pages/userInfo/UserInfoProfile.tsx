@@ -104,7 +104,7 @@ function UserInfoProfile({
           {!!shopDescription && (
             <Description
               dangerouslySetInnerHTML={{
-                __html: shopDescription.replaceAll(/\r?\n/gi, '<br />')
+                __html: shopDescription.replace(/\r?\n/g, '<br />')
               }}
             />
           )}

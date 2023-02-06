@@ -56,7 +56,7 @@ function LegitOpinion({
           variant="body2"
           dangerouslySetInnerHTML={{
             __html: `${title
-              .replaceAll(/\r?\n/gi, '<br />')
+              .replace(/\r?\n/g, '<br />')
               .split('<br />')
               .map((text) => text.replace(/^-|^- /, ''))
               .join('<br />')}`
@@ -69,7 +69,7 @@ function LegitOpinion({
         <Typography
           customStyle={{ marginTop: 8 }}
           dangerouslySetInnerHTML={{
-            __html: `${description.replaceAll(/\r?\n/gi, '<br />')}`
+            __html: `${description.replace(/\r?\n/g, '<br />')}`
           }}
         />
         <Typography variant="small2" customStyle={{ marginTop: 8, color: common.ui60 }}>
