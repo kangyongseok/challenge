@@ -72,6 +72,7 @@ function CamelSellerHeader() {
 
   const handleClickClose = () => {
     clickBackRef.current = true;
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
     if (
       !query.id &&
@@ -99,7 +100,13 @@ function CamelSellerHeader() {
         logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
           name: attrProperty.name.PRODUCT_MAIN,
           title: attrProperty.title.LEAVE,
-          data: saveData
+          data: {
+            ...tempData,
+            unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+            storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+            distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+            colorIds: colors.map(({ id }) => id)
+          }
         });
       }
     } else {
@@ -135,7 +142,13 @@ function CamelSellerHeader() {
     logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
       name: attrProperty.name.PRODUCT_MAIN,
       title: attrProperty.title.EDIT,
-      data: submitPutData
+      data: {
+        ...tempData,
+        unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+        storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+        distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+        colorIds: colors.map(({ id }) => id)
+      }
     });
 
     mutatePutEdit(
@@ -145,6 +158,7 @@ function CamelSellerHeader() {
       },
       {
         onSuccess() {
+          SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
           window.history.replaceState(null, '', '/user/shop');
           replace(`/products/${productId}?success=true`).then(() => {
             resetTempData();
@@ -181,12 +195,19 @@ function CamelSellerHeader() {
     logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
       name: attrProperty.name.PRODUCT_MAIN,
       title: attrProperty.title.NEW,
-      data
+      data: {
+        ...tempData,
+        unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+        storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+        distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+        colorIds: colors.map(({ id }) => id)
+      }
     });
 
     mutatePostRegister(data as SubmitType, {
       onSuccess({ id, isProductLegit }) {
         LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+        SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
         window.history.replaceState(null, '', '/user/shop');
         if (isProductLegit) {
           SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');
@@ -249,6 +270,8 @@ function CamelSellerHeader() {
 
   useEffect(() => {
     beforePopState(() => {
+      SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+
       if (
         !clickBackRef.current &&
         !query.id &&
@@ -277,7 +300,13 @@ function CamelSellerHeader() {
           logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
             name: attrProperty.name.PRODUCT_MAIN,
             title: attrProperty.title.LEAVE,
-            data: saveData
+            data: {
+              ...tempData,
+              unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+              storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+              distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+              colorIds: colors.map(({ id }) => id)
+            }
           });
         }
       } else if (!clickBackRef.current) {

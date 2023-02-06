@@ -4,9 +4,11 @@ import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { LISTING_TECH_DATE, SAVED_CAMEL_SELLER_PRODUCT_DATA } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -110,17 +112,15 @@ function CamelSellerSavePopup() {
       att: 'NEW'
     });
     LocalStorage.remove(LISTING_TECH_DATE);
-    setContinueRegisterDialog(({ type }) => ({ type, open: false }));
-    reset();
-    router.push('/camelSeller/registerConfirm');
-  };
-
-  const reset = () => {
     LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+    setContinueRegisterDialog(({ type }) => ({ type, open: false }));
     resetTempData();
     resetSurveyState();
     resetHasOpenedSurveyBottomSheetState();
     setSubmitClickState(({ type }) => ({ type, isState: false }));
+
+    router.push('/camelSeller/registerConfirm');
   };
 
   return (

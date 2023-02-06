@@ -5,11 +5,13 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo } from '@api/user';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { SAVED_CAMEL_SELLER_PRODUCT_DATA, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -166,6 +168,8 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
     resetTempData();
     resetSurveyState();
     resetHasOpenedSurveyBottomSheetState();
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+
     router.push('/camelSeller/registerConfirm');
   };
 

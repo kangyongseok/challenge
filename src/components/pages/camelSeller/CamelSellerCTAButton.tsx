@@ -44,7 +44,8 @@ function CamelSellerCTAButton() {
     categorySizeIds,
     sizes,
     sizeOptionIds,
-    useDeliveryPrice
+    useDeliveryPrice,
+    ...other
   } = useRecoilValue(camelSellerTempSaveDataState);
   const { units, stores, distances, colors } = useRecoilValue(camelSellerSurveyState);
   const isValid = useRecoilValue(camelSellerSubmitValidatorState);
@@ -105,7 +106,26 @@ function CamelSellerCTAButton() {
       logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
         name: attrProperty.name.PRODUCT_MAIN,
         title: attrProperty.title.EDIT,
-        data
+        data: {
+          images,
+          title,
+          quoteTitle,
+          description,
+          price,
+          brandIds,
+          brands,
+          category,
+          condition,
+          categorySizeIds,
+          sizes,
+          sizeOptionIds,
+          useDeliveryPrice,
+          ...other,
+          unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+          storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+          distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+          colorIds: colors.map(({ id }) => id)
+        }
       });
 
       mutateEdit(
@@ -115,6 +135,7 @@ function CamelSellerCTAButton() {
         },
         {
           onSuccess() {
+            SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
             window.history.replaceState(null, '', '/user/shop');
             router.replace(`/products/${productId}?success=true`).then(() => {
               resetSurveyState();
@@ -129,12 +150,32 @@ function CamelSellerCTAButton() {
       logEvent(attrKeys.camelSeller.SUBMIT_PRODUCT, {
         name: attrProperty.name.PRODUCT_MAIN,
         title: attrProperty.title.NEW,
-        data
+        data: {
+          images,
+          title,
+          quoteTitle,
+          description,
+          price,
+          brandIds,
+          brands,
+          category,
+          condition,
+          categorySizeIds,
+          sizes,
+          sizeOptionIds,
+          useDeliveryPrice,
+          ...other,
+          unitIds: units.filter(({ selected }) => selected).map(({ id }) => id),
+          storeIds: stores.filter(({ selected }) => selected).map(({ id }) => id),
+          distanceIds: distances.filter(({ selected }) => selected).map(({ id }) => id),
+          colorIds: colors.map(({ id }) => id)
+        }
       });
 
       mutate(data, {
         onSuccess({ id, isProductLegit }) {
           LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+          SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
           window.history.replaceState(null, '', '/user/shop');
           if (isProductLegit) {
             SessionStorage.set(sessionStorageKeys.submitLegitProcessName, 'LEGIT_PROCESS');

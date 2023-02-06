@@ -8,10 +8,12 @@ import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
@@ -279,6 +281,7 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       ...getAttProperty
     });
 
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
     resetTempData();
 
     router.push(`/camelSeller/registerConfirm/${id}`);

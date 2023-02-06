@@ -24,10 +24,12 @@ import {
   CamelSellerTitle
 } from '@components/pages/camelSeller';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -84,13 +86,21 @@ function RegisterConfirmEdit() {
   }, [tempData]);
 
   useEffect(() => {
-    if (!isFetching) {
+    const isFirstVisit = SessionStorage.get(
+      sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm
+    );
+
+    if (!isFetching && !isFirstVisit) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.EDIT,
         data: editData
       });
     }
   }, [isFetching, editData]);
+
+  useEffect(() => {
+    SessionStorage.set(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm, true);
+  }, []);
 
   useEffect(() => {
     return () => resetPhotoState();

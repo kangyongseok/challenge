@@ -12,6 +12,7 @@ const savedCreateChannelParams = 'savedCreateChannelParams';
 const camelSellerSelectBrandSource = 'camelSellerSelectBrandSource';
 const submitLegitProcessName = 'submitLegitProcessName';
 const legitIntroSource = 'legitIntroSource';
+const isFirstVisitCamelSellerRegisterConfirm = 'isFirstVisitCamelSellerRegisterConfirm';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -27,7 +28,8 @@ const sessionStorageKeys = {
   savedCreateChannelParams,
   camelSellerSelectBrandSource,
   submitLegitProcessName,
-  legitIntroSource
+  legitIntroSource,
+  isFirstVisitCamelSellerRegisterConfirm
 };
 
 export default sessionStorageKeys;

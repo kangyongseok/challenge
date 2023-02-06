@@ -11,11 +11,13 @@ import { Badge } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import Sendbird from '@library/sendbird';
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting, putProductUpdateStatus } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -178,6 +180,7 @@ function ProductSellerBottomMenu({
       ...getAttProperty
     });
 
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
     resetTempData();
 
     router.push(`/camelSeller/registerConfirm/${parameter.productId}`);

@@ -21,9 +21,11 @@ import {
   CamelSellerTitle
 } from '@components/pages/camelSeller';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import {
   CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE,
   SAVED_CAMEL_SELLER_PRODUCT_DATA,
@@ -32,7 +34,7 @@ import {
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { SaveCamelSellerProductData } from '@typings/camelSeller';
+import type { SaveCamelSellerProductData } from '@typings/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function RegisterConfirm() {
@@ -42,14 +44,17 @@ function RegisterConfirm() {
   useEffect(() => {
     const source = LocalStorage.get(SOURCE);
     const data = LocalStorage.get<SaveCamelSellerProductData>(SAVED_CAMEL_SELLER_PRODUCT_DATA);
+    const isFirstVisit = SessionStorage.get(
+      sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm
+    );
 
-    if (accessUser && data && data[accessUser.snsType]) {
+    if (accessUser && data && data[accessUser.snsType] && !isFirstVisit) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.LEAVE,
         source,
         data: data[accessUser.snsType]
       });
-    } else {
+    } else if (!isFirstVisit) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.NEW,
         source
@@ -60,6 +65,10 @@ function RegisterConfirm() {
       LocalStorage.remove(SOURCE);
     };
   }, [accessUser]);
+
+  useEffect(() => {
+    SessionStorage.set(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm, true);
+  }, []);
 
   useEffect(() => {
     if (!LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE)) {
