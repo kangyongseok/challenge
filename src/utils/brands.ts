@@ -48,8 +48,10 @@ export function parseWordToConsonant(word: string) {
     'ㅍ',
     'ㅎ'
   ];
-  const code = Math.floor((word[0].charCodeAt(0) - 44032) / 588);
-  result += code >= 0 ? choArr[code] : word[0];
+  if (word) {
+    const code = Math.floor((word[0].charCodeAt(0) - 44032) / 588);
+    result += code >= 0 ? choArr[code] : word[0];
+  }
   return result;
 }
 
