@@ -163,7 +163,7 @@ function ProductInfo({
         >
           <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
           <Typography variant="body2" weight="medium">
-            {product?.productSeller?.site?.name} 플랫폼과 동기화된 매물이에요.
+            {product?.site?.name} 플랫폼과 동기화된 매물이에요.
           </Typography>
         </Flexbox>
       );

@@ -171,7 +171,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
                 labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
                 productId={contents[index].id}
                 isTransferred={isTransferred}
-                platformName={contents[index].productSeller?.site?.name}
+                platformName={contents[index].site?.name}
                 savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
                 synonyms={shopBannerList[0]?.synonyms || ''}
                 attributes={handleProductAtt(contents[index], index)}

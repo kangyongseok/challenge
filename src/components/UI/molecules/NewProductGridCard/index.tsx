@@ -14,7 +14,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
@@ -221,21 +221,22 @@ function NewProductGridCard({
           position: 'relative'
         }}
       >
-        {!hideLabel && sellerType === productSellerType.legit && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            size="xsmall"
-            startIcon={<Icon name="ShieldFilled" />}
-            text="인증판매자"
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1
-            }}
-          />
-        )}
+        {!hideLabel &&
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
+            <Label
+              variant="solid"
+              brandColor="black"
+              size="xsmall"
+              startIcon={<Icon name="ShieldFilled" />}
+              text="인증판매자"
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1
+              }}
+            />
+          )}
         <Image
           ratio="5:6"
           src={imageMain || imageThumbnail}
