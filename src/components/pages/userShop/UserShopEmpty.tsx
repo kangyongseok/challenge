@@ -9,7 +9,7 @@ interface UserShopEmptyProps {
 function UserShopEmpty({ tab }: UserShopEmptyProps) {
   const { icon, text } = useMemo(() => {
     const result = {
-      icon: '🕳',
+      icon: '🥲',
       text: '판매중인 매물이 없어요!'
     };
 

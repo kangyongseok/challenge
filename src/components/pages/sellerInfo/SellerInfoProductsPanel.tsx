@@ -136,13 +136,19 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
   }, [handleResize]);
 
   return !isLoading && sellerProducts.length === 0 ? (
-    <Typography
-      weight="bold"
-      variant="h3"
-      customStyle={{ textAlign: 'center', margin: '84px 20px 0', color: palette.common.ui60 }}
+    <Flexbox
+      direction="vertical"
+      alignment="center"
+      gap={20}
+      customStyle={{
+        margin: '84px 20px 0'
+      }}
     >
-      판매중인 매물이 없어요
-    </Typography>
+      <Typography customStyle={{ width: 52, height: 52, fontSize: 52 }}>🥲</Typography>
+      <Typography variant="h3" weight="bold">
+        판매중인 매물이 없어요
+      </Typography>
+    </Flexbox>
   ) : (
     <>
       {!isLoading && (

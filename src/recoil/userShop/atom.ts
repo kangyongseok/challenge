@@ -36,12 +36,12 @@ export const userShopSelectedProductState = atom<Partial<Product> | Partial<Prod
   default: {}
 });
 
-export const userShopSelectProductManageState = atom<ProductResult & Product>({
-  key: 'users/userShopSelectProductManageState',
-  default: {} as ProductResult & Product
-});
-
-export const userShopUpdatedProfileDataState = atom<boolean>({
+export const userShopUpdatedProfileDataState = atom({
   key: 'userShop/updatedProfileDataState',
   default: false
+});
+
+export const userShopListPrevScrollTopState = atom({
+  key: 'userShop/listPrevScrollTopState',
+  default: 0
 });

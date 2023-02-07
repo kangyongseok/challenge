@@ -3,7 +3,7 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -14,7 +14,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
+import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
@@ -41,6 +41,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
   bottomLabel?: ReactElement;
   hidePrice?: boolean;
   hideLabel?: boolean;
+  hidePlatformLogo?: boolean;
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
   hideWishButton?: boolean;
@@ -61,6 +62,7 @@ function NewProductListCard({
   bottomLabel,
   hidePrice,
   hideLabel,
+  hidePlatformLogo = true,
   hideAreaInfo,
   hideMetaInfo,
   hideWishButton,
@@ -84,8 +86,9 @@ function NewProductListCard({
     brand: { name: brandName = '', nameEng = '' } = {},
     category: { name: categoryName = '', parentId = 0 } = {},
     status,
-    site: { name: siteName = '' } = {},
-    productSeller: { site: { id: siteId = 0 } = {}, type = 0 } = {},
+    site: { name: siteName = '', hasImage: siteHasImage = false } = {},
+    siteUrl: { name: siteUrlName = '' } = {},
+    productSeller: { site: { id: siteId = 0 } = {}, type: sellerType = 0 } = {},
     wishCount = 0,
     purchaseCount = 0,
     datePosted,
@@ -107,7 +110,7 @@ function NewProductListCard({
     site: siteName,
     price,
     cluster,
-    productType: getProductType(siteId, type),
+    productType: getProductType(siteId, sellerType),
     sellerType: product.sellerType,
     productSellerId: product.productSeller.id,
     productSellerType: product.productSeller.type,
@@ -200,8 +203,6 @@ function NewProductListCard({
     }
   };
 
-  useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);
-
   const handleClickManageProduct = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setUserShopSelectedProductState(product as Product & ProductResult);
@@ -210,6 +211,8 @@ function NewProductListCard({
       open: true
     }));
   };
+
+  useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);
 
   return (
     <Flexbox
@@ -226,7 +229,7 @@ function NewProductListCard({
           maxWidth: variant === 'listB' ? 60 : 120
         }}
       >
-        {!hideLabel && SELLER_STATUS[type as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
+        {!hideLabel && sellerType === productSellerType.legit && (
           <Label
             variant="solid"
             brandColor="black"
@@ -239,6 +242,17 @@ function NewProductListCard({
               left: 8,
               zIndex: 1
             }}
+          />
+        )}
+        {!hidePlatformLogo && (
+          <Avatar
+            width={18}
+            height={18}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+              (siteHasImage && siteId) || ''
+            }.png`}
+            alt={`${siteUrlName || 'Platform'} Logo Img`}
+            customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
           />
         )}
         <Image

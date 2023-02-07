@@ -62,7 +62,7 @@ function UserShop() {
     refetchOnMount: true
   });
 
-  const tabRef = useRef<null | HTMLDivElement>(null);
+  const tabRef = useRef<HTMLDivElement>(null);
   const triggered = useScrollTrigger({
     ref: tabRef,
     additionalOffsetTop:

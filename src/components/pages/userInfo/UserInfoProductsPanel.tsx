@@ -11,7 +11,7 @@ import {
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -40,9 +40,6 @@ interface UserInfoProductsPanelProps {
 
 function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
   const router = useRouter();
-  const {
-    theme: { palette }
-  } = useTheme();
 
   const params = useMemo(() => ({ userId, size: 20 }), [userId]);
   const {
@@ -208,13 +205,19 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
   }, [handleResize]);
 
   return !isLoading && groupedProducts.length === 0 ? (
-    <Typography
-      weight="bold"
-      variant="h3"
-      customStyle={{ textAlign: 'center', margin: '84px 20px 0', color: palette.common.ui60 }}
+    <Flexbox
+      direction="vertical"
+      alignment="center"
+      gap={20}
+      customStyle={{
+        margin: '84px 20px 0'
+      }}
     >
-      판매중인 매물이 없어요
-    </Typography>
+      <Typography customStyle={{ width: 52, height: 52, fontSize: 52 }}>🥲</Typography>
+      <Typography variant="h3" weight="bold">
+        판매중인 매물이 없어요
+      </Typography>
+    </Flexbox>
   ) : (
     <Flexbox direction="vertical" component="section" customStyle={{ paddingBottom: 100 }}>
       {isLoading ? (
@@ -266,6 +269,7 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
 const ProductGridList = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 32px;
 `;
 
 const ProductGridCardBox = styled.div`

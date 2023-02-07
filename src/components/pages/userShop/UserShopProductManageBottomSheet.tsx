@@ -61,7 +61,8 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
     scorePrice,
     scorePriceAvg,
     scorePriceCount,
-    scorePriceRate
+    scorePriceRate,
+    productSeller
   } = useRecoilValue(userShopSelectedProductState) as Product;
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
 
@@ -76,14 +77,15 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
     channelBottomSheetStateFamily('selectTargetUser')
   );
 
-  const { isSale, isSoldOut, isReserving, isHiding } = useMemo(
+  const { isSale, isSoldOut, isReserving, isHiding, isTransferred } = useMemo(
     () => ({
       isSale: status === 0,
       isSoldOut: status === 1,
       isReserving: status === 4,
-      isHiding: status === 8
+      isHiding: status === 8,
+      isTransferred: productSeller?.type === 3
     }),
-    [status]
+    [status, productSeller]
   );
 
   const getAttProperty = {
@@ -311,9 +313,11 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
               <Menu variant="h3" weight="medium" data-status={1} onClick={handleClickUpdateStatus}>
                 판매완료로 변경
               </Menu>
-              <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
-                수정하기
-              </Menu>
+              {!isTransferred && (
+                <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
+                  수정하기
+                </Menu>
+              )}
               <Menu variant="h3" weight="medium" data-status={8} onClick={handleClickUpdateStatus}>
                 숨기기
               </Menu>
@@ -327,9 +331,11 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
               <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
                 판매중으로 변경
               </Menu>
-              <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
-                수정하기
-              </Menu>
+              {!isTransferred && (
+                <Menu variant="h3" weight="medium" onClick={handleClickEdit}>
+                  수정하기
+                </Menu>
+              )}
             </>
           )}
           {isSoldOut && (

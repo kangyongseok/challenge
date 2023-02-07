@@ -570,54 +570,56 @@ function ProductCTAButton({
             />
           </>
         )}
-        {isProductLegit && !product?.productLegit && (
-          <ProductLegitCTAButton
-            variant="solid"
-            size="xlarge"
-            onClick={() => {
-              logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
-                name: attrProperty.productName.PRODUCT_DETAIL,
-                title: attrProperty.productTitle.CTA,
-                brand: product?.brand.name,
-                category: product?.category.name,
-                parentCategory: FIRST_CATEGORIES[product?.category.parentId as number],
-                site: product?.site.name,
-                price: product?.price,
-                imageCount: product?.imageCount,
-                legitStatus: product?.productLegit?.status,
-                legitResult: product?.productLegit?.result
-              });
-              setLegitBottomSheet(true);
-            }}
-          >
-            <Tooltip
-              open={legitTooltip && isDoneWishOnBoarding && !isOpenPriceCRMTooltip}
-              variant="ghost"
-              brandColor="primary"
-              message={
-                <Flexbox gap={6} alignment="center">
-                  <Label text="NEW" variant="solid" size="xsmall" />
-                  <Typography weight="bold" variant="small1">
-                    지금 보는 사진 그대로 실시간 정가품 의견받기
-                  </Typography>
-                  <Icon
-                    name="CloseOutlined"
-                    size="small"
-                    color={common.ui20}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLegitTooltip(false);
-                    }}
-                  />
-                </Flexbox>
-              }
-              customStyle={{ left: '160%' }}
-              triangleLeft={80}
+        {isProductLegit &&
+          !product?.productLegit &&
+          product?.sellerType !== productSellerType.normal && (
+            <ProductLegitCTAButton
+              variant="solid"
+              size="xlarge"
+              onClick={() => {
+                logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
+                  name: attrProperty.productName.PRODUCT_DETAIL,
+                  title: attrProperty.productTitle.CTA,
+                  brand: product?.brand.name,
+                  category: product?.category.name,
+                  parentCategory: FIRST_CATEGORIES[product?.category.parentId as number],
+                  site: product?.site.name,
+                  price: product?.price,
+                  imageCount: product?.imageCount,
+                  legitStatus: product?.productLegit?.status,
+                  legitResult: product?.productLegit?.result
+                });
+                setLegitBottomSheet(true);
+              }}
             >
-              사진감정
-            </Tooltip>
-          </ProductLegitCTAButton>
-        )}
+              <Tooltip
+                open={legitTooltip && isDoneWishOnBoarding && !isOpenPriceCRMTooltip}
+                variant="ghost"
+                brandColor="primary"
+                message={
+                  <Flexbox gap={6} alignment="center">
+                    <Label text="NEW" variant="solid" size="xsmall" />
+                    <Typography weight="bold" variant="small1">
+                      지금 보는 사진 그대로 실시간 정가품 의견받기
+                    </Typography>
+                    <Icon
+                      name="CloseOutlined"
+                      size="small"
+                      color={common.ui20}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLegitTooltip(false);
+                      }}
+                    />
+                  </Flexbox>
+                }
+                customStyle={{ left: '160%' }}
+                triangleLeft={80}
+              >
+                사진감정
+              </Tooltip>
+            </ProductLegitCTAButton>
+          )}
         <Button
           variant="solid"
           brandColor={ctaBrandColor}
@@ -638,11 +640,6 @@ function ProductCTAButton({
             whiteSpace: 'nowrap',
             backgroundColor: ctaBrandColor === 'black' ? common.uiBlack : undefined
           }}
-          // startIcon={
-          //   !roleSeller && (isCamelProduct || isCamelSeller) ? (
-          //     <Icon name="MessageOutlined" width={20} />
-          //   ) : undefined
-          // }
         >
           <Typography
             variant={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'h3' : 'body1'}

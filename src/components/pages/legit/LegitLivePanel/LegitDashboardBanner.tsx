@@ -241,7 +241,7 @@ function LegitDashboardBanner() {
       </Swiper>
       {triggered && <Box customStyle={{ height: LEGIT_FAKE_BANNER_HEIGHT }} />}
       <Banner ref={bannerRef} isFixed={triggered} showAppDownloadBanner={showAppDownloadBanner}>
-        {fakeIndexData.map(({ title, description, increaseRate }, index) => (
+        {fakeIndexData.map(({ title, description, increaseRate = 0 }, index) => (
           <FakeInfo key={`fake-index-${title}`} showLine={index + 1 !== fakeIndexData.length}>
             <Typography
               variant="body2"
@@ -257,7 +257,7 @@ function LegitDashboardBanner() {
             >
               {description}
             </Typography>
-            {increaseRate && increaseRate > 0 && !Number.isNaN(increaseRate) && (
+            {!Number.isNaN(increaseRate) && increaseRate > 0 && (
               <Flexbox
                 gap={2}
                 alignment="center"

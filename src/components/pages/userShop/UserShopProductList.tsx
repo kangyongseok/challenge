@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   AutoSizer,
   CellMeasurer,
@@ -38,7 +38,7 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
 import type { SavedLegitDataProps } from '@typings/product';
-import { userShopSelectedProductState } from '@recoil/userShop';
+import { userShopListPrevScrollTopState, userShopSelectedProductState } from '@recoil/userShop';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
@@ -59,11 +59,19 @@ interface UserShopProductListProps {
 
 function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListProps) {
   const router = useRouter();
+
   const { data: accessUser } = useQueryAccessUser();
   const getSavedLegitData: SavedLegitDataProps | null = LocalStorage.get(
     String(accessUser?.userId)
   );
+
   const { id: productId } = useRecoilValue(userShopSelectedProductState);
+  const [userShopListPrevScrollTop, setUserShopListPrevScrollTopState] = useRecoilState(
+    userShopListPrevScrollTopState
+  );
+
+  const [prevScrollTop, setPrevScrollTop] = useState(userShopListPrevScrollTop);
+  const prevScrollTopRef = useRef(prevScrollTop);
 
   const userProductsParams = useMemo(
     () => ({
@@ -125,49 +133,53 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     await fetchNextPage();
   };
 
-  const handleResize = useCallback(() => {
+  const handleUpdateProductStatus = useCallback(async () => {
+    await refreshInfoByUserId();
+    await refetchUserProducts();
     cache.clearAll();
-  }, []);
+  }, [refetchUserProducts, refreshInfoByUserId]);
 
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
       const shopBannerList = contents[index].labels?.filter((label) => label.codeId === 17);
       const isSale = contents[index].status === productStatusCode.sale;
+      // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
+      // TODO 너무 헷갈린다.. 네이밍도 어렵고.. 추후 보완
+      const isTransferred =
+        (contents[index].productSeller?.type === 0 &&
+          contents[index].productSeller?.site.id === 34) ||
+        contents[index].productSeller.type === 4;
       const isSavedLegitRequest =
         getSavedLegitData?.savedLegitRequest?.state?.productId === contents[index].id;
 
       return (
         // @ts-ignore
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          {({ registerChild }) => (
-            <Box
-              ref={(ref) => {
-                if (ref && registerChild) registerChild(ref);
-              }}
-              style={style}
-            >
-              <NewProductListCard
-                key={`user-shop-product-list-${contents[index].id}`}
-                variant="listA"
-                product={contents[index]}
+          <Box style={style}>
+            <NewProductListCard
+              key={`user-shop-product-list-${contents[index].id}`}
+              variant="listA"
+              product={contents[index]}
+              attributes={handleProductAtt(contents[index], index)}
+              hidePlatformLogo={isTransferred}
+              hideLabel
+              hideWishButton
+              showShopManageButton
+            />
+            {(!!shopBannerList?.length || isSavedLegitRequest) && (isSale || !isTransferred) ? (
+              <UserShopProductActionBanner
+                labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
+                productId={contents[index].id}
+                isTransferred={isTransferred}
+                platformName={contents[index].productSeller?.site?.name}
+                savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
+                synonyms={shopBannerList[0]?.synonyms || ''}
                 attributes={handleProductAtt(contents[index], index)}
-                hideLabel
-                hideWishButton
-                showShopManageButton
               />
-              {(!!shopBannerList?.length || isSavedLegitRequest) && isSale ? (
-                <UserShopProductActionBanner
-                  labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
-                  productId={contents[index].id}
-                  savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
-                  synonyms={shopBannerList[0]?.synonyms || ''}
-                  attributes={handleProductAtt(contents[index], index)}
-                />
-              ) : (
-                <Box customStyle={{ height: 32 }} />
-              )}
-            </Box>
-          )}
+            ) : (
+              <Box customStyle={{ height: 32 }} />
+            )}
+          </Box>
         </CellMeasurer>
       );
     },
@@ -175,22 +187,57 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   );
 
   useEffect(() => {
-    cache.clearAll();
-  }, [router, pages]);
+    const handleResize = () => {
+      cache.clearAll();
+    };
 
-  const handleUpdateProductStatus = useCallback(async () => {
-    await refreshInfoByUserId();
-    await refetchUserProducts();
-    cache.clearAll();
-  }, [refetchUserProducts, refreshInfoByUserId]);
-
-  useEffect(() => {
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [handleResize]);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setPrevScrollTop(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleRouteChangeStart = (_: unknown, { shallow }: { shallow: boolean }) => {
+      if (!shallow) {
+        setUserShopListPrevScrollTopState(window.scrollY);
+      }
+    };
+
+    const handleRouteChangeComplete = () => {
+      if (prevScrollTop) {
+        window.scrollTo(0, userShopListPrevScrollTop);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [prevScrollTop, router.events, setUserShopListPrevScrollTopState, userShopListPrevScrollTop]);
+
+  useEffect(() => {
+    if (prevScrollTopRef.current) {
+      setPrevScrollTop(0);
+      prevScrollTopRef.current = 0;
+    }
+  }, []);
 
   return !isLoading && contents.length === 0 ? (
     <UserShopEmpty tab={tab} />
@@ -217,9 +264,9 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
           {({ registerChild, onRowsRendered }) => (
             // @ts-ignore
             <WindowScroller>
-              {({ height, isScrolling, scrollTop }) => (
+              {({ height, isScrolling }) => (
                 // @ts-ignore
-                <AutoSizer disableHeight onResize={handleResize}>
+                <AutoSizer disableHeight>
                   {({ width }) => (
                     // @ts-ignore
                     <List
@@ -229,7 +276,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
                       width={width}
                       height={height}
                       isScrolling={isScrolling}
-                      scrollTop={scrollTop}
+                      scrollTop={prevScrollTop}
                       rowCount={contents.length}
                       rowHeight={cache.rowHeight}
                       rowRenderer={rowRenderer}

@@ -49,7 +49,7 @@ function ProductInfo({
 }: ProductInfoProps) {
   const {
     theme: {
-      palette: { common }
+      palette: { primary, common }
     }
   } = useTheme();
   const [isClamped, setIsClamped] = useState(false);
@@ -61,6 +61,10 @@ function ProductInfo({
   const isCertificationSeller =
     product?.sellerType === productSellerType.certification ||
     product?.sellerType === productSellerType.legit;
+  // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
+  const isTransferred =
+    (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
+    product?.productSeller?.type === 4;
 
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
@@ -144,6 +148,44 @@ function ProductInfo({
     setIsExpended(!isExpended);
   };
 
+  const renderCertificationBanner = () => {
+    if (!isTransferred && isCamelSellerProduct) {
+      return (
+        <Flexbox
+          alignment="center"
+          gap={4}
+          customStyle={{
+            marginTop: 20,
+            padding: 12,
+            borderRadius: 8,
+            backgroundColor: common.bg02
+          }}
+        >
+          <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
+          <Typography variant="body2" weight="medium">
+            {product?.productSeller?.site?.name} 플랫폼과 동기화된 매물이에요.
+          </Typography>
+        </Flexbox>
+      );
+    }
+    if (isCertificationSeller) {
+      return (
+        <CertificationCard>
+          <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
+            <Icon name="ShieldFilled" width={16} height={16} color={primary.light} />
+            <Typography variant="small1" weight="medium">
+              카멜이 직접 인증한 판매자예요. 편하게 문의해보세요.
+            </Typography>
+          </Flexbox>
+          <Typography variant="small1" customStyle={{ color: common.ui60, paddingLeft: 18 }}>
+            가품시, 100% 환불
+          </Typography>
+        </CertificationCard>
+      );
+    }
+    return null;
+  };
+
   return !product ? (
     <ProductInfoSkeleton />
   ) : (
@@ -222,19 +264,7 @@ function ProductInfo({
           )}
         </Flexbox>
       </Flexbox>
-      {isCertificationSeller && (
-        <CertificationCard>
-          <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
-            <SafeIcon />
-            <Typography variant="small1" weight="medium">
-              카멜이 직접 인증한 판매자예요. 편하게 문의해보세요.
-            </Typography>
-          </Flexbox>
-          <Typography variant="small1" customStyle={{ color: common.ui60, paddingLeft: 18 }}>
-            가품시, 100% 환불
-          </Typography>
-        </CertificationCard>
-      )}
+      {renderCertificationBanner()}
       {!isCertificationSeller && <CustomDivider ref={contentRef} />}
       {product?.site.code === 'CAMELSELLER' &&
         (!!product?.area || !!distanceText || find(product.labels, { name: '33' })) && (
@@ -368,18 +398,5 @@ const CertificationCard = styled.div`
   padding: 14px;
   margin-top: 20px;
 `;
-
-function SafeIcon() {
-  return (
-    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M12 0H0V7.90618C0 8.79778 0.445603 9.6304 1.18747 10.125L6 13.3333L10.8125 10.125C11.5544 9.6304 12 8.79778 12 7.90618V0ZM5.3333 8.94286L9.80471 4.47145L8.8619 3.52865L5.3333 7.05724L3.13804 4.86198L2.19523 5.80479L5.3333 8.94286Z"
-        fill="#425BFF"
-      />
-    </svg>
-  );
-}
 
 export default ProductInfo;

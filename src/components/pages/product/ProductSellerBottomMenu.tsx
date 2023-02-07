@@ -72,6 +72,9 @@ function ProductSellerBottomMenu({
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
 
   const isDeletedProduct = productStatusCode.deleted === status;
+  const isTransferred =
+    (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
+    product?.productSeller?.type === 4;
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;
@@ -325,7 +328,7 @@ function ProductSellerBottomMenu({
             상태변경
           </Typography>
         </Flexbox>
-        {status !== 1 && (
+        {status !== 1 && isTransferred && (
           <Flexbox
             direction="vertical"
             alignment="center"
@@ -371,7 +374,7 @@ function ProductSellerBottomMenu({
       >
         <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
           <Flexbox direction="vertical">
-            {status !== 4 && status !== 8 && (
+            {status !== 4 && status !== 8 && isTransferred && (
               <Menu variant="h3" weight="medium" data-status-id={4} onClick={handleClickStatus}>
                 예약중으로 변경
               </Menu>

@@ -106,7 +106,12 @@ function UserShopProfile({
       <InfoWrapper>
         {isLoading ? (
           <>
-            <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
+            <Flexbox
+              direction="vertical"
+              alignment="center"
+              gap={12}
+              customStyle={{ flex: 1, padding: '0 20px' }}
+            >
               <Skeleton
                 width={96}
                 height={96}
@@ -114,22 +119,10 @@ function UserShopProfile({
                 round={16}
                 customStyle={{ margin: '-40px auto 0' }}
               />
-              <Flexbox direction="vertical" alignment="center" gap={4}>
-                <Flexbox alignment="center" justifyContent="center" gap={2}>
-                  <Skeleton width={90} height="24px" disableAspectRatio round={8} />
-                  <Skeleton width={24} height="24px" disableAspectRatio round={8} />
-                </Flexbox>
-                <Flexbox alignment="center" justifyContent="center" gap={1}>
-                  <Skeleton width={84} height="16px" disableAspectRatio round={8} />
-                </Flexbox>
-                <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-                  <Skeleton width={120} height="24px" disableAspectRatio round={8} />
-                </Flexbox>
-              </Flexbox>
-              <Skeleton width="100%" height={60} disableAspectRatio round={8} />
+              <Skeleton width={90} height={24} disableAspectRatio round={8} />
             </Flexbox>
             <Flexbox alignment="center" gap={8} customStyle={{ padding: '32px 20px 12px' }}>
-              <Skeleton minWidth="44px" width={44} height="44px" disableAspectRatio round={8} />
+              <Skeleton minWidth={44} width={44} height={44} disableAspectRatio round={8} />
               <Skeleton width="100%" height={44} disableAspectRatio round={8} />
             </Flexbox>
           </>

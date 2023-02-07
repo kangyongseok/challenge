@@ -113,25 +113,14 @@ function UserShopLegitProfile({
               gap={12}
               customStyle={{ flex: 1, padding: '0 20px' }}
             >
-              <Skeleton
-                width="96px"
-                height="96px"
-                disableAspectRatio
-                customStyle={{ borderRadius: 16 }}
-              />
+              <Skeleton width={96} height={96} round={16} disableAspectRatio />
               <Flexbox direction="vertical" alignment="center" gap={4}>
-                <Flexbox alignment="center" justifyContent="center" gap={4}>
-                  <Skeleton width={90} height={24} disableAspectRatio round={8} />
-                  <Skeleton width={67} height={24} disableAspectRatio round={8} />
+                <Flexbox gap={4}>
+                  <Skeleton width={50} height={24} round={8} disableAspectRatio />
+                  <Skeleton width={50} height={24} round={12} disableAspectRatio />
                 </Flexbox>
-                <Flexbox alignment="center" justifyContent="center">
-                  <Skeleton width={84} height={16} disableAspectRatio round={8} />
-                </Flexbox>
-                <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-                  <Skeleton width={120} height={24} disableAspectRatio round={8} />
-                </Flexbox>
+                <Skeleton width={84} height={16} round={8} disableAspectRatio />
               </Flexbox>
-              <Skeleton width="100%" height={60} disableAspectRatio round={8} />
             </Flexbox>
             <Flexbox alignment="center" gap={8} customStyle={{ padding: '32px 20px 12px' }}>
               <Skeleton minWidth="44px" width={44} height={44} disableAspectRatio round={8} />

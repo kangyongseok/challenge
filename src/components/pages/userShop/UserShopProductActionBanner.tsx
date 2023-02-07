@@ -19,12 +19,16 @@ import { camelSellerIsMovedScrollState, camelSellerTempSaveDataState } from '@re
 function UserShopProductActionBanner({
   labelId,
   productId,
+  isTransferred,
+  platformName,
   savedLegitData,
   synonyms,
   attributes
 }: {
   labelId: number;
   productId: number;
+  isTransferred: boolean;
+  platformName: string;
   savedLegitData?: SavedLegitState;
   synonyms?: string;
   attributes?: {
@@ -87,7 +91,7 @@ function UserShopProductActionBanner({
     {
       id: 3876,
       iconName: <Icon name="LegitFilled" size="small" customStyle={{ color: primary.light }} />,
-      text: '무료사진감정 대상 매물입니다! ',
+      text: '무료사진감정 대상 매물입니다!',
       backgroundColor: common.bg02,
       theme: 'light',
       action: `/legit/intro?productId=${productId}&register=true`,
@@ -127,6 +131,17 @@ function UserShopProductActionBanner({
       router.push(findBanner.action);
     }
   };
+
+  if (!isTransferred) {
+    return (
+      <ActionBannerWrap alignment="center" bg={common.bg02} gap={4} onClick={handleClickBanner}>
+        <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
+        <Typography variant="small1" weight="medium" customStyle={{ color: common.ui20 }}>
+          {platformName} 플랫폼과 동기화된 매물이에요.
+        </Typography>
+      </ActionBannerWrap>
+    );
+  }
 
   return (
     <ActionBannerWrap

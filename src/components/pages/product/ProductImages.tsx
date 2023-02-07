@@ -63,6 +63,7 @@ function ProductImages({
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchLowerProductsParams | null>(null);
+
   const { data: searchRelatedProducts, isFetched } = useQuery(
     queryKeys.products.searchRelatedProducts(
       searchRelatedProductsParams as SearchLowerProductsParams
@@ -76,32 +77,10 @@ function ProductImages({
   );
 
   const isNormalseller = product?.sellerType === productSellerType.normal;
-
-  useEffect(() => {
-    if (searchRelatedProducts && !isLoading && isFetched) {
-      if (searchRelatedProducts.page.content.length < 8) {
-        setIsDisplay(false);
-      } else {
-        setIsDisplay(true);
-      }
-    }
-  }, [isLoading, searchRelatedProducts, isFetched]);
-
-  useEffect(() => {
-    if (product) {
-      setSearchRelatedProductsParams({
-        brandIds: product.brandId ? [product.brandId] : [],
-        categoryIds: product.categoryId ? [product.categoryId] : [],
-        line: product.line || undefined,
-        related: 1,
-        size: 8,
-        idFilterIds: 30,
-        scorePriceAvg: product.scorePriceAvg,
-        quoteTitle: product.quoteTitle,
-        productId: product.id
-      });
-    }
-  }, [product]);
+  // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
+  const isTransferred =
+    (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
+    product?.productSeller?.type === 4;
 
   const detailImages = useMemo(() => {
     if (product?.imageDetailsLarge) {
@@ -185,6 +164,105 @@ function ProductImages({
     setOpenModal(true);
   };
 
+  const lowerPriceDisplay = () => {
+    if (isDisplay && detailImages.length && currentSlide === detailImages.length) return true;
+    return false;
+  };
+
+  const renderLabel = () => {
+    if (!isTransferred && isCamelSellerProduct) {
+      return (
+        <Platform alignment="center" justifyContent="center">
+          <Avatar
+            width={16}
+            height={16}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+              (product?.site?.hasImage && product?.site?.id) || ''
+            }.png`}
+            alt={`${product?.siteUrl?.name || '플랫폼'} 로고 이미지`}
+          />
+          <Typography
+            variant="body2"
+            weight="bold"
+            customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
+          >
+            {product?.site?.name}
+          </Typography>
+        </Platform>
+      );
+    }
+    if (SELLER_STATUS[product?.sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) {
+      return (
+        <Label
+          variant="solid"
+          brandColor="black"
+          startIcon={<Icon name="ShieldFilled" />}
+          text="인증판매자"
+          customStyle={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            zIndex: 1
+          }}
+        />
+      );
+    }
+    if (
+      !isCamelSellerProduct &&
+      SELLER_STATUS[product?.sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
+      !isNormalseller
+    ) {
+      return (
+        <Platform alignment="center" justifyContent="center">
+          <Avatar
+            width={16}
+            height={16}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+              (product?.siteUrl?.hasImage && product?.siteUrl?.id) ||
+              (product?.site?.hasImage && product?.site?.id) ||
+              ''
+            }.png`}
+            alt={`${product?.siteUrl?.name || '플랫폼'} 로고 이미지`}
+          />
+          <Typography
+            variant="body2"
+            weight="bold"
+            customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
+          >
+            {product?.siteUrl?.name || product?.site?.name}
+          </Typography>
+        </Platform>
+      );
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (searchRelatedProducts && !isLoading && isFetched) {
+      if (searchRelatedProducts.page.content.length < 8) {
+        setIsDisplay(false);
+      } else {
+        setIsDisplay(true);
+      }
+    }
+  }, [isLoading, searchRelatedProducts, isFetched]);
+
+  useEffect(() => {
+    if (product) {
+      setSearchRelatedProductsParams({
+        brandIds: product.brandId ? [product.brandId] : [],
+        categoryIds: product.categoryId ? [product.categoryId] : [],
+        line: product.line || undefined,
+        related: 1,
+        size: 8,
+        idFilterIds: 30,
+        scorePriceAvg: product.scorePriceAvg,
+        quoteTitle: product.quoteTitle,
+        productId: product.id
+      });
+    }
+  }, [product]);
+
   useEffect(() => {
     const newWrapperRef = wrapperRef.current;
     const disabledSafariSwipeBack = (e: TouchEvent) => {
@@ -222,11 +300,6 @@ function ProductImages({
     }
   }, [router.query.id, imageSwiper]);
 
-  const lowerPriceDisplay = () => {
-    if (isDisplay && detailImages.length && currentSlide === detailImages.length) return true;
-    return false;
-  };
-
   return (
     <>
       <Box
@@ -247,45 +320,7 @@ function ProductImages({
           {product && !lowerPriceDisplay() && (
             <>
               {getProductImageOverlay({ status: product.status })}
-              {SELLER_STATUS[product.sellerType as keyof typeof SELLER_STATUS] ===
-                SELLER_STATUS['3'] && (
-                <Label
-                  variant="solid"
-                  brandColor="black"
-                  startIcon={<Icon name="ShieldFilled" />}
-                  text="인증판매자"
-                  customStyle={{
-                    position: 'absolute',
-                    top: 12,
-                    left: 12,
-                    zIndex: 1
-                  }}
-                />
-              )}
-              {!isCamelSellerProduct &&
-                SELLER_STATUS[product.sellerType as keyof typeof SELLER_STATUS] !==
-                  SELLER_STATUS['3'] &&
-                !isNormalseller && (
-                  <Platform alignment="center" justifyContent="center">
-                    <Avatar
-                      width={16}
-                      height={16}
-                      src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                        (product.siteUrl?.hasImage && product.siteUrl?.id) ||
-                        (product.site?.hasImage && product.site?.id) ||
-                        ''
-                      }.png`}
-                      alt={`${product.siteUrl?.name || '플랫폼'} 로고 이미지`}
-                    />
-                    <Typography
-                      variant="body2"
-                      weight="bold"
-                      customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
-                    >
-                      {product.siteUrl?.name || product.site.name}
-                    </Typography>
-                  </Platform>
-                )}
+              {renderLabel()}
             </>
           )}
           <SwiperSlide>
