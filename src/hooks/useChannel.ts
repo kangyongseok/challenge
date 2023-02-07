@@ -3,10 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import has from 'lodash-es/has';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';

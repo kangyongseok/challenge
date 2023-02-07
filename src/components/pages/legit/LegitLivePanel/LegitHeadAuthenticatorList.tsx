@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useResetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';
@@ -91,11 +91,7 @@ function LegitHeadAuthenticatorList() {
                     <Skeleton width={64} height={20} round={8} disableAspectRatio />
                     <Skeleton width={160} height={48} round={8} disableAspectRatio />
                   </Flexbox>
-                  <Divider
-                    css={{
-                      margin: '20px 0'
-                    }}
-                  />
+                  <Divider css={{ margin: '20px 0' }} />
                   <Flexbox gap={4} justifyContent="center">
                     <Flexbox direction="vertical" alignment="center" gap={3}>
                       <Skeleton width={59} height={18} round={8} disableAspectRatio />
@@ -134,6 +130,7 @@ function LegitHeadAuthenticatorList() {
                       <Description
                         variant="body2"
                         customStyle={{ wordBreak: 'keep-all' }}
+                        lineClamp={3}
                         dangerouslySetInnerHTML={{
                           __html: `${title
                             .replace(/\r?\n/g, '<br />')
@@ -201,7 +198,7 @@ const Card = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 32px 32px 20px;
-  background-color: ${({ theme }) => theme.palette.common.bg01};
+  background-color: ${({ theme }) => theme.palette.common.bg03};
   border-radius: 8px;
   cursor: pointer;
   width: 240px;

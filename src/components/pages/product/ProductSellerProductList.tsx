@@ -1,9 +1,9 @@
 import { memo, useEffect, useState } from 'react';
 
-import { useQueries } from 'react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useQueries } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Divider, ProductGridCard } from '@components/UI/molecules';
@@ -66,20 +66,23 @@ function ProductSellerProductList({
       isFetching: reviewInfoIsFetching,
       isError: reviewInfoIsError
     }
-  ] = useQueries([
-    {
-      queryKey: queryKeys.products.sellerProducts(sellerProductsParams),
-      queryFn: () => fetchSellerProducts(sellerProductsParams),
-      keepPreviousData: true,
-      staleTime: 5 * 60 * 1000
-    },
-    {
-      queryKey: queryKeys.products.reviewInfo(reviewInfoParams),
-      queryFn: () => fetchReviewInfo(reviewInfoParams),
-      keepPreviousData: true,
-      staleTime: 5 * 60 * 1000
-    }
-  ]);
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: queryKeys.products.sellerProducts(sellerProductsParams),
+        queryFn: () => fetchSellerProducts(sellerProductsParams),
+        keepPreviousData: true,
+        staleTime: 5 * 60 * 1000
+      },
+      {
+        queryKey: queryKeys.products.reviewInfo(reviewInfoParams),
+        queryFn: () => fetchReviewInfo(reviewInfoParams),
+        keepPreviousData: true,
+        staleTime: 5 * 60 * 1000
+      }
+    ]
+  });
+
   const isCamelSeller =
     reviewInfo &&
     SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===

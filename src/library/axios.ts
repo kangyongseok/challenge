@@ -7,7 +7,9 @@ import { ACCESS_TOKEN } from '@constants/localStorage';
 
 const axiosInstance = axios.create({
   baseURL: process.env.API_BASE_URL,
-  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'comma' })
+  paramsSerializer: {
+    serialize: (params) => qs.stringify(params, { arrayFormat: 'comma' })
+  }
 });
 
 const accessToken = LocalStorage.get<string>(ACCESS_TOKEN);

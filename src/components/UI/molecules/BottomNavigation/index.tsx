@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { IconName } from 'mrcamel-ui';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
@@ -24,7 +24,7 @@ import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
 import { getUnreadMessagesCount } from '@utils/channel';
 
 import { legitRequestParamsState } from '@recoil/legitRequest';
-import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
+import { legitFilterGridParamsState } from '@recoil/legit';
 import {
   homeLegitResultTooltipCloseState,
   homePersonalCurationBannersState,
@@ -115,7 +115,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
   const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
-  const resetLegitFiltersState = useResetRecoilState(legitFiltersState);
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
@@ -153,7 +152,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   }, [priceNotiProducts]);
 
   const handleClickInterceptor =
-    (title: string, logName: string, href: string) => async (e: MouseEvent<HTMLAnchorElement>) => {
+    (title: string, logName: string, href: string) => async (e: MouseEvent<HTMLDivElement>) => {
       logEvent(`${attrKeys.login.CLICK_TAB}_${logName}`, {
         title:
           !isLoading && notViewedLegitCount && logName === 'LEGIT'
@@ -218,7 +217,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
       if (href === '/legit') {
         resetLegitFilterGridParamsState();
-        resetLegitFiltersState();
 
         queryClient
           .getQueryCache()
@@ -364,7 +362,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                   as={{ pathname: getPathName(href), query: getQuery(href) }}
                   passHref
                 >
-                  <a onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
+                  <div onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
                     <Box customStyle={{ position: 'relative' }}>
                       <Icon
                         name={isActive ? activeIcon : defaultIcon}
@@ -393,7 +391,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                         color: isActive ? common.ui20 : common.ui80
                       }}
                     />
-                  </a>
+                  </div>
                 </Link>
               </ListItem>
             );

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Chip, Skeleton } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { RelatedKeyword } from '@dto/product';

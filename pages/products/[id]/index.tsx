@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
@@ -638,9 +638,7 @@ function ProductDetail() {
               });
             }}
           >
-            <Link href={targetProductUrl}>
-              <a>확인하기</a>
-            </Link>
+            <Link href={targetProductUrl}>확인하기</Link>
           </Typography>
         </Flexbox>
       </Toast>
@@ -661,9 +659,7 @@ function ProductDetail() {
               color: common.ui80
             }}
           >
-            <Link href={targetProductUrl}>
-              <a>확인하기</a>
-            </Link>
+            <Link href={targetProductUrl}>확인하기</Link>
           </Typography>
         </Flexbox>
       </Toast>

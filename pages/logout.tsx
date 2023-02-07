@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import amplitude from 'amplitude-js';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { FacebookLoginResponse } from '@dto/userAuth';
 

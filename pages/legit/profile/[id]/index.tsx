@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Flexbox, ThemeProvider, useTheme } from 'mrcamel-ui';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 
 import { LegitContactBanner } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';

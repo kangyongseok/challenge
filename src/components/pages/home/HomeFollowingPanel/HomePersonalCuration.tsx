@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,
@@ -191,7 +191,7 @@ function HomePersonalCuration() {
               // eslint-disable-next-line react/no-array-index-key
               <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
                 <Grid item xs={2}>
-                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                  <NewProductGridCardSkeleton variant="gridB" />
                 </Grid>
                 {(index + 1) % 8 === 0 && (
                   <Grid item xs={1}>
@@ -214,7 +214,6 @@ function HomePersonalCuration() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      isRound
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.PERSONAL,
@@ -252,7 +251,7 @@ function HomePersonalCuration() {
               // eslint-disable-next-line react/no-array-index-key
               <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
                 <Grid item xs={2}>
-                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                  <NewProductGridCardSkeleton variant="gridB" />
                 </Grid>
                 {(index + 1) % 8 === 0 && (
                   <Grid item xs={1}>
@@ -276,7 +275,6 @@ function HomePersonalCuration() {
                       variant="gridB"
                       product={product}
                       wishButtonType="B"
-                      isRound
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.PERSONAL,

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';

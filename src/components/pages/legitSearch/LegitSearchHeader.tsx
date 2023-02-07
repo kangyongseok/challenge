@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Chip, Flexbox, Icon, Input, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -132,11 +132,12 @@ function LegitSearchHeader() {
           onChange={(e) => setValue(e.currentTarget.value)}
           value={value}
           spellCheck={false}
+          customStyle={{ border: 'none', background: common.ui95 }}
         />
       </Flexbox>
       <List>
         <Chip
-          variant={legitParentIds.includes(481) ? 'solid' : 'outlineGhost'}
+          variant={legitParentIds.includes(481) ? 'solid' : 'ghost'}
           size="large"
           brandColor="black"
           onClick={handleClick(481, '신발')}
@@ -145,7 +146,7 @@ function LegitSearchHeader() {
           신발
         </Chip>
         <Chip
-          variant={legitParentIds.includes(479) ? 'solid' : 'outlineGhost'}
+          variant={legitParentIds.includes(479) ? 'solid' : 'ghost'}
           size="large"
           brandColor="black"
           onClick={handleClick(479, '가방')}
@@ -154,7 +155,7 @@ function LegitSearchHeader() {
           가방
         </Chip>
         <Chip
-          variant={legitParentIds.includes(480) ? 'solid' : 'outlineGhost'}
+          variant={legitParentIds.includes(480) ? 'solid' : 'ghost'}
           size="large"
           brandColor="black"
           onClick={handleClick(480, '지갑')}
@@ -163,7 +164,7 @@ function LegitSearchHeader() {
           지갑
         </Chip>
         <Chip
-          variant={legitParentIds.includes(482) ? 'solid' : 'outlineGhost'}
+          variant={legitParentIds.includes(482) ? 'solid' : 'ghost'}
           size="large"
           brandColor="black"
           onClick={handleClick(482, '의류')}
@@ -172,7 +173,7 @@ function LegitSearchHeader() {
           의류
         </Chip>
         <Chip
-          variant={legitParentIds.includes(483) ? 'solid' : 'outlineGhost'}
+          variant={legitParentIds.includes(483) ? 'solid' : 'ghost'}
           size="large"
           brandColor="black"
           onClick={handleClick(483, '기타')}
@@ -196,18 +197,18 @@ const StyledLegitSearchHeader = styled.header<{
     if (isExtendedLayout) return `${APP_TOP_STATUS_HEIGHT + 6}px`;
     return '6px';
   }};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   border-bottom: 1px solid
     ${({
       theme: {
         palette: { common }
       }
-    }) => common.line01};
+    }) => common.line02};
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg03};
   transition: transform 0.5s;
   transform: translateY(
     ${({ showAppDownloadBanner, init }) => {

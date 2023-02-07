@@ -69,7 +69,7 @@ function UserShopHeader({
     </>
   ) : (
     <ThemeProvider theme="dark">
-      <Header hideHeart isTransparent />
+      <Header isTransparent />
     </ThemeProvider>
   );
 }

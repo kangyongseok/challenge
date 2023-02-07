@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
-import type { UseMutationOptions } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 import { deleteNoti, postNoti } from '@api/channel';
 

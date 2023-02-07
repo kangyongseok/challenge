@@ -233,6 +233,7 @@ function LegitStatusCardHolder({
               .split(' ')
               .join('')}.jpg`}
             alt="Brand Logo Img"
+            round={8}
             disableAspectRatio
             customStyle={{
               mixBlendMode: 'screen'
@@ -326,7 +327,6 @@ function LegitStatusCardHolder({
                           data-src={image}
                           alt="Legit Result Img"
                           round={8}
-                          disableOnBackground={false}
                         />
                         <ImageShield isActive={isActive} />
                       </>

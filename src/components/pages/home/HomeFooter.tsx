@@ -31,40 +31,34 @@ function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
       </Typography>
       <Flexbox alignment="center" gap={10}>
         <Link href="/terms/privacy">
-          <a>
-            <FormattedText
-              variant="body2"
-              customStyle={{
-                color: common.ui60,
-                textDecoration: 'underline'
-              }}
-              id="common.privacy"
-            />
-          </a>
+          <FormattedText
+            variant="body2"
+            customStyle={{
+              color: common.ui60,
+              textDecoration: 'underline'
+            }}
+            id="common.privacy"
+          />
         </Link>
         <Link href="/terms/operationPolicy">
-          <a>
-            <FormattedText
-              variant="body2"
-              customStyle={{
-                color: common.ui60,
-                textDecoration: 'underline'
-              }}
-              id="common.operationPolicy"
-            />
-          </a>
+          <FormattedText
+            variant="body2"
+            customStyle={{
+              color: common.ui60,
+              textDecoration: 'underline'
+            }}
+            id="common.operationPolicy"
+          />
         </Link>
         <Link href="/terms/serviceTerms">
-          <a>
-            <FormattedText
-              variant="body2"
-              customStyle={{
-                color: common.ui60,
-                textDecoration: 'underline'
-              }}
-              id="common.serviceTerms"
-            />
-          </a>
+          <FormattedText
+            variant="body2"
+            customStyle={{
+              color: common.ui60,
+              textDecoration: 'underline'
+            }}
+            id="common.serviceTerms"
+          />
         </Link>
       </Flexbox>
       <Typography variant="body2" customStyle={{ color: common.ui20, margin: '20px 0 52px 0' }}>

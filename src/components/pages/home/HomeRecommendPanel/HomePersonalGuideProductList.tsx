@@ -2,11 +2,11 @@ import { useEffect, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import {
@@ -191,7 +191,6 @@ function HomePersonalGuideProductList() {
                 // eslint-disable-next-line react/no-array-index-key
                 key={`home-personal-guide-product-skeleton-${index}`}
                 variant="swipeX"
-                isRound
               />
             ))}
           {!isLoading &&
@@ -200,7 +199,6 @@ function HomePersonalGuideProductList() {
                 key={`home-personal-guide-product-${product.id}`}
                 variant="swipeX"
                 product={product}
-                isRound
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.PERSONAL_GUIDE,
@@ -217,7 +215,6 @@ function HomePersonalGuideProductList() {
                 // eslint-disable-next-line react/no-array-index-key
                 key={`home-personal-guide-product-skeleton-${index}`}
                 variant="swipeX"
-                isRound
               />
             ))}
           {!isLoading &&
@@ -226,7 +223,6 @@ function HomePersonalGuideProductList() {
                 key={`home-personal-guide-product-${product.id}`}
                 variant="swipeX"
                 product={product}
-                isRound
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.PERSONAL_GUIDE,

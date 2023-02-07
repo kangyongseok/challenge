@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   LegitGridCard,
@@ -82,7 +82,7 @@ function HomeLegitAuthenticProductList() {
             Array.from({ length: 8 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
-                <LegitGridCardSkeleton variant="gridB" isRound />
+                <LegitGridCardSkeleton variant="gridB" />
               </Grid>
             ))}
           {!isLoading &&
@@ -97,7 +97,6 @@ function HomeLegitAuthenticProductList() {
                       .length
                   }
                   status={status}
-                  isRound
                   onClick={handleClickCard(productResult)}
                 />
               </Grid>
@@ -108,7 +107,7 @@ function HomeLegitAuthenticProductList() {
             Array.from({ length: 8 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Grid key={`home-authentic-product-skeleton-${index}`} item xs={2}>
-                <LegitGridCardSkeleton variant="gridB" isRound />
+                <LegitGridCardSkeleton variant="gridB" />
               </Grid>
             ))}
           {!isLoading &&
@@ -123,7 +122,6 @@ function HomeLegitAuthenticProductList() {
                       .length
                   }
                   status={status}
-                  isRound
                   onClick={handleClickCard(productResult)}
                 />
               </Grid>

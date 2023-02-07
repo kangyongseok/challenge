@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useMutation } from 'react-query';
 import { Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

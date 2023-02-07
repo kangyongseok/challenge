@@ -1,7 +1,7 @@
-import { QueryClient, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { QueryClient, useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { ChannelAppointmentResult } from '@dto/channel';

@@ -2,9 +2,9 @@ import { forwardRef, useEffect, useState } from 'react';
 import type { HTMLAttributes, MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Alert, Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { HideOverlay, ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
 
@@ -241,13 +241,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
           {...props}
         >
           <Content size={100} isTimeline={router.query.tab === 'history'}>
-            <Image
-              src={imageUrl}
-              alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
-              round={8}
-              disableLazyLoad={false}
-              disableOnBackground={false}
-            />
+            <Image src={imageUrl} alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)} round={8} />
             <Avatar
               width={20}
               height={20}

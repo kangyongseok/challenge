@@ -3,9 +3,9 @@ import { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Image } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

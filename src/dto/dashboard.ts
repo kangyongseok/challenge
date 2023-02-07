@@ -11,12 +11,21 @@ export interface DashboardResults {
   };
 }
 
+export interface FakeInfo {
+  fakeCnt: number;
+  fakeLastWeekCnt: number;
+  fakeRate: number;
+  fakeThisWeekCnt: number;
+  fakeTopBrands: Brand[];
+}
+
 export interface LegitDashboard {
   mostPopular: ProductLegit;
   realVsFake: ProductLegit;
   authenticators: UserRoleLegit[];
   caseHistories: ProductLegit[];
   targetBrands: Brand[];
+  fakeInfo: FakeInfo;
 }
 
 export interface LegitDashboardParams {

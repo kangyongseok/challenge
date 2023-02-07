@@ -1,9 +1,9 @@
 import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

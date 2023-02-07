@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Grid } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 

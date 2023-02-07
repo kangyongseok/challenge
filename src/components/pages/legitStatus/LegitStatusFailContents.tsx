@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { LegitPhotoGuideCard } from '@components/UI/molecules';

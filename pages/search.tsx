@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Icon, Typography } from 'mrcamel-ui';
 import find from 'lodash-es/find';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { SearchBar } from '@components/UI/molecules';

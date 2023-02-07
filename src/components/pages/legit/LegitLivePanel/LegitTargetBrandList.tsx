@@ -3,9 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -154,7 +154,7 @@ function LegitTargetBrandList() {
           spaceBetween={20}
           pagination={{ clickable: true }}
           modules={[Pagination]}
-          style={{ padding: '0 20px' }}
+          style={{ padding: '0 12px' }}
           onSlideChange={handleSwiperBrand}
         >
           {isLoading ? (
@@ -213,15 +213,18 @@ function LegitTargetBrandList() {
 }
 
 const Wrapper = styled.div`
+  .swiper-initialized {
+    height: 260px;
+  }
   .swiper-slide {
     margin-right: 20px;
   }
   .swiper-pagination {
-    bottom: -4px;
+    /* bottom: -10px; */
   }
   .swiper-pagination-bullet {
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
     background-color: ${({ theme: { palette } }) => palette.common.ui90};
     opacity: 1;
     margin: 0 2px !important;
@@ -233,7 +236,7 @@ const Wrapper = styled.div`
 `;
 
 const BrandList = styled.div`
-  width: calc(100vw - 40px);
+  width: calc(100vw - 24px);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px 12px;

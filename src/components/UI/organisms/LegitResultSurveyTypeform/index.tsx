@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import amplitude from 'amplitude-js';
 import type { BehavioralType } from '@typeform/embed/types/base';
 import { PopupButton } from '@typeform/embed-react';
+import { useQuery } from '@tanstack/react-query';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';

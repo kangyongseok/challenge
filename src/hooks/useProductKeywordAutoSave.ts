@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { ProductKeywordSourceType } from '@dto/user';
 

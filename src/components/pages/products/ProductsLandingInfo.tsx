@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { fetchSearchOptions } from '@api/product';

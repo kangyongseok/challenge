@@ -1,5 +1,5 @@
-import { QueryClient } from 'react-query';
 import { GetServerSidePropsContext } from 'next';
+import { QueryClient } from '@tanstack/react-query';
 
 import Initializer from '@library/initializer';
 

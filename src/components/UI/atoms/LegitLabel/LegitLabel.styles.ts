@@ -14,6 +14,10 @@ export const StyledLegitLabel = styled(Label)<Pick<LegitLabelProps, 'opinion'>>`
         return {
           backgroundColor: light.palette.common.ui20
         };
+      case 'legitIng':
+        return {
+          backgroundColor: light.palette.common.ui20
+        };
       default:
         return {
           backgroundColor: light.palette.primary.dark

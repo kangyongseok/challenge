@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

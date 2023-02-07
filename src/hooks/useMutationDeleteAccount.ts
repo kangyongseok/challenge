@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
+import { useMutation } from '@tanstack/react-query';
 
 import { postWithdraw } from '@api/userAuth';
 

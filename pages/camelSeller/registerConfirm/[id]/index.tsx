@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {

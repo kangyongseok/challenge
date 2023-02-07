@@ -2,7 +2,6 @@ import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import {
   Alert,
@@ -16,6 +15,7 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ProductLabel } from '@components/UI/organisms';
 import { ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
@@ -353,12 +353,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             customStyle={{ position: 'absolute', top: 12, left: -12 }}
           />
           <Content isRound={isRound}>
-            <Image
-              src={imageUrl}
-              alt={`${product.title} 이미지`}
-              round={isRound ? 8 : 0}
-              disableOnBackground={false}
-            />
+            <Image src={imageUrl} alt={`${product.title} 이미지`} round={isRound ? 8 : 0} />
             <WishButton onClick={handleClickWish}>
               {isWish ? (
                 <Icon name="HeartFilled" color={secondary.red.main} size="large" />

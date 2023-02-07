@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-import { QueryClient, dehydrate } from 'react-query';
-import type { DehydratedState } from 'react-query';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Alert, Box, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
+import type { DehydratedState } from '@tanstack/react-query';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {

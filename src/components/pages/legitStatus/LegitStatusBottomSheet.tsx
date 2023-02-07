@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
 
 import { TouchIcon } from '@components/UI/atoms';
 

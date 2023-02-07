@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useResetRecoilState } from 'recoil';
-import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, IconName, Image, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { UserNoti } from '@dto/user';

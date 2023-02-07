@@ -18,7 +18,6 @@ export interface NewProductGridCardSkeletonProps {
 
 function NewProductGridCardSkeleton({
   variant = 'gridA',
-  isRound,
   hasSubText,
   hasLabel,
   hidePrice,
@@ -28,7 +27,7 @@ function NewProductGridCardSkeleton({
 }: NewProductGridCardSkeletonProps) {
   return (
     <Flexbox direction="vertical" customStyle={customStyle}>
-      <Skeleton ratio="5:6" round={isRound ? 8 : 0} />
+      <Skeleton ratio="5:6" round={variant !== 'gridA' ? 8 : 0} />
       <Content variant={variant}>
         <Skeleton width={32} height={16} round={8} disableAspectRatio />
         <Skeleton

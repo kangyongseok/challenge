@@ -26,7 +26,7 @@ function LegitLabel({ opinion = 'authentic', text, size, customStyle, ...props }
         <>
           {opinion === 'authentic' && <Icon name="OpinionAuthenticFilled" width={16} height={16} />}
           {opinion === 'fake' && <Icon name="OpinionFakeFilled" width={16} height={16} />}
-          {opinion === 'impossible' && (
+          {(opinion === 'impossible' || opinion === 'legitIng') && (
             <Icon name="OpinionImpossibleFilled" width={16} height={16} />
           )}
         </>

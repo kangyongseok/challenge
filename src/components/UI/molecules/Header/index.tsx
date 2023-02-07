@@ -279,7 +279,10 @@ function Header({
                 {showRight && (
                   <Icon
                     name="HeartOutlined"
-                    customStyle={{ visibility: hideHeart ? 'hidden' : 'visible' }}
+                    customStyle={{
+                      visibility: hideHeart ? 'hidden' : 'visible',
+                      opacity: Number(!hideHeart)
+                    }}
                   />
                 )}
               </IconBox>

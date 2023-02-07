@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
 
-import { Avatar, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import { Badge } from '@components/UI/atoms';
 
 import type { ProductLegit } from '@dto/productLegit';
 
-import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
+import { productPostType } from '@constants/common';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
@@ -16,38 +16,30 @@ import { commaNumber } from '@utils/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-import { Content, ImageBox, StyledLegitStatusCard, Title } from './LegitStatusCard.styles';
-
 interface LegitStatusCardProps extends HTMLAttributes<HTMLDivElement> {
   productLegit: ProductLegit;
   useInAdmin?: boolean;
+  hidePrice?: boolean;
 }
 
 function LegitStatusCard({
   productLegit: {
     userId,
     status,
+    result,
     legitOpinions,
     dateCreated,
     dateCompleted,
     isViewed,
-    productResult: {
-      title,
-      imageMain,
-      imageThumbnail,
-      site,
-      siteUrl,
-      price,
-      postType,
-      productSeller
-    }
+    productResult: { title, imageMain, imageThumbnail, price, postType, brand }
   },
   useInAdmin = false,
+  hidePrice = false,
   ...props
 }: LegitStatusCardProps) {
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { common, secondary }
     }
   } = useTheme();
 
@@ -55,9 +47,6 @@ function LegitStatusCard({
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const isMine = accessUser && accessUser.userId === userId;
-  const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
-  const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
-  const isNormalseller = (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3;
 
   const role = useMemo(() => {
     if ((roles as string[]).includes('PRODUCT_LEGIT_HEAD')) {
@@ -89,86 +78,147 @@ function LegitStatusCard({
         } else if (status === 13) {
           newLabelText = '보완완료';
         } else if (status === 20 && !hasMyLegitOpinion) {
-          newLabelText = '감정신청';
+          newLabelText = '감정중';
         } else if (status === 20 && hasMyLegitOpinion) {
           newLabelText = '작성완료';
         } else if (status === 30) {
-          newLabelText = '감정완료';
+          if (result === 1) {
+            newLabelText = '정품의견';
+          } else if (result === 2) {
+            newLabelText = '가품의심';
+          } else {
+            newLabelText = '감정불가';
+          }
         }
       } else if (role === 'normal') {
         const hasMyLegitOpinion = legitOpinions.find(
           ({ roleLegit }) => roleLegit.userId === (accessUser || {}).userId
         );
+
         if (status === 20 && !hasMyLegitOpinion) {
           newLabelText = '감정신청';
         } else if (status === 20 && hasMyLegitOpinion) {
           newLabelText = '작성완료';
         } else if (status === 30) {
-          newLabelText = '감정완료';
+          if (result === 1) {
+            newLabelText = '정품의견';
+          } else if (result === 2) {
+            newLabelText = '가품의심';
+          } else {
+            newLabelText = '감정불가';
+          }
         }
       }
     } else if (isMine) {
       if (status === 10) {
-        newLabelText = '감정신청';
+        newLabelText = '감정중';
       } else if (status === 11) {
         newLabelText = '감정불가';
       } else if (status === 12) {
         newLabelText = '감정불가';
       } else if (status === 13) {
-        newLabelText = '감정신청';
+        newLabelText = '감정중';
       } else if (status === 20) {
         newLabelText = '감정중';
       } else if (status === 30) {
-        newLabelText = '감정완료';
+        if (result === 1) {
+          newLabelText = '정품의견';
+        } else if (result === 2) {
+          newLabelText = '가품의심';
+        } else {
+          newLabelText = '감정불가';
+        }
       }
     } else if (status === 10) {
-      newLabelText = '감정신청';
+      newLabelText = '감정중';
     } else if (status === 11) {
       newLabelText = '감정불가';
     } else if (status === 12) {
       newLabelText = '감정불가';
     } else if (status === 13) {
-      newLabelText = '감정신청';
+      newLabelText = '감정중';
     } else if (status === 20) {
       newLabelText = '감정중';
     } else if (status === 30) {
-      newLabelText = '감정완료';
+      if (result === 1) {
+        newLabelText = '정품의견';
+      } else if (result === 2) {
+        newLabelText = '가품의심';
+      } else {
+        newLabelText = '감정불가';
+      }
     }
 
     return newLabelText;
-  }, [legitOpinions, role, isMine, status, accessUser, useInAdmin]);
+  }, [useInAdmin, isMine, status, role, legitOpinions, accessUser, result]);
 
   return (
-    <StyledLegitStatusCard
-      alignment="center"
-      useInAdmin={useInAdmin}
-      status={status}
-      gap={12}
-      {...props}
-    >
-      <ImageBox>
-        <Image
-          src={imageThumbnail || imageMain}
-          alt="Product Legit Img"
-          round={8}
-          disableOnBackground={false}
-        />
-        {!postType && (
-          <Avatar
-            width={20}
-            height={20}
-            alt="Platform Logo Img"
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              isNormalseller
-                ? IMG_CAMEL_PLATFORM_NUMBER
-                : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
-            }.png`}
-            round={4}
+    <Flexbox {...props} gap={16} customStyle={{ cursor: 'pointer', userSelect: 'none' }}>
+      <Box
+        customStyle={{
+          position: 'relative',
+          flexGrow: 1,
+          minWidth: 120,
+          maxWidth: 120,
+          borderRadius: 8
+        }}
+      >
+        <Image ratio="5:6" src={imageThumbnail || imageMain} alt={`${title} 이미지`} round={8} />
+        {labelText === '감정신청' && (
+          <Label
+            variant="outline"
+            brandColor="red"
+            text={labelText}
+            size="small"
+            customStyle={{ position: 'absolute', top: 8, left: 8 }}
+          />
+        )}
+        {labelText === '정품의견' && (
+          <Label
+            variant="darked"
+            brandColor="primary"
+            text={labelText}
+            size="small"
             customStyle={{
               position: 'absolute',
               top: 8,
               left: 8
             }}
+            startIcon={<Icon name="OpinionAuthenticOutlined" color={common.uiWhite} />}
+          />
+        )}
+        {labelText === '가품의심' && (
+          <Label
+            variant="darked"
+            brandColor="red"
+            text={labelText}
+            size="small"
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              backgroundColor: secondary.red.dark
+            }}
+            startIcon={<Icon name="OpinionFakeOutlined" color={common.uiWhite} />}
+          />
+        )}
+        {['보완요청', '보완완료', '감정불가'].includes(labelText) && (
+          <Label
+            variant="darked"
+            brandColor="black"
+            text={labelText}
+            size="small"
+            customStyle={{ position: 'absolute', top: 8, left: 8 }}
+            startIcon={<Icon name="OpinionImpossibleOutlined" color={common.uiWhite} />}
+          />
+        )}
+        {['작성완료', '감정중'].includes(labelText) && (
+          <Label
+            variant="outline"
+            brandColor="gray"
+            text={labelText}
+            size="small"
+            customStyle={{ position: 'absolute', top: 8, left: 8 }}
           />
         )}
         <Badge
@@ -184,110 +234,62 @@ function LegitStatusCard({
             N
           </Typography>
         </Badge>
-      </ImageBox>
-      <Content>
-        {labelText === '감정신청' && (
-          <Label
-            variant="solid"
-            text={labelText}
-            size="xsmall"
-            customStyle={{ maxWidth: 'fit-content', backgroundColor: secondary.blue.light }}
-          />
-        )}
-        {labelText === '감정완료' && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            text={labelText}
-            size="xsmall"
-            customStyle={{ maxWidth: 'fit-content' }}
-          />
-        )}
-        {['보완요청', '보완완료', '감정불가'].includes(labelText) && (
-          <Label
-            variant="solid"
-            text={labelText}
-            size="xsmall"
-            customStyle={{ maxWidth: 'fit-content', backgroundColor: secondary.red.light }}
-          />
-        )}
-        {['작성완료', '감정중'].includes(labelText) && (
-          <Label
-            variant="darked"
-            brandColor="primary"
-            text={labelText}
-            size="xsmall"
-            customStyle={{ maxWidth: 'fit-content' }}
-          />
-        )}
-        <Title variant="body2" weight="medium">
+      </Box>
+      <Flexbox
+        direction="vertical"
+        gap={2}
+        customStyle={{
+          position: 'relative',
+          flexGrow: 1,
+          padding: '2px 0'
+        }}
+      >
+        <Typography variant="body2" weight="bold">
+          {brand?.nameEng || ''}
+        </Typography>
+        <Typography variant="body2" noWrap lineClamp={2} customStyle={{ color: common.ui60 }}>
           {title}
-        </Title>
-        {!postType && !!price && (
-          <Typography variant="h4" weight="bold" customStyle={{ marginTop: 4 }}>
-            {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+        </Typography>
+        {!hidePrice && !!price && postType !== productPostType.photoLegit && (
+          <Typography variant="h3" weight="bold" customStyle={{ paddingTop: 2 }}>
+            {`${commaNumber(getTenThousandUnitPrice(price || 0))}만원`}
           </Typography>
         )}
-        {role === 'head' && ['감정신청', '보완요청', '보완완료'].includes(labelText) && (
-          <Typography
-            variant="small2"
-            weight="medium"
-            customStyle={{ marginTop: 8, color: common.ui60 }}
-          >
-            신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
-          </Typography>
-        )}
-        {role !== 'head' && ['감정신청', '감정불가'].includes(labelText) && (
-          <Typography
-            variant="small2"
-            weight="medium"
-            customStyle={{ marginTop: 8, color: common.ui60 }}
-          >
-            신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
-          </Typography>
-        )}
-        {['감정중', '작성완료'].includes(labelText) && (
-          <>
-            <Typography
-              variant="small2"
-              weight="medium"
-              customStyle={{ marginTop: 8, color: common.ui60 }}
-            >
+        <Box customStyle={{ paddingTop: 6 }}>
+          {(role === 'head'
+            ? ['감정중', '보완요청', '보완완료'].includes(labelText)
+            : ['감정중', '감정불가'].includes(labelText)) && (
+            <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
               신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
             </Typography>
-            {dateCompleted && (
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ marginTop: 2, color: common.ui60 }}
-              >
-                완료예정일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
+          )}
+          {labelText === '작성완료' && (
+            <>
+              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>
-            )}
-          </>
-        )}
-        {labelText === '감정완료' && (
-          <>
-            <Typography
-              variant="small2"
-              weight="medium"
-              customStyle={{ marginTop: 8, color: common.ui60 }}
-            >
-              신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
-            </Typography>
-            {dateCompleted && (
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ marginTop: 2, color: common.ui60 }}
-              >
-                완료일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
+              {dateCompleted && (
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                  완료예정일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
+                </Typography>
+              )}
+            </>
+          )}
+          {['정품의견', '가품의심'].includes(labelText) && (
+            <>
+              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>
-            )}
-          </>
-        )}
-      </Content>
-    </StyledLegitStatusCard>
+              {dateCompleted && (
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                  완료일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
+                </Typography>
+              )}
+            </>
+          )}
+        </Box>
+      </Flexbox>
+    </Flexbox>
   );
 }
 

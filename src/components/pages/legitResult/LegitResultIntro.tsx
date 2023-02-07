@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchProductLegit } from '@api/productLegit';
 
@@ -49,6 +49,7 @@ function LegitResultIntro() {
           .toLowerCase()
           .replace(/ /g, '')}.png`}
         alt="Brand Logo Img"
+        round={8}
         disableAspectRatio
       />
       <Typography

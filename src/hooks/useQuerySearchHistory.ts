@@ -1,5 +1,5 @@
-import { useInfiniteQuery, useQuery } from 'react-query';
 import { isEmpty, omit } from 'lodash-es';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { RecentSearchParams } from '@dto/product';
 

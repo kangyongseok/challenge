@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { QueryClient, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

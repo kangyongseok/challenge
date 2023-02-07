@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { Content } from '@dto/common';
 

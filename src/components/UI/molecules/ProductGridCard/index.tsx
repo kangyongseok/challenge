@@ -2,10 +2,10 @@ import { HTMLAttributes, ReactElement, forwardRef, memo, useEffect, useRef, useS
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ProductLabel } from '@components/UI/organisms';
 import {
@@ -292,12 +292,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       {...props}
     >
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
-        <Image
-          src={imageUrl}
-          alt={`${product.title} 이미지`}
-          round={isRound ? 8 : 0}
-          disableOnBackground={false}
-        />
+        <Image src={imageUrl} alt={`${product.title} 이미지`} round={isRound ? 8 : 0} />
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
             {productLabels.map(({ description }, index) => (

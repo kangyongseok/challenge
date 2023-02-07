@@ -2,10 +2,10 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent, MutableRefObject } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Skeleton, Toast, Typography, useTheme } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
+import { useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { SearchParams } from '@dto/product';

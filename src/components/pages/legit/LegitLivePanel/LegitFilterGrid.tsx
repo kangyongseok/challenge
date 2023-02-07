@@ -1,12 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Grid, Icon, Typography, useTheme } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Button, Chip, Flexbox, Grid, Icon, Skeleton } from 'mrcamel-ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
+import { LegitGridCard } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
 
@@ -21,51 +20,51 @@ import attrKeys from '@constants/attrKeys';
 import { getProductDetailUrl } from '@utils/common';
 
 import { legitSearchFilterParamsState } from '@recoil/legitSearchFilter';
-import { legitFilterGridParamsState, legitFiltersState } from '@recoil/legit';
+import { legitFilterGridParamsState } from '@recoil/legit';
 
 function LegitFilterGrid() {
   const router = useRouter();
 
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const [legitFilterGridParams, setLegitFilterGridParams] = useRecoilState(
     legitFilterGridParamsState
   );
-  const [{ initialized, legitFilters }, setLegitFilters] = useRecoilState(legitFiltersState);
   const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetLegitSearchFilterParamsState = useResetRecoilState(legitSearchFilterParamsState);
 
   const queryClient = useQueryClient();
 
-  const {
-    data: { pages = [] } = {},
-    fetchNextPage,
-    isLoading
-  } = useInfiniteQuery(
-    queryKeys.productLegits.legits(legitFilterGridParams),
-    ({ pageParam = 0 }) => fetchProductLegits({ ...legitFilterGridParams, page: pageParam }),
-    {
-      staleTime: 5 * 60 * 1000,
-      getNextPageParam: (data) => {
-        const { productLegits: { number = 0, totalPages = 0 } = {} } = data || {};
-
-        return number < totalPages - 1 ? number + 1 : undefined;
+  const { data: { productLegits: { content: legitProducts = [] } = {} } = {}, isLoading } =
+    useQuery(
+      queryKeys.productLegits.legits(legitFilterGridParams),
+      () => fetchProductLegits(legitFilterGridParams),
+      {
+        refetchOnMount: true,
+        onSuccess(successData) {
+          if (successData) {
+            setLegitFilters((prevState) =>
+              prevState.map((curLegitFilter) => {
+                switch (curLegitFilter.result) {
+                  case 0:
+                    return { ...curLegitFilter, count: successData.cntAuthenticating || 0 };
+                  case 1:
+                    return { ...curLegitFilter, count: successData.cntReal || 0 };
+                  case 2:
+                    return { ...curLegitFilter, count: successData.cntFake || 0 };
+                  default:
+                    return curLegitFilter;
+                }
+              })
+            );
+          }
+        }
       }
-    }
-  );
+    );
 
-  const legitProducts = useMemo(
-    () => pages.map(({ productLegits }) => productLegits?.content).flat(),
-    [pages]
-  );
-  const isLastPage = useMemo(() => {
-    const lastPage = pages[pages.length - 1] || {};
-    return legitProducts.length >= 80 || lastPage?.productLegits?.last;
-  }, [pages, legitProducts]);
+  const [legitFilters, setLegitFilters] = useState(() => [
+    { result: 1, status: 30, label: '정품의견', count: 0, isActive: false },
+    { result: 2, status: 30, label: '가품의심', count: 0, isActive: false },
+    { result: 0, status: 20, label: '감정중', count: 0, isActive: false }
+  ]);
 
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_LEGIT_HISTORY, {
@@ -120,8 +119,6 @@ function LegitFilterGrid() {
         att
       });
 
-      setLegitFilters((currVal) => ({ ...currVal, legitFilters: newLegitFilters }));
-
       if (activeLegitFilters.length === 0) {
         resetLegitFilterGridParamsState();
       } else {
@@ -133,49 +130,22 @@ function LegitFilterGrid() {
       }
     };
 
-  const handleClickMoreButton = async () => {
-    logEvent(attrKeys.legit.CLICK_LOADMORE, {
-      name: attrProperty.legitName.LEGIT_MAIN,
-      title: attrProperty.legitTitle.HISTORY
-    });
-
-    if (isLastPage) return;
-    await fetchNextPage();
-  };
-
-  useEffect(() => {
-    const [firstPage] = pages;
-
-    if (firstPage && !initialized) {
-      setLegitFilters(({ legitFilters: curLegitFilters }) => ({
-        initialized: true,
-        legitFilters: curLegitFilters.map((curLegitFilter) => {
-          switch (curLegitFilter.result) {
-            case 0:
-              return { ...curLegitFilter, count: firstPage.cntAuthenticating };
-            case 1:
-              return { ...curLegitFilter, count: firstPage.cntReal };
-            case 2:
-              return { ...curLegitFilter, count: firstPage.cntFake };
-            default:
-              return curLegitFilter;
-          }
-        })
-      }));
-    }
-  }, [initialized, pages, setLegitFilters]);
-
   return (
-    <Flexbox component="section" direction="vertical" customStyle={{ padding: '0 20px' }}>
-      <Flexbox gap={8} alignment="center" justifyContent="space-between">
+    <Flexbox component="section" direction="vertical" gap={20}>
+      <Flexbox
+        gap={8}
+        alignment="center"
+        justifyContent="space-between"
+        customStyle={{ padding: '0 20px' }}
+      >
         <Flexbox gap={6}>
           {legitFilters.map(({ label, isActive, result: selectResult, status: selectStatus }) => (
             <Chip
               key={`legit-select-label-${label}`}
-              variant={isActive ? 'ghost' : 'outlineGhost'}
+              variant="ghost"
               brandColor={isActive ? 'blue' : 'black'}
               size="large"
-              disabled={isLoading || !initialized}
+              disabled={isLoading}
               isRound={false}
               onClick={handleClickChip({ selectResult, selectStatus })}
             >
@@ -189,71 +159,59 @@ function LegitFilterGrid() {
           size="small"
           endIcon={<Icon name="CaretRightOutlined" />}
           onClick={handleClick}
-          customStyle={{
-            padding: 0,
-            gap: 0
-          }}
+          customStyle={{ padding: 0, gap: 0 }}
         >
           전체보기
         </Button>
       </Flexbox>
-      <ProductGrid container>
+      <Grid
+        container
+        columnGap={12}
+        rowGap={20}
+        customStyle={{ padding: '0 20px', marginBottom: 0 }}
+      >
         {isLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Grid key={`legit-skeleton-${index}`} item xs={2}>
-                <LegitCardSkeleton />
+                <Flexbox direction="vertical" gap={12} customStyle={{ paddingBottom: 12 }}>
+                  <Skeleton
+                    round={8}
+                    disableAspectRatio
+                    customStyle={{ paddingTop: 'calc(100% / 5 * 6)' }}
+                  />
+                  <Flexbox direction="vertical" gap={2} customStyle={{ padding: '0 4px' }}>
+                    <Skeleton width={60} height={16} round={8} disableAspectRatio />
+                    <Skeleton width="100%" height={32} round={8} disableAspectRatio />
+                  </Flexbox>
+                </Flexbox>
               </Grid>
             ))
-          : legitProducts.map((productLegit) => (
-              <Grid key={`legit-${productLegit.productId}`} item xs={2}>
-                <LegitCard
-                  productLegit={productLegit}
-                  onClick={handleClickCard({ product: productLegit.productResult })}
+          : legitProducts.map(({ productId, productResult, result, status }) => (
+              <Grid key={`legit-${productId}`} item xs={2}>
+                <LegitGridCard
+                  variant="gridB"
+                  product={productResult}
+                  result={result}
+                  onClick={handleClickCard({ product: productResult })}
+                  status={status}
                 />
               </Grid>
             ))}
-      </ProductGrid>
-      {!isLastPage && (
-        <Button
-          fullWidth
-          onClick={handleClickMoreButton}
-          customStyle={{ borderTop: 'none', borderColor: common.ui95, borderRadius: '0 0 8px 8px' }}
-        >
-          <Typography variant="body2" weight="medium">
-            더보기
-          </Typography>
-        </Button>
-      )}
+      </Grid>
+      <Button
+        fullWidth
+        onClick={handleClick}
+        size="large"
+        customStyle={{
+          margin: '0 auto',
+          width: 'calc(100% - 40px)'
+        }}
+      >
+        전체보기
+      </Button>
     </Flexbox>
   );
 }
-
-const ProductGrid = styled(Grid)`
-  margin-top: 25px;
-  overflow: hidden;
-  border: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.line02};
-  border-right: none;
-  border-radius: 8px 8px 0 0;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-  & > div {
-    border-top: 1px solid;
-    border-right: 1px solid;
-    border-color: ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.line02};
-  }
-`;
 
 export default LegitFilterGrid;

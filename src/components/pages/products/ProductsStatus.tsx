@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import LinearProgress from '@components/UI/molecules/LinearProgress';
 

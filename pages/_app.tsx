@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { RecoilRoot } from 'recoil';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
@@ -114,15 +114,12 @@ function App({ Component, pageProps }: AppProps) {
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
-    if (router.asPath.split('?')[0] === '/legit' || router.asPath.split('?')[0] === '/legit/search')
-      return common.bg03;
-
     if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
       return common.uiBlack;
     }
 
     return common.uiWhite;
-  }, [router.asPath, router.pathname, common.cmn80, common.bg03, common.uiWhite, common.uiBlack]);
+  }, [router.asPath, router.pathname, common.cmn80, common.uiWhite, common.uiBlack]);
 
   useEffect(() => {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
@@ -132,7 +129,7 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
-    // Initializer.initRum();
+    Initializer.initRum();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

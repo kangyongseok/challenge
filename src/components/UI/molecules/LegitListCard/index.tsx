@@ -1,32 +1,74 @@
 import type { HTMLAttributes } from 'react';
+import { useMemo } from 'react';
 
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { LegitLabel } from '@components/UI/atoms';
 
+import type { ProductLegit } from '@dto/productLegit';
+
+import { getTenThousandUnitPrice } from '@utils/formats';
+import { commaNumber } from '@utils/common';
+
 import type { ProductListCardVariant } from '@typings/common';
 
-import { MoreButton } from './LegitListCard.styles';
+import { Description, MoreButton } from './LegitListCard.styles';
 
 export interface LegitListCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductListCardVariant;
+  productLegit: Partial<ProductLegit>;
+  userId?: number;
+  hidePrice?: boolean;
+  hideResult?: boolean;
+  hideMore?: boolean;
   customStyle?: CustomStyle;
 }
 
-// TODO 기능 구현
-function LegitListCard({ variant, customStyle, ...props }: LegitListCardProps) {
+function LegitListCard({
+  variant,
+  productLegit,
+  userId = 0,
+  hidePrice = false,
+  hideResult = false,
+  hideMore = false,
+  customStyle,
+  ...props
+}: LegitListCardProps) {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
 
+  const {
+    productResult: {
+      quoteTitle = '',
+      title: productTitle = '',
+      brand: { nameEng = '' } = {},
+      imageMain = '',
+      imageThumbnail = '',
+      price
+    } = {},
+    legitOpinions = []
+  } = productLegit;
+
+  const { authenticCount, fakeCount } = useMemo(
+    () => ({
+      authenticCount: legitOpinions.filter((legitOpinion) => legitOpinion.result === 1).length,
+      fakeCount: legitOpinions.filter((legitOpinion) => legitOpinion.result === 2).length
+    }),
+    [legitOpinions]
+  );
+  const { result: opinionResult, description } =
+    legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
+
   return (
     <Flexbox
       {...props}
       gap={16}
       alignment={variant === 'listB' ? 'center' : undefined}
+      customStyle={{ cursor: 'pointer' }}
       css={customStyle}
     >
       <Box
@@ -40,89 +82,129 @@ function LegitListCard({ variant, customStyle, ...props }: LegitListCardProps) {
       >
         <Image
           ratio="5:6"
-          src="https://s3.ap-northeast-2.amazonaws.com/mrcamel/product/20221130_36198894_0.jpg"
-          alt="20221130_36198894_0.jpg"
+          src={imageThumbnail || imageMain}
+          alt={`${productTitle} 이미지`}
           round={8}
-          disableOnBackground={false}
         />
         {variant === 'listA' && (
-          <LegitLabel
-            opinion="authentic"
-            text="정품의견"
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8
-            }}
-          />
+          <>
+            {opinionResult === 1 && (
+              <LegitLabel
+                opinion="authentic"
+                text="정품의견"
+                customStyle={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8
+                }}
+              />
+            )}
+            {opinionResult === 2 && (
+              <LegitLabel
+                opinion="fake"
+                text="가품의심"
+                customStyle={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8
+                }}
+              />
+            )}
+            {opinionResult === 0 && (
+              <LegitLabel
+                opinion="impossible"
+                text="감정불가"
+                customStyle={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8
+                }}
+              />
+            )}
+          </>
         )}
       </Box>
-      <Box
+      <Flexbox
+        direction="vertical"
+        gap={2}
         customStyle={{
           position: 'relative',
-          flexGrow: 1
+          flexGrow: 1,
+          padding: '2px 0'
         }}
       >
         <Typography variant="body2" weight="bold">
-          구찌
+          {nameEng}
         </Typography>
         <Typography
           variant="body2"
           noWrap
           lineClamp={2}
           customStyle={{
-            marginTop: 2,
             color: common.ui60
           }}
         >
-          [팝니다] 구찌 스니커즈 급처
+          {variant === 'listA' ? productTitle : quoteTitle}
         </Typography>
-        <Typography
-          variant="h3"
-          weight="bold"
-          customStyle={{
-            marginTop: 4
-          }}
-        >
-          99만원
-        </Typography>
-        {variant === 'listA' && (
-          <Flexbox
-            gap={12}
+        {!hidePrice && (
+          <Typography
+            variant="h3"
+            weight="bold"
             customStyle={{
-              marginTop: 8
+              paddingTop: 2
             }}
           >
-            <Flexbox gap={2}>
-              <Icon name="OpinionAuthenticFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
-                2
-              </Typography>
-            </Flexbox>
-            <Flexbox gap={2}>
-              <Icon name="OpinionFakeFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
-                2
-              </Typography>
-            </Flexbox>
+            {`${commaNumber(getTenThousandUnitPrice(price || 0))}만원`}
+          </Typography>
+        )}
+
+        {variant === 'listA' && (
+          <Flexbox
+            direction="vertical"
+            gap={6}
+            customStyle={{
+              paddingTop: 6
+            }}
+          >
+            <Description variant="small2" weight="regular" color={common.ui60}>
+              {description}
+            </Description>
+            {!hideResult && (
+              <Flexbox gap={12}>
+                <Flexbox gap={2}>
+                  <Icon name="OpinionAuthenticFilled" width={12} height={12} color={common.ui80} />
+                  <Typography
+                    variant="small2"
+                    weight="medium"
+                    customStyle={{
+                      color: common.ui80
+                    }}
+                  >
+                    {authenticCount}
+                  </Typography>
+                </Flexbox>
+                <Flexbox gap={2}>
+                  <Icon name="OpinionFakeFilled" width={12} height={12} color={common.ui80} />
+                  <Typography
+                    variant="small2"
+                    weight="medium"
+                    customStyle={{
+                      color: common.ui80
+                    }}
+                  >
+                    {fakeCount}
+                  </Typography>
+                </Flexbox>
+              </Flexbox>
+            )}
           </Flexbox>
         )}
-        <MoreButton variant={variant}>
-          <Icon name="MoreHorizFilled" color={common.ui80} />
-        </MoreButton>
-      </Box>
+        {!hideMore && (
+          <MoreButton variant={variant}>
+            <Icon name="MoreHorizFilled" color={common.ui80} />
+          </MoreButton>
+        )}
+      </Flexbox>
     </Flexbox>
   );
 }

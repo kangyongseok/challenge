@@ -1,5 +1,5 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
 import PageHead from '@components/UI/atoms/PageHead';
 

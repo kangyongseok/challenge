@@ -11,8 +11,8 @@ import {
   ListRowProps,
   WindowScroller
 } from 'react-virtualized';
-import { useInfiniteQuery } from 'react-query';
 import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';

@@ -5,9 +5,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { AutoSizer, InfiniteLoader, List, WindowScroller } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
-import { useInfiniteQuery } from 'react-query';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import UserListSkeleton from '@components/UI/molecules/Skeletons/UserListSkeleton';

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Toast, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 import { Keyframes } from '@emotion/react';

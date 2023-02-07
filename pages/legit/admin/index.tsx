@@ -1,21 +1,14 @@
-import { useEffect } from 'react';
-
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, useTheme } from 'mrcamel-ui';
+import { Box } from 'mrcamel-ui';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LegitAdminRequestPanel, LegitAdminTabs } from '@components/pages/legitAdmin';
-import {
-  LegitFloatingButton,
-  LegitLivePanel,
-  LegitMyPanel,
-  LegitReviewSlide
-} from '@components/pages/legit';
+import { LegitFloatingButton, LegitLivePanel, LegitMyPanel } from '@components/pages/legit';
 
 import Initializer from '@library/initializer';
 
@@ -26,20 +19,6 @@ import { getCookies } from '@utils/cookies';
 function LegitAdmin() {
   const router = useRouter();
   const { tab = 'home' } = router.query;
-  const {
-    theme: {
-      mode,
-      palette: { common }
-    }
-  } = useTheme();
-
-  useEffect(() => {
-    document.body.className = `legit-${mode}`;
-
-    return () => {
-      document.body.removeAttribute('class');
-    };
-  }, [mode]);
 
   return (
     <>
@@ -52,18 +31,16 @@ function LegitAdmin() {
         keywords="중고 명품 감정, 정품가품 구별법, 명품 정품가품 구별, 정품가품 확인, 명품 정품가품 확인, 중고 명품, 명품 감정사, 중고 정품가품 확인, 중고 명품 정품가품 확인, 정품가품 구별하기, 정품 구별법, 가품 구별법"
       />
       <GeneralTemplate
-        header={<Header isTransparent customStyle={{ backgroundColor: common.bg03 }} />}
+        header={<Header />}
         footer={tab !== 'profile' ? <BottomNavigation /> : undefined}
         disablePadding
         customStyle={{
           height: 'auto',
           minHeight: '100%',
-          backgroundColor: common.bg03,
           overflowX: 'hidden'
         }}
       >
         <LegitAdminTabs />
-        {tab === 'home' && <LegitReviewSlide />}
         {tab === 'home' && <LegitLivePanel />}
         {tab === 'my' && (
           <Box customStyle={{ marginTop: 20 }}>

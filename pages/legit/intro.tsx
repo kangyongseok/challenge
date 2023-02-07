@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -117,7 +117,6 @@ function LegitIntro() {
               src={product?.imageThumbnail || product?.imageMain || ''}
               alt="Product Img"
               disableAspectRatio
-              disableOnBackground={false}
             />
           </IntroImage>
           <Image

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useInfiniteQuery, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography } from 'mrcamel-ui';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
 

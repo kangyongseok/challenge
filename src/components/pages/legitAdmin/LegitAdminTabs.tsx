@@ -4,19 +4,20 @@ import { Box, Flexbox, Tab, TabGroup, useTheme } from 'mrcamel-ui';
 
 import Badge from '@components/UI/atoms/Badge';
 
+import { TAB_HEIGHT } from '@constants/common';
+
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitProfileOpinionLegitsParamsState } from '@recoil/legitProfile';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function LegitAdminTabs() {
-  const router = useRouter();
-  const { tab = 'home' } = router.query;
-
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
+  const router = useRouter();
+  const { tab = 'home' } = router.query;
 
   const resetLegitProfileOpinionLegitsParamsState = useResetRecoilState(
     legitProfileOpinionLegitsParamsState
@@ -41,14 +42,12 @@ function LegitAdminTabs() {
   };
 
   return (
-    <Box component="section">
+    <Box component="section" customStyle={{ minHeight: TAB_HEIGHT, zIndex: 2 }}>
       <TabGroup
         fullWidth
         onChange={handleChange}
         value={String(tab)}
-        customStyle={{
-          backgroundColor: common.bg03
-        }}
+        customStyle={{ position: 'fixed', width: '100%', backgroundColor: common.uiWhite }}
       >
         <Tab text="홈" value="home" />
         <Tab text="내 사진감정" value="my" />

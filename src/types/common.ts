@@ -198,7 +198,7 @@ export type ShareData = {
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
-export type LegitOpinionType = 'authentic' | 'fake' | 'impossible';
+export type LegitOpinionType = 'authentic' | 'fake' | 'impossible' | 'legitIng';
 
 export type AccessUserSettingValue = {
   userId: number;

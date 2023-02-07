@@ -1,6 +1,5 @@
 import { Fragment, useMemo, useState } from 'react';
 
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -15,6 +14,7 @@ import {
 } from 'mrcamel-ui';
 import { entries, groupBy } from 'lodash-es';
 import dayjs from 'dayjs';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import type { UseMutateFunction, UseQueryResult } from 'react-query';
 import { useRouter } from 'next/router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UseMutateFunction, UseQueryResult } from '@tanstack/react-query';
 
 import type { ProductDetail, ProductParams } from '@dto/product';
 
@@ -112,7 +112,7 @@ function useQueryProduct(): UseQueryProductResult {
         if (isAddWish || isRemoveWish) {
           queryClient.invalidateQueries({
             queryKey: queryKeys.users.categoryWishes({ deviceId: params.deviceId }),
-            refetchActive: true
+            refetchType: 'active'
           });
         }
       }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useInfiniteQuery, useQueryClient } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import type { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
 
 import type { Channel, ChannelsParams } from '@dto/channel';

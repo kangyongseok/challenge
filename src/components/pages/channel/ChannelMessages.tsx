@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { MutableRefObject, UIEvent } from 'react';
 
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
 import { Box } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 import dayjs from 'dayjs';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
 import type { AdminMessage, FileMessage, UserMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import styled from '@emotion/styled';

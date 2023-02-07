@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { useTheme } from 'mrcamel-ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';

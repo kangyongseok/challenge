@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
 
@@ -196,10 +196,9 @@ function LegitMyPanel() {
       <Box component="section" customStyle={{ marginTop: 20 }}>
         <Box customStyle={{ position: 'relative', maxWidth: 288, margin: '0 auto' }}>
           <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v2.png`}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v3.png`}
             alt="Legit Guide Img"
             round={8}
-            disableOnBackground={false}
             customStyle={{
               position: 'relative',
               paddingTop: '125%'
@@ -232,7 +231,7 @@ function LegitMyPanel() {
   }
 
   return (
-    <Box component="section" customStyle={{ padding: '0 20px' }}>
+    <Box component="section" customStyle={{ padding: '0 20px', marginTop: 21 }}>
       {isLoading ? (
         <Skeleton width={70} height={16} round={8} disableAspectRatio />
       ) : (

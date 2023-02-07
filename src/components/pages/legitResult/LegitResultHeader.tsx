@@ -1,7 +1,9 @@
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, dark } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
+
+import Header from '@components/UI/molecules/Header';
 
 import { logEvent } from '@library/amplitude';
 
@@ -14,8 +16,6 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, getProductDetailUrl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
-
-import Header from '../../UI/molecules/Header';
 
 function LegitResultHeader() {
   const router = useRouter();

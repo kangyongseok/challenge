@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import {
   BottomSheet,
   Box,
@@ -16,6 +15,7 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

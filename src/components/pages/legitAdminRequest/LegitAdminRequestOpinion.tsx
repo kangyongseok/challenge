@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import LegitOpinion from '@components/UI/molecules/LegitOpinion';
 

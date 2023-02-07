@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Badge } from '@components/UI/atoms';

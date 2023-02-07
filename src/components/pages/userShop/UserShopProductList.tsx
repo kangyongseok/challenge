@@ -11,10 +11,14 @@ import {
   WindowScroller
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox } from 'mrcamel-ui';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 import NewProductListCardSkeleton from '@components/UI/molecules/Skeletons/NewProductListCardSkeleton';

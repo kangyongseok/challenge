@@ -61,11 +61,7 @@ function LegitCard({
         customStyle={{ ...customStyle, maxHeight: 56, cursor: 'pointer' }}
       >
         <ImageBox>
-          <Image
-            src={imageThumbnail || imageMain}
-            disableOnBackground={false}
-            alt="Product Legit Img"
-          />
+          <Image src={imageThumbnail || imageMain} alt="Product Legit Img" />
           {!hidePlatformLogo && postType !== 2 && (
             <Avatar
               width={15}
@@ -148,11 +144,7 @@ function LegitCard({
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
-      <Image
-        src={imageThumbnail || imageMain}
-        alt="Product Legit Img"
-        disableOnBackground={false}
-      />
+      <Image src={imageThumbnail || imageMain} alt="Product Legit Img" />
       <Flexbox
         direction="vertical"
         gap={2}

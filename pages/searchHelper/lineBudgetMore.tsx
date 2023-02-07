@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import debounce from 'lodash-es/debounce';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';

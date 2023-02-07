@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 
 import { Header } from '@components/UI/molecules';
 

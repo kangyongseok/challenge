@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { useQuery } from 'react-query';
 import omit from 'lodash-es/omit';
+import { useQuery } from '@tanstack/react-query';
 
 import { AccessUser } from '@dto/userAuth';
 

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { Box, ThemeProvider, Tooltip, Typography, dark } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { StylesCards } from '@components/UI/organisms';
 

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { CamelSellerFloatingButton } from '@components/UI/molecules';

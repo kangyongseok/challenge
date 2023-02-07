@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, useTheme } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { PageHead, TouchIcon } from '@components/UI/atoms';

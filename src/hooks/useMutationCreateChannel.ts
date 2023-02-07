@@ -1,7 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import type { UseMutationOptions } from 'react-query';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
+import type { UseMutationOptions } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { PostChannelData } from '@dto/channel';
 

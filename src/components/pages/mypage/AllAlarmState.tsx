@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Flexbox, Switch, Typography } from 'mrcamel-ui';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { AlarmsParams } from '@dto/user';
 
@@ -22,7 +22,10 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
   const [allAlarm, setAllAlarm] = useState(false);
   const { mutate: switchAlarm } = useMutation(putAlarm, {
     onSuccess() {
-      queryClient.invalidateQueries(queryKeys.users.alarms(), { refetchInactive: true });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.alarms(),
+        refetchType: 'inactive'
+      });
     }
   });
 

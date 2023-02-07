@@ -1,7 +1,7 @@
 import { useResetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,
@@ -61,7 +61,7 @@ function HomeQuickSaleProducts() {
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
-                    <NewProductGridCardSkeleton variant="gridB" isRound />
+                    <NewProductGridCardSkeleton variant="gridB" />
                   </Grid>
                 ))
               : camelProducts?.content.slice(0, 8).map((product, index) => (
@@ -69,7 +69,6 @@ function HomeQuickSaleProducts() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      isRound
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.GENERAL_SELLER,
@@ -83,7 +82,7 @@ function HomeQuickSaleProducts() {
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
-                    <NewProductGridCardSkeleton variant="gridB" isRound />
+                    <NewProductGridCardSkeleton variant="gridB" />
                   </Grid>
                 ))
               : camelProducts?.content.slice(0, 8).map((product, index) => (
@@ -92,7 +91,6 @@ function HomeQuickSaleProducts() {
                       variant="gridB"
                       product={product}
                       wishButtonType="B"
-                      isRound
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.GENERAL_SELLER,

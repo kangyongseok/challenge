@@ -88,24 +88,21 @@ function AllOptions() {
             }`}
             passHref
           >
-            <a
+            <CustomTypography
+              variant="h2"
+              weight="medium"
               onClick={handleClickLabel(
                 (index === 0 && 'BRAND') ||
                   (brandLineCategoryLabels.length > 2 && index === 1 && 'LINE') ||
                   'CATEGORY'
               )}
+              customStyle={{
+                borderBottom: `4px solid ${primary.main}`,
+                marginRight: brandLineCategoryLabels.length !== index + 1 ? 8 : 0
+              }}
             >
-              <CustomTypography
-                variant="h2"
-                weight="medium"
-                customStyle={{
-                  borderBottom: `4px solid ${primary.main}`,
-                  marginRight: brandLineCategoryLabels.length !== index + 1 ? 8 : 0
-                }}
-              >
-                {option}
-              </CustomTypography>
-            </a>
+              {option}
+            </CustomTypography>
           </Link>
         ))}
         <CustomTypography
@@ -118,18 +115,17 @@ function AllOptions() {
         {sizeLabel.length > 0 && (
           <>
             <Link href="/searchHelper/brandCategorySize" passHref>
-              <a onClick={handleClickLabel('SIZE')}>
-                <CustomTypography
-                  variant="h2"
-                  weight="medium"
-                  customStyle={{
-                    borderBottom: `4px solid ${primary.main}`,
-                    marginRight: 8
-                  }}
-                >
-                  {sizeLabel}
-                </CustomTypography>
-              </a>
+              <CustomTypography
+                variant="h2"
+                weight="medium"
+                onClick={handleClickLabel('SIZE')}
+                customStyle={{
+                  borderBottom: `4px solid ${primary.main}`,
+                  marginRight: 8
+                }}
+              >
+                {sizeLabel}
+              </CustomTypography>
             </Link>
             <CustomTypography
               variant="h2"
@@ -143,18 +139,17 @@ function AllOptions() {
         {maxPriceLabel?.length > 0 && (
           <>
             <Link href="/searchHelper/lineBudgetMore" passHref>
-              <a onClick={handleClickLabel('BUDGET')}>
-                <CustomTypography
-                  variant="h2"
-                  weight="medium"
-                  customStyle={{
-                    borderBottom: `4px solid ${primary.main}`,
-                    marginRight: 8
-                  }}
-                >
-                  {maxPriceLabel}
-                </CustomTypography>
-              </a>
+              <CustomTypography
+                variant="h2"
+                weight="medium"
+                onClick={handleClickLabel('BUDGET')}
+                customStyle={{
+                  borderBottom: `4px solid ${primary.main}`,
+                  marginRight: 8
+                }}
+              >
+                {maxPriceLabel}
+              </CustomTypography>
             </Link>
             <CustomTypography
               variant="h2"
@@ -169,18 +164,17 @@ function AllOptions() {
           <>
             {moreLabels.map((option, index) => (
               <Link key={`more-label-${option}`} href="/searchHelper/lineBudgetMore" passHref>
-                <a onClick={handleClickLabel('MOREOPTION')}>
-                  <CustomTypography
-                    variant="h2"
-                    weight="medium"
-                    customStyle={{
-                      borderBottom: `4px solid ${primary.main}`,
-                      marginRight: moreLabels.length !== index + 1 ? 8 : 0
-                    }}
-                  >
-                    {option}
-                  </CustomTypography>
-                </a>
+                <CustomTypography
+                  variant="h2"
+                  weight="medium"
+                  onClick={handleClickLabel('MOREOPTION')}
+                  customStyle={{
+                    borderBottom: `4px solid ${primary.main}`,
+                    marginRight: moreLabels.length !== index + 1 ? 8 : 0
+                  }}
+                >
+                  {option}
+                </CustomTypography>
               </Link>
             ))}
             <CustomTypography
@@ -195,15 +189,14 @@ function AllOptions() {
         {platformLabel.length > 0 && (
           <>
             <Link href="/searchHelper/lineBudgetMore" passHref>
-              <a onClick={handleClickLabel('MOREOPTION')}>
-                <CustomTypography
-                  variant="h2"
-                  weight="medium"
-                  customStyle={{ borderBottom: `4px solid ${primary.main}` }}
-                >
-                  {platformLabel}
-                </CustomTypography>
-              </a>
+              <CustomTypography
+                variant="h2"
+                weight="medium"
+                onClick={handleClickLabel('MOREOPTION')}
+                customStyle={{ borderBottom: `4px solid ${primary.main}` }}
+              >
+                {platformLabel}
+              </CustomTypography>
             </Link>
             <CustomTypography variant="h2" weight="medium" customStyle={{ color: common.ui60 }}>
               에서

@@ -1,11 +1,11 @@
 import { memo, useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Input, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

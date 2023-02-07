@@ -12,11 +12,11 @@ import {
   ListRowProps,
   WindowScroller
 } from 'react-virtualized';
-import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import { isEmpty } from 'lodash-es';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,

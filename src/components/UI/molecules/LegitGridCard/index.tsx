@@ -20,13 +20,13 @@ export interface LegitGridCardProps extends HTMLAttributes<HTMLDivElement> {
   result?: 0 | 1 | 2 | 3;
   resultCount?: number;
   status?: number;
-  isRound?: boolean;
   rank?: number;
   hideLabel?: boolean;
   hidePrice?: boolean;
   hideMetaInfo?: boolean;
   hideMoreButton?: boolean;
   customStyle?: CustomStyle;
+  customTitleStyle?: CustomStyle;
 }
 
 // TODO 기능 구현
@@ -36,13 +36,13 @@ function LegitGridCard({
   result,
   resultCount,
   status,
-  isRound,
   rank,
   hideLabel,
   hidePrice = true,
   hideMetaInfo = true,
   hideMoreButton = true,
   customStyle,
+  customTitleStyle,
   ...props
 }: LegitGridCardProps) {
   const {
@@ -60,7 +60,7 @@ function LegitGridCard({
   } = product || {};
 
   return (
-    <Flexbox {...props} direction="vertical" css={customStyle}>
+    <Flexbox {...props} direction="vertical" customStyle={{ cursor: 'pointer' }} css={customStyle}>
       <Box
         customStyle={{
           position: 'relative'
@@ -70,8 +70,7 @@ function LegitGridCard({
           ratio="5:6"
           src={imageMain || imageThumbnail}
           alt={`${title} 이미지`}
-          round={isRound ? 8 : 0}
-          disableOnBackground={false}
+          round={variant !== 'gridA' ? 8 : 0}
         />
         {!hideLabel && (
           <>
@@ -110,7 +109,7 @@ function LegitGridCard({
             )}
             {!result && status === 20 && (
               <LegitLabel
-                opinion="impossible"
+                opinion="legitIng"
                 text="감정중"
                 customStyle={{
                   position: 'absolute',
@@ -130,7 +129,7 @@ function LegitGridCard({
                 color: common.cmn20
               }}
             >
-              주간 ${rank}위
+              {`주간 ${rank}위`}
             </Typography>
           </Overlay>
         )}
@@ -159,7 +158,8 @@ function LegitGridCard({
           lineClamp={2}
           customStyle={{
             marginTop: 2,
-            color: common.ui60
+            color: common.ui60,
+            ...customTitleStyle
           }}
         >
           {title}

@@ -5,7 +5,6 @@ import { Content } from './LegitGridCardSkeleton.styles';
 
 export interface LegitGridCardSkeletonProps {
   variant?: 'gridA' | 'gridB' | 'gridC' | 'swipeX';
-  isRound?: boolean;
   hidePrice?: boolean;
   hideMetaInfo?: boolean;
   customStyle?: CustomStyle;
@@ -13,14 +12,13 @@ export interface LegitGridCardSkeletonProps {
 
 function LegitGridCardSkeleton({
   variant,
-  isRound,
   hidePrice = true,
   hideMetaInfo = true,
   customStyle
 }: LegitGridCardSkeletonProps) {
   return (
     <Flexbox direction="vertical" css={customStyle}>
-      <Skeleton ratio="5:6" round={isRound ? 8 : 0} />
+      <Skeleton ratio="5:6" round={variant !== 'gridA' ? 8 : 0} />
       <Content variant={variant}>
         <Skeleton width={32} height={16} round={8} disableAspectRatio />
         <Skeleton

@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query';
-import type { UseMutationOptions } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 import Sendbird from '@library/sendbird';
 

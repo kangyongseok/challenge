@@ -19,10 +19,7 @@ import attrKeys from '@constants/attrKeys';
 
 function LegitSearch() {
   const {
-    theme: {
-      mode,
-      palette: { common }
-    }
+    theme: { mode }
   } = useTheme();
 
   useEffect(() => {
@@ -44,8 +41,7 @@ function LegitSearch() {
       disablePadding
       customStyle={{
         height: 'auto',
-        minHeight: '100%',
-        backgroundColor: common.bg03
+        minHeight: '100%'
       }}
     >
       <LegitSearchFilter />

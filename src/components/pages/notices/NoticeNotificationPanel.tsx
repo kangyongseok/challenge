@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';

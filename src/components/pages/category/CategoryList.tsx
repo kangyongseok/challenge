@@ -2,9 +2,9 @@ import type { Dispatch, MouseEvent, SetStateAction } from 'react';
 import { useCallback, useMemo } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

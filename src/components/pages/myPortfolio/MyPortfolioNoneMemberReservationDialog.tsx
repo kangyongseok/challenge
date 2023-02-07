@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 
 import { TextInput } from '@components/UI/molecules';
 

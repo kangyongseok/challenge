@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

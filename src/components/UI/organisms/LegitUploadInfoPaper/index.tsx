@@ -48,6 +48,7 @@ function LegitUploadInfoPaper({
         height={110}
         src={imagSrc}
         alt="Model Img"
+        round={8}
         disableAspectRatio
         customStyle={{
           position: 'absolute',

@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ParsedUrlQueryInput } from 'node:querystring';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { SearchParams } from '@dto/product';

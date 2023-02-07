@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useResetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { Box, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
+import { useMutation } from '@tanstack/react-query';
 
 import GenderYearInput from '@components/UI/organisms/GenderYearInput';
 

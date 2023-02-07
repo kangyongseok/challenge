@@ -1,9 +1,7 @@
-import { useEffect } from 'react';
-
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, useTheme } from 'mrcamel-ui';
+import { Box } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
@@ -12,7 +10,6 @@ import {
   LegitFloatingButton,
   LegitLivePanel,
   LegitMyPanel,
-  LegitReviewSlide,
   LegitTabs
 } from '@components/pages/legit';
 
@@ -23,20 +20,6 @@ import { isExtendedLayoutIOSVersion } from '@utils/common';
 function Legit() {
   const router = useRouter();
   const { tab = 'live' } = router.query;
-  const {
-    theme: {
-      mode,
-      palette: { common }
-    }
-  } = useTheme();
-
-  useEffect(() => {
-    document.body.className = `legit-${mode}`;
-
-    return () => {
-      document.body.removeAttribute('class');
-    };
-  }, [mode]);
 
   return (
     <>
@@ -49,22 +32,17 @@ function Legit() {
         keywords="중고 명품 감정, 정품가품 구별법, 명품 정품가품 구별, 정품가품 확인, 명품 정품가품 확인, 중고 명품, 명품 감정사, 중고 정품가품 확인, 중고 명품 정품가품 확인, 정품가품 구별하기, 정품 구별법, 가품 구별법"
       />
       <GeneralTemplate
-        header={<Header isTransparent isFixed customStyle={{ backgroundColor: common.bg03 }} />}
+        header={<Header isFixed />}
         footer={<BottomNavigation />}
         customStyle={{
           height: 'auto',
           minHeight: '100%',
-          backgroundColor: common.bg03,
-          overflowX: 'hidden'
+          overflowX: 'hidden',
+          userSelect: 'none'
         }}
         disablePadding
       >
-        {isExtendedLayoutIOSVersion() ? (
-          <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />
-        ) : (
-          ''
-        )}
-        {tab === 'live' && <LegitReviewSlide />}
+        {isExtendedLayoutIOSVersion() && <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />}
         <LegitTabs />
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}

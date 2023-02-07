@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Skeleton, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { ProductWishesCard, ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';

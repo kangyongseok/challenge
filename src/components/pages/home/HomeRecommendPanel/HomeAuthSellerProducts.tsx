@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,
@@ -68,7 +68,7 @@ function HomeAuthSellerProducts() {
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
-                    <NewProductGridCardSkeleton variant="gridB" isRound />
+                    <NewProductGridCardSkeleton variant="gridB" />
                   </Grid>
                 ))
               : camelProducts?.content.slice(0, 8).map((product, index) => (
@@ -76,7 +76,6 @@ function HomeAuthSellerProducts() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      isRound
                       hideLabel={false}
                       attributes={{
                         name: attrProperty.name.MAIN,
@@ -91,7 +90,7 @@ function HomeAuthSellerProducts() {
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
-                    <NewProductGridCardSkeleton variant="gridB" isRound />
+                    <NewProductGridCardSkeleton variant="gridB" />
                   </Grid>
                 ))
               : camelProducts?.content.slice(0, 8).map((product, index) => (
@@ -100,7 +99,6 @@ function HomeAuthSellerProducts() {
                       variant="gridB"
                       product={product}
                       wishButtonType="B"
-                      isRound
                       hideLabel={false}
                       attributes={{
                         name: attrProperty.name.MAIN,

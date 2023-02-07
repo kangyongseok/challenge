@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -15,6 +14,7 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
@@ -100,8 +100,9 @@ function LoginButtonList({
       title: 'KAKAO',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
-      refetchInactive: true
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.personals.guideAllProducts(),
+      refetchType: 'inactive'
     });
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
       window.webview.callLoginKakao();
@@ -130,8 +131,9 @@ function LoginButtonList({
       title: 'FACEBOOK',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
-      refetchInactive: true
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.personals.guideAllProducts(),
+      refetchType: 'inactive'
     });
     const checkFacebookLoginState = (response: FacebookLoginResponse) => {
       const provider = 'facebook';
@@ -199,8 +201,9 @@ function LoginButtonList({
       title: 'APPLE',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
-      refetchInactive: true
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.personals.guideAllProducts(),
+      refetchType: 'inactive'
     });
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
       window.webview.callLoginApple();

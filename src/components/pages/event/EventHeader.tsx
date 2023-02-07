@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { Header } from '@components/UI/molecules';
 import { Badge } from '@components/UI/atoms';

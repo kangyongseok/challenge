@@ -161,6 +161,7 @@ const StyledLegitGuideCtaButton = styled.div`
   left: 0;
   padding: 20px;
   width: 100%;
+  z-index: 10;
   background-color: ${({
     theme: {
       palette: { common }

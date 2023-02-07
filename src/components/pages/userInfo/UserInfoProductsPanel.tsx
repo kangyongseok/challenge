@@ -10,9 +10,9 @@ import {
   WindowScroller
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';

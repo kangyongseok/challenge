@@ -1,6 +1,6 @@
-import { QueryClient, dehydrate } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { Flexbox, Switch } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -39,7 +39,10 @@ function SellerProductAlarm({ alarm }: { alarm?: boolean }) {
       {
         onSuccess: () => {
           setIsSellerProductAlarm((props) => !props);
-          queryClient.invalidateQueries(queryKeys.users.alarms(), { refetchInactive: true });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.users.alarms(),
+            refetchType: 'inactive'
+          });
         }
       }
     );

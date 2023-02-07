@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import { sortBy, uniqBy } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
 import { Gap } from '@components/UI/atoms';

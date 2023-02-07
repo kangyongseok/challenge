@@ -2,13 +2,6 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
-import type {
-  QueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters,
-  UseMutateFunction
-} from 'react-query';
 import { useRouter } from 'next/router';
 import type { BaseButtonProps } from 'mrcamel-ui/dist/components/Button';
 import {
@@ -26,6 +19,13 @@ import {
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  UseMutateFunction
+} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { OnBoardingSpotlight } from '@components/UI/organisms';

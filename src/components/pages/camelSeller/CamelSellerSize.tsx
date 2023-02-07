@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { CategorySizes } from '@dto/category';
@@ -193,7 +193,7 @@ export default CamelSellerSize;
 // import { useEffect, useState } from 'react';
 
 // import { useRecoilValue, useSetRecoilState } from 'recoil';
-// import { useQuery } from 'react-query';
+// import { useQuery } from '@tanstack/react-query';
 // import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 // import { logEvent } from '@library/amplitude';

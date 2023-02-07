@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
 
 import type { Channel, ChannelsParams } from '@dto/channel';

@@ -36,7 +36,8 @@ function LegitGuideTabs() {
       onChange={handleClickTab}
       value={String(tab)}
       customStyle={{
-        marginTop: 20
+        marginTop: 20,
+        backgroundColor: 'transparent'
       }}
     >
       <Tab text="1. 사진 올려서 감정신청" value="upload" />

@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -108,7 +107,7 @@ function Onboarding() {
             대신 찾아다 드릴거에요!
           </Typography>
         </Box>
-        <Image src="/images/searchHelperWelcome.png" width={375} height={360} layout="responsive" />
+        <Image src="/images/searchHelperWelcome.png" alt="Search Helper Welcome Img" />
       </GeneralTemplate>
       <PortalConsumer>
         <ButtonGroups>

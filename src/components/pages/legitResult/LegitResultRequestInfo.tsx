@@ -2,9 +2,9 @@ import { useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Grid, Label } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   ImageDetailDialog,

@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query';
-import type { UseMutationOptions } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 import { PushNotificationDeliveryOption } from '@sendbird/chat/message';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { FileCompat } from '@sendbird/chat';

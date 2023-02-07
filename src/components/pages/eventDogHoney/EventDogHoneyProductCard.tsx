@@ -2,10 +2,10 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
   Content,
@@ -237,7 +237,6 @@ function EventDogHoneyProductCard({
           src={imageMain || imageThumbnail}
           alt={`${productTitle} 이미지`}
           round={isRound ? 8 : 0}
-          disableOnBackground={false}
         />
         <Avatar
           width={20}

@@ -1,13 +1,13 @@
 import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Image, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import Gap from '@components/UI/atoms/Gap';
+import LegitListCard from '@components/UI/molecules/LegitListCard';
 
 import type { ProductResult } from '@dto/product';
 
@@ -157,33 +157,38 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
 
     return (
       <Box component="section">
-        <Gap height={8} />
         <Wrapper
           ref={ref}
           css={!isLoading && legitProducts.length === 0 ? { ...customStyle, flex: 1 } : customStyle}
         >
-          <Flexbox gap={8} customStyle={{ marginBottom: 20 }}>
-            {legitFilters.map(({ label, result, status }) => (
-              <Chip
-                key={`legit-select-label-${label}`}
-                variant="ghost"
-                brandColor={(params.results || []).includes(result) ? 'blue' : 'black'}
-                size="large"
-                disabled={isLoading}
-                onClick={handleClick({ status, result, label })}
-                isRound={false}
-              >
-                {label}
-              </Chip>
-            ))}
-          </Flexbox>
+          {!isLoading && legitProducts.length > 0 && (
+            <Flexbox gap={8} customStyle={{ marginBottom: 20 }}>
+              {legitFilters.map(({ label, result, status }) => (
+                <Chip
+                  key={`legit-select-label-${label}`}
+                  variant="ghost"
+                  brandColor={(params.results || []).includes(result) ? 'blue' : 'black'}
+                  size="large"
+                  disabled={isLoading}
+                  onClick={handleClick({ status, result, label })}
+                  isRound={false}
+                >
+                  {label}
+                </Chip>
+              ))}
+            </Flexbox>
+          )}
           <Flexbox direction="vertical" gap={20}>
             {isLoading &&
               Array.from({ length: 16 }).map((_, index) => (
                 // eslint-disable-next-line react/no-array-index-key
-                <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={12}>
-                  <Skeleton width={100} height={100} round={8} disableAspectRatio />
-                  <Box customStyle={{ flexGrow: 1 }}>
+                <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={16}>
+                  <Skeleton width={120} height={144} round={8} disableAspectRatio />
+                  <Flexbox
+                    direction="vertical"
+                    gap={2}
+                    customStyle={{ flexGrow: 1, padding: '2px 0' }}
+                  >
                     <Skeleton width={58} height={18} round={8} disableAspectRatio />
                     <Skeleton
                       width="100%"
@@ -191,124 +196,50 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
                       height={16}
                       round={8}
                       disableAspectRatio
-                      customStyle={{ marginTop: 4 }}
                     />
                     <Skeleton
                       width="100%"
                       maxWidth={220}
-                      height={24}
+                      height={36}
                       round={8}
                       disableAspectRatio
-                      customStyle={{ marginTop: 8 }}
+                      customStyle={{ marginTop: 6 }}
                     />
-                  </Box>
+                  </Flexbox>
                 </Flexbox>
               ))}
             {!isLoading &&
-              legitProducts.map(({ productId, productResult, status, legitOpinions = [] }) => {
-                const { result: opinionResult, description } =
-                  legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
-
-                return (
-                  <Flexbox
-                    key={`user-legit-opinion-${productId}`}
-                    gap={12}
-                    onClick={handleClickProduct({ product: productResult })}
-                  >
-                    <Box customStyle={{ minWidth: 100, maxWidth: 100, height: 100 }}>
-                      <Image
-                        src={productResult.imageThumbnail || productResult.imageMain}
-                        alt="User Legit Product Img"
-                        round={8}
-                        disableOnBackground={false}
-                      />
-                    </Box>
-                    <div>
-                      {status === 30 && opinionResult === 1 && (
-                        <Label
-                          variant="darked"
-                          text={
-                            <Flexbox alignment="center" gap={2}>
-                              <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
-                              <Typography
-                                variant="small2"
-                                weight="medium"
-                                customStyle={{
-                                  color: common.cmnW
-                                }}
-                              >
-                                정품의견
-                              </Typography>
-                            </Flexbox>
-                          }
-                          size="xsmall"
-                        />
-                      )}
-                      {status === 30 && opinionResult === 2 && (
-                        <Label
-                          variant="darked"
-                          brandColor="red"
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore
-                          text={
-                            <Flexbox alignment="center" gap={2}>
-                              <Icon name="OpinionFakeOutlined" width={12} height={12} />
-                              <Typography
-                                variant="small2"
-                                weight="medium"
-                                customStyle={{
-                                  color: common.cmnW
-                                }}
-                              >
-                                가품의심
-                              </Typography>
-                            </Flexbox>
-                          }
-                          size="xsmall"
-                        />
-                      )}
-                      {status === 20 && (
-                        <Label
-                          variant="solid"
-                          brandColor="black"
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore
-                          text={
-                            <Flexbox alignment="center" gap={2}>
-                              <Icon name="OpinionImpossibleOutlined" width={12} height={12} />
-                              <Typography
-                                variant="small2"
-                                weight="medium"
-                                customStyle={{
-                                  color: common.cmnW
-                                }}
-                              >
-                                감정중
-                              </Typography>
-                            </Flexbox>
-                          }
-                          size="xsmall"
-                        />
-                      )}
-                      <Typography variant="body2" weight="medium" customStyle={{ marginTop: 4 }}>
-                        {productResult.title}
-                      </Typography>
-                      <Description variant="small2" weight="medium">
-                        {description}
-                      </Description>
-                    </div>
-                  </Flexbox>
-                );
-              })}
+              legitProducts.map((productLegit) => (
+                <LegitListCard
+                  key={`user-legit-opinion-${productLegit.productId}`}
+                  variant="listA"
+                  productLegit={productLegit}
+                  hidePrice
+                  hideResult
+                  hideMore
+                  userId={userId}
+                  onClick={handleClickProduct({ product: productLegit.productResult })}
+                  customStyle={{
+                    alignItems: 'flex-start'
+                  }}
+                />
+              ))}
           </Flexbox>
-          {!isLoading && legitProducts.length === 0 && (
-            <Flexbox justifyContent="center" alignment="center" customStyle={{ marginTop: 52 }}>
-              <Typography variant="h2" weight="bold" customStyle={{ color: common.ui80 }}>
-                감정이력이 없습니다.
-              </Typography>
-            </Flexbox>
-          )}
         </Wrapper>
+        {!isLoading && legitProducts.length === 0 && (
+          <Flexbox
+            direction="vertical"
+            justifyContent="center"
+            alignment="center"
+            gap={20}
+            customStyle={{ marginTop: 72 }}
+          >
+            <Typography customStyle={{ width: 52, height: 52, fontSize: 52 }}>🕵️‍♂️</Typography>
+            <Typography variant="h2" weight="bold" customStyle={{ color: common.ui80 }}>
+              감정이력이 없습니다.
+            </Typography>
+          </Flexbox>
+        )}
       </Box>
     );
   }
@@ -318,20 +249,6 @@ const Wrapper = styled.div`
   padding: 32px 20px 35px;
   background-color: ${({ theme }) => theme.palette.common.cmnW};
   z-index: 2;
-`;
-
-const Description = styled(Typography)`
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  margin-top: 8px;
-  overflow: hidden;
-  word-break: break-all;
-  color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui60};
 `;
 
 export default LegitProfileOpinionLegitList;

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
 import type { Product } from '@dto/product';
 

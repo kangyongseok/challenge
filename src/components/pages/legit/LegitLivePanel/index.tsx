@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 
-import { Flexbox, useTheme } from 'mrcamel-ui';
-
-import { Gap } from '@components/UI/atoms';
+import { Flexbox } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -14,30 +12,26 @@ import LegitHeadAuthenticatorList from './LegitHeadAuthenticatorList';
 import LegitFilterGrid from './LegitFilterGrid';
 import LegitDashboardBanner from './LegitDashboardBanner';
 import LegitCaseHistory from './LegitCaseHistory';
+import LegitApplyBanner from './LegitApplyBanner';
 
 function LegitLivePanel() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_MAIN);
   }, []);
 
   return (
-    <Flexbox
-      direction="vertical"
-      gap={52}
-      customStyle={{ margin: '12px 0 84px', userSelect: 'none' }}
-    >
+    <Flexbox direction="vertical" gap={84} customStyle={{ marginBottom: 84 }}>
       <LegitDashboardBanner />
       <LegitTargetBrandList />
-      <LegitHeadAuthenticatorList />
+      <Flexbox direction="vertical" gap={32}>
+        <LegitHeadAuthenticatorList />
+        <LegitApplyBanner />
+      </Flexbox>
       <LegitYourTurnList />
-      <LegitCaseHistory />
-      <Gap height={1} customStyle={{ margin: '-20px 0', backgroundColor: common.line01 }} />
-      <LegitFilterGrid />
+      <Flexbox direction="vertical" gap={32}>
+        <LegitCaseHistory />
+        <LegitFilterGrid />
+      </Flexbox>
     </Flexbox>
   );
 }

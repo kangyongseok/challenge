@@ -11,9 +11,9 @@ import {
   WindowScroller
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import ReviewCard from '@components/UI/organisms/ReviewCard';

@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import dayjs from 'dayjs';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
 import { AdminMessage } from '@sendbird/chat/message';
 import styled from '@emotion/styled';
 

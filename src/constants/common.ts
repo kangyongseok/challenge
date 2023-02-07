@@ -20,6 +20,7 @@ export const MESSAGE_INPUT_HEIGHT = 44;
 export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
 export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
 export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
+export const LEGIT_FAKE_BANNER_HEIGHT = 40;
 export const extractTagRegx = /(<([^>]+)>)/gi;
 export const NEXT_IMAGE_BLUR_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
@@ -98,4 +99,9 @@ export const EventStatus = {
   READY: 1,
   PROGRESS: 2,
   CLOSED: 3
+};
+
+export const productPostType = {
+  crowlLegit: 0,
+  photoLegit: 1
 };

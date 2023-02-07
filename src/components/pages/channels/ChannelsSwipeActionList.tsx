@@ -10,9 +10,9 @@ import {
   SwipeableListItem,
   TrailingActions
 } from 'react-swipeable-list';
-import { QueryClient, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Icon, Label, useTheme } from 'mrcamel-ui';
+import { QueryClient, useMutation } from '@tanstack/react-query';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import styled from '@emotion/styled';
 

@@ -1,10 +1,14 @@
 import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
-import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { ChannelDetail } from '@dto/channel';

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import GenderYearInput from '@components/UI/organisms/GenderYearInput';
@@ -75,8 +75,9 @@ function PersonalInput() {
       yearOfBirth: yearOfBirthValue
     });
 
-    queryClient.invalidateQueries(queryKeys.users.myUserInfo(), {
-      refetchInactive: true
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.users.myUserInfo(),
+      refetchType: 'inactive'
     });
 
     updateAccessUserOnBraze({

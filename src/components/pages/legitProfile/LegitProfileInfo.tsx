@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -15,6 +14,7 @@ import {
   dark,
   useTheme
 } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

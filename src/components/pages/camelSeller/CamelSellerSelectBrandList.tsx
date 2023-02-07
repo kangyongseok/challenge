@@ -1,10 +1,10 @@
 import { useMemo, useRef } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { isEmpty } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 
 import type { AllBrand } from '@dto/brand';
 

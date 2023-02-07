@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import { Gap, PageHead } from '@components/UI/atoms';

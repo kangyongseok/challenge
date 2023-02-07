@@ -2,13 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UIEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { Box, Button, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import has from 'lodash-es/has';
 import debounce from 'lodash-es/debounce';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';

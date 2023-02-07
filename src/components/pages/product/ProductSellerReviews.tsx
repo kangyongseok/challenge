@@ -1,9 +1,9 @@
 import { memo, useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';

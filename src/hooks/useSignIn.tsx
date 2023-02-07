@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
+import { useMutation } from '@tanstack/react-query';
 
 import type {
   AccessUser,

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { Box, Chip, Flexbox } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { logEvent } from '@library/amplitude';
 
@@ -85,7 +85,7 @@ function LegitSearchFilter() {
     <Box component="section" customStyle={{ padding: '12px 20px 0' }}>
       <Flexbox gap={6}>
         <Chip
-          variant={params.results?.includes(1) ? 'ghost' : 'outlineGhost'}
+          variant={params.results?.includes(1) ? 'ghost' : 'ghost'}
           brandColor={params.results?.includes(1) ? 'blue' : 'black'}
           size="large"
           isRound={false}
@@ -95,7 +95,7 @@ function LegitSearchFilter() {
           정품의견
         </Chip>
         <Chip
-          variant={params.results?.includes(2) ? 'ghost' : 'outlineGhost'}
+          variant={params.results?.includes(2) ? 'ghost' : 'ghost'}
           brandColor={params.results?.includes(2) ? 'blue' : 'black'}
           size="large"
           isRound={false}
@@ -105,7 +105,7 @@ function LegitSearchFilter() {
           가품의심
         </Chip>
         <Chip
-          variant={params.results?.includes(0) ? 'ghost' : 'outlineGhost'}
+          variant={params.results?.includes(0) ? 'ghost' : 'ghost'}
           brandColor={params.results?.includes(0) ? 'blue' : 'black'}
           size="large"
           isRound={false}

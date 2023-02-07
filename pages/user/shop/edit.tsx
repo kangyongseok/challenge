@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
-import { QueryClient, dehydrate, useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import {
@@ -16,6 +15,13 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import {
+  QueryClient,
+  dehydrate,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';
@@ -92,8 +98,9 @@ function UserShopEdit() {
       });
       await queryClient.invalidateQueries(queryKeys.users.userInfo());
       await queryClient.invalidateQueries(queryKeys.users.myUserInfo());
-      await queryClient.invalidateQueries(queryKeys.users.infoByUserId(accessUser?.userId || 0), {
-        refetchInactive: true
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.users.infoByUserId(accessUser?.userId || 0),
+        refetchType: 'inactive'
       });
       setToastState({ type: 'user', status: 'saved' });
       router.back();

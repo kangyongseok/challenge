@@ -4,10 +4,10 @@ import type { MouseEvent } from 'react';
 import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Image, Label, Skeleton, Typography, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 

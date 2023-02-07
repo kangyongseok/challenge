@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 
-import { QueryClient, dehydrate, useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
+import { QueryClient, dehydrate, useMutation, useQuery } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';

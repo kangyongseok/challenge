@@ -1,7 +1,7 @@
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox, Icon } from 'mrcamel-ui';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

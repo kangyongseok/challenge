@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Image, Label } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
@@ -378,7 +378,6 @@ function CamelSellerProductImage() {
               round={8}
               onClick={handleClickImage(index)}
               disableAspectRatio
-              disableOnBackground={false}
             />
             <DeleteIconWrap
               justifyContent="center"

@@ -1,4 +1,4 @@
-import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
+import { Flexbox, Skeleton } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 interface LegitStatusCardSkeletonPros {
@@ -7,33 +7,35 @@ interface LegitStatusCardSkeletonPros {
 
 function LegitStatusCardSkeleton({ customStyle }: LegitStatusCardSkeletonPros) {
   return (
-    <Flexbox gap={12} customStyle={customStyle}>
-      <Box customStyle={{ width: 100 }}>
-        <Skeleton round={8} />
-      </Box>
-      <Box customStyle={{ flex: 1 }}>
+    <Flexbox gap={16} customStyle={customStyle}>
+      <Skeleton width={120} height={144} round={8} disableAspectRatio />
+      <Flexbox
+        direction="vertical"
+        gap={2}
+        customStyle={{
+          position: 'relative',
+          flexGrow: 1,
+          padding: '2px 0'
+        }}
+      >
         <Skeleton width="100%" maxWidth={46} height={18} round={8} disableAspectRatio />
+        <Skeleton width="100%" maxWidth={200} height={16} disableAspectRatio round={8} />
+        <Skeleton
+          width={50}
+          height={24}
+          round={8}
+          disableAspectRatio
+          customStyle={{ marginTop: 2 }}
+        />
         <Skeleton
           width="100%"
-          maxWidth={200}
-          height={16}
-          disableAspectRatio
-          round={8}
-          customStyle={{ marginTop: 8 }}
-        />
-        <Skeleton
-          width={41}
-          height={16}
+          maxWidth={70}
+          height={24}
           round={8}
           disableAspectRatio
-          customStyle={{ margin: '5px 0' }}
+          customStyle={{ marginTop: 6 }}
         />
-
-        <Flexbox direction="vertical" gap={2} customStyle={{ marginTop: 8 }}>
-          <Skeleton width="100%" maxWidth={70} height={12} round={8} disableAspectRatio />
-          <Skeleton width="100%" maxWidth={100} height={12} round={8} disableAspectRatio />
-        </Flexbox>
-      </Box>
+      </Flexbox>
     </Flexbox>
   );
 }

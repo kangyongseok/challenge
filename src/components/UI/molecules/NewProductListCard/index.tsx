@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -246,7 +246,6 @@ function NewProductListCard({
           src={imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL}
           alt={`${productTitle} 이미지`}
           round={8}
-          disableOnBackground={false}
         />
         {variant === 'listA' && status !== 0 && (
           <Overlay>

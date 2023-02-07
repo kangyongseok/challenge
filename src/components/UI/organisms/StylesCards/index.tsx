@@ -2,10 +2,10 @@ import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find, uniq } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 
 import { StyleDetails } from '@dto/common';
 

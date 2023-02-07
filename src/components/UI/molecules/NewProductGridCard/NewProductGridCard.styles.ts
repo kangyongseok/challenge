@@ -46,7 +46,9 @@ export const Content = styled.div<Pick<NewProductGridCardProps, 'variant'>>`
   }};
 `;
 
-export const Overlay = styled.div<Pick<NewProductGridCardProps, 'isRound'>>`
+export const Overlay = styled.div<{
+  isRound?: boolean;
+}>`
   position: absolute;
   top: 0;
   left: 0;

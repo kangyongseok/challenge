@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import {
@@ -260,7 +260,6 @@ function HomeRecommendWishes() {
                 // eslint-disable-next-line react/no-array-index-key
                 key={`home-user-history-product-skeleton-${index}`}
                 variant="swipeX"
-                isRound
                 hideMetaInfo
               />
             ))}
@@ -271,7 +270,6 @@ function HomeRecommendWishes() {
                 // eslint-disable-next-line react/no-array-index-key
                 key={`home-user-history-product-skeleton-${index}`}
                 variant="swipeX"
-                isRound
                 hideMetaInfo
               />
             ))}
@@ -316,7 +314,6 @@ function HomeRecommendWishes() {
                 key={`home-user-history-product-${product.id}`}
                 variant="swipeX"
                 product={product}
-                isRound
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.RECENT_LIST,
@@ -332,7 +329,6 @@ function HomeRecommendWishes() {
                 key={`home-user-history-product-${product.id}`}
                 variant="swipeX"
                 product={product}
-                isRound
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.RECENT_LIST,

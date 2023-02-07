@@ -96,7 +96,7 @@ function UserShopProductActionBanner({
     {
       id: 3877,
       iconName: <Icon name="Arrow4UpFilled" size="small" customStyle={{ color: primary.light }} />,
-      text: `${synonyms} 입력하면 매일 자동으로 끌올!`,
+      text: `${synonyms} 입력하면 한 달 동안 매일 자동으로 끌올!`,
       backgroundColor: common.bg02,
       theme: 'light',
       action: `/camelSeller/registerConfirm/${productId}?anchor=surveyForm`,

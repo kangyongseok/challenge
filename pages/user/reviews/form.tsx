@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { FixedProductInfo, Header } from '@components/UI/molecules';

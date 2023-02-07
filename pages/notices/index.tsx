@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticPropsContext } from 'next';
 import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -43,8 +43,9 @@ function Notices() {
   const { data: { notViewedAnnounceCount = 0 } = {} } = useQueryUserInfo();
   const { mutate: productNotiReadAllMutate } = useMutation(putNotiReadAll, {
     onSuccess() {
-      queryClient.invalidateQueries(queryKeys.userHistory.userNoti(params, accessUser?.userId), {
-        refetchInactive: true
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.userHistory.userNoti(params, accessUser?.userId),
+        refetchType: 'inactive'
       });
     }
   });

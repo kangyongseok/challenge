@@ -2,11 +2,15 @@ import { useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Chip, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { useMutation } from '@tanstack/react-query';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 

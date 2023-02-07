@@ -1,8 +1,8 @@
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { BottomSheet, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

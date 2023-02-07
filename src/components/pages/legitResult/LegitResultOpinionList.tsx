@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import LegitOpinion from '@components/UI/molecules/LegitOpinion';

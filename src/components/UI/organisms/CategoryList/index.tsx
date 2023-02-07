@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchParentCategories } from '@api/category';
 

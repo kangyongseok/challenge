@@ -1,5 +1,5 @@
-import { QueryClient, dehydrate } from 'react-query';
 import type { GetServerSidePropsContext } from 'next';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

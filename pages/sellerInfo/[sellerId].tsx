@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Typography, useTheme } from 'mrcamel-ui';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Toast } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

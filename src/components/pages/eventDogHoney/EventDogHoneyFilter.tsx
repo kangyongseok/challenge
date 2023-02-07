@@ -1,9 +1,9 @@
 import { UIEvent, useCallback, useEffect, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQueryClient } from 'react-query';
 import { Box, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Model } from '@dto/common';

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { QueryClient, dehydrate, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Switch, Typography, useTheme } from 'mrcamel-ui';
+import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import Header from '@components/UI/molecules/Header';

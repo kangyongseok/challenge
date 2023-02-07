@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import LegitOpinionButton from '@components/UI/molecules/LegitOpinionButton';

@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
-import { useQuery } from 'react-query';
 import { Box, Grid, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,
@@ -60,7 +60,7 @@ function HomeStyleRecommendProductList() {
           {isFetching &&
             Array.from({ length: 4 }, (_, index) => (
               <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
-                <NewProductGridCardSkeleton variant="gridB" isRound />
+                <NewProductGridCardSkeleton variant="gridB" />
               </Grid>
             ))}
           {!isFetching &&
@@ -69,7 +69,6 @@ function HomeStyleRecommendProductList() {
                 <NewProductGridCard
                   variant="gridB"
                   product={product}
-                  isRound
                   attributes={{
                     name: attrProperty.name.MAIN,
                     title: attrProperty.title.STYLERECOMM,
@@ -84,7 +83,7 @@ function HomeStyleRecommendProductList() {
           {isFetching &&
             Array.from({ length: 4 }, (_, index) => (
               <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
-                <NewProductGridCardSkeleton variant="gridB" isRound />
+                <NewProductGridCardSkeleton variant="gridB" />
               </Grid>
             ))}
           {!isFetching &&
@@ -94,7 +93,6 @@ function HomeStyleRecommendProductList() {
                   variant="gridB"
                   product={product}
                   wishButtonType="B"
-                  isRound
                   attributes={{
                     name: attrProperty.name.MAIN,
                     title: attrProperty.title.STYLERECOMM,

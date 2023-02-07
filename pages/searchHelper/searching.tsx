@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Label, Typography } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { animated, useSpring } from '@react-spring/web';
 import styled from '@emotion/styled';
 

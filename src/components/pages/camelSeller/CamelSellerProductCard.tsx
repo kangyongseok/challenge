@@ -115,7 +115,6 @@ function CamelSellerProductCard({ data }: { data: Product }) {
             src={data.imageMain || data.imageThumbnail}
             alt={data.title}
             round={8}
-            disableOnBackground={false}
           />
           {images.length > 0 && (
             <Label

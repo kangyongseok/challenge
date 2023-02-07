@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useQuery, useQueryClient } from 'react-query';
 import {
   BottomSheet,
   Box,
@@ -13,6 +12,7 @@ import {
   dark
 } from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';
@@ -176,8 +176,9 @@ function OnboardingResult() {
           logEvent(attrKeys.welcome.CLICK_START, {
             name: attrProperty.name.PERSONAL_INPUT
           });
-          queryClient.invalidateQueries(queryKeys.personals.guideAllProducts(), {
-            refetchInactive: true
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.personals.guideAllProducts(),
+            refetchType: 'inactive'
           });
           setIsOpen(true);
         }}

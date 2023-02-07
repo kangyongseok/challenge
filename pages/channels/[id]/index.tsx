@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate } from 'react-query';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Chip, Flexbox, Icon } from 'mrcamel-ui';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';

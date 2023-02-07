@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { QueryClient, dehydrate, useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import {
@@ -14,6 +13,13 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import {
+  QueryClient,
+  dehydrate,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
@@ -80,8 +86,9 @@ function LegitProfileEdit() {
       });
       await queryClient.invalidateQueries(queryKeys.users.userInfo());
       await queryClient.invalidateQueries(queryKeys.users.myUserInfo());
-      await queryClient.invalidateQueries(queryKeys.users.infoByUserId(Number(id)), {
-        refetchInactive: true
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.users.infoByUserId(Number(id)),
+        refetchType: 'inactive'
       });
       setToastState({ type: 'user', status: 'saved' });
       setLegitProfileUpdatedProfileDataState(false);

@@ -2,10 +2,10 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -35,7 +35,6 @@ import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard
 export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductGridCardVariant;
   product: Product | ProductResult;
-  isRound?: boolean;
   // TODO A/B 테스트 이후 제거 예정
   wishButtonType?: 'A' | 'B';
   subText?: string;
@@ -56,7 +55,6 @@ export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> 
 function NewProductGridCard({
   variant = 'gridA',
   product,
-  isRound,
   wishButtonType = 'A',
   subText,
   bottomLabel,
@@ -243,8 +241,7 @@ function NewProductGridCard({
           ratio="5:6"
           src={imageMain || imageThumbnail}
           alt={`${productTitle} 이미지`}
-          round={isRound ? 8 : 0}
-          disableOnBackground={false}
+          round={variant === 'gridA' ? 0 : 8}
         />
         {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && wishButtonType === 'A' && (
           <WishButtonA variant={variant} onClick={handleClickWish}>
@@ -257,7 +254,7 @@ function NewProductGridCard({
           </WishButtonA>
         )}
         {status > 0 && (
-          <Overlay isRound={isRound}>
+          <Overlay isRound={variant !== 'gridA'}>
             <Typography
               variant="h4"
               weight="bold"

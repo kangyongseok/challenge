@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Toast, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import ChannelTalk from '@library/channelTalk';

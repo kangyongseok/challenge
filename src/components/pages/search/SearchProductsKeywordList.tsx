@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -14,6 +13,7 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { ProductKeywordsContent } from '@dto/user';

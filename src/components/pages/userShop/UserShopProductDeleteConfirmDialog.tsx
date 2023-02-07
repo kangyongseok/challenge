@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 
 import { logEvent } from '@library/amplitude';
 

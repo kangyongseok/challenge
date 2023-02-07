@@ -12,18 +12,6 @@ export const legitFilterGridParamsState = atom<ProductLegitsParams>({
   }
 });
 
-export const legitFiltersState = atom({
-  key: 'legit/filtersState',
-  default: {
-    initialized: false,
-    legitFilters: [
-      { result: 1, status: 30, label: '정품의견', count: 0, isActive: false },
-      { result: 2, status: 30, label: '가품의심', count: 0, isActive: false },
-      { result: 0, status: 20, label: '감정중', count: 0, isActive: false }
-    ]
-  }
-});
-
 export const legitOpenRecommendBottomSheetState = atom({
   key: 'legit/openRecommendBottomSheetState',
   default: false

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { QueryClient, dehydrate, useQuery } from 'react-query';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetStaticPropsContext } from 'next';
 import { Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';

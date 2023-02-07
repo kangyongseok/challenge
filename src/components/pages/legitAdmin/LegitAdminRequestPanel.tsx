@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
@@ -248,8 +248,9 @@ function LegitAdminRequestPanel() {
         {!isLoading && !isHead && (
           <>
             <Chip
-              variant={(params.status || []).includes(20) ? 'solid' : 'outlineGhost'}
-              brandColor={(params.status || []).includes(20) ? 'black' : undefined}
+              variant={(params.status || []).includes(20) ? 'solid' : 'ghost'}
+              brandColor="black"
+              disabled={isLoading}
               endIcon={
                 <Typography
                   variant="small2"
@@ -270,8 +271,9 @@ function LegitAdminRequestPanel() {
               감정신청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(21) ? 'solid' : 'outlineGhost'}
-              brandColor={(params.status || []).includes(21) ? 'black' : undefined}
+              variant={(params.status || []).includes(21) ? 'solid' : 'ghost'}
+              brandColor="black"
+              disabled={isLoading}
               endIcon={
                 <Typography
                   variant="small2"
@@ -292,8 +294,9 @@ function LegitAdminRequestPanel() {
               작성완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(30) ? 'solid' : 'outlineGhost'}
-              brandColor={(params.status || []).includes(30) ? 'black' : undefined}
+              variant={(params.status || []).includes(30) ? 'solid' : 'ghost'}
+              brandColor="black"
+              disabled={isLoading}
               endIcon={
                 <Typography
                   variant="small2"

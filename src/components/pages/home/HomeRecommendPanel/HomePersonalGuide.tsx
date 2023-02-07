@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { uniqBy } from 'lodash-es';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import type { Category } from '@dto/category';

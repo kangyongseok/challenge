@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Image, Skeleton } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchContent } from '@api/common';
 

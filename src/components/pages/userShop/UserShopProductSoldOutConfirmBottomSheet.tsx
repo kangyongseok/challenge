@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
 import { BottomSheet, Box, Button, Flexbox, Image, Typography } from 'mrcamel-ui';
+import { useMutation } from '@tanstack/react-query';
 
 import type { Product } from '@dto/product';
 
@@ -96,7 +96,6 @@ function UserShopProductSoldOutConfirmBottomSheet() {
       <Box customStyle={{ padding: '32px 20px', textAlign: 'center' }}>
         <Box customStyle={{ width: 72, height: 72, margin: 'auto' }}>
           <Image
-            disableOnBackground={false}
             src={product.imageMain || product.imageThumbnail || ''}
             alt="SoldOut Product Img"
             round={12}

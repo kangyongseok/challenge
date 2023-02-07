@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { postLeave } from '@api/channel';
 

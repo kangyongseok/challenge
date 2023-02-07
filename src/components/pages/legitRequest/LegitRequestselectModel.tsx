@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';

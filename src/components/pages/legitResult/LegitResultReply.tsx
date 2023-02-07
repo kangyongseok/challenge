@@ -2,10 +2,10 @@ import type { HTMLAttributes, MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ProductLegitReply } from '@dto/productLegit';

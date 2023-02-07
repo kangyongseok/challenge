@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   NewProductGridCard,
@@ -89,7 +89,7 @@ function HomeRecommendProductList() {
             {isLoading &&
               Array.from({ length: 8 }, (_, index) => (
                 <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
-                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                  <NewProductGridCardSkeleton variant="gridB" />
                 </Grid>
               ))}
             {!isLoading &&
@@ -98,7 +98,6 @@ function HomeRecommendProductList() {
                   <NewProductGridCard
                     variant="gridB"
                     product={product}
-                    isRound
                     attributes={{
                       name: attrProperty.name.MAIN,
                       title: attrProperty.title.RECOMM,
@@ -113,7 +112,7 @@ function HomeRecommendProductList() {
             {isLoading &&
               Array.from({ length: 8 }, (_, index) => (
                 <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
-                  <NewProductGridCardSkeleton variant="gridB" isRound />
+                  <NewProductGridCardSkeleton variant="gridB" />
                 </Grid>
               ))}
             {!isLoading &&
@@ -123,7 +122,6 @@ function HomeRecommendProductList() {
                     variant="gridB"
                     product={product}
                     wishButtonType="B"
-                    isRound
                     attributes={{
                       name: attrProperty.name.MAIN,
                       title: attrProperty.title.RECOMM,

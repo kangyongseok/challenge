@@ -1,12 +1,11 @@
 import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
-import styled, { CSSObject } from '@emotion/styled';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { LegitCard, LegitCardSkeleton } from '@components/UI/molecules';
+import { LegitGridCard, LegitGridCardSkeleton } from '@components/UI/molecules';
 
 import { fetchProductLegits } from '@api/productLegit';
 
@@ -96,103 +95,44 @@ function LegitSearchGrid() {
           전체 {commaNumber(((lastProductLegit || {}).productLegits || {}).totalElements)}개
         </Typography>
       )}
-      <LegitGridContainer container>
+      <Grid container columnGap={11.5} rowGap={32}>
         {isLoading &&
-          Array.from({ length: 10 }).map((_, index) => {
-            let bottomLeftRadius = index === productLegits.length - 2 ? 8 : 0;
-            let bottomRightRadius = index === productLegits.length - 1 ? 8 : 0;
-
-            if (productLegits.length % 2 !== 0) {
-              bottomLeftRadius = index === productLegits.length - 1 ? 8 : 0;
-              bottomRightRadius = 0;
-            }
-
-            return (
-              <LegitGrid
-                // eslint-disable-next-line react/no-array-index-key
-                key={`legit-serach-product-legit-skeleton-${index}`}
-                item
-                xs={2}
-                hideBorderTop={index > 1}
-                bottomLeftRadius={bottomLeftRadius}
-                bottomRightRadius={bottomRightRadius}
-              >
-                <LegitCardSkeleton />
-              </LegitGrid>
-            );
-          })}
+          Array.from({ length: 10 }).map((_, index) => (
+            <Grid
+              // eslint-disable-next-line react/no-array-index-key
+              key={`legit-serach-product-legit-skeleton-${index}`}
+              item
+              xs={2}
+            >
+              <LegitGridCardSkeleton variant="gridB" />
+            </Grid>
+          ))}
         {!isLoading &&
-          productLegits.map((productLegit, index) => {
-            let bottomLeftRadius = index === productLegits.length - 2 ? 8 : 0;
-            let bottomRightRadius = index === productLegits.length - 1 ? 8 : 0;
-
-            if (productLegits.length % 2 !== 0) {
-              bottomLeftRadius = index === productLegits.length - 1 ? 8 : 0;
-              bottomRightRadius = 0;
-            }
-
-            return (
-              <LegitGrid
-                key={`legit-serach-product-legit-${productLegit.productId}`}
-                item
-                xs={2}
-                hideBorderTop={index > 1}
-                bottomLeftRadius={bottomLeftRadius}
-                bottomRightRadius={bottomRightRadius}
-                onClick={() =>
-                  router.push(
-                    `/legit${getProductDetailUrl({
-                      type: 'productResult',
-                      product: productLegit.productResult
-                    }).replace(/\/products/g, '')}/result`
-                  )
-                }
-              >
-                <LegitCard productLegit={productLegit} />
-              </LegitGrid>
-            );
-          })}
-      </LegitGridContainer>
+          productLegits.map((productLegit) => (
+            <Grid
+              key={`legit-serach-product-legit-${productLegit.productId}`}
+              item
+              xs={2}
+              onClick={() =>
+                router.push(
+                  `/legit${getProductDetailUrl({
+                    type: 'productResult',
+                    product: productLegit.productResult
+                  }).replace(/\/products/g, '')}/result`
+                )
+              }
+            >
+              <LegitGridCard
+                variant="gridB"
+                product={productLegit.productResult}
+                result={productLegit.result}
+                status={productLegit.status}
+              />
+            </Grid>
+          ))}
+      </Grid>
     </Box>
   );
 }
-
-const LegitGridContainer = styled(Grid)`
-  border-left: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.line02};
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const LegitGrid = styled(Grid)<{
-  hideBorderTop: boolean;
-  bottomLeftRadius: number;
-  bottomRightRadius: number;
-}>`
-  ${({ hideBorderTop }): CSSObject =>
-    !hideBorderTop
-      ? {
-          borderTop: '1px solid'
-        }
-      : {}};
-  border-right: 1px solid;
-  border-bottom: 1px solid;
-  border-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.line02};
-  border-bottom-left-radius: ${({ bottomLeftRadius }) => bottomLeftRadius}px;
-  border-bottom-right-radius: ${({ bottomRightRadius }) => bottomRightRadius}px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-`;
 
 export default LegitSearchGrid;

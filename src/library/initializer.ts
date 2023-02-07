@@ -1,6 +1,6 @@
-import type { QueryClient } from 'react-query';
 import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import type { AmplitudeClient } from 'amplitude-js';
+import type { QueryClient } from '@tanstack/react-query';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 

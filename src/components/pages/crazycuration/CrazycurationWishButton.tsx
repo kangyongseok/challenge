@@ -1,11 +1,15 @@
 import { memo, useCallback } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useMutation } from 'react-query';
-import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from 'react-query';
 import { useRouter } from 'next/router';
 import { Button, Icon } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import type { ProductContent } from '@dto/product';
 
