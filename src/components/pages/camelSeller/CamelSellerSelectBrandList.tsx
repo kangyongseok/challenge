@@ -206,7 +206,7 @@ function CamelSellerSelectBrandList({ triggered }: CamelSellerSelectBrandListPro
           flexGrow: 1
         }}
       >
-        {(isLoading || isLoadingSearch) &&
+        {(isLoading || (debouncedValue && isLoadingSearch)) &&
           Array.from({ length: 20 }).map((_, index) => (
             <Flexbox
               // eslint-disable-next-line react/no-array-index-key
@@ -230,8 +230,7 @@ function CamelSellerSelectBrandList({ triggered }: CamelSellerSelectBrandListPro
               </Flexbox>
             </Flexbox>
           ))}
-        {!isLoading &&
-          !isLoadingSearch &&
+        {(!isLoading || (!isLoadingSearch && debouncedValue)) &&
           cons.map((con, index) =>
             brands
               .filter((brand) => con === brand.con)
