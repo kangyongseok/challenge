@@ -1,14 +1,25 @@
+import { useRouter } from 'next/router';
 import { Flexbox, Skeleton, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { LegitGridCard } from '@components/UI/molecules';
 
+import { ProductResult } from '@dto/product';
+
+import { logEvent } from '@library/amplitude';
+
 import { fetchLegit } from '@api/dashboard';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
+
+import { getProductDetailUrl } from '@utils/common';
 
 function LegitCaseHistory() {
+  const router = useRouter();
+
   const {
     theme: {
       palette: { common }
@@ -19,6 +30,21 @@ function LegitCaseHistory() {
     queryKeys.dashboards.legit(),
     () => fetchLegit()
   );
+
+  const handleClick = (product: ProductResult, rank: number) => () => {
+    logEvent(attrKeys.legit.CLICK_LEGIT_INFO, {
+      name: attrProperty.legitName.LEGIT_MAIN,
+      title: attrProperty.legitTitle.BEST,
+      att: `주간${rank}위`
+    });
+
+    router.push(
+      `/legit${getProductDetailUrl({
+        type: 'productResult',
+        product
+      }).replace('/products', '')}/result`
+    );
+  };
 
   return (
     <Flexbox component="section" direction="vertical" gap={32} customStyle={{ width: '100%' }}>
@@ -64,6 +90,7 @@ function LegitCaseHistory() {
                       rank={index + 1}
                       variant="swipeX"
                       hideMetaInfo={false}
+                      onClick={handleClick(productResult, index + 1)}
                       customStyle={{ minWidth: 144 }}
                       customTitleStyle={{ color: common.uiWhite }}
                     />

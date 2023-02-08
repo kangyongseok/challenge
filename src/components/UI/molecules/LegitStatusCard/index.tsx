@@ -245,7 +245,16 @@ function LegitStatusCard({
         }}
       >
         <Typography variant="body2" weight="bold">
-          {brand?.nameEng || ''}
+          {(brand?.nameEng || '')
+            .split(' ')
+            .map(
+              (splitNameEng) =>
+                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                  1,
+                  splitNameEng.length
+                )}`
+            )
+            .join(' ')}
         </Typography>
         <Typography variant="body2" noWrap lineClamp={2} customStyle={{ color: common.ui60 }}>
           {title}

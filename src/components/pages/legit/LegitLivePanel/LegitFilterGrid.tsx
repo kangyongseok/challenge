@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -66,6 +66,8 @@ function LegitFilterGrid() {
     { result: 0, status: 20, label: '감정중', count: 0, isActive: false }
   ]);
 
+  const isInitLegitFiltersRef = useRef(false);
+
   const handleClick = () => {
     logEvent(attrKeys.legit.CLICK_LEGIT_HISTORY, {
       name: attrProperty.name.LEGIT_MAIN
@@ -106,6 +108,7 @@ function LegitFilterGrid() {
           ? { ...legitFilter, isActive: !legitFilter.isActive }
           : legitFilter
       );
+      setLegitFilters(newLegitFilters);
       const activeLegitFilters = newLegitFilters.filter(({ isActive }) => isActive);
       let att = '감정중';
 
@@ -129,6 +132,18 @@ function LegitFilterGrid() {
         }));
       }
     };
+
+  useEffect(() => {
+    if ((legitFilterGridParams.results || []).length !== 3 && !isInitLegitFiltersRef.current) {
+      isInitLegitFiltersRef.current = true;
+      setLegitFilters((prevState) =>
+        prevState.map((prevLegitFilter) => ({
+          ...prevLegitFilter,
+          isActive: (legitFilterGridParams.results || []).includes(prevLegitFilter.result)
+        }))
+      );
+    }
+  }, [setLegitFilters, legitFilterGridParams?.results]);
 
   return (
     <Flexbox component="section" direction="vertical" gap={20}>

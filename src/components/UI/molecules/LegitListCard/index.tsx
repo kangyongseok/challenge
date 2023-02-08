@@ -134,7 +134,16 @@ function LegitListCard({
         }}
       >
         <Typography variant="body2" weight="bold">
-          {nameEng}
+          {nameEng
+            .split(' ')
+            .map(
+              (splitNameEng) =>
+                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                  1,
+                  splitNameEng.length
+                )}`
+            )
+            .join(' ')}
         </Typography>
         <Typography
           variant="body2"

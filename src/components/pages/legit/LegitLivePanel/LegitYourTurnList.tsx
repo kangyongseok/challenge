@@ -121,7 +121,7 @@ function LegitYourTurnList() {
             spaceBetween={20}
             pagination={{ clickable: true }}
             modules={[Pagination]}
-            style={{ width: 'calc(100vw - 40px)', padding: '0 0 24px', mixBlendMode: 'multiply' }}
+            style={{ width: '100%', padding: '0 20px', mixBlendMode: 'multiply' }}
             onSlideChange={handleSwiperYourTurn}
           >
             {groupedProductLegits.map((groupedProductLegit, index) => (
@@ -156,8 +156,6 @@ function LegitYourTurnList() {
 }
 
 const Wrapper = styled.section`
-  padding: 0 20px;
-
   .swiper-slide {
     margin-right: 20px;
   }
