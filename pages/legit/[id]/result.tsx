@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { Alert, Box, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
-import type { DehydratedState } from '@tanstack/react-query';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -130,17 +129,15 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
     if (data.status !== 20 && data.status !== 30) {
       return {
         redirect: {
-          destination: `/legit/${id}`,
+          destination: encodeURI(`/legit/${id}`),
           permanent: false
         }
       };
     }
 
-    const dehydratedState: DehydratedState = dehydrate(queryClient);
-
     return {
       props: {
-        dehydratedState,
+        dehydratedState: dehydrate(queryClient),
         status: data.status
       }
     };
