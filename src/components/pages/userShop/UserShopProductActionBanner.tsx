@@ -134,7 +134,7 @@ function UserShopProductActionBanner({
 
   if (!isTransferred) {
     return (
-      <ActionBannerWrap alignment="center" bg={common.bg02} gap={4} onClick={handleClickBanner}>
+      <ActionBannerWrap alignment="center" bg={common.bg02} gap={4}>
         <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
         <Typography variant="small1" weight="medium" customStyle={{ color: common.ui20 }}>
           {platformName} 플랫폼과 동기화된 매물이에요.
