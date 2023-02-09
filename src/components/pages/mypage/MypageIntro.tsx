@@ -49,9 +49,11 @@ function MypageIntro() {
         customStyle={{ flex: 1 }}
       >
         <IntroImage
-          width="100%"
+          width={181}
+          height={231}
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/login-img.png`}
           alt="Login Img"
+          round={16}
           disableAspectRatio
         />
         <Flexbox direction="vertical" alignment="center" gap={8}>

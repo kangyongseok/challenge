@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
+
+import { historyState } from '@recoil/common';
 
 function CamelSellerGuideHeader() {
   const router = useRouter();
@@ -14,7 +17,19 @@ function CamelSellerGuideHeader() {
     }
   } = useTheme();
 
+  const { asPaths, index } = useRecoilValue(historyState);
+
   const [triggered, setTriggered] = useState(false);
+
+  const handleClick = () => {
+    const prevAsPath = asPaths[index - 1];
+
+    if (prevAsPath && prevAsPath.indexOf('/camelSeller/registerConfirm') !== -1) {
+      router.back();
+    } else {
+      router.replace('/camelSeller/registerConfirm');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +50,7 @@ function CamelSellerGuideHeader() {
   return (
     <Header
       leftIcon={
-        <Box onClick={() => router.back()} customStyle={{ padding: 16 }}>
+        <Box onClick={handleClick} customStyle={{ padding: 16 }}>
           <Icon name="CloseOutlined" />
         </Box>
       }

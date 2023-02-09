@@ -12,7 +12,7 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
-import { entries, groupBy } from 'lodash-es';
+import { entries, groupBy, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -47,7 +47,7 @@ function HistoryPanel() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openSuccessToast, setOpenSuccessToast] = useState(false);
   const { data: accessUser } = useQueryAccessUser();
-  const { data, isLoading } = useQuery(
+  const { data, isInitialLoading } = useQuery(
     queryKeys.users.userHistory(0),
     () => fetchUserHistory({ page: 0 }),
     {
@@ -97,7 +97,34 @@ function HistoryPanel() {
     deleteMutate();
   };
 
-  if (isLoading) {
+  if (!isInitialLoading && !accessUser) {
+    return (
+      <WishesNotice
+        imgName="login-img"
+        moveTo="/login"
+        message={
+          <>
+            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
+              최근목록이 보이지 않나요?
+            </Typography>
+            <Typography>
+              카멜에 로그인하면
+              <br />
+              다시 만날 수 있어요😘
+            </Typography>
+          </>
+        }
+        buttonLabel="3초 로그인하기"
+        onClickLog={() => {
+          logEvent(attrKeys.wishes.CLICK_LOGIN, {
+            name: 'RECENT_LIST'
+          });
+        }}
+      />
+    );
+  }
+
+  if (isInitialLoading && accessUser) {
     return (
       <>
         <Flexbox
@@ -216,34 +243,7 @@ function HistoryPanel() {
     );
   }
 
-  if (!data || !accessUser) {
-    return (
-      <WishesNotice
-        imgName="login-img"
-        moveTo="/login"
-        message={
-          <>
-            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
-              최근목록이 보이지 않나요?
-            </Typography>
-            <Typography>
-              카멜에 로그인하면
-              <br />
-              다시 만날 수 있어요😘
-            </Typography>
-          </>
-        }
-        buttonLabel="3초 로그인하기"
-        onClickLog={() => {
-          logEvent(attrKeys.wishes.CLICK_LOGIN, {
-            name: 'RECENT_LIST'
-          });
-        }}
-      />
-    );
-  }
-
-  if (data.content.length === 0) {
+  if (!isInitialLoading && isEmpty(data?.content) && accessUser) {
     return (
       <WishesNotice
         imgName="recent-empty-img"

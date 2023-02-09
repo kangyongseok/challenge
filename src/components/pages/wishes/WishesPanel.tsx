@@ -4,6 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Flexbox, Skeleton, Toast, Typography, useTheme } from 'mrcamel-ui';
+import { isEmpty } from 'lodash-es';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -74,7 +75,7 @@ function WishesPanel({
   const queryClient = useQueryClient();
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data, isLoading, isFetchedAfterMount, refetch } = useQuery(
+  const { data, isFetchedAfterMount, refetch, isInitialLoading } = useQuery(
     queryKeys.users.categoryWishes(categoryWishesParam),
     () => fetchCategoryWishes(categoryWishesParam),
     {
@@ -234,7 +235,34 @@ function WishesPanel({
     );
   };
 
-  if (isLoading) {
+  if (!isInitialLoading && !accessUser) {
+    return (
+      <WishesNotice
+        imgName="login-img"
+        moveTo="/login"
+        message={
+          <>
+            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
+              찜❤️이 보이지않나요?
+            </Typography>
+            <Typography>
+              카멜에 로그인하고
+              <br />
+              똑똑하게 득템하세요 😘
+            </Typography>
+          </>
+        }
+        buttonLabel="3초 로그인하기"
+        onClickLog={() => {
+          logEvent(attrKeys.wishes.CLICK_LOGIN, {
+            name: attrProperty.name.wishList
+          });
+        }}
+      />
+    );
+  }
+
+  if (isInitialLoading && accessUser) {
     return (
       <>
         <Flexbox gap={6} alignment="center" customStyle={{ height: 60 }}>
@@ -263,34 +291,7 @@ function WishesPanel({
     );
   }
 
-  if (!data || !accessUser) {
-    return (
-      <WishesNotice
-        imgName="login-img"
-        moveTo="/login"
-        message={
-          <>
-            <Typography weight="bold" variant="h2" customStyle={{ marginBottom: 8 }}>
-              찜❤️이 보이지않나요?
-            </Typography>
-            <Typography>
-              카멜에 로그인하고
-              <br />
-              똑똑하게 득템하세요 😘
-            </Typography>
-          </>
-        }
-        buttonLabel="3초 로그인하기"
-        onClickLog={() => {
-          logEvent(attrKeys.wishes.CLICK_LOGIN, {
-            name: attrProperty.name.wishList
-          });
-        }}
-      />
-    );
-  }
-
-  if (data.userWishes.length === 0) {
+  if (!isInitialLoading && isEmpty(data?.userWishes) && accessUser) {
     return (
       <WishesNotice
         imgName="wishe-empty-img"
@@ -322,7 +323,7 @@ function WishesPanel({
     <>
       {hiddenTab !== 'legit' && (
         <WishesCategories
-          isLoading={isLoading}
+          isLoading={isInitialLoading}
           categories={initialCategories}
           selectedCategoryIds={selectedCategoryIds}
         />

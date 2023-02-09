@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import { useRouter } from 'next/router';
-
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   CamelSellerCTAButton,
@@ -26,11 +24,7 @@ import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import {
-  CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE,
-  SAVED_CAMEL_SELLER_PRODUCT_DATA,
-  SOURCE
-} from '@constants/localStorage';
+import { SAVED_CAMEL_SELLER_PRODUCT_DATA, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -38,7 +32,6 @@ import type { SaveCamelSellerProductData } from '@typings/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function RegisterConfirm() {
-  const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
 
   useEffect(() => {
@@ -69,12 +62,6 @@ function RegisterConfirm() {
   useEffect(() => {
     SessionStorage.set(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm, true);
   }, []);
-
-  useEffect(() => {
-    if (!LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE)) {
-      router.push('/camelSeller/guide');
-    }
-  }, [router]);
 
   return (
     <GeneralTemplate header={<CamelSellerHeader />} subset hideAppDownloadBanner>

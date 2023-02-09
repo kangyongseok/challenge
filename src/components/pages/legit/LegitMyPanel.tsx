@@ -193,19 +193,17 @@ function LegitMyPanel() {
 
   if ((!isFetching && !productLegits.length) || !accessUser) {
     return (
-      <Box component="section" customStyle={{ marginTop: 20 }}>
-        <Box customStyle={{ position: 'relative', maxWidth: 288, margin: '0 auto' }}>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v3.png`}
-            alt="Legit Guide Img"
-            round={8}
-            customStyle={{
-              position: 'relative',
-              paddingTop: '125%'
-            }}
-          />
-        </Box>
-        <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
+      <Box component="section" customStyle={{ marginTop: 56 }}>
+        <Image
+          width={181}
+          height={232}
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v3.png`}
+          alt="Legit Guide Img"
+          round={16}
+          disableAspectRatio
+          customStyle={{ margin: 'auto', boxShadow: '0px 16px 32px rgba(0, 0, 0, 0.1)' }}
+        />
+        <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 37, textAlign: 'center' }}>
           <Typography variant="h2" weight="bold">
             사진으로 감정하세요!
           </Typography>

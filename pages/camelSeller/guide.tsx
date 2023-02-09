@@ -13,9 +13,7 @@ import { CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE } from '@constants/localStorage';
 
 function CamelSellerGuide() {
   useEffect(() => {
-    if (!LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE)) {
-      LocalStorage.set(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE, true);
-    }
+    LocalStorage.set(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE, true);
   }, []);
 
   return (

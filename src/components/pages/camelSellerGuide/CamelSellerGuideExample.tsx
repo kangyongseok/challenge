@@ -1,5 +1,8 @@
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Alert, Box, Button, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+
+import { historyState } from '@recoil/common';
 
 function CamelSellerGuideExample() {
   const router = useRouter();
@@ -9,6 +12,18 @@ function CamelSellerGuideExample() {
       palette: { secondary, common }
     }
   } = useTheme();
+
+  const { asPaths, index } = useRecoilValue(historyState);
+
+  const handleClick = () => {
+    const prevAsPath = asPaths[index - 1];
+
+    if (prevAsPath && prevAsPath.indexOf('/camelSeller/registerConfirm') !== -1) {
+      router.back();
+    } else {
+      router.replace('/camelSeller/registerConfirm');
+    }
+  };
 
   return (
     <Box
@@ -236,7 +251,7 @@ function CamelSellerGuideExample() {
         brandColor="primary"
         size="xlarge"
         fullWidth
-        onClick={() => router.back()}
+        onClick={handleClick}
         customStyle={{
           marginTop: 20
         }}

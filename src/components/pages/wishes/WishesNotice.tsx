@@ -55,8 +55,10 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
       >
         <NoticeImage
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/wishes/${imgName}.png`}
-          width={240}
+          width={181}
+          height={231}
           alt={imgName}
+          round={16}
           disableAspectRatio
         />
         <Box customStyle={{ marginTop: 32, textAlign: 'center' }}>{message}</Box>

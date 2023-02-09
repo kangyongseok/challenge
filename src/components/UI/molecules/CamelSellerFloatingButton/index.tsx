@@ -13,7 +13,11 @@ import { fetchUserInfo } from '@api/user';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { SAVED_CAMEL_SELLER_PRODUCT_DATA, SOURCE } from '@constants/localStorage';
+import {
+  CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE,
+  SAVED_CAMEL_SELLER_PRODUCT_DATA,
+  SOURCE
+} from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -170,7 +174,11 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
     resetHasOpenedSurveyBottomSheetState();
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
-    router.push('/camelSeller/registerConfirm');
+    if (!LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE)) {
+      router.push('/camelSeller/guide');
+    } else {
+      router.push('/camelSeller/registerConfirm');
+    }
   };
 
   // eslint-disable-next-line no-constant-condition
