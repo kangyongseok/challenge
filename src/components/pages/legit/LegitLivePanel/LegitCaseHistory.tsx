@@ -83,13 +83,15 @@ function LegitCaseHistory() {
                 ))
               : caseHistories
                   .slice(0, 5)
-                  .map(({ productResult, productId }, index) => (
+                  .map(({ productResult, productId, legitOpinions }, index) => (
                     <LegitGridCard
                       key={`case-history-${productId}`}
                       product={productResult}
                       rank={index + 1}
                       variant="swipeX"
                       hideMetaInfo={false}
+                      authenticCount={legitOpinions.filter(({ result }) => result === 1).length}
+                      fakeCount={legitOpinions.filter(({ result }) => result === 2).length}
                       onClick={handleClick(productResult, index + 1)}
                       customStyle={{ minWidth: 144 }}
                       customTitleStyle={{ color: common.uiWhite }}

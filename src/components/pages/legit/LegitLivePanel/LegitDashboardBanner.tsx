@@ -169,7 +169,6 @@ function LegitDashboardBanner() {
   return (
     <Wrapper>
       <Swiper
-        spaceBetween={8}
         modules={[Pagination, EffectCoverflow, Autoplay]}
         effect="coverflow"
         coverflowEffect={{

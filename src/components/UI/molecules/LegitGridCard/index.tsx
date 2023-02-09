@@ -19,6 +19,8 @@ export interface LegitGridCardProps extends HTMLAttributes<HTMLDivElement> {
   product: Product | ProductResult;
   result?: 0 | 1 | 2 | 3;
   resultCount?: number;
+  authenticCount?: number;
+  fakeCount?: number;
   status?: number;
   rank?: number;
   hideLabel?: boolean;
@@ -29,12 +31,13 @@ export interface LegitGridCardProps extends HTMLAttributes<HTMLDivElement> {
   customTitleStyle?: CustomStyle;
 }
 
-// TODO 기능 구현
 function LegitGridCard({
   variant,
   product,
   result,
   resultCount,
+  authenticCount = 0,
+  fakeCount = 0,
   status,
   rank,
   hideLabel,
@@ -191,7 +194,7 @@ function LegitGridCard({
                   color: common.ui80
                 }}
               >
-                2
+                {authenticCount}
               </Typography>
             </Flexbox>
             <Flexbox gap={2}>
@@ -203,7 +206,7 @@ function LegitGridCard({
                   color: common.ui80
                 }}
               >
-                2
+                {fakeCount}
               </Typography>
             </Flexbox>
           </Flexbox>

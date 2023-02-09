@@ -18,6 +18,7 @@ interface LegitUploadInfoPaperProps {
   model: {
     name: string;
     imagSrc: string;
+    isEtc?: boolean;
   };
   title: string;
   subTitle?: string;
@@ -28,7 +29,7 @@ interface LegitUploadInfoPaperProps {
 
 function LegitUploadInfoPaper({
   children,
-  model: { name, imagSrc },
+  model: { name, imagSrc, isEtc },
   title,
   subTitle,
   additionalIds = [],
@@ -41,6 +42,17 @@ function LegitUploadInfoPaper({
       palette: { common }
     }
   } = useTheme();
+
+  const getMixBlendMode = () => {
+    if (isEtc) {
+      return 'difference';
+    }
+    if (mode === 'light') {
+      return 'darken';
+    }
+    return undefined;
+  };
+
   return (
     <StyledLegitUploadInfoPaper css={customStyle}>
       <Image
@@ -55,7 +67,8 @@ function LegitUploadInfoPaper({
           top: -55,
           left: '50%',
           transform: 'translateX(-50%)',
-          mixBlendMode: mode === 'light' ? 'darken' : undefined
+          mixBlendMode: getMixBlendMode(),
+          opacity: isEtc ? 0.5 : 1
         }}
       />
       <Flexbox direction="vertical" alignment="center" gap={4} customStyle={{ marginTop: 68 }}>

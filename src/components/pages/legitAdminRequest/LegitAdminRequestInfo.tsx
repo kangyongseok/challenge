@@ -52,7 +52,8 @@ function LegitAdminRequestInfo() {
       imageModel = '',
       photoGuideDetails = [],
       status: productStatus = 0,
-      sellerType = 0
+      sellerType = 0,
+      category: { nameEng: categoryNameEng = '' } = {}
     } = {}
   } = productLegit || {};
   const isRequestLegit = sellerType !== 0 && productStatus === 7;
@@ -93,7 +94,8 @@ function LegitAdminRequestInfo() {
         <LegitUploadInfoPaper
           model={{
             name: quoteTitle || '',
-            imagSrc: imageModel || brandLogo
+            imagSrc: imageModel || brandLogo,
+            isEtc: categoryNameEng?.toLowerCase() === 'etc'
           }}
           title="감정을 요청했습니다"
           additionalIds={additionalIds}

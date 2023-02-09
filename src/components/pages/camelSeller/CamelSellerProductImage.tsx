@@ -447,6 +447,7 @@ const List = styled.div`
   overflow-y: hidden;
   overflow-x: auto;
   user-select: none;
+  -webkit-touch-callout: none;
 `;
 
 const ProductImageWrap = styled.div`
@@ -454,6 +455,7 @@ const ProductImageWrap = styled.div`
   height: 84px;
   border-radius: 8px;
   position: relative;
+  -webkit-touch-callout: none;
 `;
 
 const DeleteIconWrap = styled(Flexbox)`
