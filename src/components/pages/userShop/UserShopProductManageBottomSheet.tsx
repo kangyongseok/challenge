@@ -153,6 +153,7 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
             type,
             open: false
           }));
+          refetchData();
         }
       }
     );

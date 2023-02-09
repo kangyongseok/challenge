@@ -51,8 +51,9 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
     source?: string;
     index?: number;
   };
-  customStyle?: CustomStyle;
   showShopManageButton?: boolean;
+  measure?: () => void;
+  customStyle?: CustomStyle;
 }
 
 function NewProductListCard({
@@ -66,8 +67,9 @@ function NewProductListCard({
   hideAreaInfo,
   hideMetaInfo,
   hideWishButton,
-  showShopManageButton = false,
   attributes: { name, title, source, index, ...attributes } = {},
+  showShopManageButton = false,
+  measure,
   customStyle,
   ...props
 }: NewProductListCardProps) {
@@ -213,6 +215,12 @@ function NewProductListCard({
   };
 
   useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);
+
+  useEffect(() => {
+    if (measure && typeof measure === 'function') {
+      measure();
+    }
+  }, [measure]);
 
   return (
     <Flexbox

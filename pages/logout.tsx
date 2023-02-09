@@ -51,7 +51,7 @@ function Logout() {
     LocalStorage.remove(ACCESS_USER);
     LocalStorage.remove(ACCESS_TOKEN);
     Axios.clearAccessToken();
-    queryClient.removeQueries();
+    queryClient.clear();
     resetSendbirdState();
     resetChannelReceivedMessageFilteredState();
     Sendbird.finalize();
@@ -70,8 +70,10 @@ function Logout() {
 }
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
-  deleteCookie('accessUser', { req, res });
-  deleteCookie('accessToken', { req, res });
+  const domain = process.env.NODE_ENV === 'development' ? undefined : '.mrcamel.co.kr';
+
+  deleteCookie('accessUser', { req, res, domain });
+  deleteCookie('accessToken', { req, res, domain });
 
   return {
     props: {}

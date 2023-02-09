@@ -155,31 +155,34 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
       return (
         // @ts-ignore
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          <Box style={style}>
-            <NewProductListCard
-              key={`user-shop-product-list-${contents[index].id}`}
-              variant="listA"
-              product={contents[index]}
-              attributes={handleProductAtt(contents[index], index)}
-              hidePlatformLogo={isTransferred}
-              hideLabel
-              hideWishButton
-              showShopManageButton
-            />
-            {(!!shopBannerList?.length || isSavedLegitRequest) && (isSale || !isTransferred) ? (
-              <UserShopProductActionBanner
-                labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
-                productId={contents[index].id}
-                isTransferred={isTransferred}
-                platformName={contents[index].site?.name}
-                savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
-                synonyms={shopBannerList[0]?.synonyms || ''}
+          {({ measure }) => (
+            <Box style={style}>
+              <NewProductListCard
+                key={`user-shop-product-list-${contents[index].id}`}
+                variant="listA"
+                product={contents[index]}
                 attributes={handleProductAtt(contents[index], index)}
+                hidePlatformLogo={isTransferred}
+                hideLabel
+                hideWishButton
+                showShopManageButton
+                measure={measure}
               />
-            ) : (
-              <Box customStyle={{ height: 32 }} />
-            )}
-          </Box>
+              {(!!shopBannerList?.length || isSavedLegitRequest) && (isSale || !isTransferred) ? (
+                <UserShopProductActionBanner
+                  labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
+                  productId={contents[index].id}
+                  isTransferred={isTransferred}
+                  platformName={contents[index].site?.name}
+                  savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
+                  synonyms={shopBannerList[0]?.synonyms || ''}
+                  attributes={handleProductAtt(contents[index], index)}
+                />
+              ) : (
+                <Box customStyle={{ height: 32 }} />
+              )}
+            </Box>
+          )}
         </CellMeasurer>
       );
     },
