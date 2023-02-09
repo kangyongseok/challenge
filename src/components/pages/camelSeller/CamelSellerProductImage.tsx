@@ -296,7 +296,9 @@ function CamelSellerProductImage() {
     scrollingRef.current = true;
   };
 
-  const handleClickImage = (index: number) => () => {
+  const handleClickImage = (index: number) => (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
     if (!draggingRef.current && !scrollingRef.current) {
       logEvent(attrKeys.camelSeller.CLICK_PIC, {
         name: attrProperty.name.PRODUCT_MAIN,
@@ -377,6 +379,7 @@ function CamelSellerProductImage() {
               alt={image?.split('/')[image.split('/').length - 1]}
               round={8}
               onClick={handleClickImage(index)}
+              disableOnBackground={false}
               disableAspectRatio
             />
             <DeleteIconWrap
@@ -447,7 +450,6 @@ const List = styled.div`
   overflow-y: hidden;
   overflow-x: auto;
   user-select: none;
-  -webkit-touch-callout: none;
 `;
 
 const ProductImageWrap = styled.div`
@@ -455,7 +457,6 @@ const ProductImageWrap = styled.div`
   height: 84px;
   border-radius: 8px;
   position: relative;
-  -webkit-touch-callout: none;
 `;
 
 const DeleteIconWrap = styled(Flexbox)`
