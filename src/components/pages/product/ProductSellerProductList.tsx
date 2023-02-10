@@ -1,8 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQueries } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -18,7 +17,6 @@ import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -184,15 +182,7 @@ function ProductSellerProductList({
         <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
           {reviewInfo?.productSeller.image ? (
             <UserAvatar>
-              <Image
-                src={`${reviewInfo?.productSeller.image}`}
-                alt="프로필 이미지"
-                placeholder="blur"
-                blurDataURL={NEXT_IMAGE_BLUR_URL}
-                layout="fill"
-                objectFit="cover"
-                style={{ borderRadius: '50%' }}
-              />
+              <Image src={`${reviewInfo?.productSeller.image}`} alt="프로필 이미지" round="50%" />
             </UserAvatar>
           ) : (
             <EmptyAvatar justifyContent="center" alignment="center">

@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
 import SessionStorage from '@library/sessionStorage';
@@ -57,26 +55,11 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
   );
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
 
-  const { data: { roles = [], notProcessedLegitCount = 0 } = {} } = useQuery(
+  const { data: { notProcessedLegitCount = 0 } = {} } = useQuery(
     queryKeys.users.userInfo(),
     fetchUserInfo
   );
   const triggered = useReverseScrollTrigger();
-  const [authProductSeller, setAuthProductSeller] = useState(false);
-
-  useEffect(() => {
-    if (accessUser) {
-      setAuthProductSeller(true);
-    } else {
-      setAuthProductSeller(false);
-    }
-  }, [accessUser, roles]);
-
-  const getAttName = () => {
-    if (router.pathname === '/') return attrProperty.name.MAIN;
-    if (router.pathname === 'mypage') return attrProperty.name.MY_STORE;
-    return '';
-  };
 
   /**
    *
@@ -88,8 +71,24 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
       SAVED_CAMEL_SELLER_PRODUCT_DATA
     );
     LocalStorage.set(SOURCE, source);
+
+    const getName = () => {
+      if (router.pathname === '/') return attrProperty.name.MAIN;
+      if (router.pathname === '/mypage') return attrProperty.name.MY;
+      if (router.pathname === '/user/shop') return attrProperty.name.MY_STORE;
+      return '';
+    };
+
+    const getTitle = () => {
+      if (router.pathname === '/') return attrProperty.title.MAIN_FLAOTING;
+      if (router.pathname === '/mypage') return attrProperty.title.MY_FLOATING;
+      if (router.pathname === '/user/shop') return attrProperty.title.MY_STORE_FLOATING;
+      return '';
+    };
+
     logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
-      name: getAttName()
+      name: getName(),
+      title: getTitle()
     });
 
     // 개발 모드에서는 모웹에서도 테스트하기 위해 분기처리
@@ -181,35 +180,31 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
     }
   };
 
-  // eslint-disable-next-line no-constant-condition
-  if (authProductSeller) {
-    return (
-      <>
-        <Wrapper
-          onClick={handleClickMoveToCamelSeller}
-          isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
-          isUserShop={router.pathname === '/user/shop'}
-        >
-          <FloatingButton triggered={triggered}>
-            <Typography variant="h3" weight="medium" customStyle={{ color: common.uiWhite }}>
-              판매하기
-            </Typography>
-            <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
-          </FloatingButton>
-        </Wrapper>
-        <Wrapper
-          onClick={handleClickMoveToCamelSeller}
-          isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
-          isUserShop={router.pathname === '/user/shop'}
-        >
-          <FloatingButton triggered={triggered} onlyIcon>
-            <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
-          </FloatingButton>
-        </Wrapper>
-      </>
-    );
-  }
-  return <Box />;
+  return (
+    <>
+      <Wrapper
+        onClick={handleClickMoveToCamelSeller}
+        isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
+        isUserShop={router.pathname === '/user/shop'}
+      >
+        <FloatingButton triggered={triggered}>
+          <Typography variant="h3" weight="medium" customStyle={{ color: common.uiWhite }}>
+            판매하기
+          </Typography>
+          <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
+        </FloatingButton>
+      </Wrapper>
+      <Wrapper
+        onClick={handleClickMoveToCamelSeller}
+        isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
+        isUserShop={router.pathname === '/user/shop'}
+      >
+        <FloatingButton triggered={triggered} onlyIcon>
+          <Icon name="PlusOutlined" size="medium" color={common.uiWhite} />
+        </FloatingButton>
+      </Wrapper>
+    </>
+  );
 }
 
 export default CamelSellerFloatingButton;

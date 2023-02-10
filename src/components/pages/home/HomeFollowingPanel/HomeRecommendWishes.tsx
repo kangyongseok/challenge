@@ -45,17 +45,21 @@ function HomeRecommendWishes() {
   const { data: accessUser } = useQueryAccessUser();
   const { userNickName } = useQueryMyUserInfo();
 
-  const { data = [], isLoading } = useQuery(queryKeys.users.recommWishes(), fetchRecommWishes, {
-    enabled: !!accessUser,
-    refetchOnMount: true
-  });
-
-  const enabledUserHistories = useMemo(
-    () => ((!data || !data.length) && !isLoading) || !accessUser,
-    [data, isLoading, accessUser]
+  const { data = [], isInitialLoading } = useQuery(
+    queryKeys.users.recommWishes(),
+    fetchRecommWishes,
+    {
+      enabled: !!accessUser,
+      refetchOnMount: true
+    }
   );
 
-  const { data: { content = [] } = {}, isLoading: isLoadingUserHistory } = useQuery(
+  const enabledUserHistories = useMemo(
+    () => ((!data || !data.length) && !isInitialLoading) || !accessUser,
+    [data, isInitialLoading, accessUser]
+  );
+
+  const { data: { content = [] } = {}, isInitialLoading: isLoadingUserHistory } = useQuery(
     queryKeys.users.userHistory('recommendWishes'),
     () => fetchUserHistory({ page: 0, size: 12, type: 'PV' }),
     {
@@ -103,7 +107,7 @@ function HomeRecommendWishes() {
   };
 
   if (
-    !isLoading &&
+    !isInitialLoading &&
     !isLoadingUserHistory &&
     enabledUserHistories &&
     (!content || !content.length || !notSoldoutProducts.length)
@@ -162,14 +166,14 @@ function HomeRecommendWishes() {
         alignment="center"
         customStyle={{ marginBottom: 20, padding: '0 20px', minHeight: 32 }}
       >
-        {((isLoading && !enabledUserHistories) ||
+        {((isInitialLoading && !enabledUserHistories) ||
           (isLoadingUserHistory && enabledUserHistories)) && (
           <>
             <Skeleton width="100%" maxWidth={153} height={24} round={8} disableAspectRatio />
             <Skeleton width={105} height={16} round={8} disableAspectRatio />
           </>
         )}
-        {!isLoading && !enabledUserHistories && (
+        {!isInitialLoading && !enabledUserHistories && (
           <>
             <Typography
               variant="h3"
@@ -218,7 +222,7 @@ function HomeRecommendWishes() {
           </>
         )}
       </Flexbox>
-      {isLoading && !enabledUserHistories && (
+      {isInitialLoading && !enabledUserHistories && (
         <Flexbox direction="vertical" gap={12} customStyle={{ padding: '0 20px' }}>
           <Card gap={12}>
             <Box customStyle={{ position: 'relative', width: 48, height: 48 }}>
@@ -288,7 +292,7 @@ function HomeRecommendWishes() {
           </ABTestGroup>
         </List>
       )}
-      {!isLoading && !enabledUserHistories && (
+      {!isInitialLoading && !enabledUserHistories && (
         <Swiper spaceBetween={20} onSlideChange={({ activeIndex }) => setCurrentSlide(activeIndex)}>
           {recommendWishes.map(([firstRecommendWish, secondRecommendWish]) => (
             <SwiperSlide

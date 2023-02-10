@@ -38,7 +38,7 @@ function HomeProductKeywordList() {
 
   const [isMounted, setIsMounted] = useState(false);
 
-  const { data: { content = [] } = {}, isLoading } = useQuery(
+  const { data: { content = [] } = {}, isInitialLoading } = useQuery(
     queryKeys.users.userProductKeywords(),
     fetchProductKeywords,
     {
@@ -147,7 +147,7 @@ function HomeProductKeywordList() {
 
   return (
     <List>
-      {isLoading &&
+      {isInitialLoading &&
         Array.from({ length: 10 }).map((_, index) => (
           <Flexbox
             // eslint-disable-next-line react/no-array-index-key
@@ -169,7 +169,7 @@ function HomeProductKeywordList() {
             </Flexbox>
           </Flexbox>
         ))}
-      {!isLoading &&
+      {!isInitialLoading &&
         accessUser &&
         content.map(({ id, keyword, filter, imageThumbnail, isNew }) => {
           let splitFilter: string | string[] = filter.split(',');
@@ -212,7 +212,7 @@ function HomeProductKeywordList() {
             </Flexbox>
           );
         })}
-      {!isLoading &&
+      {!isInitialLoading &&
         isMounted &&
         savedRecentSearchList.slice(0, 12 - content.slice(0, 12).length).map(({ keyword }) => (
           <Flexbox
