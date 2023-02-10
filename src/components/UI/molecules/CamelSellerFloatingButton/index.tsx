@@ -158,6 +158,17 @@ function CamelSellerFloatingButton({ source }: { source: string }) {
       }
     }
 
+    if (!accessUser) {
+      router.push({
+        pathname: '/login',
+        query: {
+          returnUrl: '/camelSeller/registerConfirm',
+          isRequiredLogin: true
+        }
+      });
+      return;
+    }
+
     // 이어하기 다이얼로그 띄우는 조건
     if (
       accessUser &&
