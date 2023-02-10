@@ -81,7 +81,7 @@ function BrandItem({ type = 'recommend', brand: { name, nameLogo, nameEng } }: B
         <Typography variant="h4" weight="bold" customStyle={{ lineHeight: '20px' }}>
           {name}
         </Typography>
-        <Typography variant="small1" customStyle={{ lineHeight: '16px' }}>
+        <Typography variant="body2" customStyle={{ lineHeight: '16px' }}>
           {nameEng
             .split(/\s/)
             .map((brandName) => capitalize(brandName))

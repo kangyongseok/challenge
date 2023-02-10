@@ -17,6 +17,7 @@ import type {
   PostReviewData,
   PostSize,
   PostStyleParams,
+  PostSurveyData,
   ProductKeywordData,
   ProductKeywords,
   ProductsAddParams,
@@ -326,4 +327,8 @@ export async function fetchBanword(params: BanWordParams) {
 
 export async function putProfile(data: UpdateUserProfileData) {
   await Axios.getInstance().put(`${BASE_PATH}/profile`, data);
+}
+
+export async function postSurvey(data: PostSurveyData) {
+  await Axios.getInstance().post(`${BASE_PATH}/survey`, data);
 }

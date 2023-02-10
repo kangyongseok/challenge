@@ -7,3 +7,4 @@ export { default as MypageActionBanner } from './MypageActionBanner';
 export { default as MypageLegitInfo } from './MypageLegitInfo';
 export { default as MypageAlarmSettingOff } from './MypageAlarmSettingOff';
 export { default as MypageAlarmSetting } from './MypageAlarmSetting';
+export { default as MypageEventBanner } from './MypageEventBanner';

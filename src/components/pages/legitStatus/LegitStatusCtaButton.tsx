@@ -178,7 +178,7 @@ function LegitStatusCtaButton() {
           <Tooltip
             open
             message={
-              <Typography weight="medium" variant="small1" customStyle={{ color: common.uiWhite }}>
+              <Typography weight="medium" variant="body2" customStyle={{ color: common.uiWhite }}>
                 판매자에게 추가 사진을 받으셨다면, 1:1 상담 요청하세요!
               </Typography>
             }

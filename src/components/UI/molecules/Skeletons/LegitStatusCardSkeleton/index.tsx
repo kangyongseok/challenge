@@ -8,7 +8,7 @@ interface LegitStatusCardSkeletonPros {
 function LegitStatusCardSkeleton({ customStyle }: LegitStatusCardSkeletonPros) {
   return (
     <Flexbox gap={16} customStyle={customStyle}>
-      <Skeleton width={120} height={144} round={8} disableAspectRatio />
+      <Skeleton width={100} height={120} round={8} disableAspectRatio />
       <Flexbox
         direction="vertical"
         gap={2}

@@ -42,7 +42,7 @@ function ProductSoldoutCard({
         <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
           판매 완료된 매물이에요
         </Typography>
-        <EllipsisTitle variant="small1" weight="medium">
+        <EllipsisTitle variant="body2" weight="medium">
           {!isNormalSeller && isSafe && <span>안전결제 </span>}
           {product?.title}
         </EllipsisTitle>

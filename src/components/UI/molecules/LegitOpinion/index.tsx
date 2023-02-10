@@ -43,7 +43,7 @@ function LegitOpinion({
           <Flexbox gap={6} alignment="center" customStyle={{ flexGrow: 1 }}>
             <Typography weight="bold">{name}</Typography>
             {ip && (
-              <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+              <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                 ({ip})
               </Typography>
             )}

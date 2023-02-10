@@ -90,7 +90,7 @@ function OnboardingLikeModel({ onClick }: { onClick: () => void }) {
           variant="solid"
           message={
             <Typography
-              variant="small1"
+              variant="body2"
               weight="medium"
               customStyle={{ color: dark.palette.common.ui98 }}
             >

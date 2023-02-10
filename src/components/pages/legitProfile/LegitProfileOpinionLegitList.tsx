@@ -183,7 +183,7 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
               Array.from({ length: 16 }).map((_, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <Flexbox key={`user-legit-opinion-skeleton-${index}`} gap={16}>
-                  <Skeleton width={120} height={144} round={8} disableAspectRatio />
+                  <Skeleton width={100} height={120} round={8} disableAspectRatio />
                   <Flexbox
                     direction="vertical"
                     gap={2}
@@ -221,6 +221,9 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
                   onClick={handleClickProduct({ product: productLegit.productResult })}
                   customStyle={{
                     alignItems: 'flex-start'
+                  }}
+                  customTitleStyle={{
+                    color: common.ui20
                   }}
                 />
               ))}

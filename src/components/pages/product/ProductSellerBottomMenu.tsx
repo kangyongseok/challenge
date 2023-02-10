@@ -277,7 +277,7 @@ function ProductSellerBottomMenu({
             <IconPullUp />
             <Typography
               draggable={false}
-              variant="small1"
+              variant="body2"
               weight="medium"
               customStyle={{ color: common.ui60 }}
             >
@@ -304,7 +304,7 @@ function ProductSellerBottomMenu({
               {getUnreadMessagesCount(unreadMessageCount)}
             </CustomBadge>
           </Box>
-          <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
             채팅목록
           </Typography>
         </Flexbox>
@@ -321,7 +321,7 @@ function ProductSellerBottomMenu({
           <IconChangeStatus />
           <Typography
             draggable={false}
-            variant="small1"
+            variant="body2"
             weight="medium"
             customStyle={{ color: common.ui60 }}
           >
@@ -339,7 +339,7 @@ function ProductSellerBottomMenu({
             <IconEdit />
             <Typography
               draggable={false}
-              variant="small1"
+              variant="body2"
               weight="medium"
               customStyle={{ color: common.ui60 }}
             >
@@ -358,7 +358,7 @@ function ProductSellerBottomMenu({
             <IconDelete />
             <Typography
               draggable={false}
-              variant="small1"
+              variant="body2"
               weight="medium"
               customStyle={{ color: common.ui60 }}
             >

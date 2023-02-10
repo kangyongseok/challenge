@@ -134,7 +134,7 @@ function DropDownSelect({
               {data.length > 0 && (
                 <Typography
                   weight="bold"
-                  variant="small1"
+                  variant="body2"
                   customStyle={{ color: common.ui60, padding: '20px 0 5px 12px' }}
                 >
                   {label}

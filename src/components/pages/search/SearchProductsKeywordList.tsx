@@ -228,7 +228,7 @@ function SearchProductsKeywordList() {
                         <Text weight="medium">
                           {card.keyword.replace('(P)', '').replace(/-/g, ' ')}
                         </Text>
-                        <Text variant="small1">{card.filter}</Text>
+                        <Text variant="body2">{card.filter}</Text>
                       </Flexbox>
                     </Flexbox>
                     <CloseIcon>

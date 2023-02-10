@@ -94,14 +94,14 @@ function AppDownloadBanner() {
         >
           <Typography
             weight="bold"
-            variant="small1"
+            variant="body2"
             customStyle={{ color: dark.palette.common.uiBlack }}
           >
             카멜 - 세상 모든 중고명품
           </Typography>
           <Typography
             weight="medium"
-            variant="small1"
+            variant="body2"
             customStyle={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',

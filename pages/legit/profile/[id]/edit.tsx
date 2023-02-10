@@ -311,7 +311,7 @@ function LegitProfileEdit() {
         </TabGroup>
         {tab === '판매자' && <SellerProfileContents />}
         {tab === '감정사' && <LegitProfileContents />}
-        <WithdrawalButton variant="small1" onClick={handleClickWithdrawal}>
+        <WithdrawalButton variant="body2" onClick={handleClickWithdrawal}>
           회원탈퇴
         </WithdrawalButton>
         <Box customStyle={{ paddingBottom: 120 }} />

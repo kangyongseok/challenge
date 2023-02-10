@@ -273,7 +273,7 @@ function OnboardingPermission() {
                 <Typography weight="bold" customStyle={{ color: dark.palette.common.ui98 }}>
                   {content.title}
                 </Typography>
-                <Typography variant="small1" customStyle={{ color: common.ui60, marginTop: 2 }}>
+                <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 2 }}>
                   {content.subTitle}
                 </Typography>
               </Box>

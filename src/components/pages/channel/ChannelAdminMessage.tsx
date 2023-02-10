@@ -260,7 +260,7 @@ function ChannelAdminMessage({
                   />
                 </Box>
                 <Box>
-                  <Typography variant="small1">{detail.title}</Typography>
+                  <Typography variant="body2">{detail.title}</Typography>
                   <Typography weight="bold" customStyle={{ marginTop: 4 }}>
                     {commaNumber(getTenThousandUnitPrice(detail.price))}만원
                   </Typography>

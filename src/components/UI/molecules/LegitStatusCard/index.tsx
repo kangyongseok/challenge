@@ -158,8 +158,8 @@ function LegitStatusCard({
         customStyle={{
           position: 'relative',
           flexGrow: 1,
-          minWidth: 120,
-          maxWidth: 120,
+          minWidth: 100,
+          maxWidth: 100,
           borderRadius: 8
         }}
       >
@@ -268,17 +268,17 @@ function LegitStatusCard({
           {(role === 'head'
             ? ['감정중', '보완요청', '보완완료'].includes(labelText)
             : ['감정중', '감정불가'].includes(labelText)) && (
-            <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body3" customStyle={{ color: common.ui60 }}>
               신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
             </Typography>
           )}
           {labelText === '작성완료' && (
             <>
-              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+              <Typography variant="body3" customStyle={{ color: common.ui60 }}>
                 신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>
               {dateCompleted && (
-                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Typography variant="body3" customStyle={{ color: common.ui60 }}>
                   완료예정일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
                 </Typography>
               )}
@@ -286,11 +286,11 @@ function LegitStatusCard({
           )}
           {['정품의견', '가품의심'].includes(labelText) && (
             <>
-              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+              <Typography variant="body3" customStyle={{ color: common.ui60 }}>
                 신청일 : {dayjs(dateCreated).format('YYYY.MM.DD HH:mm')}
               </Typography>
               {dateCompleted && (
-                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Typography variant="body3" customStyle={{ color: common.ui60 }}>
                   완료일 : {dayjs(dateCompleted).format('YYYY.MM.DD HH:mm')}
                 </Typography>
               )}

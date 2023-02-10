@@ -629,3 +629,10 @@ export interface UpdateUserProfileData {
   nickName?: string;
   shopDescription?: string;
 }
+
+export type PostSurveyData = {
+  deviceId?: string;
+  answer: number;
+  options: string;
+  surveyId: number;
+};

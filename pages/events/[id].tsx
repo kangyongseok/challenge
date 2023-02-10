@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import EventDogHoneyMain from '@components/pages/eventDogHoney/EventDogHoneyMain';
 import {
   EventBanner,
   EventFilter,
@@ -14,7 +13,6 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function Event() {
@@ -23,15 +21,6 @@ function Event() {
 
   useEffect(() => {
     if (!router.isReady) return;
-
-    if (String(id).endsWith('17')) {
-      logEvent(attrKeys.events.VIEW_EVENT_DETAIL, {
-        name: attrProperty.name.EVENT_DETAIL,
-        title: '2301_DOG_HONEY'
-      });
-
-      return;
-    }
 
     const getAtt = () => {
       if (String(id).split('-').includes('13')) {
@@ -55,9 +44,7 @@ function Event() {
     });
   }, [id, router.isReady]);
 
-  return String(id).endsWith('17') ? (
-    <EventDogHoneyMain />
-  ) : (
+  return (
     <GeneralTemplate header={<EventHeader />}>
       <EventBanner />
       {String(id).split('-').includes('16') && <EventMarketingAgree />}

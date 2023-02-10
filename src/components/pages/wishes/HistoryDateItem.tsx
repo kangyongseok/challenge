@@ -115,7 +115,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
                     });
                   }}
                 >
-                  <KeywordTypo variant="small1" weight="medium">
+                  <KeywordTypo variant="body2" weight="medium">
                     검색어
                   </KeywordTypo>
                   <Typography

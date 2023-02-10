@@ -147,7 +147,7 @@ function MyPortfolioLanding01({
           <Typography weight="bold" variant="h3" customStyle={{ color: common.cmnW }}>
             <Icon name="AlarmFilled" /> 오픈 알림 받기
           </Typography>
-          <Typography variant="small1" customStyle={{ color: common.cmnW }}>
+          <Typography variant="body2" customStyle={{ color: common.cmnW }}>
             내 명품의 가치를 가장 먼저 확인하세요
           </Typography>
         </RevervationCtaButton>

@@ -115,7 +115,7 @@ function BasicAlarm({
           }
         >
           {label}
-          <Typography variant="small1" customStyle={{ color: common.ui60, marginTop: 6 }}>
+          <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 6 }}>
             {infoText}
           </Typography>
         </MenuItem>

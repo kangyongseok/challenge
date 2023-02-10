@@ -273,7 +273,7 @@ function MyPortfolioBottomSheet({
                 }}
               />
               {validatorText && (
-                <Typography variant="small1" brandColor="red">
+                <Typography variant="body2" brandColor="red">
                   {validatorText}
                 </Typography>
               )}

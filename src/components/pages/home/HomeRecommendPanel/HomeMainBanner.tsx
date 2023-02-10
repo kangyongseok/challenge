@@ -117,25 +117,25 @@ function HomeMainBanner() {
                   { name, x, y },
                   {
                     onSuccess: () => {
-                      router.push('/events/실시간-개꿀매-17');
+                      router.push('/events/dogHoney');
                     },
                     onError: () => {
-                      router.push('/events/실시간-개꿀매-17');
+                      router.push('/events/dogHoney');
                     }
                   }
                 );
               } else {
-                router.push('/events/실시간-개꿀매-17');
+                router.push('/events/dogHoney');
               }
             },
             () => {
-              router.push('/events/실시간-개꿀매-17');
+              router.push('/events/dogHoney');
             }
           );
         }
       });
     } else {
-      router.push('/events/실시간-개꿀매-17');
+      router.push('/events/dogHoney');
     }
   };
 

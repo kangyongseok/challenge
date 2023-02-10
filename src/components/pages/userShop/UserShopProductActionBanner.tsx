@@ -136,7 +136,7 @@ function UserShopProductActionBanner({
     return (
       <ActionBannerWrap alignment="center" bg={common.bg02} gap={4}>
         <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
-        <Typography variant="small1" weight="medium" customStyle={{ color: common.ui20 }}>
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui20 }}>
           {platformName} 플랫폼과 동기화된 매물이에요.
         </Typography>
       </ActionBannerWrap>
@@ -152,7 +152,7 @@ function UserShopProductActionBanner({
     >
       {findBanner?.iconName}
       <Typography
-        variant="small1"
+        variant="body2"
         weight="medium"
         customStyle={{ color: findBanner?.theme === 'dark' ? darkCommon.uiBlack : common.ui20 }}
       >

@@ -23,16 +23,18 @@ export interface LegitListCardProps extends HTMLAttributes<HTMLDivElement> {
   hideResult?: boolean;
   hideMore?: boolean;
   customStyle?: CustomStyle;
+  customTitleStyle?: CustomStyle;
 }
 
 function LegitListCard({
   variant,
   productLegit,
   userId = 0,
-  hidePrice = false,
-  hideResult = false,
-  hideMore = false,
+  hidePrice,
+  hideResult,
+  hideMore,
   customStyle,
+  customTitleStyle,
   ...props
 }: LegitListCardProps) {
   const {
@@ -75,8 +77,8 @@ function LegitListCard({
         customStyle={{
           position: 'relative',
           flexGrow: 1,
-          minWidth: variant === 'listB' ? 60 : 120,
-          maxWidth: variant === 'listB' ? 60 : 120,
+          minWidth: variant === 'listB' ? 60 : 100,
+          maxWidth: variant === 'listB' ? 60 : 100,
           borderRadius: 8
         }}
       >
@@ -149,9 +151,11 @@ function LegitListCard({
           variant="body2"
           noWrap
           lineClamp={2}
-          customStyle={{
-            color: common.ui60
-          }}
+          customStyle={
+            customTitleStyle || {
+              color: common.ui60
+            }
+          }
         >
           {variant === 'listA' ? productTitle : quoteTitle}
         </Typography>
@@ -166,7 +170,6 @@ function LegitListCard({
             {`${commaNumber(getTenThousandUnitPrice(price || 0))}만원`}
           </Typography>
         )}
-
         {variant === 'listA' && (
           <Flexbox
             direction="vertical"
@@ -175,7 +178,12 @@ function LegitListCard({
               paddingTop: 6
             }}
           >
-            <Description variant="small2" weight="regular" color={common.ui60}>
+            <Description
+              variant="body3"
+              customStyle={{
+                color: common.ui60
+              }}
+            >
               {description}
             </Description>
             {!hideResult && (

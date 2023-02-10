@@ -266,7 +266,7 @@ function HomePersonalGuide() {
                 customStyle={{ minWidth: 72, maxWidth: 72 }}
               >
                 <AvatarStyle src={src} alt="Personal Guide Img" />
-                <Name variant="small1">{name}</Name>
+                <Name variant="body2">{name}</Name>
               </Flexbox>
             ))}
         </List>

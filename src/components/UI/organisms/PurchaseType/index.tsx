@@ -95,7 +95,7 @@ function PurchaseType() {
               {data.title}
             </Typography>
             <Typography
-              variant="small1"
+              variant="body2"
               customStyle={{
                 color: selectedType === data.value ? palette.common.uiWhite : palette.common.ui60
               }}

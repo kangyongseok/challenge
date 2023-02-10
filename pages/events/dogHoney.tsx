@@ -5,6 +5,13 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { TopButton } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import {
+  EventDogHoneyBanner,
+  EventDogHoneyFilter,
+  EventDogHoneyHeader,
+  EventDogHoneyInfo,
+  EventDogHoneyProductList
+} from '@components/pages/eventDogHoney';
 
 import { logEvent } from '@library/amplitude';
 
@@ -18,12 +25,6 @@ import {
 } from '@recoil/eventFilter';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryContents from '@hooks/useQueryContents';
-
-import EventDogHoneyProductList from './EventDogHoneyProductList';
-import EventDogHoneyInfo from './EventDogHoneyInfo';
-import EventDogHoneyHeader from './EventDogHoneyHeader';
-import EventDogHoneyFilter from './EventDogHoneyFilter';
-import EventDogHoneyBanner from './EventDogHoneyBanner';
 
 function EventDogHoneyMain() {
   const setEventContentProductsParamsState = useSetRecoilState(eventContentProductsParamsState);
@@ -58,6 +59,13 @@ function EventDogHoneyMain() {
   useEffect(() => {
     setEventContentProductsParamsState((currVal) => ({ ...currVal, id: 17 }));
   }, [setEventContentProductsParamsState]);
+
+  useEffect(() => {
+    logEvent(attrKeys.events.VIEW_EVENT_DETAIL, {
+      name: attrProperty.name.EVENT_DETAIL,
+      title: '2301_DOG_HONEY'
+    });
+  }, []);
 
   return (
     <>

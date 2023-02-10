@@ -65,14 +65,14 @@ function MypageUserInfo() {
   const returnBudget = () => {
     if (maxMoney <= 0) {
       return (
-        <strong style={{ fontWeight: typography.small1.weight.medium }}>
+        <strong style={{ fontWeight: typography.body2.weight.medium }}>
           {maxMoney === -1 ? '최대 예산 전체보기' : '예산이 얼마이신가요?'}
         </strong>
       );
     }
     return (
       <div>
-        <strong style={{ fontWeight: typography.small1.weight.medium }}>
+        <strong style={{ fontWeight: typography.body2.weight.medium }}>
           {commaNumber(maxMoney)}
         </strong>{' '}
         만원
@@ -140,7 +140,7 @@ function MypageUserInfo() {
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             사이즈
           </Typography>
-          <ElipsisArea variant="small1">{sizeParser()}</ElipsisArea>
+          <ElipsisArea variant="body2">{sizeParser()}</ElipsisArea>
         </MyInfoBox>
         <MyInfoBox
           variant="solid"
@@ -152,7 +152,7 @@ function MypageUserInfo() {
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             거래지역
           </Typography>
-          <ElipsisArea variant="small1">
+          <ElipsisArea variant="body2">
             {(area && area?.filter((list) => list.isActive)[0]?.areaName) || '어디서 거래하시나요?'}
           </ElipsisArea>
         </MyInfoBox>
@@ -166,7 +166,7 @@ function MypageUserInfo() {
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             예산
           </Typography>
-          <Typography variant="small1" customStyle={{ textAlign: 'left' }}>
+          <Typography variant="body2" customStyle={{ textAlign: 'left' }}>
             {returnBudget()}
           </Typography>
         </MyInfoBox>
@@ -180,7 +180,7 @@ function MypageUserInfo() {
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             관심모델
           </Typography>
-          <ElipsisArea variant="small1">
+          <ElipsisArea variant="body2">
             {styles.length > 0
               ? styles.map(({ name }) => name).join(' / ')
               : '카멜에게 알려주세요.'}
@@ -196,7 +196,7 @@ function MypageUserInfo() {
           <Typography weight="bold" variant="small2" customStyle={{ color: common.ui60 }}>
             중고 구매 시 중요한 부분
           </Typography>
-          <ElipsisArea variant="small1" customStyle={{ textAlign: 'left' }}>
+          <ElipsisArea variant="body2" customStyle={{ textAlign: 'left' }}>
             {find(purchaseType, { value: purchaseTypes[0]?.id })?.subTitle ||
               '카멜에게 알려주세요.'}
           </ElipsisArea>
@@ -227,7 +227,7 @@ const ElipsisArea = styled(Typography)`
   white-space: nowrap;
   width: 100%;
   text-align: left;
-  font-weight: ${({ theme: { typography } }) => typography.small1.weight.medium};
+  font-weight: ${({ theme: { typography } }) => typography.body2.weight.medium};
 `;
 
 export default MypageUserInfo;

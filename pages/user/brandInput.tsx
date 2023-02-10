@@ -188,7 +188,7 @@ function BrandInput() {
             <Typography variant="body1" customStyle={{ color: common.ui20, textAlign: 'center' }}>
               선택한 브랜드는 홈에서 모아볼 수 있어요.
             </Typography>
-            <Typography variant="small1" customStyle={{ color: common.ui60, textAlign: 'center' }}>
+            <Typography variant="body2" customStyle={{ color: common.ui60, textAlign: 'center' }}>
               최대 20개 선택할 수 있어요.
             </Typography>
           </Box>

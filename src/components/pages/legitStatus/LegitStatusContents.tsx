@@ -120,7 +120,7 @@ function LegitStatusContents() {
       {data?.status === 20 && isAuthUser && (
         <FrameBox>
           <Typography weight="medium">알림을 끄셨다면 사진감정 결과를 받을 수 없어요!</Typography>
-          <Typography variant="small1">
+          <Typography variant="body2">
             알림켜기: 휴대폰 설정 {'>'} 알림 {'>'} Camel 허용
           </Typography>
         </FrameBox>

@@ -173,11 +173,11 @@ function ProductInfo({
         <CertificationCard>
           <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
             <Icon name="ShieldFilled" width={16} height={16} color={primary.light} />
-            <Typography variant="small1" weight="medium">
+            <Typography variant="body2" weight="medium">
               카멜이 직접 인증한 판매자예요. 편하게 문의해보세요.
             </Typography>
           </Flexbox>
-          <Typography variant="small1" customStyle={{ color: common.ui60, paddingLeft: 18 }}>
+          <Typography variant="body2" customStyle={{ color: common.ui60, paddingLeft: 18 }}>
             가품시, 100% 환불
           </Typography>
         </CertificationCard>
@@ -210,7 +210,7 @@ function ProductInfo({
         alignment="center"
         customStyle={{ color: common.ui60, marginTop: 12 }}
       >
-        <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
           {isCamelSellerProduct && product.datePosted > product.dateFirstPosted ? '끌올 ' : ''}
           {getFormattedDistanceTime(hoistingState ? new Date() : new Date(product.datePosted))}
         </Typography>
@@ -224,7 +224,7 @@ function ProductInfo({
                 customStyle={{ color: common.ui80, marginRight: 2 }}
               />
               <Typography
-                variant="small1"
+                variant="body2"
                 weight="medium"
                 customStyle={{ color: common.ui80, marginRight: 6 }}
               >
@@ -241,7 +241,7 @@ function ProductInfo({
                 customStyle={{ color: common.ui80, marginRight: 2 }}
               />
               <Typography
-                variant="small1"
+                variant="body2"
                 weight="medium"
                 customStyle={{ color: common.ui80, marginRight: 6 }}
               >
@@ -257,7 +257,7 @@ function ProductInfo({
                 height={15}
                 customStyle={{ color: common.ui80, marginRight: 2 }}
               />
-              <Typography variant="small1" weight="medium" customStyle={{ color: common.ui80 }}>
+              <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
                 {product.purchaseCount}
               </Typography>
             </>

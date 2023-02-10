@@ -599,7 +599,7 @@ function ProductCTAButton({
                 message={
                   <Flexbox gap={6} alignment="center">
                     <Label text="NEW" variant="solid" size="xsmall" />
-                    <Typography weight="bold" variant="small1">
+                    <Typography weight="bold" variant="body2">
                       지금 보는 사진 그대로 실시간 정가품 의견받기
                     </Typography>
                     <Icon

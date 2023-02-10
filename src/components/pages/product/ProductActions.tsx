@@ -290,7 +290,7 @@ function ProductActions({
                 {label}
               </Typography>
             </Flexbox>
-            <Typography variant="small1" weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
               {count}
             </Typography>
           </ReportOption>

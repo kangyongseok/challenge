@@ -154,7 +154,7 @@ function LegitStatusFailContents() {
           <Typography weight="bold" customStyle={{ marginBottom: 4 }}>
             camel
           </Typography>
-          <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
             카멜 실시간 사진감정팀
           </Typography>
           <Typography

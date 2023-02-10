@@ -220,7 +220,7 @@ function ProductSellerProductList({
             </Typography>
           </Flexbox>
           <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
-            <Typography weight="medium" variant="small1">
+            <Typography weight="medium" variant="body2">
               더보기
             </Typography>
             <Icon name="CaretRightOutlined" size="small" />

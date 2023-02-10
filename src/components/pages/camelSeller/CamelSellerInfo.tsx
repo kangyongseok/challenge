@@ -39,7 +39,7 @@ function CamelSellerInfo() {
     return (
       <Wrap alignment="center" gap={6} onClick={() => router.push('/camelSeller/guide')}>
         <Icon name="LegitFilled" size="small" customStyle={{ color: common.uiWhite }} />
-        <Typography variant="small1" customStyle={{ color: common.uiWhite }}>
+        <Typography variant="body2" customStyle={{ color: common.uiWhite }}>
           감정중인 매물은 카테고리/브랜드를 변경할 수 없어요.
         </Typography>
       </Wrap>
@@ -58,7 +58,7 @@ function CamelSellerInfo() {
         }}
       >
         <Icon name="ShieldFilled" size="small" customStyle={{ color: common.uiWhite }} />
-        <Typography variant="small1" customStyle={{ color: common.uiWhite }}>
+        <Typography variant="body2" customStyle={{ color: common.uiWhite }}>
           정품인증 마크를 받았어요! 감정한 매물은 카테고리/브랜드를 변경할 수 없어요.
         </Typography>
       </Wrap>
@@ -68,7 +68,7 @@ function CamelSellerInfo() {
   return (
     <Wrap alignment="center" gap={6} onClick={() => router.push('/camelSeller/guide')}>
       <Icon name="BangCircleFilled" size="small" customStyle={{ color: common.uiWhite }} />
-      <Typography variant="small1" customStyle={{ color: common.uiWhite }}>
+      <Typography variant="body2" customStyle={{ color: common.uiWhite }}>
         사진 등록 전 <span style={{ textDecoration: 'underline' }}>사진업로드 가이드</span>를 꼭
         확인해주세요!
       </Typography>

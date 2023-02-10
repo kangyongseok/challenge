@@ -253,11 +253,11 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] && (
               <>
-                {status === 4 && <ReservingOverlay card variant="small1" />}
+                {status === 4 && <ReservingOverlay card variant="body2" />}
                 {status === 8 ? (
-                  <HideOverlay card variant="small1" />
+                  <HideOverlay card variant="body2" />
                 ) : (
-                  <SoldOutOverlay card variant="small1" />
+                  <SoldOutOverlay card variant="body2" />
                 )}
               </>
             )}

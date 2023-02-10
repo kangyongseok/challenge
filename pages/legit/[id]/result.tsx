@@ -74,7 +74,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
             <LegitResultCommentWriter writerRef={writerRef} />
             <LegitResultCommentList writerRef={writerRef} />
             <Alert round="8" customStyle={{ margin: '84px 0 20px', padding: '8px 16px' }}>
-              <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+              <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                 사진 상 정품 혹은 가품 의견을 여러 전문가로부터 받는 서비스로, 법적 효력이 있지는
                 않으며 단순 참고용으로 사용하시기 바랍니다.
               </Typography>
@@ -102,7 +102,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
         <LegitResultCommentWriter writerRef={writerRef} />
         <LegitResultCommentList writerRef={writerRef} />
         <Alert round="8" customStyle={{ margin: '84px 0 20px', padding: '8px 16px' }}>
-          <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
             사진 상 정품 혹은 가품 의견을 여러 전문가로부터 받는 서비스로, 법적 효력이 있지는 않으며
             단순 참고용으로 사용하시기 바랍니다.
           </Typography>

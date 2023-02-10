@@ -23,7 +23,7 @@ function ProductDeletedCard() {
       <Typography weight="medium" variant="h4">
         삭제된 매물이에요
       </Typography>
-      <Typography variant="small1" customStyle={{ marginTop: 4 }}>
+      <Typography variant="body2" customStyle={{ marginTop: 4 }}>
         다른 매물을 검색해보세요.
       </Typography>
       <Button

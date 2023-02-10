@@ -9,6 +9,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   MypageActionBanner,
   MypageEtc,
+  MypageEventBanner,
   MypageIntro,
   MypageLegitInfo,
   MypageMyInfo,
@@ -66,6 +67,7 @@ function MyPage() {
         <Gap height={1} />
         <MypageSetting />
         <Gap height={1} />
+        <MypageEventBanner />
         <MypageEtc />
       </GeneralTemplate>
       <CamelSellerFloatingButton source="MYPAGE" />

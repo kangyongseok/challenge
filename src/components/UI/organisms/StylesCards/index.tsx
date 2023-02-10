@@ -238,7 +238,7 @@ function StylesCards({ themeType }: { themeType?: 'normal' }) {
                 {find(parentData, { id: style.id })?.title}
               </Typography>
               <Typography
-                variant="small1"
+                variant="body2"
                 customStyle={{
                   color: styleCardId.includes(style.id) ? palette.common.ui95 : palette.common.ui60
                 }}

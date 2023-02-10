@@ -41,7 +41,7 @@ function CamelSellerProductSearchItem({ data, onClick }: ModelSearchItemProps) {
               __html: data.modelDeco
             }}
           />
-          <Typography weight="medium" variant="small1" customStyle={{ color: common.ui60 }}>
+          <Typography weight="medium" variant="body2" customStyle={{ color: common.ui60 }}>
             {data.subParentCategoryName}
           </Typography>
         </Flexbox>

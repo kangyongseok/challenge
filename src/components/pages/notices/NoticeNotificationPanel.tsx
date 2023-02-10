@@ -116,7 +116,7 @@ function NoticeNotificationPanel() {
               <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
                 {notice.title}
               </Typography>
-              <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+              <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                 {dayjs(notice.dateCreated).format('YYYY.MM.DD')}
               </Typography>
             </Box>

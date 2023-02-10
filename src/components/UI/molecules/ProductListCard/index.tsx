@@ -374,9 +374,9 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
               (status === 4 ? (
-                <ReservingOverlay card variant="small1" />
+                <ReservingOverlay card variant="body2" />
               ) : (
-                <SoldOutOverlay card variant="small1" />
+                <SoldOutOverlay card variant="body2" />
               ))}
           </Content>
           <div>

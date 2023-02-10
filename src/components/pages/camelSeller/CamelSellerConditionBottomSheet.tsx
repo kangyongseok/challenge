@@ -72,7 +72,7 @@ function CamelSellerConditionBottomSheet() {
             hideLine={codeDetails.length - 1 === index}
           >
             <Flexbox alignment="center" gap={12}>
-              <StateLabel variant="small1" weight="medium">
+              <StateLabel variant="body2" weight="medium">
                 {synonyms}
               </StateLabel>
               <Typography weight="medium" variant="h4">

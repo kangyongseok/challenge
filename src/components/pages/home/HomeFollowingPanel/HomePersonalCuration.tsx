@@ -2,7 +2,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
+import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
@@ -34,6 +34,8 @@ import { eventContentProductsParamsState } from '@recoil/eventFilter';
 import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
+import HomeBannerCard from './HomeBannerCard';
 
 function HomePersonalCuration() {
   const router = useRouter();
@@ -79,6 +81,9 @@ function HomePersonalCuration() {
       if (pathname.indexOf('/products') > -1) {
         return attrProperty.title.PRODUCT_LIST;
       }
+      if (pathname.indexOf('/events/interfereInKing') > -1) {
+        return '2302_CAMEL_OPINION';
+      }
       if (pathname.indexOf('/events') > -1) {
         return attrProperty.title.CRAZYWEEK;
       }
@@ -87,11 +92,17 @@ function HomePersonalCuration() {
       }
       return undefined;
     };
+    const getClickBannerAtt = () => {
+      if (pathname.indexOf('/events/interfereInKing') > -1) {
+        return 'YES';
+      }
+      return 'MIDDLE';
+    };
 
     logEvent(attrKeys.home.CLICK_BANNER, {
       name: attrProperty.name.MAIN,
       title: getClickBannerTitle(),
-      att: 'MIDDLE'
+      att: getClickBannerAtt()
     });
 
     if (pathname.indexOf('/products') > -1) {
@@ -107,7 +118,7 @@ function HomePersonalCuration() {
       });
     }
 
-    if (pathname.indexOf('/events') > -1) {
+    if (pathname.indexOf('/events/interfereInKing') === -1 && pathname.indexOf('/events') > -1) {
       resetEventContentProductsParamsState();
       logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
         name: attrProperty.name.MAIN,
@@ -123,6 +134,7 @@ function HomePersonalCuration() {
         att: 'MIDDLE'
       });
     }
+
     router.push(pathname);
   };
 
@@ -155,14 +167,21 @@ function HomePersonalCuration() {
         const randomBanner = bannerGroup[Math.floor(Math.random() * bannerGroup.length)];
         setHomePersonalCurationBannersState((prevState) => {
           const newBanners = [...prevState];
+
           if ((index + 1) % 16 === 0 && !prevState[index]) {
-            if (prevIndexRef.current === findIndex(bannerGroup, randomBanner)) {
+            // 참견왕 이벤트 제일 우선 순위 렌더링
+            if (index + 1 === 16) {
+              newBanners[index] =
+                defaultBanners.find(({ pathname }) => pathname === '/events/interfereInKing') ||
+                newBanners[index];
+            } else if (prevIndexRef.current === findIndex(bannerGroup, randomBanner)) {
               newBanners[index] = bannerGroup[Math.abs(prevIndexRef.current - 2)];
             } else {
               newBanners[index] = randomBanner;
             }
             prevIndexRef.current = findIndex(bannerGroup, randomBanner);
           }
+
           return newBanners;
         });
       });
@@ -222,23 +241,13 @@ function HomePersonalCuration() {
                     />
                   </Grid>
                   {(index + 1) % 16 === 0 && (
-                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
-                      <Box
-                        customStyle={{
-                          margin: '0 -20px',
-                          textAlign: 'center',
-                          backgroundColor: banners[index]?.backgroundColor
-                        }}
-                      >
-                        {banners[index]?.src && (
-                          <Image
-                            height={104}
-                            src={banners[index]?.src}
-                            alt="Banner Img"
-                            disableAspectRatio
-                          />
-                        )}
-                      </Box>
+                    <Grid item xs={1}>
+                      <HomeBannerCard
+                        src={banners[index]?.src}
+                        pathname={banners[index]?.pathname}
+                        backgroundColor={banners[index]?.backgroundColor}
+                        onClick={handleClickBanner(banners[index]?.pathname)}
+                      />
                     </Grid>
                   )}
                 </Fragment>
@@ -283,23 +292,13 @@ function HomePersonalCuration() {
                     />
                   </Grid>
                   {(index + 1) % 16 === 0 && (
-                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
-                      <Box
-                        customStyle={{
-                          margin: '0 -20px',
-                          textAlign: 'center',
-                          backgroundColor: banners[index]?.backgroundColor
-                        }}
-                      >
-                        {banners[index]?.src && (
-                          <Image
-                            height={104}
-                            src={banners[index]?.src}
-                            alt="Banner Img"
-                            disableAspectRatio
-                          />
-                        )}
-                      </Box>
+                    <Grid item xs={1}>
+                      <HomeBannerCard
+                        src={banners[index]?.src}
+                        pathname={banners[index]?.pathname}
+                        backgroundColor={banners[index]?.backgroundColor}
+                        onClick={handleClickBanner(banners[index]?.pathname)}
+                      />
                     </Grid>
                   )}
                 </Fragment>
@@ -367,23 +366,13 @@ function HomePersonalCuration() {
                     />
                   </Grid>
                   {(index + 1) % 16 === 0 && (
-                    <Grid item xs={1} onClick={handleClickBanner(banners[index]?.pathname)}>
-                      <Box
-                        customStyle={{
-                          margin: '0 -20px',
-                          textAlign: 'center',
-                          backgroundColor: banners[index]?.backgroundColor
-                        }}
-                      >
-                        {banners[index]?.src && (
-                          <Image
-                            height={104}
-                            src={banners[index]?.src}
-                            alt="Banner Img"
-                            disableAspectRatio
-                          />
-                        )}
-                      </Box>
+                    <Grid item xs={1}>
+                      <HomeBannerCard
+                        src={banners[index]?.src}
+                        pathname={banners[index]?.pathname}
+                        backgroundColor={banners[index]?.backgroundColor}
+                        onClick={handleClickBanner(banners[index]?.pathname)}
+                      />
                     </Grid>
                   )}
                 </Fragment>
@@ -391,7 +380,6 @@ function HomePersonalCuration() {
             })}
         </ABTestGroup>
       </Grid>
-      {}
     </Box>
   );
 }

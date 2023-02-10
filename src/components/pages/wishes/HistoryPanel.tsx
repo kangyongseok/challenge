@@ -284,7 +284,7 @@ function HistoryPanel() {
           startIcon={<Icon name="DeleteOutlined" />}
           onClick={handleClickAllDelete}
         >
-          <Typography weight="medium" variant="small1">
+          <Typography weight="medium" variant="body2">
             전체삭제
           </Typography>
         </Button>

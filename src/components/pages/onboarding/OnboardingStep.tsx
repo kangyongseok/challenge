@@ -60,7 +60,7 @@ function OnboardingStep() {
           onClick={handleClickStep}
         >
           <Typography
-            variant="small1"
+            variant="body2"
             weight="bold"
             customStyle={{
               color:

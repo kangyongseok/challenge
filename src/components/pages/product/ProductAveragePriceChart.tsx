@@ -285,7 +285,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
       <Box customStyle={{ paddingTop: 20 }} />
       <Box customStyle={{ marginBottom: 32 }}>
         <Typography
-          variant="small1"
+          variant="body2"
           weight="bold"
           customStyle={{ color: common.ui60, marginBottom: 4 }}
         >

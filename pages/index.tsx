@@ -11,6 +11,7 @@ import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/mole
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  HomeEventBannerBottomSheet,
   HomeFollowingPanel,
   HomeFooter,
   HomeLegitContinueDialog,
@@ -156,6 +157,7 @@ function Home() {
       <SearchHelperPopup type="continue" />
       <CamelSellerFloatingButton source="MAIN" />
       <HomeLegitContinueDialog />
+      <HomeEventBannerBottomSheet />
     </>
   );
 }

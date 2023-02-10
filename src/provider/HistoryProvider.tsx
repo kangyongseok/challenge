@@ -81,7 +81,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
         return false;
       }
 
-      if (router.pathname === '/events/[id]' && router.query.id === '실시간-개꿀매-17') {
+      if (router.pathname === '/events/dogHoney') {
         resetEventContentDogHoneyFilterState();
       }
 

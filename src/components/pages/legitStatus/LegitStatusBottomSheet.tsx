@@ -146,7 +146,7 @@ function Basic() {
       <Typography weight="medium" customStyle={{ marginTop: 20, color: common.ui60 }}>
         알림을 끄셨다면 사진감정 결과를 받을 수 없어요!
       </Typography>
-      <Typography variant="small1" customStyle={{ marginTop: 2 }}>
+      <Typography variant="body2" customStyle={{ marginTop: 2 }}>
         알림켜기: 휴대폰 설정 {'>'} 알림 {'>'} Camel 허용
       </Typography>
     </>
@@ -166,14 +166,14 @@ function OverTime() {
       <Typography customStyle={{ marginTop: 4, color: common.ui60 }}>
         감정이 시작되면 앱푸시로 알려드릴게요
       </Typography>
-      <Typography variant="small1" customStyle={{ marginTop: 28 }}>
+      <Typography variant="body2" customStyle={{ marginTop: 28 }}>
         알림켜기: 휴대폰 설정 {'>'} 알림 {'>'} Camel 허용
       </Typography>
       <Box customStyle={{ marginTop: 16 }}>
-        <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+        <Typography variant="body2" customStyle={{ color: common.ui60 }}>
           사진감정 운영은 평일 10~19시이며,
         </Typography>
-        <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+        <Typography variant="body2" customStyle={{ color: common.ui60 }}>
           이외의 신청건은 운영시간에 순차적으로 진행됩니다
         </Typography>
       </Box>
@@ -194,10 +194,10 @@ function NotAppUser() {
       <Typography weight="bold" variant="h3">
         로그인이 필요해요!
       </Typography>
-      <Typography variant="small1" customStyle={{ marginTop: 28 }}>
+      <Typography variant="body2" customStyle={{ marginTop: 28 }}>
         로그인 후 알림켜주시면, 앱푸시로 알려드릴게요 :)
       </Typography>
-      <Typography variant="small1" customStyle={{ color: common.ui60 }}>
+      <Typography variant="body2" customStyle={{ color: common.ui60 }}>
         알림켜기: 휴대폰 설정 {'>'} 알림 {'>'} Camel 허용
       </Typography>
     </>

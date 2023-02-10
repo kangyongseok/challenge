@@ -81,7 +81,7 @@ function HotBrandList({ onClick, checkList }: HotBrandListProps) {
               style={{ backgroundColor: '#eff2f7' }}
             />
             <Typography
-              variant="small1"
+              variant="body2"
               weight="medium"
               customStyle={{ marginTop: 8, minHeight: 18, wordBreak: 'keep-all' }}
             >

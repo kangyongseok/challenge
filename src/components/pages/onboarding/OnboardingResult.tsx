@@ -163,7 +163,7 @@ function OnboardingResult() {
             </Flexbox>
           </ProfileCard>
           <Typography
-            variant="small1"
+            variant="body2"
             weight="medium"
             customStyle={{ color: dark.palette.common.ui60 }}
           >

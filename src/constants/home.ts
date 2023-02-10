@@ -28,6 +28,11 @@ export const defaultBanners = [
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-3-banner.png`,
     pathname: '/events/인기-특가-매물-16',
     backgroundColor: '#5A2B08'
+  },
+  {
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-interfere-in-king-banner.png`,
+    pathname: '/events/interfereInKing',
+    backgroundColor: '#0B123E'
   }
 ];
 

@@ -89,7 +89,7 @@ function AnnounceDetail() {
         <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
           {announce.title}
         </Typography>
-        <Typography variant="small1" customStyle={{ color: palette.common.ui60 }}>
+        <Typography variant="body2" customStyle={{ color: palette.common.ui60 }}>
           {dayjs(announce.datePosted).format('YYYY.MM.DD')}
         </Typography>
       </Box>
