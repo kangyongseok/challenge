@@ -26,7 +26,7 @@ function MyShopAppDownloadDialog() {
       customStyle={{ width: '100%' }}
     >
       <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
-        판매하시려면
+        판매하려면
       </Typography>
       <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
         카멜 앱이 필요해요

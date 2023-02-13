@@ -22,6 +22,11 @@ function HomeBannerCard({ src, pathname, backgroundColor, onClick }: HomeBannerC
         title: '2302_CAMEL_OPINION',
         att: 'JOIN'
       });
+    } else if (pathname === '/camelSeller/registerConfirm') {
+      logEvent(attrKeys.events.VIEW_BANNER, {
+        name: attrProperty.name.MAIN,
+        title: attrProperty.title.FOLLOWING
+      });
     }
   }, [pathname]);
 

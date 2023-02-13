@@ -220,7 +220,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     e.stopPropagation();
 
     if (!accessUser) {
-      setLoginBottomSheet(true);
+      setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }
 

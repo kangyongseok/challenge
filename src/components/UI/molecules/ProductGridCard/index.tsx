@@ -235,7 +235,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     e.stopPropagation();
 
     if (!accessUser) {
-      setLoginBottomSheet(true);
+      setLoginBottomSheet({
+        open: true,
+        returnUrl: ''
+      });
       return;
     }
 

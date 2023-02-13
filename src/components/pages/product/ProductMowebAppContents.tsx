@@ -27,12 +27,6 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
   } = useTheme();
   const [isApp, setIsApp] = useState(false);
 
-  useEffect(() => {
-    if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
-      setIsApp(true);
-    }
-  }, []);
-
   const isShowChart = useMemo(() => {
     if (data?.product?.weekAvgPrices) {
       return (
@@ -53,6 +47,12 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
     brandIds: data?.product.brand.id ? [data.product.brand.id] : [],
     categoryIds: data?.product.category.id ? [data.product.category.id] : []
   };
+
+  useEffect(() => {
+    if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
+      setIsApp(true);
+    }
+  }, []);
 
   if (isApp) {
     return (

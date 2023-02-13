@@ -27,6 +27,7 @@ import {
 import { dialogState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
 
@@ -70,6 +71,15 @@ function HomeMainBanner() {
   const { data: accessUser } = useQueryAccessUser();
   const { data: { area: { values: areaValues = [] } = {} } = {} } = useQueryMyUserInfo();
   const { mutate: mutatePostArea } = useMutation(postArea);
+
+  const handleClickCamelSellerBanner = useMoveCamelSeller({
+    attributes: {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.MAIN_BANNER,
+      source: 'MAIN',
+      index: 2
+    }
+  });
 
   const startXRef = useRef(0);
 
@@ -220,6 +230,14 @@ function HomeMainBanner() {
             src={`${IMAGE_BASE_URL}/main-banner-event01.gif`}
             alt="Main Banner Img"
             onClick={handleClickDogHoneyEvent}
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <Image
+            ratio="4:3"
+            src={`${IMAGE_BASE_URL}/main-banner07.png`}
+            alt="Main Banner Img"
+            onClick={handleClickCamelSellerBanner}
           />
         </SwiperSlide>
         {bannerData.map((data) => (

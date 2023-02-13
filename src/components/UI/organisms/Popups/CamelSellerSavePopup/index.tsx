@@ -62,11 +62,18 @@ function CamelSellerSavePopup() {
       SAVED_CAMEL_SELLER_PRODUCT_DATA
     );
 
-    if (
-      !accessUser ||
-      !savedCamelSellerProductData ||
-      !savedCamelSellerProductData[accessUser.snsType]
-    ) {
+    if (!accessUser) {
+      router.push({
+        pathname: '/login',
+        query: {
+          returnUrl: '/camelSeller/registerConfirm',
+          isRequiredLogin: true
+        }
+      });
+      return;
+    }
+
+    if (!savedCamelSellerProductData || !savedCamelSellerProductData[accessUser.snsType]) {
       router.push('/camelSeller/registerConfirm');
       return;
     }
@@ -101,6 +108,8 @@ function CamelSellerSavePopup() {
       })),
       colors
     }));
+
+    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
     router.push('/camelSeller/registerConfirm');
   };

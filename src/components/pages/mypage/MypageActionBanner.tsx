@@ -2,10 +2,8 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, dark, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
-
-import { Gap } from '@components/UI/atoms';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -34,6 +32,7 @@ import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function MypageActionBanner() {
   const {
@@ -49,11 +48,9 @@ function MypageActionBanner() {
   const setDialogState = useSetRecoilState(dialogState);
   const setLegitRequestState = useSetRecoilState(legitRequestState);
 
-  useEffect(() => {
-    if (notProcessedLegitCount < 2 && !!LocalStorage.get('legitDate')) {
-      LocalStorage.remove('legitDate');
-    }
-  }, [notProcessedLegitCount]);
+  const handleClick = useMoveCamelSeller({
+    attributes: { name: attrProperty.name.MY, title: attrProperty.title.MY, source: 'MYPAGE' }
+  });
 
   const authLegit = useMemo(
     () => roles?.includes('PRODUCT_LEGIT') || roles?.includes('PRODUCT_LEGIT_HEAD'),
@@ -228,10 +225,36 @@ function MypageActionBanner() {
 
       if (!LocalStorage.get(firstViewData.localStorageName))
         LocalStorage.set(firstViewData.localStorageName, dayjs().format('YYYY-MM-DD'));
+    } else {
+      logEvent(attrKeys.products.VIEW_BANNER, {
+        name: attrProperty.name.MY,
+        title: attrProperty.title.MY
+      });
     }
   }, [firstViewData]);
 
-  if (!firstViewData) return <Gap height={8} />;
+  useEffect(() => {
+    if (notProcessedLegitCount < 2 && !!LocalStorage.get('legitDate')) {
+      LocalStorage.remove('legitDate');
+    }
+  }, [notProcessedLegitCount]);
+
+  if (!firstViewData)
+    return (
+      <Box
+        onClick={handleClick}
+        customStyle={{
+          backgroundColor: '#4836B6'
+        }}
+      >
+        <Image
+          height={104}
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`}
+          alt="Banner Img"
+          disableAspectRatio
+        />
+      </Box>
+    );
 
   return (
     <Flexbox

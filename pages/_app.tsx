@@ -11,6 +11,7 @@ import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import {
+  CamelSellerAppUpdateDialog,
   CamelSellerSavePopup,
   ErrorBoundary,
   LegitResultSurveyTypeform,
@@ -194,6 +195,7 @@ function App({ Component, pageProps }: AppProps) {
                     잠시 후 다시 시도해 주세요
                   </Toast>
                   <CamelSellerSavePopup />
+                  <CamelSellerAppUpdateDialog />
                   {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
               </ErrorBoundary>

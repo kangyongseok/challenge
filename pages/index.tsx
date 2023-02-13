@@ -1,10 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
-import { QueryClient, dehydrate, useMutation, useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
@@ -25,13 +25,12 @@ import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 
 import { postManage } from '@api/userHistory';
-import { fetchSimpleUserInfo } from '@api/user';
 import { fetchProduct } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import { locales } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
@@ -42,26 +41,12 @@ import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 function Home() {
   const router = useRouter();
-  const { tab } = router.query;
+  const { tab = 'recommend' } = router.query;
 
-  const { data: { isNewUser } = {} } = useQuery(
-    queryKeys.users.simpleUserInfo(),
-    fetchSimpleUserInfo
-  );
   const { data: accessUser } = useQueryAccessUser();
 
   const { mutate: mutatePostManage } = useMutation(postManage);
   const { mutate: mutateCreateChannel } = useMutationCreateChannel();
-
-  const currentTab = useMemo(() => {
-    if (!tab) {
-      if (isNewUser || isNewUser === undefined) {
-        return 'recommend';
-      }
-      return 'following';
-    }
-    return tab;
-  }, [tab, isNewUser]);
 
   useEffect(() => {
     const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
@@ -150,12 +135,18 @@ function Home() {
       <GeneralTemplate footer={<BottomNavigation />} disablePadding>
         <HomeTabs />
         <HomeSearchHeader />
-        {currentTab === 'recommend' && <HomeRecommendPanel />}
-        {currentTab === 'following' && <HomeFollowingPanel />}
+        {tab === 'recommend' && <HomeRecommendPanel />}
+        {tab === 'following' && <HomeFollowingPanel />}
         {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
-      <CamelSellerFloatingButton source="MAIN" />
+      <CamelSellerFloatingButton
+        attributes={{
+          name: attrProperty.name.MAIN,
+          title: attrProperty.title.MAIN_FLOATING,
+          source: 'MAIN'
+        }}
+      />
       <HomeLegitContinueDialog />
       <HomeEventBannerBottomSheet />
     </>
@@ -172,10 +163,6 @@ export async function getServerSideProps({
   Initializer.initAccessTokenByCookies(getCookies({ req }));
   Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
-
-  if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.simpleUserInfo(), fetchSimpleUserInfo);
-  }
 
   return {
     props: {

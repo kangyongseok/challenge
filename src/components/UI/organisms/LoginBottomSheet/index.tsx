@@ -19,15 +19,16 @@ import useSignIn from '@hooks/useSignIn';
 function LoginBottomSheet() {
   const router = useRouter();
 
-  const [open, setOpen] = useRecoilState(loginBottomSheetState);
+  const [{ open, returnUrl }, setLoginBottomSheetState] = useRecoilState(loginBottomSheetState);
   const setToastState = useSetRecoilState(toastState);
 
-  const returnUrl = router.asPath;
-
   const { code, loading, setLoading, authLogin, successLogin } = useSignIn({
-    returnUrl,
+    returnUrl: returnUrl || router.asPath,
     authLoginCallback() {
-      setOpen(false);
+      setLoginBottomSheetState({
+        open: false,
+        returnUrl: ''
+      });
       setToastState({
         type: 'bottomSheetLogin',
         status: 'loginSuccess'
@@ -45,24 +46,28 @@ function LoginBottomSheet() {
 
   useEffect(() => {
     const attName = () => {
-      if (router.query.keyword) return attrProperty.name.productList;
+      if (router.query.keyword) return attrProperty.name.PRODUCT_LIST;
       if (router.query.id) return attrProperty.name.PRODUCT_DETAIL;
       if (router.pathname === '/') return attrProperty.name.MAIN;
+      if (router.pathname === '/mypage') return attrProperty.name.MY;
       return '';
     };
 
     if (open) {
       logEvent(attrKeys.login.VIEW_LOGIN_MODAL, {
         name: attName(),
-        title: attrProperty.title.WISH
+        title:
+          returnUrl === '/camelSeller/registerConfirm'
+            ? attrProperty.title.PRODUCT_MAIN
+            : attrProperty.title.WISH
       });
     }
-  }, [open, router]);
+  }, [open, returnUrl, router]);
 
   return (
     <BottomSheet
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={() => setLoginBottomSheetState({ open: false, returnUrl: '' })}
       disableSwipeable
       customStyle={{ padding: '52px 20px 32px 20px', textAlign: 'center' }}
     >
@@ -89,10 +94,15 @@ function LoginBottomSheet() {
               <LoginButtonList
                 authLogin={authLogin}
                 successLogin={successLogin}
-                returnUrl={returnUrl as string}
+                returnUrl={(returnUrl as string) || router.asPath}
                 setShow={setShow}
                 setLoading={setLoading}
-                onClickNotLoginShow={() => setOpen(false)}
+                onClickNotLoginShow={() =>
+                  setLoginBottomSheetState({
+                    open: false,
+                    returnUrl: ''
+                  })
+                }
                 attName="MODAL"
                 disabledRecentLogin
               />

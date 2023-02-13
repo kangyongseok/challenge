@@ -139,7 +139,10 @@ export const themeState = atom<ThemeMode>({
 
 export const loginBottomSheetState = atom({
   key: 'common/loginBottomSheetState',
-  default: false
+  default: {
+    open: false,
+    returnUrl: ''
+  }
 });
 
 export const historyState = atom<{
@@ -179,4 +182,9 @@ export const accessUserSettingValuesState = atom<AccessUserSettingValue[]>({
       });
     }
   ]
+});
+
+export const camelSellerAppUpdateDialogOpenState = atom({
+  key: 'common/camelSellerAppUpdateDialogOpenState',
+  default: false
 });

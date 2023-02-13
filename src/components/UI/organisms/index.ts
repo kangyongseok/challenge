@@ -17,3 +17,4 @@ export { default as StylesCards } from './StylesCards';
 export { default as LoginBottomSheet } from './LoginBottomSheet';
 export { default as PageSkeleton } from './PageSkeleton';
 export { default as ReviewCard } from './ReviewCard';
+export { default as CamelSellerAppUpdateDialog } from './CamelSellerAppUpdateDialog';

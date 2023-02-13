@@ -20,6 +20,7 @@ import {
 import { logEvent } from '@library/amplitude';
 
 import { locales } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -70,7 +71,13 @@ function MyPage() {
         <MypageEventBanner />
         <MypageEtc />
       </GeneralTemplate>
-      <CamelSellerFloatingButton source="MYPAGE" />
+      <CamelSellerFloatingButton
+        attributes={{
+          name: attrProperty.name.MY,
+          title: attrProperty.title.MY_FLOATING,
+          source: 'MYPAGE'
+        }}
+      />
     </>
   );
 }

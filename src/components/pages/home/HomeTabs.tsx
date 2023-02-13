@@ -1,17 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import { useQuery } from '@tanstack/react-query';
 
 import Badge from '@components/UI/atoms/Badge';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchSimpleUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -24,30 +20,13 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeTabs() {
   const router = useRouter();
-  const { tab } = router.query;
+  const { tab = 'recommend' } = router.query;
 
   const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
-  const { data: { isNewUser } = {} } = useQuery(
-    queryKeys.users.simpleUserInfo(),
-    fetchSimpleUserInfo
-  );
+
   const { data: accessUser } = useQueryAccessUser();
   const setHasHomeTab = useSetRecoilState(hasHomeTabChangeState);
   const resetHasHomeTab = useResetRecoilState(hasHomeTabChangeState);
-
-  useEffect(() => {
-    return () => resetHasHomeTab();
-  }, [resetHasHomeTab]);
-
-  const currentTab = useMemo(() => {
-    if (!tab) {
-      if (isNewUser || isNewUser === undefined) {
-        return 'recommend';
-      }
-      return 'following';
-    }
-    return tab;
-  }, [tab, isNewUser]);
 
   const {
     theme: {
@@ -95,6 +74,10 @@ function HomeTabs() {
     router.push('/wishes');
   };
 
+  useEffect(() => {
+    return () => resetHasHomeTab();
+  }, [resetHasHomeTab]);
+
   return (
     <Flexbox
       alignment="center"
@@ -110,7 +93,7 @@ function HomeTabs() {
           weight="bold"
           onClick={handleClick('recommend')}
           customStyle={{
-            color: currentTab !== 'recommend' ? common.ui80 : undefined,
+            color: tab !== 'recommend' ? common.ui80 : undefined,
             cursor: 'pointer',
             userSelect: 'none'
           }}
@@ -122,7 +105,7 @@ function HomeTabs() {
           weight="bold"
           onClick={handleClick('following')}
           customStyle={{
-            color: currentTab !== 'following' ? common.ui80 : undefined,
+            color: tab !== 'following' ? common.ui80 : undefined,
             cursor: 'pointer',
             userSelect: 'none'
           }}

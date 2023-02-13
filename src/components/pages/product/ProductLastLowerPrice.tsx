@@ -223,6 +223,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
 
 const Wrap = styled.div<{ disabled: boolean }>`
   display: ${({ disabled }) => (disabled ? 'none' : 'block')};
+  margin-top: 32px;
 `;
 
 const ProductList = styled(Flexbox)`

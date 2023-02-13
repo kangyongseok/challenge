@@ -233,47 +233,6 @@ function CamelSellerSizeBottomSheet() {
       }));
     }
 
-    // if (selectedSize) {
-    //   const otherSizeIds = Array.from(
-    //     new Set(
-    //       otherSizeGroups
-    //         .map((otherSizeGroup) =>
-    //           Object.keys(otherSizeGroup)
-    //             .map((otherSizeGroupName) =>
-    //               otherSizeGroup[otherSizeGroupName]
-    //                 .filter(({ selected }) => selected)
-    //                 .map(({ id: categorySizeId }) => categorySizeId)
-    //             )
-    //             .flat()
-    //         )
-    //         .flat()
-    //     )
-    //   );
-    //   const optionalSizeIds = [
-    //     ...optionalSizes
-    //       .filter(({ selected }) => selected)
-    //       .map(({ id: categorySizeId }) => categorySizeId),
-    //     ...optionalFitSizes
-    //       .filter(({ selected }) => selected)
-    //       .map(({ id: categorySizeId }) => categorySizeId)
-    //   ];
-
-    //   setTempData((prevState) => ({
-    //     ...prevState,
-    //     size: { id: selectedSize.id, name: selectedSize.name },
-    //     sizes: '',
-    //     categorySizeIds: [selectedSize.id, ...otherSizeIds],
-    //     sizeOptionIds: optionalSizeIds
-    //   }));
-    // } else if (openSizeDirectInputButton && openSizeDirectInput && value) {
-    //   setTempData((prevState) => ({
-    //     ...prevState,
-    //     size: { id: 0, name: value },
-    //     sizes: value,
-    //     categorySizeIds: [],
-    //     sizeOptionIds: []
-    //   }));
-    // }
     setOpen(({ type }) => ({ type, open: false }));
   };
 

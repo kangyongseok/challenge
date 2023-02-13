@@ -34,6 +34,7 @@ import { eventContentProductsParamsState } from '@recoil/eventFilter';
 import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 import HomeBannerCard from './HomeBannerCard';
 
@@ -50,6 +51,14 @@ function HomePersonalCuration() {
 
   const [bannerGroup, setBannerGroup] = useState<HomeSeasonBannerData[]>([]);
   const prevIndexRef = useRef<number>();
+
+  const handleClick = useMoveCamelSeller({
+    attributes: {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.FOLLOWING,
+      source: 'MAIN'
+    }
+  });
 
   const {
     data: { pages = [] } = {},
@@ -77,6 +86,11 @@ function HomePersonalCuration() {
   const products = useMemo(() => pages.map(({ content }) => content).flat(), [pages]);
 
   const handleClickBanner = (pathname: string) => () => {
+    if (pathname === '/camelSeller/registerConfirm') {
+      handleClick();
+      return;
+    }
+
     const getClickBannerTitle = () => {
       if (pathname.indexOf('/products') > -1) {
         return attrProperty.title.PRODUCT_LIST;
@@ -172,8 +186,11 @@ function HomePersonalCuration() {
             // 참견왕 이벤트 제일 우선 순위 렌더링
             if (index + 1 === 16) {
               newBanners[index] =
-                defaultBanners.find(({ pathname }) => pathname === '/events/interfereInKing') ||
-                newBanners[index];
+                (Math.random() < 0.5
+                  ? defaultBanners.find(({ pathname }) => pathname === '/events/interfereInKing')
+                  : defaultBanners.find(
+                      ({ pathname }) => pathname === '/camelSeller/registerConfirm'
+                    )) || randomBanner;
             } else if (prevIndexRef.current === findIndex(bannerGroup, randomBanner)) {
               newBanners[index] = bannerGroup[Math.abs(prevIndexRef.current - 2)];
             } else {

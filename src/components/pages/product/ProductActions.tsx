@@ -326,7 +326,7 @@ const ActionButtonWrap = styled.div`
       }
     }) => common.bg02};
   width: calc(100% + 40px);
-  margin: 20px 0 32px;
+  margin-top: 20px;
   padding: 10px 0;
 `;
 

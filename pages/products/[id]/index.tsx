@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
-import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -75,6 +75,7 @@ import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function ProductDetail() {
   const {
@@ -196,7 +197,7 @@ function ProductDetail() {
       if (!data?.product) return false;
 
       if (!accessUser) {
-        setLoginBottomSheet(true);
+        setLoginBottomSheet({ open: true, returnUrl: '' });
         return false;
       }
 
@@ -307,6 +308,14 @@ function ProductDetail() {
 
     setViewDetail(true);
   };
+
+  const handleClick = useMoveCamelSeller({
+    attributes: {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PRODUCT_DETAIL,
+      source: 'PRODUCT_DETAIL'
+    }
+  });
 
   useEffect(() => {
     setUserShopSelectedProductState({ id: Number(productId) });
@@ -470,6 +479,13 @@ function ProductDetail() {
     }
   }, [setToastState, setUserDate, userData?.savedLegitRequest]);
 
+  useEffect(() => {
+    logEvent(attrKeys.products.VIEW_BANNER, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PRODUCT_DETAIL
+    });
+  }, []);
+
   const sizeParser = () => {
     const selectedMainSize = data?.product?.categorySizes?.map((size) => size.name) || [];
     const selectedOption = data?.sizeOptions?.map((size) => size.description) || [];
@@ -581,6 +597,21 @@ function ProductDetail() {
                   onClickSMS={handleClickSMS}
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
+                <Box
+                  onClick={handleClick}
+                  customStyle={{
+                    margin: '0 -20px',
+                    borderBottom: `8px solid ${common.bg02}`,
+                    backgroundColor: '#4836B6'
+                  }}
+                >
+                  <Image
+                    height={104}
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`}
+                    alt="Banner Img"
+                    disableAspectRatio
+                  />
+                </Box>
               </>
             )}
             <ProductMowebAppContents data={data} />

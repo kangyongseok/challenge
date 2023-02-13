@@ -33,6 +33,11 @@ export const defaultBanners = [
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-interfere-in-king-banner.png`,
     pathname: '/events/interfereInKing',
     backgroundColor: '#0B123E'
+  },
+  {
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`,
+    pathname: '/camelSeller/registerConfirm',
+    backgroundColor: '#4836B6'
   }
 ];
 

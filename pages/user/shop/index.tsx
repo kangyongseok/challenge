@@ -181,7 +181,13 @@ function UserShop() {
         </Flexbox>
       </GeneralTemplate>
       <UserShopProductDeleteConfirmDialog />
-      <CamelSellerFloatingButton source="SHOP" />
+      <CamelSellerFloatingButton
+        attributes={{
+          name: attrProperty.name.MY_STORE,
+          title: attrProperty.title.MY_STORE_FLOATING,
+          source: 'SHOP'
+        }}
+      />
       <MyShopAppDownloadDialog />
     </>
   );
