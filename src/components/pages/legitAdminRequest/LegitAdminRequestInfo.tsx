@@ -51,12 +51,11 @@ function LegitAdminRequestInfo() {
       quoteTitle = '',
       imageModel = '',
       photoGuideDetails = [],
-      status: productStatus = 0,
-      sellerType = 0,
+      postType = 0,
       category: { nameEng: categoryNameEng = '' } = {}
     } = {}
   } = productLegit || {};
-  const isRequestLegit = sellerType !== 0 && productStatus === 7;
+  const isRequestLegit = postType === 2;
   const brandLogo =
     mode === 'light'
       ? `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/${nameEng

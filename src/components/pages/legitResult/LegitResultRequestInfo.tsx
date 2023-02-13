@@ -42,15 +42,14 @@ function LegitResultRequestInfo() {
     description,
     productResult: {
       brand: { nameEng = '' } = {},
-      sellerType = 0,
-      status: productStatus = 0,
+      postType = 0,
       quoteTitle = '',
       imageModel = '',
       photoGuideDetails = []
     } = {}
   } = productLegit || {};
 
-  const isRequestLegit = sellerType !== 0 && productStatus === 7;
+  const isRequestLegit = postType === 2;
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const dataIndex = Number(e.currentTarget.getAttribute('data-index') || 0);

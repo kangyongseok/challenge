@@ -55,7 +55,7 @@ function LegitAdminRequestCtaButton() {
   const {
     data: {
       status,
-      productResult: { photoGuideDetails = [], sellerType = 0, status: productStatus = 0 } = {},
+      productResult: { photoGuideDetails = [], postType = 0 } = {},
       legitOpinions = [],
       isLegitHead
     } = {},
@@ -78,7 +78,7 @@ function LegitAdminRequestCtaButton() {
     [legitOpinions, accessUser]
   );
 
-  const isRequestLegit = sellerType !== 0 && productStatus === 7;
+  const isRequestLegit = postType === 2;
 
   const handleClick = () => {
     if (myLegitOpinion) {

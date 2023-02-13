@@ -70,8 +70,7 @@ function LegitStatusCardHolder({
       siteUrl,
       photoGuideDetails = [],
       productSeller,
-      sellerType,
-      status: productStatus
+      postType
     }
   },
   title,
@@ -97,9 +96,9 @@ function LegitStatusCardHolder({
   const { isNormalseller, isRequestLegit } = useMemo(
     () => ({
       isNormalseller: (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3,
-      isRequestLegit: sellerType !== 0 && productStatus === 7
+      isRequestLegit: postType === 2
     }),
-    [productSeller.type, productStatus, sellerType, siteId]
+    [productSeller.type, siteId, postType]
   );
 
   const images = useMemo(() => {

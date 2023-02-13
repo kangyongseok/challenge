@@ -38,8 +38,7 @@ function LegitResultBottomCtaButton() {
       enabled: !!id
     }
   );
-  const isRequestLegit =
-    (productResult || {}).sellerType !== 0 && (productResult || {}).status === 7;
+  const isRequestLegit = (productResult || {}).postType === 2;
 
   const handleClick = () => {
     if (isRequestLegit) {

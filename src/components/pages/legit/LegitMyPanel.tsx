@@ -74,7 +74,7 @@ function LegitMyPanel() {
   const handleClick =
     ({ product, status }: { product: ProductResult; status: number }) =>
     () => {
-      const isRequestLegit = product.sellerType !== 0 && product.status === 7;
+      const isRequestLegit = product.postType === 2;
 
       logEvent(attrKeys.legit.CLICK_LEGIT_INFO, {
         name: attrProperty.legitName.LEGIT_MY,

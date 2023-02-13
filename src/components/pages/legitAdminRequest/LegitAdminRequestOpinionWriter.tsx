@@ -42,12 +42,7 @@ function LegitAdminRequestOpinionWriter() {
   const { data: accessUser } = useQueryAccessUser();
 
   const {
-    data: {
-      status,
-      legitOpinions = [],
-      productResult: { status: productStatus = 0, sellerType = 0 } = {},
-      isLegitHead
-    } = {}
+    data: { status, legitOpinions = [], productResult: { postType = 0 } = {}, isLegitHead } = {}
   } = useQuery(queryKeys.productLegits.legit(Number(id)), () => fetchProductLegit(Number(id)), {
     enabled: !!id
   });
@@ -57,7 +52,7 @@ function LegitAdminRequestOpinionWriter() {
     [legitOpinions, accessUser]
   );
 
-  const isRequestLegit = sellerType !== 0 && productStatus === 7;
+  const isRequestLegit = postType === 2;
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const dataResult = Number(e.currentTarget.getAttribute('data-result')) as 0 | 1 | 2 | 3;
