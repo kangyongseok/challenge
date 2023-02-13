@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
 import { useRouter } from 'next/router';
 import { Flexbox, Grid, Label, Typography, dark, useTheme } from 'mrcamel-ui';
+import { uniqBy } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -12,6 +13,8 @@ import {
   LegitUploadInfoPaper
 } from '@components/UI/organisms';
 import LegitPhotoGuideCard from '@components/UI/molecules/LegitPhotoGuideCard';
+
+import type { CommonPhotoGuideDetail } from '@dto/common';
 
 import { fetchProductLegit } from '@api/productLegit';
 
@@ -33,6 +36,18 @@ function LegitAdminRequestInfo() {
   const [open, setOpen] = useState(false);
   const [labelText, setLabelText] = useState('');
   const [syncIndex, setSyncIndex] = useState(0);
+  const [newPhotoGuideDetails, setNewPhotoGuideDetails] = useState<
+    {
+      commonPhotoGuideDetail: CommonPhotoGuideDetail;
+      dateCreated: string;
+      dateUpdated: string;
+      id: number;
+      imageSize: number;
+      imageUrl: string;
+      isEdit: boolean;
+      productId: number;
+    }[]
+  >([]);
 
   const { data: productLegit } = useQuery(
     queryKeys.productLegits.legit(Number(id)),
@@ -50,6 +65,8 @@ function LegitAdminRequestInfo() {
       brand: { nameEng = '' } = {},
       quoteTitle = '',
       imageModel = '',
+      imageMain = '',
+      imageDetails = '',
       photoGuideDetails = [],
       postType = 0,
       category: { nameEng: categoryNameEng = '' } = {}
@@ -68,7 +85,7 @@ function LegitAdminRequestInfo() {
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const dataIndex = Number(e.currentTarget.getAttribute('data-index') || 0);
 
-    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === dataIndex);
+    const findPhotoGuideDetail = newPhotoGuideDetails.find((_, index) => index === dataIndex);
 
     if (!findPhotoGuideDetail) return;
 
@@ -78,12 +95,49 @@ function LegitAdminRequestInfo() {
   };
 
   const handleChange = ({ realIndex }: Swiper) => {
-    const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === realIndex);
+    const findPhotoGuideDetail = newPhotoGuideDetails.find((_, index) => index === realIndex);
 
     if (!findPhotoGuideDetail) return;
 
     setLabelText(findPhotoGuideDetail.commonPhotoGuideDetail.name);
   };
+
+  useEffect(() => {
+    if (!photoGuideDetails.length) return;
+
+    setNewPhotoGuideDetails(
+      uniqBy(
+        photoGuideDetails.concat(
+          [imageMain, ...(imageDetails || '').split('|')]
+            .filter((image) => image)
+            .map((image) => ({
+              imageUrl: image,
+              dateCreated: '',
+              dateUpdated: '',
+              id: 0,
+              imageSize: 0,
+              isEdit: false,
+              productId: 0,
+              commonPhotoGuideDetail: {
+                id: 0,
+                photoGuideId: 0,
+                name: '',
+                description: '',
+                imageType: 0,
+                imageWatermark: '',
+                imageWatermarkDark: '',
+                imageSample: '',
+                sort: 0,
+                isRequired: false,
+                dateUpdated: '',
+                dateCreated: ''
+              }
+            }))
+        ),
+        'imageUrl'
+      )
+    );
+  }, [photoGuideDetails, imageMain, imageDetails]);
 
   if (!productLegit) return null;
 
@@ -102,29 +156,28 @@ function LegitAdminRequestInfo() {
           customStyle={{ marginTop: 68 }}
         >
           <Grid container columnGap={12} rowGap={12}>
-            {(photoGuideDetails || []).map(
-              ({ imageUrl, commonPhotoGuideDetail, isEdit }, index) => (
-                <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}`} item xs={3}>
-                  <LegitPhotoGuideCard
-                    photoGuideDetail={commonPhotoGuideDetail}
-                    imageUrl={imageUrl}
-                    hideLabel
-                    hideHighLite={!((status === 12 || status === 13) && isEdit)}
-                    highLiteColor={status === 12 && isEdit ? 'red-light' : 'primary-light'}
-                    isDark
-                    data-index={index}
-                    onClick={handleClick}
-                  />
-                </Grid>
-              )
-            )}
+            {newPhotoGuideDetails.map(({ imageUrl, commonPhotoGuideDetail, isEdit }, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}-${index}`} item xs={3}>
+                <LegitPhotoGuideCard
+                  photoGuideDetail={commonPhotoGuideDetail}
+                  imageUrl={imageUrl}
+                  hideLabel
+                  hideHighLite={!((status === 12 || status === 13) && isEdit)}
+                  highLiteColor={status === 12 && isEdit ? 'red-light' : 'primary-light'}
+                  isDark
+                  data-index={index}
+                  onClick={handleClick}
+                />
+              </Grid>
+            ))}
           </Grid>
         </LegitUploadInfoPaper>
         <ImageDetailDialog
           open={open}
           onChange={handleChange}
           onClose={() => setOpen(false)}
-          images={(photoGuideDetails || []).map(({ imageUrl }) => imageUrl)}
+          images={newPhotoGuideDetails.map(({ imageUrl }) => imageUrl)}
           label={<Label variant="ghost" brandColor="black" text={labelText} />}
           syncIndex={syncIndex}
         />
