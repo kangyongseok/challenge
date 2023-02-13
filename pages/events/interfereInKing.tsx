@@ -149,11 +149,8 @@ function EventInterfereInKing() {
         footer={
           <Box
             customStyle={{
-              position: 'fixed',
-              left: 0,
-              bottom: 0,
               width: '100%',
-              padding: '0 20px 20px'
+              minHeight: 40
             }}
           >
             <Button
@@ -162,8 +159,23 @@ function EventInterfereInKing() {
               size="xlarge"
               fullWidth
               onClick={handleClickJoinEvent}
+              customStyle={{
+                position: 'fixed',
+                left: 0,
+                bottom: 0,
+                height: 80,
+                borderRadius: 0
+              }}
             >
-              카멜에 참견하기
+              <Typography
+                variant="h2"
+                weight="bold"
+                customStyle={{
+                  color: common.uiWhite
+                }}
+              >
+                이벤트 참여하기
+              </Typography>
             </Button>
           </Box>
         }
