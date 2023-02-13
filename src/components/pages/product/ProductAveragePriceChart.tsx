@@ -91,7 +91,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
     }
 
     return averagePrices
-      .map((averagePrice) => Number((averagePrice / 10000).toFixed(1)))
+      ?.map((averagePrice) => Number((averagePrice / 10000).toFixed(1)))
       .slice(0, 7)
       .reverse();
   }, [product?.weekAvgPrices]);
@@ -145,12 +145,12 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
       setData({
         labels: [
           // `${dayjs().set('month', -6).format('YY년')} ${dayjs().set('month', -6).format('M')}월`,
-          `${dayjs().set('month', -6).format('M')}월`,
           `${dayjs().set('month', -5).format('M')}월`,
           `${dayjs().set('month', -4).format('M')}월`,
           `${dayjs().set('month', -3).format('M')}월`,
           `${dayjs().set('month', -2).format('M')}월`,
-          `${dayjs().set('month', -1).format('M')}월`
+          `${dayjs().set('month', -1).format('M')}월`,
+          `${dayjs().set('month', 0).format('M')}월`
         ],
         datasets: [
           {

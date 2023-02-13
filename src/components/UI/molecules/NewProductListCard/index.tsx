@@ -27,7 +27,6 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import type { ProductListCardVariant } from '@typings/common';
-import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -54,6 +53,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
   showShopManageButton?: boolean;
   measure?: () => void;
   customStyle?: CustomStyle;
+  onClickManageProduct?: () => void;
 }
 
 function NewProductListCard({
@@ -69,6 +69,7 @@ function NewProductListCard({
   hideWishButton,
   attributes: { name, title, source, index, ...attributes } = {},
   showShopManageButton = false,
+  onClickManageProduct,
   measure,
   customStyle,
   ...props
@@ -125,8 +126,6 @@ function NewProductListCard({
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
-  const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
 
   const queryClient = useQueryClient();
 
@@ -207,11 +206,9 @@ function NewProductListCard({
 
   const handleClickManageProduct = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setUserShopSelectedProductState(product as Product & ProductResult);
-    setOpenState(({ type: stateType }) => ({
-      type: stateType,
-      open: true
-    }));
+    if (onClickManageProduct && showShopManageButton) {
+      onClickManageProduct();
+    }
   };
 
   useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);

@@ -140,7 +140,7 @@ function ProductRelatedProductList({
                 <ProductGridCardSkeleton isRound />
               </Grid>
             ))
-          : searchRelatedProducts?.page.content.map((product, i) => (
+          : searchRelatedProducts?.page?.content?.map((product, i) => (
               <Grid key={`related-product-${product.id}`} item xs={2}>
                 <ProductGridCard
                   product={product}

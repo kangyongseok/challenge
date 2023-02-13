@@ -148,7 +148,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
       </Typography>
       <ProductList alignment="flex-start" gap={12}>
         {type &&
-          searchRelatedProducts?.page.content.slice(0, 3).map((product, i) => (
+          searchRelatedProducts?.page.content.slice(0, 3)?.map((product, i) => (
             <Box customStyle={{ flex: 1 }} key={`related-product-${product.id}`}>
               <ProductGridCard
                 product={product}
@@ -189,7 +189,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
           ))}
         {!type &&
           !isLoading &&
-          searchRelatedProducts?.page.content.map((product, i) => (
+          searchRelatedProducts?.page.content?.map((product, i) => (
             <Box customStyle={{ minWidth: 144 }} key={`related-product-${product.id}`}>
               <ProductGridCard
                 product={product}

@@ -139,9 +139,9 @@ function ProductSellerReviews({
         ? Array.from({ length: 2 }, (_, index) => (
             <ReviewCardSkeleton key={`review-loading-${index}`} />
           ))
-        : reviewInfo.sellerReviews.content
+        : reviewInfo.sellerReviews?.content
             .slice(0, 2)
-            .map(({ id: sellerReviewId, reportStatus, creator, content, score }) => (
+            ?.map(({ id: sellerReviewId, reportStatus, creator, content, score }) => (
               <ReviewCard key={`review-${sellerReviewId}`}>
                 {REPORT_STATUS[reportStatus as keyof typeof REPORT_STATUS] === REPORT_STATUS[0] && (
                   <>

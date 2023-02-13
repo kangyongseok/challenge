@@ -59,7 +59,7 @@ function LegitStatusSummaryCard() {
   }, [data]);
 
   const { isPriceDown, isDup, hasTarget } = useMemo(() => {
-    const _price = getTenThousandUnitPrice(data?.product.price || 0);
+    const _price = getTenThousandUnitPrice(data?.product?.price || 0);
     const _targetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
     let _isPriceDown = _targetProductPrice < _price;
     const _isDup = !data?.product.targetProductStatus;
@@ -108,7 +108,7 @@ function LegitStatusSummaryCard() {
           isSafe={isSafe}
           image={data.product.imageThumbnail || data.product.imageMain}
           title={data.product.title}
-          price={data.product.price}
+          price={data.product?.price || 0}
           status={data.product.status}
           isNormalSeller={!!(data.product.productSeller.type === 4 || data.product.site.id === 34)}
           getProductImageOverlay={getProductImageOverlay}

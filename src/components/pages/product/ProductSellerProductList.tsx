@@ -222,7 +222,7 @@ function ProductSellerProductList({
           ? Array.from({ length: 5 }, (_, index) => (
               <ImageSkeleton key={`seller-product-${index}`} />
             ))
-          : sellerProducts.content.map((sellerProduct, i) => (
+          : sellerProducts.content?.map((sellerProduct, i) => (
               <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
                 <ProductGridCard
                   product={sellerProduct}

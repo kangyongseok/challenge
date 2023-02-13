@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AutoSizer,
   CellMeasurer,
@@ -38,7 +38,11 @@ import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
 import type { SavedLegitDataProps } from '@typings/product';
-import { userShopListPrevScrollTopState, userShopSelectedProductState } from '@recoil/userShop';
+import {
+  userShopListPrevScrollTopState,
+  userShopOpenStateFamily,
+  userShopSelectedProductState
+} from '@recoil/userShop';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
@@ -72,6 +76,8 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
 
   const [prevScrollTop, setPrevScrollTop] = useState(userShopListPrevScrollTop);
   const prevScrollTopRef = useRef(prevScrollTop);
+  const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+  const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
 
   const userProductsParams = useMemo(
     () => ({
@@ -139,6 +145,17 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     cache.clearAll();
   }, [refetchUserProducts, refreshInfoByUserId]);
 
+  const handleClickManageProduct = useCallback(
+    (product: ProductResult) => {
+      setUserShopSelectedProductState(product);
+      setOpenState(({ type: stateType }) => ({
+        type: stateType,
+        open: true
+      }));
+    },
+    [setOpenState, setUserShopSelectedProductState]
+  );
+
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
       const shopBannerList = contents[index].labels?.filter((label) => label.codeId === 17);
@@ -166,6 +183,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
                 hideLabel
                 hideWishButton
                 showShopManageButton
+                onClickManageProduct={() => handleClickManageProduct(contents[index])}
                 measure={measure}
               />
               {(!!shopBannerList?.length || isSavedLegitRequest) && (isSale || !isTransferred) ? (
@@ -186,7 +204,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
         </CellMeasurer>
       );
     },
-    [contents, getSavedLegitData?.savedLegitRequest]
+    [contents, getSavedLegitData?.savedLegitRequest?.state, handleClickManageProduct]
   );
 
   useEffect(() => {

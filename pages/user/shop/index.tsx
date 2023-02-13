@@ -70,27 +70,22 @@ function UserShop() {
     delay: 0
   });
 
-  const { labels, tab, curnScore, maxScore } = useMemo(() => {
-    const tabLabels = [
+  const tabLabels = useMemo(() => {
+    return [
       { key: '0', value: `판매중 ${displayProductCount}` },
       { key: '1', value: `판매완료 ${undisplayProductCount}` },
       { key: '2', value: `후기 ${reviewCount}` }
     ];
+  }, [displayProductCount, undisplayProductCount, reviewCount]);
 
+  const { tab, curnScore, maxScore } = useMemo(() => {
     return {
-      labels: tabLabels,
       tab: String(router.query.tab || tabLabels[0].key),
       curnScore: Number(data?.curnScore || 0),
       maxScore: Number(data?.maxScore || 0)
     };
-  }, [
-    data?.curnScore,
-    data?.maxScore,
-    displayProductCount,
-    reviewCount,
-    router.query.tab,
-    undisplayProductCount
-  ]);
+  }, [data?.curnScore, data?.maxScore, router.query.tab, tabLabels]);
+
   const { title, description } = useMemo(() => {
     return {
       title: `판매자 ${userNickName} 후기와 평점 보기 | 카멜`,
@@ -172,10 +167,10 @@ function UserShop() {
             soldoutCount={undisplayProductCount}
             reviewCount={reviewCount}
           />
-          {[labels[0].key, labels[1].key].includes(tab) && (
+          {[tabLabels[0].key, tabLabels[1].key].includes(tab) && (
             <UserShopProductList tab={tab} refreshInfoByUserId={refreshInfoByUserId} />
           )}
-          {tab === labels[2].key && (
+          {tab === tabLabels[2].key && (
             <UserShopReviewList
               userId={userId}
               reviewCount={reviewCount}
