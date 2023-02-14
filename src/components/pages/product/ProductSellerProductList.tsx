@@ -182,7 +182,14 @@ function ProductSellerProductList({
         <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
           {reviewInfo?.productSeller.image ? (
             <UserAvatar>
-              <Image src={`${reviewInfo?.productSeller.image}`} alt="프로필 이미지" round="50%" />
+              <Image
+                src={`${reviewInfo?.productSeller.image}`}
+                alt="프로필 이미지"
+                round="50%"
+                customStyle={{
+                  borderRadius: '50%'
+                }}
+              />
             </UserAvatar>
           ) : (
             <EmptyAvatar justifyContent="center" alignment="center">
@@ -308,6 +315,9 @@ const UserAvatar = styled.div`
   }) => common.bg02};
   overflow: hidden;
   margin-right: 12px;
+  * {
+    border-radius: 50%;
+  }
 `;
 
 const EmptyAvatar = styled(Flexbox)`
