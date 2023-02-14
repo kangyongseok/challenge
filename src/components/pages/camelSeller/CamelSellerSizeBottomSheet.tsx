@@ -22,6 +22,7 @@ function CamelSellerSizeBottomSheet() {
     {
       category: { id, parentId, parentCategoryName, name: categoryName },
       brand: { id: brandId },
+      brands,
       sizes,
       categorySizeIds,
       sizeOptionIds
@@ -64,7 +65,7 @@ function CamelSellerSizeBottomSheet() {
     queryKeys.categories.categorySizes({ categoryId: id, brandId }),
     () => fetchCategorySizes({ categoryId: id, brandId }),
     {
-      enabled: open && !!id && !!brandId
+      enabled: open && !!id && (!!brandId || !!brands)
     }
   );
 

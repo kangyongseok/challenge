@@ -46,6 +46,17 @@ function CamelSellerSize() {
     }
   );
 
+  const handleOpenSizeBottomSheet = () => {
+    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
+      name: attrProperty.name.PRODUCT_MAIN,
+      title: attrProperty.title.SIZE,
+      att: selectedCategorySizes.map((info) => info.name)
+    });
+
+    if ((categoryId && brandId) || (categoryId && brands))
+      setOpen(({ type }) => ({ type, open: true }));
+  };
+
   useEffect(() => {
     const result = fetchSizeData?.filter((data) => categorySizeIds?.includes(data.categorySizeId));
     setSelectedCategorySizes(result || []);
@@ -116,17 +127,6 @@ function CamelSellerSize() {
 
     return result;
   }, [categorySizeIds, selectedCategorySizes, selectedOptionalSizes, sizes]);
-
-  const handleOpenSizeBottomSheet = () => {
-    logEvent(attrKeys.camelSeller.CLICK_PRODUCT_EDIT, {
-      name: attrProperty.name.PRODUCT_MAIN,
-      title: attrProperty.title.SIZE,
-      att: selectedCategorySizes.map((info) => info.name)
-    });
-
-    if ((categoryId && brandId) || (categoryId && brands))
-      setOpen(({ type }) => ({ type, open: true }));
-  };
 
   return (
     <SizeWrap
