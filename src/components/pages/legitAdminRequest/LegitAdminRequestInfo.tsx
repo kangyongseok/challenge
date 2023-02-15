@@ -103,11 +103,9 @@ function LegitAdminRequestInfo() {
   };
 
   useEffect(() => {
-    if (!photoGuideDetails.length) return;
-
     setNewPhotoGuideDetails(
       uniqBy(
-        photoGuideDetails.concat(
+        (photoGuideDetails || []).concat(
           [imageMain, ...(imageDetails || '').split('|')]
             .filter((image) => image)
             .map((image) => ({
@@ -178,7 +176,9 @@ function LegitAdminRequestInfo() {
           onChange={handleChange}
           onClose={() => setOpen(false)}
           images={newPhotoGuideDetails.map(({ imageUrl }) => imageUrl)}
-          label={<Label variant="ghost" brandColor="black" text={labelText} />}
+          label={
+            labelText ? <Label variant="ghost" brandColor="black" text={labelText} /> : undefined
+          }
           syncIndex={syncIndex}
         />
       </>
