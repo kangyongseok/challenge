@@ -13,8 +13,11 @@ import { logEvent } from '@library/amplitude';
 import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
 
@@ -73,7 +76,12 @@ function LegitRequestSelectBrand() {
       <Typography variant="h2" weight="bold">
         브랜드를 선택해주세요
       </Typography>
-      <Flexbox component="section" direction="vertical" gap={10}>
+      <Flexbox
+        component="section"
+        direction="vertical"
+        gap={10}
+        customStyle={{ paddingBottom: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : 0 }}
+      >
         {legitsBrands.map(({ id, name, nameEng }) => (
           <Flexbox
             key={`brand-${id}`}

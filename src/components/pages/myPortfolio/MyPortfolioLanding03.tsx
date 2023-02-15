@@ -1,5 +1,9 @@
 import { Box, Image, Typography, useTheme } from 'mrcamel-ui';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function MyPortfolioLanding03() {
@@ -9,7 +13,12 @@ function MyPortfolioLanding03() {
   const { data: userInfo } = useQueryUserInfo();
 
   return (
-    <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
+    <Box
+      customStyle={{
+        textAlign: 'center',
+        marginTop: `calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`
+      }}
+    >
       <Typography weight="bold" customStyle={{ color: palette.primary.main }}>
         실거래가
       </Typography>

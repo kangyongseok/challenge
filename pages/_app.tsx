@@ -3,43 +3,31 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
-import { appWithTranslation } from 'next-i18next';
 import { Toast, useTheme } from 'mrcamel-ui';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
-import {
-  CamelSellerAppUpdateDialog,
-  CamelSellerSavePopup,
-  ErrorBoundary,
-  LegitResultSurveyTypeform,
-  LoginBottomSheet,
-  PageSkeleton
-} from '@components/UI/organisms';
+import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
 
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
 
-import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
-import localeData from 'public/locales';
-import { i18n } from 'next-i18next.config';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 import { PortalProvider } from '@provider/PortalProvider';
-import { ABTestCookie } from '@provider/ABTestProvider';
 import {
   ABTestProvider,
   ChannelTalkProvider,
-  DialogProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
   HistoryProvider,
   SendbirdProvider,
-  ThemeModeProvider,
-  ToastProvider
+  ThemeModeProvider
 } from '@provider';
 
 import '@styles/base.css';
@@ -50,6 +38,34 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
+
+const DialogProvider = dynamic(() => import('@provider/DialogProvider'), {
+  loading: () => <div>Loading...</div>
+});
+const ToastProvider = dynamic(() => import('@provider/ToastProvider'), {
+  loading: () => <div>Loading...</div>
+});
+const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'), {
+  loading: () => <div>Loading...</div>
+});
+const LegitResultSurveyTypeform = dynamic(
+  () => import('@components/UI/organisms/LegitResultSurveyTypeform'),
+  {
+    loading: () => <div>Loading...</div>
+  }
+);
+const CamelSellerSavePopup = dynamic(
+  () => import('@components/UI/organisms/Popups/CamelSellerSavePopup'),
+  {
+    loading: () => <div>Loading...</div>
+  }
+);
+const CamelSellerAppUpdateDialog = dynamic(
+  () => import('@components/UI/organisms/CamelSellerAppUpdateDialog'),
+  {
+    loading: () => <div>Loading...</div>
+  }
+);
 
 if (global.navigator) {
   Amplitude.init();
@@ -82,36 +98,14 @@ function App({ Component, pageProps }: AppProps) {
     })
   );
 
-  const lang: keyof typeof localeData = useMemo(
-    () => pageProps?._nextI18Next?.initialLocale || locales.ko.lng,
-    [pageProps?._nextI18Next?.initialLocale]
-  );
   const canonicalUrl = useMemo(() => {
     // 해당 페이지 내에서 렌더링하기 위함
     if (router.pathname === '/products/[id]') return '';
 
     const asPath = router.asPath === '/' ? '' : router.asPath.split('?')[0];
-    return decodeURI(`${originUrl}${lang === locales.ko.lng ? '' : `/${lang}`}${asPath}`).replace(
-      / /g,
-      '-'
-    );
-  }, [lang, router.asPath, router.pathname]);
-  const alternativeLink = useMemo(
-    () =>
-      Object.entries(locales).map(([_, { lng }]) => (
-        <link
-          key={lng}
-          rel="alternate"
-          hrefLang={lng}
-          href={decodeURI(
-            `${originUrl}${lng === locales.ko.lng ? '' : `/${lng}`}${
-              router.asPath === '/' ? '' : router.asPath
-            }`
-          ).replace(/ /g, '-')}
-        />
-      )),
-    [router.asPath]
-  );
+    return decodeURI(`${originUrl}${asPath}`).replace(/ /g, '-');
+  }, [router.asPath, router.pathname]);
+
   const themeColor = useMemo(() => {
     if (router.asPath.split('?')[0] === '/') return common.cmn80;
 
@@ -126,7 +120,6 @@ function App({ Component, pageProps }: AppProps) {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
       logEvent(event.eventName, event.eventParams);
     };
-    ABTestCookie({ name: abTestTaskNameKeys.WELCOME3_2211, cookieName: 'useAi' });
     Initializer.initAccessUserInQueryClient(queryClient.current);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
@@ -149,24 +142,20 @@ function App({ Component, pageProps }: AppProps) {
         <meta charSet="utf-8" />
         <meta
           name="viewport"
-          content="minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0"
+          content={`minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0, ${
+            isExtendedLayoutIOSVersion() ? 'viewport-fit=cover' : ''
+          }`}
         />
         <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta httpEquiv="content-language" content={lang} />
-        <meta name="description" content={localeData[lang].meta.description} />
-        <meta name="theme-color" content={themeColor} />
-        <title>{localeData[lang].meta.title}</title>
-        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-        {alternativeLink}
-        <link
-          rel="alternate"
-          hrefLang="x-default"
-          href={decodeURI(`${originUrl}${router.asPath === '/' ? '' : router.asPath}`).replace(
-            / /g,
-            '-'
-          )}
+        <meta httpEquiv="content-language" content="ko" />
+        <meta
+          name="description"
+          content="여러분은 카멜에서 검색만 하세요. 전국 중고명품 매물은 카멜이 다 모아서 비교하고 분석해드릴게요!"
         />
+        <meta name="theme-color" content={themeColor} />
+        <title>전국 중고명품 통합검색은 카멜에서</title>
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       </Head>
       <ChannelTalkProvider />
       <FacebookPixelProvider />
@@ -208,4 +197,4 @@ function App({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(App, { i18n, reloadOnPrerender: false });
+export default App;

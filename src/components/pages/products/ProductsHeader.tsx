@@ -8,11 +8,12 @@ import { Header, SearchBar } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
-import { SEARCH_BAR_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import {
@@ -96,7 +97,9 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     return (
       <Box
         customStyle={{
-          minHeight: SEARCH_BAR_HEIGHT,
+          minHeight: `calc(${
+            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+          } + ${SEARCH_BAR_HEIGHT}px)`,
           position: 'relative'
         }}
       >

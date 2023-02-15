@@ -2,6 +2,10 @@ import { useRecoilValue } from 'recoil';
 
 import { TopButton } from '@components/UI/molecules';
 
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 import { creazycurationProductsEventBottomBannerOpenState } from '@recoil/crazycuration';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
@@ -16,7 +20,7 @@ function ProductsTopButton() {
     <TopButton
       show={triggered}
       customStyle={{
-        bottom: 80
+        bottom: `calc(80px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
       }}
     />
   );

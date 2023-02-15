@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
 import { useRouter } from 'next/router';
-import { ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -12,7 +12,7 @@ import { AppIntro01, AppIntro02, AppIntro03, AppIntro04 } from '@components/page
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -51,23 +51,31 @@ function AppIntroStep() {
           variant="h4"
           weight="bold"
           onClick={handleClick}
-          isHeight={isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}
+          isHeight={isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0}
         >
           로그인
         </Login>
         <StyledWrap currentStep={currentStep}>
           <Swiper pagination modules={[Pagination]} onSlideChange={handleChange}>
             <SwiperSlide>
-              <AppIntro01 />
+              <SwiperContents alignment="center" justifyContent="center" direction="vertical">
+                <AppIntro01 />
+              </SwiperContents>
             </SwiperSlide>
             <SwiperSlide>
-              <AppIntro02 animationStart={currentStep === 1} />
+              <SwiperContents alignment="center" justifyContent="center" direction="vertical">
+                <AppIntro02 animationStart={currentStep === 1} />
+              </SwiperContents>
             </SwiperSlide>
             <SwiperSlide>
-              <AppIntro03 animationStart={currentStep === 2} />
+              <SwiperContents alignment="center" justifyContent="center" direction="vertical">
+                <AppIntro03 animationStart={currentStep === 2} />
+              </SwiperContents>
             </SwiperSlide>
             <SwiperSlide>
-              <AppIntro04 animationStart={currentStep === 3} />
+              <SwiperContents alignment="center" justifyContent="center" direction="vertical">
+                <AppIntro04 animationStart={currentStep === 3} />
+              </SwiperContents>
             </SwiperSlide>
           </Swiper>
         </StyledWrap>
@@ -96,13 +104,18 @@ const StyledWrap = styled.div<{ currentStep: number }>`
   }
 `;
 
-const Login = styled(Typography)<{ isHeight: number }>`
+const Login = styled(Typography)<{ isHeight: number | typeof IOS_SAFE_AREA_TOP }>`
   position: absolute;
-  top: ${({ isHeight }) => isHeight}px;
+  top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0};
   right: 0;
   color: ${dark.palette.common.ui60};
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   padding: 32px;
+`;
+
+const SwiperContents = styled(Flexbox)`
+  height: 100vh;
+  height: calc((var(--vh, 1vh) * 100));
 `;
 
 export default AppIntroStep;

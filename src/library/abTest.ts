@@ -38,6 +38,20 @@ const tasks: ABTestTask[] = [
     },
     running: false,
     defaultBelong: 'A'
+  },
+  {
+    name: abTestTaskNameKeys.BETTER_CARD_2302,
+    slot: 'test_type_01',
+    postfix: {
+      A: '2302_RECOMMEND_A',
+      B: '2302_RECOMMEND_B'
+    },
+    ratio: {
+      A: 50,
+      B: 50
+    },
+    running: true,
+    defaultBelong: 'A'
   }
 ];
 

@@ -26,7 +26,7 @@ import { fetchInfoByUserId } from '@api/user';
 
 import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -66,7 +66,11 @@ function UserShop() {
   const triggered = useScrollTrigger({
     ref: tabRef,
     additionalOffsetTop:
-      (isExtendedLayoutIOSVersion() ? -APP_TOP_STATUS_HEIGHT : 0) + -HEADER_HEIGHT,
+      -(isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0) - HEADER_HEIGHT,
     delay: 0
   });
 
@@ -121,17 +125,14 @@ function UserShop() {
             imageProfile={userImageProfile}
             nickName={userNickName}
             currentTab={tab}
+            reviewCount={reviewCount}
             sellCount={displayProductCount}
             soldoutCount={undisplayProductCount}
-            reviewCount={reviewCount}
           />
         }
         disablePadding
       >
-        <Flexbox
-          direction="vertical"
-          customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
-        >
+        <Flexbox direction="vertical">
           {userRoleLegit ? (
             <UserShopLegitProfile
               isLoading={isLoading}
@@ -163,9 +164,9 @@ function UserShop() {
           <UserShopTabs
             ref={tabRef}
             value={tab}
+            reviewCount={reviewCount}
             sellCount={displayProductCount}
             soldoutCount={undisplayProductCount}
-            reviewCount={reviewCount}
           />
           {[tabLabels[0].key, tabLabels[1].key].includes(tab) && (
             <UserShopProductList tab={tab} refreshInfoByUserId={refreshInfoByUserId} />

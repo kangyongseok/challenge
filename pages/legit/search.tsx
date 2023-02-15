@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetStaticPropsContext } from 'next';
 import { useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation } from '@components/UI/molecules';
@@ -14,7 +12,6 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 function LegitSearch() {
@@ -48,17 +45,6 @@ function LegitSearch() {
       <LegitSearchGrid />
     </GeneralTemplate>
   );
-}
-
-export async function getStaticProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetStaticPropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
 }
 
 export default LegitSearch;

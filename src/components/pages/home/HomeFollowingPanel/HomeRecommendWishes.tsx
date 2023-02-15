@@ -6,12 +6,7 @@ import { Box, Button, Flexbox, Icon, Image, Skeleton, Typography, useTheme } fro
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -258,7 +253,7 @@ function HomeRecommendWishes() {
       )}
       {isLoadingUserHistory && enabledUserHistories && (
         <List>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
             {Array.from({ length: 10 }).map((_, index) => (
               <NewProductGridCardSkeleton
                 // eslint-disable-next-line react/no-array-index-key
@@ -268,25 +263,13 @@ function HomeRecommendWishes() {
               />
             ))}
           </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
             {Array.from({ length: 10 }).map((_, index) => (
               <NewProductGridCardSkeleton
                 // eslint-disable-next-line react/no-array-index-key
                 key={`home-user-history-product-skeleton-${index}`}
                 variant="swipeX"
                 hideMetaInfo
-              />
-            ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <ProductGridCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`home-user-history-product-skeleton-${index}`}
-                isRound
-                compact
-                hasAreaWithDateInfo={false}
-                hasMetaInfo={false}
               />
             ))}
           </ABTestGroup>
@@ -312,7 +295,7 @@ function HomeRecommendWishes() {
       )}
       {!isLoadingUserHistory && enabledUserHistories && notSoldoutProducts.length && (
         <List>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
             {notSoldoutProducts.map(({ product }, index) => (
               <NewProductGridCard
                 key={`home-user-history-product-${product.id}`}
@@ -327,57 +310,20 @@ function HomeRecommendWishes() {
               />
             ))}
           </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
             {notSoldoutProducts.map(({ product }, index) => (
               <NewProductGridCard
                 key={`home-user-history-product-${product.id}`}
                 variant="swipeX"
                 product={product}
+                platformLabelType="B"
+                hideSize={false}
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.RECENT_LIST,
                   source: attrProperty.source.MAIN_RECENT,
                   index: index + 1
                 }}
-              />
-            ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-            {notSoldoutProducts.map(({ product }, index) => (
-              <ProductGridCard
-                key={`home-user-history-product-${product.id}`}
-                product={product}
-                productAtt={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.RECENT_LIST,
-                  id: product.id,
-                  index: index + 1,
-                  brand: product.brand.name,
-                  category: product.category.name,
-                  parentId: product.category.parentId,
-                  site: product.site.name,
-                  price: product.price,
-                  cluster: product.cluster,
-                  source: attrProperty.source.MAIN_RECENT
-                }}
-                wishAtt={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.RECENT_LIST,
-                  id: product.id,
-                  index: index + 1,
-                  brand: product.brand.name,
-                  category: product.category.name,
-                  parentId: product.category.parentId,
-                  site: product.site.name,
-                  price: product.price,
-                  cluster: product.cluster,
-                  source: attrProperty.source.MAIN_RECENT
-                }}
-                source={attrProperty.source.MAIN_RECENT}
-                isRound
-                hideProductLabel
-                hideAreaWithDateInfo
-                compact
               />
             ))}
           </ABTestGroup>

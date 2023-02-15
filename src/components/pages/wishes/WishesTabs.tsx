@@ -5,11 +5,9 @@ import { Box, Button, Dialog, Flexbox, Tab, TabGroup, Typography, useTheme } fro
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT, TAB_HEIGHT } from '@constants/common';
+import { TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 function WishesTabs() {
   const router = useRouter();
@@ -112,8 +110,7 @@ function WishesTabs() {
         component="section"
         customStyle={{
           minHeight: TAB_HEIGHT,
-          zIndex: header,
-          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+          zIndex: header
         }}
       >
         <TabGroup

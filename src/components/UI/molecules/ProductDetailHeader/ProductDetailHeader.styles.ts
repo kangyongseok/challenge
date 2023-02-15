@@ -1,14 +1,14 @@
 import { Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 export const CustomHeader = styled(Flexbox)`
   position: fixed;
   left: 0;
-  padding: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px 20px 0;
+  padding: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0} 20px 0;
   width: 100%;
   height: ${HEADER_HEIGHT}px;
   background: ${({ theme: { palette } }) => palette.common.uiWhite};

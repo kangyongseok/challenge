@@ -69,7 +69,7 @@ const Wrapper = styled.section<{ show: boolean }>`
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  margin: -16px 20px 20px;
+  margin: -10px 20px 20px;
   z-index: ${({ show, theme: { zIndex } }) => show && zIndex.header};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
 `;

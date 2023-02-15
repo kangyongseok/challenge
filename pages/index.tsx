@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
@@ -29,7 +28,6 @@ import { fetchProduct } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
-import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
@@ -153,11 +151,7 @@ function Home() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
@@ -166,7 +160,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

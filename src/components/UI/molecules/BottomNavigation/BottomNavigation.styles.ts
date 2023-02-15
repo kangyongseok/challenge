@@ -2,12 +2,18 @@ import { Tooltip } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 export const StyledBottomNavigation = styled.nav<{
   display?: 'block' | 'none';
 }>`
   width: 100%;
-  min-height: 60px;
+  min-height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'} + 60px);
   display: ${({ display }) => display || 'block'};
+  padding-bottom: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : 0};
+  padding-top: ${isExtendedLayoutIOSVersion() ? `calc(${IOS_SAFE_AREA_BOTTOM} / 3)` : 0};
 `;
 
 export const List = styled.ul<{ triggered: boolean }>`
@@ -30,7 +36,7 @@ export const List = styled.ul<{ triggered: boolean }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 60px;
+  min-height: 60px;
   transition: opacity 0.1s ease-in;
 
   ${({ triggered }): CSSObject =>
@@ -42,6 +48,8 @@ export const List = styled.ul<{ triggered: boolean }>`
           opacity: 0,
           pointerEvents: 'none'
         }};
+  padding-bottom: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : 0};
+  padding-top: ${isExtendedLayoutIOSVersion() ? `calc(${IOS_SAFE_AREA_BOTTOM} / 3)` : 0};
 `;
 
 export const ListItem = styled.li`
@@ -70,7 +78,7 @@ export const LegitResultTooltip = styled(Tooltip)`
     width: calc(100% - 80px);
     height: fit-content;
     top: auto;
-    bottom: 20px;
+    bottom: calc(20px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'});
     text-align: center;
   }
   z-index: ${({ theme: { zIndex } }) => zIndex.sheet - 1};

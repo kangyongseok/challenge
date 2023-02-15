@@ -3,6 +3,10 @@ import styled from '@emotion/styled';
 
 import { LegitRequestBrandLogo } from '@components/pages/legitRequest/index';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 interface LegitRequestTitleWithModelImageProps {
   brandLogo: string;
   brandName: string;
@@ -66,7 +70,8 @@ const Title = styled.section<{ isEditMode?: boolean }>`
   display: flex;
   column-gap: 12px;
   align-items: center;
-  padding: ${({ isEditMode }) => (isEditMode ? '52px 20px 0' : '52px 20px 32px')};
+  padding: calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}) 20px
+    ${({ isEditMode }) => (isEditMode ? 0 : 32)}px;
   user-select: none;
 
   & > div:last-of-type {

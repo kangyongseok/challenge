@@ -1,4 +1,3 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
@@ -24,8 +23,6 @@ import Initializer from '@library/initializer';
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { locales } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
 import { getCookies } from '@utils/cookies';
@@ -48,7 +45,7 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
         <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
-        <ProductsInfiniteGrid variant="search" name={attrProperty.productName.SEARCH} />
+        <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
@@ -63,9 +60,7 @@ export async function getServerSideProps({
   query,
   req,
   res,
-  resolvedUrl,
-  locale,
-  defaultLocale = locales.ko.lng
+  resolvedUrl
 }: GetServerSidePropsContext) {
   if (query.keyword?.includes(' ')) {
     return {
@@ -86,7 +81,6 @@ export async function getServerSideProps({
 
     return {
       props: {
-        ...(await serverSideTranslations(locale || defaultLocale)),
         params
       }
     };
@@ -102,7 +96,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient),
       params
     }

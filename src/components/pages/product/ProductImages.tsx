@@ -21,11 +21,8 @@ import { fetchSearchRelatedProducts } from '@api/product';
 
 import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import ProductLastLowerPrice from './ProductLastLowerPrice';
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
@@ -305,8 +302,7 @@ function ProductImages({
       <Box
         ref={wrapperRef}
         customStyle={{
-          margin: '0 -20px',
-          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+          margin: '0 -20px'
         }}
       >
         <Swiper

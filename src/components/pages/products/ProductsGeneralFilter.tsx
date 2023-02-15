@@ -31,12 +31,14 @@ import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   CATEGORY_TAGS_HEIGHT,
   GENERAL_FILTER_HEIGHT,
-  HEADER_HEIGHT
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 import {
@@ -727,13 +729,17 @@ const StyledGeneralFilter = styled.section<{
 
   top: ${({ variant, showAppDownloadBanner }) => {
     if (variant === 'search') {
-      return showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT;
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT
+      }px)`;
     }
 
-    return showAppDownloadBanner
-      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT
-      : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT;
-  }}px;
+    return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+      showAppDownloadBanner
+        ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT
+        : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT
+    }px)`;
+  }};
 
   ${({ triggered, productsStatusTriggered }): CSSObject => {
     if (!triggered && productsStatusTriggered) {

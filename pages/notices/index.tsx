@@ -1,8 +1,6 @@
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetStaticPropsContext } from 'next';
 import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -16,8 +14,10 @@ import { logEvent } from '@library/amplitude';
 import { postManage, putNotiReadAll } from '@api/userHistory';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_TOP, TAB_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -144,23 +144,15 @@ function Notices() {
 
 const TabsWrapper = styled(Box)<{ showAppDownloadBanner: boolean }>`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px;
+  top: calc(
+    ${({ showAppDownloadBanner }) =>
+        showAppDownloadBanner ? 56 + APP_DOWNLOAD_BANNER_HEIGHT : 56}px +
+      ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
   width: 100%;
   min-height: ${TAB_HEIGHT}px;
   z-index: 2;
   transition: top 0.5s;
 `;
-
-export async function getStaticProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetStaticPropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
-}
 
 export default Notices;

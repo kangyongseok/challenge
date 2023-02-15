@@ -11,7 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchProductLegits } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -109,7 +109,6 @@ function LegitSearchHeader() {
     <StyledLegitSearchHeader
       ref={headerRef}
       showAppDownloadBanner={showAppDownloadBanner && window && !!window.scrollY}
-      isExtendedLayout={isExtendedLayoutIOSVersion()}
       init={init}
     >
       <Flexbox gap={12} alignment="center" customStyle={{ padding: '0 16px' }}>
@@ -188,15 +187,11 @@ function LegitSearchHeader() {
 
 const StyledLegitSearchHeader = styled.header<{
   showAppDownloadBanner: boolean;
-  isExtendedLayout: boolean | null;
   init: boolean;
 }>`
   position: sticky;
   top: 0;
-  padding-top: ${({ isExtendedLayout }) => {
-    if (isExtendedLayout) return `${APP_TOP_STATUS_HEIGHT + 6}px`;
-    return '6px';
-  }};
+  padding-top: ${isExtendedLayoutIOSVersion() ? `calc(${IOS_SAFE_AREA_TOP} + 6px)` : '6px'};
   background: ${({
     theme: {
       palette: { common }

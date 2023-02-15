@@ -1,13 +1,21 @@
 import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 function MyPortfolioLanding02({ isSmallHeight }: { isSmallHeight: boolean }) {
   const {
     theme: { palette }
   } = useTheme();
   return (
     <StyledWrap>
-      <Box customStyle={{ height: 52 }} />
+      <Box
+        customStyle={{
+          height: `calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`
+        }}
+      />
       <Typography weight="bold" variant="h2" customStyle={{ width: 376, margin: '0 auto' }}>
         내 옷장 명품들이
       </Typography>

@@ -117,7 +117,6 @@ function RegisterConfirmEdit() {
         }
         return { id: 0, name: '', categorySizeId: 0 };
       };
-
       setHasOpenedSurveyBottomSheetState(true);
       setTempData({
         title: editData.product.title,

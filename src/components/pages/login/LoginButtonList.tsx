@@ -80,7 +80,6 @@ function LoginButtonList({
 
   const handleCLickTestUserLogin = async () => {
     const testUserId = (document.getElementById('signIn') as HTMLInputElement).value || '';
-
     if (testUserId) {
       try {
         Axios.clearAccessToken();

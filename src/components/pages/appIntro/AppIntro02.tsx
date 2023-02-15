@@ -1,66 +1,56 @@
 import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
-
 function AppIntro02({ animationStart }: { animationStart: boolean }) {
   return (
-    <StyledWrap direction="vertical" justifyContent="center" alignment="center">
-      <Flexbox
-        alignment="center"
-        direction="vertical"
-        customStyle={{ height: 350, justifyContent: 'flex-end' }}
-      >
-        <CenterCard direction="vertical" justifyContent="center" alignment="center">
-          <Icon name="LogoText_96_20" customStyle={{ marginTop: 20 }} width={70} />
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/center_bag_img.png`}
-            alt="Center Bag Img"
-            disableAspectRatio
-          />
-          {animationStart && (
-            <>
-              <BubbleText variant="h3" weight="bold" top={-20} left={-20} afterLeft={30} order={2}>
-                인증판매자
-              </BubbleText>
-              <BubbleText variant="h3" weight="bold" top={55} left={-70} afterLeft={70} order={1}>
-                새상품급
-              </BubbleText>
-              <BubbleText variant="h3" weight="bold" top={-10} right={-55} order={3}>
-                MEDIUM
-              </BubbleText>
-              <BubbleText variant="h3" weight="bold" top={60} right={-95} order={4} afterTop={14}>
-                <Flexbox gap={8}>
-                  <Circle color={dark.palette.common.uiWhite}>
-                    <Icon name="CheckOutlined" size="medium" />
-                  </Circle>
-                  <Circle color="#FC7B7B" />
-                  <Circle color="#E09C76" />
-                </Flexbox>
-              </BubbleText>
-            </>
-          )}
-        </CenterCard>
-        <Box customStyle={{ textAlign: 'center' }}>
-          <Typography variant="h1" weight="bold">
-            AI가 정리한
-            <br />
-            깔끔 필터
-          </Typography>
-          <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
-            복잡한 중고매물, 보고픈 것만 보세요
-          </Typography>
-        </Box>
-      </Flexbox>
-    </StyledWrap>
+    <Flexbox
+      alignment="center"
+      direction="vertical"
+      customStyle={{ height: 350, justifyContent: 'flex-end' }}
+    >
+      <CenterCard direction="vertical" justifyContent="center" alignment="center">
+        <Icon name="LogoText_96_20" customStyle={{ marginTop: 20 }} width={70} />
+        <Image
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/center_bag_img.png`}
+          alt="Center Bag Img"
+          disableAspectRatio
+        />
+        {animationStart && (
+          <>
+            <BubbleText variant="h3" weight="bold" top={-20} left={-20} afterLeft={30} order={2}>
+              인증판매자
+            </BubbleText>
+            <BubbleText variant="h3" weight="bold" top={55} left={-70} afterLeft={70} order={1}>
+              새상품급
+            </BubbleText>
+            <BubbleText variant="h3" weight="bold" top={-10} right={-55} order={3}>
+              MEDIUM
+            </BubbleText>
+            <BubbleText variant="h3" weight="bold" top={60} right={-95} order={4} afterTop={14}>
+              <Flexbox gap={8}>
+                <Circle color={dark.palette.common.uiWhite}>
+                  <Icon name="CheckOutlined" size="medium" />
+                </Circle>
+                <Circle color="#FC7B7B" />
+                <Circle color="#E09C76" />
+              </Flexbox>
+            </BubbleText>
+          </>
+        )}
+      </CenterCard>
+      <Box customStyle={{ textAlign: 'center' }}>
+        <Typography variant="h1" weight="bold">
+          AI가 정리한
+          <br />
+          깔끔 필터
+        </Typography>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+          복잡한 중고매물, 보고픈 것만 보세요
+        </Typography>
+      </Box>
+    </Flexbox>
   );
 }
-
-const StyledWrap = styled(Flexbox)`
-  width: 100%;
-  height: calc(100vh - ${APP_TOP_STATUS_HEIGHT}px);
-  height: calc((var(--vh, 1vh) * 100) - ${APP_TOP_STATUS_HEIGHT}px);
-`;
 
 const CenterCard = styled(Flexbox)`
   width: 181px;

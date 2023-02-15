@@ -8,7 +8,6 @@ export const GENERAL_FILTER_HEIGHT = 100;
 export const CATEGORY_TAGS_HEIGHT = 39;
 export const RELATED_KEYWORDS_HEIGHT = 52;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
-export const APP_TOP_STATUS_HEIGHT = 44;
 export const TAB_HEIGHT_XLARGE = 45;
 export const TAB_HEIGHT = 41;
 export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
@@ -26,6 +25,8 @@ export const NEXT_IMAGE_BLUR_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 export const BASIC_BACKGROUND_IMG = `https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-profile-background.png`;
 export const EVENT_NEW_YEAR_FILTER_INFO_HEIGHT = 80;
+export const IOS_SAFE_AREA_TOP = 'env(safe-area-inset-top)';
+export const IOS_SAFE_AREA_BOTTOM = 'env(safe-area-inset-bottom)';
 
 export const locales = {
   ko: {

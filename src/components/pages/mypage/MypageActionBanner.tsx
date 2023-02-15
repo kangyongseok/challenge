@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Image, Typography, dark, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -27,12 +27,15 @@ import {
 
 import type { SavedLegitDataProps } from '@typings/product';
 import type { SaveCamelSellerProductData } from '@typings/camelSeller';
+import {
+  settingsTransferDataState,
+  settingsTransferPlatformsState
+} from '@recoil/settingsTransfer';
 import { legitRequestState } from '@recoil/legitRequest';
 import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function MypageActionBanner() {
   const {
@@ -47,10 +50,8 @@ function MypageActionBanner() {
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setDialogState = useSetRecoilState(dialogState);
   const setLegitRequestState = useSetRecoilState(legitRequestState);
-
-  const handleClick = useMoveCamelSeller({
-    attributes: { name: attrProperty.name.MY, title: attrProperty.title.MY, source: 'MYPAGE' }
-  });
+  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
+  const resetDataState = useResetRecoilState(settingsTransferDataState);
 
   const authLegit = useMemo(
     () => roles?.includes('PRODUCT_LEGIT') || roles?.includes('PRODUCT_LEGIT_HEAD'),
@@ -65,6 +66,18 @@ function MypageActionBanner() {
     !!savedCamelSellerProductData &&
     !!accessUser &&
     savedCamelSellerProductData[accessUser.snsType];
+
+  const handleClick = () => {
+    logEvent(attrKeys.mypage.CLICK_BANNER, {
+      name: attrProperty.name.MY,
+      title: attrProperty.title.MY,
+      att: 'TRANSFER'
+    });
+
+    resetPlatformsState();
+    resetDataState();
+    router.push('/mypage/settings/transfer');
+  };
 
   const handleClickLegit = () => {
     router.push('/legit/admin?tab=request');
@@ -228,7 +241,8 @@ function MypageActionBanner() {
     } else {
       logEvent(attrKeys.products.VIEW_BANNER, {
         name: attrProperty.name.MY,
-        title: attrProperty.title.MY
+        title: attrProperty.title.MY,
+        att: 'TRANSFER'
       });
     }
   }, [firstViewData]);
@@ -244,12 +258,12 @@ function MypageActionBanner() {
       <Box
         onClick={handleClick}
         customStyle={{
-          backgroundColor: '#4836B6'
+          backgroundColor: '#111A3D'
         }}
       >
         <Image
           height={104}
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`}
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
           alt="Banner Img"
           disableAspectRatio
         />

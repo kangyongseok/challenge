@@ -4,6 +4,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow } from 'swiper';
 import { Box, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 function MyPortfolioLanding05() {
   const {
     theme: {
@@ -19,7 +23,12 @@ function MyPortfolioLanding05() {
 
   return (
     <Flexbox
-      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%', position: 'relative' }}
+      customStyle={{
+        textAlign: 'center',
+        marginTop: `calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`,
+        height: '100%',
+        position: 'relative'
+      }}
       direction="vertical"
     >
       <Typography weight="bold" customStyle={{ color: primary.main }}>
@@ -33,7 +42,10 @@ function MyPortfolioLanding05() {
       </Typography>
       <Flexbox
         direction="vertical"
-        customStyle={{ flex: 1, marginBottom: 100 }}
+        customStyle={{
+          flex: 1,
+          marginBottom: `calc(100px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`
+        }}
         alignment="center"
         justifyContent="center"
       >

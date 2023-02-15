@@ -1,6 +1,5 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Box, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -21,13 +20,7 @@ import {
 
 import Initializer from '@library/initializer';
 
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  HEADER_HEIGHT,
-  locales
-} from '@constants/common';
-import attrProperty from '@constants/attrProperty';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
@@ -47,9 +40,7 @@ function CrmProducts() {
     <>
       <GeneralTemplate
         header={
-          <Box
-            customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
-          >
+          <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}>
             <Header />
             {notice && (
               <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
@@ -69,7 +60,7 @@ function CrmProducts() {
         <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
-        <ProductsInfiniteGrid variant="search" name={attrProperty.productName.CRM} />
+        <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
@@ -81,16 +72,10 @@ function CrmProducts() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
   return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
+    props: {}
   };
 }
 

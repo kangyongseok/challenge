@@ -1,8 +1,5 @@
 import { useEffect } from 'react';
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSidePropsContext } from 'next';
-
 import { BottomNavigation, CamelSellerFloatingButton, Header } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -19,7 +16,6 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -51,7 +47,7 @@ function MyPage() {
   return (
     <>
       <GeneralTemplate
-        header={<Header isFixed={false} />}
+        header={<Header />}
         footer={<BottomNavigation />}
         disablePadding
         customStyle={{ userSelect: 'none', footer: { marginTop: 0 } }}
@@ -80,17 +76,6 @@ function MyPage() {
       />
     </>
   );
-}
-
-export async function getServerSideProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
 }
 
 export default MyPage;

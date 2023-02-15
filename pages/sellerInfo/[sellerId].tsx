@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Typography, useTheme } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
@@ -23,13 +22,18 @@ import { logEvent } from '@library/amplitude';
 import { fetchSellerInfo } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, TAB_HEIGHT, locales } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP,
+  TAB_HEIGHT
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getUserName, getUserScoreText } from '@utils/user';
 import { getCookies } from '@utils/cookies';
-import { commaNumber } from '@utils/common';
+import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -51,7 +55,14 @@ function SellerInfo() {
   const tabRef = useRef<null>(null);
   const triggered = useScrollTrigger({
     ref: tabRef,
-    additionalOffsetTop: (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) - TAB_HEIGHT,
+    additionalOffsetTop:
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
+      TAB_HEIGHT -
+      (isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0),
     delay: 0
   });
 
@@ -121,7 +132,9 @@ function SellerInfo() {
                 reviewCount={sellerReviewCount}
                 customStyle={{
                   position: 'fixed',
-                  paddingTop: HEADER_HEIGHT - 2,
+                  paddingTop: `calc(${HEADER_HEIGHT - 2}px + ${
+                    isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+                  })`,
                   width: '100%',
                   zIndex: zIndex.header
                 }}
@@ -154,12 +167,7 @@ function SellerInfo() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  query,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   const sellerId = String(query.sellerId);
 
   if (/^[0-9]+$/.test(sellerId)) {
@@ -176,7 +184,6 @@ export async function getServerSideProps({
 
         return {
           props: {
-            ...(await serverSideTranslations(locale || defaultLocale)),
             dehydratedState: dehydrate(queryClient)
           }
         };
@@ -187,7 +194,6 @@ export async function getServerSideProps({
   }
 
   return {
-    ...(await serverSideTranslations(locale || defaultLocale)),
     notFound: true
   };
 }

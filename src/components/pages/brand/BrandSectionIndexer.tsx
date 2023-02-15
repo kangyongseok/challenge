@@ -9,8 +9,8 @@ import { logEvent } from '@library/amplitude';
 
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
   HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP,
   SEARCH_BAR_HEIGHT
 } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
@@ -66,7 +66,7 @@ const Wrapper = styled.section<{ showAppDownloadBanner: boolean }>`
   position: fixed;
   top: ${({ showAppDownloadBanner }) =>
     112 + (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
-  padding-top: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 32}px;
+  padding-top: calc(32px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   right: 0;
   user-select: none;
   overflow: scroll;

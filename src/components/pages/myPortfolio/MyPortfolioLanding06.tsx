@@ -1,5 +1,9 @@
 import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 function MyPortfolioLanding06() {
   const {
     theme: {
@@ -9,7 +13,11 @@ function MyPortfolioLanding06() {
   return (
     <Flexbox
       direction="vertical"
-      customStyle={{ textAlign: 'center', marginTop: 52, height: '100%' }}
+      customStyle={{
+        textAlign: 'center',
+        marginTop: `calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`,
+        height: '100%'
+      }}
     >
       <Typography weight="bold" customStyle={{ color: primary.main }}>
         판매하기

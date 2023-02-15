@@ -41,6 +41,13 @@
   src: url('./fonts/CamelProductSans-Thin.woff2') format('woff2')
 }
 
+:root {
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+}
+
 body.legit-light {
   background-color: #F5F6F7;
 }

@@ -25,7 +25,7 @@ import { fetchSearch } from '@api/product';
 import { fetchBrandsSuggest } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import { PARENT_CATEGORY_NEED_SIZE } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
@@ -370,7 +370,7 @@ function BrandCategorySize() {
       component="section"
       direction="vertical"
       customStyle={{
-        paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0,
+        paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0,
         height: '100%'
       }}
     >

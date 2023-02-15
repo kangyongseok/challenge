@@ -1,6 +1,10 @@
 import { Image } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 interface LegitRequestBrandLogoProps {
   src: string;
 }
@@ -30,7 +34,7 @@ const BrandLogo = styled.section`
 
   & > div {
     position: absolute;
-    margin-top: -28px;
+    margin-top: calc(-28px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   }
 `;
 

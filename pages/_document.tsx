@@ -1,15 +1,9 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
-import { locales } from '@constants/common';
-
-import { notSupport } from 'public/locales';
-
 class MyDocument extends Document {
   override render() {
-    const lang = this.props.locale || locales.ko.lng;
-
     return (
-      <Html lang={lang} prefix="og: https://ogp.me/ns#">
+      <Html lang="ko" prefix="og: https://ogp.me/ns#">
         <Head>
           <meta name="application-name" content="카멜" />
           <meta name="mobile-web-app-capable" content="yes" />
@@ -117,13 +111,9 @@ class MyDocument extends Document {
         </Head>
         <body>
           <div id="not-support" style={{ display: 'none' }}>
-            <h2>{notSupport[lang as keyof typeof notSupport].message}</h2>
-            <a
-              href={notSupport[lang as keyof typeof notSupport].url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {notSupport[lang as keyof typeof notSupport].button}
+            <h2>지원하지 않는 브라우저입니다. 브라우저를 업데이트 해주세요.</h2>
+            <a href="http://outdatedbrowser.com/ko" target="_blank" rel="noreferrer">
+              브라우저 업데이트 하기
             </a>
           </div>
           <Main />

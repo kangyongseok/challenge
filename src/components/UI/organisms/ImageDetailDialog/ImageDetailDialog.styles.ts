@@ -1,7 +1,7 @@
 import { Button, Icon } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -11,7 +11,7 @@ export const Img = styled.img<{ rotate: number }>`
 
 export const CloseIcon = styled(Icon)`
   position: absolute;
-  top: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 16}px;
+  top: calc(15px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   right: 16px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
   cursor: pointer;

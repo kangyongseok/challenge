@@ -20,13 +20,14 @@ import queryKeys from '@constants/queryKeys';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP,
   LEGIT_FAKE_BANNER_HEIGHT,
   TAB_HEIGHT
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getProductDetailUrl } from '@utils/common';
+import { getProductDetailUrl, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
@@ -45,7 +46,14 @@ function LegitDashboardBanner() {
   const triggered = useScrollTrigger({
     ref: bannerRef,
     additionalOffsetTop:
-      -HEADER_HEIGHT + (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) - TAB_HEIGHT,
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
+      HEADER_HEIGHT -
+      TAB_HEIGHT -
+      (isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0),
     delay: 0
   });
 
@@ -337,8 +345,9 @@ const Banner = styled.div<{ isFixed: boolean; showAppDownloadBanner: boolean }>`
     isFixed
       ? {
           position: 'fixed',
-          top:
-            HEADER_HEIGHT + TAB_HEIGHT + (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0),
+          top: `calc(${
+            HEADER_HEIGHT + TAB_HEIGHT + (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)
+          }px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`,
           left: 0,
           right: 0,
           zIndex: zIndex.header

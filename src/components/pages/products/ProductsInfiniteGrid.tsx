@@ -18,19 +18,13 @@ import throttle from 'lodash-es/throttle';
 import { isEmpty } from 'lodash-es';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { Product } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
-import ABTest from '@library/abTest';
 
 import { fetchSearch, fetchSearchOptions } from '@api/product';
 
@@ -70,13 +64,9 @@ const cache = new CellMeasurerCache({
 
 interface ProductsInfiniteGridProps {
   variant: ProductsVariant;
-  name?: string;
 }
 
-function ProductsInfiniteGrid({
-  variant,
-  name = attrProperty.productName.PRODUCT_LIST
-}: ProductsInfiniteGridProps) {
+function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   const router = useRouter();
   const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
@@ -169,14 +159,6 @@ function ProductsInfiniteGrid({
       staleTime: 5 * 60 * 1000
     }
   );
-
-  useEffect(() => {
-    pages.forEach((page) => {
-      if (page.resultUseAI) {
-        logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
-      }
-    });
-  }, [pages]);
 
   const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
 
@@ -299,12 +281,8 @@ function ProductsInfiniteGrid({
           // @ts-ignore
           <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
             <div style={style}>
-              <Grid
-                container
-                columnGap={ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 0 : 2}
-                customStyle={{ paddingBottom: 20 }}
-              >
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+              <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
                   {firstProduct && (
                     <Grid item xs={2}>
                       <NewProductGridCardSkeleton
@@ -320,7 +298,7 @@ function ProductsInfiniteGrid({
                     </Grid>
                   )}
                 </ABTestGroup>
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
                   {firstProduct && (
                     <Grid item xs={2}>
                       <NewProductGridCardSkeleton
@@ -332,28 +310,6 @@ function ProductsInfiniteGrid({
                     <Grid item xs={2}>
                       <NewProductGridCardSkeleton
                         hideMetaInfo={!secondProduct.wishCount && !secondProduct.purchaseCount}
-                      />
-                    </Grid>
-                  )}
-                </ABTestGroup>
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-                  {firstProduct && (
-                    <Grid item xs={2}>
-                      <ProductGridCardSkeleton
-                        title={firstProduct.title}
-                        labels={firstProduct.labels}
-                        productSeller={firstProduct.productSeller}
-                        hasMetaInfo={!!firstProduct.wishCount || !!firstProduct.purchaseCount}
-                      />
-                    </Grid>
-                  )}
-                  {secondProduct && (
-                    <Grid item xs={2}>
-                      <ProductGridCardSkeleton
-                        title={secondProduct.title}
-                        labels={secondProduct.labels}
-                        productSeller={secondProduct.productSeller}
-                        hasMetaInfo={!!secondProduct.wishCount || !!secondProduct.purchaseCount}
                       />
                     </Grid>
                   )}
@@ -369,12 +325,8 @@ function ProductsInfiniteGrid({
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
           {({ measure }) => (
             <div style={style}>
-              <Grid
-                container
-                columnGap={ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 0 : 2}
-                customStyle={{ paddingBottom: 20 }}
-              >
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+              <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
                   {firstProduct && (
                     <Grid item xs={2}>
                       <NewProductGridCard
@@ -398,16 +350,17 @@ function ProductsInfiniteGrid({
                     </Grid>
                   )}
                 </ABTestGroup>
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
                   {firstProduct && (
                     <Grid item xs={2}>
                       <NewProductGridCard
                         product={firstProduct}
-                        wishButtonType="B"
+                        platformLabelType="B"
                         attributes={getProductAttributes(firstProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
                         hideLabel={variant === 'camel'}
+                        hideSize={false}
                       />
                     </Grid>
                   )}
@@ -415,39 +368,12 @@ function ProductsInfiniteGrid({
                     <Grid item xs={2}>
                       <NewProductGridCard
                         product={secondProduct}
-                        wishButtonType="B"
+                        platformLabelType="B"
                         attributes={getProductAttributes(secondProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
                         hideLabel={variant === 'camel'}
-                      />
-                    </Grid>
-                  )}
-                </ABTestGroup>
-                <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-                  {firstProduct && (
-                    <Grid item xs={2}>
-                      <ProductGridCard
-                        product={firstProduct}
-                        measure={measure}
-                        name={name}
-                        source={attrProperty.productSource.PRODUCT_LIST}
-                        productAtt={getProductAttributes(firstProduct)}
-                        wishAtt={getProductAttributes(firstProduct)}
-                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                      />
-                    </Grid>
-                  )}
-                  {secondProduct && (
-                    <Grid item xs={2}>
-                      <ProductGridCard
-                        product={secondProduct}
-                        measure={measure}
-                        name={name}
-                        source={attrProperty.productSource.PRODUCT_LIST}
-                        productAtt={getProductAttributes(secondProduct)}
-                        wishAtt={getProductAttributes(secondProduct)}
-                        onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                        hideSize={false}
                       />
                     </Grid>
                   )}
@@ -466,7 +392,6 @@ function ProductsInfiniteGrid({
       getProductAttributes,
       handleWishAfterChangeCallback,
       variant,
-      name,
       hasSelectedSearchOptions,
       isFetched
     ]
@@ -671,20 +596,25 @@ function ProductsInfiniteGrid({
     };
   }, []);
 
+  useEffect(() => {
+    pages.forEach((page) => {
+      if (page.resultUseAI) {
+        logEvent(attrKeys.products.LOAD_PRODUCT_LIST_ZAI);
+      }
+    });
+  }, [pages]);
+
   if (!progressDone)
     return (
       <Grid container rowGap={20}>
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
               <NewProductGridCardSkeleton />
             </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
               <NewProductGridCardSkeleton />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-              <ProductGridCardSkeleton />
             </ABTestGroup>
           </Grid>
         ))}

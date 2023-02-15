@@ -31,12 +31,13 @@ import {
   productDynamicFilterEventPropertyTitle,
   productDynamicOptionCodeType
 } from '@constants/productsFilter';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { SelectedSearchOption } from '@typings/products';
 import {
@@ -480,7 +481,11 @@ function ProductsDynamicFilter() {
       direction="vertical"
       gap={1}
       customStyle={{
-        backgroundColor: common.ui95
+        backgroundColor: common.ui95,
+        marginTop:
+          isExtendedLayoutIOSVersion() && !router.pathname.split('/').includes('search')
+            ? IOS_SAFE_AREA_TOP
+            : 0
       }}
     >
       {dynamicOptions

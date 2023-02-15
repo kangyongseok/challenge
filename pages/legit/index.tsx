@@ -1,7 +1,4 @@
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetServerSidePropsContext } from 'next';
-import { Box } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
@@ -12,10 +9,6 @@ import {
   LegitMyPanel,
   LegitTabs
 } from '@components/pages/legit';
-
-import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
-
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 function Legit() {
   const router = useRouter();
@@ -42,7 +35,6 @@ function Legit() {
         }}
         disablePadding
       >
-        {isExtendedLayoutIOSVersion() && <Box customStyle={{ height: APP_TOP_STATUS_HEIGHT }} />}
         <LegitTabs />
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}
@@ -50,17 +42,6 @@ function Legit() {
       {tab === 'live' && <LegitFloatingButton />}
     </>
   );
-}
-
-export async function getStaticProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
 }
 
 export default Legit;

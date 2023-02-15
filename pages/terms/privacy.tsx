@@ -6,13 +6,24 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 function Privacy() {
   const router = useRouter();
   useEffect(() => {
     logEvent('VIEW_ABOUT');
   }, []);
   return (
-    <div className="container" style={{ background: '#fff', padding: '24px' }}>
+    <div
+      className="container"
+      style={{
+        background: '#fff',
+        padding: '24px',
+        paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0
+      }}
+    >
       <Flexbox justifyContent="space-between" alignment="center" customStyle={{ marginBottom: 36 }}>
         <Typography variant="h3" weight="bold" component="h1">
           개인정보처리방침

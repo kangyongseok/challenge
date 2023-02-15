@@ -46,6 +46,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SITE, productStatusCode } from '@constants/product';
 import { APP_BANNER, IS_DONE_WISH_ON_BOARDING } from '@constants/localStorage';
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -58,6 +59,7 @@ import {
   commaNumber,
   getProductDetailUrl,
   getRandomNumber,
+  isExtendedLayoutIOSVersion,
   needUpdateChatIOSVersion
 } from '@utils/common';
 
@@ -531,7 +533,11 @@ function ProductCTAButton({
 
   return (
     <>
-      <Box customStyle={{ minHeight: 76 }} />
+      <Box
+        customStyle={{
+          minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
+        }}
+      />
       <Wrapper>
         {!isBlockedUser && (
           <>
@@ -770,7 +776,7 @@ const Wrapper = styled.div`
       palette: { common }
     }
   }) => common.uiWhite};
-  padding: 12px 20px;
+  padding: 12px 20px ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '12px'};
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
 `;
 

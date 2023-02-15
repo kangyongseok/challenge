@@ -6,7 +6,7 @@ import UserAvatar from '@components/UI/organisms/UserAvatar';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -156,8 +156,9 @@ const Wrapper = styled.section`
   flex-direction: column;
   user-select: none;
   min-height: 312px;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
-  margin-top: -${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  margin-top: calc(
+    -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
 `;
 
 const BackgroundImage = styled.div<{ src: string }>`
@@ -187,7 +188,9 @@ const Info = styled.div`
   position: relative;
   flex: 1;
   user-select: none;
-  padding-top: ${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 20}px;
+  padding-top: calc(
+    ${HEADER_HEIGHT}px + 20px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
 `;
 
 const NickName = styled(Typography)`

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import {
   Alert,
@@ -30,7 +30,9 @@ import { postSurvey } from '@api/user';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { deviceIdState } from '@recoil/common';
+import { executedShareURl } from '@utils/common';
+
+import { deviceIdState, dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function EventInterfereInKing() {
@@ -45,6 +47,7 @@ function EventInterfereInKing() {
   const { data: accessUser } = useQueryAccessUser();
 
   const deviceId = useRecoilValue(deviceIdState);
+  const setDialogState = useSetRecoilState(dialogState);
 
   const [open, setOpen] = useState(false);
   const [openToast, setOpenToast] = useState(false);
@@ -115,6 +118,25 @@ function EventInterfereInKing() {
     setOpen(true);
   };
 
+  const handleClickShare = () => {
+    const shareData = {
+      title: '카멜 참견왕 이벤트',
+      description: '카멜에 마음껏 참여하고, 네이버페이 받아가세요!',
+      image: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-interfere-in-king-main.png`,
+      url: 'https://mrcamel.co.kr/events/interfereInKing'
+    };
+
+    if (
+      !executedShareURl({
+        url: shareData.url,
+        title: shareData.title,
+        text: shareData.description
+      })
+    ) {
+      setDialogState({ type: 'SNSShare', shareData });
+    }
+  };
+
   useEffect(() => {
     logEvent(attrKeys.events.VIEW_EVENT_DETAIL, {
       name: attrProperty.name.EVENT_DETAIL,
@@ -140,6 +162,11 @@ function EventInterfereInKing() {
               </Box>
             }
             showRight={false}
+            rightIcon={
+              <Box onClick={handleClickShare} customStyle={{ padding: '16px 8px' }}>
+                <Icon name="ShareOutlined" />
+              </Box>
+            }
           >
             <Typography variant="h3" weight="bold">
               카멜 참견왕 이벤트

@@ -156,7 +156,8 @@ const users = {
     [...users.all, 'reviewsByUserId', params] as const,
   blocks: (params: UserBlockParams) => [...users.all, 'blocks', params] as const,
   myUserInfo: () => [...users.all, 'myUserInfo'] as const,
-  banword: () => [...users.all, 'banword'] as const
+  banword: () => [...users.all, 'banword'] as const,
+  transfers: () => [...users.all, 'transfers'] as const
 };
 
 const userAuth = {

@@ -18,6 +18,7 @@ import type {
   PostSize,
   PostStyleParams,
   PostSurveyData,
+  PostTransferData,
   ProductKeywordData,
   ProductKeywords,
   ProductsAddParams,
@@ -35,7 +36,8 @@ import type {
   UserReviewsByUserIdParams,
   UserRoleLegit,
   UserRoleSeller,
-  UserSizeSuggestParams
+  UserSizeSuggestParams,
+  UserTransfer
 } from '@dto/user';
 import type { PageProductResult, ProductResult, UserPersonalStyleParams } from '@dto/product';
 
@@ -331,4 +333,16 @@ export async function putProfile(data: UpdateUserProfileData) {
 
 export async function postSurvey(data: PostSurveyData) {
   await Axios.getInstance().post(`${BASE_PATH}/survey`, data);
+}
+
+export async function fetchTransfers() {
+  const { data } = await Axios.getInstance().get<{
+    userTransfers: UserTransfer[];
+  }>(`${BASE_PATH}/transfers`);
+
+  return data;
+}
+
+export async function postTransfers(data: PostTransferData) {
+  await Axios.getInstance().post(`${BASE_PATH}/transfers`, data);
 }

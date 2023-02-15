@@ -25,7 +25,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT } from '@constants/common';
+import { CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import {
   checkAgent,
@@ -408,8 +408,10 @@ const Wrapper = styled.section`
   padding: 20px;
   user-select: none;
   min-height: 520px;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 56}px;
-  margin-top: -${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '56px'};
+  margin-top: calc(
+    -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
 `;
 
 const BackgroundImage = styled.div<{ src: string }>`

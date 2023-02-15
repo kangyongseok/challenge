@@ -1,8 +1,12 @@
 import { Flexbox } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 export const StyledLegitContactBanner = styled(Flexbox)<{ isDark: boolean; isFixed: boolean }>`
-  padding: 17px 0 16px 20px;
+  padding: 17px 0 ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '16px'} 20px;
   text-overflow: ellipsis;
   background-color: ${({
     isDark,
@@ -11,7 +15,7 @@ export const StyledLegitContactBanner = styled(Flexbox)<{ isDark: boolean; isFix
     }
   }) => (isDark ? common.cmnB : common.ui90)};
   cursor: pointer;
-  height: 72px;
+  height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'} + 72px);
   z-index: ${({ theme }) => theme.zIndex.bottomNav};
 
   ${({ isFixed }) =>

@@ -11,10 +11,11 @@ import { Badge, Gap } from '@components/UI/atoms';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { hasImageFile } from '@utils/common';
+import { hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
@@ -115,7 +116,11 @@ function MypageProfile() {
       component="section"
       direction="vertical"
       justifyContent="center"
-      customStyle={{ padding: '32px 20px 20px' }}
+      customStyle={{
+        padding: `calc(32px + ${
+          isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+        }) 20px 20px`
+      }}
     >
       <Flexbox gap={20} alignment="center">
         <Box customStyle={{ position: 'relative' }}>

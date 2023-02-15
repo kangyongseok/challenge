@@ -1,16 +1,12 @@
 import { Typography, dark } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
-
-import { isExtendedLayoutIOSVersion } from '@utils/common';
-
 import type { LegitStatusCardHolderProps } from '.';
 
 export const StyledLegitStatusCardHolder = styled.section<
   Pick<LegitStatusCardHolderProps, 'simplify'>
 >`
-  margin-top: calc(24px + ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px);
+  margin-top: 24px;
   background-color: ${({ simplify }) =>
     !simplify ? dark.palette.common.bg03 : dark.palette.common.bg02};
   ${({ simplify }): CSSObject =>

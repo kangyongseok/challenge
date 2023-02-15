@@ -3,6 +3,10 @@ import { useState } from 'react';
 import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 const tabData = [
   { tab: '비싸게 팔린', img: 'new_tab_img01', num: 1 },
   { tab: '빨리 팔린', img: 'new_tab_img02', num: 2 },
@@ -18,7 +22,12 @@ function MyPortfolioLanding04() {
   const [activeTab, setActiveTab] = useState(1);
   const [imgName, setImgName] = useState('tab_img01');
   return (
-    <Box customStyle={{ textAlign: 'center', marginTop: 52 }}>
+    <Box
+      customStyle={{
+        textAlign: 'center',
+        marginTop: `calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`
+      }}
+    >
       <Typography weight="bold" customStyle={{ color: primary.main }}>
         테마 별 실거래가
       </Typography>

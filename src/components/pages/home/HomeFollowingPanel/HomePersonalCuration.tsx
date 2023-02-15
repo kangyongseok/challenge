@@ -6,12 +6,7 @@ import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -221,7 +216,7 @@ function HomePersonalCuration() {
           : `${userNickName}님이 찾고 있는 매물을 모았어요`}
       </Typography>
       <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
           {isLoading &&
             Array.from({ length: 24 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
@@ -271,7 +266,7 @@ function HomePersonalCuration() {
               );
             })}
         </ABTestGroup>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
           {isLoading &&
             Array.from({ length: 24 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key
@@ -300,86 +295,13 @@ function HomePersonalCuration() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      wishButtonType="B"
+                      platformLabelType="B"
+                      hideSize={false}
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.PERSONAL,
                         source: attrProperty.source.MAIN_PERSONAL
                       }}
-                    />
-                  </Grid>
-                  {(index + 1) % 16 === 0 && (
-                    <Grid item xs={1}>
-                      <HomeBannerCard
-                        src={banners[index]?.src}
-                        pathname={banners[index]?.pathname}
-                        backgroundColor={banners[index]?.backgroundColor}
-                        onClick={handleClickBanner(banners[index]?.pathname)}
-                      />
-                    </Grid>
-                  )}
-                </Fragment>
-              );
-            })}
-        </ABTestGroup>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-          {isLoading &&
-            Array.from({ length: 24 }).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
-                <Grid item xs={2}>
-                  <ProductGridCardSkeleton isRound compact />
-                </Grid>
-                {(index + 1) % 8 === 0 && (
-                  <Grid item xs={1}>
-                    <Box
-                      customStyle={{
-                        margin: '0 -20px'
-                      }}
-                    >
-                      <Skeleton height={104} disableAspectRatio />
-                    </Box>
-                  </Grid>
-                )}
-              </Fragment>
-            ))}
-          {!isLoading &&
-            products.map((product, index) => {
-              return (
-                <Fragment key={`home-personal-curation-product-${product.id}`}>
-                  <Grid item xs={2}>
-                    <ProductGridCard
-                      product={product}
-                      productAtt={{
-                        name: attrProperty.name.MAIN,
-                        title: attrProperty.title.PERSONAL,
-                        id: product.id,
-                        index: index + 1,
-                        brand: product.brand.name,
-                        category: product.category.name,
-                        parentId: product.category.parentId,
-                        site: product.site.name,
-                        price: product.price,
-                        cluster: product.cluster,
-                        source: attrProperty.source.MAIN_PERSONAL
-                      }}
-                      wishAtt={{
-                        name: attrProperty.name.MAIN,
-                        title: attrProperty.title.PERSONAL,
-                        id: product.id,
-                        index: index + 1,
-                        brand: product.brand.name,
-                        category: product.category.name,
-                        parentId: product.category.parentId,
-                        site: product.site.name,
-                        price: product.price,
-                        cluster: product.cluster,
-                        source: attrProperty.source.MAIN_PERSONAL
-                      }}
-                      source={attrProperty.source.MAIN_PERSONAL}
-                      isRound
-                      hideProductLabel
-                      compact
                     />
                   </Grid>
                   {(index + 1) % 16 === 0 && (

@@ -12,7 +12,6 @@ import styled from '@emotion/styled';
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Badge } from '@components/UI/atoms';
 
-import FormattedText from '@library/FormattedText';
 import { logEvent } from '@library/amplitude';
 
 import queryKeys from '@constants/queryKeys';
@@ -54,35 +53,35 @@ const data: {
   logName: string;
 }[] = [
   {
-    title: 'navigation.home',
+    title: '홈',
     defaultIcon: 'NewHomeOutlined',
     activeIcon: 'NewHomeFilled',
     href: '/',
     logName: 'HOME'
   },
   {
-    title: 'navigation.legit',
+    title: '사진감정',
     defaultIcon: 'LegitOutlined',
     activeIcon: 'LegitFilled',
     href: '/legit',
     logName: 'LEGIT'
   },
   {
-    title: 'navigation.category',
+    title: '카테고리',
     defaultIcon: 'NewCategoryOutlined',
     activeIcon: 'NewCategoryFilled',
     href: '/category',
     logName: 'CATEGORY'
   },
   {
-    title: 'navigation.channel',
+    title: '채팅',
     defaultIcon: 'BnChatOutlined',
     activeIcon: 'BnChatFilled',
     href: '/channels',
     logName: 'CHANNEL'
   },
   {
-    title: 'navigation.myPage',
+    title: '마이',
     defaultIcon: 'NewUserLargeOutlined',
     activeIcon: 'NewUserLargeFilled',
     href: '/mypage',
@@ -125,8 +124,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       roles = [],
       priceNotiProducts = [],
       notViewedLegitCount = 0,
-      notProcessedLegitCount = 0,
-      isNewUser
+      notProcessedLegitCount = 0
     } = {},
     isLoading
   } = useQueryUserInfo();
@@ -264,18 +262,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   };
 
   const getQuery = (href: string) => {
-    if (href === '/') {
-      if (!router.query.tab) {
-        if (isNewUser || isNewUser === undefined) {
-          return { tab: 'recommend' };
-        }
-        return { tab: 'following' };
-      }
-      if (router.query.tab === 'recommend') {
-        return { tab: 'following' };
-      }
-      return { tab: 'recommend' };
-    }
     if (href === '/wishes' && confirmPriceNotiProducts.length) {
       return { scrollToProductId: confirmPriceNotiProducts[0].id };
     }
@@ -361,6 +347,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                   href={{ pathname: getPathName(href), query: getQuery(href) }}
                   as={{ pathname: getPathName(href), query: getQuery(href) }}
                   passHref
+                  prefetch={false}
                 >
                   <div onClick={handleClickInterceptor(title, logName, href)} aria-hidden="true">
                     <Box customStyle={{ position: 'relative' }}>
@@ -381,8 +368,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                         {getUnreadMessagesCount(unreadMessagesCount)}
                       </CustomBadge>
                     </Box>
-                    <FormattedText
-                      id={title}
+                    <Typography
                       variant="small2"
                       weight={isActive ? 'bold' : 'regular'}
                       customStyle={{
@@ -390,7 +376,9 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                         marginTop: 4,
                         color: isActive ? common.ui20 : common.ui80
                       }}
-                    />
+                    >
+                      {title}
+                    </Typography>
                   </div>
                 </Link>
               </ListItem>

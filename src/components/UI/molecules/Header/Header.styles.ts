@@ -1,12 +1,19 @@
 import styled from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-export const StyledHeader = styled.header<{ minHeight: number; isTransparent: boolean }>`
+export const StyledHeader = styled.header<{
+  minHeight: number;
+  isTransparent: boolean;
+  isFixed: boolean;
+}>`
   position: relative;
-  min-height: ${({ minHeight }) => minHeight || HEADER_HEIGHT}px;
+  min-height: calc(
+    ${({ isFixed }) => (isFixed && isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px')} +
+      ${({ minHeight }) => minHeight || HEADER_HEIGHT}px
+  );
   background-color: ${({ isTransparent, theme: { palette } }) =>
     isTransparent ? 'transparent' : palette.common.uiWhite};
   transition: all 0.5s;
@@ -20,7 +27,7 @@ export const Wrapper = styled.div<{
   background-color: inherit;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   position: ${({ isFixed }) => (isFixed ? 'fixed' : 'initial')};
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0};
 `;
 
 export const Title = styled.div<{ show: boolean; customHeight?: number }>`

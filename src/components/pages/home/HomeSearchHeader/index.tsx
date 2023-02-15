@@ -13,7 +13,7 @@ import { logEvent } from '@library/amplitude';
 import { postManage } from '@api/userHistory';
 
 import { filterGenders } from '@constants/productsFilter';
-import { APP_DOWNLOAD_BANNER_HEIGHT, APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -187,7 +187,7 @@ const StyledHomeSearchHeader = styled(Flexbox)<{
   }};
   width: 100%;
   padding: ${({ isAppLayout, triggered }) =>
-      isAppLayout && triggered ? APP_TOP_STATUS_HEIGHT : 10}px
+      isAppLayout && triggered ? IOS_SAFE_AREA_TOP : '10px'}
     20px 10px;
   background-color: ${({
     theme: {

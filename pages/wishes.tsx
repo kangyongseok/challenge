@@ -3,8 +3,6 @@ import type { ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import type { GetStaticPropsContext } from 'next';
 import { Toast } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -21,7 +19,6 @@ import type { CategoryValue } from '@dto/category';
 
 import { logEvent } from '@library/amplitude';
 
-import { locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { deviceIdState } from '@recoil/common';
@@ -99,17 +96,6 @@ function WishesPage() {
       </Toast>
     </>
   );
-}
-
-export async function getStaticProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetStaticPropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
 }
 
 export default WishesPage;

@@ -24,7 +24,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -270,7 +270,7 @@ function LineBudgetMore() {
   }, [budget, focusedBudget, isBudgetLow]);
 
   return (
-    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}>
       <SearchHelperLinearProgress
         value={progress}
         showInfoText={

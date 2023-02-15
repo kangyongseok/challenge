@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Icon } from 'mrcamel-ui';
+import { Badge, Flexbox, Icon } from 'mrcamel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -13,11 +13,17 @@ import attrKeys from '@constants/attrKeys';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
 
+import {
+  settingsTransferDataState,
+  settingsTransferPlatformsState
+} from '@recoil/settingsTransfer';
 import { dialogState } from '@recoil/common';
 
 function MypageSetting() {
   const router = useRouter();
   const setDialogState = useSetRecoilState(dialogState);
+  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
+  const resetDataState = useResetRecoilState(settingsTransferDataState);
 
   const handleClickAlarmSetting = useCallback(() => {
     if (!checkAgent.isMobileApp()) {
@@ -54,23 +60,48 @@ function MypageSetting() {
     router.push('/mypage/settings/blockedUsers');
   }, [router]);
 
+  const handleClickTransfer = useCallback(() => {
+    resetPlatformsState();
+    resetDataState();
+    router.push('/mypage/settings/transfer');
+  }, [resetPlatformsState, resetDataState, router]);
+
   const settingMenu = useMemo(
     () => [
-      { label: '알림 설정', onClick: handleClickAlarmSetting },
-      { label: '차단 사용자 관리', onClick: handleClickBlockedUsers }
+      { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
+      { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
+      { label: '내 상품 가져오기', isNew: true, onClick: handleClickTransfer }
     ],
-    [handleClickAlarmSetting, handleClickBlockedUsers]
+    [handleClickAlarmSetting, handleClickBlockedUsers, handleClickTransfer]
   );
 
   return (
     <Menu id="mypage-setting" title="설정">
-      {settingMenu.map(({ label, onClick }) => (
+      {settingMenu.map(({ label, isNew, onClick }) => (
         <MenuItem
           key={`info-menu-${label}`}
           action={<Icon name="Arrow2RightOutlined" size="small" />}
           onClick={onClick}
         >
-          {label}
+          <Flexbox alignment="center" gap={2}>
+            {label}
+            <Badge
+              variant="solid"
+              open={isNew}
+              brandColor="red"
+              text="N"
+              size="xsmall"
+              disablePositionAbsolute
+              customStyle={{
+                // TODO UI 라이브러리 개선
+                width: 16,
+                height: 16,
+                fontWeight: 700,
+                padding: '2px 0',
+                justifyContent: 'center'
+              }}
+            />
+          </Flexbox>
         </MenuItem>
       ))}
     </Menu>

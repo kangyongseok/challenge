@@ -9,10 +9,11 @@ import { logEvent } from '@library/amplitude';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, getProductDetailUrl } from '@utils/common';
+import { checkAgent, getProductDetailUrl, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { legitResultCommentFocusedState } from '@recoil/legitResultComment/atom';
 import { dialogState } from '@recoil/common';
@@ -124,7 +125,12 @@ function LegitResultBottomCtaButton() {
   if (commentWriterFocused || (isRequestLegit && status !== 30)) return null;
 
   return (
-    <Box component="nav" customStyle={{ minHeight: 89 }}>
+    <Box
+      component="nav"
+      customStyle={{
+        minHeight: `calc(89px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
+      }}
+    >
       <CtaButtonWrapper gap={8} status={status}>
         <Button
           startIcon={<Icon name="ShareOutlined" />}
@@ -169,6 +175,7 @@ const CtaButtonWrapper = styled(Flexbox)<{ status?: number }>`
     status
   }) => (status === 20 ? common.bg03 : common.uiWhite)};
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
+  padding-bottom: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '20px'};
 `;
 
 export default LegitResultBottomCtaButton;

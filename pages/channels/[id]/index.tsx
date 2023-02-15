@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Chip, Flexbox, Icon } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
@@ -30,11 +29,7 @@ import { fetchChannel } from '@api/channel';
 
 import { channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import {
-  MESSAGE_INPUT_HEIGHT,
-  MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
-  locales
-} from '@constants/common';
+import { MESSAGE_INPUT_HEIGHT, MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -486,12 +481,7 @@ function Chanel() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  query: { id },
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
   const channelId = String(id);
   const queryClient = new QueryClient();
 
@@ -507,7 +497,6 @@ export async function getServerSideProps({
     if (channelUser) {
       return {
         props: {
-          ...(await serverSideTranslations(locale || defaultLocale)),
           dehydratedState: dehydrate(queryClient)
         }
       };
@@ -526,7 +515,7 @@ export async function getServerSideProps({
 
 const Layout = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
 
   main {
@@ -545,12 +534,17 @@ const Container = styled.div`
 
 const HeaderWrapper = styled.div`
   position: fixed;
-  top: env(safe-area-inset-top, 0);
+  top: 0;
   right: 0;
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   overflow: hidden;
   transition: all 0.5s;
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 const Inner = styled.div`

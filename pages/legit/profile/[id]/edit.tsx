@@ -39,11 +39,7 @@ import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  HEADER_HEIGHT
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
@@ -148,9 +144,13 @@ function LegitProfileEdit() {
   const triggered = useScrollTrigger({
     ref: elementRef,
     additionalOffsetTop:
-      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) +
-      (isExtendedLayoutIOSVersion() ? -APP_TOP_STATUS_HEIGHT : 0) +
-      -HEADER_HEIGHT,
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
+      HEADER_HEIGHT -
+      (isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0),
     delay: 0
   });
 
@@ -325,7 +325,7 @@ const BackgroundImage = styled.div<{ src: string; showAppDownloadBanner: boolean
   top: ${({ showAppDownloadBanner }) => (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
   left: 0;
   width: 100%;
-  height: 275px;
+  height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 275px);
   background: url(${({ src }) => src}) no-repeat center;
   background-size: cover;
 `;

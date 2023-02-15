@@ -1,10 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 export const Wrapper = styled.div<{ isLegitTooltip: boolean; isUserShop: boolean }>`
   position: fixed;
   left: 50%;
-  bottom: ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 20 : isLegitTooltip ? 110 : 80)}px;
+  bottom: calc(
+    ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'} +
+      ${({ isLegitTooltip, isUserShop }) => (isUserShop ? 20 : isLegitTooltip ? 110 : 80)}px
+  );
   transform: translateX(-50%);
   z-index: ${({ theme: { zIndex } }) => zIndex.button + 1};
 `;

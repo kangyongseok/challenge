@@ -12,12 +12,14 @@ import { fetchUserLegitTargets } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { SAVED_LEGIT_REQUEST } from '@constants/localStorage';
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
   handleClickAppDownload,
+  isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
@@ -206,7 +208,7 @@ function LegitFloatingButton() {
 const Wrapper = styled.div`
   position: fixed;
   left: 50%;
-  bottom: 80px;
+  bottom: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'} + 80px);
   transform: translateX(-50%);
   z-index: ${({ theme: { zIndex } }) => zIndex.button + 2};
 `;

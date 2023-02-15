@@ -3,10 +3,11 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, handleClickAppDownload } from '@utils/common';
+import { checkAgent, handleClickAppDownload, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
@@ -21,7 +22,11 @@ function MyPortfolioLanding07({
 
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>
-      <Flexbox direction="vertical" alignment="center">
+      <Flexbox
+        direction="vertical"
+        alignment="center"
+        customStyle={{ marginTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}
+      >
         <Icon name="LogoText_96_20" height={10} customStyle={{ marginBottom: 15 }} />
         <GradationTitle />
         <Typography weight="medium" variant="h3" customStyle={{ marginTop: 20 }}>

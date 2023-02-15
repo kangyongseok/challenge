@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
@@ -26,12 +25,7 @@ import { fetchInfoByUserId } from '@api/user';
 
 import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  TAB_HEIGHT,
-  locales
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -52,7 +46,14 @@ function UserInfo() {
   const tabRef = useRef<null>(null);
   const triggered = useScrollTrigger({
     ref: tabRef,
-    additionalOffsetTop: (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) - TAB_HEIGHT,
+    additionalOffsetTop:
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
+      TAB_HEIGHT -
+      (isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0),
     delay: 0
   });
 
@@ -161,10 +162,7 @@ function UserInfo() {
         footer={<BottomNavigation />}
         disablePadding
       >
-        <Flexbox
-          direction="vertical"
-          customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}
-        >
+        <Flexbox direction="vertical">
           {userRoleLegit ? (
             <UserInfoLegitProfile
               imageProfile={userImageProfile}
@@ -203,12 +201,7 @@ function UserInfo() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  query,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   const userId = String(query.userId);
 
   if (/^[0-9]+$/.test(userId)) {
@@ -225,7 +218,6 @@ export async function getServerSideProps({
 
         return {
           props: {
-            ...(await serverSideTranslations(locale || defaultLocale)),
             dehydratedState: dehydrate(queryClient)
           }
         };
@@ -236,7 +228,6 @@ export async function getServerSideProps({
   }
 
   return {
-    ...(await serverSideTranslations(locale || defaultLocale)),
     notFound: true
   };
 }

@@ -8,9 +8,11 @@ import { TextInput } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 
@@ -26,7 +28,9 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
         logEvent(attrKeys.brand.CLICK_BRAND_SEARCH, { name: attrProperty.productName.BRAND_LIST })
       }
     >
-      <SearchBarBox showAppDownloadBanner={showAppDownloadBanner}>
+      <SearchBarBox
+        appDownloadBannerHeight={showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0}
+      >
         <TextInput
           autoCapitalize="none"
           autoComplete="off"
@@ -47,10 +51,12 @@ function BrandSearchBar({ value, onChange }: BrandSearchBarProps) {
   );
 }
 
-const SearchBarBox = styled.div<{ showAppDownloadBanner: boolean }>`
+const SearchBarBox = styled.div<{ appDownloadBannerHeight: number }>`
   position: fixed;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT}px;
+  top: calc(
+    ${({ appDownloadBannerHeight }) => appDownloadBannerHeight + HEADER_HEIGHT}px +
+      ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
   width: 100%;
   background-color: ${({
     theme: {

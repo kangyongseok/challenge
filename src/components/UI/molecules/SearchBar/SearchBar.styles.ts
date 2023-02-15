@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 
-import {
-  APP_TOP_STATUS_HEIGHT,
-  CAMEL_SUBSET_FONTFAMILY,
-  SEARCH_BAR_HEIGHT
-} from '@constants/common';
+import { CAMEL_SUBSET_FONTFAMILY, IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -13,7 +9,7 @@ import { SearchBarProps } from '.';
 export const StyledSearchBar = styled.div<Pick<SearchBarProps, 'variant' | 'isFixed'>>`
   display: flex;
   align-items: center;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
+  padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0};
 
   ${({
     isFixed,
@@ -55,7 +51,9 @@ export const InputBox = styled.div<
       ? `0 ${hasEndIcon ? 0 : 20}px 0 ${hasStartIcon ? 0 : 20}px`
       : `6px ${hasEndIcon ? 0 : 16}px 6px ${hasStartIcon ? 0 : 16}px`};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'fit-content')};
-  max-height: ${SEARCH_BAR_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  max-height: calc(
+    ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${SEARCH_BAR_HEIGHT}px
+  );
 `;
 
 export const Wrapper = styled.div<Pick<SearchBarProps, 'variant' | 'fullWidth'>>`

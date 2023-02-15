@@ -225,6 +225,7 @@ function Header({
     <StyledHeader
       minHeight={customHeight || HEADER_HEIGHT}
       isTransparent={isTransparent}
+      isFixed={isFixed}
       css={{
         backgroundColor: (customStyle || {}).backgroundColor,
         ...customStyle

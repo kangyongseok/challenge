@@ -26,7 +26,7 @@ function useQueryContents(onSuccess?: (successData: Content) => void) {
   const realPriceAverage = useMemo(
     () =>
       Number(
-        data?.models.find(({ keyword }) => keyword === eventContentProductsParams.keyword)
+        data?.models?.find(({ keyword }) => keyword === eventContentProductsParams.keyword)
           ?.priceAvg || 0
       ),
     [eventContentProductsParams.keyword, data?.models]

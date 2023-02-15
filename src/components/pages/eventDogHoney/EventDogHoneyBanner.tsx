@@ -2,9 +2,18 @@ import { forwardRef } from 'react';
 
 import { Box, Flexbox, Image } from 'mrcamel-ui';
 
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 const EventDogHoneyBanner = forwardRef<HTMLDivElement>(function EventDogHoneyBanner(_, ref) {
   return (
-    <Flexbox ref={ref} component="section" justifyContent="center">
+    <Flexbox
+      ref={ref}
+      component="section"
+      justifyContent="center"
+      customStyle={{ marginTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}
+    >
       <Box customStyle={{ width: '100%' }}>
         <Image
           ratio="1:2"

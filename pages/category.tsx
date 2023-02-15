@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
@@ -15,14 +14,11 @@ import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserInfo } from '@api/user';
-import { fetchParentCategories } from '@api/category';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, locales } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import categoryState from '@recoil/category';
 
@@ -69,8 +65,7 @@ function Category() {
           direction="vertical"
           gap={12}
           customStyle={{
-            marginBottom: 12,
-            paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0
+            marginBottom: 12
           }}
         >
           <CategoryGenderTabs resetSelectedParentCategory={() => setSelectedParentCategory(0)} />
@@ -86,30 +81,14 @@ function Category() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale: initialLocale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
-  const queryClientList: Promise<void>[] = [];
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
   Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
-  if (req.cookies.accessToken) {
-    queryClientList.concat([queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo)]);
-  }
-
-  queryClientList.concat([
-    queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories)
-  ]);
-
-  await Promise.allSettled(queryClientList);
-
   return {
     props: {
-      ...(await serverSideTranslations(initialLocale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

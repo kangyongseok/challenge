@@ -1,14 +1,10 @@
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticPropsContext } from 'next';
 import { Flexbox, Radio, Typography, useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-
-import { locales } from '@constants/common';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
@@ -88,17 +84,6 @@ function SettingTheme() {
       </Flexbox>
     </GeneralTemplate>
   );
-}
-
-export async function getStaticProps({
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetStaticPropsContext) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
-  };
 }
 
 export default SettingTheme;

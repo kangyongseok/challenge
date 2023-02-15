@@ -7,13 +7,18 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  CATEGORY_TAGS_HEIGHT,
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCenterScrollLeft } from '@utils/scroll';
 import { convertSearchParamsByQuery } from '@utils/products';
-import { convertStringToArray } from '@utils/common';
+import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import {
@@ -310,10 +315,10 @@ const StyledCategoryTags = styled.div<{
           opacity: 0
         }
       : {}};
-
   top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT}px;
-
+    `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+      showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT
+    }px)`};
   ${({ triggered, productsStatusTriggered }): CSSObject => {
     if (!triggered && productsStatusTriggered) {
       return {

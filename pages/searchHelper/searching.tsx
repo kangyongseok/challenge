@@ -18,7 +18,7 @@ import { fetchSizeMapping, postProductKeyword } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -187,7 +187,9 @@ function Searching() {
         variant="h2"
         weight="bold"
         customStyle={{
-          padding: `${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 48}px 0px 40px`
+          padding: `calc(${
+            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+          } + 48px) 0px 40px`
         }}
       >
         검색 집사가

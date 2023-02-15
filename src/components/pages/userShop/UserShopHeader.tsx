@@ -4,7 +4,9 @@ import { UserAvatar } from '@components/UI/organisms';
 import Header from '@components/UI/molecules/Header';
 import { UserShopTabs } from '@components/pages/userShop/index';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 interface UserShopHeaderProps {
   triggered: boolean;
@@ -61,9 +63,11 @@ function UserShopHeader({
         reviewCount={reviewCount}
         customStyle={{
           position: 'fixed',
-          paddingTop: HEADER_HEIGHT - 2,
+          paddingTop: `calc(${HEADER_HEIGHT - 2}px + ${
+            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+          })`,
           width: '100%',
-          zIndex: zIndex.header
+          zIndex: zIndex.header - 1
         }}
       />
     </>

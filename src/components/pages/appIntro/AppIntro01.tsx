@@ -1,8 +1,6 @@
 import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
-
 const animationItems = [
   { name: 'box_brand01', style: { width: 24, top: 60 }, alt: '트랜비', order: 4 },
   { name: 'box_brand02', style: { width: 24, top: 40, left: 38 }, alt: '시크먼트', order: 6 },
@@ -18,52 +16,44 @@ const animationItems = [
 
 function AppIntro01() {
   return (
-    <StyledWrap alignment="center" justifyContent="center" direction="vertical">
-      <Flexbox
-        alignment="center"
-        direction="vertical"
-        customStyle={{ height: 350, justifyContent: 'flex-end' }}
-      >
-        <Box customStyle={{ position: 'relative', width: 188, marginBottom: 35 }}>
-          <AnimationArea>
-            {animationItems.map((item) => (
-              <AnimationItem
-                key={`platform-icon-${item.alt}`}
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/${item.name}.png`}
-                disableAspectRatio
-                customStyle={item.style}
-                index={item.order}
-                alt={item.alt}
-              />
-            ))}
-          </AnimationArea>
-          <BoxTop />
-          <BoxFront />
-          <FullLogo justifyContent="center" alignment="center" gap={7}>
-            <Icon name="Logo_45_45" width={30} />
-            <Icon name="LogoText_96_20" />
-          </FullLogo>
-        </Box>
-        <Box customStyle={{ textAlign: 'center' }}>
-          <Typography variant="h1" weight="bold">
-            앱1개로 모아보는
-            <br />
-            대한민국 중고명품
-          </Typography>
-          <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
-            다른 앱이 필요없어요
-          </Typography>
-        </Box>
-      </Flexbox>
-    </StyledWrap>
+    <Flexbox
+      alignment="center"
+      direction="vertical"
+      customStyle={{ height: 350, justifyContent: 'flex-end' }}
+    >
+      <Box customStyle={{ position: 'relative', width: 188, marginBottom: 35 }}>
+        <AnimationArea>
+          {animationItems.map((item) => (
+            <AnimationItem
+              key={`platform-icon-${item.alt}`}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/${item.name}.png`}
+              disableAspectRatio
+              customStyle={item.style}
+              index={item.order}
+              alt={item.alt}
+            />
+          ))}
+        </AnimationArea>
+        <BoxTop />
+        <BoxFront />
+        <FullLogo justifyContent="center" alignment="center" gap={7}>
+          <Icon name="Logo_45_45" width={30} />
+          <Icon name="LogoText_96_20" />
+        </FullLogo>
+      </Box>
+      <Box customStyle={{ textAlign: 'center' }}>
+        <Typography variant="h1" weight="bold">
+          앱1개로 모아보는
+          <br />
+          대한민국 중고명품
+        </Typography>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+          다른 앱이 필요없어요
+        </Typography>
+      </Box>
+    </Flexbox>
   );
 }
-
-const StyledWrap = styled(Flexbox)`
-  width: 100%;
-  height: calc(100vh - ${APP_TOP_STATUS_HEIGHT}px);
-  height: calc((var(--vh, 1vh) * 100) - ${APP_TOP_STATUS_HEIGHT}px);
-`;
 
 const AnimationArea = styled.div`
   width: 188px;

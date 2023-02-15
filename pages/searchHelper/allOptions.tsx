@@ -12,7 +12,7 @@ import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -71,7 +71,7 @@ function AllOptions() {
   }, []);
 
   return (
-    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0 }}>
+    <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}>
       <SuccessLabelWrapper>
         <SuccessLabel variant="h4" weight="medium">
           100% 완료 👍

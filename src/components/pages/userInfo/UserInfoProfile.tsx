@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -119,9 +119,10 @@ const ImageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   user-select: none;
-  min-height: 160px;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
-  margin-top: -${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  min-height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 160px);
+  margin-top: calc(
+    -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
 `;
 
 const BackgroundImage = styled.div<{ src: string }>`

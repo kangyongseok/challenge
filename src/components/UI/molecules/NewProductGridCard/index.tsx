@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -35,15 +35,16 @@ import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard
 export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductGridCardVariant;
   product: Product | ProductResult;
-  // TODO A/B 테스트 이후 제거 예정
-  wishButtonType?: 'A' | 'B';
   subText?: string;
+  // TODO A/B 테스트 이후 제거 예정
+  platformLabelType?: 'A' | 'B';
   bottomLabel?: ReactElement;
   hideLabel?: boolean;
   hidePrice?: boolean;
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
   hideWishButton?: boolean;
+  hideSize?: boolean;
   attributes?: {
     [key: string]: string | string[] | number | boolean | null | undefined;
   };
@@ -55,14 +56,15 @@ export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> 
 function NewProductGridCard({
   variant = 'gridA',
   product,
-  wishButtonType = 'A',
   subText,
+  platformLabelType = 'A',
   bottomLabel,
   hideLabel,
   hidePrice,
   hideAreaInfo,
   hideMetaInfo,
   hideWishButton,
+  hideSize = true,
   attributes: { name, title, source, index, ...attributes } = {},
   onWishAfterChangeCallback,
   measure,
@@ -84,7 +86,8 @@ function NewProductGridCard({
     brand: { name: brandName = '', nameEng = '' } = {},
     category: { name: categoryName = '', parentId = 0 } = {},
     status,
-    site: { name: siteName = '' } = {},
+    site: { name: siteName = '', hasImage: siteHasImage = false } = {},
+    siteUrl,
     productSeller: { site: { id: siteId = 0 } = {}, type: sellerType = 0 } = {},
     wishCount = 0,
     purchaseCount = 0,
@@ -92,8 +95,14 @@ function NewProductGridCard({
     dateFirstPosted,
     area,
     price,
-    cluster
+    cluster,
+    size
   } = product || {};
+  const {
+    id: siteUrlId = 0,
+    hasImage: siteUrlHasImage = false,
+    name: siteUrlName = ''
+  } = siteUrl || {};
   const eventParams = {
     id,
     index,
@@ -116,6 +125,7 @@ function NewProductGridCard({
     ...attributes
   };
   const [isWish, setIsWish] = useState(false);
+  const [sizeText, setSizeText] = useState('');
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -214,6 +224,14 @@ function NewProductGridCard({
 
   useEffect(() => setIsWish(userWishIds.includes(id)), [id, userWishIds]);
 
+  useEffect(() => {
+    if (!size) return;
+
+    const sizes = size.split('|');
+
+    setSizeText(`${sizes.slice(0, 3).join(', ')}${sizes.length > 3 ? '...' : ''}`);
+  }, [size]);
+
   return (
     <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
       <Box
@@ -222,6 +240,7 @@ function NewProductGridCard({
         }}
       >
         {!hideLabel &&
+          platformLabelType === 'A' &&
           SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
             <Label
               variant="solid"
@@ -237,13 +256,71 @@ function NewProductGridCard({
               }}
             />
           )}
+        {!hideLabel &&
+          platformLabelType === 'B' &&
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
+            <Flexbox
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1,
+                borderRadius: 4,
+                backgroundColor: common.ui20
+              }}
+            >
+              <CamelLogoIcon />
+              <Typography
+                variant="small2"
+                weight="bold"
+                customStyle={{
+                  padding: '3px 4px 3px 2px',
+                  color: common.uiWhite
+                }}
+              >
+                인증판매자
+              </Typography>
+            </Flexbox>
+          )}
+        {!hideLabel &&
+          platformLabelType === 'B' &&
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
+          product.productSeller.type !== 4 &&
+          siteId !== 34 && (
+            <Avatar
+              width={18}
+              height={18}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+              }.png`}
+              alt={`${siteUrlName || 'Platform'} Logo Img`}
+              customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
+            />
+          )}
+        {!hideLabel &&
+          platformLabelType === 'B' &&
+          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
+          (product.productSeller.type === 4 || siteId === 34) && (
+            <Flexbox
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1,
+                borderRadius: 4,
+                backgroundColor: common.ui20
+              }}
+            >
+              <CamelLogoIcon />
+            </Flexbox>
+          )}
         <Image
           ratio="5:6"
           src={imageMain || imageThumbnail}
           alt={`${productTitle} 이미지`}
           round={variant === 'gridA' ? 0 : 8}
         />
-        {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && wishButtonType === 'A' && (
+        {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && (
           <WishButtonA variant={variant} onClick={handleClickWish}>
             <Icon
               name="HeartFilled"
@@ -268,7 +345,7 @@ function NewProductGridCard({
         )}
       </Box>
       <Content variant={variant}>
-        {!hideMetaInfo && (['gridC', 'swipeX'].includes(variant) || wishButtonType === 'B') && (
+        {!hideMetaInfo && ['gridC', 'swipeX'].includes(variant) && (
           <WishButtonB variant={variant} onClick={handleClickWish}>
             <Icon
               name={isWish ? 'HeartFilled' : 'HeartOutlined'}
@@ -312,18 +389,37 @@ function NewProductGridCard({
               marginTop: 4
             }}
           >
-            <Typography variant="h3" weight="bold">
+            <Typography
+              variant="h3"
+              weight="bold"
+              customStyle={{
+                minWidth: 'fit-content'
+              }}
+            >
               {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
-            {subText && (
+            {hideSize && subText && (
               <Typography
                 variant="body2"
                 weight="medium"
+                noWrap
                 customStyle={{
                   color: secondary.red.light
                 }}
               >
                 {subText}
+              </Typography>
+            )}
+            {!hideSize && (
+              <Typography
+                variant="body2"
+                weight="medium"
+                noWrap
+                customStyle={{
+                  color: common.ui60
+                }}
+              >
+                {sizeText}
               </Typography>
             )}
           </Flexbox>
@@ -391,6 +487,18 @@ function NewProductGridCard({
         )}
       </Content>
     </Flexbox>
+  );
+}
+
+// TODO 추후 UI 라이브러리 추가?
+function CamelLogoIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M2.67529 12.2355L4.39429 7.51046C4.50051 7.21865 4.7183 6.981 4.99974 6.84977C5.28119 6.71854 5.60324 6.70449 5.89504 6.81071C6.18685 6.91693 6.4245 7.13471 6.55573 7.41616C6.68696 7.69761 6.70101 8.01965 6.59479 8.31146L5.17504 12.2355H2.67529ZM8.52529 12.2355H6.02554L7.74454 7.51046C7.85076 7.21865 8.06855 6.981 8.34999 6.84977C8.63144 6.71854 8.95349 6.70449 9.24529 6.81071C9.5371 6.91693 9.77475 7.13471 9.90598 7.41616C10.0372 7.69761 10.0513 8.01965 9.94504 8.31146L8.52529 12.2355ZM14.445 8.07071L13.275 8.37221L11.8665 12.2355H9.37354L11.4953 6.41021L13.8623 5.80271C14.163 5.72543 14.4822 5.77079 14.7495 5.92882C15.0168 6.08684 15.2104 6.34458 15.2877 6.64533C15.3649 6.94609 15.3196 7.26522 15.1616 7.53253C15.0035 7.79984 14.7458 7.99343 14.445 8.07071Z"
+        fill="white"
+      />
+    </svg>
   );
 }
 

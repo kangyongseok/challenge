@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Box, Icon, useTheme } from 'mrcamel-ui';
 
@@ -18,8 +17,6 @@ import {
 } from '@components/pages/products';
 
 import Initializer from '@library/initializer';
-
-import { locales } from '@constants/common';
 
 import { getCookies } from '@utils/cookies';
 
@@ -67,16 +64,10 @@ function Products() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
   return {
-    props: {
-      ...(await serverSideTranslations(locale || defaultLocale))
-    }
+    props: {}
   };
 }
 

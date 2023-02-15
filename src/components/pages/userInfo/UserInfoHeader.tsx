@@ -3,7 +3,9 @@ import { Flexbox, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
 import { UserAvatar } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import UserInfoTabs from './UserInfoTabs';
 
@@ -69,7 +71,9 @@ function UserInfoHeader({
         reviewCount={reviewCount}
         customStyle={{
           position: 'fixed',
-          paddingTop: HEADER_HEIGHT - 2,
+          paddingTop: `calc(${
+            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+          } + ${HEADER_HEIGHT}px)`,
           width: '100%',
           zIndex: zIndex.header
         }}

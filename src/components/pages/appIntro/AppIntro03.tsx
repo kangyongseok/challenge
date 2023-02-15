@@ -1,119 +1,108 @@
 import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
-
 function AppIntro03({ animationStart }: { animationStart: boolean }) {
   return (
-    <StyledWrap direction="vertical" alignment="center" justifyContent="center">
-      <Flexbox
-        alignment="center"
-        direction="vertical"
-        customStyle={{ height: 350, justifyContent: 'flex-end' }}
-      >
-        <Box customStyle={{ position: 'relative', width: '100%' }}>
-          {animationStart && (
-            <>
-              <BubbleText variant="h3" weight="bold" right={120}>
-                <Icon name="AlarmFilled" /> UPDATE
-                <Dot />
-                <StarIcon
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/white_star.png`}
-                  alt="star icon"
-                />
-              </BubbleText>
-              <BlueLine alignment="center" gap={10} customStyle={{ height: 30 }}>
-                <Flexbox justifyContent="center" alignment="center" gap={7}>
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox justifyContent="center" alignment="center" gap={7}>
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox justifyContent="center" alignment="center" gap={7}>
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox justifyContent="center" alignment="center" gap={7}>
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-              </BlueLine>
-              <GrayLine alignment="center" gap={10}>
-                <Flexbox
-                  justifyContent="center"
-                  alignment="center"
-                  gap={7}
-                  customStyle={{ height: 30 }}
-                >
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox
-                  justifyContent="center"
-                  alignment="center"
-                  gap={7}
-                  customStyle={{ height: 30 }}
-                >
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox
-                  justifyContent="center"
-                  alignment="center"
-                  gap={7}
-                  customStyle={{ height: 30 }}
-                >
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-                <Flexbox
-                  justifyContent="center"
-                  alignment="center"
-                  gap={7}
-                  customStyle={{ height: 30 }}
-                >
-                  <Icon name="Logo_45_45" size="medium" />
-                  <Icon name="LogoText_96_20" height={15} width={70} />
-                </Flexbox>
-              </GrayLine>
-            </>
-          )}
-          <ProductImageArea justifyContent="space-between" alignment="center">
-            <Image
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/left_cloth.png`}
-              alt="Left Cloth Img"
-              disableAspectRatio
-            />
-            <Image
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/right_bag.png`}
-              alt="Right Bag Img"
-              disableAspectRatio
-            />
-          </ProductImageArea>
-        </Box>
-        <Box customStyle={{ textAlign: 'center', marginTop: 35 }}>
-          <Typography variant="h1" weight="bold">
-            대신 찾아주는
-            <br />
-            꿀매물
-          </Typography>
-          <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
-            가격 하락, 꿀매물 알아서 전부 챙겨드려요
-          </Typography>
-        </Box>
-      </Flexbox>
-    </StyledWrap>
+    <Flexbox
+      alignment="center"
+      direction="vertical"
+      customStyle={{ height: 350, justifyContent: 'flex-end' }}
+    >
+      <Box customStyle={{ position: 'relative', width: '100%' }}>
+        {animationStart && (
+          <>
+            <BubbleText variant="h3" weight="bold" right={120}>
+              <Icon name="AlarmFilled" /> UPDATE
+              <Dot />
+              <StarIcon
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/white_star.png`}
+                alt="star icon"
+              />
+            </BubbleText>
+            <BlueLine alignment="center" gap={10} customStyle={{ height: 30 }}>
+              <Flexbox justifyContent="center" alignment="center" gap={7}>
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox justifyContent="center" alignment="center" gap={7}>
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox justifyContent="center" alignment="center" gap={7}>
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox justifyContent="center" alignment="center" gap={7}>
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+            </BlueLine>
+            <GrayLine alignment="center" gap={10}>
+              <Flexbox
+                justifyContent="center"
+                alignment="center"
+                gap={7}
+                customStyle={{ height: 30 }}
+              >
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox
+                justifyContent="center"
+                alignment="center"
+                gap={7}
+                customStyle={{ height: 30 }}
+              >
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox
+                justifyContent="center"
+                alignment="center"
+                gap={7}
+                customStyle={{ height: 30 }}
+              >
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+              <Flexbox
+                justifyContent="center"
+                alignment="center"
+                gap={7}
+                customStyle={{ height: 30 }}
+              >
+                <Icon name="Logo_45_45" size="medium" />
+                <Icon name="LogoText_96_20" height={15} width={70} />
+              </Flexbox>
+            </GrayLine>
+          </>
+        )}
+        <ProductImageArea justifyContent="space-between" alignment="center">
+          <Image
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/left_cloth.png`}
+            alt="Left Cloth Img"
+            disableAspectRatio
+          />
+          <Image
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/right_bag.png`}
+            alt="Right Bag Img"
+            disableAspectRatio
+          />
+        </ProductImageArea>
+      </Box>
+      <Box customStyle={{ textAlign: 'center', marginTop: 35 }}>
+        <Typography variant="h1" weight="bold">
+          대신 찾아주는
+          <br />
+          꿀매물
+        </Typography>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+          가격 하락, 꿀매물 알아서 전부 챙겨드려요
+        </Typography>
+      </Box>
+    </Flexbox>
   );
 }
-
-const StyledWrap = styled(Flexbox)`
-  width: 100%;
-  height: calc(100vh - ${APP_TOP_STATUS_HEIGHT}px);
-  height: calc((var(--vh, 1vh) * 100) - ${APP_TOP_STATUS_HEIGHT}px);
-  overflow: hidden;
-`;
 
 const GrayLine = styled(Flexbox)`
   position: absolute;

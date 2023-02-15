@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Box } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
@@ -11,8 +10,6 @@ import { LegitAdminRequestPanel, LegitAdminTabs } from '@components/pages/legitA
 import { LegitFloatingButton, LegitLivePanel, LegitMyPanel } from '@components/pages/legit';
 
 import Initializer from '@library/initializer';
-
-import { locales } from '@constants/common';
 
 import { getCookies } from '@utils/cookies';
 
@@ -54,11 +51,7 @@ function LegitAdmin() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 
@@ -67,7 +60,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

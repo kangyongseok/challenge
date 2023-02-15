@@ -40,7 +40,7 @@ import { fetchBanword, fetchInfoByUserId, putProfile } from '@api/user';
 import { PROFILE_EDIT_ERROR_MESSAGE } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import { APP_TOP_STATUS_HEIGHT, CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT } from '@constants/common';
+import { CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getUserName } from '@utils/user';
@@ -129,7 +129,11 @@ function UserShopEdit() {
   const triggered = useScrollTrigger({
     ref: infoRef,
     additionalOffsetTop:
-      (isExtendedLayoutIOSVersion() ? -APP_TOP_STATUS_HEIGHT : 0) + -HEADER_HEIGHT,
+      -(isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0) - HEADER_HEIGHT,
     delay: 0
   });
   const { imageType, isLoadingGetPhoto, setGetPhotoState } = useGetImage((imageUrl) => {
@@ -474,7 +478,6 @@ function UserShopEdit() {
       <Flexbox
         direction="vertical"
         customStyle={{
-          paddingTop: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0,
           userSelect: 'none',
           height: '100%'
         }}
@@ -666,9 +669,10 @@ const ImageWrapper = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 160px;
-  padding-top: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px;
-  margin-top: -${HEADER_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  min-height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 160px);
+  margin-top: calc(
+    -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
+  );
 `;
 
 const BackgroundImage = styled.div<{ src: string }>`

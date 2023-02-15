@@ -2,12 +2,7 @@ import { useRouter } from 'next/router';
 import { Box, Grid, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -85,7 +80,7 @@ function HomeRecommendProductList() {
           </Typography>
         )}
         <Grid container rowGap={20} columnGap={12}>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
             {isLoading &&
               Array.from({ length: 8 }, (_, index) => (
                 <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
@@ -108,7 +103,7 @@ function HomeRecommendProductList() {
                 </Grid>
               ))}
           </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
             {isLoading &&
               Array.from({ length: 8 }, (_, index) => (
                 <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
@@ -121,62 +116,14 @@ function HomeRecommendProductList() {
                   <NewProductGridCard
                     variant="gridB"
                     product={product}
-                    wishButtonType="B"
+                    platformLabelType="B"
+                    hideSize={false}
                     attributes={{
                       name: attrProperty.name.MAIN,
                       title: attrProperty.title.RECOMM,
                       source: attrProperty.source.MAIN_RECOMM,
                       index: i + 1
                     }}
-                  />
-                </Grid>
-              ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-            {isLoading &&
-              Array.from({ length: 8 }, (_, index) => (
-                <Grid key={`home-recommend-product-skeleton-${index}`} item xs={2}>
-                  <ProductGridCardSkeleton isRound />
-                </Grid>
-              ))}
-            {!isLoading &&
-              content.map((product, i) => (
-                <Grid key={`home-recommend-product-${product.id}`} item xs={2}>
-                  <ProductGridCard
-                    product={product}
-                    hideProductLabel
-                    hideLegitStatusLabel
-                    wishAtt={{
-                      name: attrProperty.name.MAIN,
-                      title: attrProperty.title.RECOMM,
-                      id: product.id,
-                      index: i + 1,
-                      brand: product.brand.name,
-                      category: product.category.name,
-                      parentId: product.category.parentId,
-                      site: product.site.name,
-                      price: product.price,
-                      cluster: product.cluster,
-                      source: attrProperty.source.MAIN_RECOMM,
-                      sellerType: product.sellerType
-                    }}
-                    productAtt={{
-                      name: attrProperty.name.MAIN,
-                      title: attrProperty.title.RECOMM,
-                      id: product.id,
-                      index: i + 1,
-                      brand: product.brand.name,
-                      category: product.category.name,
-                      parentId: product.category.parentId,
-                      site: product.site.name,
-                      price: product.price,
-                      cluster: product.cluster,
-                      source: attrProperty.source.MAIN_RECOMM,
-                      sellerType: product.sellerType
-                    }}
-                    source={attrProperty.source.MAIN_RECOMM}
-                    compact
-                    isRound
                   />
                 </Grid>
               ))}

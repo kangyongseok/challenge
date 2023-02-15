@@ -25,7 +25,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postPreReserve } from '@api/user';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -354,8 +354,8 @@ const LandingHeader = styled(Flexbox)<{
   top: 0;
   left: 0;
   width: 100%;
-  height: ${(isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 66}px;
-  padding: ${isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0}px 20px 0;
+  height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 66px);
+  padding: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0} 20px 0;
   z-index: 10;
   background: ${({ bgColor }) => bgColor};
   border-bottom: ${({ isBorder, borderColor }) =>

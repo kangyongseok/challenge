@@ -6,6 +6,9 @@
   "author": "mrcamel <admin@mrcamel.co.kr>",
   "license": "MIT",
   "private": true,
+  "sideEffects": [
+    "./src/utils/common"
+  ],
   "scripts": {
     "dev": "next dev",
     "start": "next build && next start -p ${PORT}",

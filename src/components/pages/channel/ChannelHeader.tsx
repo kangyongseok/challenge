@@ -9,11 +9,11 @@ import UserAvatar from '@components/UI/organisms/UserAvatar';
 
 import { logEvent } from '@library/amplitude';
 
-import { HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
+import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel/atom';
 
@@ -131,17 +131,18 @@ function ChannelHeader({
 
 const Layout = styled.header`
   position: relative;
-  min-height: ${HEADER_HEIGHT}px;
+  height: calc(${HEADER_HEIGHT}px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
 `;
 
 const Wrapper = styled.div`
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
-  height: ${HEADER_HEIGHT}px;
+  height: calc(${HEADER_HEIGHT}px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   display: flex;
   align-items: center;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
   background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
+  padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0};
 `;
 
 const IconBox = styled.div`
@@ -161,7 +162,6 @@ const Title = styled.div<{ disabled?: boolean }>`
   overflow: hidden;
   white-space: nowrap;
   padding: 16px 0;
-  height: ${HEADER_HEIGHT}px;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 `;
 

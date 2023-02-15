@@ -20,11 +20,11 @@ import { deleteWishSoldout, fetchCategoryWishes, postProductsAdd } from '@api/us
 
 import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { convertStringToArray } from '@utils/common';
+import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   openDeleteToastState,
@@ -422,7 +422,15 @@ function WishesPanel({
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
         삭제한 찜 목록을 다시 저장했어요.
       </Toast>
-      <TopButton show name="WISH_LIST" customStyle={{ bottom: hiddenTab === 'legit' ? 105 : 80 }} />
+      <TopButton
+        show
+        name="WISH_LIST"
+        customStyle={{
+          bottom: `calc(${hiddenTab === 'legit' ? 105 : 80}px + ${
+            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'
+          })`
+        }}
+      />
     </>
   );
 }

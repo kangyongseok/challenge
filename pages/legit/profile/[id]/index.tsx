@@ -22,11 +22,7 @@ import { fetchLegitProfile, fetchUserInfo } from '@api/user';
 import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
-  HEADER_HEIGHT
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
@@ -77,9 +73,13 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   const triggered = useScrollTrigger({
     ref: opinionLegitListRef,
     additionalOffsetTop:
-      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) +
-      (isExtendedLayoutIOSVersion() ? -APP_TOP_STATUS_HEIGHT : 0) +
-      -HEADER_HEIGHT,
+      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
+      HEADER_HEIGHT -
+      (isExtendedLayoutIOSVersion()
+        ? Number(
+            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
+          )
+        : 0),
     delay: 0
   });
 

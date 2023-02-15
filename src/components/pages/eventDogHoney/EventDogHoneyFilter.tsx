@@ -11,9 +11,11 @@ import { Model } from '@dto/common';
 import { logEvent } from '@library/amplitude';
 
 import queryKeys from '@constants/queryKeys';
-import { EVENT_NEW_YEAR_FILTER_INFO_HEIGHT } from '@constants/common';
+import { EVENT_NEW_YEAR_FILTER_INFO_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   eventContentDogHoneyFilterOffsetTopState,
@@ -180,13 +182,13 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
 
 const FixedFilter = styled.section<{ isFixed: boolean }>`
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-
   ${({ isFixed }) =>
     isFixed && {
       position: 'fixed',
       top: 0,
       left: 0,
-      right: 0
+      right: 0,
+      paddingTop: `${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0}`
     }};
 `;
 

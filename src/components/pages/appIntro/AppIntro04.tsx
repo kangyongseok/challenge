@@ -6,7 +6,6 @@ import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -29,63 +28,55 @@ function AppIntro04({ animationStart }: { animationStart: boolean }) {
   };
 
   return (
-    <StyledWrap alignment="center" direction="vertical" justifyContent="center">
-      <Flexbox
-        alignment="center"
-        direction="vertical"
-        customStyle={{ height: 350, justifyContent: 'flex-end' }}
-      >
-        <Box customStyle={{ position: 'relative' }}>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/legit_box.png`}
-            alt="Legit Box Img"
-            disableAspectRatio
-            width={240}
-          />
-          {animationStart && (
-            <>
-              <TextBox type="origin" variant="h3" weight="bold" delay={0.3}>
-                <Icon name="OpinionAuthenticOutlined" />
-                정품의견
-              </TextBox>
-              <TextBox type="fake" variant="h3" weight="bold" delay={0.5}>
-                <Icon name="OpinionFakeFilled" />
-                가품의심
-              </TextBox>
-            </>
-          )}
-        </Box>
-        <Box customStyle={{ textAlign: 'center' }}>
-          <Typography variant="h1" weight="bold">
-            사진으로 받는
-            <br />
-            정가품 의견
-          </Typography>
-          <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
-            사기 전에 전문가에게 물어보세요
-          </Typography>
-        </Box>
+    <Flexbox
+      alignment="center"
+      direction="vertical"
+      customStyle={{ height: 350, justifyContent: 'flex-end' }}
+    >
+      <Box customStyle={{ position: 'relative' }}>
+        <Image
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/appIntro/legit_box.png`}
+          alt="Legit Box Img"
+          disableAspectRatio
+          width={240}
+        />
         {animationStart && (
-          <LoginButton
-            fullWidth
-            variant="solid"
-            size="xlarge"
-            customStyle={{ marginTop: 'auto', marginBottom: 20 }}
-            onClick={handleClickLogin}
-          >
-            카멜 회원가입하기
-          </LoginButton>
+          <>
+            <TextBox type="origin" variant="h3" weight="bold" delay={0.3}>
+              <Icon name="OpinionAuthenticOutlined" />
+              정품의견
+            </TextBox>
+            <TextBox type="fake" variant="h3" weight="bold" delay={0.5}>
+              <Icon name="OpinionFakeFilled" />
+              가품의심
+            </TextBox>
+          </>
         )}
-      </Flexbox>
-    </StyledWrap>
+      </Box>
+      <Box customStyle={{ textAlign: 'center' }}>
+        <Typography variant="h1" weight="bold">
+          사진으로 받는
+          <br />
+          정가품 의견
+        </Typography>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+          사기 전에 전문가에게 물어보세요
+        </Typography>
+      </Box>
+      {animationStart && (
+        <LoginButton
+          fullWidth
+          variant="solid"
+          size="xlarge"
+          customStyle={{ marginTop: 'auto', marginBottom: 20 }}
+          onClick={handleClickLogin}
+        >
+          카멜 회원가입하기
+        </LoginButton>
+      )}
+    </Flexbox>
   );
 }
-
-const StyledWrap = styled(Flexbox)`
-  width: 100%;
-  height: calc(100vh - ${APP_TOP_STATUS_HEIGHT}px);
-  height: calc((var(--vh, 1vh) * 100) - ${APP_TOP_STATUS_HEIGHT}px);
-`;
 
 const TextBox = styled(Typography)<{ type: 'origin' | 'fake'; delay?: number }>`
   width: 113px;

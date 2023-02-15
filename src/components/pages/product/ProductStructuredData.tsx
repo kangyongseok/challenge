@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import type { Product } from '@dto/product';
@@ -19,8 +18,6 @@ interface ProductStructuredDataProps {
 }
 
 function ProductStructuredData({ product, relatedProducts = [], url }: ProductStructuredDataProps) {
-  const router = useRouter();
-
   const { data: { parentCategories = [] } = {} } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories
@@ -30,7 +27,7 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
     if (!product || !parentCategories || !parentCategories.length) return [];
 
     const { brand, category } = product;
-    const baseUrl = `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}`;
+    const baseUrl = 'https://mrcamel.co.kr';
 
     const newItemListElement = [
       {
@@ -89,7 +86,7 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
       ...element,
       position: index + 1
     }));
-  }, [product, parentCategories, router.locale]);
+  }, [product, parentCategories]);
 
   if (!product) return null;
 
@@ -150,9 +147,7 @@ function ProductStructuredData({ product, relatedProducts = [], url }: ProductSt
             itemListElement: relatedProducts.map((relatedProduct, index) => ({
               '@type': 'ListItem',
               position: index + 1,
-              url: `https://mrcamel.co.kr${
-                router.locale === 'ko' ? '' : `/${router.locale}`
-              }${getProductDetailUrl({ product: relatedProduct })}`
+              url: `https://mrcamel.co.kr${getProductDetailUrl({ product: relatedProduct })}`
             }))
           })
         }}

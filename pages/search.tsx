@@ -30,7 +30,7 @@ import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { APP_TOP_STATUS_HEIGHT, SEARCH_BAR_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -281,7 +281,9 @@ export async function getStaticProps() {
 }
 
 const SearchForm = styled.form`
-  min-height: ${SEARCH_BAR_HEIGHT + (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0)}px;
+  min-height: calc(
+    ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${SEARCH_BAR_HEIGHT}px
+  );
 `;
 
 export default Search;

@@ -1,5 +1,3 @@
-const { i18n } = require('./next-i18next.config');
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 const routers = [
   {
@@ -28,13 +26,23 @@ const routers = [
     permanent: false
   },
   {
+    source: '/en/:path*',
+    destination: '/:path*',
+    permanent: true
+  },
+  {
+    source: '/ko/:path*',
+    destination: '/:path*',
+    permanent: true
+  },
+  {
     source: '/en-US/:path*',
-    destination: '/en/:path*',
+    destination: '/:path*',
     permanent: true
   },
   {
     source: '/ko-KR/:path*',
-    destination: '/ko/:path*',
+    destination: '/:path*',
     permanent: true
   }
 ];
@@ -112,8 +120,7 @@ const nextConfig = {
             destination: 'https://intro.mrcamel.co.kr/:path*'
           }
         ]);
-  },
-  i18n
+  }
 };
 
 module.exports = nextConfig;

@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
@@ -16,7 +15,6 @@ import {
 
 import Initializer from '@library/initializer';
 
-import { locales } from '@constants/common';
 import { channelType } from '@constants/channel';
 
 import { getCookies } from '@utils/cookies';
@@ -90,12 +88,7 @@ function Channels() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  locale,
-  query: { productId },
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query: { productId } }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
@@ -117,7 +110,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale || defaultLocale)),
       dehydratedState: dehydrate(queryClient)
     }
   };

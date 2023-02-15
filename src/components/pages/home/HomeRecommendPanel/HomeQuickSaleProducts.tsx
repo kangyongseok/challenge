@@ -3,19 +3,13 @@ import { useRouter } from 'next/router';
 import { Box, Grid, Image, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
 import { fetchPersonalsSellerProducts } from '@api/personal';
 
 import queryKeys from '@constants/queryKeys';
-import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
@@ -57,7 +51,7 @@ function HomeQuickSaleProducts() {
           언제나 매력적인 새로 올라온 매물! 😎
         </Typography>
         <Grid container rowGap={20} columnGap={12}>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
@@ -78,7 +72,7 @@ function HomeQuickSaleProducts() {
                   </Grid>
                 ))}
           </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
             {isLoading || isFetching || !camelProducts
               ? Array.from({ length: 4 }, (_, index) => (
                   <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
@@ -90,61 +84,13 @@ function HomeQuickSaleProducts() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      wishButtonType="B"
+                      platformLabelType="B"
+                      hideSize={false}
                       attributes={{
                         name: attrProperty.name.MAIN,
                         title: attrProperty.title.GENERAL_SELLER,
                         index: index + 1
                       }}
-                    />
-                  </Grid>
-                ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-            {isLoading || isFetching || !camelProducts
-              ? Array.from({ length: 4 }, (_, index) => (
-                  <Grid key={`home-camel-auth-product-skeleton-${index}`} item xs={2}>
-                    <ProductGridCardSkeleton isRound />
-                  </Grid>
-                ))
-              : camelProducts?.content.slice(0, 8).map((product, index) => (
-                  <Grid key={`home-camel-auth-product-${product.id}`} item xs={2}>
-                    <ProductGridCard
-                      product={product}
-                      hideLegitStatusLabel
-                      hideProductLabel
-                      hideSafePayment
-                      wishAtt={{
-                        name: attrProperty.name.MAIN,
-                        title: attrProperty.title.GENERAL_SELLER,
-                        id: product.id,
-                        index: index + 1,
-                        brand: product.brand.name,
-                        category: product.category.name,
-                        parentId: product.category.parentId,
-                        site: product.site.name,
-                        price: product.price,
-                        cluster: product.cluster,
-                        source: attrProperty.source.MAIN_GENERAL_SELLER,
-                        sellerType: product.sellerType
-                      }}
-                      productAtt={{
-                        name: attrProperty.name.MAIN,
-                        title: attrProperty.title.GENERAL_SELLER,
-                        index: index + 1,
-                        id: product.id,
-                        brand: product.brand.name,
-                        category: product.category.name,
-                        parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-                        site: product.site.name,
-                        price: product.price,
-                        source: attrProperty.source.MAIN_GENERAL_SELLER,
-                        sellerType: product.sellerType
-                      }}
-                      source={attrProperty.source.MAIN_GENERAL_SELLER}
-                      compact
-                      isRound
-                      customStyle={{ minWidth: 144, flex: 1 }}
                     />
                   </Grid>
                 ))}

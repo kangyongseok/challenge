@@ -496,6 +496,17 @@ export interface BanWordResponse {
   isValidShopDescription: boolean;
 }
 
+export interface UserTransfer {
+  id: number;
+  userId: number;
+  siteId: number;
+  status: 0 | 1;
+  url: string;
+  isDeleted: boolean;
+  dateUpdated: string;
+  dateCreated: string;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface CategoryWishesParams {
   categoryIds?: number[];
@@ -635,4 +646,9 @@ export type PostSurveyData = {
   answer: number;
   options: string;
   surveyId: number;
+};
+
+export type PostTransferData = {
+  siteId: number;
+  url: string;
 };

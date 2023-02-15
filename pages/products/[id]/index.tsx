@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetServerSidePropsContext } from 'next';
 import { Box, Flexbox, Image, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -60,7 +59,6 @@ import {
   productStatusCode
 } from '@constants/product';
 import { ACCESS_USER, DUPLICATED_PRODUCT_IDS, SAVED_LEGIT_REQUEST } from '@constants/localStorage';
-import { locales } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -71,15 +69,18 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
+import {
+  settingsTransferDataState,
+  settingsTransferPlatformsState
+} from '@recoil/settingsTransfer';
 import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
-import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function ProductDetail() {
   const {
-    locale,
+    push,
     query: { id: productId, redirect, chainPrice },
     asPath
   } = useRouter();
@@ -92,6 +93,8 @@ function ProductDetail() {
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const [toast, setToastState] = useRecoilState(toastState);
+  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
+  const resetDataState = useResetRecoilState(settingsTransferDataState);
 
   const { data: userData, set: setUserDate } = useQueryUserData();
   const {
@@ -309,13 +312,26 @@ function ProductDetail() {
     setViewDetail(true);
   };
 
-  const handleClick = useMoveCamelSeller({
-    attributes: {
+  const handleClick = () => {
+    logEvent(attrKeys.products.CLICK_BANNER, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: attrProperty.title.PRODUCT_DETAIL,
-      source: 'PRODUCT_DETAIL'
+      att: 'TRANSFER'
+    });
+
+    resetPlatformsState();
+    resetDataState();
+
+    if (!accessUser) {
+      setLoginBottomSheet({
+        open: true,
+        returnUrl: '/mypage/settings/transfer'
+      });
+      return;
     }
-  });
+
+    push('/mypage/settings/transfer');
+  };
 
   useEffect(() => {
     setUserShopSelectedProductState({ id: Number(productId) });
@@ -482,7 +498,8 @@ function ProductDetail() {
   useEffect(() => {
     logEvent(attrKeys.products.VIEW_BANNER, {
       name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.PRODUCT_DETAIL
+      title: attrProperty.title.PRODUCT_DETAIL,
+      att: 'TRANSFER'
     });
   }, []);
 
@@ -500,9 +517,7 @@ function ProductDetail() {
         ogTitle={`${data?.product.title} | 카멜`}
         ogDescription={`${getMetaDescription(data?.product)}`}
         ogImage={data?.product.imageMain || data?.product.imageThumbnail}
-        canonical={`https://mrcamel.co.kr${
-          locale === 'ko' ? '' : `/${locale}`
-        }${getProductDetailUrl({
+        canonical={`https://mrcamel.co.kr${getProductDetailUrl({
           product: data?.product as Product
         })}`}
         keywords={`중고 ${data?.product.brand.name}, 중고 ${data?.product.category.name}, 중고 ${data?.product.quoteTitle}, ${data?.product.brand.name}, ${data?.product.category.name}, ${data?.product.quoteTitle}, 여자 ${data?.product.category.name}, 남자 ${data?.product.category.name}`}
@@ -511,7 +526,7 @@ function ProductDetail() {
       <ProductStructuredData
         product={data?.product}
         relatedProducts={data?.relatedProducts}
-        url={`https://mrcamel.co.kr${locale === 'ko' ? '' : `/${locale}`}${getProductDetailUrl({
+        url={`https://mrcamel.co.kr${getProductDetailUrl({
           product: data?.product as Product
         })}`}
       />
@@ -602,12 +617,12 @@ function ProductDetail() {
                   customStyle={{
                     margin: '0 -20px',
                     borderBottom: `8px solid ${common.bg02}`,
-                    backgroundColor: '#4836B6'
+                    backgroundColor: '#111A3D'
                   }}
                 >
                   <Image
                     height={104}
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`}
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
                     alt="Banner Img"
                     disableAspectRatio
                   />
@@ -701,21 +716,13 @@ function ProductDetail() {
   );
 }
 
-export async function getServerSideProps({
-  req,
-  res,
-  query,
-  locale,
-  defaultLocale = locales.ko.lng
-}: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
   const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
   if (isGoBack) {
     res.setHeader('Set-Cookie', 'isGoBack=false;path=/');
 
     return {
-      props: {
-        ...(await serverSideTranslations(locale || defaultLocale))
-      }
+      props: {}
     };
   }
 
@@ -730,9 +737,7 @@ export async function getServerSideProps({
     // TODO getServerSideProps 가 2번 호출되고, null 이 string 으로 들어옴
     if (!id || id === 'null') {
       return {
-        props: {
-          ...(await serverSideTranslations(locale || defaultLocale))
-        }
+        props: {}
       };
     }
 
@@ -777,7 +782,6 @@ export async function getServerSideProps({
 
     return {
       props: {
-        ...(await serverSideTranslations(locale || defaultLocale)),
         dehydratedState: dehydrate(queryClient)
       }
     };

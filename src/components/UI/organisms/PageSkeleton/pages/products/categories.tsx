@@ -1,12 +1,7 @@
 import { Box, Flexbox, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
-import {
-  Header,
-  LinearProgress,
-  NewProductGridCardSkeleton,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { Header, LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -96,14 +91,11 @@ function CategoryProducts() {
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
               <NewProductGridCardSkeleton />
             </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
               <NewProductGridCardSkeleton />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-              <ProductGridCardSkeleton />
             </ABTestGroup>
           </Grid>
         ))}

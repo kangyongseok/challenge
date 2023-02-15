@@ -48,11 +48,7 @@ function PageHead({
       {ogImage && <meta property="og:image" content={ogImage} />}
       <meta
         property="og:url"
-        content={decodeURI(
-          `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}${
-            router.asPath === '/' ? '' : router.asPath
-          }`
-        )}
+        content={decodeURI(`https://mrcamel.co.kr${router.asPath === '/' ? '' : router.asPath}`)}
       />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="카멜" />
@@ -62,11 +58,7 @@ function PageHead({
       <meta name="twitter:card" content="summary" />
       <meta
         name="twitter:url"
-        content={decodeURI(
-          `https://mrcamel.co.kr${router.locale === 'ko' ? '' : `/${router.locale}`}${
-            router.asPath === '/' ? '' : router.asPath
-          }`
-        )}
+        content={decodeURI(`https://mrcamel.co.kr${router.asPath === '/' ? '' : router.asPath}`)}
       />
       {canonical && <link rel="canonical" href={canonical} />}
       {product && (

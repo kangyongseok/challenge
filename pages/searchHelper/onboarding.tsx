@@ -9,7 +9,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
@@ -85,9 +85,9 @@ function Onboarding() {
       <GeneralTemplate disablePadding hideAppDownloadBanner>
         <Box
           customStyle={{
-            padding: `${
-              (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 48
-            }px 20px 116px`
+            padding: `calc(${
+              isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+            } + 48px) 20px 116px`
           }}
         >
           <Typography

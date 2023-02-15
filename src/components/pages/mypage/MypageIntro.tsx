@@ -7,9 +7,9 @@ import { logEvent } from '@library/amplitude';
 
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
-  APP_TOP_STATUS_HEIGHT,
   BOTTOM_NAVIGATION_HEIGHT,
-  HEADER_HEIGHT
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -38,8 +38,7 @@ function MypageIntro() {
       component="section"
       direction="vertical"
       alignment="center"
-      showAppDownloadBanner={showAppDownloadBanner}
-      isAppLayout={!!isExtendedLayoutIOSVersion()}
+      showAppDownloadHeight={showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0}
     >
       <Flexbox
         direction="vertical"
@@ -81,26 +80,21 @@ function MypageIntro() {
   );
 }
 
-const Wrapper = styled(Flexbox)<{ showAppDownloadBanner: boolean; isAppLayout: boolean }>`
+const Wrapper = styled(Flexbox)<{ showAppDownloadHeight: number }>`
   height: calc(
     100vh -
-      ${({ showAppDownloadBanner, isAppLayout }) =>
-        `${
-          HEADER_HEIGHT +
-          BOTTOM_NAVIGATION_HEIGHT +
-          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0) +
-          (isAppLayout ? APP_TOP_STATUS_HEIGHT : 0)
-        }px`}
+      (
+        ${({ showAppDownloadHeight }) =>
+          HEADER_HEIGHT + BOTTOM_NAVIGATION_HEIGHT + showAppDownloadHeight}px
+      ) - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
   );
+
   height: calc(
     (var(--vh, 1vh) * 100) -
-      ${({ showAppDownloadBanner, isAppLayout }) =>
-        `${
-          HEADER_HEIGHT +
-          BOTTOM_NAVIGATION_HEIGHT +
-          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0) +
-          (isAppLayout ? APP_TOP_STATUS_HEIGHT : 0)
-        }px`}
+      (
+        ${({ showAppDownloadHeight }) =>
+          HEADER_HEIGHT + BOTTOM_NAVIGATION_HEIGHT + showAppDownloadHeight}px
+      ) - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
   );
 `;
 

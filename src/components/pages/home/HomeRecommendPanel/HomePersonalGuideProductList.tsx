@@ -9,16 +9,10 @@ import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import {
-  NewProductGridCard,
-  NewProductGridCardSkeleton,
-  ProductGridCard,
-  ProductGridCardSkeleton
-} from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
-import ABTest from '@library/abTest';
 
 import { fetchGuideAllProducts } from '@api/personal';
 
@@ -181,10 +175,10 @@ function HomePersonalGuideProductList() {
         onScroll={handleScroll}
         ref={listScrollRef}
         css={{
-          minHeight: ABTest.getBelong(abTestTaskNameKeys.BETTER_CARD_2301) === 'C' ? 222 : 286
+          minHeight: 286
         }}
       >
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="A">
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
           {isLoading &&
             Array.from({ length: 10 }).map((_, index) => (
               <NewProductGridCardSkeleton
@@ -208,7 +202,7 @@ function HomePersonalGuideProductList() {
               />
             ))}
         </ABTestGroup>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="B">
+        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
           {isLoading &&
             Array.from({ length: 10 }).map((_, index) => (
               <NewProductGridCardSkeleton
@@ -223,64 +217,14 @@ function HomePersonalGuideProductList() {
                 key={`home-personal-guide-product-${product.id}`}
                 variant="swipeX"
                 product={product}
+                platformLabelType="B"
+                hideSize={false}
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.PERSONAL_GUIDE,
                   source: attrProperty.source.MAIN_PERSONAL_GUIDE,
                   index: index + 1
                 }}
-              />
-            ))}
-        </ABTestGroup>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2301} belong="C">
-          {isLoading &&
-            Array.from({ length: 10 }).map((_, index) => (
-              <ProductGridCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`home-personal-guide-product-skeleton-${index}`}
-                isRound
-                hasAreaWithDateInfo={false}
-                hasMetaInfo={false}
-                compact
-                gap={8}
-              />
-            ))}
-          {!isLoading &&
-            products[guideProductsNum]?.products?.content.map((product, index) => (
-              <ProductGridCard
-                key={`home-personal-guide-product-${product.id}`}
-                product={product}
-                isRound
-                compact
-                gap={8}
-                hideProductLabel
-                productAtt={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.PERSONAL_GUIDE,
-                  id: product.id,
-                  index: index + 1,
-                  brand: product.brand.name,
-                  category: product.category.name,
-                  parentId: product.category.parentId,
-                  site: product.site.name,
-                  price: product.price,
-                  cluster: product.cluster,
-                  source: attrProperty.source.MAIN_PERSONAL_GUIDE
-                }}
-                wishAtt={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.PERSONAL_GUIDE,
-                  id: product.id,
-                  index: index + 1,
-                  brand: product.brand.name,
-                  category: product.category.name,
-                  parentId: product.category.parentId,
-                  site: product.site.name,
-                  price: product.price,
-                  cluster: product.cluster,
-                  source: attrProperty.source.MAIN_PERSONAL_GUIDE
-                }}
-                source={attrProperty.source.MAIN_PERSONAL_GUIDE}
               />
             ))}
         </ABTestGroup>

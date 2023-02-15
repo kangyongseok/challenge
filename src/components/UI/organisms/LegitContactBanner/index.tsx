@@ -4,8 +4,11 @@ import { PopupButton } from '@typeform/embed-react';
 
 import { logEvent } from '@library/amplitude';
 
+import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { ImageBox, InfoBox, StyledLegitContactBanner } from './LegitContactBanner.styles';
 
@@ -44,7 +47,7 @@ function LegitContactBanner({
       <Box
         customStyle={{
           position: 'relative',
-          height: 72,
+          height: `calc(72px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`,
           ...customStyle
         }}
       >

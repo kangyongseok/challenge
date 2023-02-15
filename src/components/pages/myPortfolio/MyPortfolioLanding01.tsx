@@ -6,6 +6,10 @@ import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
+import { IOS_SAFE_AREA_BOTTOM, IOS_SAFE_AREA_TOP } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 const slideImage = [
@@ -61,7 +65,7 @@ function MyPortfolioLanding01({
     <>
       <Flexbox
         direction="vertical"
-        customStyle={{ padding: '0 32px', marginTop: isSmallHeight ? '-32px' : 0 }}
+        customStyle={{ padding: '0 32px', marginTop: isSmallHeight ? '-32px' : IOS_SAFE_AREA_TOP }}
       >
         <Flexbox alignment="flex-end" gap={12} customStyle={{ marginBottom: 36 }}>
           <Icon
@@ -216,7 +220,7 @@ const BottomFixComponent = styled.div`
   width: 100%;
   padding: 0 32px;
   position: absolute;
-  bottom: 60px;
+  bottom: calc(60px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'});
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
 `;

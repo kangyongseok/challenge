@@ -8,7 +8,7 @@ import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { APP_TOP_STATUS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
@@ -321,7 +321,7 @@ function ImageDetailDialog({
           position: 'absolute',
           left: 0,
           right: 0,
-          top: isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0,
+          top: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0,
           height: HEADER_HEIGHT,
           zIndex: button,
           backgroundColor: common.overlay60
@@ -331,7 +331,7 @@ function ImageDetailDialog({
           <Box
             customStyle={{
               position: 'absolute',
-              top: (isExtendedLayoutIOSVersion() ? APP_TOP_STATUS_HEIGHT : 0) + 16,
+              top: `calc(16px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`,
               left: 16,
               zIndex: button
             }}

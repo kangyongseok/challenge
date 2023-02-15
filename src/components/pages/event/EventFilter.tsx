@@ -10,9 +10,11 @@ import { logEvent } from '@library/amplitude';
 import { fetchContent } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { eventContentProductsParamsState } from '@recoil/eventFilter/atom';
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -126,8 +128,11 @@ function EventFilter() {
 
 const List = styled.section<{ showAppDownloadBanner: boolean }>`
   position: sticky;
-  top: ${({ showAppDownloadBanner }) =>
-    showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 56 : 56}px;
+  top: calc(
+    ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} +
+      ${({ showAppDownloadBanner }) =>
+        showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT : HEADER_HEIGHT}px
+  );
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;

@@ -8,8 +8,13 @@ import styled from '@emotion/styled';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   BOTTOM_NAVIGATION_HEIGHT,
-  HEADER_HEIGHT
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_BOTTOM,
+  IOS_SAFE_AREA_TOP,
+  TAB_HEIGHT
 } from '@constants/common';
+
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
@@ -44,8 +49,8 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
       direction="vertical"
       alignment="center"
       justifyContent="center"
-      showAppDownloadBanner={showAppDownloadBanner}
-      isHiddenTab={hiddenTab === 'legit'}
+      showAppDownloadHeight={showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0}
+      hiddenTabHeight={hiddenTab === 'legit' ? 25 : 0}
     >
       <Flexbox
         direction="vertical"
@@ -77,30 +82,30 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
   );
 }
 
-const Wrapper = styled(Flexbox)<{ showAppDownloadBanner: boolean; isHiddenTab: boolean }>`
+const Wrapper = styled(Flexbox)<{ showAppDownloadHeight: number; hiddenTabHeight: number }>`
   height: calc(
     100vh -
-      ${({ showAppDownloadBanner, isHiddenTab }) => {
-        let calcHeight =
+      (
+        ${({ showAppDownloadHeight, hiddenTabHeight }) =>
           HEADER_HEIGHT +
           BOTTOM_NAVIGATION_HEIGHT +
-          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 45 : 45);
-
-        if (isHiddenTab) calcHeight += 25;
-        return `${calcHeight}px`;
-      }}
+          TAB_HEIGHT +
+          showAppDownloadHeight +
+          hiddenTabHeight}px
+      ) - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} -
+      ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'}
   );
   height: calc(
     (var(--vh, 1vh) * 100) -
-      ${({ showAppDownloadBanner, isHiddenTab }) => {
-        let calcHeight =
+      (
+        ${({ showAppDownloadHeight, hiddenTabHeight }) =>
           HEADER_HEIGHT +
           BOTTOM_NAVIGATION_HEIGHT +
-          (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT + 45 : 45);
-
-        if (isHiddenTab) calcHeight += 25;
-        return `${calcHeight}px`;
-      }}
+          TAB_HEIGHT +
+          showAppDownloadHeight +
+          hiddenTabHeight}px
+      ) - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} -
+      ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'}
   );
 `;
 
