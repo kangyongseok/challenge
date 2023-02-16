@@ -40,6 +40,10 @@ const mapFilter = {
   signIn: '로그인이 필요해요'
 };
 
+const event = {
+  onready: '이미 참여 하셨습니다.'
+};
+
 const product = {
   successCopy: 'URL이 복사 되었어요.',
   successReport: '감사합니다! 신고 접수 완료되었습니다 😇',
@@ -165,7 +169,8 @@ export const toastText: Record<
   mypage,
   user,
   channel,
-  sendbird
+  sendbird,
+  event
 };
 
 const productsKeywordActionButton = {

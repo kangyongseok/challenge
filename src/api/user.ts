@@ -346,3 +346,9 @@ export async function fetchTransfers() {
 export async function postTransfers(data: PostTransferData) {
   await Axios.getInstance().post(`${BASE_PATH}/transfers`, data);
 }
+
+export async function fetchSurvey() {
+  const { data } = await Axios.getInstance().get(`${BASE_PATH}/survey/4`);
+
+  return data;
+}

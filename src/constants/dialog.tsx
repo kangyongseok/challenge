@@ -72,7 +72,8 @@ export const dialogTitle: Record<
   productDelete: '삭제된 매물입니다',
   productHidden: '숨긴 매물입니다',
   productReservation: '예약중인 매물입니다',
-  locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>
+  locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>,
+  endEvent: '종료된 이벤트입니다.'
 };
 
 export const dialogContent = {
@@ -262,6 +263,7 @@ export const secondButtonText: Record<
     | 'productDelete'
     | 'productHidden'
     | 'productReservation'
+    | 'endEvent'
   >,
   string | number | ReactElement
 > = {
@@ -296,7 +298,8 @@ export const secondButtonText: Record<
   productDelete: '확인',
   productHidden: '확인',
   productReservation: '확인',
-  locationInfo: '동의하고 매물보기'
+  locationInfo: '동의하고 매물보기',
+  endEvent: '확인'
 };
 
 const dialog = {

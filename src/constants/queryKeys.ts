@@ -209,7 +209,8 @@ const nextJs = {
 
 const client = {
   all: ['client'] as const,
-  recentSearchList: () => [...client.all, RECENT_SEARCH_LIST] as const
+  recentSearchList: () => [...client.all, RECENT_SEARCH_LIST] as const,
+  survey: () => [...client.all, 'survey'] as const
 };
 
 const dashboards = {

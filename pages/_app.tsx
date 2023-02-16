@@ -22,7 +22,6 @@ import { isExtendedLayoutIOSVersion } from '@utils/common';
 import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
-  ChannelTalkProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
   HistoryProvider,
@@ -38,6 +37,10 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
+
+const ChannelTalkProvider = dynamic(() => import('@provider/ChannelTalkProvider'), {
+  loading: () => <div>Loading...</div>
+});
 
 const DialogProvider = dynamic(() => import('@provider/DialogProvider'), {
   loading: () => <div>Loading...</div>

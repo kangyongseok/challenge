@@ -90,11 +90,16 @@ export default function useMoveCamelSeller({
     const checkedProductPhotoUploadGuide = LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE);
 
     if (!accessUser) {
+      // setOpenLoginBottomSheetState({
+      //   open: true,
+      //   returnUrl: checkedProductPhotoUploadGuide
+      //     ? '/camelSeller/registerConfirm'
+      //     : // : '/camelSeller/guide'
+      //       '/events/camelSellerEvent'
+      // });
       setOpenLoginBottomSheetState({
         open: true,
-        returnUrl: checkedProductPhotoUploadGuide
-          ? '/camelSeller/registerConfirm'
-          : '/camelSeller/guide'
+        returnUrl: '/events/camelSellerEvent?login=true'
       });
       return;
     }
@@ -145,9 +150,14 @@ export default function useMoveCamelSeller({
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
     if (checkedProductPhotoUploadGuide) {
-      router.push('/camelSeller/registerConfirm');
+      if (router.query.banner) {
+        router.replace('/camelSeller/registerConfirm');
+      } else {
+        router.push('/camelSeller/registerConfirm');
+      }
     } else {
-      router.push('/camelSeller/guide');
+      // router.push('/camelSeller/guide');
+      router.push('/events/camelSellerEvent?first=true');
     }
   };
 

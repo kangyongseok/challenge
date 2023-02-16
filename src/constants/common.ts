@@ -106,3 +106,6 @@ export const productPostType = {
   crowlLegit: 0,
   photoLegit: 1
 };
+
+export const EVENT_START_DATE = '2023-02-15';
+export const EVENT_END_DATE = '2023-02-28';

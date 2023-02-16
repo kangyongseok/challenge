@@ -36,6 +36,7 @@ import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+// import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function MypageActionBanner() {
   const {
@@ -258,11 +259,14 @@ function MypageActionBanner() {
       <Box
         onClick={handleClick}
         customStyle={{
+          // backgroundColor: '#4836B6'
+          // backgroundColor: '#64607A'
           backgroundColor: '#111A3D'
         }}
       >
         <Image
           height={104}
+          // src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner2.png`}
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
           alt="Banner Img"
           disableAspectRatio

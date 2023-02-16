@@ -27,7 +27,7 @@ import {
 import { dialogState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
+// import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
 
@@ -72,14 +72,25 @@ function HomeMainBanner() {
   const { data: { area: { values: areaValues = [] } = {} } = {} } = useQueryMyUserInfo();
   const { mutate: mutatePostArea } = useMutation(postArea);
 
-  const handleClickCamelSellerBanner = useMoveCamelSeller({
-    attributes: {
+  const handleClickCamelSellerBanner = () => {
+    logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
       name: attrProperty.name.MAIN,
       title: attrProperty.title.MAIN_BANNER,
       source: 'MAIN',
       index: 2
-    }
-  });
+    });
+
+    router.push('/events/camelSellerEvent?banner=true');
+  };
+
+  // const handleClickCamelSellerBanner = useMoveCamelSeller({
+  //   attributes: {
+  // name: attrProperty.name.MAIN,
+  // title: attrProperty.title.MAIN_BANNER,
+  // source: 'MAIN',
+  // index: 2
+  //   }
+  // });
 
   const startXRef = useRef(0);
 
@@ -235,8 +246,8 @@ function HomeMainBanner() {
         <SwiperSlide>
           <Image
             ratio="4:3"
-            src={`${IMAGE_BASE_URL}/main-banner07.png`}
-            alt="Main Banner Img"
+            src={`${IMAGE_BASE_URL}/main-banner07-2.png`}
+            alt="카멜에서 판매 시작하기"
             onClick={handleClickCamelSellerBanner}
           />
         </SwiperSlide>

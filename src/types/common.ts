@@ -98,6 +98,7 @@ export type ToastType =
   | 'home'
   | 'user'
   | 'channel'
+  | 'event'
   | 'sendbird';
 
 export type ToastStatus =
@@ -152,7 +153,8 @@ export type ToastStatus =
   | 'invalidAdminWord'
   | 'disableImageUpload'
   | 'savedProfileImage'
-  | 'savedBackgroundImage';
+  | 'savedBackgroundImage'
+  | 'onready';
 
 export type DialogType =
   | 'SNSShare'
@@ -187,7 +189,8 @@ export type DialogType =
   | 'productDelete'
   | 'productHidden'
   | 'productReservation'
-  | 'locationInfo';
+  | 'locationInfo'
+  | 'endEvent';
 
 export type ShareData = {
   title: string;
