@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
@@ -23,7 +23,7 @@ import attrProperty from '@constants/attrProperty';
 import { EventTime } from '@utils/eventTimes';
 import { checkAgent } from '@utils/common';
 
-import { dialogState, showAppDownloadBannerState } from '@recoil/common';
+import { dialogState, historyState, showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
@@ -34,7 +34,7 @@ function CamelSellerEvent() {
   const isMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp());
   const setDialogState = useSetRecoilState(dialogState);
   const [isOpen, setIsOpen] = useState(false);
-  // const { asPaths, index } = useRecoilValue(historyState);
+  const { asPaths, index } = useRecoilValue(historyState);
   const evnetDateInfo = EventTime(EVENT_START_DATE, EVENT_END_DATE);
   const { data: accessUser } = useQueryAccessUser();
   const { data } = useQuery(queryKeys.client.survey(), fetchSurvey, {
@@ -53,14 +53,17 @@ function CamelSellerEvent() {
   }, [router.query.login]);
 
   const handleClickBack = () => {
+    const prevAsPath = asPaths[index - 1];
+    if (!prevAsPath) {
+      router.replace('/');
+      return;
+    }
     if (router.query.first) {
       router.replace('/camelSeller/registerConfirm');
     } else {
       router.back();
     }
 
-    // const prevAsPath = asPaths[index - 1];
-    // console.log(prevAsPath)
     // if (prevAsPath && prevAsPath.indexOf('/camelSeller/registerConfirm') !== -1) {
     //   router.back();
     // } else {
