@@ -203,7 +203,8 @@ function LegitMyPanel() {
           disableAspectRatio
           round={16}
           customStyle={{
-            margin: '60px auto 40px'
+            margin: '60px auto 40px',
+            boxShadow: '0px 16px 32px rgba(0, 0, 0, 0.2)'
           }}
         />
         <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
