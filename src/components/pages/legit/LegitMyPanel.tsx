@@ -17,14 +17,12 @@ import { fetchMyProductLegits } from '@api/productLegit';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { postType } from '@constants/productlegits';
-import { IOS_SAFE_AREA_TOP, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
   commaNumber,
   getProductDetailUrl,
-  isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
@@ -193,22 +191,21 @@ function LegitMyPanel() {
     logEvent(attrKeys.legit.VIEW_LEGIT_MY);
   }, []);
 
+  // TODO 추후 Viewport 에 맞춰질 수 있도록 개선
   if ((!isFetching && !productLegits.length) || !accessUser) {
     return (
-      <Box component="section" customStyle={{ height: '100vh' }}>
-        <Box customStyle={{ position: 'relative', maxWidth: 288, margin: '0 auto' }}>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v3.png`}
-            alt="Legit Guide Img"
-            round={8}
-            customStyle={{
-              position: 'relative',
-              paddingTop: `calc(${TAB_HEIGHT}px + ${
-                isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
-              })`
-            }}
-          />
-        </Box>
+      <Box component="section">
+        <Image
+          width={181}
+          height={231}
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/legit/legit-my-guide_v3.png`}
+          alt="Legit Guide Img"
+          disableAspectRatio
+          round={16}
+          customStyle={{
+            margin: '60px auto 40px'
+          }}
+        />
         <Flexbox direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
           <Typography variant="h2" weight="bold">
             사진으로 감정하세요!
