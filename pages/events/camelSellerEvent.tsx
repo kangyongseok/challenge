@@ -27,6 +27,8 @@ import { dialogState, historyState, showAppDownloadBannerState } from '@recoil/c
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
+import PageHead from '../../src/components/UI/atoms/PageHead';
+
 function CamelSellerEvent() {
   // TODO isExtendedLayoutIOSVersion 적용 필요
   const router = useRouter();
@@ -115,62 +117,77 @@ function CamelSellerEvent() {
   // };
 
   return (
-    <GeneralTemplate
-      disablePadding
-      header={
-        <Header hideTitle hideHeart showRight={false} isTransparent onClickLeft={handleClickBack} />
-      }
-      footer={
-        <FixButton
-          justifyContent="center"
-          alignment="center"
-          style={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}
-          isEvent={evnetDateInfo.isEvent}
-        >
-          {evnetDateInfo.isEvent ? (
-            <Button
-              fullWidth
-              size="xlarge"
-              variant="solid"
-              onClick={() => {
-                if (!isMoweb && accessUser && evnetDateInfo.isEvent) {
-                  if (!data) {
-                    setIsOpen(true);
+    <>
+      <PageHead
+        title="🐪 카멜에서 명품을 판매해보세요."
+        description="지금 판매등록하면 아이패드, 에어팟 등 선물을 드려요!"
+        ogTitle="🐪 카멜에서 명품을 판매해보세요."
+        ogDescription="지금 판매등록하면 아이패드, 에어팟 등 선물을 드려요!"
+        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/camel-seller.jpg`}
+      />
+      <GeneralTemplate
+        disablePadding
+        header={
+          <Header
+            hideTitle
+            hideHeart
+            showRight={false}
+            isTransparent
+            onClickLeft={handleClickBack}
+          />
+        }
+        footer={
+          <FixButton
+            justifyContent="center"
+            alignment="center"
+            style={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}
+            isEvent={evnetDateInfo.isEvent}
+          >
+            {evnetDateInfo.isEvent ? (
+              <Button
+                fullWidth
+                size="xlarge"
+                variant="solid"
+                onClick={() => {
+                  if (!isMoweb && accessUser && evnetDateInfo.isEvent) {
+                    if (!data) {
+                      setIsOpen(true);
+                      return;
+                    }
+                  }
+                  if (!evnetDateInfo.isEvent) {
+                    setDialogState({
+                      type: 'endEvent',
+                      customStyleTitle: { minWidth: 311 }
+                    });
                     return;
                   }
-                }
-                if (!evnetDateInfo.isEvent) {
-                  setDialogState({
-                    type: 'endEvent',
-                    customStyleTitle: { minWidth: 311 }
-                  });
-                  return;
-                }
-                handleClick();
-              }}
-            >
-              {isMoweb ? '카멜앱에서 판매 시작하기' : '판매 시작하기'}
-            </Button>
-          ) : (
-            <Button fullWidth size="xlarge" variant="ghost">
-              {!evnetDateInfo.isStart && '이벤트 준비중입니다.'}
-              {!evnetDateInfo.isEnd && '종료된 이벤트입니다.'}
-            </Button>
-          )}
-        </FixButton>
-      }
-    >
-      <Box
-        customStyle={{
-          position: 'absolute',
-          top: `calc(${showAppDownloadBannerState ? APP_DOWNLOAD_BANNER_HEIGHT : 0}px)`
-        }}
+                  handleClick();
+                }}
+              >
+                {isMoweb ? '카멜앱에서 판매 시작하기' : '판매 시작하기'}
+              </Button>
+            ) : (
+              <Button fullWidth size="xlarge" variant="ghost">
+                {!evnetDateInfo.isStart && '이벤트 준비중입니다.'}
+                {!evnetDateInfo.isEnd && '종료된 이벤트입니다.'}
+              </Button>
+            )}
+          </FixButton>
+        }
       >
-        <EventFullImage />
-      </Box>
-      <EventRegisterDialog open={isOpen} close={() => setIsOpen(false)} />
-      <MyShopAppDownloadDialog />
-    </GeneralTemplate>
+        <Box
+          customStyle={{
+            position: 'absolute',
+            top: `calc(${showAppDownloadBannerState ? APP_DOWNLOAD_BANNER_HEIGHT : 0}px)`
+          }}
+        >
+          <EventFullImage />
+        </Box>
+        <EventRegisterDialog open={isOpen} close={() => setIsOpen(false)} />
+        <MyShopAppDownloadDialog />
+      </GeneralTemplate>
+    </>
   );
 }
 
@@ -196,5 +213,11 @@ const FixButton = styled(Flexbox)<{ isEvent: boolean }>`
     font-size: 20px;
   }`}
 `;
+
+export async function getStaticProps() {
+  return {
+    props: {}
+  };
+}
 
 export default CamelSellerEvent;
