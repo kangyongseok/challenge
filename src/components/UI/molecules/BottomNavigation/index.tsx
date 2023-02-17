@@ -158,7 +158,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
             : undefined
       });
 
-      if (title === 'navigation.channel') {
+      if (title === '채팅') {
         if (!accessUser) {
           e.preventDefault();
           router.push({ pathname: '/login' });
@@ -188,13 +188,13 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         queryClient.invalidateQueries(queryKeys.channels.channels({ type: 0, size: 20 }));
       }
 
-      if (title === 'navigation.home') {
+      if (title === '홈') {
         // homeTabChange();
         resetProductKeyword();
         resetRecentSearch();
       }
 
-      if (title === 'navigation.category' && router.pathname !== '/category') {
+      if (title === '카테고리' && router.pathname !== '/category') {
         resetCategory();
       }
 
