@@ -4,64 +4,36 @@ import type { MouseEvent } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Pagination } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import { Box, Flexbox, Icon, Skeleton, Typography, dark, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
-import styled, { CSSObject } from '@emotion/styled';
+import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
 import { fetchLegit } from '@api/dashboard';
 
 import queryKeys from '@constants/queryKeys';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  HEADER_HEIGHT,
-  IOS_SAFE_AREA_TOP,
-  LEGIT_FAKE_BANNER_HEIGHT,
-  TAB_HEIGHT
-} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getProductDetailUrl, isExtendedLayoutIOSVersion } from '@utils/common';
-
-import { showAppDownloadBannerState } from '@recoil/common';
-import useScrollTrigger from '@hooks/useScrollTrigger';
+import { getProductDetailUrl } from '@utils/common';
 
 function LegitDashboardBanner() {
   const router = useRouter();
   const {
     theme: {
-      palette: { common, secondary }
+      palette: { common }
     }
   } = useTheme();
-
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-
-  const bannerRef = useRef<HTMLDivElement>(null);
-  const triggered = useScrollTrigger({
-    ref: bannerRef,
-    additionalOffsetTop:
-      (showAppDownloadBanner ? -APP_DOWNLOAD_BANNER_HEIGHT : 0) -
-      HEADER_HEIGHT -
-      TAB_HEIGHT -
-      (isExtendedLayoutIOSVersion()
-        ? Number(
-            getComputedStyle(document.documentElement).getPropertyValue('--sat').split('px')[0]
-          )
-        : 0),
-    delay: 0
-  });
 
   const [initLoad, setInitLoad] = useState(false);
 
   const startXRef = useRef(0);
 
-  const { isLoading, data: { mostPopular, realVsFake, fakeInfo } = {} } = useQuery(
+  const { isLoading, data: { mostPopular, realVsFake } = {} } = useQuery(
     queryKeys.dashboards.legit(),
     () => fetchLegit()
   );
@@ -121,28 +93,6 @@ function LegitDashboardBanner() {
       }
     ];
   }, [common.ui95, common.uiBlack, common.uiWhite, mostPopular, realVsFake]);
-  const fakeIndexData = useMemo(
-    () => [
-      { title: '오늘 가품', description: `${fakeInfo?.fakeRate || 0}%` },
-      { title: '가품적발', description: `${fakeInfo?.fakeCnt || 0}건` },
-      {
-        title: '이번주 가품',
-        description: `${fakeInfo?.fakeThisWeekCnt || 0}개`,
-        increaseRate: Number(
-          (fakeInfo?.fakeThisWeekCnt || 0) > (fakeInfo?.fakeLastWeekCnt || 0)
-            ? (((fakeInfo?.fakeThisWeekCnt || 0) - (fakeInfo?.fakeLastWeekCnt || 0)) /
-                (fakeInfo?.fakeLastWeekCnt || 0)) *
-                100
-            : 0
-        )
-      },
-      {
-        title: '가품 1/2/3위',
-        description: fakeInfo?.fakeTopBrands.map(({ nameEng }) => nameEng.toUpperCase()).join(' / ')
-      }
-    ],
-    [fakeInfo]
-  );
 
   const handleClickBanner = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
@@ -246,56 +196,11 @@ function LegitDashboardBanner() {
               )
             )}
       </Swiper>
-      {triggered && <Box customStyle={{ height: LEGIT_FAKE_BANNER_HEIGHT }} />}
-      <Banner ref={bannerRef} isFixed={triggered} showAppDownloadBanner={showAppDownloadBanner}>
-        {fakeIndexData.map(({ title, description, increaseRate = 0 }, index) => (
-          <FakeInfo key={`fake-index-${title}`} showLine={index + 1 !== fakeIndexData.length}>
-            <Typography
-              variant="body2"
-              weight="bold"
-              customStyle={{ whiteSpace: 'nowrap', color: common.uiWhite, textAlign: 'center' }}
-            >
-              {title}
-            </Typography>
-            <Typography
-              variant="body2"
-              weight="bold"
-              customStyle={{ whiteSpace: 'nowrap', color: secondary.red.light }}
-            >
-              {description}
-            </Typography>
-            {!Number.isNaN(increaseRate) && increaseRate > 0 && (
-              <Flexbox
-                gap={2}
-                alignment="center"
-                customStyle={{
-                  marginLeft: -4
-                }}
-              >
-                <Icon
-                  name="DropUpFilled"
-                  width={8}
-                  height={16}
-                  viewBox="0 0 12 24"
-                  color={secondary.red.light}
-                />
-                <Typography
-                  variant="body2"
-                  weight="bold"
-                  customStyle={{ whiteSpace: 'nowrap', color: secondary.red.light }}
-                >
-                  {Math.round(increaseRate)}%
-                </Typography>
-              </Flexbox>
-            )}
-          </FakeInfo>
-        ))}
-      </Banner>
     </Wrapper>
   );
 }
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   .swiper-pagination-progressbar {
     top: auto;
     bottom: 0;
@@ -332,49 +237,6 @@ const CustomLabel = styled.label`
   width: fit-content;
   height: 24px;
   border-radius: 4px;
-`;
-
-const Banner = styled.div<{ isFixed: boolean; showAppDownloadBanner: boolean }>`
-  display: flex;
-  align-items: center;
-  background-color: ${({ theme: { palette } }) => palette.common.uiBlack};
-  overflow-x: auto;
-  transition: top 0.5s;
-
-  ${({ isFixed, showAppDownloadBanner, theme: { zIndex } }): CSSObject =>
-    isFixed
-      ? {
-          position: 'fixed',
-          top: `calc(${
-            HEADER_HEIGHT + TAB_HEIGHT + (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)
-          }px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'})`,
-          left: 0,
-          right: 0,
-          zIndex: zIndex.header
-        }
-      : {}};
-`;
-
-const FakeInfo = styled.div<{ showLine: boolean }>`
-  position: relative;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 16px;
-  width: 100%;
-
-  :after {
-    ${({ showLine }) =>
-      showLine && {
-        content: '""',
-        backgroundColor: dark.palette.common.line01,
-        width: 1,
-        height: 16,
-        position: 'absolute',
-        right: 0
-      }};
-  }
 `;
 
 export default LegitDashboardBanner;

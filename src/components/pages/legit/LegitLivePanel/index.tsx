@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Flexbox } from 'mrcamel-ui';
+import { Box, Flexbox } from 'mrcamel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -12,6 +12,7 @@ import LegitHeadAuthenticatorList from './LegitHeadAuthenticatorList';
 import LegitFilterGrid from './LegitFilterGrid';
 import LegitDashboardBanner from './LegitDashboardBanner';
 import LegitCaseHistory from './LegitCaseHistory';
+import LegitAutoRollingBanner from './LegitAutoRollingBanner';
 import LegitApplyBanner from './LegitApplyBanner';
 
 function LegitLivePanel() {
@@ -21,7 +22,10 @@ function LegitLivePanel() {
 
   return (
     <Flexbox direction="vertical" gap={84} customStyle={{ marginBottom: 84 }}>
-      <LegitDashboardBanner />
+      <Box component="section">
+        <LegitDashboardBanner />
+        <LegitAutoRollingBanner />
+      </Box>
       <LegitTargetBrandList />
       <Flexbox direction="vertical" gap={32}>
         <LegitHeadAuthenticatorList />
