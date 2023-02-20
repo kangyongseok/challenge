@@ -19,6 +19,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
 
+import type { ProductsVariant } from '@typings/products';
 import {
   activeTabCodeIdState,
   filterOperationInfoSelector,
@@ -27,7 +28,11 @@ import {
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 
-function FilterBottomOperation() {
+interface FilterBottomOperationProps {
+  variant: ProductsVariant;
+}
+
+function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
@@ -289,67 +294,71 @@ function FilterBottomOperation() {
     <StyledFilterBottomOperation>
       {selectedSearchOptionsHistory.length > 0 && (
         <SelectedSearchOptionList onScroll={handleScroll}>
-          {selectedSearchOptionsHistory.map(
-            ({
-              id,
-              codeId,
-              parentId,
-              parentCategoryId,
-              categorySizeId,
-              genderId,
-              gender,
-              displayName,
-              grouping,
-              groupingDepth,
-              description,
-              index
-            }) => (
-              <Chip
-                key={`selected-filter-options-history-${index || 0}-${displayName}`}
-                endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
-                weight="regular"
-                isRound={false}
-                onClick={handleClickRemove({
-                  newHistoryIndex: index,
-                  newId: id,
-                  newCodeId: codeId,
-                  newParentId: parentId,
-                  newParentCategoryId: parentCategoryId,
-                  newCategorySizeId: categorySizeId,
-                  newGenderId: genderId,
-                  newGender: gender,
-                  newGrouping: grouping,
-                  newGroupingDepth: groupingDepth
-                })}
-                customStyle={{
-                  '& > svg': {
-                    height: 'auto'
-                  }
-                }}
-              >
-                {codeId === filterCodeIds.color ? (
-                  <>
-                    {filterColors[description as keyof typeof filterColors] && (
-                      <ColorSample
-                        colorCode={filterColors[description as keyof typeof filterColors]}
-                      />
-                    )}
-                    {filterImageColorNames.includes(description || '') && (
-                      <Avatar
-                        width={20}
-                        height={20}
-                        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
-                        alt="Color Img"
-                        round="50%"
-                      />
-                    )}
-                  </>
-                ) : (
-                  displayName
-                )}
-              </Chip>
+          {selectedSearchOptionsHistory
+            .filter(
+              ({ id, codeId }) => !(variant === 'camel' && codeId === filterCodeIds.id && id === 5)
             )
-          )}
+            .map(
+              ({
+                id,
+                codeId,
+                parentId,
+                parentCategoryId,
+                categorySizeId,
+                genderId,
+                gender,
+                displayName,
+                grouping,
+                groupingDepth,
+                description,
+                index
+              }) => (
+                <Chip
+                  key={`selected-filter-options-history-${index || 0}-${displayName}`}
+                  endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
+                  weight="regular"
+                  isRound={false}
+                  onClick={handleClickRemove({
+                    newHistoryIndex: index,
+                    newId: id,
+                    newCodeId: codeId,
+                    newParentId: parentId,
+                    newParentCategoryId: parentCategoryId,
+                    newCategorySizeId: categorySizeId,
+                    newGenderId: genderId,
+                    newGender: gender,
+                    newGrouping: grouping,
+                    newGroupingDepth: groupingDepth
+                  })}
+                  customStyle={{
+                    '& > svg': {
+                      height: 'auto'
+                    }
+                  }}
+                >
+                  {codeId === filterCodeIds.color ? (
+                    <>
+                      {filterColors[description as keyof typeof filterColors] && (
+                        <ColorSample
+                          colorCode={filterColors[description as keyof typeof filterColors]}
+                        />
+                      )}
+                      {filterImageColorNames.includes(description || '') && (
+                        <Avatar
+                          width={20}
+                          height={20}
+                          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/colors/${description}.png`}
+                          alt="Color Img"
+                          round="50%"
+                        />
+                      )}
+                    </>
+                  ) : (
+                    displayName
+                  )}
+                </Chip>
+              )
+            )}
         </SelectedSearchOptionList>
       )}
       <FilterButtons>

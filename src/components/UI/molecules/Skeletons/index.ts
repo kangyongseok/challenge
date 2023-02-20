@@ -5,4 +5,5 @@ export { default as LegitStatusCardSkeleton } from './LegitStatusCardSkeleton';
 export { default as LegitResultCommentSkeleton } from './LegitResultCommentSkeleton';
 export { default as ProductWishesCardSkeleton } from './ProductWishesCardSkeleton';
 export { default as NewProductGridCardSkeleton } from './NewProductGridCardSkeleton';
+export { default as NewProductListCardSkeleton } from './NewProductListCardSkeleton';
 export { default as LegitGridCardSkeleton } from './LegitGridCardSkeleton';

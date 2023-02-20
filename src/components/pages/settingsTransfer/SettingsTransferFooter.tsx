@@ -102,7 +102,7 @@ function SettingsTransferFooter() {
             onClick={handleClick}
             disabled={!siteId || !url || !accessUser}
           >
-            연동하기
+            신청하기
           </Button>
         </Box>
       </Box>

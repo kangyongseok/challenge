@@ -22,7 +22,7 @@ import type {
 
 import Axios from '@library/axios';
 
-import { SearcgRelatedKeywordsParams, putProductUpdateStatusParams } from '@typings/products';
+import type { SearcgRelatedKeywordsParams, putProductUpdateStatusParams } from '@typings/products';
 import type { SubmitType } from '@typings/camelSeller';
 
 const BASE_PATH = '/products';

@@ -21,7 +21,11 @@ import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
 
-import type { SelectedSearchOption, SelectedSearchOptionHistory } from '@typings/products';
+import type {
+  ProductsVariant,
+  SelectedSearchOption,
+  SelectedSearchOptionHistory
+} from '@typings/products';
 import {
   activeMyFilterState,
   filterOperationInfoSelector,
@@ -31,7 +35,11 @@ import {
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 
-function ProductsFilterHistory() {
+interface ProductsFilterHistoryProps {
+  variant: ProductsVariant;
+}
+
+function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
   const {
     theme: {
       palette: { common }
@@ -56,6 +64,9 @@ function ProductsFilterHistory() {
   const myFilterIntersectionCategorySizes = useRecoilValue(myFilterIntersectionCategorySizesState);
 
   const [open, setOpen] = useState(false);
+  const [filteredSelectedSearchOptionsHistory, setFilteredSelectedSearchOptionsHistory] = useState<
+    typeof selectedSearchOptionsHistory
+  >([]);
 
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXFilterHistory, {
@@ -214,11 +225,19 @@ function ProductsFilterHistory() {
     progressDone
   ]);
 
+  useEffect(() => {
+    setFilteredSelectedSearchOptionsHistory(
+      selectedSearchOptionsHistory.filter(
+        ({ id, codeId }) => !(variant === 'camel' && codeId === filterCodeIds.id && id === 5)
+      )
+    );
+  }, [variant, selectedSearchOptionsHistory]);
+
   return progressDone ? (
     <>
-      <Wrapper show={selectedSearchOptionsHistory.length > 0}>
-        <List show={selectedSearchOptionsHistory.length > 0} onScroll={handleScroll}>
-          {selectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
+      <Wrapper show={filteredSelectedSearchOptionsHistory.length > 0}>
+        <List show={filteredSelectedSearchOptionsHistory.length > 0} onScroll={handleScroll}>
+          {filteredSelectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
             <FilterChip
               key={`selected-filter-options-history-${selectedSearchOptionHistory.index || 0}-${
                 selectedSearchOptionHistory.displayName

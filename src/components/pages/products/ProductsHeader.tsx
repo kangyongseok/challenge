@@ -33,7 +33,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     }
   } = useTheme();
   const router = useRouter();
-  const { keyword }: { keyword?: string } = router.query;
+  const { keyword, title }: { keyword?: string; title?: string } = router.query;
   const { parentIds = [] } = convertSearchParamsByQuery(router.query);
   const atomParam = router.asPath.split('?')[0];
   const {
@@ -43,7 +43,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     productsStatusTriggeredStateFamily(atomParam)
   );
 
-  const [title, setTitle] = useState('');
+  const [newTitle, setNewTitle] = useState('');
 
   const triggered = useReverseScrollTrigger();
 
@@ -69,16 +69,16 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     const newKeyword = (keyword || '').split('-').join(' X ');
 
     if (variant === 'categories') {
-      setTitle(newKeyword.replace(/\(P\)/g, ''));
+      setNewTitle(newKeyword.replace(/\(P\)/g, ''));
     } else if (variant === 'brands') {
       const parentCategory = parentCategories.find(({ id }) =>
         parentIds.map((parentId) => Number(parentId)).includes(id)
       );
 
       if (parentCategory) {
-        setTitle(`${newKeyword} | ${parentCategory.name.replace(/\(P\)/g, '')}`);
+        setNewTitle(`${newKeyword} | ${parentCategory.name.replace(/\(P\)/g, '')}`);
       } else {
-        setTitle(newKeyword);
+        setNewTitle(newKeyword);
       }
     } else if (variant === 'camel') {
       const parentCategory = parentCategories.find(({ id }) =>
@@ -86,9 +86,9 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
       );
 
       if (parentCategory) {
-        setTitle(`카멜 인증 판매자 | ${parentCategory.name.replace(/\(P\)/g, '')}`);
+        setNewTitle(`카멜인증 | ${parentCategory.name.replace(/\(P\)/g, '')}`);
       } else {
-        setTitle('카멜 인증 판매자');
+        setNewTitle('카멜인증');
       }
     }
   }, [variant, keyword, parentIds, parentCategories]);
@@ -141,14 +141,14 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     >
       <Header isFixed hideLine={triggered || !productsStatusTriggered}>
         <Flexbox gap={6} alignment="center">
-          {variant === 'camel' && <Icon name="SafeFilled" color="primary" />}
+          {variant === 'camel' && !title && <Icon name="ShieldFilled" width={20} height={20} />}
           <Typography
             component="h1"
             variant="h3"
             weight="bold"
             customStyle={{ textAlign: 'center', whiteSpace: 'nowrap' }}
           >
-            {title}
+            {title || newTitle}
           </Typography>
         </Flexbox>
       </Header>

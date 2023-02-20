@@ -78,7 +78,7 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
           name: attrProperty.name.EVENT_DETAIL,
           title: '2301_DOG_HONEY',
           att: {
-            keyword: keyword.length > 0 ? keyword : '전체',
+            keyword: keyword !== 'recomm' ? keyword : '추천',
             priceAvg,
             priceCnt,
             sort: index + 1
@@ -150,13 +150,13 @@ function EventDogHoneyFilter({ onMoveFixedInfo }: EventDogHoneyFilterProps) {
                   weight="bold"
                   isSelected={selectedIndex === 0}
                   onClick={handleClickFilter({
-                    keyword: '',
+                    keyword: 'recomm',
                     priceAvg: 0,
                     priceCnt: 0,
                     index: 0
                   })}
                 >
-                  전체
+                  추천
                 </FilterItemAll>
                 {models.map((model, index) => (
                   <FilterItem

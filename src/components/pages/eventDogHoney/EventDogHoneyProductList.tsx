@@ -78,7 +78,9 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
         const { pages: successDataPages = [] } = successData;
         const pageNumber = successDataPages.length;
         const keyword =
-          eventContentProductsParams.keyword === '' ? '전체' : eventContentProductsParams.keyword;
+          eventContentProductsParams.keyword === 'recomm'
+            ? '추천'
+            : eventContentProductsParams.keyword;
 
         logEvent(attrKeys.events.LOAD_PRODUCT_LIST, {
           name: attrProperty.name.EVENT_DETAIL,
@@ -316,7 +318,9 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
       title: '2301_DOG_HONEY',
       type: attrProperty.type.GUIDED,
       keyword:
-        eventContentProductsParams.keyword === '' ? '전체' : eventContentProductsParams.keyword
+        eventContentProductsParams.keyword === 'recomm'
+          ? '추천'
+          : eventContentProductsParams.keyword
     });
   }, [eventContentProductsParams.keyword]);
 

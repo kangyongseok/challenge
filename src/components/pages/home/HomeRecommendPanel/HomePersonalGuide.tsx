@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { uniqBy } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
+import type { SizeResult } from '@dto/user';
 import type { Category } from '@dto/category';
 import type { Brand } from '@dto/brand';
 
@@ -22,11 +23,10 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { activeMyFilterState } from '@recoil/productsFilter';
-import { accessUserSettingValuesState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-type HomePersonalGuide = (Brand | Category) & {
+type PersonalGuide = (Brand | Category) & {
   type?: string;
   src?: string;
 };
@@ -39,12 +39,12 @@ function HomePersonalGuide() {
       palette: { common }
     }
   } = useTheme();
-  const [openBanner, setOpenBanner] = useState(false);
+
   const setActiveMyFilterState = useSetRecoilState(activeMyFilterState);
-  // TODO 일단 지금은 개인화 가이드 배너 close 여부 확인에만 활용, 추후 로그인 계정 별 설정 값 저장이 필요한 경우가 생기면 리팩터링하여 확대 적용
-  const [accessUserSettingValues, setAccessUserSettingValuesState] = useRecoilState(
-    accessUserSettingValuesState
-  );
+
+  const [sizes, setSizes] = useState<SizeResult[]>([]);
+  const [guides, setGuides] = useState<Array<Partial<PersonalGuide>>>([]);
+
   const { data: parentCategories = [], isLoading: isLoadingParentCategories } = useQuery(
     queryKeys.categories.parentCategories(),
     fetchParentCategories,
@@ -55,92 +55,18 @@ function HomePersonalGuide() {
   );
 
   const { data: accessUser } = useQueryAccessUser();
+
   const {
     data: {
       info: { value: { gender = 'M' } = {} } = {},
       personalStyle: { styles = [], defaultStyles = [] } = {},
-      size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
+      size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
     } = {},
     isLoading
   } = useQueryUserInfo();
 
-  const sizes = useMemo(() => [tops, bottoms, shoes].flat(), [tops, bottoms, shoes]);
-  const defaultStylesResult = defaultStyles.map((defaultStyle) => {
-    if (defaultStyle.brand) {
-      return {
-        ...defaultStyle.brand,
-        type: 'brand',
-        src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-          mode === 'light' ? 'white' : 'black'
-        }/${(defaultStyle.brand.nameEng || '').toLowerCase().replace(/\s/g, '')}.jpg`
-      };
-    }
-
-    if (defaultStyle.category) {
-      return {
-        ...defaultStyle.category,
-        type: 'category',
-        src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_${
-          (defaultStyle.category || {}).subParentId || (defaultStyle.category || {}).id
-        }_${(gender || 'm').toLowerCase()}.png`
-      };
-    }
-    return {};
-  });
-
-  const guides = useMemo(() => {
-    let newGuides: Array<
-      Partial<Brand | Category> & {
-        type?: string;
-        src?: string;
-      }
-    > = Array.from({
-      length: styles.length
-    })
-      .map((_, index) => [
-        styles[index].brand
-          ? {
-              ...styles[index].brand,
-              src: '',
-              type: 'brand'
-            }
-          : styles[index].brand,
-        styles[index].category
-          ? {
-              ...styles[index].category,
-              src: '',
-              type: 'category'
-            }
-          : styles[index].category
-      ])
-      .flat()
-      .filter((guide) => guide)
-      .map((guide: HomePersonalGuide) => ({
-        ...guide,
-        src:
-          guide && guide.type === 'brand'
-            ? `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-                mode === 'light' ? 'white' : 'black'
-              }/${(guide.nameEng || '').toLowerCase().replace(/\s/g, '')}.jpg`
-            : `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_${
-                (guide || {}).subParentId || (guide || {}).id
-              }_${(gender || 'm').toLowerCase()}.png`
-      }))
-      .slice(0, 8);
-
-    if (newGuides.length && newGuides.length <= 8) {
-      newGuides = uniqBy([...newGuides, ...defaultStylesResult], 'id').slice(0, 8);
-    }
-
-    if (!newGuides.length) {
-      newGuides = defaultNonMemberPersonalGuideList;
-    }
-
-    return newGuides;
-  }, [styles, mode, gender, defaultStylesResult]);
-
   const handleClick =
-    ({ id, parentId, type, name, subParentId }: Partial<HomePersonalGuide>) =>
+    ({ id, parentId, type, name, subParentId }: Partial<PersonalGuide>) =>
     () => {
       if (type === 'brand') {
         logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
@@ -156,7 +82,8 @@ function HomePersonalGuide() {
         router.push({
           pathname: `/products/brands/${name}`,
           query: {
-            genders: gender === 'F' ? 'female' : 'male'
+            genders: gender === 'F' ? 'female' : 'male',
+            idFilterIds: [5]
           }
         });
       } else {
@@ -177,162 +104,275 @@ function HomePersonalGuide() {
         const categorySizeIds = sizes
           .filter(({ parentCategoryId }) => parentCategoryId === parentId)
           .map(({ categorySizeId }) => categorySizeId);
-        setActiveMyFilterState(true);
+
+        if (accessUser) {
+          setActiveMyFilterState(true);
+        }
+
         router.push({
           pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
           query: {
+            idFilterIds: [5],
             subParentIds: [Number(subParentId || id || 0)],
             genders: gender === 'F' ? 'female' : 'male',
             categorySizeIds,
-            parentId
+            parentIds: [Number(parentId)]
           }
         });
       }
     };
 
-  const handleClickClose = () => {
-    setAccessUserSettingValuesState((prevState) =>
-      prevState
-        .filter(({ userId }) => userId !== (accessUser || {}).userId)
-        .concat([
-          {
-            userId: (accessUser || {}).userId || 0,
-            personalGuideBannerClose: true
-          }
-        ])
-    );
-    setOpenBanner(false);
+  const handleClickCamelAuth = () => {
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.CONTENT,
+      att: '카멜인증'
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.CAMEL,
+      type: attrProperty.type.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/camel',
+      query: {
+        idFilterIds: [5]
+      }
+    });
+  };
+
+  const handleClickDogHoney = () => {
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.CONTENT,
+      att: '급처,개꿀매모음'
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.EVENT_DETAIL,
+      title: '2301_DOG_HONEY',
+      type: attrProperty.type.GUIDED
+    });
+
+    router.push('/events/dogHoney');
   };
 
   useEffect(() => {
-    if (accessUser && styles.length > 0) {
-      const accessUserSettingValue = accessUserSettingValues.find(
-        ({ userId }) => userId === (accessUser || {}).userId
-      );
+    const guideRenderCount = 8;
+    const themeMode = mode === 'light' ? 'white' : 'black';
+    const defaultStylesResult = defaultStyles.map((defaultStyle) => {
+      const categoryId = defaultStyle?.category?.subParentId || defaultStyle?.category?.id;
 
-      if (!accessUserSettingValue) {
-        setOpenBanner(true);
-      } else if (accessUserSettingValue && !accessUserSettingValue.personalGuideBannerClose) {
-        setOpenBanner(true);
+      if (defaultStyle.brand) {
+        return {
+          ...defaultStyle.brand,
+          type: 'brand',
+          src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${themeMode}/${(
+            defaultStyle.brand.nameEng || ''
+          )
+            .toLowerCase()
+            .replace(/\s/g, '')}.jpg`
+        };
       }
+
+      if (defaultStyle.category) {
+        return {
+          ...defaultStyle.category,
+          type: 'category',
+          src: `https://${
+            process.env.IMAGE_DOMAIN
+          }/assets/images/category/ico_cate_${categoryId}_${(gender || 'm').toLowerCase()}.png`
+        };
+      }
+      return {};
+    });
+    const divisionStyles = styles
+      .map((style) => {
+        return [
+          { ...style.brand, type: 'brand' },
+          { ...style.category, type: 'category' }
+        ];
+      })
+      .flat();
+    const newGuides = divisionStyles
+      .map((divisionStyle) => {
+        const imageName = divisionStyle.nameEng?.toLowerCase().replace(/\s/g, '');
+        const categoryId = divisionStyle?.subParentId || divisionStyle?.id;
+
+        if (divisionStyle && divisionStyle.type === 'brand') {
+          return {
+            ...divisionStyle,
+            src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${themeMode}/${imageName}.jpg`
+          };
+        }
+        if (divisionStyle && divisionStyle.type === 'category') {
+          return {
+            ...divisionStyle,
+            src: `https://${
+              process.env.IMAGE_DOMAIN
+            }/assets/images/category/ico_cate_${categoryId}_${(gender || 'm').toLowerCase()}.png`
+          };
+        }
+
+        return {};
+      })
+      .slice(0, guideRenderCount);
+
+    if (!newGuides.length) {
+      setGuides(defaultNonMemberPersonalGuideList);
+      return;
     }
-  }, [accessUser, accessUserSettingValues, styles]);
+    if (newGuides.length <= guideRenderCount) {
+      setGuides(uniqBy([...newGuides, ...defaultStylesResult], 'id').slice(0, guideRenderCount));
+    }
+  }, [defaultStyles, gender, mode, setGuides, styles]);
 
   useEffect(() => {
-    if (openBanner) {
-      logEvent(attrKeys.home.VIEW_PERSONAL_ONBOARDING, {
-        name: attrProperty.name.MAIN
-      });
-    }
-  }, [openBanner]);
+    setSizes([tops || [], bottoms || [], shoes || []].flat());
+  }, [tops, bottoms, shoes]);
 
   return (
-    <section>
-      {openBanner && (
-        <PersonalBanner justifyContent="center" alignment="center">
-          <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
-            찾고 있는 매물로 화면을 구성했어요!
-          </Typography>
-          <CloseIcon name="CloseOutlined" size="medium" onClick={handleClickClose} />
-        </PersonalBanner>
+    <List>
+      {(isLoadingParentCategories || isLoading || !guides.length) &&
+        Array.from({ length: 8 }).map((_, index) => (
+          <Flexbox
+            // eslint-disable-next-line react/no-array-index-key
+            key={`home-personal-guide-skeleton-${index}`}
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            customStyle={{ minWidth: 72, maxWidth: 72 }}
+          >
+            <Skeleton width={48} height={48} round={12} disableAspectRatio />
+            <Skeleton width={42} height={16} round={8} disableAspectRatio />
+          </Flexbox>
+        ))}
+      {!isLoadingParentCategories && !isLoading && (
+        <>
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClickCamelAuth}
+            customStyle={{ position: 'relative', minWidth: 72, maxWidth: 72 }}
+          >
+            <Label
+              brandColor="red"
+              text="정품보장"
+              size="xsmall"
+              round={9}
+              customStyle={{
+                position: 'absolute',
+                top: -18,
+                left: '50%',
+                zIndex: 1,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap'
+              }}
+            />
+            <Image
+              width={48}
+              height={48}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-auth.png`}
+              alt="Personal Guide Img"
+              round={12}
+              disableAspectRatio
+            />
+            <Typography variant="body2" weight="bold" noWrap>
+              카멜인증
+            </Typography>
+          </Flexbox>
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClickDogHoney}
+            customStyle={{ position: 'relative', minWidth: 72, maxWidth: 72 }}
+          >
+            <Label
+              brandColor="red"
+              text="꿀매물"
+              size="xsmall"
+              round={9}
+              customStyle={{
+                position: 'absolute',
+                top: -18,
+                left: '50%',
+                zIndex: 1,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap'
+              }}
+            />
+            <Image
+              width={48}
+              height={48}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/dog-honey.png`}
+              alt="Personal Guide Img"
+              round={12}
+              disableAspectRatio
+            />
+            <Typography variant="body2" weight="bold" noWrap>
+              급처,개꿀매모음
+            </Typography>
+          </Flexbox>
+        </>
       )}
-      <Box customStyle={{ marginTop: 20 }}>
-        <List>
-          {(isLoadingParentCategories || isLoading) &&
-            Array.from({ length: 8 }).map((_, index) => (
-              <Flexbox
-                // eslint-disable-next-line react/no-array-index-key
-                key={`home-personal-guide-skeleton-${index}`}
-                direction="vertical"
-                gap={8}
-                alignment="center"
-                justifyContent="center"
-                customStyle={{ minWidth: 72, maxWidth: 72 }}
-              >
-                <Skeleton width={48} height={48} round="50%" disableAspectRatio />
-                <Skeleton width={31} height={16} round={8} disableAspectRatio />
-              </Flexbox>
-            ))}
-          {!isLoadingParentCategories &&
-            !isLoading &&
-            guides.map(({ id, parentId, src = '', type, name, subParentId }) => (
-              <Flexbox
-                key={`home-personal-guide-${name}`}
-                direction="vertical"
-                gap={8}
-                alignment="center"
-                justifyContent="center"
-                onClick={handleClick({ id, parentId, type, name, subParentId })}
-                customStyle={{ minWidth: 72, maxWidth: 72 }}
-              >
-                <AvatarStyle src={src} alt="Personal Guide Img" />
-                <Name variant="body2">{name}</Name>
-              </Flexbox>
-            ))}
-        </List>
-      </Box>
-    </section>
+      {!isLoadingParentCategories &&
+        !isLoading &&
+        guides.map(({ name = '', src = '', ...guide }) => (
+          <Flexbox
+            key={`home-personal-guide-${name}`}
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClick({ name, ...guide })}
+            customStyle={{ minWidth: 72, maxWidth: 72 }}
+          >
+            <Flexbox
+              alignment="center"
+              justifyContent="center"
+              customStyle={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: common.bg02
+              }}
+            >
+              <Image
+                width={40}
+                height={40}
+                src={src}
+                alt="Personal Guide Img"
+                round={12}
+                disableAspectRatio
+                customStyle={{
+                  mixBlendMode: 'darken'
+                }}
+              />
+            </Flexbox>
+            <Typography variant="body2" noWrap>
+              {name}
+            </Typography>
+          </Flexbox>
+        ))}
+    </List>
   );
 }
-
-const PersonalBanner = styled(Flexbox)`
-  display: flex;
-  width: 100%;
-  height: 44px;
-  position: relative;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.cmn80};
-  &::after {
-    content: '';
-    width: 0;
-    height: 0;
-    border-top: 6px solid
-      ${({
-        theme: {
-          palette: { common }
-        }
-      }) => common.cmn80};
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    position: absolute;
-    bottom: -6px;
-    /* left: 50%; */
-  }
-`;
-
-const CloseIcon = styled(Icon)`
-  position: absolute;
-  right: 20px;
-  top: 11px;
-  color: ${({ theme: { palette } }) => palette.common.uiWhite};
-`;
 
 const List = styled.div`
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  column-gap: 4px;
-  padding: 0 12px;
+  column-gap: 8px;
+  padding: 22px 12px 32px;
   min-height: 80px;
   overflow-x: auto;
-`;
-
-const AvatarStyle = styled(Avatar)`
-  width: 48px;
-  height: 48px;
-  padding: 4px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
-  border-radius: 50%;
-`;
-
-const Name = styled(Typography)`
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
 `;
 
 export default HomePersonalGuide;

@@ -27,6 +27,7 @@ import { legitFilterGridParamsState } from '@recoil/legit';
 import {
   homeLegitResultTooltipCloseState,
   homePersonalCurationBannersState,
+  homePopularCamelProductListPrevPageState,
   homeSelectedTabStateFamily
 } from '@recoil/home';
 import { dialogState } from '@recoil/common';
@@ -118,6 +119,9 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
   );
+  const resetPopularCamelProductListPrevPageState = useResetRecoilState(
+    homePopularCamelProductListPrevPageState
+  );
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const {
     data: {
@@ -199,6 +203,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       }
 
       if (href === '/') {
+        resetPopularCamelProductListPrevPageState();
         resetHomePersonalCurationBannersState();
         queryClient
           .getQueryCache()

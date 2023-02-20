@@ -1,281 +1,127 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import type { Swiper as SwiperClass } from 'swiper';
 import { useRouter } from 'next/router';
-import { Image } from 'mrcamel-ui';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import styled from '@emotion/styled';
+import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 
-import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchArea, postArea } from '@api/user';
-
-import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
-
-import {
-  eventContentDogHoneyFilterState,
-  eventContentProductsParamsState
-} from '@recoil/eventFilter';
-import { dialogState } from '@recoil/common';
-import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
-// import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
-
-const IMAGE_BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/home`;
-
-const bannerData = [
-  // {
-  //   imageName: 'main-banner06-1',
-  //   pathname: '/events/인기-특가-매물-16'
-  // },
-  {
-    imageName: 'main-banner01',
-    pathname: `/products/search/${encodeURIComponent('파라점퍼스 고비 패딩')}`,
-    title: 'PRODUCT_LIST'
-  },
-  {
-    imageName: 'main-banner02',
-    pathname: '/myPortfolio'
-  },
-  {
-    imageName: 'main-banner03',
-    pathname: '/events/급처-매물-13'
-  },
-  {
-    imageName: 'main-banner04',
-    pathname: '/announces/5'
-  },
-  {
-    imageName: 'main-banner05',
-    pathname: '/events/명품이-이-가격에-14'
-  }
-];
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function HomeMainBanner() {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const eventContentProductsParams = useRecoilValue(eventContentProductsParamsState);
-  const resetEventContentProductsParamsState = useResetRecoilState(eventContentProductsParamsState);
-  const resetEventContentDogHoneyFilterState = useResetRecoilState(eventContentDogHoneyFilterState);
-  const setDialogState = useSetRecoilState(dialogState);
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
-  const { data: { area: { values: areaValues = [] } = {} } = {} } = useQueryMyUserInfo();
-  const { mutate: mutatePostArea } = useMutation(postArea);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
+
+  const handleClick = useMoveCamelSeller({
+    attributes: {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.BANNER,
+      source: 'MAIN'
+    }
+  });
 
   const handleClickCamelSellerBanner = () => {
-    logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.MAIN_BANNER,
-      source: 'MAIN',
-      index: 2
-    });
-
-    router.push('/events/camelSellerEvent?banner=true');
-  };
-
-  // const handleClickCamelSellerBanner = useMoveCamelSeller({
-  //   attributes: {
-  // name: attrProperty.name.MAIN,
-  // title: attrProperty.title.MAIN_BANNER,
-  // source: 'MAIN',
-  // index: 2
-  //   }
-  // });
-
-  const startXRef = useRef(0);
-
-  const handleClickDogHoneyEvent = () => {
-    resetEventContentDogHoneyFilterState();
-    queryClient.refetchQueries(queryKeys.commons.contentProducts(eventContentProductsParams));
     logEvent(attrKeys.home.CLICK_BANNER, {
       name: attrProperty.name.MAIN,
       title: attrProperty.title.EVENT_DETAIL,
-      att: '2301_DOG_HONEY'
+      att: '2302_CAMEL_PRODUCT'
     });
 
-    if (!!accessUser && !areaValues?.length) {
-      logEvent(attrKeys.home.VIEW_LOCATION_POPUP, {
-        name: attrProperty.name.HOME
-      });
-      setDialogState({
-        type: 'locationInfo',
-        customStyleTitle: { minWidth: 270 },
-        secondButtonAction: () => {
-          logEvent(attrKeys.home.CLICK_LOCATION_POPUP, {
-            att: 'YES'
-          });
-
-          if (checkAgent.isAndroidApp()) {
-            window.webview?.callAuthLocation?.();
-            return;
-          }
-
-          if (checkAgent.isIOSApp()) {
-            window.webkit?.messageHandlers?.callAuthLocation?.postMessage?.(0);
-          }
-
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const { longitude, latitude } = position.coords;
-
-              if (longitude > 0 || latitude > 0) {
-                const { name, x, y } = await fetchArea({
-                  x: String(longitude),
-                  y: String(latitude)
-                });
-
-                mutatePostArea(
-                  { name, x, y },
-                  {
-                    onSuccess: () => {
-                      router.push('/events/dogHoney');
-                    },
-                    onError: () => {
-                      router.push('/events/dogHoney');
-                    }
-                  }
-                );
-              } else {
-                router.push('/events/dogHoney');
-              }
-            },
-            () => {
-              router.push('/events/dogHoney');
-            }
-          );
-        }
-      });
-    } else {
-      router.push('/events/dogHoney');
-    }
+    handleClick();
   };
 
-  const handleClick = (pathname: string) => () => {
-    const getClickBannerTitle = () => {
-      if (pathname.indexOf('/products') > -1) {
-        return attrProperty.title.PRODUCT_LIST;
-      }
-      if (pathname.indexOf('/events') > -1) {
-        return attrProperty.title.CRAZYWEEK;
-      }
-      if (pathname.indexOf('/myPortfolio') > -1) {
-        return attrProperty.title.MYPORTFOLIO;
-      }
-      return undefined;
-    };
-
+  const handleClickInterfereInKingBanner = () => {
     logEvent(attrKeys.home.CLICK_BANNER, {
       name: attrProperty.name.MAIN,
-      title: getClickBannerTitle()
+      title: attrProperty.title.EVENT_DETAIL,
+      att: '2302_CAMEL_OPINION'
     });
 
-    if (pathname.indexOf('/products') > -1) {
-      logEvent(attrKeys.home.CLICK_PRODUCT_LIST, {
-        name: attrProperty.name.MAIN,
-        title: attrProperty.title.BANNER,
-        att: 'TOP'
-      });
-      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.MAIN,
-        title: attrProperty.title.BANNER,
-        type: attrProperty.type.GUIDED
-      });
-    }
-
-    if (pathname.indexOf('/events') > -1) {
-      resetEventContentProductsParamsState();
-      logEvent(attrKeys.home.CLICK_CRAZYWEEK, {
-        name: attrProperty.name.MAIN,
-        title: attrProperty.title.BANNER
-      });
-    }
-
-    if (pathname.indexOf('/myPortfolio') > -1) {
-      logEvent(attrKeys.home.CLICK_MYPORTFOLIO, {
-        name: attrProperty.name.MAIN,
-        title: attrProperty.title.BANNER,
-        att: 'TOP'
-      });
-    }
-
-    router.push(pathname);
+    router.push('/events/interfereInKing');
   };
 
   return (
-    <StyledMainBanner>
-      <Swiper
-        pagination={{
-          type: 'progressbar'
-        }}
-        loop
-        autoplay={{
-          delay: 10000,
-          disableOnInteraction: false
-        }}
-        modules={[Pagination, Autoplay]}
-        onSlideChange={({ realIndex, touches }) => {
-          const { startX } = touches;
-
-          if (startX !== startXRef.current) {
-            logEvent(attrKeys.home.SWIPE_X_BANNER, {
-              name: attrProperty.name.MAIN,
-              index: realIndex
-            });
-            startXRef.current = startX;
-          }
+    <Swiper
+      onSlideChange={handleChange}
+      style={{
+        position: 'relative',
+        width: '100%'
+      }}
+    >
+      <SwiperSlide>
+        <Box
+          onClick={handleClickCamelSellerBanner}
+          customStyle={{
+            height: 104,
+            backgroundColor: '#64607A'
+          }}
+        >
+          <Image
+            height={104}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner2.png`}
+            alt="Main Banner Img"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <SwiperSlide>
+        <Box
+          onClick={handleClickInterfereInKingBanner}
+          customStyle={{
+            height: 104,
+            backgroundColor: '#0B123E'
+          }}
+        >
+          <Image
+            height={104}
+            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-interfere-in-king-banner.png`}
+            alt="Main Banner Img"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <Flexbox
+        alignment="center"
+        justifyContent="center"
+        customStyle={{
+          position: 'absolute',
+          right: 20,
+          bottom: 12,
+          padding: '2px 6px',
+          borderRadius: 12,
+          backgroundColor: common.ui20,
+          zIndex: 10
         }}
       >
-        <SwiperSlide>
-          <Image
-            ratio="4:3"
-            src={`${IMAGE_BASE_URL}/main-banner-event01.gif`}
-            alt="Main Banner Img"
-            onClick={handleClickDogHoneyEvent}
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image
-            ratio="4:3"
-            src={`${IMAGE_BASE_URL}/main-banner07-2.png`}
-            alt="카멜에서 판매 시작하기"
-            onClick={handleClickCamelSellerBanner}
-          />
-        </SwiperSlide>
-        {bannerData.map((data) => (
-          <SwiperSlide key={`main-banner-${data.imageName}`}>
-            <Image
-              ratio="4:3"
-              src={`${IMAGE_BASE_URL}/${data.imageName}.png`}
-              alt="Main Banner Img"
-              onClick={handleClick(data.pathname)}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </StyledMainBanner>
+        <Typography
+          variant="body2"
+          weight="medium"
+          customStyle={{
+            color: common.uiWhite,
+            '& > span': {
+              color: common.ui60
+            }
+          }}
+        >
+          {currentIndex + 1}
+          <span>/2</span>
+        </Typography>
+      </Flexbox>
+    </Swiper>
   );
 }
-
-const StyledMainBanner = styled.section`
-  margin-top: 10px;
-  .swiper-pagination {
-    top: auto;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.2);
-  }
-  .swiper-pagination-progressbar-fill {
-    background: rgba(255, 255, 255, 0.4);
-  }
-`;
 
 export default HomeMainBanner;

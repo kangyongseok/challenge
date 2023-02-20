@@ -87,7 +87,7 @@ function ProductsFilterBottomSheet({ variant }: ProductsFilterBottomSheetProps) 
         <Box component="section" customStyle={{ flex: 1, overflowY: 'auto' }}>
           <FilterTabPanels variant={variant} />
         </Box>
-        <FilterBottomOperation />
+        <FilterBottomOperation variant={variant} />
       </Flexbox>
     </BottomSheet>
   );

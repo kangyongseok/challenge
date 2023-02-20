@@ -148,7 +148,7 @@ function HomeSearchHeader() {
             variant="solid"
             size="large"
             fullWidth
-            startAdornment={<Icon name="SearchOutlined" size="medium" />}
+            startAdornment={<Icon name="SearchOutlined" size="medium" color={common.ui20} />}
             placeholder="어떤 명품을 득템해 볼까요?"
             disabled
             customStyle={{

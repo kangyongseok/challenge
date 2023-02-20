@@ -7,13 +7,13 @@ export const eventContentProductsParamsState = atom<ContentProductsParams>({
   default: {
     id: 0,
     brandIds: [],
-    keyword: '',
+    keyword: 'recomm',
     size: 30
   }
 });
 
 export const eventContentDogHoneyScrollTopState = atom({
-  key: 'event/contentDogHoneyScrollTop',
+  key: 'event/contentDogHoneyScrollTopState',
   default: 0
 });
 

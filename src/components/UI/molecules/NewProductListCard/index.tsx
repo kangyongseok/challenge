@@ -98,7 +98,8 @@ function NewProductListCard({
     dateFirstPosted,
     area,
     price,
-    cluster
+    cluster,
+    productLegit
   } = product || {};
   const eventParams = {
     id,
@@ -122,6 +123,9 @@ function NewProductListCard({
     ...attributes
   };
   const [isWish, setIsWish] = useState(false);
+  const [isAuthSeller, setIsAuthSeller] = useState(false);
+  const [isAuthProduct, setIsAuthProduct] = useState(false);
+  const [authOpinionCount, setAuthOpinionCount] = useState(0);
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -219,6 +223,21 @@ function NewProductListCard({
     }
   }, [measure]);
 
+  useEffect(() => {
+    setIsAuthSeller(SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']);
+  }, [sellerType]);
+
+  useEffect(() => {
+    if (!productLegit) return;
+
+    const { status: legitStatus, result, legitOpinions = [] } = productLegit || {};
+
+    setIsAuthProduct(legitStatus === 30 && result === 1);
+    setAuthOpinionCount(
+      legitOpinions.filter(({ result: legitResult }) => legitResult === 1).length
+    );
+  }, [productLegit]);
+
   return (
     <Flexbox
       onClick={handleClick}
@@ -234,22 +253,35 @@ function NewProductListCard({
           maxWidth: variant === 'listB' ? 60 : 120
         }}
       >
-        {!hideLabel &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
-            <Label
-              variant="solid"
-              brandColor="black"
-              size="xsmall"
-              startIcon={<Icon name="ShieldFilled" />}
-              text="인증판매자"
-              customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1
-              }}
-            />
-          )}
+        {!hideLabel && !isAuthProduct && isAuthSeller && (
+          <Label
+            variant="solid"
+            brandColor="black"
+            size="xsmall"
+            startIcon={<Icon name="ShieldFilled" />}
+            text="인증판매자"
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1
+            }}
+          />
+        )}
+        {!hideLabel && isAuthProduct && (
+          <Label
+            variant="solid"
+            brandColor="black"
+            size="xsmall"
+            text={`정품의견 ${authOpinionCount}개`}
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1
+            }}
+          />
+        )}
         {!hidePlatformLogo && (
           <Avatar
             width={18}
@@ -405,7 +437,10 @@ function NewProductListCard({
           }}
         >
           <WishButton onClick={handleClickWish}>
-            <Icon name="HeartFilled" color={isWish ? secondary.red.light : common.ui80} />
+            <Icon
+              name={isWish ? 'HeartFilled' : 'HeartOutlined'}
+              color={isWish ? secondary.red.light : common.ui80}
+            />
           </WishButton>
         </Flexbox>
       )}

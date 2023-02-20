@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 
@@ -14,7 +12,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-import { hasHomeTabChangeState } from '@recoil/home';
+import { homePopularCamelProductListPrevPageState } from '@recoil/home';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -22,11 +20,13 @@ function HomeTabs() {
   const router = useRouter();
   const { tab = 'recommend' } = router.query;
 
+  const resetPopularCamelProductListPrevPageState = useResetRecoilState(
+    homePopularCamelProductListPrevPageState
+  );
+
   const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
 
   const { data: accessUser } = useQueryAccessUser();
-  const setHasHomeTab = useSetRecoilState(hasHomeTabChangeState);
-  const resetHasHomeTab = useResetRecoilState(hasHomeTabChangeState);
 
   const {
     theme: {
@@ -38,20 +38,24 @@ function HomeTabs() {
     logEvent(attrKeys.home.CLICK_MAIN_TAB, {
       att: newTab === 'recommend' ? 'RECOMM' : 'FOLLOWING'
     });
-    setHasHomeTab(true);
-
-    router.replace(
-      {
-        pathname: '/',
-        query: {
-          tab: newTab
+    router
+      .replace(
+        {
+          pathname: '/',
+          query: {
+            tab: newTab
+          }
+        },
+        undefined,
+        {
+          shallow: false
         }
-      },
-      undefined,
-      {
-        shallow: false
-      }
-    );
+      )
+      .then(() => {
+        if (newTab === 'following') {
+          resetPopularCamelProductListPrevPageState();
+        }
+      });
   };
 
   const handleClickAlarm = () => {
@@ -73,10 +77,6 @@ function HomeTabs() {
 
     router.push('/wishes');
   };
-
-  useEffect(() => {
-    return () => resetHasHomeTab();
-  }, [resetHasHomeTab]);
 
   return (
     <Flexbox

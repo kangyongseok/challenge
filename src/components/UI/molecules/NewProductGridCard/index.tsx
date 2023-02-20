@@ -96,7 +96,8 @@ function NewProductGridCard({
     area,
     price,
     cluster,
-    size
+    size,
+    productLegit
   } = product || {};
   const {
     id: siteUrlId = 0,
@@ -126,6 +127,8 @@ function NewProductGridCard({
   };
   const [isWish, setIsWish] = useState(false);
   const [sizeText, setSizeText] = useState('');
+  const [isAuthSeller, setIsAuthSeller] = useState(false);
+  const [isAuthProduct, setIsAuthProduct] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -232,6 +235,18 @@ function NewProductGridCard({
     setSizeText(`${sizes.slice(0, 3).join(', ')}${sizes.length > 3 ? '...' : ''}`);
   }, [size]);
 
+  useEffect(() => {
+    setIsAuthSeller(SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']);
+  }, [sellerType]);
+
+  useEffect(() => {
+    if (!productLegit) return;
+
+    const { status: legitStatus, result } = productLegit || {};
+
+    setIsAuthProduct(legitStatus === 30 && result === 1);
+  }, [productLegit]);
+
   return (
     <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
       <Box
@@ -239,79 +254,105 @@ function NewProductGridCard({
           position: 'relative'
         }}
       >
+        {!hideLabel && platformLabelType === 'A' && !isAuthProduct && isAuthSeller && (
+          <Label
+            variant="solid"
+            brandColor="black"
+            size="xsmall"
+            startIcon={<Icon name="ShieldFilled" />}
+            text="인증판매자"
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1
+            }}
+          />
+        )}
+        {!hideLabel && platformLabelType === 'A' && isAuthProduct && (
+          <Label
+            variant="solid"
+            brandColor="black"
+            size="xsmall"
+            text="정품의견"
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1
+            }}
+          />
+        )}
+        {!hideLabel && platformLabelType === 'B' && !isAuthProduct && isAuthSeller && (
+          <Flexbox
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1,
+              borderRadius: 4,
+              backgroundColor: common.ui20
+            }}
+          >
+            <CamelLogoIcon />
+            <Typography
+              variant="small2"
+              weight="bold"
+              customStyle={{
+                padding: '3px 4px 3px 2px',
+                color: common.uiWhite
+              }}
+            >
+              인증판매자
+            </Typography>
+          </Flexbox>
+        )}
         {!hideLabel &&
-          platformLabelType === 'A' &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
-            <Label
-              variant="solid"
-              brandColor="black"
-              size="xsmall"
-              startIcon={<Icon name="ShieldFilled" />}
-              text="인증판매자"
+          platformLabelType === 'B' &&
+          (!isAuthSeller || isAuthProduct) &&
+          product.productSeller.type !== 4 &&
+          siteId !== 34 && (
+            <Flexbox gap={4} customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
+              <Avatar
+                width={18}
+                height={18}
+                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                  (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+                }.png`}
+                alt={`${siteUrlName || 'Platform'} Logo Img`}
+              />
+              {isAuthProduct && (
+                <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
+              )}
+            </Flexbox>
+          )}
+        {!hideLabel &&
+          platformLabelType === 'B' &&
+          (!isAuthSeller || isAuthProduct) &&
+          (product.productSeller.type === 4 || siteId === 34) && (
+            <Flexbox
+              gap={4}
               customStyle={{
                 position: 'absolute',
                 top: 8,
                 left: 8,
                 zIndex: 1
               }}
-            />
-          )}
-        {!hideLabel &&
-          platformLabelType === 'B' &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3'] && (
-            <Flexbox
-              customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1,
-                borderRadius: 4,
-                backgroundColor: common.ui20
-              }}
             >
-              <CamelLogoIcon />
-              <Typography
-                variant="small2"
-                weight="bold"
+              <Flexbox
+                alignment="center"
+                justifyContent="center"
                 customStyle={{
-                  padding: '3px 4px 3px 2px',
-                  color: common.uiWhite
+                  height: 18,
+                  borderRadius: 4,
+                  backgroundColor: common.ui20
                 }}
               >
-                인증판매자
-              </Typography>
-            </Flexbox>
-          )}
-        {!hideLabel &&
-          platformLabelType === 'B' &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
-          product.productSeller.type !== 4 &&
-          siteId !== 34 && (
-            <Avatar
-              width={18}
-              height={18}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
-              }.png`}
-              alt={`${siteUrlName || 'Platform'} Logo Img`}
-              customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
-            />
-          )}
-        {!hideLabel &&
-          platformLabelType === 'B' &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
-          (product.productSeller.type === 4 || siteId === 34) && (
-            <Flexbox
-              customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1,
-                borderRadius: 4,
-                backgroundColor: common.ui20
-              }}
-            >
-              <CamelLogoIcon />
+                <CamelLogoIcon />
+              </Flexbox>
+              {isAuthProduct && (
+                <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
+              )}
             </Flexbox>
           )}
         <Image

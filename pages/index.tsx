@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
-import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
@@ -152,16 +152,11 @@ function Home() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
 
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
+    props: {}
   };
 }
 

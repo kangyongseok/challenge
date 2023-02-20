@@ -334,7 +334,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
                         attributes={getProductAttributes(firstProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                        hideLabel={variant === 'camel'}
                       />
                     </Grid>
                   )}
@@ -345,7 +344,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
                         attributes={getProductAttributes(secondProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                        hideLabel={variant === 'camel'}
                       />
                     </Grid>
                   )}
@@ -359,7 +357,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
                         attributes={getProductAttributes(firstProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                        hideLabel={variant === 'camel'}
                         hideSize={false}
                       />
                     </Grid>
@@ -372,7 +369,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
                         attributes={getProductAttributes(secondProduct)}
                         measure={measure}
                         onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                        hideLabel={variant === 'camel'}
                         hideSize={false}
                       />
                     </Grid>
@@ -391,7 +387,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
       products,
       getProductAttributes,
       handleWishAfterChangeCallback,
-      variant,
       hasSelectedSearchOptions,
       isFetched
     ]

@@ -44,7 +44,7 @@ function SettingsTransferIntro() {
       >
         다른 플랫폼에 업로드 한 내 상품을 간편하게
         <br />
-        카멜 내 상점으로 가져와 판매할 수 있어요!
+        카멜 내 상점으로 가져와 판매 등록하는 서비스입니다.
       </Typography>
     </Box>
   );

@@ -333,10 +333,6 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       }
     });
 
-    if (variant === 'camel') {
-      convertedBaseSearchParams.idFilterIds = [5];
-    }
-
     const { parentIds: newParentIds, subParentIds: newSubParentIds } = convertSearchParamsByQuery(
       router.query,
       {
@@ -373,7 +369,6 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       const convertedInitSearchParams = convertSearchParamsByQuery(router.query, {
         variant,
         defaultValue: {
-          idFilterIds: variant === 'camel' ? [5] : undefined,
           order: 'recommDesc',
           deviceId
         }
@@ -608,6 +603,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       isFetched &&
       progressDone &&
       activeMyFilter &&
+      accessUser &&
       !productTotal &&
       !pendingInActiveMyFilterSearchRef.current
     ) {
@@ -633,6 +629,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   }, [
     isFetched,
     activeMyFilter,
+    accessUser,
     productTotal,
     baseSearchParams,
     excludeAdditionalSelectedSearchOptions,
@@ -749,7 +746,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       {showDynamicFilter && dynamicOptions.length > 0 && hasBaseSearchParams && progressDone && (
         <ProductsDynamicFilter />
       )}
-      <ProductsFilterHistory />
+      <ProductsFilterHistory variant={variant} />
       <OnBoardingSpotlight
         open={hasBaseSearchParams && progressDone && !complete && step === 0}
         onClose={() =>

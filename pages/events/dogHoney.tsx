@@ -26,7 +26,7 @@ import {
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryContents from '@hooks/useQueryContents';
 
-function EventDogHoneyMain() {
+function EventDogHoney() {
   const setEventContentProductsParamsState = useSetRecoilState(eventContentProductsParamsState);
   const eventContentDogHoneyFilterOffsetTop = useRecoilValue(
     eventContentDogHoneyFilterOffsetTopState
@@ -96,4 +96,4 @@ function EventDogHoneyMain() {
   );
 }
 
-export default EventDogHoneyMain;
+export default EventDogHoney;

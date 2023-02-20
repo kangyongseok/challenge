@@ -1,27 +1,19 @@
 import { useEffect } from 'react';
 
-import { Box, useTheme } from 'mrcamel-ui';
+import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import HomeStyleRecommendProductList from './HomeStyleRecommendProductList';
-import HomeRecommendProductList from './HomeRecommendProductList';
-import HomeQuickSaleProducts from './HomeQuickSaleProducts';
-import HomePersonalGuideProductList from './HomePersonalGuideProductList';
+import HomePopularCamelProductList from './HomePopularCamelProductList';
 import HomePersonalGuide from './HomePersonalGuide';
+import HomeNewCamelProductGrid from './HomeNewCamelProductGrid';
 import HomeMainBanner from './HomeMainBanner';
-import HomeLegitAuthenticProductList from './HomeLegitAuthenticProductList';
-import HomeAuthSellerProducts from './HomeAuthSellerProducts';
+import HomeDogHoneyProductGrid from './HomeDogHoneyProductGrid';
+import HomeAuthCamelProductGrid from './HomeAuthCamelProductGrid';
 
 function HomeRecommendPanel() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   useEffect(() => {
     logEvent(attrKeys.home.VIEW_MAIN, {
       att: 'RECOMM'
@@ -30,22 +22,15 @@ function HomeRecommendPanel() {
 
   return (
     <>
-      <HomeMainBanner />
       <HomePersonalGuide />
-      <Box
-        customStyle={{
-          width: '100%',
-          borderBottom: `1px solid ${common.line01}`,
-          margin: '20px 0 32px'
-        }}
-      />
-      <HomePersonalGuideProductList />
-      <HomeLegitAuthenticProductList />
-      <HomeAuthSellerProducts />
-      <HomeQuickSaleProducts />
-      <HomeRecommendProductList />
-      {/* 정품 가품 판단 컴포넌트 자리 */}
-      <HomeStyleRecommendProductList />
+      <HomeMainBanner />
+      <HomePopularCamelProductList />
+      <Gap height={8} />
+      <HomeNewCamelProductGrid />
+      <Gap height={8} />
+      <HomeDogHoneyProductGrid />
+      <Gap height={8} />
+      <HomeAuthCamelProductGrid />
     </>
   );
 }

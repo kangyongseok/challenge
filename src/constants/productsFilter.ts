@@ -96,7 +96,7 @@ export const idFilterIds = {
 export const idFilterOptions = [
   {
     id: idFilterIds.auth,
-    name: '인증판매자'
+    name: '카멜인증'
   },
   {
     id: idFilterIds.new,

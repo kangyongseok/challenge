@@ -66,7 +66,7 @@ function SettingsTransferForm() {
             color: common.ui80
           }}
         >
-          연동할 플랫폼
+          가져오기 할 플랫폼
         </Typography>
         <SelectBox onClick={() => setOpen(true)}>
           {selectedPlatform ? (
@@ -112,14 +112,14 @@ function SettingsTransferForm() {
             color: common.ui80
           }}
         >
-          상점 주소 또는 프로필 링크를 입력해주세요.
+          본인의 상품 URL을 입력해주세요
         </Typography>
         <Input
           fullWidth
           size="xlarge"
           onChange={handleChange}
           value={url}
-          placeholder="상점 주소 또는 프로필 링크를 입력해주세요."
+          placeholder="상품 URL을 입력해주세요."
         />
       </Flexbox>
     </Flexbox>

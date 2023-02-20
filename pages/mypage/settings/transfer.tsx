@@ -72,10 +72,9 @@ function Transfer() {
                     color: common.ui60
                   }}
                 >
-                  연동한 플랫폼의 상점, 프로필 주소를 수정 또는 삭제하시려면
-                  <br />
                   {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  “1:1 문의"를 이용해주세요!
+                  가져오기 할 플랫폼의 상품 url 주소를 수정 또는 삭제하시려면 “1:1 문의”를
+                  이용해주세요!
                 </Typography>
               </Flexbox>
             </Alert>

@@ -390,6 +390,7 @@ export type ProductResult = {
   price: number;
   priceBefore: number | null;
   productSeller: ProductSeller;
+  productLegit: ProductLegit;
   purchaseCount: number;
   postType: PostType;
   site: {
@@ -704,8 +705,10 @@ export interface RecommProductsParams {
 export interface CamelProductsParams {
   page?: number;
   size?: number;
+  order?: string;
   sort?: string[];
   type?: string[]; // default "recomm"
+  idFilters?: number[];
 }
 
 export interface UserPersonalStyleParams {

@@ -1,17 +1,5 @@
 import { atom, atomFamily } from 'recoil';
 
-import type { GuideProductsParams } from '@dto/personal';
-
-export const homeCamelProductCurationPrevScrollState = atom({
-  key: 'home/camelProductCurationPrevScrollState',
-  default: 0
-});
-
-export const homePersonalProductCurationPrevScrollState = atom({
-  key: 'home/personalProductCurationPrevScrollState',
-  default: 0
-});
-
 export const homeSelectedTabStateFamily = atomFamily<
   {
     selectedIndex: number;
@@ -31,11 +19,6 @@ export const homeLegitResultTooltipCloseState = atom({
   default: false
 });
 
-export const homeGuideProductsParamsState = atom<GuideProductsParams>({
-  key: 'home/guideProductsParamsState',
-  default: {}
-});
-
 export const homePersonalCurationBannersState = atom<
   {
     src: string;
@@ -47,12 +30,7 @@ export const homePersonalCurationBannersState = atom<
   default: []
 });
 
-export const personalGuideListCurrentThemeState = atom({
-  key: 'home/personalGuideListCurrentThemeState',
+export const homePopularCamelProductListPrevPageState = atom({
+  key: 'home/popularCamelProductListPrevPageState',
   default: 0
-});
-
-export const hasHomeTabChangeState = atom({
-  key: 'home/hasHomeTabChangeState',
-  default: false
 });
