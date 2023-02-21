@@ -314,7 +314,6 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       (id: number, name: string, disableClickEvent = false) =>
         () => {
           if (isLoading) return;
-          if (variant === 'camel' && id === 5) return;
 
           if (legitIdFilterOptionIds.includes(id)) {
             logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
@@ -333,6 +332,9 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
             (selectedSearchOption) =>
               selectedSearchOption.codeId === filterCodeIds.id && selectedSearchOption.id === id
           );
+
+          if (variant === 'camel' && id === 5 && selectedIdFilterOptionIndex !== -1) return;
+
           let newSelectedSearchOptions: SelectedSearchOption[];
           let newSearchParams: Partial<SearchParams>;
 

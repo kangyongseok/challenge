@@ -36,13 +36,14 @@ function HomeEventBannerBottomSheet() {
   useEffect(() => {
     const hideDate = LocalStorage.get<string>(CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE);
 
+    // 이벤트 바텀시트 임시 비활성화
     if (hideDate) {
       if (dayjs().diff(hideDate, 'days') >= 1) {
         LocalStorage.remove(CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE);
-        setOpen(true);
+        setOpen(false);
       }
     } else {
-      setOpen(true);
+      setOpen(false);
     }
   }, []);
 

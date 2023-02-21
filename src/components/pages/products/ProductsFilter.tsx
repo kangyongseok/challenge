@@ -333,6 +333,10 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       }
     });
 
+    if (variant === 'camel') {
+      convertedBaseSearchParams.searchType = 'camel';
+    }
+
     const { parentIds: newParentIds, subParentIds: newSubParentIds } = convertSearchParamsByQuery(
       router.query,
       {
@@ -373,6 +377,10 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
           deviceId
         }
       });
+
+      if (variant === 'camel') {
+        convertedInitSearchParams.searchType = 'camel';
+      }
 
       setSearchParamsState(({ type }) => ({
         type,

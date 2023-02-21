@@ -128,6 +128,7 @@ function HomePopularCamelProductList() {
               <NewProductListCard
                 key={`home-popular-camel-product-${product.id}`}
                 product={product}
+                camelAuthLabelType="B"
                 hideAreaInfo
                 bottomLabel={
                   discountPercentage > 0 ? (
@@ -143,6 +144,9 @@ function HomePopularCamelProductList() {
                       brandColor="gray"
                       size="xsmall"
                       text={`오늘 ${product.viewCount}번 조회`}
+                      customStyle={{
+                        display: product.viewCount < 5 ? 'none' : undefined
+                      }}
                     />
                   )
                 }

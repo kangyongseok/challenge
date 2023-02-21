@@ -93,6 +93,7 @@ function HomeAuthCamelProductGrid() {
               <NewProductGridCard
                 variant="gridB"
                 product={product}
+                camelAuthLabelType="B"
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.CAMEL,

@@ -656,6 +656,7 @@ export interface SearchParams {
   subParentIds?: number[];
   unit?: number;
   conditionIds?: number[];
+  searchType?: 'camel';
 }
 
 export interface SearchAiProductParams {
