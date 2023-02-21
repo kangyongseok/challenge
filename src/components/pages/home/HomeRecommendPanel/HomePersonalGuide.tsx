@@ -108,17 +108,18 @@ function HomePersonalGuide() {
         if (accessUser) {
           setActiveMyFilterState(true);
         }
-
-        router.push({
-          pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
-          query: {
-            idFilterIds: [5],
-            subParentIds: [Number(subParentId || id || 0)],
-            genders: gender === 'F' ? 'female' : 'male',
-            categorySizeIds,
-            parentIds: [Number(parentId)]
-          }
-        });
+        if (parentCategoryName) {
+          router.push({
+            pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
+            query: {
+              idFilterIds: [5],
+              subParentIds: [Number(subParentId || id || 0)],
+              genders: gender === 'F' ? 'female' : 'male',
+              categorySizeIds,
+              parentIds: [Number(parentId)]
+            }
+          });
+        }
       }
     };
 

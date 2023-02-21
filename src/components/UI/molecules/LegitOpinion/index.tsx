@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 
 import { Avatar, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import styled from '@emotion/styled';
 
 import LegitLabel from '@components/UI/atoms/LegitLabel';
 
@@ -29,14 +30,7 @@ function LegitOpinion({
   return (
     <Flexbox gap={12} {...props}>
       {image && (
-        <Avatar
-          width={32}
-          height={32}
-          src={image}
-          alt="User Avatar Img"
-          round="50%"
-          customStyle={{ minWidth: 32, maxHeight: 32 }}
-        />
+        <OpinionAvatar width={32} height={32} src={image} alt="User Avatar Img" round="50%" />
       )}
       <Box customStyle={{ flexGrow: 1 }}>
         <Flexbox justifyContent="space-between">
@@ -79,5 +73,13 @@ function LegitOpinion({
     </Flexbox>
   );
 }
+
+const OpinionAvatar = styled(Avatar)`
+  min-height: 32px;
+  min-width: 32px;
+  img {
+    min-height: 32px;
+  }
+`;
 
 export default LegitOpinion;

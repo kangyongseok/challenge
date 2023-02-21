@@ -85,15 +85,12 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   const [data, setData] = useState<ChartData<'line'> | null>(null);
   const [options, setOptions] = useState<ChartOptions<'line'> | null>(null);
   const chartValues = useMemo(() => {
-    let averagePrices: number[] = [];
-    if (product?.weekAvgPrices) {
-      averagePrices = product.weekAvgPrices.filter((weekAvgPrice) => weekAvgPrice !== 0);
-    }
-
-    return averagePrices
-      ?.map((averagePrice) => Number((averagePrice / 10000).toFixed(1)))
-      .slice(0, 7)
-      .reverse();
+    return (
+      product?.weekAvgPrices
+        ?.map((averagePrice) => Number((averagePrice / 10000).toFixed(1)))
+        .slice(0, 7)
+        .reverse() || []
+    );
   }, [product?.weekAvgPrices]);
 
   const productPrice = useMemo(() => {
