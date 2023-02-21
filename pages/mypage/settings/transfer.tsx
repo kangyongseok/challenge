@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { useRouter } from 'next/router';
 import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -16,12 +17,31 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 function Transfer() {
+  const router = useRouter();
+
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
+
+  const { data: accessUser, isInitialLoading } = useQueryAccessUser();
+
+  // TODO 임시 처리, 추후 제거
+  useEffect(() => {
+    if (!isInitialLoading && !accessUser) {
+      router.push({
+        pathname: '/login',
+        query: {
+          returnUrl: '/mypage/settings/transfer',
+          isRequiredLogin: true
+        }
+      });
+    }
+  }, [router, isInitialLoading, accessUser]);
 
   useEffect(() => {
     logEvent(attrKeys.mypage.VIEW_TRANSFER_MANAGE);

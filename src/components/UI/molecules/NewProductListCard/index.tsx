@@ -236,10 +236,12 @@ function NewProductListCard({
 
     const { status: legitStatus, result, legitOpinions = [] } = productLegit || {};
 
-    setIsAuthProduct(legitStatus === 30 && result === 1);
-    setAuthOpinionCount(
-      legitOpinions.filter(({ result: legitResult }) => legitResult === 1).length
-    );
+    if (legitOpinions && Array.isArray(legitOpinions)) {
+      setIsAuthProduct(legitStatus === 30 && result === 1);
+      setAuthOpinionCount(
+        legitOpinions.filter(({ result: legitResult }) => legitResult === 1).length
+      );
+    }
   }, [productLegit]);
 
   return (
