@@ -4,8 +4,10 @@ import type { MouseEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { find } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
+import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -97,12 +99,7 @@ function AnnounceDetail() {
         {announce.announceDetails.map((announceDetail) => {
           if (announceDetail.type === 1) {
             return (
-              <Box
-                key={`announce-detail-${announceDetail.id}`}
-                customStyle={{
-                  padding: '0 20px 16px'
-                }}
-              >
+              <FixedButtonWrap key={`announce-detail-${announceDetail.id}`}>
                 <Button
                   data-pathname={announceDetail.parameter}
                   onClick={handleClickCtaButton}
@@ -113,7 +110,7 @@ function AnnounceDetail() {
                 >
                   {announceDetail.content}
                 </Button>
-              </Box>
+              </FixedButtonWrap>
             );
           }
           return (
@@ -163,8 +160,27 @@ function AnnounceDetail() {
           );
         })}
       </Flexbox>
+      {announce?.announceDetails && find(announce.announceDetails, { type: 1 }) && (
+        <Box customStyle={{ height: 70 }} />
+      )}
     </Box>
   );
 }
+
+const FixedButtonWrap = styled.div`
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 20px;
+`;
 
 export default AnnounceDetail;
