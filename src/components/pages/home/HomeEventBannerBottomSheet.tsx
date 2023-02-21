@@ -1,49 +1,56 @@
 import { useEffect, useState } from 'react';
 
-import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Image } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE } from '@constants/localStorage';
+import { EVENT_AD_BANNER_HIDE_DATE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-function HomeEventBannerBottomSheet() {
-  const router = useRouter();
+import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
+function HomeEventBannerBottomSheet() {
   const [open, setOpen] = useState(false);
+
+  const handleClickMoveToCamelSeller = useMoveCamelSeller({
+    attributes: {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.MAIN_MODAL,
+      source: 'MAIN'
+    }
+  });
 
   const handleClick = () => {
     logEvent(attrKeys.home.CLICK_MAIN_MODAL, {
       name: attrProperty.name.MAIN,
-      title: '2302_CAMEL_OPINION',
+      title: '2302_CAMEL_PRODUCT',
       att: 'YES'
     });
 
-    router.push('/events/interfereInKing');
+    handleClickMoveToCamelSeller();
   };
 
   const handleClose = () => setOpen(false);
 
   const handleClickTodayHide = () => {
-    LocalStorage.set(CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
+    LocalStorage.set(EVENT_AD_BANNER_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
     setOpen(false);
   };
 
   useEffect(() => {
-    const hideDate = LocalStorage.get<string>(CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE);
+    const hideDate = LocalStorage.get<string>(EVENT_AD_BANNER_HIDE_DATE);
 
     // 이벤트 바텀시트 임시 비활성화
     if (hideDate) {
       if (dayjs().diff(hideDate, 'days') >= 1) {
-        LocalStorage.remove(CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE);
-        setOpen(false);
+        LocalStorage.remove(EVENT_AD_BANNER_HIDE_DATE);
+        setOpen(true);
       }
     } else {
-      setOpen(false);
+      setOpen(true);
     }
   }, []);
 
@@ -51,7 +58,7 @@ function HomeEventBannerBottomSheet() {
     if (open) {
       logEvent(attrKeys.home.VIEW_MAIN_MODAL, {
         name: attrProperty.name.MAIN,
-        title: '2302_CAMEL_OPINION',
+        title: '2302_CAMEL_PRODUCT',
         att: 'JOIN'
       });
     }
@@ -60,7 +67,7 @@ function HomeEventBannerBottomSheet() {
   return (
     <BottomSheet open={open} onClose={handleClose} disableSwipeable>
       <Image
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-interfere-in-king-ad.png`}
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-camel-seller-ad.png`}
         alt="Event Banner Img"
         disableAspectRatio
         onClick={handleClick}

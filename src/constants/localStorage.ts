@@ -40,6 +40,6 @@ export const SAVED_LEGIT_REQUEST = 'savedLegitRequest';
 export const CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE = 'checkedProductPhotoUploadGuide';
 export const LISTING_TECH_LEGIT_DATE = 'listingTechLegitDate';
 export const SELLER_PROCESS_TYPE = 'sellerProcessType';
-export const CAMEL_INTERFERE_IN_KING_EVENT_HIDE_DATE = 'camelInterfereInKingEventHideDate';
+export const EVENT_AD_BANNER_HIDE_DATE = 'eventAdBannerHideDate';
 export const MY_PAGE_CAMEL_INTERFERE_IN_KING_EVENT_BANNER_HIDE =
   'myPageCamelInterfereInKingEventBannerHide';
