@@ -38,8 +38,6 @@ export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> 
   subText?: string;
   // TODO A/B 테스트 이후 제거 예정
   platformLabelType?: 'A' | 'B';
-  // TODO A/B 테스트 이후 제거 예정
-  camelAuthLabelType?: 'B';
   bottomLabel?: ReactElement;
   hideLabel?: boolean;
   hidePrice?: boolean;
@@ -60,7 +58,6 @@ function NewProductGridCard({
   product,
   subText,
   platformLabelType = 'A',
-  camelAuthLabelType,
   bottomLabel,
   hideLabel,
   hidePrice,
@@ -167,6 +164,7 @@ function NewProductGridCard({
       await refetch();
     }
   });
+
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove, {
     async onSuccess() {
       setIsWish(false);
@@ -257,25 +255,21 @@ function NewProductGridCard({
           position: 'relative'
         }}
       >
-        {!hideLabel &&
-          platformLabelType === 'A' &&
-          !camelAuthLabelType &&
-          !isAuthProduct &&
-          isAuthSeller && (
-            <Label
-              variant="solid"
-              brandColor="black"
-              size="xsmall"
-              startIcon={<Icon name="ShieldFilled" />}
-              text="인증판매자"
-              customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1
-              }}
-            />
-          )}
+        {!hideLabel && platformLabelType === 'A' && !isAuthProduct && isAuthSeller && (
+          <Label
+            variant="solid"
+            brandColor="black"
+            size="xsmall"
+            startIcon={<Icon name="ShieldFilled" />}
+            text="인증판매자"
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1
+            }}
+          />
+        )}
         {!hideLabel && platformLabelType === 'A' && isAuthProduct && (
           <Label
             variant="solid"
@@ -290,33 +284,30 @@ function NewProductGridCard({
             }}
           />
         )}
-        {!hideLabel &&
-          (platformLabelType === 'B' || camelAuthLabelType === 'B') &&
-          !isAuthProduct &&
-          isAuthSeller && (
-            <Flexbox
+        {!hideLabel && platformLabelType === 'B' && !isAuthProduct && isAuthSeller && (
+          <Flexbox
+            customStyle={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              zIndex: 1,
+              borderRadius: 4,
+              backgroundColor: common.ui20
+            }}
+          >
+            <CamelLogoIcon />
+            <Typography
+              variant="small2"
+              weight="bold"
               customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1,
-                borderRadius: 4,
-                backgroundColor: common.ui20
+                padding: '3px 4px 3px 2px',
+                color: common.uiWhite
               }}
             >
-              <CamelLogoIcon />
-              <Typography
-                variant="small2"
-                weight="bold"
-                customStyle={{
-                  padding: '3px 4px 3px 2px',
-                  color: common.uiWhite
-                }}
-              >
-                인증판매자
-              </Typography>
-            </Flexbox>
-          )}
+              인증판매자
+            </Typography>
+          </Flexbox>
+        )}
         {!hideLabel &&
           platformLabelType === 'B' &&
           (!isAuthSeller || isAuthProduct) &&

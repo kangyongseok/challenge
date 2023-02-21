@@ -82,8 +82,7 @@ function HomePersonalGuide() {
         router.push({
           pathname: `/products/brands/${name}`,
           query: {
-            genders: gender === 'F' ? 'female' : 'male',
-            idFilterIds: [5]
+            genders: gender === 'F' ? 'female' : 'male'
           }
         });
       } else {
@@ -112,7 +111,6 @@ function HomePersonalGuide() {
           router.push({
             pathname: `/products/categories/${(parentCategoryName || '').replace(/\(P\)/g, '')}`,
             query: {
-              idFilterIds: [5],
               subParentIds: [Number(subParentId || id || 0)],
               genders: gender === 'F' ? 'female' : 'male',
               categorySizeIds,

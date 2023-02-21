@@ -160,6 +160,7 @@ function NewProductListCard({
       await refetch();
     }
   });
+
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove, {
     async onSuccess() {
       setIsWish(false);
