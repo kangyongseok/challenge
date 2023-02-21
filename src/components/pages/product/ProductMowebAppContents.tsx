@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
@@ -26,21 +26,6 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
     }
   } = useTheme();
   const [isApp, setIsApp] = useState(false);
-
-  const isShowChart = useMemo(() => {
-    if (data?.product?.weekAvgPrices) {
-      return (
-        data.product.weekAvgPrices.slice(1).reduce((acc, v) => acc + v, 0) > 0 &&
-        data.product.scorePriceCount > 20
-      );
-    }
-
-    if (data?.product?.quoteTitle) {
-      return data.product.quoteTitle.indexOf(' ') < 0;
-    }
-
-    return false;
-  }, [data?.product.quoteTitle, data?.product.scorePriceCount, data?.product.weekAvgPrices]);
 
   const relatedKeywordParams = {
     quoteTitle: data?.product.quoteTitle || '',
@@ -94,7 +79,6 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
       <ErrorBoundary disableFallback>
         <ProductAveragePriceChart product={data?.product} />
       </ErrorBoundary>
-      {!isShowChart && <Box customStyle={{ paddingTop: 32 }} />}
       <ProductSellerProductList
         product={data?.product}
         roleSellerUserId={data?.roleSeller?.userId}

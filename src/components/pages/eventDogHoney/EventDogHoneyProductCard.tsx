@@ -45,6 +45,7 @@ export interface EventDogHoneyProductCardProps extends HTMLAttributes<HTMLDivEle
   wishButtonType?: 'A' | 'B';
   subText?: string;
   bottomLabel?: ReactElement;
+  hideTitle?: boolean;
   hidePrice?: boolean;
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
@@ -64,6 +65,7 @@ function EventDogHoneyProductCard({
   wishButtonType = 'A',
   subText,
   bottomLabel,
+  hideTitle = true,
   hidePrice,
   hideAreaInfo,
   hideMetaInfo,
@@ -84,9 +86,10 @@ function EventDogHoneyProductCard({
   const {
     id,
     title: productTitle = '',
+    quoteTitle,
     imageMain,
     imageThumbnail,
-    brand: { name: brandName = '' } = {},
+    brand: { name: brandName = '', nameEng = '' } = {},
     category: { name: categoryName = '', parentId = 0 } = {},
     status,
     site: { name: siteName = '', hasImage: siteHasImage = false } = {},
@@ -283,6 +286,31 @@ function EventDogHoneyProductCard({
               color={isWish ? secondary.red.light : common.ui80}
             />
           </WishButtonB>
+        )}
+        {!hideTitle && (
+          <>
+            <Typography variant="body2" weight="bold">
+              {nameEng
+                .split(' ')
+                .map(
+                  (splitNameEng) =>
+                    `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                      1,
+                      splitNameEng.length
+                    )}`
+                )
+                .join(' ')}
+            </Typography>
+            <Typography
+              variant="body2"
+              customStyle={{
+                marginTop: 2,
+                color: common.ui60
+              }}
+            >
+              {quoteTitle}
+            </Typography>
+          </>
         )}
         {!hidePrice && (
           <Flexbox gap={4} alignment="baseline" customStyle={{ marginTop: 2 }}>

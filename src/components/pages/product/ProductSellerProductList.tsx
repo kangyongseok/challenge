@@ -172,7 +172,12 @@ function ProductSellerProductList({
     sellerProductsIsError ||
     reviewInfoIsError ||
     (reviewInfo?.productSeller?.count || 0) > 0 ? (
-    <Box>
+    <Box
+      component="section"
+      customStyle={{
+        paddingTop: 32
+      }}
+    >
       <Flexbox
         alignment="center"
         justifyContent="space-between"

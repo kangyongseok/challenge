@@ -314,14 +314,28 @@ function NewProductGridCard({
           product.productSeller.type !== 4 &&
           siteId !== 34 && (
             <Flexbox gap={4} customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
-              <Avatar
-                width={18}
-                height={18}
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                  (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
-                }.png`}
-                alt={`${siteUrlName || 'Platform'} Logo Img`}
-              />
+              {isAuthSeller ? (
+                <Flexbox
+                  alignment="center"
+                  justifyContent="center"
+                  customStyle={{
+                    height: 18,
+                    borderRadius: 4,
+                    backgroundColor: common.ui20
+                  }}
+                >
+                  <CamelLogoIcon />
+                </Flexbox>
+              ) : (
+                <Avatar
+                  width={18}
+                  height={18}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                    (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+                  }.png`}
+                  alt={`${siteUrlName || 'Platform'} Logo Img`}
+                />
+              )}
               {isAuthProduct && (
                 <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
               )}

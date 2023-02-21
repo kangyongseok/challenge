@@ -151,6 +151,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                     index: index * 2 + 1
                   }}
                   measure={measure}
+                  hideTitle={eventContentProductsParams.keyword !== 'recomm'}
                   subText={
                     firstProduct.size ? `size ${firstProduct.size?.replace(/\|/g, ',')}` : undefined
                   }
@@ -185,8 +186,14 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                           variant="ghost"
                           brandColor="gray"
                           text={
-                            <Typography variant="small2" weight="medium">
-                              {`오늘 ${firstProduct.viewCount}번 조회`}
+                            <Typography
+                              variant="small2"
+                              weight="medium"
+                              customStyle={{
+                                color: common.ui60
+                              }}
+                            >
+                              {`오늘 ${firstProduct.viewCount}명이 조회`}
                             </Typography>
                           }
                           customStyle={{
@@ -212,6 +219,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                     index: index * 2 + 2
                   }}
                   measure={measure}
+                  hideTitle={eventContentProductsParams.keyword !== 'recomm'}
                   subText={
                     secondProduct.size
                       ? `size ${secondProduct.size?.replace(/\|/g, ',')}`
@@ -248,8 +256,14 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
                           variant="ghost"
                           brandColor="gray"
                           text={
-                            <Typography variant="small2" weight="medium">
-                              {`오늘 ${secondProduct.viewCount}번 조회`}
+                            <Typography
+                              variant="small2"
+                              weight="medium"
+                              customStyle={{
+                                color: common.ui60
+                              }}
+                            >
+                              {`오늘 ${secondProduct.viewCount}명이 조회`}
                             </Typography>
                           }
                           customStyle={{
@@ -268,7 +282,7 @@ function EventDogHoneyProductList({ offsetTop }: EventDogHoneyProductListProps) 
         </CellMeasurer>
       ) : null;
     },
-    [common.ui60, groupedProducts, secondary.red.light]
+    [common.ui60, eventContentProductsParams.keyword, groupedProducts, secondary.red.light]
   );
 
   useEffect(() => {

@@ -280,7 +280,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   return (
     <>
       <Box customStyle={{ paddingTop: 20 }} />
-      <Box customStyle={{ marginBottom: 32 }}>
+      <>
         <Typography
           variant="body2"
           weight="bold"
@@ -307,7 +307,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
           시세이하 매물보기
         </Button>
         <Divider />
-      </Box>
+      </>
     </>
   );
 }
