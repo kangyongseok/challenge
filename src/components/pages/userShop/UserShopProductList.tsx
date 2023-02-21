@@ -43,6 +43,7 @@ import {
   userShopOpenStateFamily,
   userShopSelectedProductState
 } from '@recoil/userShop';
+import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
@@ -78,6 +79,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   const prevScrollTopRef = useRef(prevScrollTop);
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
+  const getToastState = useRecoilValue(toastState);
 
   const userProductsParams = useMemo(
     () => ({
@@ -155,6 +157,12 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     },
     [setOpenState, setUserShopSelectedProductState]
   );
+
+  useEffect(() => {
+    if (getToastState.type === 'sellerProductState' && getToastState.status === 'deleted') {
+      handleUpdateProductStatus();
+    }
+  }, [getToastState.status, getToastState.type, handleUpdateProductStatus]);
 
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {

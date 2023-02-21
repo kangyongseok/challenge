@@ -47,6 +47,7 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
             type,
             open: false
           }));
+
           if (redirect) {
             router.replace('/user/shop');
           }

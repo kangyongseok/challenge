@@ -14,6 +14,7 @@ import { postProducts, putProductEdit } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { SAVED_CAMEL_SELLER_PRODUCT_DATA } from '@constants/localStorage';
+import { MIN_PRICE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -78,6 +79,12 @@ function CamelSellerCTAButton() {
 
     if (messages.length) {
       setMessage(`${messages.join(', ')}은(는) 필수 입력사항이에요.`);
+      setOpen(true);
+      return;
+    }
+
+    if (price < MIN_PRICE) {
+      setMessage('30,000원 이상의 매물만 등록할 수 있어요!');
       setOpen(true);
       return;
     }

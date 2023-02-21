@@ -33,3 +33,5 @@ export const OPTIONAL_FIT_SIZES = [
     selected: false
   }
 ];
+
+export const MIN_PRICE = 30000;

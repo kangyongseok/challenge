@@ -181,7 +181,7 @@ function UserShop() {
           )}
         </Flexbox>
       </GeneralTemplate>
-      <UserShopProductDeleteConfirmDialog />
+      <UserShopProductDeleteConfirmDialog redirect />
       <CamelSellerFloatingButton
         attributes={{
           name: attrProperty.name.MY_STORE,
