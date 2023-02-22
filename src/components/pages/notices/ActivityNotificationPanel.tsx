@@ -28,7 +28,7 @@ import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LabelData {
-  id: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90;
+  id: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
   text:
     | '찜한매물'
     | '사진감정'
@@ -38,7 +38,8 @@ interface LabelData {
     | '가격조정'
     | '감정요청'
     | '내 매물 등록'
-    | '끌올';
+    | '끌올'
+    | '카멜 알림';
   iconName: IconName;
   bgColor: string;
   color: string;
@@ -110,6 +111,13 @@ function ActivityNotificationPanel() {
       iconName: 'Arrow4UpFilled',
       bgColor: primary.highlight,
       color: primary.light
+    },
+    {
+      id: 100,
+      text: '카멜 알림',
+      iconName: 'Logo_45_45',
+      bgColor: common.ui95,
+      color: common.ui60
     }
   ];
   const params = {
@@ -309,6 +317,13 @@ function ActivityNotificationPanel() {
         }
         return page.content?.map((activityInfo, i) => {
           const findLabel = find(labelData, { id: Number(activityInfo.label.name) }) as LabelData;
+          if (process.env.NODE_ENV === 'development') {
+            if (!findLabel) {
+              throw new Error(
+                `FE에서 [${activityInfo.label.description}]케이스가 정의되지 않았습니다`
+              );
+            }
+          }
           return (
             <Flexbox
               gap={20}
@@ -330,12 +345,16 @@ function ActivityNotificationPanel() {
                   gap={3}
                   bgColor={findLabel.bgColor}
                 >
-                  <Icon
-                    name={findLabel.iconName}
-                    width={10}
-                    height={10}
-                    customStyle={{ color: findLabel.color }}
-                  />
+                  {findLabel.id === 100 ? (
+                    <CamelSybol />
+                  ) : (
+                    <Icon
+                      name={findLabel.iconName}
+                      width={10}
+                      height={10}
+                      customStyle={{ color: findLabel.color }}
+                    />
+                  )}
                   <Typography
                     variant="small2"
                     weight="medium"
@@ -423,5 +442,16 @@ const ProductImage = styled(Image)`
     min-height: 64px;
   }
 `;
+
+function CamelSybol() {
+  return (
+    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M0.783447 5.15699L1.92945 2.00699C2.00026 1.81246 2.14545 1.65402 2.33308 1.56653C2.52071 1.47905 2.73541 1.46968 2.92995 1.54049C3.12448 1.61131 3.28292 1.7565 3.37041 1.94413C3.45789 2.13176 3.46726 2.34646 3.39645 2.54099L2.44995 5.15699H0.783447ZM4.68345 5.15699H3.01695L4.16295 2.00699C4.23376 1.81246 4.37895 1.65402 4.56658 1.56653C4.75421 1.47905 4.96891 1.46968 5.16345 1.54049C5.35798 1.61131 5.51642 1.7565 5.60391 1.94413C5.69139 2.13176 5.70076 2.34646 5.62995 2.54099L4.68345 5.15699ZM8.62995 2.38049L7.84995 2.58149L6.91095 5.15699H5.24895L6.66345 1.27349L8.24145 0.868492C8.44195 0.816974 8.65471 0.847215 8.83291 0.952564C9.01112 1.05791 9.14018 1.22974 9.1917 1.43024C9.24321 1.63075 9.21297 1.8435 9.10763 2.02171C9.00228 2.19992 8.83045 2.32897 8.62995 2.38049Z"
+        fill="#313438"
+      />
+    </svg>
+  );
+}
 
 export default ActivityNotificationPanel;

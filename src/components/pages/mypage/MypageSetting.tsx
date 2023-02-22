@@ -66,13 +66,18 @@ function MypageSetting() {
     router.push('/mypage/settings/transfer');
   }, [resetPlatformsState, resetDataState, router]);
 
+  const handleClickFixMessage = useCallback(() => {
+    router.push('/mypage/settings/channelFixMessage');
+  }, [router]);
+
   const settingMenu = useMemo(
     () => [
       { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
       { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
+      { label: '채팅 고정 메시지 설정', isNew: true, onClick: handleClickFixMessage },
       { label: '내 상품 가져오기', isNew: true, onClick: handleClickTransfer }
     ],
-    [handleClickAlarmSetting, handleClickBlockedUsers, handleClickTransfer]
+    [handleClickAlarmSetting, handleClickBlockedUsers, handleClickTransfer, handleClickFixMessage]
   );
 
   return (

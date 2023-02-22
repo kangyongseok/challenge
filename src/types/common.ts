@@ -154,7 +154,8 @@ export type ToastStatus =
   | 'disableImageUpload'
   | 'savedProfileImage'
   | 'savedBackgroundImage'
-  | 'onready';
+  | 'onready'
+  | 'savedChannelMessage';
 
 export type DialogType =
   | 'SNSShare'

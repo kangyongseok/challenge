@@ -49,7 +49,9 @@ const CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES = [
   'sellingPrice',
   'sellingLegit',
   'sellingInfo',
-  'sellingUpdate'
+  'sellingUpdate',
+  'sellingHoney',
+  'sellingDuplicate'
 ];
 
 function ChannelAdminMessage({
@@ -102,10 +104,36 @@ function ChannelAdminMessage({
         icon: <Icon name="Arrow4UpFilled" />,
         action: '/user/shop',
         att: PROMOTION_ATT.UPDATE
+      },
+      {
+        id: 'sellingHoney',
+        text: '개꿀매에서 내 매물 확인하기',
+        icon: <Icon name="Arrow4RightFilled" />,
+        action: '/events/dogHoney',
+        att: PROMOTION_ATT.UPDATE
+      },
+      {
+        id: 'sellingDuplicate',
+        text: '새로 올라온 매물 보러가기',
+        icon: <Icon name="Arrow4RightFilled" />,
+        action: '/products/camel/새로%20올라왔어요!?order=postedAllDesc',
+        att: PROMOTION_ATT.UPDATE
       }
     ],
     [messageProductId]
   );
+
+  const buttonData = find(messageButtonData, { id: message.customType || '' });
+  const isAdminMessageType = CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES.includes(message.customType || '');
+
+  if (process.env.NODE_ENV === 'development') {
+    if (!isAdminMessageType) {
+      throw new Error(`FE에서 이미지 ${message.customType}케이스가 정의되지 않았습니다`);
+    }
+    if (!buttonData) {
+      throw new Error(`FE에서 버튼 ${message.customType}케이스가 정의되지 않았습니다`);
+    }
+  }
 
   const setChannelPushPageState = useSetRecoilState(channelPushPageState);
 
@@ -156,8 +184,6 @@ function ChannelAdminMessage({
 
     router.push(pathname);
   };
-
-  const buttonData = find(messageButtonData, { id: message.customType || '' });
 
   const handleClickAction = () => {
     const result = productDetail
@@ -232,7 +258,7 @@ function ChannelAdminMessage({
     }
   };
 
-  if (CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES.includes(message.customType || '')) {
+  if (isAdminMessageType) {
     return (
       <Box customStyle={{ marginBottom: 12 }}>
         <CamelAdminMessage>
@@ -241,6 +267,7 @@ function ChannelAdminMessage({
             alt={`custom-type-image-${message.messageId}`}
             disableAspectRatio
             customStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+            style={{ minHeight: 161 }}
           />
           <CamelAdminMessageDetail dangerouslySetInnerHTML={{ __html: messageInfos[0] }} />
           {productDetail &&

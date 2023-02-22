@@ -7,6 +7,7 @@ import type {
   BanWordResponse,
   CategoryWish,
   CategoryWishesParams,
+  FixedChannelType,
   MyUserInfo,
   PageHoneyNoti,
   PageUserBlock,
@@ -29,6 +30,7 @@ import type {
   SizeResult,
   UpdateUserProfileData,
   UserBlockParams,
+  UserFixedChannel,
   UserHistoryManages,
   UserInfo,
   UserInfoResult,
@@ -350,5 +352,23 @@ export async function postTransfers(data: PostTransferData) {
 export async function fetchSurvey() {
   const { data } = await Axios.getInstance().get(`${BASE_PATH}/survey/4`);
 
+  return data;
+}
+
+export async function putFixedChannel({
+  type = 'channelDefaultMessage',
+  value
+}: {
+  type: FixedChannelType;
+  value: string;
+}) {
+  await Axios.getInstance().put(`${BASE_PATH}/channel`, {
+    type,
+    value
+  });
+}
+
+export async function fetchFixedChannel() {
+  const { data } = await Axios.getInstance().get<UserFixedChannel[]>(`${BASE_PATH}/channel`);
   return data;
 }

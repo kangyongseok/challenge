@@ -66,7 +66,7 @@ function CamelSellerEvent() {
       router.back();
     }
 
-    // if (prevAsPath && prevAsPath.indexOf('/camelSeller/registerConfirm') !== -1) {
+    // if (prevAsPath && prevAsPath.indexOf('/camelSeller/registerConfirm') !== -1) { TODO 판매하기 이벤트 종료 후 원복
     //   router.back();
     // } else {
     //   router.replace('/camelSeller/registerConfirm');
@@ -81,7 +81,7 @@ function CamelSellerEvent() {
     }
   });
 
-  // const handleClick = () => {
+  // const handleClick = () => { TODO 판매하기 이벤트 종료 후 원복
   //   if (evnetDateInfo.isEvent) {
   //     useMoveCamelSeller({
   //       attributes: {

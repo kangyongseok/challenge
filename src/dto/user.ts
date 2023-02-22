@@ -507,6 +507,13 @@ export interface UserTransfer {
   dateCreated: string;
 }
 
+export type FixedChannelType = 'channelDefaultMessage';
+
+export interface UserFixedChannel {
+  type: FixedChannelType;
+  value: string;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface CategoryWishesParams {
   categoryIds?: number[];

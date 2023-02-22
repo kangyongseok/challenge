@@ -157,7 +157,8 @@ const users = {
   blocks: (params: UserBlockParams) => [...users.all, 'blocks', params] as const,
   myUserInfo: () => [...users.all, 'myUserInfo'] as const,
   banword: () => [...users.all, 'banword'] as const,
-  transfers: () => [...users.all, 'transfers'] as const
+  transfers: () => [...users.all, 'transfers'] as const,
+  fixedChannel: (userId: number) => [...users.all, 'fixedChannel', userId] as const
 };
 
 const userAuth = {

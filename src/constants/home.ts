@@ -34,7 +34,7 @@ export const defaultBanners = [
     pathname: '/events/interfereInKing',
     backgroundColor: '#0B123E'
   },
-  // {
+  // { TODO 판매 이벤트 종료 후 원복
   //   src: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner.png`,
   //   pathname: '/camelSeller/registerConfirm',
   //   backgroundColor: '#4836B6'

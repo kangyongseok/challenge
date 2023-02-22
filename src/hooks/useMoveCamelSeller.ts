@@ -90,7 +90,7 @@ export default function useMoveCamelSeller({
     const checkedProductPhotoUploadGuide = LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE);
 
     if (!accessUser) {
-      // setOpenLoginBottomSheetState({
+      // setOpenLoginBottomSheetState({ TODO 판매 이벤트 종료 후 다시 코드 원복
       //   open: true,
       //   returnUrl: checkedProductPhotoUploadGuide
       //     ? '/camelSeller/registerConfirm'

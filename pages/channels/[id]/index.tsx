@@ -29,13 +29,22 @@ import { fetchChannel } from '@api/channel';
 
 import { channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { MESSAGE_INPUT_HEIGHT, MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT } from '@constants/common';
+import {
+  IOS_SAFE_AREA_BOTTOM,
+  MESSAGE_INPUT_HEIGHT,
+  MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT
+} from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
+import {
+  checkAgent,
+  getProductDetailUrl,
+  hasImageFile,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
@@ -567,7 +576,9 @@ const FooterWrapper = styled.section<{
   isFocused: boolean;
 }>`
   position: ${({ isFocused }) => (isFocused ? 'static' : 'sticky')};
-  bottom: ${({ isFocused }) => (isFocused ? 0 : 'env(safe-area-inset-bottom, 0)')};
+  bottom: ${({ isFocused }) =>
+    // eslint-disable-next-line no-nested-ternary
+    isFocused ? 0 : isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : 0};
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
   box-sizing: content-box;
