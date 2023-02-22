@@ -17,11 +17,11 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { SearcgRelatedKeywordsParams } from '@typings/products';
+import type { SearchRelatedKeywordsParams } from '@typings/products';
 
 interface ProductKeywordListProps {
   productId?: number;
-  params: SearcgRelatedKeywordsParams;
+  params: SearchRelatedKeywordsParams;
 }
 
 function ProductKeywordList({ productId, params }: ProductKeywordListProps) {

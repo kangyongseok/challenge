@@ -41,5 +41,7 @@ export const CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE = 'checkedProductPhotoUploadGuid
 export const LISTING_TECH_LEGIT_DATE = 'listingTechLegitDate';
 export const SELLER_PROCESS_TYPE = 'sellerProcessType';
 export const EVENT_AD_BANNER_HIDE_DATE = 'eventAdBannerHideDate';
+export const PRODUCT_EVENT_AD_BANNER_HIDE_DATE = 'productEventAdBannerHideDate';
 export const MY_PAGE_CAMEL_INTERFERE_IN_KING_EVENT_BANNER_HIDE =
   'myPageCamelInterfereInKingEventBannerHide';
+export const USER_TRACE_RECORD = 'userTraceRecord';

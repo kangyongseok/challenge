@@ -52,7 +52,7 @@ export type ProductsEventProperties = {
   filters?: string | string[];
 };
 
-export interface SearcgRelatedKeywordsParams {
+export interface SearchRelatedKeywordsParams {
   quoteTitle: string;
   brandIds: number[];
   categoryIds: number[];

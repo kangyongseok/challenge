@@ -22,7 +22,7 @@ import type {
 
 import Axios from '@library/axios';
 
-import type { SearcgRelatedKeywordsParams, putProductUpdateStatusParams } from '@typings/products';
+import type { SearchRelatedKeywordsParams, putProductUpdateStatusParams } from '@typings/products';
 import type { SubmitType } from '@typings/camelSeller';
 
 const BASE_PATH = '/products';
@@ -180,7 +180,7 @@ export async function postProducts(parameter: SubmitType) {
   return data;
 }
 
-export async function fetchRelatedKeywords(params: SearcgRelatedKeywordsParams) {
+export async function fetchRelatedKeywords(params: SearchRelatedKeywordsParams) {
   const { data } = await Axios.getInstance().get(`${BASE_PATH}/searchRelatedKeywords`, { params });
 
   return data;

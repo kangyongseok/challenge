@@ -43,7 +43,7 @@ import type { SuggestParams } from '@dto/brand';
 
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
-import type { SearcgRelatedKeywordsParams } from '@typings/products';
+import type { SearchRelatedKeywordsParams } from '@typings/products';
 import type { SearchHistoryHookType } from '@typings/camelSeller';
 
 const brands = {
@@ -109,7 +109,7 @@ const products = {
     [...products.all, 'sellerModifyProducs', params] as const,
   searchLowerProducts: (params?: SearchLowerProductsParams) =>
     compact([...products.all, 'searchLowerProducts', params]),
-  searchRelatedKeyword: (params: SearcgRelatedKeywordsParams) =>
+  searchRelatedKeyword: (params: SearchRelatedKeywordsParams) =>
     [...products.all, 'searchRelatedKeyword', params] as const,
   sellerInfo: (sellerId: number) => [...products.all, 'sellerInfo', sellerId] as const,
   sellerEditProduct: (params: ProductParams) =>

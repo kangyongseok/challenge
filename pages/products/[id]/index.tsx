@@ -27,6 +27,7 @@ import {
   ProductDeletedCard,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
+  ProductEventBannerBottomSheet,
   ProductImages,
   ProductInfo,
   ProductMowebAppContents,
@@ -39,6 +40,7 @@ import {
 import type { AccessUser } from '@dto/userAuth';
 import type { Product } from '@dto/product';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
@@ -504,6 +506,10 @@ function ProductDetail() {
     });
   }, []);
 
+  useEffect(() => {
+    UserTraceRecord.increasePageViewCount('product');
+  }, []);
+
   const sizeParser = () => {
     const selectedMainSize = data?.product?.categorySizes?.map((size) => size.name) || [];
     const selectedOption = data?.sizeOptions?.map((size) => size.description) || [];
@@ -716,6 +722,7 @@ function ProductDetail() {
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
+      <ProductEventBannerBottomSheet />
     </>
   );
 }

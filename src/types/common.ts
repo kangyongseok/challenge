@@ -224,3 +224,14 @@ export interface HomeSeasonBannerData {
 
 export type ProductGridCardVariant = 'gridA' | 'gridB' | 'gridC' | 'swipeX';
 export type ProductListCardVariant = 'listA' | 'listB';
+
+export interface UserTraceRecord {
+  firstVisitDate: string;
+  lastVisitDate: string;
+  lastVisitDateDiffDay: number;
+  pageViewCounts: {
+    [page in UserTracePages]: number;
+  };
+}
+
+export type UserTracePages = 'product';

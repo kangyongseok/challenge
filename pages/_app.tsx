@@ -6,12 +6,14 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
 import { Toast, useTheme } from 'mrcamel-ui';
+import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
 
@@ -135,6 +137,21 @@ function App({ Component, pageProps }: AppProps) {
       params: window.location.search
     });
   }, [router]);
+
+  useEffect(() => {
+    if (!UserTraceRecord.getFirstVisitDate()) {
+      UserTraceRecord.setFirstVisitDate(dayjs().format('YYYY-MM-DD'));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (UserTraceRecord.getLastVisitDate()) {
+      UserTraceRecord.setLastVisitDateDiffDay(
+        dayjs().diff(dayjs(UserTraceRecord.getLastVisitDate()), 'days')
+      );
+    }
+    UserTraceRecord.setLastVisitDate(dayjs().format('YYYY-MM-DD'));
+  }, []);
 
   return (
     <>
