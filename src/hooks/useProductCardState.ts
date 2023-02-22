@@ -74,7 +74,7 @@ export default function useProductCardState({
     if (productLegitStatus === 10 || productLegitStatus === 20 || productLegitStatus === 1)
       return '감정중';
 
-    return '감정가능';
+    return '';
   }, [props]);
 
   const isDuplicate = !targetProductStatus;
