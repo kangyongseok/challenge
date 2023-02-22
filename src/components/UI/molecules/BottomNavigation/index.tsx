@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -232,14 +232,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       }
     };
 
-  const handleResize = useCallback(() => {
-    if (legitNavRef.current && !openTooltip) {
-      setTriangleLeft(
-        legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 44
-      );
-    }
-  }, [openTooltip]);
-
   const handleClickTooltip = () => {
     logEvent(attrKeys.home.CLICK_CLOSE, {
       title: attrProperty.legitTitle.LEGITRESULT_TOOLTIP
@@ -267,6 +259,11 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   };
 
   const getQuery = (href: string) => {
+    if (href === '/' && router.pathname === '/') {
+      return {
+        tab: !router.query.tab || router.query.tab === 'recommend' ? 'following' : 'recommend'
+      };
+    }
     if (href === '/wishes' && confirmPriceNotiProducts.length) {
       return { scrollToProductId: confirmPriceNotiProducts[0].id };
     }
@@ -285,12 +282,20 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      if (legitNavRef.current && !openTooltip) {
+        setTriangleLeft(
+          legitNavRef.current.offsetLeft + Math.floor(legitNavRef.current.clientWidth / 2) - 44
+        );
+      }
+    };
+
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [handleResize]);
+  }, [openTooltip]);
 
   useEffect(() => {
     if (legitNavRef.current && !openTooltip) {

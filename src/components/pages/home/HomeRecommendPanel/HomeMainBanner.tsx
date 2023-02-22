@@ -10,8 +10,6 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
-
 function HomeMainBanner() {
   const router = useRouter();
 
@@ -25,14 +23,6 @@ function HomeMainBanner() {
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
-  const handleClick = useMoveCamelSeller({
-    attributes: {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.BANNER,
-      source: 'MAIN'
-    }
-  });
-
   const handleClickCamelSellerBanner = () => {
     logEvent(attrKeys.home.CLICK_BANNER, {
       name: attrProperty.name.MAIN,
@@ -40,7 +30,12 @@ function HomeMainBanner() {
       att: '2302_CAMEL_PRODUCT'
     });
 
-    handleClick();
+    router.push({
+      pathname: '/events/camelSellerEvent',
+      query: {
+        banner: true
+      }
+    });
   };
 
   const handleClickInterfereInKingBanner = () => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
@@ -18,14 +18,13 @@ import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
+
 function AppIntroStep() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
 
-  useEffect(() => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  }, []);
+  useViewportUnitsTrick();
 
   const handleChange = (swiper: SwiperClass) => {
     const { activeIndex } = swiper;

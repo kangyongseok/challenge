@@ -1,4 +1,4 @@
-import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 const animationItems = [
@@ -15,6 +15,12 @@ const animationItems = [
 // 97 , 79
 
 function AppIntro01() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   return (
     <Flexbox
       alignment="center"
@@ -47,7 +53,7 @@ function AppIntro01() {
           <br />
           대한민국 중고명품
         </Typography>
-        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: common.ui60 }}>
           다른 앱이 필요없어요
         </Typography>
       </Box>
@@ -80,7 +86,7 @@ const BoxFront = styled.div`
   width: 188px;
   height: 114px;
   background: radial-gradient(100% 100% at 0% 0%, #0078ff 0%, #1833ff 100%);
-  border-radius: 0px 0px 8px 8px;
+  border-radius: 0 0 8px 8px;
   position: relative;
   z-index: ${({ theme: { zIndex } }) => zIndex.tooltip};
 `;

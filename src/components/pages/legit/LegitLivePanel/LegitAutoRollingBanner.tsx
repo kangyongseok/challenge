@@ -123,7 +123,11 @@ function LegitAutoRollingBanner() {
       {triggered && <Box customStyle={{ height: LEGIT_FAKE_BANNER_HEIGHT }} />}
       <Banner ref={bannerRef} isFixed={triggered} showAppDownloadBanner={showAppDownloadBanner}>
         {fakeIndexData.map(({ title, description, increaseRate = 0 }, index) => (
-          <FakeInfo key={`fake-index-${title}`} showLine={index + 1 !== fakeIndexData.length}>
+          <FakeInfo
+            // eslint-disable-next-line react/no-array-index-key
+            key={`fake-index-${title}-${index}`}
+            showLine={index + 1 !== fakeIndexData.length}
+          >
             <Typography
               variant="body2"
               weight="bold"

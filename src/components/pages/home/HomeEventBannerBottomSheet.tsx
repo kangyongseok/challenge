@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useRouter } from 'next/router';
 import { BottomSheet, Button, Flexbox, Image } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 
@@ -10,18 +11,10 @@ import { EVENT_AD_BANNER_HIDE_DATE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
-
 function HomeEventBannerBottomSheet() {
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
-  const handleClickMoveToCamelSeller = useMoveCamelSeller({
-    attributes: {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.MAIN_MODAL,
-      source: 'MAIN'
-    }
-  });
+  const [open, setOpen] = useState(false);
 
   const handleClick = () => {
     logEvent(attrKeys.home.CLICK_MAIN_MODAL, {
@@ -30,7 +23,12 @@ function HomeEventBannerBottomSheet() {
       att: 'YES'
     });
 
-    handleClickMoveToCamelSeller();
+    router.push({
+      pathname: '/events/camelSellerEvent',
+      query: {
+        banner: true
+      }
+    });
   };
 
   const handleClose = () => setOpen(false);

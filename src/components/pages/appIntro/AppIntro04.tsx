@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -12,11 +12,11 @@ import attrKeys from '@constants/attrKeys';
 function AppIntro04({ animationStart }: { animationStart: boolean }) {
   const router = useRouter();
 
-  useEffect(() => {
-    logEvent(attrKeys.intro.VIEW_LOGIN_BUTTON, {
-      name: attrProperty.name.APP_INTRO
-    });
-  }, []);
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const handleClickLogin = () => {
     logEvent(attrKeys.intro.CLICK_LOGIN, {
@@ -26,6 +26,12 @@ function AppIntro04({ animationStart }: { animationStart: boolean }) {
 
     router.push('/login');
   };
+
+  useEffect(() => {
+    logEvent(attrKeys.intro.VIEW_LOGIN_BUTTON, {
+      name: attrProperty.name.APP_INTRO
+    });
+  }, []);
 
   return (
     <Flexbox
@@ -59,7 +65,7 @@ function AppIntro04({ animationStart }: { animationStart: boolean }) {
           <br />
           정가품 의견
         </Typography>
-        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: common.ui60 }}>
           사기 전에 전문가에게 물어보세요
         </Typography>
       </Box>
@@ -108,7 +114,11 @@ const LoginButton = styled(Button)`
   position: absolute;
   bottom: 0;
   width: calc(100% - 40px);
-  background: ${dark.palette.common.ui60};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui60};
   animation: color 0.5s forwards;
   animation-delay: 1s;
   @keyframes color {

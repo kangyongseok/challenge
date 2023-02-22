@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
+import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { EventFullImage, EventRegisterDialog } from '@components/pages/event';
 
@@ -26,8 +27,6 @@ import { checkAgent } from '@utils/common';
 import { dialogState, historyState, showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
-
-import PageHead from '../../src/components/UI/atoms/PageHead';
 
 function CamelSellerEvent() {
   // TODO isExtendedLayoutIOSVersion 적용 필요

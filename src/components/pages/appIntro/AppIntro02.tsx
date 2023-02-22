@@ -1,7 +1,13 @@
-import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 function AppIntro02({ animationStart }: { animationStart: boolean }) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   return (
     <Flexbox
       alignment="center"
@@ -28,7 +34,7 @@ function AppIntro02({ animationStart }: { animationStart: boolean }) {
             </BubbleText>
             <BubbleText variant="h3" weight="bold" top={60} right={-95} order={4} afterTop={14}>
               <Flexbox gap={8}>
-                <Circle color={dark.palette.common.uiWhite}>
+                <Circle color={common.uiWhite}>
                   <Icon name="CheckOutlined" size="medium" />
                 </Circle>
                 <Circle color="#FC7B7B" />
@@ -44,7 +50,7 @@ function AppIntro02({ animationStart }: { animationStart: boolean }) {
           <br />
           깔끔 필터
         </Typography>
-        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: common.ui60 }}>
           복잡한 중고매물, 보고픈 것만 보세요
         </Typography>
       </Box>
@@ -56,7 +62,12 @@ const CenterCard = styled(Flexbox)`
   width: 181px;
   height: 232px;
   border-radius: 16px;
-  border: 6px solid ${dark.palette.common.ui95};
+  border: 6px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.ui95};
   margin-bottom: 28px;
   padding: 0 12px;
   text-align: center;
@@ -74,8 +85,16 @@ const BubbleText = styled(Typography)<{
   afterTop?: number;
 }>`
   padding: 8px 14px;
-  background: ${dark.palette.common.ui20};
-  color: ${dark.palette.common.uiWhite};
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.ui20};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
   border-radius: 36px;
   position: absolute;
   @keyframes scale-in-right {

@@ -1,7 +1,13 @@
-import { Box, Flexbox, Icon, Image, Typography, dark } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 function AppIntro03({ animationStart }: { animationStart: boolean }) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   return (
     <Flexbox
       alignment="center"
@@ -96,7 +102,7 @@ function AppIntro03({ animationStart }: { animationStart: boolean }) {
           <br />
           꿀매물
         </Typography>
-        <Typography variant="h3" customStyle={{ marginTop: 12, color: dark.palette.common.ui60 }}>
+        <Typography variant="h3" customStyle={{ marginTop: 12, color: common.ui60 }}>
           가격 하락, 꿀매물 알아서 전부 챙겨드려요
         </Typography>
       </Box>
@@ -205,11 +211,19 @@ const BubbleText = styled(Typography)<{
   afterLeft?: number;
 }>`
   padding: 8px 14px;
-  background: ${dark.palette.secondary.red.main};
-  color: ${dark.palette.common.uiBlack};
+  background: ${({
+    theme: {
+      palette: { secondary }
+    }
+  }) => secondary.red.main};
+  color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiBlack};
   border-radius: 36px;
   position: relative;
-  width: 127px;
+  width: fit-content;
   margin: 0 auto;
   bottom: -20px;
   animation: slide-in-elliptic-top-fwd 0.7s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
@@ -242,10 +256,15 @@ const BubbleText = styled(Typography)<{
           }
         : {};
     }};
-    ${({ right }): CSSObject => {
+    ${({
+      theme: {
+        palette: { secondary }
+      },
+      right
+    }): CSSObject => {
       return right
         ? {
-            borderTop: `9px solid ${dark.palette.secondary.red.main}`,
+            borderTop: `9px solid  ${secondary.red.main}`,
             borderRadius: '0 20px 0',
             transform: 'rotate(90deg) translateX(20px)',
             right: 20
