@@ -20,6 +20,8 @@ function ChannelTalkProvider() {
 
     if (router.pathname === '/mypage') {
       ChannelTalk.showChannelButton();
+    } else {
+      ChannelTalk.hideChannelButton();
     }
   }, [router.pathname]);
 
