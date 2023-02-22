@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { BottomNavigation, CamelSellerFloatingButton, Header } from '@components/UI/molecules';
+import { BottomNavigation, Header } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -16,7 +16,7 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-import attrProperty from '@constants/attrProperty';
+// import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -67,13 +67,13 @@ function MyPage() {
         <MypageEventBanner />
         <MypageEtc />
       </GeneralTemplate>
-      <CamelSellerFloatingButton
+      {/* <CamelSellerFloatingButton
         attributes={{
           name: attrProperty.name.MY,
           title: attrProperty.title.MY_FLOATING,
           source: 'MYPAGE'
         }}
-      />
+      /> */}
     </>
   );
 }

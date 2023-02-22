@@ -148,6 +148,7 @@ export type ToastStatus =
   | 'successSendReview'
   | 'disabledMakeAppointment'
   | 'overLimitText'
+  | 'undeLimitText'
   | 'duplicatedNickName'
   | 'invalidBanWord'
   | 'invalidAdminWord'

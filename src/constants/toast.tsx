@@ -7,6 +7,7 @@ import { ToastStatus, ToastType } from '@typings/common';
 const common = {
   saved: '저장이 완료되었습니다',
   overLimitText: '{length}글자만 입력할 수 있어요.',
+  undeLimitText: '최소 {length}자 이상으로 작성해주세요.',
   savedChannelMessage: '저장되었습니다'
 };
 

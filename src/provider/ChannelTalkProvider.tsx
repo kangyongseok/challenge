@@ -17,6 +17,10 @@ function ChannelTalkProvider() {
 
   useEffect(() => {
     ChannelTalk.hideMessenger();
+
+    if (router.pathname === '/mypage') {
+      ChannelTalk.showChannelButton();
+    }
   }, [router.pathname]);
 
   useEffect(() => {
