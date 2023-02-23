@@ -37,11 +37,6 @@ export const settingsTransferPlatformsState = atom<
       selected: false
     },
     {
-      id: 22,
-      name: '후르츠패밀리',
-      selected: false
-    },
-    {
       id: 6,
       name: '나이키매니아',
       selected: false

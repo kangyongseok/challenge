@@ -224,21 +224,8 @@ function Chanel() {
         lastMessageManage: useQueryChannel.data?.lastMessageManage
       });
     }
-  }, [
-    channel?.userId,
-    channelUser?.type,
-    product?.brand?.name,
-    product?.category?.id,
-    product?.category?.name,
-    product?.id,
-    product?.price,
-    product?.productSeller?.account,
-    product?.productSeller?.id,
-    product?.productSeller?.type,
-    product?.sellerType,
-    product?.site?.name,
-    useQueryChannel
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   useEffect(() => {
     if (messagesRef.current) {
