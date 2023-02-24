@@ -8,10 +8,10 @@ import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@c
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+
 interface UserShopHeaderProps {
   triggered: boolean;
-  imageProfile: string;
-  nickName: string;
   currentTab: string;
   reviewCount: number;
   sellCount: number;
@@ -20,8 +20,6 @@ interface UserShopHeaderProps {
 
 function UserShopHeader({
   triggered,
-  imageProfile,
-  nickName,
   currentTab,
   reviewCount,
   sellCount,
@@ -30,6 +28,8 @@ function UserShopHeader({
   const {
     theme: { zIndex }
   } = useTheme();
+
+  const { userNickName: nickName, userImageProfile: imageProfile } = useQueryMyUserInfo();
 
   return triggered ? (
     <>

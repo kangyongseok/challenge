@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -40,7 +40,13 @@ import { fetchBanword, fetchInfoByUserId, putProfile } from '@api/user';
 import { PROFILE_EDIT_ERROR_MESSAGE } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import { CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import {
+  CAMEL_SUBSET_FONTFAMILY,
+  DEFAUT_BACKGROUND_IMAGE,
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP
+} from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getUserName } from '@utils/user';
@@ -75,7 +81,9 @@ function UserShopEdit() {
 
   const setDialogState = useSetRecoilState(dialogState);
   const setToastState = useSetRecoilState(toastState);
-  const setUserShopUpdatedProfileDataState = useSetRecoilState(userShopUpdatedProfileDataState);
+  const [userShopUpdatedProfileData, setUserShopUpdatedProfileDataState] = useRecoilState(
+    userShopUpdatedProfileDataState
+  );
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: myUserInfo, userId, userNickName } = useQueryMyUserInfo();
@@ -84,7 +92,8 @@ function UserShopEdit() {
       queryKeys.users.infoByUserId(accessUser?.userId || 0),
       () => fetchInfoByUserId(accessUser?.userId || 0),
       {
-        enabled: !!accessUser?.userId
+        enabled: !!accessUser?.userId,
+        refetchOnMount: true
       }
     );
 
@@ -103,6 +112,7 @@ function UserShopEdit() {
         refetchType: 'inactive'
       });
       setToastState({ type: 'user', status: 'saved' });
+      setUserShopUpdatedProfileDataState(false);
       router.back();
     }
   });
@@ -200,7 +210,7 @@ function UserShopEdit() {
   const userImageBackground =
     userProfileParams.imageBackground ||
     (userImageProfile.length > 0 && userImageProfile) ||
-    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
+    DEFAUT_BACKGROUND_IMAGE;
 
   const appDownLoadDialog = useCallback(() => {
     setDialogState({
@@ -458,6 +468,16 @@ function UserShopEdit() {
     setUserShopUpdatedProfileDataState(isUpdatedProfileData);
   }, [isUpdatedProfileData, setUserShopUpdatedProfileDataState]);
 
+  const handleClickBack = () => {
+    logEvent(attrKeys.header.CLICK_BACK, {
+      name: attrProperty.name.USER_SHOP_EDIT
+    });
+    if (userShopUpdatedProfileData) {
+      window.history.pushState('', '', router.asPath);
+    }
+    router.back();
+  };
+
   return (
     <GeneralTemplate
       header={
@@ -466,6 +486,7 @@ function UserShopEdit() {
             isTransparent={!triggered}
             titleCustomStyle={{ color: common.cmnW }}
             showRight={false}
+            onClickLeft={handleClickBack}
           >
             <Typography variant="h3" weight="bold">
               프로필 수정

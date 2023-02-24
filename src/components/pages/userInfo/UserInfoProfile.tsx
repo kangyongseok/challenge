@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 
-import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -37,13 +37,7 @@ function UserInfoProfile({
   return (
     <Box component="section">
       <ImageWrapper>
-        <BackgroundImage
-          src={
-            imageBackground ||
-            imageProfile ||
-            `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`
-          }
-        >
+        <BackgroundImage src={imageBackground || imageProfile || DEFAUT_BACKGROUND_IMAGE}>
           <Blur />
         </BackgroundImage>
       </ImageWrapper>

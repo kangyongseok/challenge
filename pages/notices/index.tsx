@@ -23,8 +23,6 @@ import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-//  router.push(`/announces/${id}`);
-
 function Notices() {
   const {
     theme: {

@@ -23,9 +23,6 @@ interface UserShopLegitProfileProps {
   isLoading?: boolean;
   title: string;
   description: string;
-  imageProfile: string;
-  imageBackground: string;
-  nickName: string;
   curnScore: number;
   maxScore: number;
   areaName?: string;
@@ -36,9 +33,6 @@ function UserShopLegitProfile({
   isLoading = false,
   title,
   description,
-  imageProfile,
-  imageBackground,
-  nickName,
   curnScore,
   maxScore,
   areaName,
@@ -54,7 +48,13 @@ function UserShopLegitProfile({
   const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo } = useQueryMyUserInfo();
+
+  const {
+    userNickName: nickName,
+    userImageProfile: imageProfile,
+    userImageBackground: imageBackground,
+    data
+  } = useQueryMyUserInfo();
 
   const handleClickShare = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_SHARE, {
@@ -98,7 +98,7 @@ function UserShopLegitProfile({
       <BackgroundImage
         src={
           imageBackground ||
-          myUserInfo?.info.value.image ||
+          imageProfile ||
           `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background-legit.png`
         }
       >
@@ -177,7 +177,7 @@ function UserShopLegitProfile({
                       })}
                     </Flexbox>
                   )}
-                  {!!areaName && myUserInfo?.info.value.isAreaOpen && (
+                  {!!areaName && data?.info.value.isAreaOpen && (
                     <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
                       <Icon name="PinOutlined" width={16} height={16} />
                       <Typography>{areaName}</Typography>

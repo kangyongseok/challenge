@@ -39,16 +39,22 @@ import { fetchLegitsBrands } from '@api/model';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  DEFAUT_BACKGROUND_IMAGE,
+  HEADER_HEIGHT,
+  IOS_SAFE_AREA_TOP
+} from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
-import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useMyProfileInfo from '@hooks/userMyProfileInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationDeleteAccount from '@hooks/useMutationDeleteAccount';
 
@@ -62,7 +68,7 @@ function LegitProfileEdit() {
   const { id, targetTab } = router.query;
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const setLegitProfileUpdatedProfileDataState = useSetRecoilState(
+  const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
     legitProfileUpdatedProfileDataState
   );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
@@ -70,7 +76,7 @@ function LegitProfileEdit() {
   const setToastState = useSetRecoilState(toastState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo } = useQueryMyUserInfo();
+  const { backgroundImage } = useMyProfileInfo();
 
   const { mutate: mutateWitdhdraw } = useMutationDeleteAccount();
   const { mutate: puUserProfileMuate } = useMutation(putProfile, {
@@ -132,14 +138,6 @@ function LegitProfileEdit() {
 
   const [tab, setTab] = useState('판매자' as string | number);
   const elementRef = useRef<null | HTMLDivElement>(null);
-  const userImageProfile =
-    (hasImageFile(myUserInfo?.info?.value?.image) && myUserInfo?.info?.value?.image) ||
-    (hasImageFile(sellerEditInfo?.imageProfile) && sellerEditInfo?.imageProfile) ||
-    '';
-  const userImageBackground =
-    sellerEditInfo.imageBackground ||
-    (userImageProfile.length > 0 && userImageProfile) ||
-    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
 
   const triggered = useScrollTrigger({
     ref: elementRef,
@@ -269,6 +267,16 @@ function LegitProfileEdit() {
     setLegitProfileUpdatedProfileDataState(isUpdatedProfileData);
   }, [isUpdatedProfileData, setLegitProfileUpdatedProfileDataState]);
 
+  const handleClickBack = () => {
+    logEvent(attrKeys.header.CLICK_BACK, {
+      name: attrProperty.name.LEGIT_PROFILE_EDIT
+    });
+    if (legitProfileUpdatedProfileData) {
+      window.history.pushState('', '', router.asPath);
+    }
+    router.back();
+  };
+
   return (
     <GeneralTemplate
       header={
@@ -278,7 +286,7 @@ function LegitProfileEdit() {
             isFixed
             showRight={false}
             rightIcon={<Box customStyle={{ width: 56 }} />}
-            // onClickLeft={handleClickBack}
+            onClickLeft={handleClickBack}
           >
             <Typography variant="h3" weight="bold">
               프로필수정
@@ -300,10 +308,13 @@ function LegitProfileEdit() {
         </SaveBtnWrap>
       }
     >
-      <BackgroundImage src={userImageBackground} showAppDownloadBanner={showAppDownloadBanner}>
+      <BackgroundImage
+        src={sellerEditInfo.imageBackground || backgroundImage || DEFAUT_BACKGROUND_IMAGE}
+        showAppDownloadBanner={showAppDownloadBanner}
+      >
         <Blur />
       </BackgroundImage>
-      <LegitProfileEditInfo userImageProfile={userImageProfile} />
+      <LegitProfileEditInfo />
       <ContetnsWrap ref={elementRef}>
         <TabGroup fullWidth value={tab} onChange={handleChangeValue}>
           <Tab text="판매자 프로필" value="판매자" />

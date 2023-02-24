@@ -84,7 +84,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   const userProductsParams = useMemo(
     () => ({
       page: 0,
-      status: tab === '0' ? [Number(tab || 0), 4, 8] : [1]
+      status: tab === '0' ? [Number(tab || 0), 4, 8, 20, 21] : [1]
     }),
     [tab]
   );

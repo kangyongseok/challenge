@@ -9,7 +9,7 @@ import UserAvatar from '@components/UI/organisms/UserAvatar';
 
 import { logEvent } from '@library/amplitude';
 
-import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -22,9 +22,6 @@ interface UserShopProfileProps {
   isLoading?: boolean;
   title: string;
   description: string;
-  imageProfile: string;
-  imageBackground: string;
-  nickName: string;
   curnScore: number;
   maxScore: number;
   areaName?: string;
@@ -36,9 +33,6 @@ function UserShopProfile({
   isLoading = false,
   title,
   description,
-  imageProfile,
-  imageBackground,
-  nickName,
   curnScore,
   maxScore,
   areaName,
@@ -53,7 +47,12 @@ function UserShopProfile({
   } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
-  const { data: myUserInfo } = useQueryMyUserInfo();
+  const {
+    userNickName: nickName,
+    userImageProfile: imageProfile,
+    userImageBackground: imageBackground,
+    data
+  } = useQueryMyUserInfo();
 
   const handleClickShare = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_SHARE, {
@@ -93,13 +92,7 @@ function UserShopProfile({
   return (
     <Box component="section">
       <ImageWrapper>
-        <BackgroundImage
-          src={
-            imageBackground ||
-            imageProfile ||
-            `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`
-          }
-        >
+        <BackgroundImage src={imageBackground || imageProfile || DEFAUT_BACKGROUND_IMAGE}>
           <Blur />
         </BackgroundImage>
       </ImageWrapper>
@@ -169,7 +162,7 @@ function UserShopProfile({
                     })}
                   </Flexbox>
                 )}
-                {!!areaName && myUserInfo?.info.value.isAreaOpen && (
+                {!!areaName && data?.info.value.isAreaOpen && (
                   <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
                     <Icon name="PinOutlined" width={16} height={16} />
                     <Typography>{areaName}</Typography>

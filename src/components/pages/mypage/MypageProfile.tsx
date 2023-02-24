@@ -11,13 +11,10 @@ import { Badge, Gap } from '@components/UI/atoms';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
-import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { hasImageFile, isExtendedLayoutIOSVersion } from '@utils/common';
-
-import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useMyProfileInfo from '@hooks/userMyProfileInfo';
 
 function MypageProfile() {
   const router = useRouter();
@@ -27,13 +24,8 @@ function MypageProfile() {
     }
   } = useTheme();
 
-  const { data: myUserInfo, userNickName, userId } = useQueryMyUserInfo();
-  const userImageProfile = useMemo(() => {
-    const imageProfile = myUserInfo?.info?.value?.imageProfile;
-    const image = myUserInfo?.info?.value?.image;
-
-    return (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
-  }, [myUserInfo?.info?.value?.image, myUserInfo?.info?.value?.imageProfile]);
+  const { profileImage, snsType, isCertifiedSeller, isLegit, userId, nickName } =
+    useMyProfileInfo();
 
   const TAB_MENU: {
     iconName: IconName;
@@ -101,10 +93,7 @@ function MypageProfile() {
     logEvent(attrKeys.mypage.CLICK_PROFILE_EDIT, {
       name: attrProperty.name.MY
     });
-    if (
-      myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
-      myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')
-    ) {
+    if (isLegit) {
       router.push(`/legit/profile/${userId}/edit`);
     } else {
       router.push('/user/shop/edit');
@@ -117,30 +106,28 @@ function MypageProfile() {
       direction="vertical"
       justifyContent="center"
       customStyle={{
-        padding: `calc(32px + ${
-          isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
-        }) 20px 20px`
+        padding: 20
       }}
     >
       <Flexbox gap={20} alignment="center">
         <Box customStyle={{ position: 'relative' }}>
           <UserAvatar
-            src={userImageProfile}
+            src={profileImage || ''}
             width={64}
             height={64}
             iconCustomStyle={{ width: 32, height: 32 }}
           />
-          {myUserInfo?.info?.value?.snsType === 'kakao' && (
+          {snsType === 'kakao' && (
             <SnsIconWrap bgColor="#FEE500">
               <Icon name="KakaoFilled" />
             </SnsIconWrap>
           )}
-          {myUserInfo?.info?.value?.snsType === 'facebook' && (
+          {snsType === 'facebook' && (
             <SnsIconWrap bgColor="#528BFF">
               <Icon name="BrandFacebookFilled" customStyle={{ color: common.uiWhite }} />
             </SnsIconWrap>
           )}
-          {myUserInfo?.info?.value?.snsType === 'apple' && (
+          {snsType === 'apple' && (
             <SnsIconWrap bgColor="#313438">
               <Icon name="AppleFilled" customStyle={{ color: common.uiWhite }} />
             </SnsIconWrap>
@@ -152,13 +139,12 @@ function MypageProfile() {
           gap={4}
           customStyle={{ maxWidth: 'calc(100% - 172px)' }}
         >
-          <Flexbox alignment="center" gap={2} customStyle={{ flexWrap: 'wrap' }}>
+          <Flexbox alignment="center" gap={2} customStyle={{ flexWrap: 'nowrap' }}>
             <EllipsisText variant="h3" weight="bold">
-              {userNickName}
+              {nickName}
             </EllipsisText>
-            {myUserInfo?.isCertifiedSeller && <Icon name="SafeFilled" color={primary.light} />}
-            {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
-              myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
+            {isCertifiedSeller && <Icon name="SafeFilled" color={primary.light} />}
+            {isLegit && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
                 <Icon
                   name="LegitFilled"

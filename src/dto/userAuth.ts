@@ -1,3 +1,5 @@
+import { Sns } from './user';
+
 export interface OAuth2Response {
   access_token: string;
   token_type: string;
@@ -76,7 +78,7 @@ export interface AccessUser {
   phone: string;
   image: string;
   mrcamelId: string;
-  snsType: 'kakao' | 'facebook' | 'apple';
+  snsType: Sns;
   userAuthStatus: boolean;
   userId: number;
   userName: string;

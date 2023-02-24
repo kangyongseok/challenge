@@ -22,6 +22,8 @@ const UserTraceRecord = {
     LocalStorage.set(USER_TRACE_RECORD, { ...userTraceRecord, lastVisitDate });
   },
   getPageViewCount(page: UserTracePages) {
+    const counts = LocalStorage.get<IUserTraceRecord>(USER_TRACE_RECORD)?.pageViewCounts;
+    if (!counts || !counts[page]) return 0;
     return LocalStorage.get<IUserTraceRecord>(USER_TRACE_RECORD)?.pageViewCounts[page] || 0;
   },
   getLastVisitDateDiffDay() {

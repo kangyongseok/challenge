@@ -27,7 +27,7 @@ import { logEvent } from '@library/amplitude';
 import { fetchLegitProfile } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -96,7 +96,7 @@ function LegitProfileInfo({
   const userImageBackground =
     (hasImageFile(profile?.imageBackground) && profile?.imageBackground) ||
     (userImageProfile.length > 0 && userImageProfile) ||
-    `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`;
+    DEFAUT_BACKGROUND_IMAGE;
 
   const handleClickShare = useCallback(() => {
     const shareData = {

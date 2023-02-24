@@ -19,15 +19,12 @@ import { logEvent } from '@library/amplitude';
 // import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useMyProfileInfo from '@hooks/userMyProfileInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MyPage() {
-  const { data: accessUser } = useQueryAccessUser();
-  const { data: myUserInfo } = useQueryMyUserInfo();
-  const isAuthLegit = ((myUserInfo || {})?.roles || [])?.some((role) =>
-    ['PRODUCT_LEGIT', 'PRODUCT_LEGIT_HEAD'].includes(role)
-  );
+  const { data: accessUser, isFetched } = useQueryAccessUser();
+  const { isLegit } = useMyProfileInfo();
 
   useEffect(() => {
     logEvent(attrKeys.mypage.VIEW_MY, {
@@ -35,6 +32,8 @@ function MyPage() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!isFetched) return null;
 
   if (!accessUser) {
     return (
@@ -54,7 +53,7 @@ function MyPage() {
       >
         <MypageProfile />
         <MypageActionBanner />
-        {isAuthLegit && (
+        {isLegit && (
           <>
             <MypageLegitInfo />
             <Gap height={1} />

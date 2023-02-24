@@ -25,7 +25,7 @@ import { fetchInfoByUserId } from '@api/user';
 
 import { productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
-import { APP_DOWNLOAD_BANNER_HEIGHT, TAB_HEIGHT } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, DEFAUT_BACKGROUND_IMAGE, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -95,7 +95,7 @@ function UserInfo() {
       userImageBackground:
         (hasImageFile(imageBackground) && imageBackground) ||
         (userImage.length > 0 && userImage) ||
-        `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`,
+        DEFAUT_BACKGROUND_IMAGE,
       userArea: area?.name || '',
       userShopDescription: shopDescription || '',
       userProductCount: commaNumber(productCount || 0),

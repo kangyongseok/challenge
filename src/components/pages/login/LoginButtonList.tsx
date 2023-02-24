@@ -85,7 +85,6 @@ function LoginButtonList({
         Axios.clearAccessToken();
 
         const userSnsLoginResult = await postDevLogin({ testUserId });
-
         successLogin(userSnsLoginResult);
       } catch (e) {
         // eslint-disable-next-line no-console

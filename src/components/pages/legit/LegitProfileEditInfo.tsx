@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useQueryClient } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -27,16 +28,13 @@ import { shake } from '@styles/transition';
 import { legitProfileEditState } from '@recoil/legitProfile';
 import { dialogState, toastState } from '@recoil/common';
 
-interface LegitProfileEditInfoProps {
-  userImageProfile: string;
-}
-
-function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
+function LegitProfileEditInfo() {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
+  const queryClient = useQueryClient();
   const nickNameRef = useRef<null | HTMLInputElement>(null);
 
   const setToastState = useSetRecoilState(toastState);
@@ -195,7 +193,7 @@ function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
         500
       );
     };
-  }, [imageType, sellerEditInfo, setSellerEditInfo, setToastState]);
+  }, [imageType, queryClient, sellerEditInfo, setSellerEditInfo, setToastState]);
 
   useEffect(() => {
     setIsBanWord(extractTagRegx.test(sellerEditInfo.nickName || ''));
@@ -280,7 +278,7 @@ function LegitProfileEditInfo({ userImageProfile }: LegitProfileEditInfoProps) {
           customStyle={{ position: 'relative' }}
           onClick={handleChangeImage({ isBackground: false })}
         >
-          <UserAvatar src={userImageProfile} isRound />
+          <UserAvatar src={sellerEditInfo.imageProfile || ''} isRound />
           <IconBox>
             <Icon name="CameraFilled" />
           </IconBox>

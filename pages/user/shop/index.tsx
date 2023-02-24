@@ -34,15 +34,15 @@ import { getCookies } from '@utils/cookies';
 import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useScrollTrigger from '@hooks/useScrollTrigger';
+import useMyProfileInfo from '@hooks/userMyProfileInfo';
 import useRedirectVC from '@hooks/useRedirectVC';
-import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function UserShop() {
   const router = useRouter();
 
   useRedirectVC('/user/shop');
 
-  const { userId = 0, userNickName, userImageProfile, userImageBackground } = useQueryMyUserInfo();
+  const { userId, nickName, profileImage } = useMyProfileInfo();
 
   const {
     isLoading,
@@ -57,7 +57,7 @@ function UserShop() {
       reviewCount = 0
     } = {},
     data
-  } = useQuery(queryKeys.users.infoByUserId(userId), () => fetchInfoByUserId(userId), {
+  } = useQuery(queryKeys.users.infoByUserId(userId || 0), () => fetchInfoByUserId(userId || 0), {
     enabled: !!userId,
     refetchOnMount: true
   });
@@ -92,12 +92,12 @@ function UserShop() {
 
   const { title, description } = useMemo(() => {
     return {
-      title: `판매자 ${userNickName} 후기와 평점 보기 | 카멜`,
+      title: `판매자 ${nickName} 후기와 평점 보기 | 카멜`,
       description: `평점 ${maxScore} 만점에 ${curnScore}점을 받은 판매자에요. 총 ${commaNumber(
         reviewCount
       )}의 후기를 받았고, ${commaNumber(displayProductCount)}개의 매물을 팔고 있어요.`
     };
-  }, [curnScore, displayProductCount, maxScore, reviewCount, userNickName]);
+  }, [curnScore, displayProductCount, maxScore, reviewCount, nickName]);
 
   const logEventTabTitles = ['SALE', 'SOLD', 'REVIEW'];
 
@@ -116,14 +116,12 @@ function UserShop() {
         description={description}
         ogTitle={title}
         ogDescription={description}
-        ogImage={userImageProfile}
+        ogImage={profileImage || ''}
       />
       <GeneralTemplate
         header={
           <UserShopHeader
             triggered={triggered}
-            imageProfile={userImageProfile}
-            nickName={userNickName}
             currentTab={tab}
             reviewCount={reviewCount}
             sellCount={displayProductCount}
@@ -138,9 +136,6 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={userImageProfile}
-              imageBackground={userImageBackground}
-              nickName={userNickName}
               curnScore={Number(curnScore || 0)}
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
@@ -151,9 +146,6 @@ function UserShop() {
               isLoading={isLoading}
               title={title}
               description={description}
-              imageProfile={userImageProfile}
-              imageBackground={userImageBackground}
-              nickName={userNickName}
               curnScore={Number(curnScore || 0)}
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
@@ -173,7 +165,7 @@ function UserShop() {
           )}
           {tab === tabLabels[2].key && (
             <UserShopReviewList
-              userId={userId}
+              userId={userId || 0}
               reviewCount={reviewCount}
               curnScore={curnScore}
               maxScore={maxScore}

@@ -160,7 +160,9 @@ export const VIEW_PRODUCT_STATUS = {
   3: '판매완료',
   4: '예약중',
   7: '판매중',
-  8: '숨김'
+  8: '숨김',
+  20: '등록 대기',
+  21: '갱신 대기'
 };
 
 type ProductStatusCodeProps = {

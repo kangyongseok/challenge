@@ -65,6 +65,7 @@ export type Area = {
 };
 
 export type Gender = 'N' | 'M' | 'F' | 'E';
+export type Sns = 'kakao' | 'facebook' | 'apple';
 
 export interface UserAgeAndGender {
   age: number; // 삭제예정
@@ -83,7 +84,7 @@ export interface MyUserInfoValue {
   nickName: string;
   shopDescription: string;
   yearOfBirth: number;
-  snsType: string;
+  snsType: Sns;
 }
 
 export type MyUserInfoInfo = {

@@ -10,6 +10,7 @@ import { fetchMyUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
+import { DEFAUT_BACKGROUND_IMAGE } from '@constants/common';
 
 import { getUserName } from '@utils/user';
 import { hasImageFile } from '@utils/common';
@@ -43,9 +44,7 @@ function useQueryMyUserInfo(enabled = true) {
       ),
       userImageProfile: userImage,
       userImageBackground:
-        imageBackground ||
-        (userImage.length > 0 && userImage) ||
-        `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background.png`
+        imageBackground || (userImage.length > 0 && userImage) || DEFAUT_BACKGROUND_IMAGE
     };
   }, [
     accessUser?.image,

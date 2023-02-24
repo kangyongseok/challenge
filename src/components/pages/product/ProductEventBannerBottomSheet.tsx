@@ -41,7 +41,7 @@ function ProductEventBannerBottomSheet() {
     if (
       UserTraceRecord.getLastVisitDateDiffDay() < -7 ||
       !UserTraceRecord.isReVisit() ||
-      UserTraceRecord.getPageViewCount('product') < 2
+      (UserTraceRecord?.getPageViewCount('product') || 0) < 2
     )
       return;
 
