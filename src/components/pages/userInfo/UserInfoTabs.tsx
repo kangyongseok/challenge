@@ -76,7 +76,6 @@ const UserInfoTabs = forwardRef<HTMLDivElement, UserInfoTabsProps>(function User
 const TabWrapper = styled.section`
   min-height: ${TAB_HEIGHT}px;
   z-index: 1;
-  user-select: none;
 `;
 
 export default UserInfoTabs;

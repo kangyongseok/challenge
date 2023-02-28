@@ -206,7 +206,6 @@ const ImageWrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  user-select: none;
   min-height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 160px);
   margin-top: calc(
     -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
@@ -239,7 +238,6 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  user-select: none;
 `;
 
 const Description = styled(Typography)`

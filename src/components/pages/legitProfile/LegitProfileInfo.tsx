@@ -387,7 +387,6 @@ const Wrapper = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  user-select: none;
   margin-top: calc(
     -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
   );

@@ -449,7 +449,6 @@ const List = styled.div`
   padding: 20px 20px 0 20px;
   overflow-y: hidden;
   overflow-x: auto;
-  user-select: none;
 `;
 
 const ProductImageWrap = styled.div`

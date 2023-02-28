@@ -72,7 +72,6 @@ const Title = styled.section<{ isEditMode?: boolean }>`
   align-items: center;
   padding: calc(52px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}) 20px
     ${({ isEditMode }) => (isEditMode ? 0 : 32)}px;
-  user-select: none;
 
   & > div:last-of-type {
     z-index: ${({ theme: { zIndex } }) => zIndex.header};

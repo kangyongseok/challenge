@@ -30,7 +30,6 @@ const BrandLogo = styled.section`
   justify-content: center;
   position: relative;
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
-  user-select: none;
 
   & > div {
     position: absolute;

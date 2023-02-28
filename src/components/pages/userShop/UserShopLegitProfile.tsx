@@ -220,7 +220,6 @@ const Wrapper = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  user-select: none;
   min-height: calc(312px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   /* padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0}; */
   margin-top: calc(
@@ -257,7 +256,6 @@ const Info = styled.div`
   padding-top: calc(
     ${HEADER_HEIGHT}px + 20px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
   );
-  user-select: none;
 `;
 
 const BadgeLabel = styled.label`

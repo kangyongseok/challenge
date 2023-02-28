@@ -49,7 +49,6 @@ const ButtonWrapper = styled.section`
   position: relative;
   width: 100%;
   min-height: 92px;
-  user-select: none;
 `;
 
 const ButtonBox = styled.div<{ backgroundColor?: Color }>`

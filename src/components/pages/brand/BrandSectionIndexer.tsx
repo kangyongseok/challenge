@@ -68,7 +68,6 @@ const Wrapper = styled.section<{ showAppDownloadBanner: boolean }>`
     112 + (showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0)}px;
   padding-top: calc(32px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   right: 0;
-  user-select: none;
   overflow: scroll;
   height: calc(
     100% -

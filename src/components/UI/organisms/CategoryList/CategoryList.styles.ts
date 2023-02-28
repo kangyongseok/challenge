@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 export const StyledCategoryList = styled.div<{ variant: 'solid' | 'outline' }>`
   display: grid;
   padding: 0 20px;
-  user-select: none;
 
   ${({ variant }) =>
     variant === 'solid'

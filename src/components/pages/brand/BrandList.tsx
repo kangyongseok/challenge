@@ -56,7 +56,6 @@ const Wrapper = styled.section`
   gap: 8px;
   flex-direction: column;
   padding: 0 40px 20px 20px;
-  user-select: none;
 `;
 
 const BrandNav = styled(Typography)`

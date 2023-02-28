@@ -154,7 +154,6 @@ const Wrapper = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  user-select: none;
   min-height: 312px;
   margin-top: calc(
     -${HEADER_HEIGHT}px - ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
@@ -187,7 +186,6 @@ const Info = styled.div`
   flex-direction: column;
   position: relative;
   flex: 1;
-  user-select: none;
   padding-top: calc(
     ${HEADER_HEIGHT}px + 20px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'}
   );

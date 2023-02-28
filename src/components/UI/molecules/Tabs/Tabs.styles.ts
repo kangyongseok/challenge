@@ -30,7 +30,6 @@ export const Tab = styled.button<
   margin: 0;
   border-radius: 0;
   cursor: pointer;
-  user-select: none;
   vertical-align: middle;
   appearance: none;
   text-decoration: none;

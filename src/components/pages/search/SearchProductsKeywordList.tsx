@@ -271,7 +271,6 @@ const CardList = styled.section`
   display: flex;
   column-gap: 12px;
   padding: 0 20px;
-  user-select: none;
   width: fit-content;
 `;
 

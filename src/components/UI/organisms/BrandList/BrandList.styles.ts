@@ -6,7 +6,6 @@ import { BrandListProps } from './index';
 export const StyledBrandList = styled.div<Pick<BrandListProps, 'variant'>>`
   padding: 0 20px;
   display: grid;
-  user-select: none;
 
   ${({ variant }) =>
     variant === 'solid'

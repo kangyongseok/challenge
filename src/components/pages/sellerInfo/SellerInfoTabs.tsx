@@ -66,7 +66,6 @@ const SellerInfoTabs = forwardRef<HTMLDivElement, SellerInfoTabsProps>(function 
 const TabWrapper = styled.section`
   min-height: ${TAB_HEIGHT}px;
   z-index: 1;
-  user-select: none;
 `;
 
 export default SellerInfoTabs;

@@ -413,7 +413,6 @@ function ProductSellerBottomMenu({
 const StyledWrap = styled.div`
   width: 100%;
   min-height: 72px;
-  user-select: none;
 `;
 
 const SellerBottomNav = styled(Flexbox)`

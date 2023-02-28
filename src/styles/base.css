@@ -68,6 +68,11 @@ body.dark {
   height: 100%;
 }
 
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 * ::-webkit-scrollbar {
   display: none;
 }

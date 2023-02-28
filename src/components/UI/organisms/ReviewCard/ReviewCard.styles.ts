@@ -7,5 +7,4 @@ export const Wrapper = styled.div`
   padding: 20px;
   background-color: ${({ theme: { palette } }) => palette.common.bg03};
   border-radius: 8px;
-  user-select: none;
 `;

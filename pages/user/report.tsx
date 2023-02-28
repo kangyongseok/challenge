@@ -166,7 +166,6 @@ const SelectBox = styled.div`
   height: 44px;
 
   svg {
-    user-select: none;
     display: inline-block;
     fill: currentcolor;
     flex-shrink: 0;

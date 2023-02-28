@@ -406,7 +406,6 @@ const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
   padding: 20px;
-  user-select: none;
   min-height: 520px;
   padding-top: ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '56px'};
   margin-top: calc(
@@ -491,7 +490,6 @@ const ButtonWrapper = styled.section`
   position: relative;
   width: 100%;
   min-height: 92px;
-  user-select: none;
 `;
 
 const ButtonBox = styled.div`

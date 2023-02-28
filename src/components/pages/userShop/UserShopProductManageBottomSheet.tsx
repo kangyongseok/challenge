@@ -77,16 +77,19 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
     channelBottomSheetStateFamily('selectTargetUser')
   );
 
-  const { isSale, isSoldOut, isReserving, isHiding, isTransferred } = useMemo(
-    () => ({
-      isSale: status === 0,
-      isSoldOut: status === 1,
-      isReserving: status === 4,
-      isHiding: status === 8,
-      isTransferred: productSeller?.type === 3
-    }),
-    [status, productSeller]
-  );
+  const { isSale, isSoldOut, isReserving, isHiding, isTransferred, isRegisterWait, isUpdateWait } =
+    useMemo(
+      () => ({
+        isSale: status === 0,
+        isSoldOut: status === 1,
+        isReserving: status === 4,
+        isHiding: status === 8,
+        isTransferred: productSeller?.type === 3,
+        isRegisterWait: status === 20,
+        isUpdateWait: status === 21
+      }),
+      [status, productSeller]
+    );
 
   const getAttProperty = {
     id,
@@ -348,6 +351,16 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
             <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
               판매중으로 변경
             </Menu>
+          )}
+          {(isUpdateWait || isRegisterWait) && (
+            <>
+              <Menu variant="h3" weight="medium" data-status={0} onClick={handleClickUpdateStatus}>
+                판매중으로 변경
+              </Menu>
+              <Menu variant="h3" weight="medium" data-status={1} onClick={handleClickUpdateStatus}>
+                판매완료로 변경
+              </Menu>
+            </>
           )}
           <Menu
             variant="h3"
