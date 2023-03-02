@@ -90,16 +90,11 @@ export default function useMoveCamelSeller({
     const checkedProductPhotoUploadGuide = LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE);
 
     if (!accessUser) {
-      // setOpenLoginBottomSheetState({ TODO 판매 이벤트 종료 후 다시 코드 원복
-      //   open: true,
-      //   returnUrl: checkedProductPhotoUploadGuide
-      //     ? '/camelSeller/registerConfirm'
-      //     : // : '/camelSeller/guide'
-      //       '/events/camelSellerEvent'
-      // });
       setOpenLoginBottomSheetState({
         open: true,
-        returnUrl: '/events/camelSellerEvent?login=true'
+        returnUrl: checkedProductPhotoUploadGuide
+          ? '/camelSeller/registerConfirm'
+          : '/camelSeller/guide'
       });
       return;
     }
@@ -156,8 +151,7 @@ export default function useMoveCamelSeller({
         router.push('/camelSeller/registerConfirm');
       }
     } else {
-      // router.push('/camelSeller/guide');
-      router.push('/events/camelSellerEvent?first=true');
+      router.push('/camelSeller/guide');
     }
   };
 

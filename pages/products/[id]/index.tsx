@@ -624,14 +624,11 @@ function ProductDetail() {
                   customStyle={{
                     margin: '0 -20px',
                     borderBottom: `8px solid ${common.bg02}`,
-                    // backgroundColor: '#4836B6'
-                    // backgroundColor: '#64607A'
                     backgroundColor: '#111A3D'
                   }}
                 >
                   <Image
                     height={104}
-                    // src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-seller-banner2.png`}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
                     alt="Banner Img"
                     disableAspectRatio

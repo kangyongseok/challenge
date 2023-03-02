@@ -63,7 +63,7 @@ function HomeEventBannerBottomSheet() {
   }, [open]);
 
   return (
-    <BottomSheet open={open} onClose={handleClose} disableSwipeable>
+    <BottomSheet open={false} onClose={handleClose} disableSwipeable>
       <Image
         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-camel-seller-ad.png`}
         alt="Event Banner Img"
