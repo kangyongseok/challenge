@@ -42,13 +42,16 @@ function LegitAdminRequestOpinionWriter() {
   const { data: accessUser } = useQueryAccessUser();
 
   const {
-    data: { status, legitOpinions = [], productResult: { postType = 0 } = {}, isLegitHead } = {}
+    data: { status, legitOpinions, productResult: { postType = 0 } = {}, isLegitHead } = {}
   } = useQuery(queryKeys.productLegits.legit(Number(id)), () => fetchProductLegit(Number(id)), {
     enabled: !!id
   });
 
   const myLegitOpinion = useMemo(
-    () => legitOpinions.find(({ roleLegit: { userId } }) => userId === (accessUser || {}).userId),
+    () =>
+      (legitOpinions || []).find(
+        ({ roleLegit: { userId } }) => userId === (accessUser || {}).userId
+      ),
     [legitOpinions, accessUser]
   );
 
