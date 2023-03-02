@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +13,6 @@ import LegitOpinionButton from '@components/UI/molecules/LegitOpinionButton';
 import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 import {
   legitAdminOpinionDataState,
@@ -270,12 +270,11 @@ const OpinionWriter = styled.div<{ hide: boolean; focused: boolean }>`
       : {}};
 `;
 
-const TextArea = styled.textarea`
+const TextArea = styled(TextareaAutosize)`
   flex-grow: 1;
   outline: 0;
   width: 100%;
   height: 100%;
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   ${({
     theme: {
       palette: { common },

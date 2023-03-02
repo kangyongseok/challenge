@@ -2,16 +2,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  Index,
-  InfiniteLoader,
-  List,
-  ListRowProps,
-  WindowScroller
-} from 'react-virtualized';
+import WindowScroller from 'react-virtualized/dist/commonjs/WindowScroller';
+import List from 'react-virtualized/dist/commonjs/List';
+import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
+import CellMeasurer from 'react-virtualized/dist/commonjs/CellMeasurer';
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
+import { CellMeasurerCache, Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';

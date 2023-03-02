@@ -41,32 +41,17 @@ import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
 
-const DialogProvider = dynamic(() => import('@provider/DialogProvider'), {
-  loading: () => <div>Loading...</div>
-});
-const ToastProvider = dynamic(() => import('@provider/ToastProvider'), {
-  loading: () => <div>Loading...</div>
-});
-const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'), {
-  loading: () => <div>Loading...</div>
-});
+const DialogProvider = dynamic(() => import('@provider/DialogProvider'));
+const ToastProvider = dynamic(() => import('@provider/ToastProvider'));
+const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'));
 const LegitResultSurveyTypeform = dynamic(
-  () => import('@components/UI/organisms/LegitResultSurveyTypeform'),
-  {
-    loading: () => <div>Loading...</div>
-  }
+  () => import('@components/UI/organisms/LegitResultSurveyTypeform')
 );
 const CamelSellerSavePopup = dynamic(
-  () => import('@components/UI/organisms/Popups/CamelSellerSavePopup'),
-  {
-    loading: () => <div>Loading...</div>
-  }
+  () => import('@components/UI/organisms/Popups/CamelSellerSavePopup')
 );
 const CamelSellerAppUpdateDialog = dynamic(
-  () => import('@components/UI/organisms/CamelSellerAppUpdateDialog'),
-  {
-    loading: () => <div>Loading...</div>
-  }
+  () => import('@components/UI/organisms/CamelSellerAppUpdateDialog')
 );
 
 if (global.navigator) {

@@ -81,7 +81,9 @@ function LegitResultRequestInfo() {
             name: quoteTitle || '',
             imagSrc:
               imageModel ||
-              `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${nameEng
+              `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${(
+                nameEng || ''
+              )
                 .toLowerCase()
                 .replace(/\s/g, '')}.png`
           }}

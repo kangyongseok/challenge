@@ -45,7 +45,9 @@ function LegitResultIntro() {
       <Image
         width={96}
         height={95}
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${brand.nameEng
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/transparent/${(
+          brand?.nameEng || ''
+        )
           .toLowerCase()
           .replace(/ /g, '')}.png`}
         alt="Brand Logo Img"
@@ -59,7 +61,7 @@ function LegitResultIntro() {
       >
         {commaNumber(cntTargetOpinions)}명의 감정 전문가들이
         <br />
-        {`${brand.name} ${category.name.replace(/\(P\)/g, '')}을(를)`}
+        {`${brand.name} ${(category?.name || '').replace(/\(P\)/g, '')}을(를)`}
         <br />
         <strong>감정중</strong>입니다.
       </Typography>
