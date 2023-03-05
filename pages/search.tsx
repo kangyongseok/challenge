@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Icon, Typography } from 'mrcamel-ui';
 import find from 'lodash-es/find';
-import { debounce } from 'lodash-es';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -41,27 +40,24 @@ import { isExtendedLayoutIOSVersion } from '@utils/common';
 import type { RecentItems, TotalSearchItem } from '@typings/search';
 import { searchRecentSearchListState } from '@recoil/search';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-// import useDebounce from '@hooks/useDebounce';
+import useDebounce from '@hooks/useDebounce';
 
 function Search() {
   const router = useRouter();
   const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
     searchRecentSearchListState
   );
-  const inputRef = useRef<HTMLInputElement>(null);
-  const submitValueRef = useRef('');
 
   const [searchValue, setSearchValue] = useState('');
 
   const { data: accessUser } = useQueryAccessUser();
 
-  // const debouncedSearchKeyword = useDebounce<string>(searchValue, 300);
+  const debouncedSearchKeyword = useDebounce<string>(searchValue.replace(/-/g, ' '), 300);
   const { data: suggestKeywords = [] } = useQuery(
-    queryKeys.products.keywordsSuggest(searchValue),
-    () => fetchKeywordsSuggest(searchValue),
+    queryKeys.products.keywordsSuggest(debouncedSearchKeyword),
+    () => fetchKeywordsSuggest(debouncedSearchKeyword),
     {
-      enabled: !!searchValue,
-      keepPreviousData: true,
+      enabled: !!debouncedSearchKeyword,
       onSuccess: (response) => {
         logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
           name: attrProperty.productName.SEARCH,
@@ -142,11 +138,11 @@ function Search() {
       });
     }
 
-    if (submitValueRef.current) {
+    if (searchValue) {
       router
         .replace({
           pathname: '/search',
-          query: { keyword: submitValueRef.current }
+          query: { keyword: searchValue }
         })
         .then(() =>
           setTimeout(() => {
@@ -158,25 +154,19 @@ function Search() {
     }
   };
 
-  // useEffect(() => {
-  //   if (fetchValue) {
-  //     refetch();
-  //   }
-  // }, [fetchValue, refetch]);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     logEvent(attrKeys.search.CLICK_SCOPE, { name: 'SEARCH' });
 
-    if (submitValueRef.current.trim().length === 0) {
+    if (searchValue.trim().length === 0) {
       logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
       setIsSearchEmpty(true);
       return;
     }
 
     handleTotalSearch({
-      keyword: submitValueRef.current,
+      keyword: searchValue,
       title: 'SCOPE',
       count: (suggestKeywords[0] || {}).count || 0,
       type: 'submit'
@@ -200,19 +190,8 @@ function Search() {
   useEffect(() => {
     const { keyword } = router.query;
 
-    if (keyword) {
-      setSearchValue(String(keyword).replace(/-/g, ' '));
-      if (inputRef.current) {
-        (inputRef.current.querySelector('input') as HTMLInputElement).value = String(
-          keyword
-        ).replace(/-/g, ' ');
-      }
-    }
+    if (keyword) setSearchValue(String(keyword));
   }, [router.query]);
-
-  const handleChange = debounce((value: string) => {
-    setSearchValue(value.replace(/-/g, ' '));
-  }, 500);
 
   return (
     <>
@@ -226,7 +205,6 @@ function Search() {
       <GeneralTemplate disablePadding subset>
         <SearchForm action="" onSubmit={handleSubmit}>
           <SearchBar
-            ref={inputRef}
             type="search"
             autoCapitalize="none"
             autoComplete="off"
@@ -236,11 +214,8 @@ function Search() {
             fullWidth
             isFixed
             placeholder="어떤 명품을 득템해 볼까요?"
-            // value={searchValue}
-            onChange={(e) => {
-              submitValueRef.current = e.target.value;
-              handleChange(e.target.value);
-            }}
+            value={searchValue.replace(/-/g, ' ')}
+            onChange={(e) => setSearchValue(e.target.value)}
             onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
             startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
           />

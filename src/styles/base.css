@@ -83,6 +83,16 @@ body.dark {
   display: none;
 }
 
+input {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   height: 16px;
