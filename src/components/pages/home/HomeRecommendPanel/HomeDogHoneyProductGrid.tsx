@@ -90,7 +90,6 @@ function HomeDogHoneyProductGrid() {
               <NewProductGridCard
                 variant="gridB"
                 product={product}
-                platformLabelType="B"
                 attributes={{
                   name: attrProperty.name.MAIN,
                   title: attrProperty.title.DOG_HONEY,

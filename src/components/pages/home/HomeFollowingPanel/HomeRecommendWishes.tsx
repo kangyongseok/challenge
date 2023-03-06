@@ -16,11 +16,9 @@ import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { groupingProducts } from '@utils/products';
 
-import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -253,26 +251,14 @@ function HomeRecommendWishes() {
       )}
       {isLoadingUserHistory && enabledUserHistories && (
         <List>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <NewProductGridCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`home-user-history-product-skeleton-${index}`}
-                variant="swipeX"
-                hideMetaInfo
-              />
-            ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <NewProductGridCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`home-user-history-product-skeleton-${index}`}
-                variant="swipeX"
-                hideMetaInfo
-              />
-            ))}
-          </ABTestGroup>
+          {Array.from({ length: 10 }).map((_, index) => (
+            <NewProductGridCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`home-user-history-product-skeleton-${index}`}
+              variant="swipeX"
+              hideMetaInfo
+            />
+          ))}
         </List>
       )}
       {!isInitialLoading && !enabledUserHistories && (
@@ -295,38 +281,19 @@ function HomeRecommendWishes() {
       )}
       {!isLoadingUserHistory && enabledUserHistories && notSoldoutProducts.length && (
         <List>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
-            {notSoldoutProducts.map(({ product }, index) => (
-              <NewProductGridCard
-                key={`home-user-history-product-${product.id}`}
-                variant="swipeX"
-                product={product}
-                attributes={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.RECENT_LIST,
-                  source: attrProperty.source.MAIN_RECENT,
-                  index: index + 1
-                }}
-              />
-            ))}
-          </ABTestGroup>
-          <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
-            {notSoldoutProducts.map(({ product }, index) => (
-              <NewProductGridCard
-                key={`home-user-history-product-${product.id}`}
-                variant="swipeX"
-                product={product}
-                platformLabelType="B"
-                hideSize={false}
-                attributes={{
-                  name: attrProperty.name.MAIN,
-                  title: attrProperty.title.RECENT_LIST,
-                  source: attrProperty.source.MAIN_RECENT,
-                  index: index + 1
-                }}
-              />
-            ))}
-          </ABTestGroup>
+          {notSoldoutProducts.map(({ product }, index) => (
+            <NewProductGridCard
+              key={`home-user-history-product-${product.id}`}
+              variant="swipeX"
+              product={product}
+              attributes={{
+                name: attrProperty.name.MAIN,
+                title: attrProperty.title.RECENT_LIST,
+                source: attrProperty.source.MAIN_RECENT,
+                index: index + 1
+              }}
+            />
+          ))}
         </List>
       )}
       {!enabledUserHistories && (

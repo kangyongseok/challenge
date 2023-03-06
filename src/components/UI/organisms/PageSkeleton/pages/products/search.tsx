@@ -6,10 +6,6 @@ import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { ProductsHeader } from '@components/pages/products';
 
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
-
-import { ABTestGroup } from '@provider/ABTestProvider';
-
 function SearchProducts() {
   return (
     <GeneralTemplate
@@ -69,12 +65,7 @@ function SearchProducts() {
         {Array.from({ length: 10 }, (_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Grid key={`product-card-skeleton-${index}`} item xs={2}>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
-              <NewProductGridCardSkeleton />
-            </ABTestGroup>
-            <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
-              <NewProductGridCardSkeleton />
-            </ABTestGroup>
+            <NewProductGridCardSkeleton />
           </Grid>
         ))}
       </Grid>

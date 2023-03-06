@@ -36,8 +36,6 @@ export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> 
   variant?: ProductGridCardVariant;
   product: Product | ProductResult;
   subText?: string;
-  // TODO A/B 테스트 이후 제거 예정
-  platformLabelType?: 'A' | 'B';
   bottomLabel?: ReactElement;
   hideLabel?: boolean;
   hidePrice?: boolean;
@@ -57,14 +55,13 @@ function NewProductGridCard({
   variant = 'gridA',
   product,
   subText,
-  platformLabelType = 'A',
   bottomLabel,
   hideLabel,
   hidePrice,
   hideAreaInfo,
   hideMetaInfo,
   hideWishButton,
-  hideSize = true,
+  hideSize,
   attributes: { name, title, source, index, ...attributes } = {},
   onWishAfterChangeCallback,
   measure,
@@ -255,36 +252,7 @@ function NewProductGridCard({
           position: 'relative'
         }}
       >
-        {!hideLabel && platformLabelType === 'A' && !isAuthProduct && isAuthSeller && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            size="xsmall"
-            startIcon={<Icon name="ShieldFilled" />}
-            text="인증판매자"
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1
-            }}
-          />
-        )}
-        {!hideLabel && platformLabelType === 'A' && isAuthProduct && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            size="xsmall"
-            text="정품의견"
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1
-            }}
-          />
-        )}
-        {!hideLabel && platformLabelType === 'B' && !isAuthProduct && isAuthSeller && (
+        {!hideLabel && !isAuthProduct && isAuthSeller && (
           <Flexbox
             customStyle={{
               position: 'absolute',
@@ -309,7 +277,6 @@ function NewProductGridCard({
           </Flexbox>
         )}
         {!hideLabel &&
-          platformLabelType === 'B' &&
           (!isAuthSeller || isAuthProduct) &&
           product.productSeller.type !== 4 &&
           siteId !== 34 && (
@@ -342,7 +309,6 @@ function NewProductGridCard({
             </Flexbox>
           )}
         {!hideLabel &&
-          platformLabelType === 'B' &&
           (!isAuthSeller || isAuthProduct) &&
           (product.productSeller.type === 4 || siteId === 34) && (
             <Flexbox

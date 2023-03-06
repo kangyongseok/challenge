@@ -92,7 +92,6 @@ function HomeAuthCamelProductGrid() {
             <Grid key={`home-auth-camel-product-${product.id}`} item xs={2}>
               <NewProductGridCard
                 variant="gridB"
-                platformLabelType="B"
                 product={product}
                 attributes={{
                   name: attrProperty.name.MAIN,
