@@ -103,7 +103,7 @@ function HomeTabs() {
         </Typography>
         <Badge
           open={!!notViewedFollowingCount}
-          text={12}
+          text={notViewedFollowingCount}
           width={20}
           height={20}
           customStyle={{
