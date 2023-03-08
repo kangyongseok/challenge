@@ -163,6 +163,7 @@ export interface UserInfoResult {
   isNewUser: boolean;
   notViewedHistoryCount: number;
   notViewedAnnounceCount: number;
+  notViewedFollowingCount: number;
   hasChannel: boolean;
 }
 
@@ -501,11 +502,12 @@ export interface UserTransfer {
   id: number;
   userId: number;
   siteId: number;
-  status: 0 | 1;
+  status: 0 | 1 | 2;
   url: string;
   isDeleted: boolean;
   dateUpdated: string;
   dateCreated: string;
+  description?: string;
 }
 
 export type FixedChannelType = 'channelDefaultMessage';

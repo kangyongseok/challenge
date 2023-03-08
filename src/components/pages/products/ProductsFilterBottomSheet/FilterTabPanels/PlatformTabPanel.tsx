@@ -20,7 +20,7 @@ function getPlatformImageSrc(hasImage: boolean, id: number) {
   if (!hasImage) return '';
 
   if (id === 161) {
-    return 'https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/logo_icon_blue.png';
+    return `https://${process.env.IMAGE_DOMAIN}/assets/images/logo_icon_blue.png`;
   }
 
   return `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${id}.png`;

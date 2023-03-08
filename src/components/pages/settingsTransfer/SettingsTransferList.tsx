@@ -53,7 +53,7 @@ function SettingsTransferList() {
           marginTop: 12
         }}
       >
-        {userTransfers.map(({ id, siteId, url, status }) => (
+        {userTransfers.map(({ id, siteId, url, status, description }) => (
           <Flexbox
             key={`user-transfer-platform-${id}`}
             alignment="center"
@@ -93,6 +93,16 @@ function SettingsTransferList() {
               >
                 {url}
               </Typography>
+              {description && status === 2 && (
+                <Typography
+                  variant="body3"
+                  customStyle={{
+                    color: common.ui60
+                  }}
+                >
+                  {description}
+                </Typography>
+              )}
             </Flexbox>
             {status === 0 && (
               <Chip
@@ -110,7 +120,7 @@ function SettingsTransferList() {
             {status === 1 && (
               <Chip
                 variant="solid"
-                brandColor="white"
+                brandColor="black"
                 size="small"
                 isRound={false}
                 customStyle={{
@@ -118,6 +128,20 @@ function SettingsTransferList() {
                 }}
               >
                 완료
+              </Chip>
+            )}
+            {status === 2 && (
+              <Chip
+                variant="ghost"
+                brandColor="red"
+                size="small"
+                isRound={false}
+                customStyle={{
+                  whiteSpace: 'nowrap',
+                  background: '#FFE5E8'
+                }}
+              >
+                실패
               </Chip>
             )}
           </Flexbox>

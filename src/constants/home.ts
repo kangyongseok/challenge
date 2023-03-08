@@ -97,13 +97,22 @@ export const femaleBanners = [
   }
 ];
 
+// 스니커즈, 시계, 맨투맨, 패딩/점퍼, 카드지갑, 자켓/바람막이
+// 조던 구찌 스톤아일랜드 프라이탁, 루이비통, 톰브라운, 샤넬, 애플
 export const defaultNonMemberPersonalGuideList = [
   {
-    id: 25,
-    name: '스톤아일랜드',
-    parentId: 0,
-    type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/stoneisland.jpg`
+    id: 383,
+    name: '스니커즈',
+    parentId: 14,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_383_m.png`
+  },
+  {
+    id: 409,
+    name: '시계',
+    parentId: 96,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_409_m.png`
   },
   {
     id: 366,
@@ -113,25 +122,11 @@ export const defaultNonMemberPersonalGuideList = [
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_366_m.png`
   },
   {
-    id: 44,
-    name: '샤넬',
-    parentId: 0,
-    type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/chanel.jpg`
-  },
-  {
-    id: 327,
-    name: '숄더백/크로스백',
-    parentId: 45,
+    id: 356,
+    name: '패딩/점퍼',
+    parentId: 119,
     type: 'category',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_327_m.png`
-  },
-  {
-    id: 125,
-    name: '프라이탁',
-    parentId: 98,
-    type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/freitag.jpg`
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_356_m.png`
   },
   {
     id: 393,
@@ -141,17 +136,66 @@ export const defaultNonMemberPersonalGuideList = [
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_393_m.png`
   },
   {
-    id: 34,
-    name: '디올',
-    parentId: 97,
-    type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/dior.jpg`
+    id: 286,
+    name: '자켓/바람막이',
+    parentId: 119,
+    type: 'category',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_286_m.png`
   },
   {
-    id: 26,
-    name: '아이앱',
+    id: 216,
+    name: '조던',
     parentId: 0,
     type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/iapstudio.jpg`
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/airjordan.jpg`
+  },
+  {
+    id: 6,
+    name: '구찌',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/gucci.jpg`
+  },
+  {
+    id: 25,
+    name: '스톤아일랜드',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/stoneisland.jpg`
+  },
+  {
+    id: 125,
+    name: '프라이탁',
+    parentId: 98,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/freitag.jpg`
+  },
+  {
+    id: 11,
+    name: '루이비통',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/louisvuitton.jpg`
+  },
+  {
+    id: 32,
+    name: '톰브라운',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/thombrowne.jpg`
+  },
+  {
+    id: 44,
+    name: '샤넬',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/chanel.jpg`
+  },
+  {
+    id: 51,
+    name: '애플',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/apple.jpg`
   }
 ];

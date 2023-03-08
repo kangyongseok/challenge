@@ -31,6 +31,22 @@ type PersonalGuide = (Brand | Category) & {
   src?: string;
 };
 
+type PersonalNewGuide = {
+  isDeleted: boolean;
+  dateUpdated: string;
+  dateCreated: string;
+  id: number;
+  groupId: number;
+  tierId: number;
+  name: string;
+  nameEng: string;
+  viewName: null;
+  parentId: number;
+  isLegitProduct: boolean;
+  type: 'brand' | 'category';
+  src: string;
+};
+
 function HomePersonalGuide() {
   const router = useRouter();
   const {
@@ -159,12 +175,12 @@ function HomePersonalGuide() {
   };
 
   useEffect(() => {
-    const guideRenderCount = 8;
+    const guideRenderCount = 13;
     const themeMode = mode === 'light' ? 'white' : 'black';
-    const defaultStylesResult = defaultStyles.map((defaultStyle) => {
-      const categoryId = defaultStyle?.category?.subParentId || defaultStyle?.category?.id;
 
-      if (defaultStyle.brand) {
+    const defaultStyleBrands = defaultStyles
+      .filter((defaultStyle) => defaultStyle.brand)
+      .map((defaultStyle) => {
         return {
           ...defaultStyle.brand,
           type: 'brand',
@@ -174,9 +190,11 @@ function HomePersonalGuide() {
             .toLowerCase()
             .replace(/\s/g, '')}.jpg`
         };
-      }
-
-      if (defaultStyle.category) {
+      });
+    const defaultStyleCategory = defaultStyles
+      .filter((defaultStyle) => defaultStyle.category)
+      .map((defaultStyle) => {
+        const categoryId = defaultStyle?.category?.subParentId || defaultStyle?.category?.id;
         return {
           ...defaultStyle.category,
           type: 'category',
@@ -184,9 +202,8 @@ function HomePersonalGuide() {
             process.env.IMAGE_DOMAIN
           }/assets/images/category/ico_cate_${categoryId}_${(gender || 'm').toLowerCase()}.png`
         };
-      }
-      return {};
-    });
+      });
+
     const divisionStyles = styles
       .map((style) => {
         return [
@@ -217,14 +234,31 @@ function HomePersonalGuide() {
 
         return {};
       })
-      .slice(0, guideRenderCount);
+      .slice(0, guideRenderCount) as PersonalNewGuide[];
 
     if (!newGuides.length) {
       setGuides(defaultNonMemberPersonalGuideList);
       return;
     }
+
     if (newGuides.length <= guideRenderCount) {
-      setGuides(uniqBy([...newGuides, ...defaultStylesResult], 'id').slice(0, guideRenderCount));
+      const categories = uniqBy(
+        [
+          ...newGuides.filter((guide: PersonalNewGuide) => guide.type === 'category'),
+          ...defaultStyleCategory
+        ],
+        'id'
+      ).slice(0, 6);
+
+      const brands = uniqBy(
+        [
+          ...newGuides.filter((guide: PersonalNewGuide) => guide.type === 'brand'),
+          ...defaultStyleBrands
+        ],
+        'id'
+      ).slice(0, 8);
+
+      setGuides([...categories, ...brands]);
     }
   }, [defaultStyles, gender, mode, setGuides, styles]);
 
@@ -235,7 +269,7 @@ function HomePersonalGuide() {
   return (
     <List>
       {(isLoadingParentCategories || isLoading || !guides.length) &&
-        Array.from({ length: 8 }).map((_, index) => (
+        Array.from({ length: 16 }).map((_, index) => (
           <Flexbox
             // eslint-disable-next-line react/no-array-index-key
             key={`home-personal-guide-skeleton-${index}`}
@@ -249,7 +283,7 @@ function HomePersonalGuide() {
             <Skeleton width={42} height={16} round={8} disableAspectRatio />
           </Flexbox>
         ))}
-      {!isLoadingParentCategories && !isLoading && (
+      {!isLoadingParentCategories && !isLoading && !!guides.length && (
         <>
           <Flexbox
             direction="vertical"
@@ -366,9 +400,8 @@ function HomePersonalGuide() {
 
 const List = styled.div`
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  column-gap: 8px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 28px 8px;
   padding: 22px 12px 32px;
   min-height: 80px;
   overflow-x: auto;

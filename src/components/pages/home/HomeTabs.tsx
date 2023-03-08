@@ -24,7 +24,8 @@ function HomeTabs() {
     homePopularCamelProductListPrevPageState
   );
 
-  const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
+  const { data: { notViewedHistoryCount = 0, notViewedFollowingCount = 0 } = {} } =
+    useQueryUserInfo();
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -100,18 +101,32 @@ function HomeTabs() {
         >
           추천
         </Typography>
-        <Typography
-          variant="h2"
-          weight="bold"
-          onClick={handleClick('following')}
+        <Badge
+          open={!!notViewedFollowingCount}
+          text={12}
+          width={20}
+          height={20}
           customStyle={{
-            color: tab !== 'following' ? common.ui80 : undefined,
-            cursor: 'pointer',
-            userSelect: 'none'
+            top: 5,
+            right: -25,
+            width: 'fit-content',
+            minWidth: 20,
+            background: '#FF5260'
           }}
         >
-          팔로잉
-        </Typography>
+          <Typography
+            variant="h2"
+            weight="bold"
+            onClick={handleClick('following')}
+            customStyle={{
+              color: tab !== 'following' ? common.ui80 : undefined,
+              cursor: 'pointer',
+              userSelect: 'none'
+            }}
+          >
+            팔로잉
+          </Typography>
+        </Badge>
       </Flexbox>
       <Flexbox gap={16}>
         <Icon name="HeartOutlined" onClick={handleClickWish} />

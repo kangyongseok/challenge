@@ -84,8 +84,7 @@ export const BadgeText = styled(Typography)<{ selected: boolean; badge?: boolean
   ${({ badge }): CSSObject => {
     return badge
       ? {
-          background:
-            'url(https://mrcamel.s3.ap-northeast-2.amazonaws.com/assets/images/ico/badge_new.png) no-repeat 100% 50%',
+          background: `url(https://${process.env.IMAGE_DOMAIN}/assets/images/ico/badge_new.png) no-repeat 100% 50%`,
           backgroundSize: '16px'
         }
       : {};

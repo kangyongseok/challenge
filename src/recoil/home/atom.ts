@@ -34,3 +34,13 @@ export const homePopularCamelProductListPrevPageState = atom({
   key: 'home/popularCamelProductListPrevPageState',
   default: 0
 });
+
+export const personalGuideListCurrentThemeState = atom({
+  key: 'home/personalGuideListCurrentThemeState',
+  default: 0
+});
+
+export const hasHomeTabChangeState = atom({
+  key: 'home/hasHomeTabChangeState',
+  default: false
+});
