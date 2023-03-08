@@ -29,6 +29,7 @@
     "@react-spring/web": "^9.4.5",
     "@sendbird/chat": "^4.1.1",
     "@stomp/stompjs": "^6.1.2",
+    "@tosspayments/payment-sdk": "^1.2.5",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.4",
     "@typeform/embed-react": "^1.18.0",

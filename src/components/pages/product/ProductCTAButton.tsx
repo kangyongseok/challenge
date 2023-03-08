@@ -83,6 +83,7 @@ interface ProductCTAButtonProps {
   isWish?: boolean;
   isPriceDown?: boolean;
   isProductLegit?: boolean;
+  paymentsTest?: boolean;
   onClickWish: (isWish: boolean) => boolean;
   onClickSMS: ({
     siteId,
@@ -123,7 +124,8 @@ function ProductCTAButton({
   onClickWish,
   onClickSMS,
   mutateMetaInfo,
-  refetch
+  refetch,
+  paymentsTest
 }: ProductCTAButtonProps) {
   const {
     push,
@@ -702,6 +704,11 @@ function ProductCTAButton({
             customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
           />
         </Button>
+        {paymentsTest && (
+          <Button fullWidth size="xlarge" onClick={() => push(`/products/payments/${id}`)}>
+            안전결제
+          </Button>
+        )}
       </Wrapper>
       <BottomSheet
         open={isOpenRelatedProductListBottomSheet}
