@@ -141,6 +141,7 @@ function LegitPhotoGuideCard({
             src={isDark ? imageWatermarkDark : imageWatermark}
             alt="WaterMark Img"
             round={8}
+            fallbackElement={<div />}
             disableAspectRatio
           />
         )}
