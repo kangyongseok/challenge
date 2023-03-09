@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 
 import { Image, Label, Typography, useTheme } from 'mrcamel-ui';
@@ -22,6 +22,7 @@ export interface LegitPhotoGuideCardProps extends HTMLAttributes<HTMLDivElement>
   highLiteColor?: 'red-light' | 'primary-light';
   isLoading?: boolean;
   isDark?: boolean;
+  staticImageUrl?: string;
 }
 
 function LegitPhotoGuideCard({
@@ -35,6 +36,7 @@ function LegitPhotoGuideCard({
     savedImageUrl
   },
   imageUrl,
+  staticImageUrl,
   hideSample = false,
   hideLabel,
   isInvalid,
@@ -50,6 +52,7 @@ function LegitPhotoGuideCard({
       palette: { common }
     }
   } = useTheme();
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   // 0: optional, 1: 필수, 2: 수정, 3: 수정완료
   const status = useMemo(() => {
@@ -64,16 +67,28 @@ function LegitPhotoGuideCard({
     return 0;
   }, [imageSample, imageUrl, isEdit, isInvalid, isRequired, savedImageUrl]);
 
+  useEffect(() => {
+    const newImage = document.createElement('img');
+    if (staticImageUrl) {
+      newImage.src = `${staticImageUrl}?w=250&f=webp`;
+      newImage.addEventListener('load', () => {
+        setIsImageLoading(false);
+      });
+    } else {
+      setIsImageLoading(false);
+    }
+  }, [staticImageUrl]);
+
   return (
     <StyledLegitPhotoGuideCard
       imageSample={hideSample ? '' : imageSample}
-      imageUrl={imageUrl}
+      imageUrl={staticImageUrl ? `${staticImageUrl}?w=250&f=webp` : imageUrl}
       status={status}
       isInvalid={isInvalid}
       hideStatusHighLite={hideStatusHighLite}
       hideHighLite={hideHighLite}
       highLiteColor={highLiteColor}
-      isLoading={isLoading}
+      isLoading={isLoading || isImageLoading}
       {...props}
     >
       {!hideLabel && status === 1 && !isInvalid && (
@@ -113,7 +128,7 @@ function LegitPhotoGuideCard({
         />
       )}
       <PhotoGuideInfo>
-        {isLoading ? (
+        {isLoading || isImageLoading ? (
           <AnimationLoading
             src={`https://${process.env.IMAGE_DOMAIN}/assets/images/ico/photo_loading_fill.png`}
             alt="loading"

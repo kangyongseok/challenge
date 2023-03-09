@@ -46,6 +46,7 @@ function LegitAdminRequestInfo() {
       imageUrl: string;
       isEdit: boolean;
       productId: number;
+      staticImageUrl: string;
     }[]
   >([]);
 
@@ -103,38 +104,39 @@ function LegitAdminRequestInfo() {
   };
 
   useEffect(() => {
-    setNewPhotoGuideDetails(
-      uniqBy(
-        (photoGuideDetails || []).concat(
-          [imageMain, ...(imageDetails || '').split('|')]
-            .filter((image) => image)
-            .map((image) => ({
-              imageUrl: image,
-              dateCreated: '',
-              dateUpdated: '',
+    const result = uniqBy(
+      (photoGuideDetails || []).concat(
+        [imageMain, ...(imageDetails || '').split('|')]
+          .filter((image) => image)
+          .map((image) => ({
+            imageUrl: image,
+            dateCreated: '',
+            dateUpdated: '',
+            id: 0,
+            imageSize: 0,
+            isEdit: false,
+            productId: 0,
+            staticImageUrl: image,
+            commonPhotoGuideDetail: {
               id: 0,
-              imageSize: 0,
-              isEdit: false,
-              productId: 0,
-              commonPhotoGuideDetail: {
-                id: 0,
-                photoGuideId: 0,
-                name: '',
-                description: '',
-                imageType: 0,
-                imageWatermark: '',
-                imageWatermarkDark: '',
-                imageSample: '',
-                sort: 0,
-                isRequired: false,
-                dateUpdated: '',
-                dateCreated: ''
-              }
-            }))
-        ),
-        'imageUrl'
-      )
+              photoGuideId: 0,
+              name: '',
+              description: '',
+              imageType: 0,
+              imageWatermark: '',
+              imageWatermarkDark: '',
+              imageSample: '',
+              sort: 0,
+              isRequired: false,
+              dateUpdated: '',
+              dateCreated: ''
+            }
+          }))
+      ),
+      'staticImageUrl'
     );
+
+    setNewPhotoGuideDetails(uniqBy(result, 'imageUrl'));
   }, [photoGuideDetails, imageMain, imageDetails]);
 
   if (!productLegit) return null;
@@ -154,21 +156,24 @@ function LegitAdminRequestInfo() {
           customStyle={{ marginTop: 68 }}
         >
           <Grid container columnGap={12} rowGap={12}>
-            {newPhotoGuideDetails.map(({ imageUrl, commonPhotoGuideDetail, isEdit }, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}-${index}`} item xs={3}>
-                <LegitPhotoGuideCard
-                  photoGuideDetail={commonPhotoGuideDetail}
-                  imageUrl={imageUrl}
-                  hideLabel
-                  hideHighLite={!((status === 12 || status === 13) && isEdit)}
-                  highLiteColor={status === 12 && isEdit ? 'red-light' : 'primary-light'}
-                  isDark
-                  data-index={index}
-                  onClick={handleClick}
-                />
-              </Grid>
-            ))}
+            {newPhotoGuideDetails.map(
+              ({ imageUrl, commonPhotoGuideDetail, isEdit, staticImageUrl }, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}-${index}`} item xs={3}>
+                  <LegitPhotoGuideCard
+                    photoGuideDetail={commonPhotoGuideDetail}
+                    imageUrl={imageUrl}
+                    staticImageUrl={staticImageUrl}
+                    hideLabel
+                    hideHighLite={!((status === 12 || status === 13) && isEdit)}
+                    highLiteColor={status === 12 && isEdit ? 'red-light' : 'primary-light'}
+                    isDark
+                    data-index={index}
+                    onClick={handleClick}
+                  />
+                </Grid>
+              )
+            )}
           </Grid>
         </LegitUploadInfoPaper>
         <ImageDetailDialog

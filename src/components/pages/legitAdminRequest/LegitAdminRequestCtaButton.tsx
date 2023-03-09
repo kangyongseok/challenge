@@ -284,22 +284,25 @@ function LegitAdminRequestCtaButton() {
             보완할 이미지 선택 혹은 보완의견을 남겨주세요
           </Typography>
           <Grid container columnGap={12} rowGap={12} customStyle={{ marginTop: 20 }}>
-            {(photoGuideDetails || []).map(({ imageUrl, commonPhotoGuideDetail }) => (
-              <Grid
-                key={`legit-request-photo-guide-detail-${commonPhotoGuideDetail.id}`}
-                item
-                xs={3}
-              >
-                <LegitPhotoGuideCard
-                  photoGuideDetail={commonPhotoGuideDetail}
-                  imageUrl={imageUrl}
-                  hideLabel
-                  hideHighLite={!selectedPhotoGuideDetailIds.includes(commonPhotoGuideDetail.id)}
-                  onClick={handleClickPhotoGuideDetail}
-                  data-id={commonPhotoGuideDetail.id}
-                />
-              </Grid>
-            ))}
+            {(photoGuideDetails || []).map(
+              ({ imageUrl, commonPhotoGuideDetail, staticImageUrl }) => (
+                <Grid
+                  key={`legit-request-photo-guide-detail-${commonPhotoGuideDetail.id}`}
+                  item
+                  xs={3}
+                >
+                  <LegitPhotoGuideCard
+                    photoGuideDetail={commonPhotoGuideDetail}
+                    imageUrl={imageUrl}
+                    staticImageUrl={staticImageUrl}
+                    hideLabel
+                    hideHighLite={!selectedPhotoGuideDetailIds.includes(commonPhotoGuideDetail.id)}
+                    onClick={handleClickPhotoGuideDetail}
+                    data-id={commonPhotoGuideDetail.id}
+                  />
+                </Grid>
+              )
+            )}
           </Grid>
           <OpinionWriter focused={focused}>
             <TextArea

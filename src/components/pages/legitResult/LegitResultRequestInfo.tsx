@@ -93,20 +93,23 @@ function LegitResultRequestInfo() {
           customStyle={{ marginTop: 68 }}
         >
           <Grid container columnGap={12} rowGap={12}>
-            {(photoGuideDetails || []).map(({ commonPhotoGuideDetail, imageUrl }, index) => (
-              <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}`} item xs={3}>
-                <LegitPhotoGuideCard
-                  photoGuideDetail={commonPhotoGuideDetail}
-                  imageUrl={imageUrl}
-                  isDark
-                  hideLabel
-                  hideHighLite
-                  hideStatusHighLite
-                  data-index={index}
-                  onClick={handleClick}
-                />
-              </Grid>
-            ))}
+            {(photoGuideDetails || []).map(
+              ({ commonPhotoGuideDetail, imageUrl, staticImageUrl }, index) => (
+                <Grid key={`photo-guide-detail-${commonPhotoGuideDetail.id}`} item xs={3}>
+                  <LegitPhotoGuideCard
+                    photoGuideDetail={commonPhotoGuideDetail}
+                    imageUrl={imageUrl}
+                    staticImageUrl={staticImageUrl}
+                    isDark
+                    hideLabel
+                    hideHighLite
+                    hideStatusHighLite
+                    data-index={index}
+                    onClick={handleClick}
+                  />
+                </Grid>
+              )
+            )}
           </Grid>
         </LegitUploadInfoPaper>
         <ImageDetailDialog

@@ -428,6 +428,7 @@ export type ProductResult = {
     imageUrl: string;
     isEdit: boolean;
     productId: number;
+    staticImageUrl: string;
   }[];
   quoteTitle: string;
   description: string;

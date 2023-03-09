@@ -185,11 +185,15 @@ function LegitRequest() {
           >
             <Grid container columnGap={8} rowGap={8}>
               {photoGuideDetails.map(
-                ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }, index) => (
+                (
+                  { id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl, staticImageUrl },
+                  index
+                ) => (
                   <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
                     <LegitPhotoGuideCard
                       photoGuideDetail={commonPhotoGuideDetail}
                       imageUrl={imageUrl}
+                      staticImageUrl={staticImageUrl}
                       hideLabel
                       hideStatusHighLite
                       isDark
@@ -258,11 +262,15 @@ function LegitRequest() {
         >
           <Grid container columnGap={8} rowGap={8}>
             {photoGuideDetails.map(
-              ({ id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl }, index) => (
+              (
+                { id: photoGuideDetailId, commonPhotoGuideDetail, imageUrl, staticImageUrl },
+                index
+              ) => (
                 <Grid key={`upload-photo-guide-detail-${photoGuideDetailId}`} item xs={3}>
                   <LegitPhotoGuideCard
                     photoGuideDetail={commonPhotoGuideDetail}
                     imageUrl={imageUrl}
+                    staticImageUrl={staticImageUrl}
                     hideLabel
                     hideStatusHighLite
                     isDark
