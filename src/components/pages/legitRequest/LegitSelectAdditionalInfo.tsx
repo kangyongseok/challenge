@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import type { PostProductLegitData } from '@dto/productLegit';
 
 import { additionalInfos } from '@constants/productlegits';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 
 interface LegitSelectAdditionalInfoProps {
   additionalIds: number[];
@@ -104,7 +103,6 @@ const Description = styled.div`
       }
     }) => common.ui20};
     resize: none;
-    font-family: ${CAMEL_SUBSET_FONTFAMILY};
     ${({ theme: { typography } }) => ({
       fontSize: typography.h4.size,
       fontWeight: typography.h4.weight.regular,

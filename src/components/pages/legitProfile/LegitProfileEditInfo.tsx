@@ -25,7 +25,7 @@ import type { LegitsBrand } from '@dto/model';
 
 import { putLegitProfile } from '@api/user';
 
-import { CAMEL_SUBSET_FONTFAMILY, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import {
   checkAgent,
@@ -289,7 +289,6 @@ function LegitProfileEditInfo({
                     title: e.target.value.trim().substring(0, 100)
                   }))
                 }
-                style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
               />
               <TitleInfo variant="small2" weight="medium">
                 {`${putLegitProfileParams.title.length || 0}/ 100자`}
@@ -521,7 +520,6 @@ const TextAreaWrap = styled.div<{ ban?: boolean }>`
 `;
 
 const AutoTextArea = styled(TextareaAutosize)`
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   width: 100%;
   min-height: 150px;
   font-size: ${({ theme: { typography } }) => typography.h4};

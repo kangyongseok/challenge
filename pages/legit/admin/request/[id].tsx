@@ -21,7 +21,7 @@ import { getProductDetailUrl } from '@utils/common';
 
 function LegitAdminRequestDetail() {
   return (
-    <GeneralTemplate subset header={<Header />} footer={<LegitAdminRequestCtaButton />}>
+    <GeneralTemplate header={<Header />} footer={<LegitAdminRequestCtaButton />}>
       <LegitAdminRequestInfo />
       <LegitAdminRequestOpinion />
       <LegitAdminRequestOpinionWriter />

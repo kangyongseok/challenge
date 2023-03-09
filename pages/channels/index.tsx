@@ -79,7 +79,7 @@ function Channels() {
   return channelPushPage ? (
     <div />
   ) : (
-    <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding subset>
+    <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding>
       <ChannelsTabs labels={labels} value={type.toString()} />
       {type === +labels[0].key && <ChannelsMessagesPanel type={0} />}
       {type === +labels[1].key && <ChannelsFilteredMessagesPanel />}

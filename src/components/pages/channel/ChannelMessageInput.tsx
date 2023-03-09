@@ -7,11 +7,7 @@ import throttle from 'lodash-es/throttle';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
-import {
-  CAMEL_SUBSET_FONTFAMILY,
-  MESSAGE_ACTION_BUTTONS_HEIGHT,
-  MESSAGE_INPUT_HEIGHT
-} from '@constants/common';
+import { MESSAGE_ACTION_BUTTONS_HEIGHT, MESSAGE_INPUT_HEIGHT } from '@constants/common';
 
 import useOutsideClickRef from '@hooks/useOutsideClickRef';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
@@ -123,7 +119,6 @@ function ChannelMessageInput({
               }
               onFocus={handleFocus}
               disabled={!channelId || !channelUrl}
-              style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
             />
           </InputWrapper>
           <Flexbox

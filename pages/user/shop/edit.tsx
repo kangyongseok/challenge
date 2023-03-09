@@ -40,12 +40,7 @@ import { fetchBanword, fetchInfoByUserId, putProfile } from '@api/user';
 import { PROFILE_EDIT_ERROR_MESSAGE } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import {
-  CAMEL_SUBSET_FONTFAMILY,
-  DEFAUT_BACKGROUND_IMAGE,
-  HEADER_HEIGHT,
-  IOS_SAFE_AREA_TOP
-} from '@constants/common';
+import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -599,7 +594,6 @@ function UserShopEdit() {
                     })
                   }
                   onChange={handleChangeDescription}
-                  style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
                 />
                 <DescriptionInfo variant="small2" weight="medium">
                   {userProfileParams.shopDescription?.length || 0}

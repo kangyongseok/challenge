@@ -33,7 +33,7 @@ import {
 } from '@provider';
 
 import '@styles/base.css';
-import '@styles/subsetFont.css';
+import '@styles/font.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';

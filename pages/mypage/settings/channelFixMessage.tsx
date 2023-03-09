@@ -16,7 +16,6 @@ import { logEvent } from '@library/amplitude';
 import { fetchFixedChannel, putFixedChannel } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { shake } from '@styles/transition';
@@ -116,7 +115,7 @@ function ChannelFixMessage() {
           placeholder="메세지를 입력해주세요"
           value={description}
           onChange={handleChangeDescription}
-          style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY, border: 'none' }}
+          style={{ border: 'none' }}
         />
         <DescriptionInfo variant="small2" weight="medium">
           {description?.length || 0}

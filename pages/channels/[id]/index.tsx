@@ -381,7 +381,6 @@ function Chanel() {
             }
             disablePadding
             customStyle={{ position: 'relative' }}
-            subset
           >
             <Inner>
               <ContentWrapper>

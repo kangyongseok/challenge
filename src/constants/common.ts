@@ -65,9 +65,6 @@ export const purchaseType = [
 
 export const globalSizeGroupId = [1, 3, 6, 8, 10];
 
-export const CAMEL_SUBSET_FONTFAMILY =
-  'Camel Product Sans Subset, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji';
-
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 export const SUPPORTED_MIMES = {
   IMAGE: [

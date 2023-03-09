@@ -21,7 +21,6 @@ import {
 } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -339,7 +338,6 @@ const TextArea = styled.textarea<{ open: boolean }>`
   background-color: transparent;
   outline: 0;
   resize: none;
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   ${({
     theme: {
       palette: { common },

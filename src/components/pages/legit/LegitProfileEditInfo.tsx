@@ -13,7 +13,7 @@ import { PhotoGuideImage } from '@dto/productLegit';
 
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
+import { extractTagRegx } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import {
@@ -354,7 +354,6 @@ const NickNameInputWrap = styled.div<{ ban: boolean }>`
 `;
 
 const TextInputArea = styled(TextInput)<{ ban: boolean }>`
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   height: 100%;
   width: 100%;
   padding: 14px;
@@ -365,7 +364,6 @@ const TextInputArea = styled(TextInput)<{ ban: boolean }>`
 `;
 
 const FakeTextInput = styled.div<{ ban: boolean }>`
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   width: 100%;
   height: 44px;
   background: ${({

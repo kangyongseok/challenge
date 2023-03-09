@@ -18,7 +18,6 @@ import { postReview } from '@api/user';
 import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
@@ -177,7 +176,6 @@ function ReviewForm() {
                 content: prevState.content?.length ? e.target.value : e.target.value.trim()
               }))
             }
-            style={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
           />
         </Description>
       </Flexbox>

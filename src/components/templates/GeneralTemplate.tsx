@@ -2,13 +2,13 @@ import type { PropsWithChildren, ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import MowebFooter from '@components/UI/organisms/MowebFooter';
 import { AppDownloadBanner } from '@components/UI/organisms';
 
-import { APP_DOWNLOAD_BANNER_HEIGHT, CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
 
@@ -21,22 +21,15 @@ interface GeneralTemplateProps {
   disablePadding?: boolean;
   hideAppDownloadBanner?: boolean;
   customStyle?: CustomStyle;
-  subset?: boolean;
 }
 
-/**
- *
- * @param subset
- * @description 검색어 입력시 졎, 밙 같은 특수한 텍스트에 대한 대응으로 subset 폰트 파일 적용
- */
 function GeneralTemplate({
   children,
   header,
   footer,
   disablePadding = false,
   hideAppDownloadBanner = false,
-  customStyle,
-  subset = false
+  customStyle
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
 
@@ -57,7 +50,6 @@ function GeneralTemplate({
 
   return (
     <Wrapper
-      subset={subset}
       css={{
         paddingTop: paddingTopParser(),
         ...customStyle
@@ -75,7 +67,7 @@ function GeneralTemplate({
   );
 }
 
-const Wrapper = styled.div<{ subset?: boolean }>`
+const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -87,7 +79,6 @@ const Wrapper = styled.div<{ subset?: boolean }>`
       palette: { common }
     }
   }) => common.bg01};
-  font-family: ${({ subset }) => (subset ? CAMEL_SUBSET_FONTFAMILY : 'inherit')};
   transition: padding-top 0.5s;
 `;
 

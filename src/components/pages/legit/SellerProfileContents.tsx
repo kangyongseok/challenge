@@ -7,7 +7,7 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { CAMEL_SUBSET_FONTFAMILY, extractTagRegx } from '@constants/common';
+import { extractTagRegx } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { shake } from '@styles/transition';
@@ -105,7 +105,6 @@ const Wrap = styled.div`
 `;
 
 const BanWordText = styled(Typography)`
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   b {
     font-weight: ${({ theme: { typography } }) => typography.h4.weight.medium};
     color: ${({
@@ -154,7 +153,6 @@ const TextAreaWrap = styled.div<{ ban?: boolean }>`
 `;
 
 const AutoTextArea = styled(TextareaAutosize)<{ ban: boolean }>`
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   width: 100%;
   min-height: 230px;
   font-size: ${({ theme: { typography } }) => typography.h4};

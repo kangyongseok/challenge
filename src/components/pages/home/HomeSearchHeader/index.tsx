@@ -152,6 +152,7 @@ function HomeSearchHeader() {
             placeholder="어떤 명품을 득템해 볼까요?"
             disabled
             customStyle={{
+              pointerEvents: 'none',
               overflow: 'hidden',
               '& input::placeholder': {
                 color: common.ui60

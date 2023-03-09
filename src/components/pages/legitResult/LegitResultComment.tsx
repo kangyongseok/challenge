@@ -19,11 +19,7 @@ import {
 } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  CAMEL_SUBSET_FONTFAMILY,
-  HEADER_HEIGHT
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -365,7 +361,6 @@ export const TextArea = styled.textarea`
   background-color: transparent;
   outline: 0;
   resize: none;
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
   ${({
     theme: {
       palette: { common },

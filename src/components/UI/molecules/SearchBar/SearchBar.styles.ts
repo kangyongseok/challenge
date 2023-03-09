@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { CAMEL_SUBSET_FONTFAMILY, IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
+import { IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -82,7 +82,6 @@ export const Input = styled.input`
   width: 100%;
   outline: 0;
   background-color: transparent;
-  font-family: ${CAMEL_SUBSET_FONTFAMILY};
 
   ${({ theme: { typography } }) => ({
     fontSize: typography.h4.size,

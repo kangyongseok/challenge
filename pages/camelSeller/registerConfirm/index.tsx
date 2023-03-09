@@ -64,7 +64,7 @@ function RegisterConfirm() {
   }, []);
 
   return (
-    <GeneralTemplate header={<CamelSellerHeader />} subset hideAppDownloadBanner>
+    <GeneralTemplate header={<CamelSellerHeader />} hideAppDownloadBanner>
       <CamelSellerInfo />
       <CamelSellerProductImage />
       <CamelSellerTitle />

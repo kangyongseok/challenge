@@ -12,7 +12,6 @@ import { logEvent } from '@library/amplitude';
 
 // import { FIRST_CATEGORIES } from '@constants/category';
 import { productSellerType } from '@constants/user';
-import { CAMEL_SUBSET_FONTFAMILY } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -118,11 +117,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
                   <KeywordTypo variant="body2" weight="medium">
                     검색어
                   </KeywordTypo>
-                  <Typography
-                    weight="medium"
-                    variant="h4"
-                    customStyle={{ fontFamily: CAMEL_SUBSET_FONTFAMILY }}
-                  >
+                  <Typography weight="medium" variant="h4">
                     {userHistory.message}
                   </Typography>
                 </KeywordFlexbox>

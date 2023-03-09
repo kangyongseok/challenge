@@ -179,7 +179,7 @@ function RegisterConfirmEdit() {
   ]);
 
   return (
-    <GeneralTemplate header={<CamelSellerHeader />} subset hideAppDownloadBanner>
+    <GeneralTemplate header={<CamelSellerHeader />} hideAppDownloadBanner>
       <CamelSellerInfo />
       <CamelSellerProductImage />
       <CamelSellerTitle />

@@ -538,7 +538,6 @@ function ProductDetail() {
         })}`}
       />
       <GeneralTemplate
-        subset
         header={<ProductDetailHeader data={data} />}
         footer={
           <ProductDetailFooter

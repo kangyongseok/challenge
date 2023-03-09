@@ -202,7 +202,7 @@ function Search() {
         ogDescription="중고명품, 이앱 저앱 모두 검색해보지 말고 카멜에서 바로 한번에 검색해보세요!"
         ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
       />
-      <GeneralTemplate disablePadding subset>
+      <GeneralTemplate disablePadding>
         <SearchForm action="" onSubmit={handleSubmit}>
           <SearchBar
             type="search"
