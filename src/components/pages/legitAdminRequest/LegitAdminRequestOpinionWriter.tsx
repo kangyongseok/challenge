@@ -166,6 +166,7 @@ function LegitAdminRequestOpinionWriter() {
           value={description}
           maxLength={300}
           disabled={!result}
+          hasResult={!!result}
           placeholder="내용을 입력해주세요."
         />
         <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
@@ -246,6 +247,7 @@ const OpinionWriter = styled.div<{ hide: boolean; focused: boolean }>`
   height: 270px;
   margin-top: 32px;
   padding: 12px;
+  user-select: auto;
   background-color: ${({
     theme: {
       palette: { common }
@@ -273,11 +275,12 @@ const OpinionWriter = styled.div<{ hide: boolean; focused: boolean }>`
       : {}};
 `;
 
-const TextArea = styled(TextareaAutosize)`
+const TextArea = styled(TextareaAutosize)<{ hasResult: boolean }>`
   flex-grow: 1;
   outline: 0;
   width: 100%;
   height: 100%;
+  pointer-events: ${({ hasResult }) => (hasResult ? 'auto' : 'none')};
   ${({
     theme: {
       palette: { common },
