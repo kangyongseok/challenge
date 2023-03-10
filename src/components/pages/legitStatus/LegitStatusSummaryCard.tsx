@@ -60,7 +60,7 @@ function LegitStatusSummaryCard() {
 
   const { isPriceDown, isDup, hasTarget } = useMemo(() => {
     const _price = getTenThousandUnitPrice(data?.product?.price || 0);
-    const _targetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
+    const _targetProductPrice = getTenThousandUnitPrice(data?.product?.targetProductPrice || 0);
     let _isPriceDown = _targetProductPrice < _price;
     const _isDup = !data?.product.targetProductStatus;
     const _hasTarget = !!data?.product.targetProductId;

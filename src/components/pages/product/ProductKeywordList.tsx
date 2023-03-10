@@ -62,10 +62,10 @@ function ProductKeywordList({ productId, params }: ProductKeywordListProps) {
     });
   }, 300);
 
-  const line01 = data?.slice(0, 6);
+  const line01 = data?.slice(0, 6) || [];
   const line02 =
     data && (data as string[]).length > 6
-      ? data?.slice(7, data.length < 13 ? data.length : 13)
+      ? data?.slice(7, data.length < 13 ? data.length : 13) || []
       : [];
 
   const keywordBgColor = [primary.main, secondary.blue.main, secondary.purple.main];

@@ -28,7 +28,7 @@ function CamelProducts() {
         disablePadding
       >
         <ProductsCategoryTags variant="camel" />
-        <ProductsFilter variant="camel" />
+        <ProductsFilter variant="camel" showDynamicFilter />
         <Gap height={8} />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="camel" />

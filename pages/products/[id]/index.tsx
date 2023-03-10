@@ -128,7 +128,7 @@ function ProductDetail() {
 
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
-    const newTargetProductPrice = getTenThousandUnitPrice(data?.product.targetProductPrice || 0);
+    const newTargetProductPrice = getTenThousandUnitPrice(data?.product?.targetProductPrice || 0);
     let newIsPriceDown = newTargetProductPrice < newPrice;
     let newIsDup = data?.product.targetProductStatus === 0;
     let newHasTarget = !!data?.product.targetProductId;

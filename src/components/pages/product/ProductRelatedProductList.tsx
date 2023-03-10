@@ -124,7 +124,7 @@ function ProductRelatedProductList({
     return {};
   };
 
-  if (!searchRelatedProducts?.page.content.length) return <Box customStyle={{ marginTop: -1 }} />;
+  if (!searchRelatedProducts?.page?.content?.length) return <Box customStyle={{ marginTop: -1 }} />;
 
   return (
     <Box customStyle={{ margin: '32px 0' }}>
