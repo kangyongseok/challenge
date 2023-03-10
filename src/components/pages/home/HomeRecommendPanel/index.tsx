@@ -8,7 +8,6 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import HomeStyleRecommendProductList from './HomeStyleRecommendProductList';
 import HomePersonalGuideProductList from './HomePersonalGuideProductList';
 import HomePersonalGuide from './HomePersonalGuide';
 import HomeNewCamelProductGrid from './HomeNewCamelProductGrid';
@@ -43,8 +42,6 @@ function HomeRecommendPanel() {
       <HomeNewCamelProductGrid />
       <Gap height={8} />
       <HomeDogHoneyProductGrid />
-      <Gap height={8} />
-      <HomeStyleRecommendProductList />
     </>
   );
 }

@@ -9,6 +9,7 @@ import { Toast, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import localFont from '@next/font/local';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
@@ -33,7 +34,6 @@ import {
 } from '@provider';
 
 import '@styles/base.css';
-import '@styles/font.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -59,6 +59,17 @@ if (global.navigator) {
 }
 
 const originUrl = 'https://mrcamel.co.kr';
+
+const font = localFont({
+  src: [
+    { path: '../src/styles/fonts/CamelProductSans-Black.woff2', weight: '900' },
+    { path: '../src/styles/fonts/CamelProductSans-Bold.woff2', weight: '700' },
+    { path: '../src/styles/fonts/CamelProductSans-Medium.woff2', weight: '500' },
+    { path: '../src/styles/fonts/CamelProductSans-Regular.woff2', weight: '400' },
+    { path: '../src/styles/fonts/CamelProductSans-Light.woff2', weight: '300' },
+    { path: '../src/styles/fonts/CamelProductSans-Thin.woff2', weight: '100' }
+  ]
+});
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -172,7 +183,9 @@ function App({ Component, pageProps }: AppProps) {
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
                     <SendbirdProvider>
                       <PortalProvider>
-                        <Component {...pageProps} />
+                        <main className={font.className}>
+                          <Component {...pageProps} />
+                        </main>
                       </PortalProvider>
                     </SendbirdProvider>
                   </ABTestProvider>
