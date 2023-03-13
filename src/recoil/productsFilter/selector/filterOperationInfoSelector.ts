@@ -84,6 +84,8 @@ const filterOperationInfoSelector = selector({
               (idFilterOptions.find((idFilterOption) => idFilterOption.id === id) || {}).name || '';
           } else if (codeId === filterCodeIds.map) {
             displayName = '내 주변';
+          } else if (id === filterCodeIds.safePayment) {
+            displayName = '채팅가능';
           } else if (codeId === filterCodeIds.price) {
             displayName = `${commaNumber(getTenThousandUnitPrice(minPrice))}만원 ~ ${commaNumber(
               getTenThousandUnitPrice(maxPrice)

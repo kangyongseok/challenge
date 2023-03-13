@@ -9,6 +9,7 @@ export const filterCodeIds = {
   color: 3,
   material: 4,
   gender: 5,
+  safePayment: 6, // 채팅가능 => 안전결제로 변경 예정
   season: 11,
   id: 12,
   map: 13,
@@ -87,6 +88,7 @@ export const needReverseCheckFilterColorNames = [
 
 export const idFilterIds = {
   auth: 5,
+  safePayment: 6,
   new: 10,
   lowPrice: 30,
   quickSale: 31,
@@ -192,6 +194,7 @@ export const generalFilterOptions = {
   brands: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
+    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.gender, name: '성별' },
     { codeId: filterCodeIds.size, name: '사이즈' },
@@ -204,6 +207,7 @@ export const generalFilterOptions = {
   categories: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
+    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
@@ -216,6 +220,7 @@ export const generalFilterOptions = {
   search: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
+    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
@@ -229,6 +234,7 @@ export const generalFilterOptions = {
   camel: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
+    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
@@ -243,16 +249,28 @@ export const generalFilterOptions = {
 
 export const filterCodes = {
   brands: generalFilterOptions.brands.filter(
-    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my].includes(codeId)
+    ({ codeId }) =>
+      ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my, filterCodeIds.safePayment].includes(
+        codeId
+      )
   ),
   categories: generalFilterOptions.categories.filter(
-    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my].includes(codeId)
+    ({ codeId }) =>
+      ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my, filterCodeIds.safePayment].includes(
+        codeId
+      )
   ),
   search: generalFilterOptions.search.filter(
-    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my].includes(codeId)
+    ({ codeId }) =>
+      ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my, filterCodeIds.safePayment].includes(
+        codeId
+      )
   ),
   camel: generalFilterOptions.camel.filter(
-    ({ codeId }) => ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my].includes(codeId)
+    ({ codeId }) =>
+      ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my, filterCodeIds.safePayment].includes(
+        codeId
+      )
   )
 };
 

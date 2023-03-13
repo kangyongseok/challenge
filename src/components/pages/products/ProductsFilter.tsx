@@ -130,6 +130,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   const [myFilterTooltipCustomStyle, setMyFilterTooltipCustomStyle] = useState<CustomStyle>({});
   const [step1TooltipCustomStyle, setStep1TooltipCustomStyle] = useState<CustomStyle>({});
   const [step2TooltipCustomStyle, setStep2TooltipCustomStyle] = useState<CustomStyle>({});
+  const [step3TooltipCustomStyle, setStep3TooltipCustomStyle] = useState<CustomStyle>({});
 
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
@@ -720,6 +721,20 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       });
     }
 
+    if (mapFilterButtonRef.current) {
+      setStep3TooltipCustomStyle({
+        position: 'fixed',
+        top:
+          mapFilterButtonRef.current.getBoundingClientRect().top +
+          mapFilterButtonRef.current.clientHeight +
+          10,
+        left: 85,
+        transform: 'none',
+        height: 'fit-content',
+        '& > svg': { left: mapFilterButtonRef.current.offsetLeft + 90 }
+      });
+    }
+
     if (accessUser) {
       setProductsOnBoardingTrigger(productsOnBoardingTrigger);
     }
@@ -810,6 +825,32 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
           triangleLeft={16}
           placement="bottom"
           customStyle={step2TooltipCustomStyle}
+        />
+      </OnBoardingSpotlight>
+      <OnBoardingSpotlight
+        open={hasBaseSearchParams && progressDone && !complete && step === 2}
+        onClose={() =>
+          setUserOnBoardingTriggerState((prevState) => ({
+            ...prevState,
+            products: { complete: true, step: 3 }
+          }))
+        }
+        targetRef={mapFilterButtonRef}
+        customSpotlightPosition={{ top: 1, left: 144 }}
+        customStyle={{ borderRadius: 8, width: 70 }}
+      >
+        <Tooltip
+          open={hasBaseSearchParams && progressDone && !complete && step === 2}
+          variant="ghost"
+          brandColor="primary"
+          message={
+            <Typography variant="body2" weight="medium" brandColor="primary">
+              채팅으로 바로 거래할 수 있는 매물만 보고싶다면 클릭!
+            </Typography>
+          }
+          triangleLeft={16}
+          placement="bottom"
+          customStyle={step3TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
       <Tooltip

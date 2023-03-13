@@ -1,7 +1,8 @@
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
+import { CamelAuthLabel } from '@components/UI/atoms';
 
 import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
@@ -28,12 +29,6 @@ function UserInfoProfile({
   curnScore,
   maxScore
 }: UserInfoProfileProps) {
-  const {
-    theme: {
-      palette: { primary }
-    }
-  } = useTheme();
-
   return (
     <Box component="section">
       <ImageWrapper>
@@ -56,9 +51,7 @@ function UserInfoProfile({
               <NickName variant="h3" weight="bold">
                 {nickName}
               </NickName>
-              {isCertificationSeller && (
-                <Icon name="SafeFilled" customStyle={{ color: primary.main, minWidth: 24 }} />
-              )}
+              {isCertificationSeller && <CamelAuthLabel />}
             </Flexbox>
             <Flexbox direction="vertical" gap={8}>
               {!!curnScore && !!maxScore && (

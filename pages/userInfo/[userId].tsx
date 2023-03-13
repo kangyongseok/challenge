@@ -157,6 +157,7 @@ function UserInfo() {
             userId={userId}
             productCount={userProductCount}
             reviewCount={userReviewCount}
+            isCertificationSeller={isCertificationSeller}
           />
         }
         footer={<BottomNavigation />}
@@ -192,6 +193,7 @@ function UserInfo() {
             userId={userId}
             productCount={userProductCount}
             reviewCount={userReviewCount}
+            isCertificationSeller={isCertificationSeller}
           />
           {tab === 'products' && <UserInfoProductsPanel userId={userId} />}
           {tab === 'reviews' && <UserInfoReviewsPanel userId={userId} />}

@@ -40,6 +40,7 @@ interface ChannelMessagesProps {
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
   isCamelAdminUser?: boolean;
+  isCamelAuthSeller?: boolean;
   messagesRef: MutableRefObject<HTMLDivElement | null>;
   hasMorePrev: boolean;
   fetchPrevMessages: () => Promise<void>;
@@ -60,6 +61,7 @@ function ChannelMessages({
   messagesRef,
   hasMorePrev,
   isCamelAdminUser,
+  isCamelAuthSeller,
   fetchPrevMessages,
   scrollToBottom,
   refetchChannel
@@ -102,11 +104,11 @@ function ChannelMessages({
           ) : null;
         })
       ) : (
-        <DateSeparator customStyle={{ margin: '20px 0' }}>
+        <DateSeparator customStyle={{ margin: isCamelAuthSeller ? '60px 0' : '20px 0' }}>
           {dayjs(sendbirdChannel.createdAt).format('YYYY년 MM월 DD일')}
         </DateSeparator>
       ),
-    [messages, sendbirdChannel, productId, targetUserId, refetchChannel]
+    [messages, isCamelAuthSeller, sendbirdChannel, productId, targetUserId, refetchChannel]
   );
 
   const handleScroll = debounce((e: UIEvent<HTMLDivElement>) => {

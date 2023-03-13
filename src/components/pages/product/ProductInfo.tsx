@@ -174,12 +174,33 @@ function ProductInfo({
           <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
             <Icon name="ShieldFilled" width={16} height={16} color={primary.light} />
             <Typography variant="body2" weight="medium">
-              카멜이 직접 인증한 판매자예요. 편하게 문의해보세요.
+              카멜이 직접 인증한 판매자의 상품입니다.
             </Typography>
           </Flexbox>
-          <Typography variant="body2" customStyle={{ color: common.ui60, paddingLeft: 18 }}>
-            가품시, 100% 환불
-          </Typography>
+          <Flexbox gap={6} alignment="center">
+            <Box customStyle={{ padding: '0 4px' }}>
+              <CheckedIcon />
+            </Box>
+            <Typography variant="body2" weight="medium">
+              계좌, 신분증, 전화번호, 더치트 인증
+            </Typography>
+          </Flexbox>
+          <Flexbox gap={6} alignment="center">
+            <Box customStyle={{ padding: '0 4px' }}>
+              <CheckedIcon />
+            </Box>
+            <Typography variant="body2" weight="medium">
+              상품 미발송 시 <span style={{ color: primary.main }}>카멜이 100% 보상</span>
+            </Typography>
+          </Flexbox>
+          <Flexbox gap={6} alignment="center">
+            <Box customStyle={{ padding: '0 4px' }}>
+              <CheckedIcon />
+            </Box>
+            <Typography variant="body2" weight="medium">
+              <span style={{ color: primary.main }}>가품시 100% 환불</span> 보장
+            </Typography>
+          </Flexbox>
         </CertificationCard>
       );
     }
@@ -389,14 +410,27 @@ const MoreInfoButton = styled(Button)<{ isExpended: boolean }>`
 `;
 
 const CertificationCard = styled.div`
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.bg02};
-  border-radius: 9px;
-  padding: 14px;
-  margin-top: 20px;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line02};
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 24px;
 `;
 
+function CheckedIcon() {
+  return (
+    <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M0.195312 2.47145L1.13812 1.52865L3.33338 3.72391L6.86198 0.195312L7.80479 1.13812L3.33338 5.60953L0.195312 2.47145Z"
+        fill="#313438"
+      />
+    </svg>
+  );
+}
 export default ProductInfo;

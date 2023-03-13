@@ -14,6 +14,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ChannelAppointmentBanner,
   ChannelBottomActionButtons,
+  ChannelCamelAuthFixBanner,
   ChannelHeader,
   ChannelMessageInput,
   ChannelMessages,
@@ -27,7 +28,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchChannel } from '@api/channel';
 
-import { channelUserType, productSellerType } from '@constants/user';
+import { SELLER_STATUS, channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import {
   IOS_SAFE_AREA_BOTTOM,
@@ -126,6 +127,10 @@ function Chanel() {
     }),
     [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked]
   );
+
+  const isCamelAuthSeller =
+    SELLER_STATUS[product?.productSeller?.type as keyof typeof SELLER_STATUS] ===
+    SELLER_STATUS['3'];
 
   const scrollToBottom = useCallback((behavior?: ScrollBehavior) => {
     messagesRef.current?.scrollTo({
@@ -335,22 +340,25 @@ function Chanel() {
                 />
                 {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
                   !isCamelAdminUser && (
-                    <FixedProductInfo
-                      isLoading={isLoading || !isFetched}
-                      isEditableProductStatus={isSeller}
-                      isDeletedProduct={isDeletedProduct}
-                      image={product?.imageThumbnail || product?.imageMain || ''}
-                      status={productStatus}
-                      title={product?.title || ''}
-                      price={product?.price || 0}
-                      onClick={handleClickProduct}
-                      onClickStatus={() =>
-                        logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                          name: attrProperty.name.CHANNEL_DETAIL,
-                          title: getLogEventTitle(product?.status || 0)
-                        })
-                      }
-                    />
+                    <>
+                      <FixedProductInfo
+                        isLoading={isLoading || !isFetched}
+                        isEditableProductStatus={isSeller}
+                        isDeletedProduct={isDeletedProduct}
+                        image={product?.imageThumbnail || product?.imageMain || ''}
+                        status={productStatus}
+                        title={product?.title || ''}
+                        price={product?.price || 0}
+                        onClick={handleClickProduct}
+                        onClickStatus={() =>
+                          logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
+                            name: attrProperty.name.CHANNEL_DETAIL,
+                            title: getLogEventTitle(product?.status || 0)
+                          })
+                        }
+                      />
+                      {isCamelAuthSeller && <ChannelCamelAuthFixBanner />}
+                    </>
                   )}
                 {!!appointment && showAppointmentBanner && (
                   <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
@@ -399,6 +407,7 @@ function Chanel() {
                     scrollToBottom={scrollToBottom}
                     refetchChannel={refetch}
                     isCamelAdminUser={isCamelAdminUser}
+                    isCamelAuthSeller={isCamelAuthSeller}
                   />
                 )}
               </ContentWrapper>

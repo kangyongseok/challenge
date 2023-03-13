@@ -6,7 +6,7 @@ import type { IconName } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
-import { Badge, Gap } from '@components/UI/atoms';
+import { Badge, CamelAuthLabel, Gap } from '@components/UI/atoms';
 
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
@@ -20,7 +20,7 @@ function MypageProfile() {
   const router = useRouter();
   const {
     theme: {
-      palette: { common, secondary, primary }
+      palette: { common, secondary }
     }
   } = useTheme();
 
@@ -143,7 +143,7 @@ function MypageProfile() {
             <EllipsisText variant="h3" weight="bold">
               {nickName}
             </EllipsisText>
-            {isCertifiedSeller && <Icon name="SafeFilled" color={primary.light} />}
+            {isCertifiedSeller && <CamelAuthLabel />}
             {isLegit && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
                 <Icon

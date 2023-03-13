@@ -10,16 +10,19 @@ import { TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { ChannelCamelAuthFixBanner } from '../channel';
+
 interface UserInfoTabsProps {
   value: string;
   customStyle?: CustomStyle;
   userId: number;
   productCount: string;
   reviewCount: string;
+  isCertificationSeller?: boolean;
 }
 
 const UserInfoTabs = forwardRef<HTMLDivElement, UserInfoTabsProps>(function UserInfoTabs(
-  { value, customStyle, userId, productCount, reviewCount },
+  { value, customStyle, userId, productCount, reviewCount, isCertificationSeller },
   ref
 ) {
   const {
@@ -69,6 +72,7 @@ const UserInfoTabs = forwardRef<HTMLDivElement, UserInfoTabsProps>(function User
         <Tab text={`매물 ${productCount || 0}`} value="products" />
         <Tab text={`후기 ${reviewCount || 0}`} value="reviews" />
       </TabGroup>
+      {isCertificationSeller && <ChannelCamelAuthFixBanner />}
     </TabWrapper>
   );
 });

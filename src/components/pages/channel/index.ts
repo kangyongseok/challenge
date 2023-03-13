@@ -5,3 +5,4 @@ export { default as ChannelBottomActionButtons } from './ChannelBottomActionButt
 export { default as ChannelMessages } from './ChannelMessages';
 export { default as ChannelMoreMenuBottomSheet } from './ChannelMoreMenuBottomSheet';
 export { default as ChannelProductStatusBottomSheet } from './ChannelProductStatusBottomSheet';
+export { default as ChannelCamelAuthFixBanner } from './ChannelCamelAuthFixBanner';

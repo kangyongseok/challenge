@@ -472,6 +472,11 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
           return;
         }
 
+        if (filterCodeIds.safePayment === codeId) {
+          handleClickIdFilterOption(6, name, true)();
+          return;
+        }
+
         if (filterCodeIds.my === codeId) {
           handleClickMyFilter();
           return;
@@ -626,10 +631,10 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                       size="medium"
                       startIcon={<Icon name="FilterFilled" />}
                       customStyle={{
-                        minWidth: 68
+                        minWidth: selectedSearchOptionsHistoryCount === 0 ? 68 : 36
                       }}
                     >
-                      필터
+                      {selectedSearchOptionsHistoryCount === 0 ? '필터' : ''}
                     </Button>
                   )}
                   {!isLoading && selectedSearchOptionsHistoryCount > 0 && (
@@ -656,6 +661,10 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                         (selectedSearchOption) =>
                           selectedSearchOption.codeId === filterCodeIds.gender
                       )) ||
+                    (filterCodeIds.safePayment === codeId &&
+                      selectedSearchOptions.some(
+                        (option) => option.id === idFilterIds.safePayment
+                      )) ||
                     count > 0;
 
                   return (
@@ -670,9 +679,12 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                       active={progressDone && active}
                       data-code-id={codeId}
                       endIcon={
-                        ![filterCodeIds.map, filterCodeIds.id, filterCodeIds.my].includes(
-                          codeId
-                        ) ? (
+                        ![
+                          filterCodeIds.map,
+                          filterCodeIds.id,
+                          filterCodeIds.my,
+                          filterCodeIds.safePayment
+                        ].includes(codeId) ? (
                           <Icon
                             name="DropdownFilled"
                             viewBox="0 0 12 24"

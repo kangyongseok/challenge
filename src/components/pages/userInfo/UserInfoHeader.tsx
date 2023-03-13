@@ -2,6 +2,7 @@ import { Flexbox, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
 
 import { UserAvatar } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
+import { CamelAuthLabel } from '@components/UI/atoms';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
@@ -17,6 +18,7 @@ interface UserInfoHeaderProps {
   userId: number;
   productCount: string;
   reviewCount: string;
+  isCertificationSeller?: boolean;
 }
 
 function UserInfoHeader({
@@ -26,7 +28,8 @@ function UserInfoHeader({
   currentTab,
   userId,
   productCount,
-  reviewCount
+  reviewCount,
+  isCertificationSeller
 }: UserInfoHeaderProps) {
   const {
     theme: {
@@ -62,6 +65,7 @@ function UserInfoHeader({
           >
             {userName}
           </Typography>
+          {isCertificationSeller && <CamelAuthLabel />}
         </Flexbox>
       </Header>
       <UserInfoTabs
@@ -69,6 +73,7 @@ function UserInfoHeader({
         userId={userId}
         productCount={productCount}
         reviewCount={reviewCount}
+        isCertificationSeller={isCertificationSeller}
         customStyle={{
           position: 'fixed',
           paddingTop: `calc(${

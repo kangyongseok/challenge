@@ -2,19 +2,23 @@ import { memo, useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';
 
+import type { AccessUser } from '@dto/userAuth';
 import type { Product } from '@dto/product';
+
+import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo } from '@api/product';
 
-import { productSellerType } from '@constants/user';
+import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
+import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -38,6 +42,7 @@ function ProductSellerReviews({
     }
   } = useTheme();
   const [reviewBlock, setReviewBlockState] = useRecoilState(reviewBlockState);
+  const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
 
   const sellerId = product?.productSeller.id || 0;
 
@@ -57,6 +62,44 @@ function ProductSellerReviews({
       enabled: !!reviewInfoParams.sellerId
     }
   );
+
+  const isCamelSeller =
+    reviewInfo &&
+    SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
+      SELLER_STATUS['3'];
+
+  const handleClickMoreList = () => {
+    if (product)
+      productDetailAtt({
+        key: attrKeys.products.CLICK_SELLER_PRODUCT,
+        product,
+        rest: {
+          att: 'ALL'
+        },
+        source: attrProperty.productSource.PRODUCT_LIST
+      });
+    // 내 매물 shop
+
+    if (roleSellerUserId && accessUser?.userId && roleSellerUserId === accessUser?.userId) {
+      router.push({
+        pathname: '/user/shop',
+        query: { tab: 0 }
+      });
+      return;
+    }
+
+    // 크롤링 판매자 정보 sellerInfo
+    // 일반 or 인증 사용자 정보 userInfo
+    router.push({
+      pathname:
+        product?.sellerType === productSellerType.collection
+          ? `/sellerInfo/${sellerId}`
+          : `/userInfo/${roleSellerUserId}`,
+      query: {
+        tab: 'products'
+      }
+    });
+  };
 
   useEffect(() => {
     if (sellerId)
@@ -172,6 +215,18 @@ function ProductSellerReviews({
                 )}
               </ReviewCard>
             ))}
+      {isCamelSeller && (
+        <Button
+          fullWidth
+          size="large"
+          variant="outline"
+          brandColor="blue"
+          customStyle={{ marginTop: 20 }}
+          onClick={handleClickMoreList}
+        >
+          인증판매자 상점 방문하기
+        </Button>
+      )}
       <Divider />
     </Box>
   ) : null;

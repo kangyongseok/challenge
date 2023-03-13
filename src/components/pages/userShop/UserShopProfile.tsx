@@ -2,10 +2,11 @@ import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
+import { CamelAuthLabel } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -40,11 +41,6 @@ function UserShopProfile({
   isCertificationSeller = false
 }: UserShopProfileProps) {
   const router = useRouter();
-  const {
-    theme: {
-      palette: { primary }
-    }
-  } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
   const {
@@ -130,9 +126,7 @@ function UserShopProfile({
                   <Typography variant="h3" weight="bold">
                     {nickName}
                   </Typography>
-                  {isCertificationSeller && (
-                    <Icon name="SafeFilled" size="small" customStyle={{ color: primary.main }} />
-                  )}
+                  {isCertificationSeller && <CamelAuthLabel />}
                 </Flexbox>
                 {!!curnScore && !!maxScore && (
                   <Flexbox alignment="center" justifyContent="center" gap={1}>

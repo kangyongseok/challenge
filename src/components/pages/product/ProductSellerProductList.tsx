@@ -5,7 +5,8 @@ import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQueries } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { Divider, ProductGridCard } from '@components/UI/molecules';
+import { ProductGridCard } from '@components/UI/molecules';
+import { CamelAuthLabel } from '@components/UI/atoms';
 
 import type { AccessUser } from '@dto/userAuth';
 import type { Product, ProductResult } from '@dto/product';
@@ -36,7 +37,7 @@ function ProductSellerProductList({
   const router = useRouter();
   const {
     theme: {
-      palette: { common, primary }
+      palette: { common, primary, secondary }
     }
   } = useTheme();
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
@@ -83,7 +84,7 @@ function ProductSellerProductList({
 
   const isCamelSeller =
     reviewInfo &&
-    SELLER_STATUS[reviewInfo.productSeller.type as keyof typeof SELLER_STATUS] ===
+    SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
   const isNormalseller = product?.sellerType === productSellerType.normal;
 
@@ -212,23 +213,48 @@ function ProductSellerProductList({
               >
                 {reviewInfo?.productSeller?.name}
               </ProductSellerName>
-              {isCamelSeller && !isNormalseller && (
-                <Icon name="SafeFilled" size="large" customStyle={{ color: primary.main }} />
-              )}
+              {isCamelSeller && !isNormalseller && <CamelAuthLabel />}
             </Flexbox>
             <Typography customStyle={{ color: common.ui60 }}>
-              {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''}
+              {/* {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''} */}
               {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
             </Typography>
           </Flexbox>
-          <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
-            <Typography weight="medium" variant="body2">
-              더보기
-            </Typography>
-            <Icon name="CaretRightOutlined" size="small" />
-          </Flexbox>
+          {!isCamelSeller && (
+            <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
+              <Typography weight="medium" variant="body2">
+                더보기
+              </Typography>
+              <Icon name="CaretRightOutlined" size="small" />
+            </Flexbox>
+          )}
         </Flexbox>
       </Flexbox>
+      {isCamelSeller && !isNormalseller && (
+        <Flexbox
+          alignment="flex-start"
+          customStyle={{
+            background: secondary.blue.bgLight,
+            borderRadius: 8,
+            padding: 12,
+            marginBottom: 20
+          }}
+          gap={6}
+        >
+          <Icon
+            name="ShieldFilled"
+            size="medium"
+            customStyle={{ color: primary.main, marginTop: -2 }}
+          />
+          <Typography weight="medium" variant="body2">
+            카멜이 직접 인증한 판매자로{' '}
+            <span style={{ color: secondary.blue.main }}>
+              상품 미발송 및 가품시 카멜이 100% 환불
+            </span>
+            해드립니다
+          </Typography>
+        </Flexbox>
+      )}
       <ProductList>
         {!sellerProducts?.content
           ? Array.from({ length: 5 }, (_, index) => (
@@ -252,7 +278,6 @@ function ProductSellerProductList({
               </Box>
             ))}
       </ProductList>
-      <Divider />
     </Box>
   ) : null;
 }
@@ -290,8 +315,7 @@ const ProductSellerName = styled(Typography)<{
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow-wrap: anywhere;
-  color: ${({ isCamelSeller, isNormalSeller, theme: { palette } }) =>
-    isCamelSeller && !isNormalSeller ? palette.primary.main : palette.common.ui20};
+  color: ${({ theme: { palette } }) => palette.common.ui20};
   ${({
     theme: {
       box,
