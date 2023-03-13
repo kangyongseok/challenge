@@ -61,13 +61,14 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 interface ProductsGeneralFilterProps {
   mapFilterButtonRef: MutableRefObject<HTMLButtonElement | null>;
   legitFilterButtonRef: MutableRefObject<HTMLDivElement | null>;
+  channelFilterButtonRef: MutableRefObject<HTMLButtonElement | null>;
   isLoading?: boolean;
   variant: ProductsVariant;
 }
 
 const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterProps>(
   function ProductsGeneralFilter(
-    { mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant },
+    { channelFilterButtonRef, mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant },
     ref
   ) {
     const {
@@ -667,10 +668,16 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                       )) ||
                     count > 0;
 
+                  const getRef = () => {
+                    if (filterCodeIds.map === codeId) return mapFilterButtonRef;
+                    if (filterCodeIds.safePayment === codeId) return channelFilterButtonRef;
+                    return undefined;
+                  };
+
                   return (
                     <FilterButton
                       key={`filter-option-button-${codeId}`}
-                      ref={filterCodeIds.map === codeId ? mapFilterButtonRef : undefined}
+                      ref={getRef() || undefined}
                       variant="ghost"
                       brandColor="black"
                       isLoading={isLoading}

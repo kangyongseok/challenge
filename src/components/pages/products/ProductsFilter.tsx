@@ -136,6 +136,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   const pendingInActiveMyFilterSearchRef = useRef(false);
   const isUpdatedAdditionalSelectedSearchOptionsRef = useRef(false);
   const mapFilterButtonRef = useRef<HTMLButtonElement>(null);
+  const channelFilterButtonRef = useRef<HTMLButtonElement>(null);
   const legitFilterButtonRef = useRef<HTMLDivElement>(null);
   const generalFilterRef = useRef<HTMLDivElement>(null);
 
@@ -721,17 +722,17 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       });
     }
 
-    if (mapFilterButtonRef.current) {
+    if (channelFilterButtonRef.current) {
       setStep3TooltipCustomStyle({
         position: 'fixed',
         top:
-          mapFilterButtonRef.current.getBoundingClientRect().top +
-          mapFilterButtonRef.current.clientHeight +
+          channelFilterButtonRef.current.getBoundingClientRect().top +
+          channelFilterButtonRef.current.clientHeight +
           10,
-        left: 85,
+        left: 60,
         transform: 'none',
         height: 'fit-content',
-        '& > svg': { left: mapFilterButtonRef.current.offsetLeft + 90 }
+        '& > svg': { left: channelFilterButtonRef.current.offsetLeft - 30 }
       });
     }
 
@@ -762,6 +763,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
       <ProductsGeneralFilter
         ref={generalFilterRef}
         mapFilterButtonRef={mapFilterButtonRef}
+        channelFilterButtonRef={channelFilterButtonRef}
         legitFilterButtonRef={legitFilterButtonRef}
         isLoading={!hasBaseSearchParams || !progressDone}
         variant={variant}
@@ -835,9 +837,9 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
             products: { complete: true, step: 3 }
           }))
         }
-        targetRef={mapFilterButtonRef}
-        customSpotlightPosition={{ top: 1, left: 144 }}
-        customStyle={{ borderRadius: 8, width: 70 }}
+        targetRef={channelFilterButtonRef}
+        customSpotlightPosition={{ top: 1, left: 1 }}
+        customStyle={{ borderRadius: 8, width: 68 }}
       >
         <Tooltip
           open={hasBaseSearchParams && progressDone && !complete && step === 2}
