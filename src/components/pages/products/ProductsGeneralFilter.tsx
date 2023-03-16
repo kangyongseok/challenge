@@ -47,6 +47,7 @@ import {
   dynamicOptionsStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
+  productFilterScrollToggleState,
   productsFilterProgressDoneState,
   productsFilterStateFamily,
   productsStatusTriggeredStateFamily,
@@ -88,6 +89,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     const setSearchOptionsParamsState = useSetRecoilState(
       searchParamsStateFamily(`searchOptions-${atomParam}`)
     );
+    const filterScrollToggleState = useRecoilValue(productFilterScrollToggleState);
     const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
       selectedSearchOptionsStateFamily(`active-${atomParam}`)
     );
@@ -129,7 +131,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       enabled: !!accessUser
     });
 
-    const triggered = useReverseScrollTrigger();
+    const triggered = useReverseScrollTrigger(filterScrollToggleState);
 
     const [open, setOpen] = useState(false);
     const [activeToastOpen, setActiveToastOpen] = useState(false);
@@ -632,11 +634,9 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                       size="medium"
                       startIcon={<Icon name="FilterFilled" />}
                       customStyle={{
-                        minWidth: selectedSearchOptionsHistoryCount === 0 ? 68 : 36
+                        minWidth: 36
                       }}
-                    >
-                      {selectedSearchOptionsHistoryCount === 0 ? '필터' : ''}
-                    </Button>
+                    />
                   )}
                   {!isLoading && selectedSearchOptionsHistoryCount > 0 && (
                     <Badge variant="small2" weight="medium">

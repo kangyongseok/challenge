@@ -12,10 +12,11 @@ function ChannelCamelAuthFixBanner() {
       gap={6}
       customStyle={{ background: secondary.blue.bgLight, padding: '12px 14px' }}
     >
-      <Icon name="ShieldFilled" size="small" customStyle={{ color: primary.main }} />
+      <Icon name="ShieldFilled" size="small" customStyle={{ color: primary.light }} />
       <Typography variant="body2" weight="medium">
-        인증판매자로 상품 미발송 및 가품시{' '}
-        <span style={{ color: secondary.blue.main }}>카멜이 100% 환불 보상</span>
+        카멜인증판매자입니다. 문제발생 시
+        <span style={{ color: secondary.blue.main }}> 카멜이 200% 환불</span>
+        해드립니다.
       </Typography>
     </Flexbox>
   );

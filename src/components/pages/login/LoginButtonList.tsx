@@ -245,6 +245,9 @@ function LoginButtonList({
     <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
       {!isProduction && (
         <ThemeProvider theme="light">
+          <Typography onClick={() => LocalStorage.clear()} customStyle={{ marginBottom: 30 }}>
+            로컬스토리지 All Clear
+          </Typography>
           <form
             onSubmit={(e) => {
               e.preventDefault();

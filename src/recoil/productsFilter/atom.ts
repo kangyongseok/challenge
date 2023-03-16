@@ -167,4 +167,9 @@ export const productsStatusTriggeredStateFamily = atomFamily<
   })
 });
 
+export const productFilterScrollToggleState = atom({
+  key: 'productsFilter/productFilterScrollToggleState',
+  default: true
+});
+
 export default productsFilterStateFamily;

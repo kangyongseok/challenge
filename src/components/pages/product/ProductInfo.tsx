@@ -190,7 +190,7 @@ function ProductInfo({
               <CheckedIcon />
             </Box>
             <Typography variant="body2" weight="medium">
-              상품 미발송 시 <span style={{ color: primary.main }}>카멜이 100% 보상</span>
+              상품 미발송 시 <span style={{ color: primary.main }}>카멜이 200% 보상</span>
             </Typography>
           </Flexbox>
           <Flexbox gap={6} alignment="center">
@@ -198,7 +198,7 @@ function ProductInfo({
               <CheckedIcon />
             </Box>
             <Typography variant="body2" weight="medium">
-              <span style={{ color: primary.main }}>가품시 100% 환불</span> 보장
+              <span style={{ color: primary.main }}>가품시 200% 환불</span> 보장
             </Typography>
           </Flexbox>
         </CertificationCard>

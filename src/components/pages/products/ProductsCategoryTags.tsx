@@ -22,6 +22,7 @@ import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common'
 
 import type { ProductsVariant } from '@typings/products';
 import {
+  productFilterScrollToggleState,
   productsStatusTriggeredStateFamily,
   searchOptionsStateFamily
 } from '@recoil/productsFilter';
@@ -37,13 +38,14 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const { keyword = '', parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const triggered = useReverseScrollTrigger();
+  const filterScrollToggleState = useRecoilValue(productFilterScrollToggleState);
+
+  const triggered = useReverseScrollTrigger(filterScrollToggleState);
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const { triggered: productsStatusTriggered } = useRecoilValue(
     productsStatusTriggeredStateFamily(atomParam)
   );
-
   const wrapperRef = useRef<HTMLDivElement>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);

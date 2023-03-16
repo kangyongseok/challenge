@@ -244,13 +244,11 @@ function ProductSellerProductList({
           <Icon
             name="ShieldFilled"
             size="medium"
-            customStyle={{ color: primary.main, marginTop: -2 }}
+            customStyle={{ color: primary.light, marginTop: -2 }}
           />
           <Typography weight="medium" variant="body2">
-            카멜이 직접 인증한 판매자로{' '}
-            <span style={{ color: secondary.blue.main }}>
-              상품 미발송 및 가품시 카멜이 100% 환불
-            </span>
+            카멜인증판매자입니다. 문제 시
+            <span style={{ color: secondary.blue.main }}> 200% 환불</span>
             해드립니다
           </Typography>
         </Flexbox>

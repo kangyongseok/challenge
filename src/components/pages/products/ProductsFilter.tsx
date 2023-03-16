@@ -42,6 +42,7 @@ import {
   dynamicOptionsStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
+  productFilterScrollToggleState,
   productsFilterAtomParamState,
   productsFilterProgressDoneState,
   productsFilterTotalCountStateFamily,
@@ -76,6 +77,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   const [{ searchOptions: baseSearchOptions }, setBaseSearchOptionsState] = useRecoilState(
     searchOptionsStateFamily(`base-${atomParam}`)
   );
+  const setFilterScrollToggleState = useSetRecoilState(productFilterScrollToggleState);
   const [{ searchParams }, setSearchParamsState] = useRecoilState(
     searchParamsStateFamily(`search-${atomParam}`)
   );
@@ -677,7 +679,6 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
 
   useEffect(() => {
     if (!hasBaseSearchParams || !progressDone) return;
-
     if (generalFilterRef.current) {
       const { clientHeight } = generalFilterRef.current;
       const { top } = generalFilterRef.current.getBoundingClientRect();
@@ -756,6 +757,35 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
         behavior: 'smooth'
       });
   }, [searchParams, isFetched]);
+
+  useEffect(() => {
+    if (document.querySelector('body') && accessUser) {
+      if (hasBaseSearchParams && progressDone && step > -1) {
+        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'initial';
+        // window.scrollTo({
+        //   top: 0,
+        //   behavior: 'smooth'
+        // });
+      } else {
+        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'hidden';
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }
+    return () => {
+      if (document.querySelector('body')) {
+        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'initial';
+      }
+    };
+  }, [accessUser, hasBaseSearchParams, progressDone, step]);
+
+  useEffect(() => {
+    setFilterScrollToggleState(
+      !!(hasBaseSearchParams && progressDone && (accessUser ? step > -1 : true))
+    );
+  }, [accessUser, setFilterScrollToggleState, hasBaseSearchParams, progressDone, step]);
 
   return (
     <>
