@@ -376,6 +376,13 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     }
   }, [prevScrollTop]);
 
+  const getViewKeyword = useMemo(() => {
+    if (keyword && typeof keyword === 'string') {
+      return keyword.replaceAll('-', ' ');
+    }
+    return keyword;
+  }, [keyword]);
+
   useEffect(() => {
     return () => LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
   }, []);
@@ -558,13 +565,12 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
         ))}
       </Grid>
     );
-
   if (progressDone && isFetched && !products.length) {
     return (
       <>
         <Flexbox gap={4} direction="vertical" customStyle={{ margin: '0 20px 24px 20px' }}>
           {variant === 'search' && keyword && (
-            <Typography weight="medium">{`'${keyword}'`}</Typography>
+            <Typography weight="medium">{`'${getViewKeyword}'`}</Typography>
           )}
           <Typography variant="body2" customStyle={{ color: common.ui60 }}>
             {!hasSelectedSearchOptions && !isNotUsedBrand

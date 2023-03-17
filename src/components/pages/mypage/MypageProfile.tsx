@@ -143,7 +143,7 @@ function MypageProfile() {
             <EllipsisText variant="h3" weight="bold">
               {nickName}
             </EllipsisText>
-            {isCertifiedSeller && <CamelAuthLabel />}
+            {isCertifiedSeller && !isLegit && <CamelAuthLabel />}
             {isLegit && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
                 <Icon
