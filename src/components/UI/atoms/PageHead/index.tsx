@@ -7,6 +7,9 @@ import { productSellerType } from '@constants/user';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
+const SERVER_IMAGE_PATH_TYPE1 = 's3.ap-northeast-2.amazonaws.com';
+const SERVER_IMAGE_PATH_TYPE2 = 'mrcamel.s3.ap-northeast-2.amazonaws.com';
+
 interface PageHeadProps {
   title?: string;
   description?: string;
@@ -39,13 +42,29 @@ function PageHead({
 
   const isNormalseller = product?.sellerType === productSellerType.normal;
 
+  const imagePathParser = () => {
+    if (ogImage) {
+      const serverPathType1 = ogImage.split('/')?.includes(SERVER_IMAGE_PATH_TYPE1);
+      const serverPathType2 = ogImage.split('/')?.includes(SERVER_IMAGE_PATH_TYPE2);
+
+      if (serverPathType1) {
+        return ogImage.replace(`${SERVER_IMAGE_PATH_TYPE1}/mrcamel`, process.env.IMAGE_DOMAIN);
+      }
+
+      if (serverPathType2) {
+        return ogImage.replace(SERVER_IMAGE_PATH_TYPE2, process.env.IMAGE_DOMAIN);
+      }
+    }
+    return '';
+  };
+
   return (
     <Head>
       {description && <meta name="description" content={description} />}
       {keywords && <meta name="keywords" content={keywords} />}
       {ogTitle && <meta property="og:title" content={ogTitle} />}
       {ogDescription && <meta property="og:description" content={ogDescription} />}
-      {ogImage && <meta property="og:image" content={ogImage} />}
+      {ogImage && <meta property="og:image" content={imagePathParser()} />}
       <meta
         property="og:url"
         content={decodeURI(`https://mrcamel.co.kr${router.asPath === '/' ? '' : router.asPath}`)}
@@ -54,7 +73,7 @@ function PageHead({
       <meta property="og:site_name" content="카멜" />
       {title && <meta name="twitter:title" content={title} />}
       {description && <meta name="twitter:description" content={description} />}
-      {ogImage && <meta name="twitter:image" content={ogImage} />}
+      {ogImage && <meta name="twitter:image" content={imagePathParser()} />}
       <meta name="twitter:card" content="summary" />
       <meta
         name="twitter:url"

@@ -52,7 +52,7 @@ function GenderYearInput({
           return currentYear - index;
         },
         {
-          index: currentYear - Number(userInfo.info.value.yearOfBirth),
+          index: currentYear - Number(userInfo?.info?.value?.yearOfBirth || 0),
           font_color: palette.common.ui60,
           selection_color: themeType === 'normal' ? palette.common.ui20 : '#ffffff'
         },

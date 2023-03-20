@@ -32,7 +32,7 @@ export async function getServerSideProps({ res }: GetServerSidePropsContext) {
   const sitemap = generateSiteMap(xml);
 
   res.setHeader('Content-Type', 'text/xml');
-  res.write(sitemap.replaceAll('&', '-'));
+  res.write(sitemap.replace(/&/g, '-'));
   res.end();
 
   return {

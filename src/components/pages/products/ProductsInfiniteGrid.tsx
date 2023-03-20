@@ -378,7 +378,7 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
 
   const getViewKeyword = useMemo(() => {
     if (keyword && typeof keyword === 'string') {
-      return keyword.replaceAll('-', ' ');
+      return keyword.replace(/-/g, ' ');
     }
     return keyword;
   }, [keyword]);
