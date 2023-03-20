@@ -27,3 +27,5 @@ export { default as NewProductGridCard } from './NewProductGridCard';
 export { default as NewProductListCard } from './NewProductListCard';
 export { default as LegitGridCard } from './LegitGridCard';
 export { default as LegitListCard } from './LegitListCard';
+export { default as InterfereKingBottomSheet } from './InterfereKingBottomSheet';
+export { default as InterfereKingResult } from './InterfereKingResult';

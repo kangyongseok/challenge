@@ -38,7 +38,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
   return (
     <>
       <Wrapper
-        onClick={handleClick}
+        onClick={handleClick} // handleClick
         isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
         isUserShop={router.pathname === '/user/shop'}
       >
@@ -50,7 +50,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
         </FloatingButton>
       </Wrapper>
       <Wrapper
-        onClick={handleClick}
+        onClick={handleClick} // handleClick
         isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
         isUserShop={router.pathname === '/user/shop'}
       >

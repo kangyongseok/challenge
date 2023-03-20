@@ -35,6 +35,7 @@ import type { UserRoleSeller } from '@dto/user';
 import type { Product, ProductDetail } from '@dto/product';
 import { Channel } from '@dto/channel';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -399,6 +400,7 @@ function ProductCTAButton({
       )?.id;
 
       if (channelId) {
+        UserTraceRecord.setExitWishChannel();
         if (checkAgent.isIOSApp()) {
           window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
         } else {

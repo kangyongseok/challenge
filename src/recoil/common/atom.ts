@@ -188,3 +188,22 @@ export const camelSellerAppUpdateDialogOpenState = atom({
   key: 'common/camelSellerAppUpdateDialogOpenState',
   default: false
 });
+
+export const exitUserViewBottomSheetState = atom({
+  key: 'common/exitUserViewBottomSheetState',
+  default: false
+});
+
+export const exitUserNextStepState = atom({
+  key: 'common/exitUserNextStepState',
+  default: {
+    text: '',
+    logType: '',
+    currentView: ''
+  }
+});
+
+export const exitNextStepBottomSheetState = atom({
+  key: 'common/exitNextStepBottomSheetState',
+  default: false
+});

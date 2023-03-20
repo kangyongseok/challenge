@@ -7,6 +7,7 @@ import type { UseMutateFunction, UseQueryResult } from '@tanstack/react-query';
 
 import type { ProductDetail, ProductParams } from '@dto/product';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
@@ -120,6 +121,7 @@ function useQueryProduct(): UseQueryProductResult {
   );
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
     onSuccess: () => {
+      UserTraceRecord.setExitWishChannel();
       mutateMetaInfo({ isAddWish: true });
     }
   });

@@ -17,6 +17,7 @@ import {
 
 import type { Product, ProductResult } from '@dto/product';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -176,7 +177,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       if (onWishAfterChangeCallback && typeof onWishAfterChangeCallback === 'function') {
         await onWishAfterChangeCallback(product, isWish);
       }
-
+      UserTraceRecord.setExitWishChannel();
       setToastState({
         type: 'product',
         status: 'successAddWish',

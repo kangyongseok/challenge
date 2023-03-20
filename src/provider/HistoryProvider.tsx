@@ -13,8 +13,15 @@ import { productsFilterProgressDoneState } from '@recoil/productsFilter';
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import { legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { eventContentDogHoneyFilterState } from '@recoil/eventFilter';
-import { dialogState, historyState, isGoBackState, toastState } from '@recoil/common';
+import {
+  dialogState,
+  exitUserNextStepState,
+  exitUserViewBottomSheetState,
+  historyState,
+  isGoBackState
+} from '@recoil/common';
 import useQueryUserData from '@hooks/useQueryUserData';
+import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
 const serverSideRenderPages = [
   '/products/categories/[keyword]',
@@ -25,7 +32,8 @@ const serverSideRenderPages = [
 
 function HistoryProvider({ children }: PropsWithChildren) {
   const router = useRouter();
-
+  const { isUserViewPerDay, productDetailOverViewLeave, isSearchExitPattern, searchProductLeave } =
+    useExitSurveyBottomSheet();
   const [history, setHistoryState] = useRecoilState(historyState);
   const [isGoBack, setIsGoBack] = useRecoilState(isGoBackState);
   const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
@@ -35,10 +43,11 @@ function HistoryProvider({ children }: PropsWithChildren) {
     userShopUpdatedProfileDataState
   );
   const legitRequest = useRecoilValue(legitRequestState);
+  const setExitBottomSheet = useSetRecoilState(exitUserViewBottomSheetState);
+  const setExitUserNextStep = useSetRecoilState(exitUserNextStepState);
   const productLegitParams = useRecoilValue(productLegitParamsState);
   const setProductsFilterProgressDoneState = useSetRecoilState(productsFilterProgressDoneState);
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
   const resetEventContentDogHoneyFilterState = useResetRecoilState(eventContentDogHoneyFilterState);
 
   const { set: setUserDate } = useQueryUserData();
@@ -46,6 +55,21 @@ function HistoryProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     router.beforePopState(({ url }) => {
       setIsGoBack(true);
+      if (isSearchExitPattern && searchProductLeave && isUserViewPerDay()) {
+        setExitUserNextStep((prev) => ({ ...prev, currentView: '검색' }));
+        setTimeout(() => {
+          setExitBottomSheet(true);
+        }, 500);
+      }
+
+      if (router.pathname === '/products/[id]') {
+        if (productDetailOverViewLeave && isUserViewPerDay()) {
+          setExitUserNextStep((prev) => ({ ...prev, currentView: '매물상세' }));
+          setTimeout(() => {
+            setExitBottomSheet(true);
+          }, 500);
+        }
+      }
 
       if (url.indexOf('/products') > -1) {
         setProductsFilterProgressDoneState(true);
@@ -111,20 +135,26 @@ function HistoryProvider({ children }: PropsWithChildren) {
       return true;
     });
   }, [
-    setIsGoBack,
-    setProductsFilterProgressDoneState,
-    router,
-    history,
-    setDialogState,
+    history.index,
+    history.pathNames,
+    isSearchExitPattern,
+    isUserViewPerDay,
     legitProfileUpdatedProfileData,
-    setLegitProfileUpdatedProfileDataState,
-    userShopUpdatedProfileData,
-    setUserShopUpdatedProfileDataState,
     legitRequest,
-    setUserDate,
+    productDetailOverViewLeave,
     productLegitParams,
-    setToastState,
-    resetEventContentDogHoneyFilterState
+    resetEventContentDogHoneyFilterState,
+    router,
+    searchProductLeave,
+    setDialogState,
+    setExitBottomSheet,
+    setExitUserNextStep,
+    setIsGoBack,
+    setLegitProfileUpdatedProfileDataState,
+    setProductsFilterProgressDoneState,
+    setUserDate,
+    setUserShopUpdatedProfileDataState,
+    userShopUpdatedProfileData
   ]);
 
   useEffect(() => {

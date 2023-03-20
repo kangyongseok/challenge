@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { Product, ProductResult } from '@dto/product';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -147,6 +148,8 @@ function NewProductGridCard({
         await onWishAfterChangeCallback(product, true);
       }
 
+      UserTraceRecord.setExitWishChannel();
+
       setToastState({
         type: 'product',
         status: 'successAddWish',
@@ -186,7 +189,9 @@ function NewProductGridCard({
         source
       });
     }
-
+    if (UserTraceRecord.getPageViewCount('exitSearch')) {
+      UserTraceRecord.setExitWishChannel();
+    }
     router.push(getProductDetailUrl({ product: product as Product }));
   };
 

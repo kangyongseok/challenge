@@ -55,6 +55,28 @@ const UserTraceRecord = {
     }
 
     return false;
+  },
+  setExitWishChannel() {
+    const userTraceRecord = LocalStorage.get<IUserTraceRecord>(USER_TRACE_RECORD);
+    if (!userTraceRecord?.exitWishChannelType) {
+      if ((userTraceRecord?.pageViewCounts.exitProduct || 0) > 0) {
+        LocalStorage.set(USER_TRACE_RECORD, {
+          ...userTraceRecord,
+          exitWishChannelType: 'exitProduct'
+        });
+      }
+
+      if ((userTraceRecord?.pageViewCounts.exitSearch || 0) > 0) {
+        LocalStorage.set(USER_TRACE_RECORD, {
+          ...userTraceRecord,
+          exitWishChannelType: 'exitSearch'
+        });
+      }
+    }
+  },
+  getExitWishChannel() {
+    const userTraceRecord = LocalStorage.get<IUserTraceRecord>(USER_TRACE_RECORD);
+    return userTraceRecord?.exitWishChannelType;
   }
 };
 

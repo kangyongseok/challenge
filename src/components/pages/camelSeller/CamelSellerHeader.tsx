@@ -21,7 +21,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import type { SaveCamelSellerProductData, SubmitType } from '@typings/camelSeller';
-import { toastState } from '@recoil/common';
+import { exitUserNextStepState, exitUserViewBottomSheetState, toastState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerChangeDetectSelector,
@@ -33,6 +33,7 @@ import {
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
 function CamelSellerHeader() {
   const { query, back, replace, beforePopState, pathname } = useRouter();
@@ -58,6 +59,8 @@ function CamelSellerHeader() {
   const resetValidatorPhoto = useResetRecoilState(
     camelSellerBooleanStateFamily('requirePhotoValid')
   );
+  const setExitBottomSheet = useSetRecoilState(exitUserViewBottomSheetState);
+  const { isUserViewPerDay } = useExitSurveyBottomSheet();
   const resetHasOpenedSurveyBottomSheetState = useResetRecoilState(
     camelSellerHasOpenedSurveyBottomSheetState
   );
@@ -70,10 +73,25 @@ function CamelSellerHeader() {
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostRegister, isLoading } = useMutation(postProducts);
   const { mutate: mutatePutEdit, isLoading: isLoadingEditMutate } = useMutation(putProductEdit);
+  const setExitUserNextStep = useSetRecoilState(exitUserNextStepState);
 
   const handleClickClose = () => {
     clickBackRef.current = true;
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+
+    if (
+      isUserViewPerDay() &&
+      (!tempData.images.length ||
+        !tempData.title ||
+        !tempData.category.id ||
+        !tempData.condition.id ||
+        (!tempData.categorySizeIds.length && !tempData.sizes))
+    ) {
+      setExitUserNextStep((prev) => ({ ...prev, currentView: '매물등록' }));
+      setTimeout(() => {
+        setExitBottomSheet(true);
+      }, 2000);
+    }
 
     if (
       !query.id &&
@@ -280,6 +298,18 @@ function CamelSellerHeader() {
       SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
       if (
+        isUserViewPerDay() &&
+        (!tempData.images.length ||
+          !tempData.title ||
+          !tempData.category.id ||
+          !tempData.condition.id ||
+          (!tempData.categorySizeIds.length && !tempData.sizes))
+      ) {
+        setExitUserNextStep((prev) => ({ ...prev, currentView: '매물등록' }));
+        setExitBottomSheet(true);
+      }
+
+      if (
         !clickBackRef.current &&
         !query.id &&
         !viewRecentPriceList.open &&
@@ -331,8 +361,11 @@ function CamelSellerHeader() {
     distances,
     hasOpenedSurveyBottomSheet,
     isChange,
+    isUserViewPerDay,
     pathname,
     query.id,
+    setExitBottomSheet,
+    setExitUserNextStep,
     stores,
     tempData,
     units,

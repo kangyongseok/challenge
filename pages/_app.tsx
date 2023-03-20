@@ -53,6 +53,10 @@ const CamelSellerSavePopup = dynamic(
 const CamelSellerAppUpdateDialog = dynamic(
   () => import('@components/UI/organisms/CamelSellerAppUpdateDialog')
 );
+const HomeInterfereKingBottomSheet = dynamic(
+  () => import('@components/pages/home/HomeInterfereKingBottomSheet')
+);
+const InterfereKingResult = dynamic(() => import('@components/UI/molecules/InterfereKingResult'));
 
 if (global.navigator) {
   Amplitude.init();
@@ -201,6 +205,8 @@ function App({ Component, pageProps }: AppProps) {
                   <CamelSellerSavePopup />
                   <CamelSellerAppUpdateDialog />
                   {router.pathname !== '/login' && <LoginBottomSheet />}
+                  <HomeInterfereKingBottomSheet />
+                  <InterfereKingResult />
                 </HistoryProvider>
               </ErrorBoundary>
             </ThemeModeProvider>

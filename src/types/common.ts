@@ -233,6 +233,7 @@ export interface UserTraceRecord {
   pageViewCounts: {
     [page in UserTracePages]: number;
   };
+  exitWishChannelType: 'exitProduct' | 'exitSearch';
 }
 
-export type UserTracePages = 'product';
+export type UserTracePages = 'product' | 'exitProduct' | 'exitSearch';

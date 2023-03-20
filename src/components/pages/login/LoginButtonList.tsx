@@ -254,6 +254,13 @@ function LoginButtonList({
               handleCLickTestUserLogin();
             }}
           >
+            <Typography
+              variant="h3"
+              onClick={() => LocalStorage.clear()}
+              customStyle={{ marginBottom: 30 }}
+            >
+              로컬스토리지 All Clear
+            </Typography>
             <TextInput
               id="signIn"
               variant="solid"

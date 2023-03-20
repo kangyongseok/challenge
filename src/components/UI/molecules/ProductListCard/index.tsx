@@ -25,6 +25,7 @@ import { ProductWishCancelDialog } from '@components/pages/product';
 import type { Product } from '@dto/product';
 import { ProductResult } from '@dto/product';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -135,6 +136,8 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
         exact: true
       });
       await refetchCategoryWishes();
+
+      UserTraceRecord.setExitWishChannel();
 
       setToastState({
         type: 'product',

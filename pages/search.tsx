@@ -21,6 +21,7 @@ import {
   SearchRecentList
 } from '@components/pages/search';
 
+import UserTraceRecord from '@library/userTraceRecord';
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -182,7 +183,7 @@ function Search() {
 
   useEffect(() => {
     logEvent(attrKeys.search.VIEW_SEARCH_MODAL);
-
+    UserTraceRecord.increasePageViewCount('exitSearch');
     if (savedRecentSearchList.length > 0) setRecentSearchList(savedRecentSearchList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

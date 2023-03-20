@@ -27,9 +27,9 @@ import {
   ProductDeletedCard,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
-  ProductEventBannerBottomSheet,
   ProductImages,
   ProductInfo,
+  ProductInterfereKingBottomSheet,
   ProductMowebAppContents,
   ProductRedirect,
   ProductRelatedProductList,
@@ -508,6 +508,7 @@ function ProductDetail() {
 
   useEffect(() => {
     UserTraceRecord.increasePageViewCount('product');
+    UserTraceRecord.increasePageViewCount('exitProduct');
   }, []);
 
   const sizeParser = () => {
@@ -718,7 +719,7 @@ function ProductDetail() {
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
-      <ProductEventBannerBottomSheet />
+      <ProductInterfereKingBottomSheet />
     </>
   );
 }

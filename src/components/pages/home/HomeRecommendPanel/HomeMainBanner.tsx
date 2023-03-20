@@ -79,22 +79,6 @@ function HomeMainBanner() {
     >
       <SwiperSlide>
         <Box
-          onClick={() => router.push('/events/camelSellerEventResult')}
-          customStyle={{
-            height: 104,
-            backgroundColor: '#64607A'
-          }}
-        >
-          <Image
-            height={104}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/seller_event_result.png`}
-            alt="판매하기 이벤트 당첨자 안내"
-            disableAspectRatio
-          />
-        </Box>
-      </SwiperSlide>
-      <SwiperSlide>
-        <Box
           onClick={handleClickTransferBanner}
           customStyle={{
             height: 104,
@@ -149,7 +133,7 @@ function HomeMainBanner() {
           }}
         >
           {currentIndex + 1}
-          <span>/3</span>
+          <span>/2</span>
         </Typography>
       </Flexbox>
     </Swiper>
