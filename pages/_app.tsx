@@ -28,6 +28,7 @@ import {
   ChannelTalkProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
+  GoogleTagManagerProvider,
   HistoryProvider,
   SendbirdProvider,
   ThemeModeProvider
@@ -177,6 +178,7 @@ function App({ Component, pageProps }: AppProps) {
       <ChannelTalkProvider />
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
+      {process.env.GOOGLE_TAG_MANAGER_ID && <GoogleTagManagerProvider />}
       <QueryClientProvider client={queryClient.current}>
         <Hydrate state={pageProps.dehydratedState}>
           <RecoilRoot>

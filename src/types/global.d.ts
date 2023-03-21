@@ -46,6 +46,7 @@ export declare global {
       GOOGLE_JS_KEY: string;
       FACEBOOK_PIXEL_ID: string;
       GOOGLE_ANALYTICS_TRACKING_ID: string;
+      GOOGLE_TAG_MANAGER_ID: string;
       DATADOG_RUM_APP_ID: string;
       DATADOG_RUM_CLIENT_TOKEN: string;
       DATADOG_RUM_ENV: string;

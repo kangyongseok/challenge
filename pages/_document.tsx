@@ -110,6 +110,19 @@ class MyDocument extends Document {
           <meta name="facebook-domain-verification" content="wldrbh2d5e7wpicfcndrlgz2sf8tmu" />
         </Head>
         <body>
+          {process.env.GOOGLE_TAG_MANAGER_ID && (
+            <noscript
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
+                __html: `<iframe
+                  src="https://www.googletagmanager.com/ns.html?id=${process.env.GOOGLE_TAG_MANAGER_ID}"
+                  height="0"
+                  width="0"
+                  style="display:none;visibility:hidden"
+                />`
+              }}
+            />
+          )}
           <div id="not-support" style={{ display: 'none' }}>
             <h2>지원하지 않는 브라우저입니다. 브라우저를 업데이트 해주세요.</h2>
             <a href="http://outdatedbrowser.com/ko" target="_blank" rel="noreferrer">
