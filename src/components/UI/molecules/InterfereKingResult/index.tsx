@@ -6,7 +6,8 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import { exitNextStepBottomSheetState, exitUserNextStepState } from '@recoil/common';
+import { deviceIdState, exitNextStepBottomSheetState, exitUserNextStepState } from '@recoil/common';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import { CloseIcon } from './InterfereKingResult.style';
 
@@ -17,6 +18,9 @@ function InterfereKingResult() {
     }
   } = useTheme();
 
+  const { data: accessUser } = useQueryAccessUser();
+
+  const deviceId = useRecoilValue(deviceIdState);
   const exitUserNextStepText = useRecoilValue(exitUserNextStepState);
   const [nextBottomSheetIsOpen, setNextBottomSheetOpen] = useRecoilState(
     exitNextStepBottomSheetState
@@ -81,6 +85,13 @@ function InterfereKingResult() {
         onReady={handleClick}
         onClose={handleClose}
         onSubmit={handleSubmit}
+        tracking={{
+          utm_source: exitUserNextStepText.currentView,
+          utm_medium: exitUserNextStepText.logType,
+          utm_campaign: '2303_CAMEL_OPINION_V2',
+          utm_term: String(accessUser?.userId || deviceId),
+          utm_content: exitUserNextStepText.content
+        }}
       >
         <Button
           fullWidth

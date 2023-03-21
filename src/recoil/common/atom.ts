@@ -199,7 +199,8 @@ export const exitUserNextStepState = atom({
   default: {
     text: '',
     logType: '',
-    currentView: ''
+    currentView: '',
+    content: ''
   }
 });
 

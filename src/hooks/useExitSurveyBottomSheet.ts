@@ -11,10 +11,6 @@ import {
 
 import { historyState } from '@recoil/common';
 
-// function productSellWaitLeave() {
-//   // 매물등록 시도 => 필수정보 입력 다 안하고 중간에 나가기
-// }
-
 function useExitSurveyBottomSheet() {
   const history = useRecoilValue(historyState);
 

@@ -195,10 +195,10 @@ const ScrollNext = styled(Flexbox)`
     margin-top: -4px;
   }
 
-  div:nth-child(3) {
+  div:nth-of-type(3) {
     animation-delay: -0.2s;
   }
-  div:nth-child(4) {
+  div:nth-of-type(4) {
     animation-delay: -0.4s;
   }
   @keyframes bounce {

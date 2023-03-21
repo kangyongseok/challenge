@@ -13,11 +13,16 @@ import { logEvent } from '@library/amplitude';
 
 import { postSurvey } from '@api/user';
 
-import { PRODUCT_EVENT_AD_BANNER_HIDE_DATE } from '@constants/localStorage';
+import {
+  DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET,
+  LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET,
+  PRODUCT_EVENT_AD_BANNER_HIDE_DATE
+} from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { deviceIdState, exitUserNextStepState } from '@recoil/common';
+import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
 const evaluationData: EvaluationData[] = [
   { evalType: 0, icon: '😐', toolTipText: '아무렇지도 않아요' },
@@ -34,8 +39,11 @@ function ProductInterfereKingBottomSheet() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<Selected>(null);
   const [description, setDescription] = useState('');
+
   const setExitUserNextStep = useSetRecoilState(exitUserNextStepState);
+  const { isOverWeek, isUserViewPerDay } = useExitSurveyBottomSheet();
   const deviceId = useRecoilValue(deviceIdState);
+
   const { mutate: mutateSurvey } = useMutation(postSurvey);
 
   const handleSelectEvaluation = (value: Selected) => {
@@ -67,23 +75,36 @@ function ProductInterfereKingBottomSheet() {
       options: `${selectedType}|${description}`,
       surveyId: 5
     });
-    setSelectedType(null);
-    setDescription('');
+
     setExitUserNextStep({
       text: '혹시 카멜이 망하지 않게 의견주실 수 있나요? ',
       logType: 'GOOD',
-      currentView: '매물상세'
+      currentView: '매물상세',
+      content: `${Number(selectedType) + 1}|${description}`
     });
+    setSelectedType(null);
+    setDescription('');
   };
 
   useEffect(() => {
+    const displayCount = LocalStorage.get(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET) || 0;
     if (isOpen) {
       logEvent(attrKeys.events.VIEW_EVENT_DETAIL, {
         name: attrProperty.name.PRODUCT_DETAIL,
         title: '2303_CAMEL_OPINION_V2',
         type: 'GOOD'
       });
+
+      if (!displayCount) {
+        LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, 1);
+        LocalStorage.set(LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET, dayjs().format('YYYY-MM-DD'));
+      }
+
+      if (Number(displayCount) === 1 && isOverWeek) {
+        LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, 2);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   useEffect(() => {
@@ -92,7 +113,8 @@ function ProductInterfereKingBottomSheet() {
     if (
       UserTraceRecord.getLastVisitDateDiffDay() < -7 ||
       !UserTraceRecord.isReVisit() ||
-      (UserTraceRecord?.getPageViewCount('product') || 0) < 2
+      (UserTraceRecord?.getPageViewCount('product') || 0) < 2 ||
+      !isUserViewPerDay()
     )
       return;
 
@@ -104,6 +126,7 @@ function ProductInterfereKingBottomSheet() {
     } else {
       setIsOpen(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

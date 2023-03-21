@@ -35,12 +35,14 @@ const evaluationData: EvaluationData[] = [
 
 function HomeInterfereKingBottomSheet() {
   const router = useRouter();
+  const [selectedType, setSelectedType] = useState<Selected>(null);
+  const [description, setDescription] = useState('');
+
   const { isOverWeek } = useExitSurveyBottomSheet();
   const [isOpen, setIsOpen] = useRecoilState(exitUserViewBottomSheetState);
   const [exitUserNextStep, setExitUserNextStep] = useRecoilState(exitUserNextStepState);
-  const [selectedType, setSelectedType] = useState<Selected>(null);
-  const [description, setDescription] = useState('');
   const deviceId = useRecoilValue(deviceIdState);
+
   const { mutate: mutateSurvey } = useMutation(postSurvey);
 
   const handleSelectEvaluation = (value: Selected) => {
@@ -67,13 +69,15 @@ function HomeInterfereKingBottomSheet() {
       options: `${selectedType}|${description}`,
       surveyId: 5
     });
-    setSelectedType(null);
-    setDescription('');
+
     setExitUserNextStep((prev) => ({
       ...prev,
       text: '혹시 조금 더 의견주실 수 있나요?',
-      logType: 'NOT_GOOD'
+      logType: 'NOT_GOOD',
+      content: `${Number(selectedType) + 1}|${description}`
     }));
+    setSelectedType(null);
+    setDescription('');
   };
 
   useEffect(() => {
@@ -89,6 +93,7 @@ function HomeInterfereKingBottomSheet() {
 
   useEffect(() => {
     const displayCount = LocalStorage.get(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET) || 0;
+
     if (isOpen) {
       if (!displayCount) {
         LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, 1);

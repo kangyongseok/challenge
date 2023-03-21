@@ -55,7 +55,8 @@ function HistoryProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     router.beforePopState(({ url }) => {
       setIsGoBack(true);
-      if (isSearchExitPattern && searchProductLeave && isUserViewPerDay()) {
+
+      if (isSearchExitPattern && searchProductLeave && isUserViewPerDay() && url === '/search') {
         setExitUserNextStep((prev) => ({ ...prev, currentView: '검색' }));
         setTimeout(() => {
           setExitBottomSheet(true);

@@ -93,7 +93,7 @@ export const NextButton = styled(Button)<{ selected: boolean }>`
 `;
 
 export const EvaluationTooltip = styled(Tooltip)<{ isAnimation: boolean }>`
-  div:nth-child(2) {
+  div:nth-of-type(2) {
     animation: ${({ isAnimation }) => (isAnimation ? fadeOut : '')} 0.5s forwards;
     animation-delay: 2s;
   }
