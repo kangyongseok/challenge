@@ -6,7 +6,6 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   MypageActionBanner,
   MypageEtc,
-  MypageEventBanner,
   MypageIntro,
   MypageLegitInfo,
   MypageMyInfo,
@@ -16,7 +15,6 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-// import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
@@ -44,36 +42,26 @@ function MyPage() {
   }
 
   return (
-    <>
-      <GeneralTemplate
-        header={<Header />}
-        footer={<BottomNavigation />}
-        disablePadding
-        customStyle={{ userSelect: 'none', footer: { marginTop: 0 } }}
-      >
-        <MypageProfile />
-        <MypageActionBanner />
-        {isLegit && (
-          <>
-            <MypageLegitInfo />
-            <Gap height={1} />
-          </>
-        )}
-        <MypageMyInfo />
-        <Gap height={1} />
-        <MypageSetting />
-        <Gap height={1} />
-        <MypageEventBanner />
-        <MypageEtc />
-      </GeneralTemplate>
-      {/* <CamelSellerFloatingButton
-        attributes={{
-          name: attrProperty.name.MY,
-          title: attrProperty.title.MY_FLOATING,
-          source: 'MYPAGE'
-        }}
-      /> */}
-    </>
+    <GeneralTemplate
+      header={<Header />}
+      footer={<BottomNavigation />}
+      disablePadding
+      customStyle={{ userSelect: 'none', footer: { marginTop: 0 } }}
+    >
+      <MypageProfile />
+      <MypageActionBanner />
+      {isLegit && (
+        <>
+          <MypageLegitInfo />
+          <Gap height={1} />
+        </>
+      )}
+      <MypageMyInfo />
+      <Gap height={1} />
+      <MypageSetting />
+      <Gap height={1} />
+      <MypageEtc />
+    </GeneralTemplate>
   );
 }
 

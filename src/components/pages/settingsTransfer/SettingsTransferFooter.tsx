@@ -23,7 +23,7 @@ function SettingsTransferFooter() {
   const [openDupToast, setOpenDupToast] = useState(false);
   const [openLimitToast, setOpenLimitToast] = useState(false);
 
-  const { siteId, url } = useRecoilValue(settingsTransferDataState);
+  const { siteId, url, isUrlPattern } = useRecoilValue(settingsTransferDataState);
   const platforms = useRecoilValue(settingsTransferPlatformsState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
@@ -57,7 +57,9 @@ function SettingsTransferFooter() {
       url
     });
 
-    if (userTransfers.length >= 3) {
+    if (!isUrlPattern) return;
+
+    if (userTransfers.length >= 5) {
       setOpenLimitToast(true);
       setOpenDupToast(false);
       setOpen(false);
@@ -115,7 +117,7 @@ function SettingsTransferFooter() {
         중복입니다!
       </Toast>
       <Toast open={openLimitToast} onClose={() => setOpenLimitToast(false)}>
-        최대 3개까지 연동됩니다!
+        최대 5개까지 연동됩니다!
       </Toast>
     </>
   );

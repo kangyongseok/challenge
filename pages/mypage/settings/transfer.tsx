@@ -94,7 +94,7 @@ function Transfer() {
                 >
                   {/* eslint-disable-next-line react/no-unescaped-entities */}
                   가져오기 할 플랫폼의 상품 url 주소를 수정 또는 삭제하시려면 “1:1 문의”를
-                  이용해주세요!
+                  이용해주세요! <span style={{ color: common.ui20 }}>최대 5개까지 연동</span>됩니다.
                 </Typography>
               </Flexbox>
             </Alert>

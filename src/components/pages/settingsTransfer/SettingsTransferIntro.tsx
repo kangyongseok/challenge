@@ -1,9 +1,11 @@
-import { Box, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Image, useTheme } from 'mrcamel-ui';
+
+import { getImageResizePath } from '@utils/common';
 
 function SettingsTransferIntro() {
   const {
     theme: {
-      palette: { common }
+      palette: { secondary }
     }
   } = useTheme();
 
@@ -12,40 +14,23 @@ function SettingsTransferIntro() {
       component="section"
       customStyle={{
         margin: '0 -20px',
-        padding: '11px 20px 32px',
         textAlign: 'center',
-        backgroundColor: common.bg03
+        backgroundColor: secondary.blue.bgLight
       }}
     >
       <Image
-        width={136}
-        height={146}
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-main.png`}
-        alt="Banner Img"
+        height={208}
+        src={getImageResizePath({
+          imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer_main_banner.png`,
+          h: 209
+        })}
+        alt="다른 곳에 있는 내 상품을 카멜에서 바로 판매하세요"
         round={8}
         disableAspectRatio
         customStyle={{
           margin: 'auto'
         }}
       />
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{
-          marginTop: 32
-        }}
-      >
-        내 상품 가져오기란,
-      </Typography>
-      <Typography
-        customStyle={{
-          marginTop: 4
-        }}
-      >
-        다른 플랫폼에 업로드 한 내 상품을 간편하게
-        <br />
-        카멜 내 상점으로 가져와 판매 등록하는 서비스입니다.
-      </Typography>
     </Box>
   );
 }

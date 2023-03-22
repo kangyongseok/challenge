@@ -33,22 +33,7 @@ export const settingsTransferPlatformsState = atom<
     },
     {
       id: 4,
-      name: '헬로마켓',
-      selected: false
-    },
-    {
-      id: 6,
-      name: '나이키매니아',
-      selected: false
-    },
-    {
-      id: 7,
-      name: '필웨이',
-      selected: false
-    },
-    {
-      id: 23,
-      name: '디젤매니아',
+      name: '세컨웨어',
       selected: false
     },
     {
@@ -57,8 +42,13 @@ export const settingsTransferPlatformsState = atom<
       selected: false
     },
     {
-      id: 30,
-      name: '초캠',
+      id: 7,
+      name: '필웨이',
+      selected: false
+    },
+    {
+      id: 6,
+      name: '나이키매니아',
       selected: false
     },
     {
@@ -73,6 +63,7 @@ export const settingsTransferDataState = atom<PostTransferData>({
   key: 'settingsTransfer/dataState',
   default: {
     siteId: 0,
-    url: ''
+    url: '',
+    isUrlPattern: false
   }
 });

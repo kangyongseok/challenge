@@ -12,7 +12,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function SettingsTransferList() {
   const {
     theme: {
-      palette: { common }
+      palette: { common, primary }
     }
   } = useTheme();
 
@@ -37,12 +37,7 @@ function SettingsTransferList() {
       }}
     >
       {userTransfers.length > 0 && (
-        <Typography
-          weight="bold"
-          customStyle={{
-            color: common.ui80
-          }}
-        >
+        <Typography weight="bold" variant="h4">
           신청 플랫폼
         </Typography>
       )}
@@ -111,7 +106,11 @@ function SettingsTransferList() {
                 size="small"
                 isRound={false}
                 customStyle={{
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  borderRadius: 4,
+                  height: 24,
+                  fontWeight: 500,
+                  color: primary.light
                 }}
               >
                 등록중
@@ -124,7 +123,10 @@ function SettingsTransferList() {
                 size="small"
                 isRound={false}
                 customStyle={{
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  borderRadius: 4,
+                  height: 24,
+                  fontWeight: 500
                 }}
               >
                 완료
@@ -138,7 +140,10 @@ function SettingsTransferList() {
                 isRound={false}
                 customStyle={{
                   whiteSpace: 'nowrap',
-                  background: '#FFE5E8'
+                  background: '#FFE5E8',
+                  borderRadius: 4,
+                  height: 24,
+                  fontWeight: 500
                 }}
               >
                 실패

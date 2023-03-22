@@ -18,7 +18,7 @@ function ChannelTalkProvider() {
   useEffect(() => {
     ChannelTalk.hideMessenger();
 
-    if (router.pathname === '/mypage') {
+    if (router.pathname === '/mypage' || router.pathname === '/mypage/settings/transfer') {
       ChannelTalk.showChannelButton();
     } else {
       ChannelTalk.hideChannelButton();
