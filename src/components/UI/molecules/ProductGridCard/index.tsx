@@ -32,13 +32,14 @@ import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getProductDetailUrl } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
 
 import {
@@ -164,6 +165,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
     useQueryCategoryWishes({ deviceId });
@@ -206,6 +208,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     }
   });
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
+  const { imageLoadError } = useProductImageResize(imageUrl);
 
   const [cardCustomStyle] = useState({ ...customStyle, cursor: 'pointer' });
   const [isWish, setIsWish] = useState(false);
@@ -296,7 +299,11 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       {...props}
     >
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
-        <Image src={imageUrl} alt={`${product.title} 이미지`} round={isRound ? 8 : 0} />
+        <Image
+          src={imageLoadError ? imageUrl : getProductCardImageResizePath(imageUrl)}
+          alt={`${product.title} 이미지`}
+          round={isRound ? 8 : 0}
+        />
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
             {productLabels.map(({ description }, index) => (

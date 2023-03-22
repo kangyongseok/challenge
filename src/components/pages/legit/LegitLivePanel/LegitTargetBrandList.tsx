@@ -19,6 +19,7 @@ import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
+  getImageResizePath,
   handleClickAppDownload,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
@@ -186,12 +187,15 @@ function LegitTargetBrandList() {
                       <Avatar
                         width={64}
                         height={64}
-                        src={`https://${
-                          process.env.IMAGE_DOMAIN
-                        }/assets/images/brands/white/${nameEng
-                          .toLocaleLowerCase()
-                          .split(' ')
-                          .join('')}.jpg`}
+                        src={getImageResizePath({
+                          imagePath: `https://${
+                            process.env.IMAGE_DOMAIN
+                          }/assets/images/brands/white/${nameEng
+                            .toLocaleLowerCase()
+                            .split(' ')
+                            .join('')}.jpg`,
+                          w: 64
+                        })}
                         alt="Brand Logo Img"
                         round="50%"
                         onClick={handleClick(id, name, nameEng)}

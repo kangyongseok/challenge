@@ -9,9 +9,10 @@ import { LegitLabel } from '@components/UI/atoms';
 import type { ProductLegit } from '@dto/productLegit';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import type { ProductListCardVariant } from '@typings/common';
+import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Description, MoreButton } from './LegitListCard.styles';
 
@@ -55,6 +56,8 @@ function LegitListCard({
     legitOpinions = []
   } = productLegit;
 
+  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
+
   const { authenticCount, fakeCount } = useMemo(
     () => ({
       authenticCount: legitOpinions.filter((legitOpinion) => legitOpinion.result === 1).length,
@@ -84,7 +87,11 @@ function LegitListCard({
       >
         <Image
           ratio="5:6"
-          src={imageThumbnail || imageMain}
+          src={
+            imageLoadError
+              ? imageThumbnail || imageMain
+              : getProductCardImageResizePath(imageThumbnail || imageMain)
+          }
           alt={`${productTitle} 이미지`}
           round={8}
         />

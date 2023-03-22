@@ -22,6 +22,8 @@ import { defaultNonMemberPersonalGuideList } from '@constants/home';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getImageResizePath } from '@utils/common';
+
 import { activeMyFilterState } from '@recoil/productsFilter';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -310,7 +312,10 @@ function HomePersonalGuide() {
             <Image
               width={48}
               height={48}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-auth.png`}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/camel-auth.png`,
+                w: 48
+              })}
               alt="Personal Guide Img"
               round={12}
               disableAspectRatio
@@ -344,7 +349,10 @@ function HomePersonalGuide() {
             <Image
               width={48}
               height={48}
-              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/dog-honey.png`}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/dog-honey.png`,
+                w: 48
+              })}
               alt="Personal Guide Img"
               round={12}
               disableAspectRatio
@@ -380,7 +388,7 @@ function HomePersonalGuide() {
               <Image
                 width={40}
                 height={40}
-                src={src}
+                src={getImageResizePath({ imagePath: src, w: 40 })}
                 alt="Personal Guide Img"
                 round={12}
                 disableAspectRatio

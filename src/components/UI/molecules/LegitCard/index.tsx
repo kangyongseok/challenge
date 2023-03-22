@@ -10,6 +10,10 @@ import type { ProductLegit } from '@dto/productLegit';
 
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 
+import { getProductCardImageResizePath } from '@utils/common';
+
+import useProductImageResize from '@hooks/useProductImageResize';
+
 import { Content, ImageBox, Title } from './LegitCard.styles';
 
 interface LegitCardProps extends HTMLAttributes<HTMLDivElement> {
@@ -48,6 +52,8 @@ function LegitCard({
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
   const isNormalseller = (siteId === 34 || productSeller?.type === 4) && productSeller?.type !== 3;
 
+  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
+
   const {
     theme: { box }
   } = useTheme();
@@ -61,7 +67,14 @@ function LegitCard({
         customStyle={{ ...customStyle, maxHeight: 56, cursor: 'pointer' }}
       >
         <ImageBox>
-          <Image src={imageThumbnail || imageMain} alt="Product Legit Img" />
+          <Image
+            src={
+              imageLoadError
+                ? imageThumbnail || imageMain
+                : getProductCardImageResizePath(imageThumbnail || imageMain)
+            }
+            alt="Product Legit Img"
+          />
           {!hidePlatformLogo && postType !== 2 && (
             <Avatar
               width={15}
@@ -144,7 +157,14 @@ function LegitCard({
           customStyle={{ position: 'absolute', top: 12, left: 12, zIndex: 1 }}
         />
       )}
-      <Image src={imageThumbnail || imageMain} alt="Product Legit Img" />
+      <Image
+        src={
+          imageLoadError
+            ? imageThumbnail || imageMain
+            : getProductCardImageResizePath(imageThumbnail || imageMain)
+        }
+        alt="Product Legit Img"
+      />
       <Flexbox
         direction="vertical"
         gap={2}

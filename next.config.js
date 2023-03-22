@@ -107,7 +107,7 @@ const nextConfig = {
               }
             ],
             permanent: false,
-            destination: 'https://intro.mrcamel.co.kr/:path*'
+            destination: 'https://staging-pc.mrcamel.co.kr/:path*'
           },
           {
             source: '/:path*',
@@ -119,7 +119,7 @@ const nextConfig = {
               }
             ],
             permanent: false,
-            destination: 'https://intro.mrcamel.co.kr/:path*'
+            destination: 'https://staging-pc.mrcamel.co.kr/:path*' // intro.mrcamel.co.kr
           }
         ]);
   }

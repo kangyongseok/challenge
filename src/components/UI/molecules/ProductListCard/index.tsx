@@ -41,12 +41,13 @@ import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getProductDetailUrl } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
 
 import { Area, Content, MetaSocial, Title, WishButton } from './ProductListCard.styles';
@@ -163,6 +164,7 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
     salePrice,
     productLegitStatusText
   } = useProductCardState(product);
+  const { imageLoadError } = useProductImageResize(imageUrl);
 
   const [isWish, setIsWish] = useState(false);
   const [openRemoveWishDialog, setOpenRemoveWishDialog] = useState(false);
@@ -356,7 +358,11 @@ const ProductListCard = forwardRef<HTMLDivElement, ProductListCardProps>(functio
             customStyle={{ position: 'absolute', top: 12, left: -12 }}
           />
           <Content isRound={isRound}>
-            <Image src={imageUrl} alt={`${product.title} 이미지`} round={isRound ? 8 : 0} />
+            <Image
+              src={imageLoadError ? imageUrl : getProductCardImageResizePath(imageUrl)}
+              alt={`${product.title} 이미지`}
+              round={isRound ? 8 : 0}
+            />
             <WishButton onClick={handleClickWish}>
               {isWish ? (
                 <Icon name="HeartFilled" color={secondary.red.main} size="large" />

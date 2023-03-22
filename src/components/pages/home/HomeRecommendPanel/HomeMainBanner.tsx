@@ -15,6 +15,8 @@ import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getImageResizePath } from '@utils/common';
+
 import {
   settingsTransferDataState,
   settingsTransferPlatformsState
@@ -87,7 +89,10 @@ function HomeMainBanner() {
         >
           <Image
             height={104}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`,
+              h: 104
+            })}
             alt="내 상품 가져오기로 한번에 판매 등록 배너"
             disableAspectRatio
           />
@@ -103,7 +108,10 @@ function HomeMainBanner() {
         >
           <Image
             height={104}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-interfere-in-king-banner.png`}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/event-interfere-in-king-banner.png`,
+              h: 104
+            })}
             alt="Main Banner Img"
             disableAspectRatio
           />

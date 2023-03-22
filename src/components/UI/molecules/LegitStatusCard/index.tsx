@@ -11,10 +11,11 @@ import type { ProductLegit } from '@dto/productLegit';
 import { productPostType } from '@constants/common';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductImageResize from '@hooks/useProductImageResize';
 
 interface LegitStatusCardProps extends HTMLAttributes<HTMLDivElement> {
   productLegit: ProductLegit;
@@ -45,6 +46,7 @@ function LegitStatusCard({
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
+  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
 
   const isMine = accessUser && accessUser.userId === userId;
 
@@ -163,7 +165,16 @@ function LegitStatusCard({
           borderRadius: 8
         }}
       >
-        <Image ratio="5:6" src={imageThumbnail || imageMain} alt={`${title} 이미지`} round={8} />
+        <Image
+          ratio="5:6"
+          src={
+            imageLoadError
+              ? imageThumbnail || imageMain
+              : getProductCardImageResizePath(imageThumbnail || imageMain)
+          }
+          alt={`${title} 이미지`}
+          round={8}
+        />
         {labelText === '감정신청' && (
           <Label
             variant="outline"

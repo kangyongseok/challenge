@@ -7,6 +7,8 @@ import { Skeleton, useTheme } from 'mrcamel-ui';
 import { GENDER } from '@constants/user';
 import { BRANDS_BY_GENDER } from '@constants/brand';
 
+import { getImageResizePath } from '@utils/common';
+
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -107,9 +109,12 @@ function BrandList({
             >
               <BrandImageBox variant={variant} color={color}>
                 <BrandImage
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
-                    mode === 'light' ? 'white' : 'black'
-                  }/${nameEng.toLowerCase().replace(/\s/g, '')}.jpg`}
+                  src={getImageResizePath({
+                    imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/${
+                      mode === 'light' ? 'white' : 'black'
+                    }/${nameEng.toLowerCase().replace(/\s/g, '')}.jpg`,
+                    w: 48
+                  })}
                   alt="Brand Logo Img"
                   variant={variant}
                   round="50%"

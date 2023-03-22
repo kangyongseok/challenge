@@ -24,13 +24,14 @@ import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
 import { commaNumber, getTenThousandUnitPrice } from '@utils/formats';
-import { getProductDetailUrl } from '@utils/common';
+import { getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { WishAtt } from '@typings/product';
 import { openDeleteToastState, removeIdState } from '@recoil/wishes';
 import { deviceIdState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
 
 import { Content, PriceDownLabel, Title } from './ProductWishesCard.styles';
@@ -105,6 +106,8 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       productLegitStatusText,
       discountedPrice
     } = useProductCardState(product);
+    const { imageLoadError } = useProductImageResize(imageUrl);
+
     const {
       id,
       title,
@@ -241,7 +244,11 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
           {...props}
         >
           <Content size={100} isTimeline={router.query.tab === 'history'}>
-            <Image src={imageUrl} alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)} round={8} />
+            <Image
+              src={imageLoadError ? imageUrl : getProductCardImageResizePath(imageUrl)}
+              alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
+              round={8}
+            />
             <Avatar
               width={20}
               height={20}

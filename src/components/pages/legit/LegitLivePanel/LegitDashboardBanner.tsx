@@ -19,7 +19,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getProductDetailUrl } from '@utils/common';
+import { getImageResizePath, getProductDetailUrl } from '@utils/common';
 
 function LegitDashboardBanner() {
   const router = useRouter();
@@ -156,7 +156,12 @@ function LegitDashboardBanner() {
           : dashBoardData.map(
               ({ icon, label, customStyle, path, image, title, description, att }) => (
                 <SwiperSlide key={`dashboard-banner-card-${label}`}>
-                  <Card url={image} onClick={handleClickBanner} data-path={path} data-att={att}>
+                  <Card
+                    url={getImageResizePath({ imagePath: image, w: 400 })}
+                    onClick={handleClickBanner}
+                    data-path={path}
+                    data-att={att}
+                  >
                     <Box customStyle={{ flex: 1 }}>
                       <CustomLabel css={customStyle}>
                         {icon && (

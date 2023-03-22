@@ -8,9 +8,10 @@ import { LegitLabel } from '@components/UI/atoms';
 import type { Product, ProductResult } from '@dto/product';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import type { ProductGridCardVariant } from '@typings/common';
+import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Content, MoreButton, Overlay } from './LegitGridCard.styles';
 
@@ -62,6 +63,8 @@ function LegitGridCard({
     price
   } = product || {};
 
+  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
+
   return (
     <Flexbox {...props} direction="vertical" customStyle={{ cursor: 'pointer' }} css={customStyle}>
       <Box
@@ -71,7 +74,11 @@ function LegitGridCard({
       >
         <Image
           ratio="5:6"
-          src={imageMain || imageThumbnail}
+          src={
+            imageLoadError
+              ? imageMain || imageThumbnail
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${title} 이미지`}
           round={variant !== 'gridA' ? 8 : 0}
         />

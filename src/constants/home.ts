@@ -144,7 +144,7 @@ export const defaultNonMemberPersonalGuideList = [
   },
   {
     id: 216,
-    name: '조던',
+    name: '에어조던',
     parentId: 0,
     type: 'brand',
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/airjordan.jpg`

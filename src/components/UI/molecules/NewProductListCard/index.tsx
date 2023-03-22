@@ -25,12 +25,13 @@ import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
 import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getProductDetailUrl } from '@utils/common';
+import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { ProductListCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles';
 
@@ -136,6 +137,7 @@ function NewProductListCard({
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
+  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
@@ -330,7 +332,11 @@ function NewProductListCard({
         )}
         <Image
           ratio="5:6"
-          src={imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL}
+          src={
+            imageLoadError
+              ? imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${productTitle} 이미지`}
           round={8}
         />

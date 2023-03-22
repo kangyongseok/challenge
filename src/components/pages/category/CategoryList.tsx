@@ -17,6 +17,8 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getImageResizePath } from '@utils/common';
+
 import categoryState from '@recoil/category';
 
 interface CategoryListProps {
@@ -176,11 +178,14 @@ function CategoryList({ selectedParentCategory, setSelectedParentCategory }: Cat
                     >
                       <ImageBox isSelected={selectedParentCategory === parentCategoryId}>
                         <Image
-                          src={`https://${
-                            process.env.IMAGE_DOMAIN
-                          }/assets/images/category/ico_cate_${parentCategoryNameEng}_${gender.charAt(
-                            0
-                          )}.png`}
+                          src={getImageResizePath({
+                            imagePath: `https://${
+                              process.env.IMAGE_DOMAIN
+                            }/assets/images/category/ico_cate_${parentCategoryNameEng}_${gender.charAt(
+                              0
+                            )}.png`,
+                            w: 48
+                          })}
                           alt="Category Icon Img"
                           width={48}
                           height={48}
