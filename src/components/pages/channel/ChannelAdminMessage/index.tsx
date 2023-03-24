@@ -56,7 +56,6 @@ interface ChannelAdminMessageProps {
   productId: number;
   targetUserId: number;
   targetUserName: string;
-  userName: string;
   isSeller: boolean;
   orders: Order[];
   hasUserReview: boolean;

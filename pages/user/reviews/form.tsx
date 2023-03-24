@@ -20,6 +20,8 @@ import { fetchProduct } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import { checkAgent } from '@utils/common';
+
 import { toastState } from '@recoil/common';
 import { AnimationLoading } from '@pages/user/report';
 
@@ -98,6 +100,12 @@ function ReviewForm() {
       });
     }
   }, [isLoading, isSeller, product, productId, router, userId]);
+
+  useEffect(() => {
+    if (checkAgent.isIOSApp()) {
+      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
+    }
+  }, []);
 
   return (
     <GeneralTemplate

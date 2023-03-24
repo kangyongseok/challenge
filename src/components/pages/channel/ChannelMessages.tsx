@@ -38,7 +38,6 @@ interface ChannelMessagesProps {
   productId: number;
   targetUserId: number;
   targetUserName: string;
-  userName: string;
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
@@ -63,7 +62,6 @@ function ChannelMessages({
   productId,
   targetUserId,
   targetUserName,
-  userName,
   showAppointmentBanner,
   showNewMessageNotification,
   showActionButtons,
@@ -104,7 +102,6 @@ function ChannelMessages({
                   productId={productId}
                   targetUserId={targetUserId}
                   targetUserName={targetUserName}
-                  userName={userName}
                   refetchChannel={refetchChannel}
                   isSeller={isSeller}
                   orders={orders}
@@ -131,7 +128,6 @@ function ChannelMessages({
       productId,
       targetUserId,
       targetUserName,
-      userName,
       refetchChannel,
       isSeller,
       orders,

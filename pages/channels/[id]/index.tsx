@@ -464,7 +464,6 @@ function Chanel() {
                     productId={productId}
                     targetUserId={targetUserId}
                     targetUserName={targetUserName}
-                    userName={userName}
                     showAppointmentBanner={showAppointmentBanner}
                     showNewMessageNotification={unreadCount > 0}
                     showActionButtons={showActionButtons}

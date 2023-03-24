@@ -102,6 +102,7 @@ function SettingsAccountForm() {
           if (response) {
             await refetch();
             const lastPageUrl = SessionStorage.get<string>(sessionStorageKeys.lastPageUrl);
+
             if (lastPageUrl) {
               router.push(lastPageUrl);
             } else {
