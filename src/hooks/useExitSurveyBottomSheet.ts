@@ -6,7 +6,8 @@ import LocalStorage from '@library/localStorage';
 
 import {
   DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET,
-  LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET
+  LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET,
+  SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET
 } from '@constants/localStorage';
 
 import { historyState } from '@recoil/common';
@@ -17,14 +18,23 @@ function useExitSurveyBottomSheet() {
   const displayCount = LocalStorage.get(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET) || 0;
   const lastDisplayDate = (LocalStorage.get(LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET) || '') as string;
 
+  const under30seconds = () => {
+    const saveSearchTime = LocalStorage.get(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET);
+    if (saveSearchTime) {
+      return dayjs().diff(dayjs(String(saveSearchTime)), 'seconds') <= 20;
+    }
+    return false;
+  };
+
   const productDetailOverViewLeave = !!(
-    (UserTraceRecord.getPageViewCount('exitProduct') || 0) >= 3 &&
+    (UserTraceRecord.getPageViewCount('exitProduct') || 0) >= 4 &&
     UserTraceRecord.getExitWishChannel() !== 'exitProduct'
   );
 
   const searchProductLeave = !!(
     UserTraceRecord.getPageViewCount('exitSearch') &&
-    UserTraceRecord.getExitWishChannel() !== 'exitSearch'
+    UserTraceRecord.getExitWishChannel() !== 'exitSearch' &&
+    under30seconds()
   );
 
   const isOverWeek = dayjs(lastDisplayDate).diff(dayjs(), 'days') >= 7;

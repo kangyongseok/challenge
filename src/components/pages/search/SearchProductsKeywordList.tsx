@@ -36,7 +36,7 @@ import attrKeys from '@constants/attrKeys';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function SearchProductsKeywordList() {
+function SearchProductsKeywordList({ handleClickSaveTime }: { handleClickSaveTime: () => void }) {
   const {
     theme: { palette }
   } = useTheme();
@@ -172,6 +172,8 @@ function SearchProductsKeywordList() {
         title: attrProperty.productTitle.MYLIST,
         att: product.isNew ? 'NEW' : 'GENERAL'
       });
+
+      handleClickSaveTime();
       setHistoryState(product, Number(cardId));
     }
   };

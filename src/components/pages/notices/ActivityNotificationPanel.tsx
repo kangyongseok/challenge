@@ -307,7 +307,14 @@ function ActivityNotificationPanel() {
       {data?.pages.map((page, pageIndex) => {
         if (!page) {
           return (
-            <Flexbox direction="vertical" gap={4} alignment="center" justifyContent="center">
+            <Flexbox
+              // eslint-disable-next-line react/no-array-index-key
+              key={`noti-${pageIndex}`}
+              direction="vertical"
+              gap={4}
+              alignment="center"
+              justifyContent="center"
+            >
               <Typography variant="h0">😮</Typography>
               <Typography variant="h3" weight="bold">
                 활동알림이 없습니다!

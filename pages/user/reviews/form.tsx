@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -62,16 +62,23 @@ function ReviewForm() {
     content: ''
   });
 
+  const loggedRef = useRef(false);
+
   const handleClickSendReview = () => {
     if (isLoadingPostReview) return;
 
-    logEvent(attrKeys.channel.SUBMIT_REVIEW, {
-      att: isSeller ? 'BUYER' : 'SELLER',
-      score: Number(params.score) / 2
-    });
-
     mutatePostReview(params, {
       onSuccess() {
+        logEvent(attrKeys.channel.SUBMIT_REVIEW, {
+          name: attrKeys.channel.REVIEW_SEND,
+          att: isSeller ? 'BUYER' : 'SELLER',
+          score: Number(params.score) / 2,
+          data: {
+            ...product
+          },
+          description: params.content
+        });
+
         setToastState({ type: 'user', status: 'successSendReview' });
         router.back();
       }
@@ -79,12 +86,18 @@ function ReviewForm() {
   };
 
   useEffect(() => {
+    if (isLoading) return;
+
     if (!productId || !userId) router.push({ pathname: '/channels', query: { type: 0 } });
 
-    logEvent(attrKeys.channel.VIEW_REVIEW_SEND, { att: isSeller ? 'BUYER' : 'SELLER' });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!loggedRef.current) {
+      loggedRef.current = true;
+      logEvent(attrKeys.channel.VIEW_REVIEW_SEND, {
+        att: isSeller ? 'BUYER' : 'SELLER',
+        data: { ...product }
+      });
+    }
+  }, [isLoading, isSeller, product, productId, router, userId]);
 
   return (
     <GeneralTemplate

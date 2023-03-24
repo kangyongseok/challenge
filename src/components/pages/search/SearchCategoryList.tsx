@@ -11,7 +11,7 @@ import attrKeys from '@constants/attrKeys';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function SearchCategoryList() {
+function SearchCategoryList({ handleClickSaveTime }: { handleClickSaveTime: () => void }) {
   const { data: accessUser } = useQueryAccessUser();
 
   const handleClickCategory = useCallback(
@@ -33,9 +33,10 @@ function SearchCategoryList() {
         title: attrProperty.productTitle.CATEGORY,
         att: subParentCategoryName
       });
+      handleClickSaveTime();
       callback();
     },
-    []
+    [handleClickSaveTime]
   );
 
   return (

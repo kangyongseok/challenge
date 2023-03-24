@@ -67,7 +67,7 @@ export interface SaveCamelSellerProductData {
   };
 }
 
-export type CommonCodeId = { codeId: number };
+export type CommonCodeId = { codeId: number; groupId?: number };
 
 export interface FilterDropItem {
   name: string;

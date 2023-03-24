@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import { PushNotificationDeliveryOption } from '@sendbird/chat/message';
@@ -16,7 +17,11 @@ import attrKeys from '@constants/attrKeys';
 
 import { urlToBlob } from '@utils/common';
 
-function useMutationSendMessage() {
+interface UseMutationSendMessageProps {
+  lastMessageIndex?: number;
+}
+
+function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProps) {
   const { mutate: mutatePostHistoryManage, ...useMutationResult } = useMutation(postHistoryManage);
 
   const mutate = async ({
@@ -50,21 +55,22 @@ function useMutationSendMessage() {
       : PushNotificationDeliveryOption.SUPPRESS;
 
     const onSucceeded = (msg: SendableMessage) => {
+      logEvent(attrKeys.channel.SUBMIT_MESSAGE, {
+        name: attrProperty.name.CHANNEL_DETAIL,
+        att: 'USER',
+        channelId: data.channelId,
+        message: fileUrl || data.content,
+        userId,
+        productId,
+        createdAt: dayjs(msg.createdAt).format('YYYY-MM-DD HH:mm'),
+        index: lastMessageIndex
+      });
       if (callback) callback(msg);
     };
 
     await mutatePostHistoryManage(data, {
       async onSuccess() {
         if (!data.content) return;
-
-        logEvent(attrKeys.channel.SUBMIT_MESSAGE, {
-          name: attrProperty.name.CHANNEL_DETAIL,
-          att: 'USER',
-          channelId: data.channelId,
-          message: fileUrl || data.content,
-          userId,
-          productId
-        });
 
         if (file) {
           await Sendbird.sendFile({

@@ -9,7 +9,7 @@ import attrKeys from '@constants/attrKeys';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function SearchBrandList() {
+function SearchBrandList({ handleClickSaveTime }: { handleClickSaveTime: () => void }) {
   const { data: accessUser } = useQueryAccessUser();
 
   const handleClickBrand = ({
@@ -26,6 +26,7 @@ function SearchBrandList() {
       title: attrProperty.productTitle.BRAND,
       att: name
     });
+    handleClickSaveTime();
     callback();
   };
 

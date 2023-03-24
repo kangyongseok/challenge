@@ -20,6 +20,8 @@ import type {
   PostStyleParams,
   PostSurveyData,
   PostTransferData,
+  PostUserAccountData,
+  PostUserDeliveryData,
   ProductKeywordData,
   ProductKeywords,
   ProductsAddParams,
@@ -29,7 +31,9 @@ import type {
   SizeMapping,
   SizeResult,
   UpdateUserProfileData,
+  UserAccount,
   UserBlockParams,
+  UserCert,
   UserFixedChannel,
   UserHistoryManages,
   UserInfo,
@@ -345,6 +349,11 @@ export async function fetchTransfers() {
   return data;
 }
 
+export async function fetchFixedChannel() {
+  const { data } = await Axios.getInstance().get<UserFixedChannel[]>(`${BASE_PATH}/channel`);
+  return data;
+}
+
 export async function postTransfers(data: PostTransferData) {
   await Axios.getInstance().post(`${BASE_PATH}/transfers`, data);
 }
@@ -368,7 +377,33 @@ export async function putFixedChannel({
   });
 }
 
-export async function fetchFixedChannel() {
-  const { data } = await Axios.getInstance().get<UserFixedChannel[]>(`${BASE_PATH}/channel`);
+export async function fetchUserAccounts() {
+  const { data } = await Axios.getInstance().get<UserAccount[]>(`${BASE_PATH}/accounts`);
   return data;
+}
+
+export async function postUserDelivery(data: PostUserDeliveryData) {
+  await Axios.getInstance().post(`${BASE_PATH}/delivery`, data);
+}
+
+export async function postUserAccount(data: PostUserAccountData) {
+  const response = await Axios.getInstance().post<UserAccount>(`${BASE_PATH}/accounts`, data);
+
+  return response.data;
+}
+
+export async function fetchUserCerts() {
+  const { data } = await Axios.getInstance().get<UserCert[]>(`${BASE_PATH}/certs`);
+
+  return data;
+}
+
+export async function postUserCerts(
+  data: Partial<Pick<UserCert, 'name' | 'birth' | 'birthday' | 'ci' | 'di' | 'gender'>> & {
+    type: 0;
+  }
+) {
+  const response = await Axios.getInstance().post<UserCert>(`${BASE_PATH}/certs`, data);
+
+  return response.data;
 }

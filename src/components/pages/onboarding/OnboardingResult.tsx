@@ -81,7 +81,11 @@ function OnboardingResult() {
     <ThemeProvider theme="dark">
       <Firecracker />
       <Box
-        customStyle={{ padding: '0 40px', background: dark.palette.common.uiWhite, height: '100%' }}
+        customStyle={{
+          padding: '0 40px',
+          background: dark.palette.common.uiWhite,
+          height: 'calc(100vh - 112px)'
+        }}
       >
         <Flexbox
           justifyContent="center"

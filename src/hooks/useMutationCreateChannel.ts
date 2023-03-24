@@ -33,7 +33,8 @@ function useMutationCreateChannel() {
 
   const mutate = async (
     params: CreateChannelParams,
-    options?: Omit<UseMutationOptions<number, unknown, PostChannelData, unknown>, 'mutationFn'>
+    options?: Omit<UseMutationOptions<number, unknown, PostChannelData, unknown>, 'mutationFn'>,
+    callback?: (channelId?: number) => void
   ) => {
     if (!!userId && !state.initialized) {
       await initializeSendbird(userId.toString(), userNickName, userImageProfile);
@@ -48,9 +49,13 @@ function useMutationCreateChannel() {
           },
           {
             async onSuccess(channelId) {
+              if (callback && typeof callback === 'function') {
+                await callback(channelId);
+              }
+
               await groupChannel.createMetaData({ ...params, channelId: String(channelId) });
 
-              queryClient.invalidateQueries(
+              await queryClient.invalidateQueries(
                 queryKeys.products.product({ productId: +params.productId })
               );
 

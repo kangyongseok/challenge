@@ -4,6 +4,9 @@ import type { PropsWithChildren, ReactElement } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 
+import SessionStorage from '@library/sessionStorage';
+
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { SAVED_LEGIT_REQUEST } from '@constants/localStorage';
 
 import { getPathNameByAsPath } from '@utils/common';
@@ -55,7 +58,6 @@ function HistoryProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     router.beforePopState(({ url }) => {
       setIsGoBack(true);
-
       if (isSearchExitPattern && searchProductLeave && isUserViewPerDay() && url === '/search') {
         setExitUserNextStep((prev) => ({ ...prev, currentView: '검색' }));
         setTimeout(() => {
@@ -169,6 +171,9 @@ function HistoryProvider({ children }: PropsWithChildren) {
           asPaths: history.asPaths.filter((_, index) => index < history.asPaths.length - 1)
         });
       } else {
+        if (history.asPaths[history.index] && history.asPaths[history.index] !== '/') {
+          SessionStorage.set(sessionStorageKeys.lastPageUrl, history.asPaths[history.index]);
+        }
         setHistoryState({
           index: history.index + 1,
           pathNames: [...history.pathNames, pathname],

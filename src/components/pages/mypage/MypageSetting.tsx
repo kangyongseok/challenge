@@ -2,12 +2,16 @@ import { useCallback, useMemo } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Badge, Flexbox, Icon } from 'mrcamel-ui';
+import { Badge, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
+import { fetchUserAccounts } from '@api/user';
+
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -17,13 +21,33 @@ import {
   settingsTransferDataState,
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
+import { settingsAccountData } from '@recoil/settingsAccount';
 import { dialogState } from '@recoil/common';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageSetting() {
   const router = useRouter();
+
+  const {
+    theme: {
+      palette: { secondary }
+    }
+  } = useTheme();
+
   const setDialogState = useSetRecoilState(dialogState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
+  const resetAccountDataState = useResetRecoilState(settingsAccountData);
+
+  const { data: accessUser } = useQueryAccessUser();
+
+  const { data: userAccounts = [] } = useQuery(
+    queryKeys.users.userAccounts(),
+    () => fetchUserAccounts(),
+    {
+      enabled: !!accessUser
+    }
+  );
 
   const handleClickAlarmSetting = useCallback(() => {
     if (!checkAgent.isMobileApp()) {
@@ -70,14 +94,30 @@ function MypageSetting() {
     router.push('/mypage/settings/channelFixMessage');
   }, [router]);
 
+  const handleClickAccount = useCallback(() => {
+    logEvent(attrKeys.mypage.CLICK_PERSONAL_INPUT, {
+      name: attrProperty.name.MY,
+      title: attrProperty.title.ACCOUNT
+    });
+    resetAccountDataState();
+    router.push('/mypage/settings/account');
+  }, [resetAccountDataState, router]);
+
   const settingMenu = useMemo(
     () => [
+      { label: '정산계좌', isNew: false, onClick: handleClickAccount },
       { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
       { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
       { label: '채팅 고정 메시지 설정', isNew: true, onClick: handleClickFixMessage },
       { label: '내 상품 가져오기', isNew: true, onClick: handleClickTransfer }
     ],
-    [handleClickAlarmSetting, handleClickBlockedUsers, handleClickTransfer, handleClickFixMessage]
+    [
+      handleClickAccount,
+      handleClickAlarmSetting,
+      handleClickBlockedUsers,
+      handleClickTransfer,
+      handleClickFixMessage
+    ]
   );
 
   return (
@@ -85,7 +125,20 @@ function MypageSetting() {
       {settingMenu.map(({ label, isNew, onClick }) => (
         <MenuItem
           key={`info-menu-${label}`}
-          action={<Icon name="Arrow2RightOutlined" size="small" />}
+          action={
+            <Flexbox gap={4} alignment="center">
+              {label === '정산계좌' && (
+                <Typography
+                  customStyle={{
+                    color: secondary.blue.main
+                  }}
+                >
+                  {userAccounts[0]?.bankName}
+                </Typography>
+              )}
+              <Icon name="Arrow2RightOutlined" size="small" />
+            </Flexbox>
+          }
           onClick={onClick}
         >
           <Flexbox alignment="center" gap={2}>

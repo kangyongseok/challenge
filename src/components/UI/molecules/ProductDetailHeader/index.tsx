@@ -14,8 +14,8 @@ import { checkAgent, executedShareURl } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 
-import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 import Header from '../Header';
+import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 
 interface ProductDetailHeaderProps {
   data?: ProductDetail;

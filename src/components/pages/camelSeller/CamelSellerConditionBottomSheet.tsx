@@ -23,7 +23,7 @@ function CamelSellerConditionBottomSheet() {
   } = useTheme();
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [{ open }, setOpen] = useRecoilState(camelSellerDialogStateFamily('condition'));
-  const { data: codeDetails } = useQuery(queryKeys.commons.codeDetails(14), () =>
+  const { data: codeDetails } = useQuery(queryKeys.commons.codeDetails({ codeId: 14 }), () =>
     fetchCommonCodeDetails({
       codeId: 14
     })

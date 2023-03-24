@@ -41,7 +41,7 @@ function NewProductListCardSkeleton({
         <Skeleton
           width="100%"
           maxWidth={120}
-          height={32}
+          height={16}
           round={8}
           disableAspectRatio
           customStyle={{

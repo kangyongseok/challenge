@@ -61,6 +61,34 @@ export const channelBottomSheetStateFamily = atomFamily<
   ]
 });
 
+export const channelDialogStateFamily = atomFamily<
+  {
+    open: boolean;
+    isChannel: boolean;
+    location?: string;
+  },
+  'purchaseConfirm' | 'saleRequestRefuse'
+>({
+  key: 'channel/dialogStateFamily',
+  default: {
+    open: false,
+    isChannel: true
+  },
+  effects: [
+    ({ onSet }) => {
+      onSet(({ open, isChannel }, _, isReset) => {
+        if (!!checkAgent.isIOSApp() && isChannel) {
+          if (open || isReset) {
+            window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
+          } else {
+            window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
+          }
+        }
+      });
+    }
+  ]
+});
+
 export const channelReceivedMessageFilteredState = atom({
   key: 'channel/receivedMessageFilteredState',
   default: false,

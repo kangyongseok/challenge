@@ -25,6 +25,7 @@ interface ChannelMessageInputProps {
   targetUserId: number;
   productId: number;
   fileUrl?: string;
+  lastMessageIndex: number;
 }
 
 function ChannelMessageInput({
@@ -39,14 +40,15 @@ function ChannelMessageInput({
   updateNewMessage,
   targetUserId,
   productId,
-  fileUrl
+  fileUrl,
+  lastMessageIndex
 }: ChannelMessageInputProps) {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const { mutate: mutateSendMessage } = useMutationSendMessage();
+  const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
 
   const [message, setMessage] = useState('');
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);

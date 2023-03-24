@@ -33,3 +33,4 @@ export { getCookie } from './getCookie';
 export { noop } from './noop';
 export { getProductCardImageResizePath } from './getProductCardImageResizePath';
 export { getImageResizePath } from './getImageResizePath';
+export { getOrderStatusText } from './getOrderStatusText';

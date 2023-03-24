@@ -17,6 +17,7 @@ import DateSeparator from '@components/UI/molecules/DateSeparator';
 import ChannelMessage from '@components/pages/channel/ChannelMessage';
 import ChannelAdminMessage from '@components/pages/channel/ChannelAdminMessage';
 
+import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
 import {
@@ -36,6 +37,8 @@ interface ChannelMessagesProps {
   messages: CoreMessageType[];
   productId: number;
   targetUserId: number;
+  targetUserName: string;
+  userName: string;
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
@@ -43,6 +46,10 @@ interface ChannelMessagesProps {
   isCamelAuthSeller?: boolean;
   messagesRef: MutableRefObject<HTMLDivElement | null>;
   hasMorePrev: boolean;
+  hasUserReview: boolean;
+  hasTargetUserReview: boolean;
+  isSeller: boolean;
+  orders: Order[];
   fetchPrevMessages: () => Promise<void>;
   scrollToBottom(behavior?: ScrollBehavior): void;
   refetchChannel: <TPageData>(
@@ -55,12 +62,17 @@ function ChannelMessages({
   messages,
   productId,
   targetUserId,
+  targetUserName,
+  userName,
   showAppointmentBanner,
   showNewMessageNotification,
   showActionButtons,
   messagesRef,
   hasMorePrev,
+  hasUserReview,
   isCamelAdminUser,
+  isSeller,
+  orders,
   isCamelAuthSeller,
   fetchPrevMessages,
   scrollToBottom,
@@ -91,7 +103,12 @@ function ChannelMessages({
                   message={message as AdminMessage}
                   productId={productId}
                   targetUserId={targetUserId}
+                  targetUserName={targetUserName}
+                  userName={userName}
                   refetchChannel={refetchChannel}
+                  isSeller={isSeller}
+                  orders={orders}
+                  hasUserReview={hasUserReview}
                 />
               ) : (
                 <ChannelMessage
@@ -108,7 +125,19 @@ function ChannelMessages({
           {dayjs(sendbirdChannel.createdAt).format('YYYY년 MM월 DD일')}
         </DateSeparator>
       ),
-    [messages, isCamelAuthSeller, sendbirdChannel, productId, targetUserId, refetchChannel]
+    [
+      messages,
+      sendbirdChannel,
+      productId,
+      targetUserId,
+      targetUserName,
+      userName,
+      refetchChannel,
+      isSeller,
+      orders,
+      hasUserReview,
+      isCamelAuthSeller
+    ]
   );
 
   const handleScroll = debounce((e: UIEvent<HTMLDivElement>) => {

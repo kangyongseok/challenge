@@ -21,7 +21,7 @@ const keywords = [
   '나이키 조던1'
 ];
 
-function SearchKeyword() {
+function SearchKeyword({ handleClickSaveTime }: { handleClickSaveTime: () => void }) {
   const router = useRouter();
   const {
     theme: { typography }
@@ -45,6 +45,8 @@ function SearchKeyword() {
       title: attrProperty.productTitle.RECOMMTAG,
       type: attrProperty.productType.GUIDED
     });
+
+    handleClickSaveTime();
     router.push({
       pathname: `/products/search/${keyword}`
     });

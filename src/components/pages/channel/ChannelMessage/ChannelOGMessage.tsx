@@ -8,24 +8,16 @@ interface ChannelOGMessageProps {
   message: UserMessage;
   status: string;
   isByMe: boolean;
-  nextMessageUserIsDiff: boolean;
 }
 
-function ChannelOGMessage({
-  message,
-  status,
-  isByMe,
-  nextMessageUserIsDiff
-}: ChannelOGMessageProps) {
+function ChannelOGMessage({ message, status, isByMe }: ChannelOGMessageProps) {
   const handleClickOGUrl = () => {
     if (message.ogMetaData?.url) window.open(message.ogMetaData?.url);
   };
 
   return (
     <OGMessage isByMe={isByMe}>
-      {!nextMessageUserIsDiff && (
-        <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
-      )}
+      <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       <Flexbox
         direction="vertical"
         onClick={handleClickOGUrl}

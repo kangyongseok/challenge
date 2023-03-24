@@ -47,9 +47,7 @@ function ChannelThumbnailMessage({
 
   return (
     <ThumbnailMessage isByMe={isByMe} nextMessageUserIsDiff={nextMessageUserIsDiff}>
-      {!nextMessageUserIsDiff && (
-        <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
-      )}
+      <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       <ImageWrapper onClick={handleClickImage}>
         <Image url={imageUrl} />
         <HiddenImageLoader

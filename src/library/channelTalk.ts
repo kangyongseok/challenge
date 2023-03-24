@@ -30,6 +30,15 @@ const ChannelTalk = {
   hideChannelButton() {
     if (window.ChannelIO) window.ChannelIO('hideChannelButton');
   },
+  onShowMessenger(callback: () => void) {
+    if (window.ChannelIO) window.ChannelIO('onShowMessenger', callback);
+  },
+  onHideMessenger(callback: () => void) {
+    if (window.ChannelIO) window.ChannelIO('onHideMessenger', callback);
+  },
+  clearCallbacks() {
+    if (window.ChannelIO) window.ChannelIO('clearCallbacks');
+  },
   moveChannelButtonPosition(moveTo: number) {
     if (!channelTalkCoreElement) {
       findChannelTalkButtonElement().then((element) => {

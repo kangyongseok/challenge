@@ -81,6 +81,8 @@ const CtaButtonWrapper = styled.div`
   }) => common.uiWhite};
   padding: 12px 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+  min-height: 76px;
+  max-height: 76px;
 `;
 
 export default ProductDetail;

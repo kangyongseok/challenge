@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
@@ -15,8 +15,10 @@ import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
 import type { ProductResult } from '@dto/product';
+import type { Order } from '@dto/order';
 import type { ChannelAppointmentResult, ChannelDetail, UserReview } from '@dto/channel';
 
+import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
@@ -27,13 +29,15 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
-import { checkAgent } from '@utils/common';
+import { checkAgent, getOrderStatusText } from '@utils/common';
 
-import { dialogState, toastState } from '@recoil/common';
+import { toastState } from '@recoil/common';
+import { channelDialogStateFamily } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
 interface ChannelBottomActionButtonsProps {
   messageInputHeight: number;
+  lastMessageIndex: number;
   channelId: number;
   channelUrl: string;
   userName: string;
@@ -49,6 +53,7 @@ interface ChannelBottomActionButtonsProps {
   userReview: UserReview | null | undefined;
   targetUserReview: UserReview | null | undefined;
   hasLastMessage: boolean;
+  order?: Order | null;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
@@ -57,6 +62,7 @@ interface ChannelBottomActionButtonsProps {
 
 function ChannelBottomActionButtons({
   messageInputHeight,
+  lastMessageIndex,
   channelId,
   channelUrl,
   userName,
@@ -72,16 +78,17 @@ function ChannelBottomActionButtons({
   userReview,
   targetUserReview,
   hasLastMessage,
+  order,
   refetchChannel,
   updateNewMessage
 }: ChannelBottomActionButtonsProps) {
   const router = useRouter();
 
   const setToastState = useSetRecoilState(toastState);
-  const setDialogState = useSetRecoilState(dialogState);
+  const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
-  const { mutate: mutateSendMessage } = useMutationSendMessage();
+  const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
 
   const [openCameraOptionMenu, setOpenCameraOptionMenu] = useState(false);
 
@@ -118,6 +125,10 @@ function ChannelBottomActionButtons({
     [productStatus[0], productStatus[4]].includes(
       productStatus[status as keyof typeof productStatus]
     );
+
+  const showPurchaseConfirmButton =
+    getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
+    isTargetUserSeller;
 
   const handleClickPhoto = () => {
     if (isLoading) return;
@@ -196,80 +207,86 @@ function ChannelBottomActionButtons({
       window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
     }
 
-    setDialogState({
-      type: 'confirmDeal',
-      content: (
-        <Flexbox
-          direction="vertical"
-          alignment="center"
-          gap={8}
-          customStyle={{ padding: '12px 0' }}
-        >
-          <Typography variant="h3" weight="bold">
-            {`${isTargetUserSeller ? '판매자' : '구매자'} ${targetUserName}님과 거래를 하셨나요?`}
-          </Typography>
-          {!isTargetUserSeller && (
-            <Typography variant="h4">매물이 판매완료로 변경됩니다.</Typography>
-          )}
-        </Flexbox>
-      ),
-      firstButtonAction() {
-        if (isLoading) return;
+    if (isLoading) return;
 
-        logEvent(attrKeys.channel.CLICK_CAMEL, {
-          name: attrProperty.name.REVIEW_SEND,
-          title: attrProperty.title.CHANNEL_DETAIL,
-          att: isTargetUserSeller ? 'BUYER' : 'SELLER',
-          id: product?.id,
-          brand: product?.brand.name,
-          category: product?.category.name,
-          parentId: product?.category.parentId,
-          site: product?.site.name,
-          price: product?.price,
-          cluster: product?.cluster,
-          source: attrProperty.source.MAIN_PERSONAL,
-          productType: product
-            ? getProductType(product.productSeller.site.id, product.productSeller.type)
-            : undefined,
-          sellerType: product?.sellerType,
-          productSellerId: product?.productSeller.id,
-          productSellerType: product?.productSeller.type,
-          productSellerAccount: product?.productSeller.account,
-          useChat: product?.sellerType !== productSellerType.collection
-        });
+    logEvent(attrKeys.channel.CLICK_CAMEL, {
+      name: attrProperty.name.REVIEW_SEND,
+      title: attrProperty.title.CHANNEL_DETAIL,
+      att: isTargetUserSeller ? 'BUYER' : 'SELLER',
+      id: product?.id,
+      brand: product?.brand.name,
+      category: product?.category.name,
+      parentId: product?.category.parentId,
+      site: product?.site.name,
+      price: product?.price,
+      cluster: product?.cluster,
+      source: attrProperty.source.MAIN_PERSONAL,
+      productType: product
+        ? getProductType(product.productSeller.site.id, product.productSeller.type)
+        : undefined,
+      sellerType: product?.sellerType,
+      productSellerId: product?.productSeller.id,
+      productSellerType: product?.productSeller.type,
+      productSellerAccount: product?.productSeller.account,
+      useChat: product?.sellerType !== productSellerType.collection
+    });
 
-        if (isTargetUserSeller) {
-          router.push({
-            pathname: '/user/reviews/form',
-            query: {
-              productId,
-              targetUserName,
-              targetUserId,
-              isTargetUserSeller
-            }
-          });
-        } else {
-          mutatePutProductUpdateStatus(
-            { productId, status: 1, soldType: 1, targetUserId },
-            {
-              async onSuccess() {
-                await refetchChannel();
-                router.push({
-                  pathname: '/user/reviews/form',
-                  query: {
-                    productId,
-                    targetUserName,
-                    targetUserId,
-                    isTargetUserSeller
-                  }
-                });
-              }
-            }
-          );
+    if (isTargetUserSeller) {
+      router.push({
+        pathname: '/user/reviews/form',
+        query: {
+          productId,
+          targetUserName,
+          targetUserId,
+          isTargetUserSeller
         }
+      });
+    } else {
+      mutatePutProductUpdateStatus(
+        { productId, status: 1, soldType: 1, targetUserId },
+        {
+          async onSuccess() {
+            await refetchChannel();
+            router.push({
+              pathname: '/user/reviews/form',
+              query: {
+                productId,
+                targetUserName,
+                targetUserId,
+                isTargetUserSeller
+              }
+            });
+          }
+        }
+      );
+    }
+  };
+
+  const handleClickAsk = () => {
+    logEvent(attrKeys.channel.CLICK_ASK, {
+      name: attrProperty.name.CHANNEL_DETAIL
+    });
+
+    ChannelTalk.showMessenger();
+  };
+
+  useEffect(() => {
+    ChannelTalk.onShowMessenger(() => {
+      if (checkAgent.isIOSApp()) {
+        window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
       }
     });
-  };
+
+    ChannelTalk.onHideMessenger(() => {
+      if (checkAgent.isIOSApp()) {
+        window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
+      }
+    });
+
+    return () => {
+      ChannelTalk.clearCallbacks();
+    };
+  }, []);
 
   return (
     <ActionButtons messageInputHeight={messageInputHeight}>
@@ -292,7 +309,7 @@ function ChannelBottomActionButtons({
       </Chip>
       {!isDeletedProduct && (
         <>
-          {showAppointmentButton && (
+          {showAppointmentButton && !showPurchaseConfirmButton && (
             <Chip
               size="large"
               variant="outline"
@@ -308,6 +325,24 @@ function ChannelBottomActionButtons({
               </Typography>
             </Chip>
           )}
+          {showPurchaseConfirmButton && (
+            <Chip
+              size="large"
+              variant="outline"
+              startIcon={<Icon name="CheckOutlined" />}
+              onClick={() =>
+                setOpenState((prevState) => ({
+                  ...prevState,
+                  open: true
+                }))
+              }
+              disabled={isLoading}
+            >
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                구매확정
+              </Typography>
+            </Chip>
+          )}
           {showReviewButton && (
             <Chip size="large" startIcon={<Icon name="EditFilled" />}>
               <Typography
@@ -316,6 +351,17 @@ function ChannelBottomActionButtons({
                 customStyle={{ whiteSpace: 'nowrap' }}
               >
                 후기 보내기
+              </Typography>
+            </Chip>
+          )}
+          {!showReviewButton && (
+            <Chip size="large" variant="outline" disabled={isLoading}>
+              <Typography
+                variant="h4"
+                onClick={handleClickAsk}
+                customStyle={{ whiteSpace: 'nowrap' }}
+              >
+                결제/환불 문의
               </Typography>
             </Chip>
           )}

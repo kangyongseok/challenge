@@ -11,9 +11,10 @@ import type {
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
-import { AdminMessage } from '@sendbird/chat/message';
+import type { AdminMessage } from '@sendbird/chat/message';
 import styled from '@emotion/styled';
 
+import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
 import SessionStorage from '@library/sessionStorage';
@@ -36,10 +37,29 @@ import { dialogState } from '@recoil/common';
 import { channelPushPageState } from '@recoil/channel';
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 
+import ChannelOrderSettleWaitMessage from './ChannelOrderSettleWaitMessage';
+import ChannelOrderSettleWaitAccountMessage from './ChannelOrderSettleWaitAccountMessage';
+import ChannelOrderSettleProgressMessage from './ChannelOrderSettleProgressMessage';
+import ChannelOrderSettleCompleteMessage from './ChannelOrderSettleCompleteMessage';
+import ChannelOrderRefundWaitMessage from './ChannelOrderRefundWaitMessage';
+import ChannelOrderRefundWaitAccountMessage from './ChannelOrderRefundWaitAccountMessage';
+import ChannelOrderRefundProgressMessage from './ChannelOrderRefundProgressMessage';
+import ChannelOrderRefundCompleteMessage from './ChannelOrderRefundCompleteMessage';
+import ChannelOrderPaymentProgressMessage from './ChannelOrderPaymentProgressMessage';
+import ChannelOrderPaymentCompleteMessage from './ChannelOrderPaymentCompleteMessage';
+import ChannelOrderPaymentCancelMessage from './ChannelOrderPaymentCancelMessage';
+import ChannelOrderDeliveryProgressRemindMessage from './ChannelOrderDeliveryProgressRemindMessage';
+import ChannelOrderDeliveryProgressMessage from './ChannelOrderDeliveryProgressMessage';
+
 interface ChannelAdminMessageProps {
   message: AdminMessage;
   productId: number;
   targetUserId: number;
+  targetUserName: string;
+  userName: string;
+  isSeller: boolean;
+  orders: Order[];
+  hasUserReview: boolean;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
@@ -58,6 +78,10 @@ function ChannelAdminMessage({
   message,
   productId,
   targetUserId,
+  targetUserName,
+  isSeller,
+  orders,
+  hasUserReview,
   refetchChannel
 }: ChannelAdminMessageProps) {
   const router = useRouter();
@@ -67,6 +91,7 @@ function ChannelAdminMessage({
   const resetCamelSellerMoveScroll = useResetRecoilState(camelSellerIsMovedScrollState);
 
   const messageProductId = useMemo(() => Number(messageInfos[1] || 0), [messageInfos]);
+  const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
   const { data: productDetail } = useQuery(
     queryKeys.products.productList([messageProductId]),
     () => fetchProductList([messageProductId]),
@@ -125,15 +150,6 @@ function ChannelAdminMessage({
 
   const buttonData = find(messageButtonData, { id: message.customType || '' });
   const isAdminMessageType = CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES.includes(message.customType || '');
-
-  if (process.env.NODE_ENV === 'development') {
-    if (!isAdminMessageType) {
-      throw new Error(`FE에서 이미지 ${message.customType}케이스가 정의되지 않았습니다`);
-    }
-    if (!buttonData) {
-      throw new Error(`FE에서 버튼 ${message.customType}케이스가 정의되지 않았습니다`);
-    }
-  }
 
   const setChannelPushPageState = useSetRecoilState(channelPushPageState);
 
@@ -316,6 +332,117 @@ function ChannelAdminMessage({
       <PushNotiMessage variant="body2" weight="medium">
         {message.message}
       </PushNotiMessage>
+    );
+  }
+
+  if (message.customType === 'orderPaymentProgress') {
+    return <ChannelOrderPaymentProgressMessage message={message} order={currentOrder} />;
+  }
+
+  if (message.customType === 'orderPaymentComplete') {
+    return (
+      <ChannelOrderPaymentCompleteMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+        refetchChannel={refetchChannel}
+      />
+    );
+  }
+
+  if (message.customType === 'orderPaymentCancel') {
+    return (
+      <ChannelOrderPaymentCancelMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+        targetUserName={targetUserName}
+      />
+    );
+  }
+
+  if (message.customType === 'orderRefundWait') {
+    return (
+      <ChannelOrderRefundWaitMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+        targetUserName={targetUserName}
+      />
+    );
+  }
+
+  if (message.customType === 'orderRefundWaitAccount') {
+    return <ChannelOrderRefundWaitAccountMessage message={message} order={currentOrder} />;
+  }
+
+  if (message.customType === 'orderRefundProgress') {
+    return <ChannelOrderRefundProgressMessage message={message} order={currentOrder} />;
+  }
+
+  if (message.customType === 'orderRefundComplete') {
+    return <ChannelOrderRefundCompleteMessage message={message} order={currentOrder} />;
+  }
+
+  if (message.customType === 'orderDeliveryProgress') {
+    return (
+      <ChannelOrderDeliveryProgressMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+      />
+    );
+  }
+
+  if (message.customType === 'orderDeliveryProgressRemind') {
+    return <ChannelOrderDeliveryProgressRemindMessage message={message} order={currentOrder} />;
+  }
+
+  if (message.customType === 'orderSettleWait') {
+    return (
+      <ChannelOrderSettleWaitMessage
+        message={message}
+        productId={productId}
+        targetUserId={targetUserId}
+        targetUserName={targetUserName}
+        hasUserReview={hasUserReview}
+        isSeller={isSeller}
+        refetchChannel={refetchChannel}
+      />
+    );
+  }
+
+  if (message.customType === 'orderSettleWaitAccount') {
+    return <ChannelOrderSettleWaitAccountMessage message={message} />;
+  }
+
+  if (message.customType === 'orderSettleProgress') {
+    return (
+      <ChannelOrderSettleProgressMessage
+        message={message}
+        order={currentOrder}
+        productId={productId}
+        targetUserId={targetUserId}
+        targetUserName={targetUserName}
+        hasUserReview={hasUserReview}
+        isSeller={isSeller}
+        refetchChannel={refetchChannel}
+      />
+    );
+  }
+
+  if (message.customType === 'orderSettleComplete') {
+    return (
+      <ChannelOrderSettleCompleteMessage
+        message={message}
+        order={currentOrder}
+        productId={productId}
+        targetUserId={targetUserId}
+        targetUserName={targetUserName}
+        hasUserReview={hasUserReview}
+        isSeller={isSeller}
+        refetchChannel={refetchChannel}
+      />
     );
   }
 

@@ -9,9 +9,9 @@ import {
   BottomSheet,
   Box,
   Button,
+  Dialog,
   Flexbox,
   Icon,
-  Label,
   Tooltip,
   Typography,
   useTheme
@@ -33,7 +33,7 @@ import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 
 import type { UserRoleSeller } from '@dto/user';
 import type { Product, ProductDetail } from '@dto/product';
-import { Channel } from '@dto/channel';
+import type { Channel } from '@dto/channel';
 
 import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
@@ -46,7 +46,11 @@ import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_SITE, productStatusCode } from '@constants/product';
-import { APP_BANNER, IS_DONE_WISH_ON_BOARDING } from '@constants/localStorage';
+import {
+  APP_BANNER,
+  IS_DONE_WISH_ON_BOARDING,
+  SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE
+} from '@constants/localStorage';
 import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -65,7 +69,6 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { productLegitToggleBottomSheetState } from '@recoil/productLegit';
 import { dialogState, toastState } from '@recoil/common';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -79,12 +82,13 @@ interface ProductCTAButtonProps {
   isBlockedUser: boolean;
   isDup: boolean;
   hasTarget: boolean;
+  hasOrder?: boolean;
   isPriceCrm: boolean;
   salePrice: number;
   isWish?: boolean;
   isPriceDown?: boolean;
-  isProductLegit?: boolean;
   paymentsTest?: boolean;
+  isProductLegit?: boolean;
   onClickWish: (isWish: boolean) => boolean;
   onClickSMS: ({
     siteId,
@@ -117,16 +121,15 @@ function ProductCTAButton({
   isBlockedUser,
   isDup,
   hasTarget,
+  hasOrder,
   isPriceCrm,
   salePrice,
   isWish = false,
   isPriceDown,
-  isProductLegit,
   onClickWish,
   onClickSMS,
   mutateMetaInfo,
-  refetch,
-  paymentsTest
+  refetch
 }: ProductCTAButtonProps) {
   const {
     push,
@@ -135,11 +138,13 @@ function ProductCTAButton({
 
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { secondary, common },
+      zIndex
     }
   } = useTheme();
 
-  const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
+  const [open, setOpen] = useState(false);
+
   const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
 
@@ -149,13 +154,13 @@ function ProductCTAButton({
     () => fetchRelatedProducts(Number(product?.id || 0)),
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!product }
   );
+
   const {
     unblock: { mutate: mutateUnblock, isLoading: isLoadingMutateUnblock }
   } = useMutationUserBlock();
   const { mutate: mutateCreateChannel, isLoading: isLoadingMutateCreateChannel } =
     useMutationCreateChannel();
 
-  const [legitTooltip, setLegitTooltip] = useState(true);
   const [isDoneWishOnBoarding, setIsDoneWishOnBoarding] = useState(true);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
     useState(false);
@@ -164,6 +169,7 @@ function ProductCTAButton({
     isOpenBunJangTooltip: false
   });
   const [pendingCreateChannel, setPendingCreateChannel] = useState(false);
+  const [openAlreadyHasOrderDialog, setOpenAlreadyHasOrderDialog] = useState(false);
 
   const wishButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -214,12 +220,12 @@ function ProductCTAButton({
 
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
-    if (roleSeller?.userId) return { ctaText: '채팅하기', ctaBrandColor: 'primary' };
+    if (roleSeller?.userId) return { ctaText: '채팅하기', ctaBrandColor: 'black' };
 
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
       return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
 
-    return { ctaText: `${siteName}에서 거래하기`, ctaBrandColor: 'black' };
+    return { ctaText: '판매글로 이동', ctaBrandColor: 'black' };
   }, [
     product,
     isBlockedUser,
@@ -495,12 +501,108 @@ function ProductCTAButton({
     scrollEnable();
   };
 
+  const handleClickSafePayment = () => {
+    if (!product) return;
+
+    const { source: productDetailSource } =
+      SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
+      {};
+
+    productDetailAtt({
+      key: attrKeys.products.CLICK_PURCHASE,
+      product,
+      source: productDetailSource || undefined,
+      rest: { att: 'ORDER' }
+    });
+
+    logEvent(attrKeys.products.CLICK_ORDER_STATUS, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PAYMENT_WAIT,
+      data: {
+        ...product
+      }
+    });
+
+    if (!accessUser) {
+      push({
+        pathname: '/login',
+        query: {
+          returnUrl: `/products/${id}/order`,
+          isRequiredLogin: true
+        }
+      });
+      return;
+    }
+    if (hasOrder) {
+      setOpenAlreadyHasOrderDialog(true);
+      return;
+    }
+    if (isBlockedUser) {
+      setDialogState({
+        type: 'unblockBlockedUser',
+        content: (
+          <Typography
+            variant="h3"
+            weight="bold"
+            customStyle={{ minWidth: 270, padding: '12px 0', textAlign: 'center' }}
+          >
+            회원님이 차단한 사용자에요.
+            <br />
+            차단을 해제할까요?
+          </Typography>
+        ),
+        async firstButtonAction() {
+          if (isLoadingMutateUnblock) return;
+
+          if (roleSeller?.userId && !!product) {
+            await mutateUnblock(roleSeller.userId, {
+              onSuccess() {
+                refetch();
+                setToastState({
+                  type: 'user',
+                  status: 'unBlockWithRole',
+                  params: { role: '판매자', userName: product.productSeller.name }
+                });
+              }
+            });
+          }
+        }
+      });
+
+      return;
+    }
+
+    SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
+      source: 'PRODUCT_DETAIL'
+    });
+
+    push(`/products/${id}/order`);
+  };
+
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.SWIP_X_CARD, {
       name: attrProperty.productName.PRODUCT_DETAIL,
       title: attrProperty.productTitle.WISH_MODAL
     });
   }, 300);
+
+  const handleClickTodayHide = () => {
+    LocalStorage.set(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+
+    if (hideDate) {
+      if (dayjs().diff(hideDate, 'days') >= 1) {
+        LocalStorage.remove(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+        setOpen(true);
+      }
+    } else {
+      setOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (isPriceCrm) {
@@ -537,6 +639,52 @@ function ProductCTAButton({
 
   return (
     <>
+      {open && ['채팅하기'].includes(ctaText) && (
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
+          gap={4}
+          onClick={handleClickTodayHide}
+          customStyle={{
+            position: 'fixed',
+            left: 0,
+            bottom: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`,
+            width: '100%',
+            height: 44,
+            padding: '12px 20px',
+            backgroundColor: common.ui20,
+            zIndex: zIndex.button
+          }}
+        >
+          <Flexbox
+            gap={4}
+            customStyle={{
+              flex: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
+            <Typography
+              weight="medium"
+              noWrap
+              customStyle={{
+                color: common.uiWhite
+              }}
+            >
+              지금 카멜은 안전결제 수수료 무료!
+            </Typography>
+          </Flexbox>
+          <Box
+            customStyle={{
+              minWidth: 'fit-content'
+            }}
+          >
+            <Icon name="CloseOutlined" width={20} height={20} color={common.uiWhite} />
+          </Box>
+        </Flexbox>
+      )}
       <Box
         customStyle={{
           minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
@@ -580,58 +728,8 @@ function ProductCTAButton({
             />
           </>
         )}
-        {isProductLegit &&
-          !product?.productLegit &&
-          product?.sellerType !== productSellerType.normal && (
-            <ProductLegitCTAButton
-              variant="solid"
-              size="xlarge"
-              onClick={() => {
-                logEvent(attrKeys.legit.CLICK_LEGIT_BANNER, {
-                  name: attrProperty.productName.PRODUCT_DETAIL,
-                  title: attrProperty.productTitle.CTA,
-                  brand: product?.brand.name,
-                  category: product?.category.name,
-                  parentCategory: FIRST_CATEGORIES[product?.category.parentId as number],
-                  site: product?.site.name,
-                  price: product?.price,
-                  imageCount: product?.imageCount,
-                  legitStatus: product?.productLegit?.status,
-                  legitResult: product?.productLegit?.result
-                });
-                setLegitBottomSheet(true);
-              }}
-            >
-              <Tooltip
-                open={legitTooltip && isDoneWishOnBoarding && !isOpenPriceCRMTooltip}
-                variant="ghost"
-                brandColor="primary"
-                message={
-                  <Flexbox gap={6} alignment="center">
-                    <Label text="NEW" variant="solid" size="xsmall" />
-                    <Typography weight="bold" variant="body2">
-                      지금 보는 사진 그대로 실시간 정가품 의견받기
-                    </Typography>
-                    <Icon
-                      name="CloseOutlined"
-                      size="small"
-                      color={common.ui20}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLegitTooltip(false);
-                      }}
-                    />
-                  </Flexbox>
-                }
-                customStyle={{ left: '160%' }}
-                triangleLeft={80}
-              >
-                사진감정
-              </Tooltip>
-            </ProductLegitCTAButton>
-          )}
         <Button
-          variant="solid"
+          variant={['채팅하기'].includes(ctaText) ? 'ghost' : 'solid'}
           brandColor={ctaBrandColor}
           size="xlarge"
           fullWidth
@@ -647,18 +745,29 @@ function ProductCTAButton({
           }
           onClick={handleClickCTAButton}
           customStyle={{
-            whiteSpace: 'nowrap',
-            backgroundColor: ctaBrandColor === 'black' ? common.uiBlack : undefined
+            maxWidth: ['채팅하기'].includes(ctaText) ? 93 : undefined,
+            gap: 0,
+            whiteSpace: 'nowrap'
           }}
         >
           <Typography
-            variant={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'h3' : 'body1'}
-            weight={['채팅하기', '차단한 사용자입니다'].includes(ctaText) ? 'medium' : 'bold'}
-            customStyle={{ display: 'flex', alignItems: 'center', color: common.uiWhite }}
+            variant="h3"
+            weight="medium"
+            customStyle={{
+              display: 'flex',
+              alignItems: 'center',
+              color: ['채팅하기'].includes(ctaText) ? undefined : common.uiWhite
+            }}
           >
             {!roleSeller &&
               (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller) && (
-                <Icon name="MessageOutlined" width={20} customStyle={{ marginRight: 8 }} />
+                <Icon
+                  name="MessageOutlined"
+                  width={16}
+                  customStyle={{
+                    marginRight: 6
+                  }}
+                />
               )}
             {!roleSeller &&
               !isCamelProduct &&
@@ -673,8 +782,10 @@ function ProductCTAButton({
                       : `https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`
                   }
                   alt="Platform Logo Img"
-                  customStyle={{ marginRight: 8 }}
-                  width={20}
+                  width={16}
+                  customStyle={{
+                    marginRight: 6
+                  }}
                 />
               )}
             {ctaText}
@@ -706,9 +817,15 @@ function ProductCTAButton({
             customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
           />
         </Button>
-        {paymentsTest && (
-          <Button fullWidth size="xlarge" onClick={() => push(`/products/payments/${id}`)}>
-            안전결제
+        {['채팅하기'].includes(ctaText) && (
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="black"
+            size="xlarge"
+            onClick={handleClickSafePayment}
+          >
+            안전하게 결제하기
           </Button>
         )}
       </Wrapper>
@@ -768,6 +885,60 @@ function ProductCTAButton({
           </ProductCardList>
         </Box>
       </BottomSheet>
+      <Dialog
+        open={openAlreadyHasOrderDialog}
+        onClose={() => setOpenAlreadyHasOrderDialog(false)}
+        fullWidth
+        customStyle={{
+          maxWidth: 311,
+          padding: '32px 20px 20px'
+        }}
+      >
+        <Typography
+          variant="h3"
+          weight="bold"
+          customStyle={{
+            textAlign: 'center'
+          }}
+        >
+          이미 거래 중인 매물이에요.
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8,
+            textAlign: 'center'
+          }}
+        >
+          채팅방에서 거래내역을 확인해주세요.
+        </Typography>
+        <Flexbox
+          direction="vertical"
+          gap={8}
+          customStyle={{
+            marginTop: 32
+          }}
+        >
+          <Button
+            variant="solid"
+            brandColor="black"
+            size="large"
+            fullWidth
+            onClick={handleClickCTAButton}
+          >
+            채팅하기
+          </Button>
+          <Button
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            fullWidth
+            onClick={() => setOpenAlreadyHasOrderDialog(false)}
+          >
+            취소
+          </Button>
+        </Flexbox>
+      </Dialog>
     </>
   );
 }
@@ -814,21 +985,6 @@ const ProductCardList = styled.div`
 
   grid-auto-columns: 120px;
   column-gap: 8px;
-`;
-
-const ProductLegitCTAButton = styled(Button)`
-  min-width: 81px;
-  padding: 0;
-  background: ${({
-    theme: {
-      palette: { primary }
-    }
-  }) => primary.highlight};
-  color: ${({
-    theme: {
-      palette: { primary }
-    }
-  }) => primary.main};
 `;
 
 export default memo(ProductCTAButton);

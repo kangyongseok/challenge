@@ -70,7 +70,7 @@ function LegitRequestSelectBrand() {
         minHeight: '100%',
         backgroundColor: common.bg03,
         userSelect: 'none',
-        '& > main': { padding: '28px 20px 0', rowGap: 32 }
+        '& > div': { padding: '28px 20px 0', rowGap: 32 }
       }}
     >
       <Typography variant="h2" weight="bold">

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import amplitude from 'amplitude-js';
-import type { BehavioralType } from '@typeform/embed/types/base';
 import { PopupButton } from '@typeform/embed-react';
+import type { BehavioralType } from '@typeform/embed/types/base';
 import { useQuery } from '@tanstack/react-query';
 
 import LocalStorage from '@library/localStorage';

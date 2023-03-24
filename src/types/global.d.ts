@@ -17,6 +17,7 @@ export declare global {
     getExecuteApp: any;
     fbq: any;
     gtag: any;
+    IMP: any;
     callSetLoginUser: any;
     getPhotoGuide: () => void;
     getPhotoGuideDone: any;
@@ -54,6 +55,11 @@ export declare global {
       DATADOG_ALLOWED_TRACING_ORIGIN: string;
       SENDBIRD_APP_ID: string;
       SOCKET_SERVER_URL: string;
+      TOSS_PAYMENTS_CLIENT_KEY: string;
+      TOSS_PAYMENTS_SECRET_KEY: string;
+      IMP_CODE: string;
+      IMP_API_KEY: string;
+      IMP_SECRET_KEY: string;
     }
   }
 }

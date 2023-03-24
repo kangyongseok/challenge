@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import type { IconName } from 'mrcamel-ui';
@@ -8,12 +9,12 @@ import styled from '@emotion/styled';
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 import { Badge, CamelAuthLabel, Gap } from '@components/UI/atoms';
 
-import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { mypageOrdersIsConfirmedState } from '@recoil/mypageOrders';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
 
 function MypageProfile() {
@@ -23,6 +24,8 @@ function MypageProfile() {
       palette: { common, secondary }
     }
   } = useTheme();
+
+  const resetIsConfirmedState = useResetRecoilState(mypageOrdersIsConfirmedState);
 
   const { profileImage, snsType, isCertifiedSeller, isLegit, userId, nickName } =
     useMyProfileInfo();
@@ -35,18 +38,6 @@ function MypageProfile() {
     onClick?: () => void;
   }[] = useMemo(
     () => [
-      {
-        iconName: 'ChatOutlined',
-        label: '1:1 문의',
-        showBadge: false,
-        onClick: () => {
-          logEvent(attrKeys.mypage.CLICK_ASK, {
-            name: attrProperty.name.MY
-          });
-
-          ChannelTalk.showMessenger();
-        }
-      },
       {
         iconName: 'HeartOutlined',
         label: '찜/최근',
@@ -84,9 +75,22 @@ function MypageProfile() {
 
           router.push('/myPortfolio');
         }
+      },
+      {
+        iconName: 'FileOutlined',
+        label: '거래내역',
+        showBadge: false,
+        onClick: () => {
+          logEvent(attrKeys.mypage.CLICK_ORDER_LIST, {
+            name: attrProperty.name.MY
+          });
+
+          resetIsConfirmedState();
+          router.push('/mypage/orders');
+        }
       }
     ],
-    [router]
+    [resetIsConfirmedState, router]
   );
 
   const handleClickEdit = () => {

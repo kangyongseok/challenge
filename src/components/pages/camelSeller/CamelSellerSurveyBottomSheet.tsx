@@ -66,7 +66,7 @@ function CamelSellerSurveyBottomSheet() {
 
   const debouncedCurrentStep = useDebounce(currentStep, 300);
 
-  const { data = [], isLoading } = useQuery(queryKeys.commons.codeDetails(3), () =>
+  const { data = [], isLoading } = useQuery(queryKeys.commons.codeDetails({ codeId: 3 }), () =>
     fetchCommonCodeDetails({
       codeId: 3
     })

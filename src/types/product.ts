@@ -16,7 +16,7 @@ export interface WishAtt {
   source?: string;
   att?: string;
   att2?: string;
-  sellerType?: typeof productSellerType[keyof typeof productSellerType];
+  sellerType?: (typeof productSellerType)[keyof typeof productSellerType];
 }
 
 export interface SavedLegitDataProps {
@@ -43,5 +43,5 @@ export interface SavedLegitState {
   isCompleted: boolean;
   isViewedSampleGuide: boolean;
   productId: number;
-  sellerType?: typeof productSellerType[keyof typeof productSellerType];
+  sellerType?: (typeof productSellerType)[keyof typeof productSellerType];
 }

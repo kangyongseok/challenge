@@ -1,5 +1,6 @@
 import type { ChannelUser, User, UserBlock } from '@dto/user';
 import type { ProductResult } from '@dto/product';
+import { Order } from '@dto/order';
 import type { Paged } from '@dto/common';
 
 import type { channelType } from '@constants/channel';
@@ -62,6 +63,7 @@ export interface ChannelDetail {
   targetUserReview: UserReview | null;
   userReview: UserReview | null;
   product: ProductResult | null;
+  orders: Order[];
   userBlocks: UserBlock[] | null;
   lastMessageManage: ChannelHistoryManage | null;
 }

@@ -89,7 +89,7 @@ function SettingsTransferForm() {
         <Typography weight="bold" variant="h4">
           가져오기 할 플랫폼을 선택해주세요
         </Typography>
-        <Flexbox alignment="center" customStyle={{ flexWrap: 'wrap' }} gap={8}>
+        <Flexbox alignment="center" customStyle={{ flexWrap: 'wrap' }} gap={6}>
           {platforms.map((platform) => (
             <Chip
               key={`platform-${platform.id}`}

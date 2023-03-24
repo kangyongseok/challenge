@@ -1,5 +1,7 @@
 import type { channelUserType, productSellerType } from '@constants/user';
 
+import type { BankCode } from '@typings/tosspayments';
+
 import type { Product, ProductResult, SearchParams } from './product';
 import type { Paged } from './common';
 import type { Category, CategoryValue } from './category';
@@ -256,7 +258,7 @@ export type UserInfo = {
   productCount: number;
   reviewCount: number;
   shopDescription: string | null;
-  sellerType: typeof productSellerType[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  sellerType: (typeof productSellerType)[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
   type: 0 | 1 | 2 | 3; // 0: 기본값 1: 블락 3: 카멜인증판매자
   undisplayProductCount: number;
   userRoleLegit: UserRoleLegit | null;
@@ -517,6 +519,35 @@ export interface UserFixedChannel {
   value: string;
 }
 
+export interface UserAccount {
+  accountHolder: string;
+  accountNumber: string;
+  bankCode: BankCode;
+  bankName: string;
+  dateCreated: string;
+  dateUpdated: string;
+  id: number;
+  isDeleted: boolean;
+  userId: number;
+}
+
+export interface UserCert {
+  birthday: string;
+  birth: string;
+  ci: string;
+  dateCreated: string;
+  dateUpdated: string;
+  di: string;
+  gender: string;
+  id: number;
+  isDeleted: boolean;
+  name: string;
+  phone: string;
+  status: number;
+  type: number;
+  userId: number;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface CategoryWishesParams {
   categoryIds?: number[];
@@ -662,4 +693,16 @@ export type PostTransferData = {
   siteId: number;
   url: string;
   isUrlPattern?: boolean;
+};
+
+export type PostUserDeliveryData = {
+  address: string;
+  name: string;
+  phone: string;
+};
+
+export type PostUserAccountData = {
+  bankCode: BankCode;
+  accountNumber: string;
+  accountHolder: string;
 };

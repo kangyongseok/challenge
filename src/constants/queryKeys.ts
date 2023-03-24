@@ -30,6 +30,7 @@ import type {
   PersonalProductsParams,
   RecommendProductsParams
 } from '@dto/personal';
+import { OrderSearchParams, ProductOrderParams } from '@dto/order';
 import type {
   LegitsBrandsParams,
   LegitsCategoriesParams,
@@ -44,7 +45,7 @@ import type { SuggestParams } from '@dto/brand';
 import { RECENT_SEARCH_LIST } from '@constants/localStorage';
 
 import type { SearchRelatedKeywordsParams } from '@typings/products';
-import type { SearchHistoryHookType } from '@typings/camelSeller';
+import type { CommonCodeId, SearchHistoryHookType } from '@typings/camelSeller';
 
 const brands = {
   all: ['brands'] as const,
@@ -158,7 +159,9 @@ const users = {
   myUserInfo: () => [...users.all, 'myUserInfo'] as const,
   banword: () => [...users.all, 'banword'] as const,
   transfers: () => [...users.all, 'transfers'] as const,
-  fixedChannel: (userId: number) => [...users.all, 'fixedChannel', userId] as const
+  fixedChannel: (userId: number) => [...users.all, 'fixedChannel', userId] as const,
+  userAccounts: () => [...users.all, 'userAccounts'] as const,
+  userCerts: () => [...users.all, 'userCerts'] as const
 };
 
 const userAuth = {
@@ -180,7 +183,7 @@ const models = {
 
 const commons = {
   all: ['commons'] as const,
-  codeDetails: (id: number) => [...commons.all, 'codeDetails', id] as const,
+  codeDetails: (params: CommonCodeId) => [...commons.all, 'codeDetails', params] as const,
   photoGuide: (params: PhotoGuideParams) => [...commons.all, 'photoGuide', params] as const,
   content: (id: number) => [...commons.all, 'content', id] as const,
   contentProducts: (params: ContentProductsParams) =>
@@ -225,6 +228,13 @@ const channels = {
   channel: (channelId: number) => [...channels.all, 'channel', channelId] as const
 };
 
+const orders = {
+  all: ['orders'] as const,
+  productOrder: (params: ProductOrderParams) => [...orders.all, 'productOrder', params] as const,
+  order: (id: number) => [...orders.all, 'order', id] as const,
+  orderSearch: (params: OrderSearchParams) => [...orders.all, 'orderSearch', params] as const
+};
+
 const queryKeys = {
   brands,
   categories,
@@ -240,7 +250,8 @@ const queryKeys = {
   commons,
   nextJs,
   client,
-  channels
+  channels,
+  orders
 };
 
 export default queryKeys;

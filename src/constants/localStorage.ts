@@ -42,8 +42,11 @@ export const LISTING_TECH_LEGIT_DATE = 'listingTechLegitDate';
 export const SELLER_PROCESS_TYPE = 'sellerProcessType';
 export const EVENT_AD_BANNER_HIDE_DATE = 'eventAdBannerHideDate';
 export const PRODUCT_EVENT_AD_BANNER_HIDE_DATE = 'productEventAdBannerHideDate';
+export const SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE =
+  'safePaymentCommissionFreeBannerHideDate';
 export const MY_PAGE_CAMEL_INTERFERE_IN_KING_EVENT_BANNER_HIDE =
   'myPageCamelInterfereInKingEventBannerHide';
 export const USER_TRACE_RECORD = 'userTraceRecord';
 export const LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET = 'lastDisplayExitSurveyBottomSheet';
 export const DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET = 'displayCountExitSurveyBottomSheet';
+export const SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET = 'searchTimeForExitBottmSheet';

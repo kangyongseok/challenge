@@ -1,13 +1,25 @@
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Avatar, CustomStyle, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Avatar,
+  Box,
+  Button,
+  CustomStyle,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Typography,
+  useTheme
+} from 'mrcamel-ui';
+
+import type { Order } from '@dto/order';
 
 import { PRODUCT_INFORMATION_HEIGHT } from '@constants/common';
 import { productStatus } from '@constants/channel';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getOrderStatusText } from '@utils/common';
 
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 
@@ -22,7 +34,9 @@ interface FixedProductInfoProps {
   title: string;
   status: number;
   price: number;
+  order?: Order | null;
   onClick?: () => void;
+  onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
   onClickStatus?: () => void;
   customStyle?: CustomStyle;
 }
@@ -36,7 +50,9 @@ function FixedProductInfo({
   title,
   status,
   price,
+  order,
   onClick,
+  onClickSafePayment,
   onClickStatus,
   customStyle
 }: FixedProductInfoProps) {
@@ -45,6 +61,7 @@ function FixedProductInfo({
       palette: { common }
     }
   } = useTheme();
+
   const setProductStatusBottomSheetState = useSetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
@@ -138,6 +155,32 @@ function FixedProductInfo({
             {commaNumber(getTenThousandUnitPrice(price))}만원
           </Typography>
         </Flexbox>
+        {onClickSafePayment && !isEditableProductStatus && (
+          <Box
+            customStyle={{
+              flex: 1,
+              textAlign: 'right'
+            }}
+          >
+            <Button
+              variant="solid"
+              brandColor="black"
+              onClick={onClickSafePayment}
+              disabled={
+                (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
+                  getOrderStatusText({ status: order?.status, result: order?.result })
+                ) &&
+                  !!order) ||
+                status !== 0
+              }
+              customStyle={{
+                whiteSpace: 'nowrap'
+              }}
+            >
+              안전결제
+            </Button>
+          </Box>
+        )}
       </Wrapper>
     </Flexbox>
   );

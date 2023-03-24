@@ -109,11 +109,11 @@ function ProductInterfereKingBottomSheet() {
 
   useEffect(() => {
     const hideDate = LocalStorage.get<string>(PRODUCT_EVENT_AD_BANNER_HIDE_DATE);
-    // 최근 일주일 이내 당일을 제외한 재방문 && 매물 상세 2회 조회된 상태에서 매물 상세에 진입 시 노출
+    // 최근 일주일 이내 당일을 제외한 재방문 && 매물 상세 5회 조회된 상태에서 매물 상세에 진입 시 노출
     if (
       UserTraceRecord.getLastVisitDateDiffDay() < -7 ||
       !UserTraceRecord.isReVisit() ||
-      (UserTraceRecord?.getPageViewCount('product') || 0) < 2 ||
+      (UserTraceRecord?.getPageViewCount('product') || 0) < 5 ||
       !isUserViewPerDay()
     )
       return;

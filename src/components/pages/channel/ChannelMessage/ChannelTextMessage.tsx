@@ -18,9 +18,7 @@ function ChannelTextMessage({
 }: ChannelTextMessageProps) {
   return (
     <TextMessage isByMe={isByMe} nextMessageUserIsDiff={nextMessageUserIsDiff}>
-      {!nextMessageUserIsDiff && (
-        <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
-      )}
+      <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       <Message isByMe={isByMe}>{message.message}</Message>
     </TextMessage>
   );

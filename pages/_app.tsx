@@ -3,13 +3,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import localFont from 'next/font/local';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
 import { Toast, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import localFont from '@next/font/local';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';

@@ -20,9 +20,15 @@ interface SearchListProps {
   recentSearchList: RecentItems[];
   onClickTotalSearch: (parameter: TotalSearchItem) => void;
   refresh: (parameter: RecentItems[]) => void;
+  handleClickSaveTime: () => void;
 }
 
-function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: SearchListProps) {
+function SearchRecentList({
+  onClickTotalSearch,
+  refresh,
+  handleClickSaveTime,
+  recentSearchList
+}: SearchListProps) {
   const {
     theme: {
       palette: { common }
@@ -48,7 +54,7 @@ function SearchRecentList({ onClickTotalSearch, refresh, recentSearchList }: Sea
         title: attrProperty.productTitle.RECENT,
         type: attrProperty.productType.INPUT
       });
-
+      handleClickSaveTime();
       onClickTotalSearch({ keyword, title: 'RECENT', expectCount });
     };
 

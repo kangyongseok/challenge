@@ -732,7 +732,7 @@ function Crazycuration({
       />
       <GeneralTemplate
         header={<CrazycurationHeader onClickShare={handleClickShare} />}
-        customStyle={{ '& > main': { backgroundColor: currentCuration.backgroundColor } }}
+        customStyle={{ '& > div': { backgroundColor: currentCuration.backgroundColor } }}
         disablePadding
       >
         <Flexbox component="section" justifyContent="center">

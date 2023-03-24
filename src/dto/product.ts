@@ -343,7 +343,7 @@ export type Product = {
   weekAvgPrices: number[] | null;
   wishCount: number;
   index?: number;
-  sellerType?: typeof productSellerType[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  sellerType?: (typeof productSellerType)[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
 };
 
 export type ProductResult = {
@@ -532,6 +532,7 @@ export interface ProductDetail {
   units: CommonCode[];
   stores: CommonCode[];
   distances: CommonCode[];
+  hasOrder: boolean;
 }
 
 export type ProductSellerReview = {
@@ -590,7 +591,7 @@ export interface SellerInfo {
   productCount: number;
   reviewCount: number;
   site: Site;
-  sellerType: typeof productSellerType[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  sellerType: (typeof productSellerType)[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
 }
 
 /* ---------- Request Parameters ---------- */

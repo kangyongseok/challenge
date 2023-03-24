@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -19,8 +20,12 @@ import {
   ChannelMessageInput,
   ChannelMessages,
   ChannelMoreMenuBottomSheet,
-  ChannelProductStatusBottomSheet
+  ChannelProductStatusBottomSheet,
+  ChannelPurchaseConfirmDialog,
+  ChannelSaleRequestRefuseDialog
 } from '@components/pages/channel';
+
+import type { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
@@ -63,6 +68,8 @@ function Chanel() {
 
   useViewportUnitsTrick();
 
+  const [isIOSApp, setIsIOSApp] = useState(false);
+
   const [channelThumbnailMessageImage, setChannelThumbnailMessageImage] = useRecoilState(
     channelThumbnailMessageImageState
   );
@@ -73,13 +80,14 @@ function Chanel() {
     channelBottomSheetStateFamily('productStatus')
   );
 
-  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const {
     useQueryChannel,
     useQueryChannel: {
       data: {
         channel,
         product,
+        orders = [],
         channelUser,
         channelTargetUser,
         userReview,
@@ -111,7 +119,9 @@ function Chanel() {
     fetchPrevMessages,
     updateNewMessage
   } = useChannel(messagesRef);
-  const { mutate: mutateSendMessage } = useMutationSendMessage();
+  const { mutate: mutateSendMessage } = useMutationSendMessage({
+    lastMessageIndex: messages.length + 1
+  });
 
   const [isFocused, setIsFocused] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -132,6 +142,8 @@ function Chanel() {
     SELLER_STATUS[product?.productSeller?.type as keyof typeof SELLER_STATUS] ===
     SELLER_STATUS['3'];
 
+  const routingRef = useRef(false);
+
   const scrollToBottom = useCallback((behavior?: ScrollBehavior) => {
     messagesRef.current?.scrollTo({
       top: messagesRef.current.scrollHeight,
@@ -140,7 +152,9 @@ function Chanel() {
   }, []);
 
   const handleClickProduct = useCallback(() => {
-    if (!product || isDeletedProduct) return;
+    if (!product || isDeletedProduct || routingRef.current) return;
+
+    routingRef.current = true;
 
     const pathname = getProductDetailUrl({ type: 'productResult', product });
 
@@ -161,6 +175,51 @@ function Chanel() {
 
     router.push(pathname);
   }, [isDeletedProduct, product, router, setChannelPushPageState]);
+
+  const handleClickSafePayment = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      logEvent(attrKeys.channel.CLICK_PURCHASE, {
+        name: attrProperty.name.CHANNEL_DETAIL,
+        att: 'ORDER'
+      });
+      logEvent(attrKeys.channel.CLICK_ORDER_STATUS, {
+        name: attrProperty.name.CHANNEL_DETAIL,
+        title: attrProperty.title.PAYMENT_WAIT,
+        data: {
+          ...product
+        }
+      });
+
+      if (!product || isDeletedProduct || routingRef.current) return;
+
+      e.stopPropagation();
+
+      routingRef.current = true;
+
+      const pathname = `${getProductDetailUrl({
+        product: product as ProductResult,
+        type: 'productResult'
+      })}/order`;
+
+      SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
+        source: 'CHANNEL_DETAIL'
+      });
+
+      if (checkAgent.isIOSApp()) {
+        setChannelPushPageState('order');
+        window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
+          JSON.stringify({
+            pathname,
+            redirectChannelUrl: router.asPath
+          })
+        );
+        return;
+      }
+
+      router.push(pathname);
+    },
+    [isDeletedProduct, product, router, setChannelPushPageState]
+  );
 
   const handleClickUnreadCount = useCallback(async () => {
     setUnreadCount(0);
@@ -316,6 +375,10 @@ function Chanel() {
     userName
   ]);
 
+  useEffect(() => {
+    setIsIOSApp(!!checkAgent.isIOSApp());
+  }, []);
+
   return (
     <>
       <Layout>
@@ -349,7 +412,9 @@ function Chanel() {
                         status={productStatus}
                         title={product?.title || ''}
                         price={product?.price || 0}
+                        order={orders[0]}
                         onClick={handleClickProduct}
+                        onClickSafePayment={handleClickSafePayment}
                         onClickStatus={() =>
                           logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
                             name: attrProperty.name.CHANNEL_DETAIL,
@@ -390,7 +455,7 @@ function Chanel() {
             disablePadding
             customStyle={{ position: 'relative' }}
           >
-            <Inner>
+            <Inner isIOSApp={isIOSApp}>
               <ContentWrapper>
                 {!!sendbirdChannel && (
                   <ChannelMessages
@@ -398,16 +463,21 @@ function Chanel() {
                     messages={messages}
                     productId={productId}
                     targetUserId={targetUserId}
+                    targetUserName={targetUserName}
+                    userName={userName}
                     showAppointmentBanner={showAppointmentBanner}
                     showNewMessageNotification={unreadCount > 0}
                     showActionButtons={showActionButtons}
                     messagesRef={messagesRef}
                     hasMorePrev={hasMorePrev}
+                    hasUserReview={!!userReview}
+                    hasTargetUserReview={!!targetUserReview}
                     fetchPrevMessages={fetchPrevMessages}
                     scrollToBottom={scrollToBottom}
                     refetchChannel={refetch}
                     isCamelAdminUser={isCamelAdminUser}
-                    isCamelAuthSeller={isCamelAuthSeller}
+                    isSeller={isSeller}
+                    orders={orders}
                   />
                 )}
               </ContentWrapper>
@@ -415,6 +485,7 @@ function Chanel() {
                 {!!channel && showActionButtons && (
                   <ChannelBottomActionButtons
                     messageInputHeight={messageInputHeight}
+                    lastMessageIndex={messages.length + 1}
                     channelId={channel.id}
                     channelUrl={channel.externalId}
                     userName={userName}
@@ -432,6 +503,7 @@ function Chanel() {
                     hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
                     refetchChannel={refetch}
                     updateNewMessage={updateNewMessage}
+                    order={orders[0]}
                   />
                 )}
                 {showMessageInput && (
@@ -447,6 +519,7 @@ function Chanel() {
                     updateNewMessage={updateNewMessage}
                     productId={productId}
                     targetUserId={targetUserId}
+                    lastMessageIndex={messages.length + 1}
                   />
                 )}
               </FooterWrapper>
@@ -481,6 +554,12 @@ function Chanel() {
         images={[channelThumbnailMessageImage]}
         name={attrProperty.name.CHANNEL_DETAIL}
       />
+      <ChannelSaleRequestRefuseDialog
+        order={orders[0]}
+        channelTargetUser={channelTargetUser}
+        refetchChannel={refetch}
+      />
+      <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
     </>
   );
 }
@@ -524,7 +603,7 @@ const Layout = styled.div`
 
   main {
     position: relative;
-    flex: 1 1 0px;
+    flex: 1 1 0;
     -webkit-box-flex: 1;
   }
 `;
@@ -551,10 +630,10 @@ const HeaderWrapper = styled.div`
   }) => common.uiWhite};
 `;
 
-const Inner = styled.div`
+const Inner = styled.div<{ isIOSApp: boolean }>`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: ${({ isIOSApp }) => (isIOSApp ? 'calc(100vh - 55px)' : '100%')};
   overflow: hidden;
 `;
 

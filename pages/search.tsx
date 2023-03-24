@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Dialog, Icon, Typography } from 'mrcamel-ui';
 import find from 'lodash-es/find';
+import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -24,6 +25,7 @@ import {
 import UserTraceRecord from '@library/userTraceRecord';
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchKeywordsSuggest } from '@api/product';
@@ -31,6 +33,7 @@ import { fetchParentCategories } from '@api/category';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET } from '@constants/localStorage';
 import { IOS_SAFE_AREA_TOP, SEARCH_BAR_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -166,6 +169,8 @@ function Search() {
       return;
     }
 
+    handleClickSaveTime();
+
     handleTotalSearch({
       keyword: searchValue,
       title: 'SCOPE',
@@ -180,6 +185,10 @@ function Search() {
     });
     router.back();
   }, [router]);
+
+  const handleClickSaveTime = () => {
+    LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
+  };
 
   useEffect(() => {
     logEvent(attrKeys.search.VIEW_SEARCH_MODAL);
@@ -230,13 +239,14 @@ function Search() {
                   refresh={setRecentSearchList}
                   recentSearchList={recentSearchList}
                   onClickTotalSearch={handleTotalSearch}
+                  handleClickSaveTime={handleClickSaveTime}
                 />
               ) : (
-                <SearchKeyword />
+                <SearchKeyword handleClickSaveTime={handleClickSaveTime} />
               )}
-              <SearchProductsKeywordList />
-              <SearchBrandList />
-              <SearchCategoryList />
+              <SearchProductsKeywordList handleClickSaveTime={handleClickSaveTime} />
+              <SearchBrandList handleClickSaveTime={handleClickSaveTime} />
+              <SearchCategoryList handleClickSaveTime={handleClickSaveTime} />
             </>
           ) : (
             <SearchList

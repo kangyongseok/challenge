@@ -57,7 +57,7 @@ function LegitRequestSelectCategory() {
         minHeight: '100%',
         backgroundColor: common.bg03,
         userSelect: 'none',
-        '& > main': { padding: '28px 20px 0', rowGap: 32 }
+        '& > div': { padding: '28px 20px 0', rowGap: 32 }
       }}
     >
       <Flexbox component="section" direction="vertical" gap={8}>

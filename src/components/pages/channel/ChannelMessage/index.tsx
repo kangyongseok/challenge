@@ -35,6 +35,7 @@ function ChannelMessage({ sendbirdChannel: channel, message, nextMessage }: Chan
     Sendbird.getInstance().currentUser.userId;
   const nextMessageUserIsDiff =
     !!nextMessage &&
+    nextMessage.messageType !== 'admin' &&
     (nextMessage as UserMessage | FileMessage | undefined)?.sender?.userId !==
       (message as UserMessage | FileMessage).sender.userId;
 
@@ -50,12 +51,7 @@ function ChannelMessage({ sendbirdChannel: channel, message, nextMessage }: Chan
           }
         />
         {isOGMessage(message as UserMessage) && (
-          <ChannelOGMessage
-            message={message as UserMessage}
-            status={status}
-            isByMe={isByMe}
-            nextMessageUserIsDiff={nextMessageUserIsDiff}
-          />
+          <ChannelOGMessage message={message as UserMessage} status={status} isByMe={isByMe} />
         )}
       </>
     );

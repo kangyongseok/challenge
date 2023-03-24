@@ -579,7 +579,7 @@ function UserShopEdit() {
                     .map(
                       (t) =>
                         (t.startsWith('<b>') && <b>{t.replace(/<\/?b[^>]*>/g, '')}</b>) || (
-                          <span dangerouslySetInnerHTML={{ __html: t }} />
+                          <span key={`description-${t}`} dangerouslySetInnerHTML={{ __html: t }} />
                         )
                     )}
                 </DescriptionErrorLabel>

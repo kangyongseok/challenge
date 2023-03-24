@@ -2,8 +2,10 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { BottomSheet, Box, Button, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { PopupButton } from '@typeform/embed-react';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import { DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { deviceIdState, exitNextStepBottomSheetState, exitUserNextStepState } from '@recoil/common';
@@ -34,6 +36,7 @@ function InterfereKingResult() {
       step: 2
     });
 
+    LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, 2);
     setNextBottomSheetOpen(false);
   };
 

@@ -20,9 +20,7 @@ function ChannelFileMessage({
 }: ChannelFileMessageProps) {
   return (
     <FileMessageWrapper isByMe={isByMe} nextMessageUserIsDiff={nextMessageUserIsDiff}>
-      {!nextMessageUserIsDiff && (
-        <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
-      )}
+      <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       <Message rel="noopener noreferrer" href={message.url} target="_blank" isByMe={isByMe}>
         {truncateString(message.name || message.url)}
       </Message>
