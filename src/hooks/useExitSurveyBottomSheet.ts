@@ -37,10 +37,11 @@ function useExitSurveyBottomSheet() {
     under30seconds()
   );
 
-  const isOverWeek = dayjs(lastDisplayDate).diff(dayjs(), 'days') >= 7;
+  const isOverWeek = dayjs(lastDisplayDate).diff(dayjs(), 'days') >= 3;
 
   const isUserViewPerDay = () => {
-    if (Number(displayCount) === 2) return false;
+    if (Number(displayCount) === 3) return false;
+    if (Number(displayCount) === 2 && lastDisplayDate && !isOverWeek) return false;
     if (Number(displayCount) === 1 && lastDisplayDate && !isOverWeek) return false;
     return true;
   };

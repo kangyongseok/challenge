@@ -37,8 +37,8 @@ function SettingAlarm() {
       checkAgent.isIOSApp() &&
       window.webkit &&
       window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthPush.postMessage
+      window.webkit.messageHandlers.callMoveToSetting &&
+      window.webkit.messageHandlers.callMoveToSetting.postMessage
     ) {
       window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
     }
@@ -60,7 +60,7 @@ function SettingAlarm() {
       ) {
         window.webkit.messageHandlers.callAuthPush.postMessage(0);
       }
-    }, 3000);
+    }, 5000);
   };
 
   if (!systemSetting) {

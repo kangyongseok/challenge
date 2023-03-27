@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Box } from 'mrcamel-ui';
+import { Box, Typography } from 'mrcamel-ui';
 
 import type { DialogType } from '@typings/common';
 
@@ -73,7 +73,9 @@ export const dialogTitle: Record<
   productHidden: '숨긴 매물입니다',
   productReservation: '예약중인 매물입니다',
   locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>,
-  endEvent: '종료된 이벤트입니다.'
+  endEvent: '종료된 이벤트입니다.',
+  notiChannelFalse: '',
+  notiDeviceFalse: ''
 };
 
 export const dialogContent = {
@@ -181,7 +183,31 @@ export const dialogContent = {
   productSoldout: '판매 완료된 매물은 수정이 불가능합니다.',
   productDelete: '삭제 된 매물은 수정이 불가능합니다.',
   productHidden: '숨긴 매물은 수정이 불가능합니다.',
-  productReservation: '예약중인 매물은 수정이 불가능합니다.'
+  productReservation: '예약중인 매물은 수정이 불가능합니다.',
+  notiChannelFalse: (
+    <Box customStyle={{ paddingTop: 20 }}>
+      <Typography customStyle={{ fontSize: 52 }}>🫢</Typography>
+      <Typography weight="bold" variant="h3" customStyle={{ marginTop: 32 }}>
+        채팅알림이 꺼져있어요!
+      </Typography>
+      <Typography variant="h4" customStyle={{ marginTop: 8 }}>
+        알림이 꺼져있으면 채팅을 받을 수 없어요.
+      </Typography>
+    </Box>
+  ),
+  notiDeviceFalse: (
+    <Box customStyle={{ paddingTop: 20 }}>
+      <Typography customStyle={{ fontSize: 52 }}>🫢</Typography>
+      <Typography weight="bold" variant="h3" customStyle={{ marginTop: 32 }}>
+        기기 알림이 꺼져있어요!
+      </Typography>
+      <Typography variant="h4" customStyle={{ marginTop: 8 }}>
+        알림이 꺼져있으면 채팅을 받을 수 없어요.
+        <br />
+        설정으로 이동하여 알림을 켜주세요.
+      </Typography>
+    </Box>
+  )
 };
 
 export const firstButtonText: Record<
@@ -264,6 +290,8 @@ export const secondButtonText: Record<
     | 'productHidden'
     | 'productReservation'
     | 'endEvent'
+    | 'notiChannelFalse'
+    | 'notiDeviceFalse'
   >,
   string | number | ReactElement
 > = {
@@ -299,7 +327,9 @@ export const secondButtonText: Record<
   productHidden: '확인',
   productReservation: '확인',
   locationInfo: '동의하고 매물보기',
-  endEvent: '확인'
+  endEvent: '확인',
+  notiChannelFalse: '채팅알림 켜기',
+  notiDeviceFalse: '알림 켜기'
 };
 
 const dialog = {

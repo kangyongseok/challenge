@@ -100,8 +100,8 @@ function ProductInterfereKingBottomSheet() {
         LocalStorage.set(LAST_DISPLAY_EXIT_SURVEY_BOTTOM_SHEET, dayjs().format('YYYY-MM-DD'));
       }
 
-      if (Number(displayCount) === 1 && isOverWeek) {
-        LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, 2);
+      if (Number(displayCount) < 3 && isOverWeek) {
+        LocalStorage.set(DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET, Number(displayCount) + 1);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

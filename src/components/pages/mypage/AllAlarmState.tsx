@@ -24,7 +24,7 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.alarms(),
-        refetchType: 'inactive'
+        refetchType: 'active'
       });
     }
   });

@@ -47,8 +47,8 @@ function LegitStatusAlarmGuideDialog() {
       checkAgent.isIOSApp() &&
       window.webkit &&
       window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthPush.postMessage
+      window.webkit.messageHandlers.callMoveToSetting &&
+      window.webkit.messageHandlers.callMoveToSetting.postMessage
     ) {
       window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
     }

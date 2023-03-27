@@ -192,7 +192,9 @@ export type DialogType =
   | 'productHidden'
   | 'productReservation'
   | 'locationInfo'
-  | 'endEvent';
+  | 'endEvent'
+  | 'notiChannelFalse'
+  | 'notiDeviceFalse';
 
 export type ShareData = {
   title: string;

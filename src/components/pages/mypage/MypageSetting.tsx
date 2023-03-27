@@ -60,6 +60,7 @@ function MypageSetting() {
       });
       return;
     }
+
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
       window.webview.callAuthPush();
     }

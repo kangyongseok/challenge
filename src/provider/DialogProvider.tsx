@@ -68,6 +68,8 @@ function DialogProvider() {
       case 'productReservation':
       case 'requiredAppUpdateForChat':
       case 'locationInfo':
+      case 'notiChannelFalse':
+      case 'notiDeviceFalse':
         return 'textWithOneButton';
       case 'appAuthCheck':
       case 'unblockBlockedUser':
