@@ -141,6 +141,8 @@ function ChannelBottomActionButtons({
     hiddenInputRef.current?.click();
   };
 
+  const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
@@ -307,7 +309,7 @@ function ChannelBottomActionButtons({
           사진
         </Typography>
       </Chip>
-      {!isDeletedProduct && (
+      {!isDeletedProduct && !isExternalPlatform && (
         <>
           {showAppointmentButton && !showPurchaseConfirmButton && (
             <Chip

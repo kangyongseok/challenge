@@ -127,5 +127,6 @@ export const productSellerType = {
   collection: 0,
   normal: 1,
   certification: 2,
-  legit: 3
+  legit: 3,
+  externalPlatform: 5
 };

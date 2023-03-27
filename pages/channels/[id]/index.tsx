@@ -141,6 +141,7 @@ function Chanel() {
   const isCamelAuthSeller =
     SELLER_STATUS[product?.productSeller?.type as keyof typeof SELLER_STATUS] ===
     SELLER_STATUS['3'];
+  const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
 
   const routingRef = useRef(false);
 
@@ -388,6 +389,8 @@ function Chanel() {
             header={
               <HeaderWrapper>
                 <ChannelHeader
+                  sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
+                  isExternalPlatform={isExternalPlatform}
                   isLoading={isLoading || !isFetched}
                   isTargetUserSeller={!isSeller}
                   isDeletedTargetUser={isDeletedTargetUser}
@@ -423,6 +426,7 @@ function Chanel() {
                         }
                       />
                       {isCamelAuthSeller && <ChannelCamelAuthFixBanner />}
+                      {isExternalPlatform && <ChannelCamelAuthFixBanner type="external" />}
                     </>
                   )}
                 {!!appointment && showAppointmentBanner && (

@@ -24,6 +24,8 @@ interface ChannelHeaderProps {
   targetUserImage: string | undefined;
   targetUserName: string;
   targetUserId: number | undefined;
+  isExternalPlatform?: boolean;
+  sellerUserId?: number;
 }
 
 function ChannelHeader({
@@ -32,7 +34,9 @@ function ChannelHeader({
   isDeletedTargetUser,
   targetUserImage,
   targetUserName,
-  targetUserId
+  targetUserId,
+  isExternalPlatform,
+  sellerUserId
 }: ChannelHeaderProps) {
   const router = useRouter();
 
@@ -61,10 +65,12 @@ function ChannelHeader({
       title: isTargetUserSeller ? attrProperty.title.SELLER : attrProperty.title.BUYER
     });
 
-    const pathname = `/userInfo/${targetUserId}`;
+    const pathname = isExternalPlatform
+      ? `/sellerInfo/${sellerUserId}`
+      : `/userInfo/${targetUserId}`;
 
     if (checkAgent.isIOSApp()) {
-      setChannelPushPageState('userInfo');
+      setChannelPushPageState(isExternalPlatform ? 'sellerInfo' : 'userInfo');
       window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
         JSON.stringify({
           pathname,
@@ -75,7 +81,15 @@ function ChannelHeader({
     }
 
     router.push(pathname);
-  }, [targetUserId, isDeletedTargetUser, isTargetUserSeller, router, setChannelPushPageState]);
+  }, [
+    targetUserId,
+    isDeletedTargetUser,
+    isTargetUserSeller,
+    isExternalPlatform,
+    sellerUserId,
+    router,
+    setChannelPushPageState
+  ]);
 
   const handleClickMore = useCallback(() => {
     logEvent(attrKeys.channel.CLICK_CHANNEL_MORE, { name: attrProperty.name.CHANNEL_DETAIL });

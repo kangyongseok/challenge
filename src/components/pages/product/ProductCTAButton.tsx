@@ -220,7 +220,8 @@ function ProductCTAButton({
 
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
-    if (roleSeller?.userId) return { ctaText: '채팅하기', ctaBrandColor: 'black' };
+    if (roleSeller?.userId || product?.sellerType === productSellerType.externalPlatform)
+      return { ctaText: '채팅하기', ctaBrandColor: 'black' };
 
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
       return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
@@ -359,7 +360,8 @@ function ProductCTAButton({
     }
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
-    if (roleSeller?.userId) {
+    // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
+    if (roleSeller?.userId || product.sellerType === productSellerType.externalPlatform) {
       productDetailAtt({
         key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
         product
@@ -373,7 +375,7 @@ function ProductCTAButton({
       // });
 
       const createChannelParams = {
-        targetUserId: String(roleSeller.userId || 0),
+        targetUserId: String(roleSeller?.userId || 0),
         productId: String(product.id),
         productTitle: product.title,
         productImage: product.imageThumbnail || product.imageMain || ''
