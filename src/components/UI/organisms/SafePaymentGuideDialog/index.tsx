@@ -91,7 +91,7 @@ function SafePaymentGuideDialog({
         isTransparent
         leftIcon={
           <Box
-            onClick={onClose}
+            onClick={handleClose}
             customStyle={{
               padding: 16
             }}
