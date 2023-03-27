@@ -3,8 +3,6 @@ import type { PropsWithChildren, ReactElement } from 'react';
 
 import ABTest from '@library/abTest';
 
-import { getCookie, setCookie } from '@utils/common';
-
 import type { ABTestBelong } from '@typings/common';
 
 interface ABTestProviderProps {
@@ -16,15 +14,6 @@ function ABTestProvider({ children, identifier = {} }: PropsWithChildren<ABTestP
     if (Object.keys(identifier).length) ABTest.setIdentifier(identifier);
   }, [identifier]);
   return children as ReactElement;
-}
-
-export function ABTestCookie({ name, cookieName }: { name: string; cookieName: string }) {
-  if (getCookie(cookieName)) return;
-  if (ABTest.getBelong(name) === 'A') {
-    setCookie(cookieName, 'true', 1);
-  } else {
-    setCookie(cookieName, 'false', 1);
-  }
 }
 
 export function ABTestGroup({

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import localFont from 'next/font/local';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
 import { Toast, useTheme } from 'mrcamel-ui';
@@ -66,17 +65,6 @@ if (global.navigator) {
 }
 
 const originUrl = 'https://mrcamel.co.kr';
-
-const font = localFont({
-  src: [
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '900' },
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '700' },
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '500' },
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '400' },
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '300' },
-    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '100' }
-  ]
-});
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -191,13 +179,11 @@ function App({ Component, pageProps }: AppProps) {
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
                     <SendbirdProvider>
                       <PortalProvider>
-                        <main className={font.className}>
-                          <AuthProvider>
-                            <SessionProvider>
-                              <Component {...pageProps} />
-                            </SessionProvider>
-                          </AuthProvider>
-                        </main>
+                        <AuthProvider>
+                          <SessionProvider>
+                            <Component {...pageProps} />
+                          </SessionProvider>
+                        </AuthProvider>
                       </PortalProvider>
                     </SendbirdProvider>
                   </ABTestProvider>

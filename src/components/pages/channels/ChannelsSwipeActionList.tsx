@@ -174,11 +174,6 @@ function ChannelsSwipeActionList({
     (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
 
-      logEvent(attrKeys.channel.CLICK_CAMEL, {
-        name: attrProperty.name.VIEW_SELECT_BUYER,
-        att: location
-      });
-
       if (
         isLoadingMutatePutProductUpdateStatus ||
         !camelChannel.product ||
@@ -192,6 +187,14 @@ function ChannelsSwipeActionList({
       }));
 
       const productId = camelChannel.product.id;
+
+      logEvent(attrKeys.channel.CLICK_CAMEL, {
+        name: attrProperty.name.VIEW_SELECT_BUYER,
+        att: location,
+        ...camelChannel.product,
+        id: productId
+      });
+
       const targetUserId = camelChannel.channelTargetUser.user?.id;
       const targetUserName =
         camelChannel.channelTargetUser.user?.nickName || camelChannel.channelTargetUser.user?.name;

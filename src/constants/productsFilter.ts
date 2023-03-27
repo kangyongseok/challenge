@@ -9,7 +9,7 @@ export const filterCodeIds = {
   color: 3,
   material: 4,
   gender: 5,
-  safePayment: 6, // 채팅가능 => 안전결제로 변경 예정
+  safePayment: 6,
   season: 11,
   id: 12,
   map: 13,
@@ -194,7 +194,7 @@ export const generalFilterOptions = {
   brands: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
+    { codeId: filterCodeIds.safePayment, name: '안전결제' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.gender, name: '성별' },
     { codeId: filterCodeIds.size, name: '사이즈' },
@@ -207,7 +207,7 @@ export const generalFilterOptions = {
   categories: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
+    { codeId: filterCodeIds.safePayment, name: '안전결제' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
@@ -220,7 +220,7 @@ export const generalFilterOptions = {
   search: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
+    { codeId: filterCodeIds.safePayment, name: '안전결제' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
@@ -234,7 +234,7 @@ export const generalFilterOptions = {
   camel: [
     { codeId: filterCodeIds.map, name: '내 주변' },
     { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '채팅가능' },
+    { codeId: filterCodeIds.safePayment, name: '안전결제' },
     { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },

@@ -176,6 +176,28 @@ function HomePersonalGuide() {
     router.push('/events/dogHoney');
   };
 
+  const handleClickSafePayment = () => {
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ORDER,
+      att: '안전결제'
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ORDER,
+      type: attrProperty.type.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/camel/새로 올라왔어요!',
+      query: {
+        order: 'postedAllDesc',
+        idFilterIds: [6]
+      }
+    });
+  };
+
   useEffect(() => {
     const guideRenderCount = 13;
     const themeMode = mode === 'light' ? 'white' : 'black';
@@ -258,7 +280,7 @@ function HomePersonalGuide() {
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 8);
+      ).slice(0, 7);
 
       setGuides([...categories, ...brands]);
     }
@@ -359,6 +381,43 @@ function HomePersonalGuide() {
             />
             <Typography variant="body2" weight="bold" noWrap>
               급처,개꿀매모음
+            </Typography>
+          </Flexbox>
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClickSafePayment}
+            customStyle={{ position: 'relative', minWidth: 72, maxWidth: 72 }}
+          >
+            <Label
+              brandColor="red"
+              text="수수료 무료"
+              size="xsmall"
+              round={9}
+              customStyle={{
+                position: 'absolute',
+                top: -18,
+                left: '50%',
+                zIndex: 1,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap'
+              }}
+            />
+            <Image
+              width={48}
+              height={48}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/safepayment.png`,
+                w: 48
+              })}
+              alt="Personal Guide Img"
+              round={12}
+              disableAspectRatio
+            />
+            <Typography variant="body2" weight="bold" noWrap>
+              안전결제
             </Typography>
           </Flexbox>
         </>

@@ -2,10 +2,23 @@ import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
+import localFont from 'next/font/local';
 import { ThemeProvider } from 'mrcamel-ui';
+import { Global } from '@emotion/react';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
+
+const font = localFont({
+  src: [
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '900' },
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '700' },
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '500' },
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '400' },
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '300' },
+    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '100' }
+  ]
+});
 
 function ThemeModeProvider({ children }: PropsWithChildren) {
   const theme = useRecoilValue(themeState);
@@ -39,6 +52,14 @@ function ThemeModeProvider({ children }: PropsWithChildren) {
 
   return (
     <ThemeProvider theme="light" disableResetCSS={false}>
+      {/* // TODO UI 라이브러리 resetCSS 커스텀이 가능하도록 보완 */}
+      <Global
+        styles={{
+          body: {
+            fontFamily: font.style.fontFamily
+          }
+        }}
+      />
       {children}
     </ThemeProvider>
   );

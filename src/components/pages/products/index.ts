@@ -16,3 +16,4 @@ export { default as ProductsFilterHistory } from './ProductsFilterHistory';
 export { default as ProductsPageHead } from './ProductsPageHead';
 export { default as ProductsMiddleFilter } from './ProductsMiddleFilter';
 export { default as ProductsStructuredData } from './ProductsStructuredData';
+export { default as ProductsSafePaymentBanner } from './ProductsSafePaymentBanner';

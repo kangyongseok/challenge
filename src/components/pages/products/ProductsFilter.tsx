@@ -877,7 +877,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
           brandColor="primary"
           message={
             <Typography variant="body2" weight="medium" brandColor="primary">
-              채팅으로 바로 거래할 수 있는 매물만 보고싶다면 클릭!
+              안전결제할 수 있는 매물만 보고싶다면 클릭!
             </Typography>
           }
           triangleLeft={16}

@@ -28,7 +28,7 @@ import type {
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { OnBoardingSpotlight } from '@components/UI/organisms';
+import { OnBoardingSpotlight, SafePaymentGuideDialog } from '@components/UI/organisms';
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
 
 import type { UserRoleSeller } from '@dto/user';
@@ -170,6 +170,7 @@ function ProductCTAButton({
   });
   const [pendingCreateChannel, setPendingCreateChannel] = useState(false);
   const [openAlreadyHasOrderDialog, setOpenAlreadyHasOrderDialog] = useState(false);
+  const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
 
   const wishButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -578,9 +579,20 @@ function ProductCTAButton({
     });
   }, 300);
 
-  const handleClickTodayHide = () => {
+  const handleClickTodayHide = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
     LocalStorage.set(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
     setOpen(false);
+  };
+
+  const handleClickSafePaymentFreeBanner = () => {
+    logEvent(attrKeys.products.CLICK_BANNER, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.ORDER
+    });
+
+    setOpenSafePaymentGuideDialog((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -636,7 +648,7 @@ function ProductCTAButton({
           alignment="center"
           justifyContent="space-between"
           gap={4}
-          onClick={handleClickTodayHide}
+          onClick={handleClickSafePaymentFreeBanner}
           customStyle={{
             position: 'fixed',
             left: 0,
@@ -665,10 +677,11 @@ function ProductCTAButton({
                 color: common.uiWhite
               }}
             >
-              지금 카멜은 안전결제 수수료 무료!
+              카멜은 안전결제 수수료 무료!
             </Typography>
           </Flexbox>
           <Box
+            onClick={handleClickTodayHide}
             customStyle={{
               minWidth: 'fit-content'
             }}
@@ -931,6 +944,10 @@ function ProductCTAButton({
           </Button>
         </Flexbox>
       </Dialog>
+      <SafePaymentGuideDialog
+        open={openSafePaymentGuideDialog}
+        onClose={() => setOpenSafePaymentGuideDialog(false)}
+      />
     </>
   );
 }

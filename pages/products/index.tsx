@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
 import { Box, Icon, useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -12,14 +11,10 @@ import {
   ProductsLandingInfo,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
+  ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
-
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
-import { getCookies } from '@utils/cookies';
 
 function Products() {
   const router = useRouter();
@@ -53,6 +48,7 @@ function Products() {
       >
         <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
+        <ProductsSafePaymentBanner />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
@@ -63,15 +59,6 @@ function Products() {
       <ProductsOrderFilterBottomSheet />
     </>
   );
-}
-
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
 }
 
 export default Products;

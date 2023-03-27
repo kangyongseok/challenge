@@ -13,20 +13,17 @@ import {
   ProductsPageHead,
   ProductsRelated,
   ProductsRelatedKeywords,
+  ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsStructuredData,
   ProductsTopButton
 } from '@components/pages/products';
-
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
 
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
-import { getCookies } from '@utils/cookies';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 
@@ -45,6 +42,7 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
         <ProductsRelatedKeywords />
         <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
+        <ProductsSafePaymentBanner />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
@@ -87,8 +85,6 @@ export async function getServerSideProps({
     };
   }
 
-  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
-
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(queryKeys.products.searchMeta(params), () =>
@@ -98,8 +94,7 @@ export async function getServerSideProps({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      params,
-      abTestIdentifier: ABTest.getIdentifier()
+      params
     }
   };
 }

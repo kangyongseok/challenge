@@ -1,6 +1,5 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
 import { Box, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
@@ -14,16 +13,13 @@ import {
   ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
+  ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
 
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
-import { getCookies } from '@utils/cookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -60,6 +56,7 @@ function CrmProducts() {
       >
         <ProductsFilter variant="search" showDynamicFilter />
         <Gap height={8} />
+        <ProductsSafePaymentBanner />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
@@ -71,15 +68,6 @@ function CrmProducts() {
       <ProductsLegitFilterBottomSheet />
     </>
   );
-}
-
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
 }
 
 const NoticeWrapper = styled.div<{ showAppDownloadBanner: boolean }>`

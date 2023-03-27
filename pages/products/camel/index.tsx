@@ -1,5 +1,3 @@
-import type { GetServerSidePropsContext } from 'next';
-
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -11,14 +9,10 @@ import {
   ProductsInfiniteGrid,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
+  ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
-
-import Initializer from '@library/initializer';
-import ABTest from '@library/abTest';
-
-import { getCookies } from '@utils/cookies';
 
 function CamelProducts() {
   return (
@@ -31,6 +25,7 @@ function CamelProducts() {
         <ProductsCategoryTags variant="camel" />
         <ProductsFilter variant="camel" showDynamicFilter />
         <Gap height={8} />
+        <ProductsSafePaymentBanner />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="camel" />
         <Gap height={8} />
@@ -41,15 +36,6 @@ function CamelProducts() {
       <ProductsOrderFilterBottomSheet />
     </>
   );
-}
-
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
-  return {
-    props: {
-      abTestIdentifier: ABTest.getIdentifier()
-    }
-  };
 }
 
 export default CamelProducts;

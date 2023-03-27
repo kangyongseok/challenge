@@ -568,8 +568,6 @@ function Chanel() {
 }
 
 export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-
   const channelId = String(id);
   const queryClient = new QueryClient();
 

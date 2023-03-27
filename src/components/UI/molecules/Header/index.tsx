@@ -35,6 +35,7 @@ interface HeaderProps {
   rightIconCustomStyle?: CustomStyle;
   hideLine?: boolean;
   customStyle?: CustomStyle;
+  wrapperCustomStyle?: CustomStyle;
   customHeight?: number;
 }
 
@@ -56,6 +57,7 @@ function Header({
   rightIconCustomStyle,
   hideLine = true,
   customStyle,
+  wrapperCustomStyle,
   customHeight,
   customHeader
 }: PropsWithChildren<HeaderProps>) {
@@ -232,7 +234,7 @@ function Header({
       }}
     >
       {customHeader || (
-        <Wrapper isFixed={isFixed}>
+        <Wrapper isFixed={isFixed} css={wrapperCustomStyle}>
           <Flexbox
             alignment="center"
             gap={8}
