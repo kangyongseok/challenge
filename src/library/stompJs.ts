@@ -5,8 +5,6 @@ import * as StompJS from '@stomp/stompjs';
 
 import { isProduction, wait } from '@utils/common';
 
-const { SOCKET_SERVER_URL } = process.env;
-
 let stompClient: StompJS.Client;
 
 const StompJs = {
@@ -15,7 +13,7 @@ const StompJs = {
   },
   initialize(channelId: number) {
     stompClient = new StompJS.Client({
-      webSocketFactory: () => new SockJS(`${SOCKET_SERVER_URL}/channels/${channelId}`),
+      webSocketFactory: () => new SockJS(`${process.env.SOCKET_SERVER_URL}/channels/${channelId}`),
       // debug(str) {
       //   if (!isProduction) console.log('StompJs debug::', str);
       // },

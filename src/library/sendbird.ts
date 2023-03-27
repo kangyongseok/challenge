@@ -4,6 +4,7 @@ import type {
   FailedMessageHandler,
   FileMessageCreateParams,
   MessageHandler,
+  SendableMessage,
   SnoozePeriod,
   UserMessageCreateParams,
   UserUpdateParams
@@ -28,6 +29,17 @@ import { isProduction, wait } from '@utils/common';
 
 import type { CreateChannelParams } from '@typings/channel';
 
+import { logEvent } from './amplitude';
+
+const sendFailLog = (error: Error, message: SendableMessage) => {
+  logEvent('SUPPORT_ERROR', {
+    type: 'SENDBIRD',
+    name: 'SEND FAIL',
+    error,
+    message
+  });
+};
+
 const sb = SendbirdChat.init({
   appId: process.env.SENDBIRD_APP_ID,
   modules: [new GroupChannelModule()]
@@ -45,9 +57,20 @@ const SendBird = {
       if (image) userUpdateParams.profileUrl = image;
 
       await sb.updateCurrentUserInfo(userUpdateParams);
-
+      logEvent('LOAD_SUPPORT', {
+        type: 'SENDBIRD',
+        userId,
+        nickname
+      });
       if (!isProduction) console.log('Sendbird initialized', { sb, user });
     } catch (error) {
+      logEvent('SUPPORT_ERROR', {
+        type: 'SENDBIRD',
+        name: 'SENDBIRD_INITIALIZED',
+        error,
+        userId,
+        nickname
+      });
       console.log('Sendbird error', error);
     }
 
@@ -112,19 +135,38 @@ const SendBird = {
     productTitle,
     productImage
   }: CreateChannelParams): Promise<[GroupChannel | null, unknown | null]> {
+    const groupChannelParams: GroupChannelCreateParams = {
+      invitedUserIds: [userId, targetUserId],
+      customType: productId,
+      data: productTitle,
+      coverUrl: productImage,
+      isDistinct: false
+    };
+
     try {
-      const groupChannelParams: GroupChannelCreateParams = {
-        invitedUserIds: [userId, targetUserId],
-        customType: productId,
-        data: productTitle,
-        coverUrl: productImage,
-        isDistinct: false
-      };
-
       const groupChannel = await sb.groupChannel.createChannel(groupChannelParams);
-
+      logEvent('SUPPORT_CREATE_CHANNEL', {
+        name: 'CREATE_CHANNEL',
+        type: 'SENDBIRD',
+        params: groupChannelParams,
+        inviter: groupChannel?.inviter?.userId,
+        member1: {
+          state: groupChannel?.members[0]?.state,
+          userId: groupChannel?.members[0]?.userId
+        },
+        member2: {
+          state: groupChannel?.members[1]?.state,
+          userId: groupChannel?.members[1]?.userId
+        }
+      });
       return [groupChannel, null];
     } catch (error) {
+      logEvent('SUPPORT_ERROR', {
+        name: 'CREATE_CHANNEL',
+        type: 'SENDBIRD',
+        params: groupChannelParams,
+        error
+      });
       return [null, error];
     }
   },
@@ -209,6 +251,7 @@ const SendBird = {
         onSucceeded(message);
       })
       .onFailed((error, message) => {
+        sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
       });
   },
@@ -235,6 +278,7 @@ const SendBird = {
         onSucceeded(fileMessage);
       })
       .onFailed((error, message) => {
+        sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
       });
   },
@@ -262,6 +306,7 @@ const SendBird = {
         onSucceeded(fileMessage);
       })
       .onFailed((error, message) => {
+        sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
       });
   },
