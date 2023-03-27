@@ -25,7 +25,7 @@ function ChatAlarm({ alarm }: { alarm?: boolean }) {
       setChatAlarm((props) => !props);
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.alarms(),
-        refetchType: 'inactive'
+        refetchType: 'active'
       });
     }
   });

@@ -121,11 +121,11 @@ function RegisterConfirm() {
         });
       }
     };
-  }, [alarmsInfo?.isNotiChannel, router, setDialogState]);
+  }, [alarmsInfo, router, setDialogState]);
 
   useEffect(() => {
     notiFalse();
-  }, [notiFalse]);
+  }, [notiFalse, alarmsInfo?.isNotiChannel]);
 
   useEffect(() => {
     const source = LocalStorage.get(SOURCE);
