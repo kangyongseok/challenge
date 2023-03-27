@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { AutoSizer, InfiniteLoader, List, WindowScroller } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -15,6 +16,7 @@ import Header from '@components/UI/molecules/Header';
 import ListItem from '@components/UI/atoms/ListItem';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchBlocks } from '@api/user';
@@ -22,6 +24,8 @@ import { fetchBlocks } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import { toastState } from '@recoil/common';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
@@ -206,5 +210,13 @@ const BlockUserWrapper = styled.ul`
   margin: 0;
   padding: 12px 0;
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default BlockedUsers;

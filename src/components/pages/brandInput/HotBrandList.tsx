@@ -124,8 +124,8 @@ const CircleChecked = styled.div`
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
+
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   await queryClient.prefetchQuery(queryKeys.brands.hotBrands(), fetchHotBrands);
 

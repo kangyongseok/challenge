@@ -7,4 +7,6 @@ export { default as ABTestProvider } from './ABTestProvider';
 export { default as ThemeModeProvider } from './ThemeModeProvider';
 export { default as HistoryProvider } from './HistoryProvider';
 export { default as SendbirdProvider } from './SendbirdProvider';
+export { default as SessionProvider } from './SessionProvider';
+export { default as AuthProvider } from './AuthProvider';
 export { default as GoogleTagManagerProvider } from './GoogleTagManagerProvider';

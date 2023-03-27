@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -13,12 +14,15 @@ import { ReportUserBottomSheet } from '@components/pages/report';
 
 import type { PostReportData } from '@dto/user';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postReport } from '@api/user';
 
 import { userReportType, userReportTypeAtt } from '@constants/user';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import { rotate } from '@styles/transition';
 
@@ -228,5 +232,13 @@ export const AnimationLoading = styled(Icon)`
   animation: ${rotate} 1s linear infinite;
   width: 30px;
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default Report;

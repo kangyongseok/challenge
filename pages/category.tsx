@@ -85,7 +85,6 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   return {
     props: {

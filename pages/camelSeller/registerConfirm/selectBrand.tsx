@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+import { GetServerSidePropsContext } from 'next';
 import { Typography } from 'mrcamel-ui';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -10,12 +11,15 @@ import {
 } from '@components/pages/camelSeller';
 
 import SessionStorage from '@library/sessionStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import useScrollTrigger from '@hooks/useScrollTrigger';
 
@@ -55,6 +59,13 @@ function CamelSellerSelectBrand() {
       <CamelSellerSelectBrandList triggered={triggered} />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  return {
+    props: {}
+  };
 }
 
 export default CamelSellerSelectBrand;

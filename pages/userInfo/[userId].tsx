@@ -206,32 +206,31 @@ function UserInfo() {
 export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   const userId = String(query.userId);
 
-  if (/^[0-9]+$/.test(userId)) {
+  try {
+    if (!/^[0-9]+$/.test(userId)) {
+      return {
+        notFound: true
+      };
+    }
+
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
-    try {
-      const infoData = await fetchInfoByUserId(+userId);
+    await queryClient.fetchQuery(queryKeys.users.infoByUserId(+userId), () =>
+      fetchInfoByUserId(+userId)
+    );
 
-      if (infoData) {
-        queryClient.setQueryData(queryKeys.users.infoByUserId(+userId), infoData);
-
-        return {
-          props: {
-            dehydratedState: dehydrate(queryClient)
-          }
-        };
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient)
       }
-    } catch {
-      //
-    }
+    };
+  } catch {
+    return {
+      notFound: true
+    };
   }
-
-  return {
-    notFound: true
-  };
 }
 
 export default UserInfo;

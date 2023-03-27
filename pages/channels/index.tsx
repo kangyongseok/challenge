@@ -3,7 +3,6 @@ import { useEffect, useMemo } from 'react';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -88,31 +87,11 @@ function Channels() {
   );
 }
 
-export async function getServerSideProps({ req, query: { productId } }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
-
-  if (!accessUser) {
-    return {
-      redirect: {
-        destination: `/login?returnUrl=/channels&isRequiredLogin=true${
-          productId ? `&productId=${productId}` : ''
-        }`,
-        permanent: false
-      }
-    };
-  }
 
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
+    props: {}
   };
 }
-
 export default Channels;

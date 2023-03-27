@@ -836,7 +836,6 @@ export async function getServerSideProps({
   let gender = 'M';
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   if (req.cookies.accessToken) {
     const { info: { value: { gender: userGender = '' } = {} } = {} } = await queryClient.fetchQuery(

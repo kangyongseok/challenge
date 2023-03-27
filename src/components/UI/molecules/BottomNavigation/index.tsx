@@ -36,7 +36,6 @@ import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 import {
@@ -104,7 +103,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const router = useRouter();
 
   const queryClient = useQueryClient();
-  const { data: accessUser } = useQueryAccessUser();
   const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
 
   const { initialized, unreadMessagesCount } = useRecoilValue(sendbirdState);
@@ -163,12 +161,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       });
 
       if (title === '채팅') {
-        if (!accessUser) {
-          e.preventDefault();
-          router.push({ pathname: '/login' });
-          return;
-        }
-
         if (needUpdateChatIOSVersion()) {
           e.preventDefault();
           setDialogState({
@@ -189,7 +181,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
           return;
         }
 
-        queryClient.invalidateQueries(queryKeys.channels.channels({ type: 0, size: 20 }));
+        await queryClient.invalidateQueries(queryKeys.channels.channels({ type: 0, size: 20 }));
       }
 
       if (title === '홈') {

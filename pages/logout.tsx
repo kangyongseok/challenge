@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
 import amplitude from 'amplitude-js';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -12,9 +11,10 @@ import Sendbird from '@library/sendbird';
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
 
+import { deleteToken } from '@api/nextJs';
+
 import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
-import { deleteCookie } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 import { deviceIdState } from '@recoil/common';
@@ -48,14 +48,16 @@ function Logout() {
         window.webkit?.messageHandlers?.callSetLogoutUser?.postMessage?.(`${accessUser.userId}`);
     }
 
-    LocalStorage.remove(ACCESS_USER);
-    LocalStorage.remove(ACCESS_TOKEN);
-    Axios.clearAccessToken();
-    queryClient.clear();
-    resetSendbirdState();
-    resetChannelReceivedMessageFilteredState();
-    Sendbird.finalize();
-    router.replace('/login');
+    deleteToken(LocalStorage.get<string>(ACCESS_TOKEN) || '').then(() => {
+      LocalStorage.remove(ACCESS_USER);
+      LocalStorage.remove(ACCESS_TOKEN);
+      Axios.clearAccessToken();
+      queryClient.clear();
+      resetSendbirdState();
+      resetChannelReceivedMessageFilteredState();
+      Sendbird.finalize();
+      router.replace('/login');
+    });
   }, [
     accessUser?.snsType,
     queryClient,
@@ -66,18 +68,7 @@ function Logout() {
     accessUser?.userId
   ]);
 
-  return <div />;
-}
-
-export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
-  const domain = process.env.NODE_ENV === 'development' ? undefined : '.mrcamel.co.kr';
-
-  deleteCookie('accessUser', { req, res, domain });
-  deleteCookie('accessToken', { req, res, domain });
-
-  return {
-    props: {}
-  };
+  return null;
 }
 
 export default Logout;

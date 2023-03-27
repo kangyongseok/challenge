@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { Box, Button, Dialog, Flexbox, Icon, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { debounce, find, isEmpty } from 'lodash-es';
-import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { Header, SearchBar } from '@components/UI/molecules';
@@ -15,7 +15,6 @@ import { BrandInputFooter, HotBrandList, SearchBrandList } from '@components/pag
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
 import { fetchBrandsSuggestWithCollabo } from '@api/brand';
 
 import queryKeys from '@constants/queryKeys';
@@ -267,19 +266,10 @@ const FixedArea = styled.div`
 `;
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
-
-  if (req.cookies.accessToken) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-  }
 
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
+    props: {}
   };
 }
 

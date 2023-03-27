@@ -52,11 +52,12 @@ function LegitAdmin() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
   // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
   return {
     props: {

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Switch, Typography, useTheme } from 'mrcamel-ui';
-import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import Header from '@components/UI/molecules/Header';
@@ -148,27 +148,10 @@ function AddressInput() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
-
-  if (!accessUser) {
-    return {
-      redirect: {
-        destination: '/login?returnUrl=/user/addressInput&isRequiredLogin=true',
-        permanent: false
-      }
-    };
-  }
 
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
+    props: {}
   };
 }
 

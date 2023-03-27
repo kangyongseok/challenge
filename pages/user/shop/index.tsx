@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { Flexbox } from 'mrcamel-ui';
-import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { CamelSellerFloatingButton } from '@components/UI/molecules';
@@ -187,27 +187,10 @@ function UserShop() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
-
-  if (!accessUser) {
-    return {
-      redirect: {
-        destination: '/login?returnUrl=/user/shop&isRequiredLogin=true',
-        permanent: false
-      }
-    };
-  }
 
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
+    props: {}
   };
 }
 

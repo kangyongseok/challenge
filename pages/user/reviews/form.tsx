@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -12,6 +13,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { PostReviewData } from '@dto/user';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postReview } from '@api/user';
@@ -20,6 +22,7 @@ import { fetchProduct } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 import { toastState } from '@recoil/common';
@@ -253,5 +256,13 @@ const Description = styled.div`
     }
   }
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default ReviewForm;

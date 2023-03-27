@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Box, Button, Typography } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { MypageAlarmSetting, MypageAlarmSettingOff } from '@components/pages/mypage';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 function SettingAlarm() {
@@ -103,6 +106,14 @@ function SettingAlarm() {
       <MypageAlarmSetting />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default SettingAlarm;

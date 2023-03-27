@@ -118,30 +118,23 @@ function SizeInput() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
+  try {
+    const queryClient = new QueryClient();
 
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
+    Initializer.initAccessTokenByCookies(getCookies({ req }));
 
-  if (accessUser) {
-    await queryClient.prefetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
-  } else {
+    await queryClient.fetchQuery(queryKeys.users.userInfo(), fetchUserInfo);
+
     return {
-      redirect: {
-        destination: '/login?returnUrl=/user/purchaseInput&isRequiredLogin=true',
-        permanent: false
+      props: {
+        dehydratedState: dehydrate(queryClient)
       }
     };
+  } catch {
+    return {
+      notFound: true
+    };
   }
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
 }
 
 const Footer = styled.div`

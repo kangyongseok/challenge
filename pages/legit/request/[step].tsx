@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { ThemeProvider } from 'mrcamel-ui';
 
 import {
@@ -12,10 +13,13 @@ import {
   LegitRequestSelectModel
 } from '@components/pages/legitRequest';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import useQueryUserData from '@hooks/useQueryUserData';
@@ -144,6 +148,14 @@ function LegitRequest() {
       {step === 'edit' && <LegitRequestEdit />}
     </ThemeProvider>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default LegitRequest;

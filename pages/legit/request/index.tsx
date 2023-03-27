@@ -302,36 +302,33 @@ function LegitRequest() {
 }
 
 export async function getServerSideProps({ req, query: { id } = {} }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-  const productId = Number(id || 0);
+  const productId = String(id || 0);
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
-  if (productId > 0) {
-    try {
-      const response = await queryClient.fetchQuery(queryKeys.productLegits.legit(productId), () =>
-        fetchProductLegit(productId)
-      );
+  try {
+    if (!/^[0-9]+$/.test(productId)) {
+      return {
+        notFound: true
+      };
+    }
 
-      if (response) {
-        return {
-          props: {
-            dehydratedState: dehydrate(queryClient)
-          }
-        };
+    const queryClient = new QueryClient();
+
+    await queryClient.fetchQuery(queryKeys.productLegits.legit(+productId), () =>
+      fetchProductLegit(+productId)
+    );
+
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient)
       }
-    } catch {
-      //
-    }
+    };
+  } catch {
+    return {
+      notFound: true
+    };
   }
-
-  return {
-    redirect: {
-      destination: '/legit?tab=my',
-      permanent: false
-    }
-  };
 }
 
 export default LegitRequest;

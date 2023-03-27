@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
@@ -12,6 +13,7 @@ import { AppointmentSelectNotiTimeBottomSheet } from '@components/pages/appointm
 
 import type { PostAppointmentData } from '@dto/channel';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
@@ -23,6 +25,7 @@ import { productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import {
   getAppointmentDataFormat,
   getAppointmentTimeFormat,
@@ -402,6 +405,14 @@ function Appointment() {
       />
     </>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default Appointment;

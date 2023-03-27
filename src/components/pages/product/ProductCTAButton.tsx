@@ -379,6 +379,10 @@ function ProductCTAButton({
         productImage: product.imageThumbnail || product.imageMain || ''
       };
 
+      const channelId = (channels || []).find(
+        (channel) => channel.userId === accessUser?.userId
+      )?.id;
+
       if (!accessUser) {
         SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
         push({ pathname: '/login' });
@@ -400,10 +404,6 @@ function ProductCTAButton({
 
         return;
       }
-
-      const channelId = (channels || []).find(
-        (channel) => channel.userId === accessUser.userId
-      )?.id;
 
       if (channelId) {
         UserTraceRecord.setExitWishChannel();
@@ -523,16 +523,6 @@ function ProductCTAButton({
       }
     });
 
-    if (!accessUser) {
-      push({
-        pathname: '/login',
-        query: {
-          returnUrl: `/products/${id}/order`,
-          isRequiredLogin: true
-        }
-      });
-      return;
-    }
     if (hasOrder) {
       setOpenAlreadyHasOrderDialog(true);
       return;

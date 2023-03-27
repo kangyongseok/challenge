@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import StylesCards from '@components/UI/organisms/StylesCards';
@@ -95,31 +95,6 @@ function LikeModelInput() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
-
-  if (!accessUser) {
-    return {
-      redirect: {
-        destination: '/login?returnUrl=/user/likeModelInput&isRequiredLogin=true',
-        permanent: false
-      }
-    };
-  }
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
-}
-
 const Footer = styled.footer`
   position: fixed;
   bottom: 0;
@@ -127,5 +102,13 @@ const Footer = styled.footer`
   padding: 20px;
   background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default LikeModelInput;

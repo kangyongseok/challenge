@@ -2,8 +2,6 @@ import { useEffect, useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import type { AccessUser } from '@dto/userAuth';
-
 import LocalStorage from '@library/localStorage';
 
 import { fetchMyUserInfo } from '@api/user';
@@ -15,10 +13,10 @@ import { DEFAUT_BACKGROUND_IMAGE } from '@constants/common';
 import { getUserName } from '@utils/user';
 import { hasImageFile } from '@utils/common';
 
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
 function useQueryMyUserInfo(enabled = true) {
-  const { data: accessUser, refetch } = useQuery(queryKeys.userAuth.accessUser(), () =>
-    LocalStorage.get<AccessUser>(ACCESS_USER)
-  );
+  const { data: accessUser, refetch } = useQueryAccessUser();
   const useQueryMyUserInfoResult = useQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo, {
     refetchOnMount: 'always',
     enabled: !!accessUser && enabled

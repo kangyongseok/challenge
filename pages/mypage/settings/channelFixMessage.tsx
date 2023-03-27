@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 import { Button, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
@@ -11,12 +12,15 @@ import styled, { CSSObject } from '@emotion/styled';
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchFixedChannel, putFixedChannel } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import { shake } from '@styles/transition';
 
@@ -219,5 +223,12 @@ const ButtonBox = styled.div`
   background-color: ${({ theme }) => theme.palette.common.uiWhite};
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+  return {
+    props: {}
+  };
+}
 
 export default ChannelFixMessage;

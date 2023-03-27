@@ -19,6 +19,7 @@ import {
 } from '@components/pages/products';
 
 import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
@@ -75,7 +76,9 @@ function CrmProducts() {
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
   return {
-    props: {}
+    props: {
+      abTestIdentifier: ABTest.getIdentifier()
+    }
   };
 }
 

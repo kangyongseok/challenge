@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 
+import { GetServerSidePropsContext } from 'next';
 import { Typography } from 'mrcamel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { CamelSellerSelectCategoryGrid } from '@components/pages/camelSeller';
 
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 function CamelSellerSelectCategory() {
   useEffect(() => {
@@ -33,6 +37,14 @@ function CamelSellerSelectCategory() {
       <CamelSellerSelectCategoryGrid />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default CamelSellerSelectCategory;

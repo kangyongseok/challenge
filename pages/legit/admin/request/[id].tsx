@@ -34,7 +34,6 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     const { id = 0 } = query;
 

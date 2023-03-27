@@ -64,7 +64,6 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
     await queryClient.fetchQuery(queryKeys.commons.announce(Number(query.id)), () =>
       fetchAnnounce(Number(query.id))

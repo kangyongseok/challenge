@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Button, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -9,6 +10,7 @@ import styled from '@emotion/styled';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import SessionStorage from '@library/sessionStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -17,6 +19,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { getProductDetailUrl } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
@@ -186,5 +189,13 @@ const CTAButton = styled.section`
   gap: 8px;
   padding: 0 20px 20px;
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default LegitIntro;

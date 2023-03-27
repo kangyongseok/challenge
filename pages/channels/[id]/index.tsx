@@ -564,16 +564,14 @@ function Chanel() {
 }
 
 export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
   const channelId = String(id);
   const queryClient = new QueryClient();
 
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
 
-  if (!!accessUser && channelId.length > 0) {
+  if (channelId.length > 0) {
     const { channelUser } = await fetchChannel(+channelId);
 
     if (channelUser) {
@@ -587,9 +585,7 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
 
   return {
     redirect: {
-      destination: accessUser
-        ? '/channels'
-        : `/login?returnUrl=/channels/${channelId}&isRequiredLogin=true`,
+      destination: `/login?returnUrl=/channels/${channelId}&isRequiredLogin=true`,
       permanent: false
     }
   };

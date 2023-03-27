@@ -67,7 +67,9 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   if (!imp_uid || success !== 'true') {
     return {
-      userCert: null
+      props: {
+        userCert: null
+      }
     };
   }
 
@@ -115,7 +117,9 @@ export async function getServerSideProps({
     };
   } catch {
     return {
-      userCert: null
+      props: {
+        userCert: null
+      }
     };
   }
 }

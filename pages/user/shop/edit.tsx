@@ -15,21 +15,14 @@ import {
   Typography,
   useTheme
 } from 'mrcamel-ui';
-import {
-  QueryClient,
-  dehydrate,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
-import type { UpdateUserProfileData } from '@dto/user';
-import { BanWordParams } from '@dto/user';
+import type { BanWordParams, UpdateUserProfileData } from '@dto/user';
 
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
@@ -655,31 +648,6 @@ function UserShopEdit() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  const queryClient = new QueryClient();
-
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-  const accessUser = Initializer.initAccessUserInQueryClientByCookies(
-    getCookies({ req }),
-    queryClient
-  );
-
-  if (!accessUser) {
-    return {
-      redirect: {
-        destination: '/login?returnUrl=/user/shop/edit&isRequiredLogin=true',
-        permanent: false
-      }
-    };
-  }
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
-}
-
 const ImageWrapper = styled.section`
   position: relative;
   display: flex;
@@ -840,5 +808,13 @@ const ErrorLabel = styled(Typography)`
   display: inline-flex;
   color: ${({ theme: { palette } }) => palette.secondary.red.light};
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default UserShopEdit;

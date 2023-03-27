@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { GetServerSidePropsContext } from 'next';
+
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   CamelSellerCTAButton,
@@ -21,12 +23,15 @@ import {
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { SAVED_CAMEL_SELLER_PRODUCT_DATA, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import type { SaveCamelSellerProductData } from '@typings/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -81,6 +86,14 @@ function RegisterConfirm() {
       <CamelSellerSurveyBottomSheet />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default RegisterConfirm;

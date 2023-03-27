@@ -389,65 +389,48 @@ const SaveBtnWrap = styled(Flexbox)`
 `;
 
 export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
   const userId = String(id);
 
-  if (/^[0-9]+$/.test(userId)) {
+  try {
+    if (!/^[0-9]+$/.test(userId)) {
+      return {
+        notFound: true
+      };
+    }
+
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
-    // TODO 의도치 않은 redirect 발생, 임시 비활성화 처리 후 추후 보완
-    // if (isEdit && +userId !== accessUser?.userId) {
-    //   return {
-    //     redirect: {
-    //       destination: `/legit/profile/${id}`,
-    //       permanent: false
-    //     }
-    //   };
-    // }
+    await queryClient.fetchQuery(queryKeys.users.legitProfile(+userId), () =>
+      fetchLegitProfile(+userId)
+    );
+    await queryClient.prefetchQuery(queryKeys.models.legitsBrands(), () => fetchLegitsBrands());
 
-    try {
-      const legitProfile = await queryClient.fetchQuery(queryKeys.users.legitProfile(+userId), () =>
-        fetchLegitProfile(+userId)
-      );
-      await queryClient.prefetchQuery(queryKeys.models.legitsBrands(), () => fetchLegitsBrands());
+    if (getCookies({ req }).accessToken) {
+      const { roles } = await queryClient.fetchQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo);
 
-      if (legitProfile) {
-        if (req.cookies.accessToken) {
-          const { roles } = await queryClient.fetchQuery(
-            queryKeys.users.myUserInfo(),
-            fetchMyUserInfo
-          );
-
-          return {
-            props: {
-              dehydratedState: dehydrate(queryClient),
-              isLegitUser: roles.some((role) =>
-                ['PRODUCT_LEGIT_HEAD', 'PRODUCT_LEGIT'].includes(role)
-              )
-            }
-          };
+      return {
+        props: {
+          dehydratedState: dehydrate(queryClient),
+          isLegitUser: roles.some((role) => ['PRODUCT_LEGIT_HEAD', 'PRODUCT_LEGIT'].includes(role))
         }
+      };
+    }
 
-        return {
-          props: {
-            dehydratedState: dehydrate(queryClient),
-            isLegitUser: false
-          }
-        };
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+        isLegitUser: false
       }
-    } catch {
-      //
-    }
+    };
+  } catch {
+    return {
+      notFound: true
+    };
   }
-
-  return {
-    redirect: {
-      destination: '/legit',
-      permanent: false
-    }
-  };
 }
 
 export default LegitProfileEdit;

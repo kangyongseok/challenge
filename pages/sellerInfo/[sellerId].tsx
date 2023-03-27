@@ -170,32 +170,31 @@ function SellerInfo() {
 export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   const sellerId = String(query.sellerId);
 
-  if (/^[0-9]+$/.test(sellerId)) {
+  try {
+    if (!/^[0-9]+$/.test(sellerId)) {
+      return {
+        notFound: true
+      };
+    }
+
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-    Initializer.initAccessUserInQueryClientByCookies(getCookies({ req }), queryClient);
 
-    try {
-      const infoData = await fetchSellerInfo(+sellerId);
+    await queryClient.fetchQuery(queryKeys.products.sellerInfo(+sellerId), () =>
+      fetchSellerInfo(+sellerId)
+    );
 
-      if (infoData) {
-        queryClient.setQueryData(queryKeys.products.sellerInfo(+sellerId), infoData);
-
-        return {
-          props: {
-            dehydratedState: dehydrate(queryClient)
-          }
-        };
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient)
       }
-    } catch {
-      //
-    }
+    };
+  } catch {
+    return {
+      notFound: true
+    };
   }
-
-  return {
-    notFound: true
-  };
 }
 
 export default SellerInfo;

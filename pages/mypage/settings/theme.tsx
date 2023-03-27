@@ -1,10 +1,15 @@
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
+import { GetServerSidePropsContext } from 'next';
 import { Flexbox, Radio, Typography, useTheme } from 'mrcamel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+
+import Initializer from '@library/initializer';
+
+import { getCookies } from '@utils/cookies';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
@@ -84,6 +89,14 @@ function SettingTheme() {
       </Flexbox>
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default SettingTheme;

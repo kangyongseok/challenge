@@ -25,12 +25,14 @@ import { isExtendedLayoutIOSVersion } from '@utils/common';
 import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
+  AuthProvider,
   ChannelTalkProvider,
   FacebookPixelProvider,
   GoogleAnalyticsProvider,
   GoogleTagManagerProvider,
   HistoryProvider,
   SendbirdProvider,
+  SessionProvider,
   ThemeModeProvider
 } from '@provider';
 
@@ -67,12 +69,12 @@ const originUrl = 'https://mrcamel.co.kr';
 
 const font = localFont({
   src: [
-    { path: '../src/styles/fonts/CamelProductSans-Black.woff2', weight: '900' },
-    { path: '../src/styles/fonts/CamelProductSans-Bold.woff2', weight: '700' },
-    { path: '../src/styles/fonts/CamelProductSans-Medium.woff2', weight: '500' },
-    { path: '../src/styles/fonts/CamelProductSans-Regular.woff2', weight: '400' },
-    { path: '../src/styles/fonts/CamelProductSans-Light.woff2', weight: '300' },
-    { path: '../src/styles/fonts/CamelProductSans-Thin.woff2', weight: '100' }
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '900' },
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '700' },
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '500' },
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '400' },
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '300' },
+    { path: '../src/styles/fonts/CamelProductSansVF.woff2', weight: '100' }
   ]
 });
 
@@ -182,15 +184,19 @@ function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient.current}>
         <Hydrate state={pageProps.dehydratedState}>
           <RecoilRoot>
-            <ThemeModeProvider>
-              <ErrorBoundary>
+            <ErrorBoundary>
+              <ThemeModeProvider>
                 <HistoryProvider>
                   <PageSkeleton />
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
                     <SendbirdProvider>
                       <PortalProvider>
                         <main className={font.className}>
-                          <Component {...pageProps} />
+                          <AuthProvider>
+                            <SessionProvider>
+                              <Component {...pageProps} />
+                            </SessionProvider>
+                          </AuthProvider>
                         </main>
                       </PortalProvider>
                     </SendbirdProvider>
@@ -210,8 +216,8 @@ function App({ Component, pageProps }: AppProps) {
                   <HomeInterfereKingBottomSheet />
                   <InterfereKingResult />
                 </HistoryProvider>
-              </ErrorBoundary>
-            </ThemeModeProvider>
+              </ThemeModeProvider>
+            </ErrorBoundary>
           </RecoilRoot>
         </Hydrate>
         <ReactQueryDevtools initialIsOpen={false} />

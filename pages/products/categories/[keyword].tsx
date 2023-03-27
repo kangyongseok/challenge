@@ -19,6 +19,7 @@ import {
 } from '@components/pages/products';
 
 import Initializer from '@library/initializer';
+import ABTest from '@library/abTest';
 
 import { fetchSearchMeta } from '@api/product';
 
@@ -97,7 +98,8 @@ export async function getServerSideProps({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      params
+      params,
+      abTestIdentifier: ABTest.getIdentifier()
     }
   };
 }

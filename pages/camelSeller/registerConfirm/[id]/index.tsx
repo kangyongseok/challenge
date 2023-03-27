@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 import { find } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
 
@@ -25,6 +26,7 @@ import {
 } from '@components/pages/camelSeller';
 
 import SessionStorage from '@library/sessionStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -33,6 +35,8 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import type { CamelSellerTempData } from '@typings/camelSeller';
 import { deviceIdState } from '@recoil/common';
@@ -196,6 +200,14 @@ function RegisterConfirmEdit() {
       <CamelSellerSurveyBottomSheet />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 export default RegisterConfirmEdit;

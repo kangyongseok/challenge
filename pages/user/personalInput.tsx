@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
+import type { GetServerSidePropsContext } from 'next';
 import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -16,6 +17,7 @@ import type { AccessUser } from '@dto/userAuth';
 import type { Gender } from '@dto/user';
 
 import updateAccessUserOnBraze from '@library/updateAccessUserOnBraze';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { postUserAgeAndGender } from '@api/user';
@@ -23,6 +25,8 @@ import { postUserAgeAndGender } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getCookies } from '@utils/cookies';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -163,5 +167,13 @@ const Footer = styled.footer`
     }
   }) => common.uiWhite};
 `;
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
+}
 
 export default PersonalInput;
