@@ -48,7 +48,7 @@ function RegisterConfirm() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const setDialogState = useSetRecoilState(dialogState);
-  const { data: alarmsInfo } = useQuery(queryKeys.users.alarms(), fetchAlarm, {
+  const { data: alarmsInfo, isLoading } = useQuery(queryKeys.users.alarms(), fetchAlarm, {
     refetchOnMount: true
   });
 
@@ -124,8 +124,10 @@ function RegisterConfirm() {
   }, [alarmsInfo, router, setDialogState]);
 
   useEffect(() => {
-    notiFalse();
-  }, [notiFalse, alarmsInfo?.isNotiChannel]);
+    if (!isLoading) {
+      notiFalse();
+    }
+  }, [notiFalse, alarmsInfo?.isNotiChannel, isLoading]);
 
   useEffect(() => {
     const source = LocalStorage.get(SOURCE);
