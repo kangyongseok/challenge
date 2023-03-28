@@ -20,6 +20,7 @@ interface ChannelMessageInputProps {
   isDeletedTargetUser: boolean;
   isTargetUserBlocked: boolean;
   isTargetUserNoti: boolean | undefined;
+  isAdminBlockUser: boolean;
   scrollToBottom(behavior?: ScrollBehavior): void;
   updateNewMessage: (msg: SendableMessage) => void;
   targetUserId: number;
@@ -36,6 +37,7 @@ function ChannelMessageInput({
   isDeletedTargetUser,
   isTargetUserBlocked,
   isTargetUserNoti,
+  isAdminBlockUser,
   scrollToBottom,
   updateNewMessage,
   targetUserId,
@@ -102,7 +104,7 @@ function ChannelMessageInput({
 
   return (
     <InputLayout ref={outsideClickRef}>
-      {!isDeletedTargetUser && !isTargetUserBlocked && (
+      {!isDeletedTargetUser && !isTargetUserBlocked && !isAdminBlockUser && (
         <>
           <InputWrapper>
             <HiddenInput ref={hiddenInputRef} />
@@ -142,7 +144,8 @@ function ChannelMessageInput({
           상대방과 대화가 불가능해요.
         </Typography>
       )}
-      {isTargetUserBlocked && (
+      {(isTargetUserBlocked ||
+        (!isDeletedTargetUser && !isTargetUserBlocked && isAdminBlockUser)) && (
         <Typography variant="h4" customStyle={{ color: common.ui60, padding: 12 }}>
           차단된 상대와는 대화할 수 없어요.
         </Typography>

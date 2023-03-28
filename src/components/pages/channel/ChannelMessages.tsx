@@ -16,6 +16,7 @@ import styled from '@emotion/styled';
 import DateSeparator from '@components/UI/molecules/DateSeparator';
 import ChannelMessage from '@components/pages/channel/ChannelMessage';
 import ChannelAdminMessage from '@components/pages/channel/ChannelAdminMessage';
+import { ChannelAdminBlockMessage } from '@components/pages/channel';
 
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
@@ -48,6 +49,7 @@ interface ChannelMessagesProps {
   hasUserReview: boolean;
   hasTargetUserReview: boolean;
   isSeller: boolean;
+  isAdminBlockUser: boolean;
   orders: Order[];
   fetchPrevMessages: () => Promise<void>;
   scrollToBottom(behavior?: ScrollBehavior): void;
@@ -70,6 +72,7 @@ function ChannelMessages({
   hasUserReview,
   isCamelAdminUser,
   isSeller,
+  isAdminBlockUser,
   orders,
   isCamelAuthSeller,
   fetchPrevMessages,
@@ -114,6 +117,7 @@ function ChannelMessages({
                   nextMessage={nextMessage as UserMessage | FileMessage | undefined}
                 />
               )}
+              {isAdminBlockUser && <ChannelAdminBlockMessage message={message as AdminMessage} />}
             </Box>
           ) : null;
         })
@@ -124,6 +128,7 @@ function ChannelMessages({
       ),
     [
       messages,
+      isCamelAuthSeller,
       sendbirdChannel,
       productId,
       targetUserId,
@@ -132,7 +137,7 @@ function ChannelMessages({
       isSeller,
       orders,
       hasUserReview,
-      isCamelAuthSeller
+      isAdminBlockUser
     ]
   );
 

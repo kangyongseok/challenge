@@ -65,6 +65,8 @@ export async function getServerSideProps({
   req,
   query: { imp_uid, success }
 }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
   if (!imp_uid || success !== 'true') {
     return {
       props: {
@@ -74,8 +76,6 @@ export async function getServerSideProps({
   }
 
   try {
-    Initializer.initAccessTokenByCookies(getCookies({ req }));
-
     const {
       data: {
         response: { access_token }

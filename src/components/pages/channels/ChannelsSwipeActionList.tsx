@@ -80,6 +80,8 @@ function ChannelsSwipeActionList({
   const { mutate: mutatePutProductUpdateStatus, isLoading: isLoadingMutatePutProductUpdateStatus } =
     useMutation(putProductUpdateStatus);
 
+  const isAdminBlockUser = camelChannel?.product?.productSeller?.type === 1;
+
   const isTargetUserBlocked = useMemo(
     () =>
       !!camelChannel.userBlocks?.some(
@@ -261,6 +263,7 @@ function ChannelsSwipeActionList({
         targetUser: camelChannel.channelTargetUser,
         groupChannel: sendbirdChannel,
         isTargetUserBlocked,
+        isAdminBlockUser,
         currentUserId: String(accessUser?.userId || '')
       })}
       description={
@@ -323,6 +326,7 @@ function ChannelsSwipeActionList({
             targetUser: camelChannel.channelTargetUser,
             groupChannel: sendbirdChannel,
             isTargetUserBlocked,
+            isAdminBlockUser,
             currentUserId: String(accessUser?.userId || '')
           })}
           description={
@@ -330,6 +334,7 @@ function ChannelsSwipeActionList({
               ? camelChannel.lastMessageManage.content
               : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
           }
+          isAdminBlockUser={isAdminBlockUser}
           descriptionCustomStyle={{
             fontSize: typography.h4.size,
             lineHeight: typography.h4.lineHeight,
@@ -363,7 +368,8 @@ function ChannelsSwipeActionList({
               (blockedUser) =>
                 blockedUser.userId === accessUser?.userId &&
                 blockedUser.targetUser.id === camelChannel.channelTargetUser?.user?.id
-            )
+            ) ||
+            isAdminBlockUser
           }
         />
       </SwipeableListItem>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 import { Icon } from 'mrcamel-ui';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -9,6 +10,7 @@ import styled from '@emotion/styled';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import SessionStorage from '@library/sessionStorage';
+import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
@@ -19,6 +21,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 import type { Payment } from '@typings/tosspayments';
@@ -241,6 +244,14 @@ function ProductOrderSuccess() {
       <LoadingIcon name="LoadingFilled" width={48} height={48} />
     </GeneralTemplate>
   );
+}
+
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  return {
+    props: {}
+  };
 }
 
 const LoadingIcon = styled(Icon)`

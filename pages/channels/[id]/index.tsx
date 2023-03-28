@@ -123,6 +123,8 @@ function Chanel() {
     lastMessageIndex: messages.length + 1
   });
 
+  const isAdminBlockUser = product?.productSeller?.type === 1;
+
   const [isFocused, setIsFocused] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messageInputHeight, setMessageInputHeight] = useState(MESSAGE_INPUT_HEIGHT);
@@ -133,9 +135,10 @@ function Chanel() {
         isTargetUserBlocked ||
         isDeletedTargetUser ||
         isCamelAdminUser,
-      showActionButtons: !isDeletedTargetUser && !isTargetUserBlocked && !isCamelAdminUser
+      showActionButtons:
+        !isDeletedTargetUser && !isTargetUserBlocked && !isCamelAdminUser && !isAdminBlockUser
     }),
-    [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked]
+    [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked, isAdminBlockUser]
   );
 
   const isCamelAuthSeller =
@@ -403,6 +406,7 @@ function Chanel() {
                   }
                   targetUserName={targetUserName}
                   targetUserId={targetUserId}
+                  isAdminBlockUser={isAdminBlockUser}
                 />
                 {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
                   !isCamelAdminUser && (
@@ -480,6 +484,7 @@ function Chanel() {
                     refetchChannel={refetch}
                     isCamelAdminUser={isCamelAdminUser}
                     isSeller={isSeller}
+                    isAdminBlockUser={isAdminBlockUser}
                     orders={orders}
                   />
                 )}
@@ -518,6 +523,7 @@ function Chanel() {
                     isTargetUserNoti={isTargetUserNoti}
                     isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
                     isTargetUserBlocked={isTargetUserBlocked}
+                    isAdminBlockUser={isAdminBlockUser}
                     scrollToBottom={scrollToBottom}
                     updateNewMessage={updateNewMessage}
                     productId={productId}

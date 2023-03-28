@@ -137,7 +137,6 @@ export const AUTH_PATH_NAMES = [
   '/channels/[id]/appointment',
   '/products/[id]/[order]',
   '/products/[id]/[order]/success',
-  '/products/[id]/[order]/fail',
   '/mypage/orders',
   '/mypage/settings/alarm',
   '/mypage/settings/blockedUsers',

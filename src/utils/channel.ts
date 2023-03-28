@@ -28,17 +28,19 @@ export const getChannelTitle = ({
   targetUser,
   groupChannel,
   isTargetUserBlocked,
+  isAdminBlockUser,
   currentUserId
 }: {
   targetUser: ChannelUser | null;
   groupChannel: GroupChannel | undefined;
   isTargetUserBlocked: boolean;
+  isAdminBlockUser: boolean;
   currentUserId: string;
 }): string => {
   if (targetUser) {
     let suffix = '';
 
-    if (isTargetUserBlocked) suffix = ' (차단)';
+    if (isTargetUserBlocked || isAdminBlockUser) suffix = ' (차단)';
 
     if (targetUser.user.isDeleted) suffix = ' (탈퇴)';
 

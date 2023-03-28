@@ -26,6 +26,7 @@ interface ChannelHeaderProps {
   targetUserId: number | undefined;
   isExternalPlatform?: boolean;
   sellerUserId?: number;
+  isAdminBlockUser?: boolean;
 }
 
 function ChannelHeader({
@@ -36,7 +37,8 @@ function ChannelHeader({
   targetUserName,
   targetUserId,
   isExternalPlatform,
-  sellerUserId
+  sellerUserId,
+  isAdminBlockUser
 }: ChannelHeaderProps) {
   const router = useRouter();
 
@@ -120,7 +122,7 @@ function ChannelHeader({
         ) : (
           <>
             <Title disabled={isDeletedTargetUser} onClick={handleClickTitle}>
-              {!isDeletedTargetUser && (
+              {!isAdminBlockUser && !isDeletedTargetUser && (
                 <UserAvatar
                   src={targetUserImage || ''}
                   width={32}
@@ -129,8 +131,13 @@ function ChannelHeader({
                   iconCustomStyle={{ width: 16, height: 16 }}
                 />
               )}
-              <UserName variant="h3" weight="bold" disabled={isDeletedTargetUser}>
+              <UserName
+                variant="h3"
+                weight="bold"
+                disabled={isAdminBlockUser || isDeletedTargetUser}
+              >
                 {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
+                {!isDeletedTargetUser && isAdminBlockUser && ' (차단)'}
               </UserName>
             </Title>
             <IconBox onClick={handleClickMore}>

@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactElement } from 'react';
 
-import { Flexbox, Icon } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -14,6 +14,7 @@ interface ListItemProps {
   showNotificationOffIcon?: boolean;
   time?: string;
   description?: string;
+  isAdminBlockUser?: boolean;
   action?: ReactElement;
   onClick?: (e?: MouseEvent<HTMLLIElement>) => void;
   disabled?: boolean;
@@ -29,6 +30,7 @@ function ListItem({
   showNotificationOffIcon = false,
   time,
   description,
+  isAdminBlockUser,
   action,
   onClick,
   disabled = false,
@@ -36,6 +38,12 @@ function ListItem({
   titleCustomStyle,
   descriptionCustomStyle
 }: ListItemProps) {
+  const {
+    theme: {
+      palette: { secondary }
+    }
+  } = useTheme();
+
   return (
     <StyledListItem css={customStyle} onClick={onClick}>
       <UserAvatar
@@ -56,10 +64,20 @@ function ListItem({
             {!!time && <Time variant="body2">{time}</Time>}
           </Flexbox>
         </Flexbox>
-        {description && (
+        {!isAdminBlockUser && description && (
           <Description variant="body2" disabled={disabled} css={descriptionCustomStyle}>
             {description}
           </Description>
+        )}
+        {isAdminBlockUser && (
+          <Typography
+            variant="h4"
+            customStyle={{
+              color: secondary.red.light
+            }}
+          >
+            관리자에게 차단된 유저입니다.
+          </Typography>
         )}
       </Item>
       {action}

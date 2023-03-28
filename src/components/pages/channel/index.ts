@@ -8,3 +8,4 @@ export { default as ChannelProductStatusBottomSheet } from './ChannelProductStat
 export { default as ChannelCamelAuthFixBanner } from './ChannelCamelAuthFixBanner';
 export { default as ChannelSaleRequestRefuseDialog } from './ChannelSaleRequestRefuseDialog';
 export { default as ChannelPurchaseConfirmDialog } from './ChannelPurchaseConfirmDialog';
+export { default as ChannelAdminBlockMessage } from './ChannelAdminBlockMessage';
