@@ -141,7 +141,14 @@ function MypageOrdersCard({
   }, [orderDetails]);
 
   useEffect(() => {
-    setOrderStatusText(getOrderStatusText({ status, result }).split('/')[type] || '거래대기');
+    const newOrderStatusText = getOrderStatusText({
+      status,
+      result,
+      options: {
+        isBuyer: type === 0
+      }
+    });
+    setOrderStatusText(newOrderStatusText.split('/')[type] || newOrderStatusText || '거래대기');
   }, [status, result, type]);
 
   useEffect(() => {

@@ -1,6 +1,18 @@
 import type { Order } from '@dto/order';
 
-export function getOrderStatusText({ status, result }: Partial<Pick<Order, 'status' | 'result'>>) {
+export function getOrderStatusText({
+  status,
+  result,
+  options: { isBuyer } = {}
+}: Partial<Pick<Order, 'status' | 'result'>> & {
+  options?: {
+    isBuyer?: boolean;
+  };
+}) {
+  if (status === 2 && isBuyer) {
+    return '거래완료';
+  }
+
   if (status === 0 && result === 0) {
     return '결제대기';
   }
