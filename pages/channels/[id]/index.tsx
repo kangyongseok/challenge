@@ -319,13 +319,13 @@ function Chanel() {
 
   useEffect(() => {
     if (checkAgent.isIOSApp()) {
-      if (isTargetUserBlocked || isDeletedTargetUser || isCamelAdminUser) {
+      if (isTargetUserBlocked || isDeletedTargetUser || isCamelAdminUser || isAdminBlockUser) {
         window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
       } else {
         window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
       }
     }
-  }, [isCamelAdminUser, isDeletedTargetUser, isTargetUserBlocked]);
+  }, [isCamelAdminUser, isDeletedTargetUser, isTargetUserBlocked, isAdminBlockUser]);
 
   useEffect(() => {
     window.getChannelMessage = (message: string) => {
