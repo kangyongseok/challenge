@@ -144,8 +144,7 @@ function ChannelMessageInput({
           상대방과 대화가 불가능해요.
         </Typography>
       )}
-      {(isTargetUserBlocked ||
-        (!isDeletedTargetUser && !isTargetUserBlocked && isAdminBlockUser)) && (
+      {(isTargetUserBlocked || (!isDeletedTargetUser && isAdminBlockUser)) && (
         <Typography variant="h4" customStyle={{ color: common.ui60, padding: 12 }}>
           차단된 상대와는 대화할 수 없어요.
         </Typography>
