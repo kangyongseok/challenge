@@ -33,6 +33,7 @@ import {
 } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
+import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function Appointment() {
   const {
@@ -41,7 +42,11 @@ function Appointment() {
       typography
     }
   } = useTheme();
+
   const router = useRouter();
+
+  useViewportUnitsTrick();
+
   const queryClient = new QueryClient();
 
   const setDialogState = useSetRecoilState(dialogState);

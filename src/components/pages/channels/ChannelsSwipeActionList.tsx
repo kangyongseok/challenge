@@ -80,7 +80,10 @@ function ChannelsSwipeActionList({
   const { mutate: mutatePutProductUpdateStatus, isLoading: isLoadingMutatePutProductUpdateStatus } =
     useMutation(putProductUpdateStatus);
 
-  const isAdminBlockUser = camelChannel?.product?.productSeller?.type === 1;
+  const isAdminBlockUser =
+    camelChannel?.product?.productSeller?.type === 1 &&
+    channelUserType[camelChannel?.channelUser?.type as keyof typeof channelUserType] !==
+      channelUserType[1];
 
   const isTargetUserBlocked = useMemo(
     () =>

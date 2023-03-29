@@ -123,7 +123,7 @@ function Chanel() {
     lastMessageIndex: messages.length + 1
   });
 
-  const isAdminBlockUser = product?.productSeller?.type === 1;
+  const isAdminBlockUser = product?.productSeller?.type === 1 && !isSeller;
 
   const [isFocused, setIsFocused] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -385,160 +385,155 @@ function Chanel() {
 
   return (
     <>
-      <Layout>
-        <Container>
-          <GeneralTemplate
-            hideAppDownloadBanner={!checkAgent.isMobileApp()}
-            header={
-              <HeaderWrapper>
-                <ChannelHeader
-                  sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
-                  isExternalPlatform={isExternalPlatform}
-                  isLoading={isLoading || !isFetched}
-                  isTargetUserSeller={!isSeller}
-                  isDeletedTargetUser={isDeletedTargetUser}
-                  isTargetUserBlocked={isTargetUserBlocked}
-                  targetUserImage={
-                    (hasImageFile(channelTargetUser?.user?.imageProfile) &&
-                      channelTargetUser?.user?.imageProfile) ||
-                    (hasImageFile(channelTargetUser?.user?.image) &&
-                      channelTargetUser?.user?.image) ||
-                    ''
-                  }
-                  targetUserName={targetUserName}
-                  targetUserId={targetUserId}
-                  isAdminBlockUser={isAdminBlockUser}
-                />
-                {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
-                  !isCamelAdminUser && (
-                    <>
-                      <FixedProductInfo
-                        isLoading={isLoading || !isFetched}
-                        isEditableProductStatus={isSeller}
-                        isDeletedProduct={isDeletedProduct}
-                        isTargetUserBlocked={isTargetUserBlocked}
-                        isAdminBlockUser={isAdminBlockUser}
-                        image={product?.imageThumbnail || product?.imageMain || ''}
-                        status={productStatus}
-                        title={product?.title || ''}
-                        price={product?.price || 0}
-                        order={orders[0]}
-                        onClick={handleClickProduct}
-                        onClickSafePayment={handleClickSafePayment}
-                        onClickStatus={() =>
-                          logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                            name: attrProperty.name.CHANNEL_DETAIL,
-                            title: getLogEventTitle(product?.status || 0)
-                          })
-                        }
-                      />
-                      {isCamelAuthSeller && <ChannelCamelAuthFixBanner />}
-                      {isExternalPlatform && <ChannelCamelAuthFixBanner type="external" />}
-                    </>
-                  )}
-                {!!appointment && showAppointmentBanner && (
-                  <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
-                )}
-                {unreadCount > 0 && (
-                  <Flexbox
-                    justifyContent="center"
-                    customStyle={{
-                      minHeight: MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
-                      position: 'relative',
-                      marginTop: 12
-                    }}
-                  >
-                    <Chip
-                      size="medium"
-                      variant="solid"
-                      isRound
-                      brandColor="blue"
-                      startIcon={<Icon name="Arrow1DownOutlined" />}
-                      customStyle={{ gap: 2 }}
-                      onClick={handleClickUnreadCount}
-                    >
-                      새 메세지 {unreadCount}개
-                    </Chip>
-                  </Flexbox>
-                )}
-              </HeaderWrapper>
-            }
-            disablePadding
-            customStyle={{ position: 'relative' }}
-          >
-            <Inner isIOSApp={isIOSApp}>
-              <ContentWrapper>
-                {!!sendbirdChannel && (
-                  <ChannelMessages
-                    sendbirdChannel={sendbirdChannel}
-                    messages={messages}
-                    productId={productId}
-                    targetUserId={targetUserId}
-                    targetUserName={targetUserName}
-                    showAppointmentBanner={showAppointmentBanner}
-                    showNewMessageNotification={unreadCount > 0}
-                    showActionButtons={showActionButtons}
-                    messagesRef={messagesRef}
-                    hasMorePrev={hasMorePrev}
-                    hasUserReview={!!userReview}
-                    hasTargetUserReview={!!targetUserReview}
-                    fetchPrevMessages={fetchPrevMessages}
-                    scrollToBottom={scrollToBottom}
-                    refetchChannel={refetch}
-                    isCamelAdminUser={isCamelAdminUser}
-                    isSeller={isSeller}
-                    isAdminBlockUser={isAdminBlockUser}
-                    orders={orders}
-                  />
-                )}
-              </ContentWrapper>
-              <FooterWrapper showInputMessage={showMessageInput} isFocused={isFocused}>
-                {!!channel && showActionButtons && (
-                  <ChannelBottomActionButtons
-                    messageInputHeight={messageInputHeight}
-                    lastMessageIndex={messages.length + 1}
-                    channelId={channel.id}
-                    channelUrl={channel.externalId}
-                    userName={userName}
-                    isTargetUserNoti={isTargetUserNoti}
-                    isTargetUserSeller={!isSeller}
-                    targetUserId={targetUserId}
-                    targetUserName={targetUserName}
-                    product={product}
-                    productId={productId}
-                    status={productStatus}
+      <GeneralTemplate
+        hideAppDownloadBanner={!checkAgent.isMobileApp()}
+        header={
+          <HeaderWrapper>
+            <ChannelHeader
+              sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
+              isExternalPlatform={isExternalPlatform}
+              isLoading={isLoading || !isFetched}
+              isTargetUserSeller={!isSeller}
+              isDeletedTargetUser={isDeletedTargetUser}
+              isTargetUserBlocked={isTargetUserBlocked}
+              targetUserImage={
+                (hasImageFile(channelTargetUser?.user?.imageProfile) &&
+                  channelTargetUser?.user?.imageProfile) ||
+                (hasImageFile(channelTargetUser?.user?.image) && channelTargetUser?.user?.image) ||
+                ''
+              }
+              targetUserName={targetUserName}
+              targetUserId={targetUserId}
+              isAdminBlockUser={isAdminBlockUser}
+            />
+            {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
+              !isCamelAdminUser && (
+                <>
+                  <FixedProductInfo
+                    isLoading={isLoading || !isFetched}
+                    isEditableProductStatus={isSeller}
                     isDeletedProduct={isDeletedProduct}
-                    appointment={appointment}
-                    userReview={userReview}
-                    targetUserReview={targetUserReview}
-                    hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
-                    refetchChannel={refetch}
-                    updateNewMessage={updateNewMessage}
-                    order={orders[0]}
-                  />
-                )}
-                {showMessageInput && (
-                  <ChannelMessageInput
-                    channelId={channel?.id}
-                    channelUrl={channel?.externalId}
-                    setMessageInputHeight={setMessageInputHeight}
-                    setIsFocused={setIsFocused}
-                    isTargetUserNoti={isTargetUserNoti}
-                    isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
                     isTargetUserBlocked={isTargetUserBlocked}
                     isAdminBlockUser={isAdminBlockUser}
-                    scrollToBottom={scrollToBottom}
-                    updateNewMessage={updateNewMessage}
-                    productId={productId}
-                    targetUserId={targetUserId}
-                    lastMessageIndex={messages.length + 1}
+                    image={product?.imageThumbnail || product?.imageMain || ''}
+                    status={productStatus}
+                    title={product?.title || ''}
+                    price={product?.price || 0}
+                    order={orders[0]}
+                    onClick={handleClickProduct}
+                    onClickSafePayment={handleClickSafePayment}
+                    onClickStatus={() =>
+                      logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
+                        name: attrProperty.name.CHANNEL_DETAIL,
+                        title: getLogEventTitle(product?.status || 0)
+                      })
+                    }
                   />
-                )}
-              </FooterWrapper>
-            </Inner>
-          </GeneralTemplate>
-        </Container>
-      </Layout>
+                  {isCamelAuthSeller && <ChannelCamelAuthFixBanner />}
+                  {isExternalPlatform && <ChannelCamelAuthFixBanner type="external" />}
+                </>
+              )}
+            {!!appointment && showAppointmentBanner && (
+              <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
+            )}
+            {unreadCount > 0 && (
+              <Flexbox
+                justifyContent="center"
+                customStyle={{
+                  minHeight: MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
+                  position: 'relative',
+                  marginTop: 12
+                }}
+              >
+                <Chip
+                  size="medium"
+                  variant="solid"
+                  isRound
+                  brandColor="blue"
+                  startIcon={<Icon name="Arrow1DownOutlined" />}
+                  customStyle={{ gap: 2 }}
+                  onClick={handleClickUnreadCount}
+                >
+                  새 메세지 {unreadCount}개
+                </Chip>
+              </Flexbox>
+            )}
+          </HeaderWrapper>
+        }
+        disablePadding
+        customStyle={{ position: 'relative' }}
+      >
+        <Inner isIOSApp={isIOSApp}>
+          <ContentWrapper>
+            {!!sendbirdChannel && (
+              <ChannelMessages
+                sendbirdChannel={sendbirdChannel}
+                messages={messages}
+                productId={productId}
+                targetUserId={targetUserId}
+                targetUserName={targetUserName}
+                showAppointmentBanner={showAppointmentBanner}
+                showNewMessageNotification={unreadCount > 0}
+                showActionButtons={showActionButtons}
+                messagesRef={messagesRef}
+                hasMorePrev={hasMorePrev}
+                hasUserReview={!!userReview}
+                hasTargetUserReview={!!targetUserReview}
+                fetchPrevMessages={fetchPrevMessages}
+                scrollToBottom={scrollToBottom}
+                refetchChannel={refetch}
+                isCamelAdminUser={isCamelAdminUser}
+                isSeller={isSeller}
+                isAdminBlockUser={isAdminBlockUser}
+                orders={orders}
+              />
+            )}
+          </ContentWrapper>
+          <FooterWrapper showInputMessage={showMessageInput} isFocused={isFocused}>
+            {!!channel && showActionButtons && (
+              <ChannelBottomActionButtons
+                messageInputHeight={messageInputHeight}
+                lastMessageIndex={messages.length + 1}
+                channelId={channel.id}
+                channelUrl={channel.externalId}
+                userName={userName}
+                isTargetUserNoti={isTargetUserNoti}
+                isTargetUserSeller={!isSeller}
+                targetUserId={targetUserId}
+                targetUserName={targetUserName}
+                product={product}
+                productId={productId}
+                status={productStatus}
+                isDeletedProduct={isDeletedProduct}
+                appointment={appointment}
+                userReview={userReview}
+                targetUserReview={targetUserReview}
+                hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
+                refetchChannel={refetch}
+                updateNewMessage={updateNewMessage}
+                order={orders[0]}
+              />
+            )}
+            {showMessageInput && (
+              <ChannelMessageInput
+                channelId={channel?.id}
+                channelUrl={channel?.externalId}
+                setMessageInputHeight={setMessageInputHeight}
+                setIsFocused={setIsFocused}
+                isTargetUserNoti={isTargetUserNoti}
+                isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
+                isTargetUserBlocked={isTargetUserBlocked}
+                isAdminBlockUser={isAdminBlockUser}
+                scrollToBottom={scrollToBottom}
+                updateNewMessage={updateNewMessage}
+                productId={productId}
+                targetUserId={targetUserId}
+                lastMessageIndex={messages.length + 1}
+              />
+            )}
+          </FooterWrapper>
+        </Inner>
+      </GeneralTemplate>
       <ChannelProductStatusBottomSheet
         id={productId}
         status={productStatus}
@@ -601,25 +596,6 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
     }
   };
 }
-
-const Layout = styled.div`
-  width: 100%;
-  height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-
-  main {
-    position: relative;
-    flex: 1 1 0;
-    -webkit-box-flex: 1;
-  }
-`;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  isolation: isolate;
-  overflow: hidden;
-`;
 
 const HeaderWrapper = styled.div`
   position: fixed;
