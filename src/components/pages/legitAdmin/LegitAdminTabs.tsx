@@ -17,7 +17,7 @@ function LegitAdminTabs() {
     }
   } = useTheme();
   const router = useRouter();
-  const { tab = 'home' } = router.query;
+  const { tab = 'request' } = router.query;
 
   const resetLegitProfileOpinionLegitsParamsState = useResetRecoilState(
     legitProfileOpinionLegitsParamsState

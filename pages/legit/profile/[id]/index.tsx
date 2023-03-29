@@ -104,8 +104,8 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
         }
         customStyle={
           isExtendedLayoutIOSVersion()
-            ? { paddingTop: 0, '& > div': { backgroundColor: common.bg03 } }
-            : { '& > div': { backgroundColor: common.bg03 } }
+            ? { paddingTop: 0, '& > main': { backgroundColor: common.bg03 } }
+            : { '& > main': { backgroundColor: common.bg03 } }
         }
         disablePadding
       >

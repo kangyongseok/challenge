@@ -20,7 +20,7 @@ function ProductOrderFail() {
       }
       hideAppDownloadBanner
       customStyle={{
-        '& > div': {
+        '& > main': {
           alignItems: 'center'
         }
       }}

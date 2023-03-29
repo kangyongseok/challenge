@@ -235,7 +235,7 @@ function ProductOrderSuccess() {
       disablePadding
       hideAppDownloadBanner
       customStyle={{
-        '& > div': {
+        '& > main': {
           justifyContent: 'center',
           alignItems: 'center'
         }

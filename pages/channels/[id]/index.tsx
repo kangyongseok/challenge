@@ -397,6 +397,7 @@ function Chanel() {
                   isLoading={isLoading || !isFetched}
                   isTargetUserSeller={!isSeller}
                   isDeletedTargetUser={isDeletedTargetUser}
+                  isTargetUserBlocked={isTargetUserBlocked}
                   targetUserImage={
                     (hasImageFile(channelTargetUser?.user?.imageProfile) &&
                       channelTargetUser?.user?.imageProfile) ||
@@ -415,6 +416,7 @@ function Chanel() {
                         isLoading={isLoading || !isFetched}
                         isEditableProductStatus={isSeller}
                         isDeletedProduct={isDeletedProduct}
+                        isTargetUserBlocked={isTargetUserBlocked}
                         isAdminBlockUser={isAdminBlockUser}
                         image={product?.imageThumbnail || product?.imageMain || ''}
                         status={productStatus}

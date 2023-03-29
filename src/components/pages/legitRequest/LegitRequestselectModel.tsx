@@ -106,7 +106,7 @@ function LegitRequestSelectModel() {
         height: 'auto',
         minHeight: '100%',
         backgroundColor: common.bg03,
-        '& > div': { padding: '28px 0', rowGap: 32 },
+        '& > main': { padding: '28px 0', rowGap: 32 },
         overflowX: 'hidden'
       }}
     >

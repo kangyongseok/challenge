@@ -82,7 +82,7 @@ const Wrapper = styled.div`
   transition: padding-top 0.5s;
 `;
 
-const Content = styled.div<{ disablePadding: boolean }>`
+const Content = styled.main<{ disablePadding: boolean }>`
   display: flex;
   flex-direction: column;
   flex-grow: 1;

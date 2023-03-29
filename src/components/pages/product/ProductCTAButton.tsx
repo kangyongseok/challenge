@@ -80,6 +80,7 @@ interface ProductCTAButtonProps {
   channels?: Channel[];
   roleSeller?: UserRoleSeller | null;
   isBlockedUser: boolean;
+  isAdminBlockedUser: boolean;
   isDup: boolean;
   hasTarget: boolean;
   hasOrder?: boolean;
@@ -119,6 +120,7 @@ function ProductCTAButton({
   channels,
   roleSeller,
   isBlockedUser,
+  isAdminBlockedUser,
   isDup,
   hasTarget,
   hasOrder,
@@ -211,6 +213,7 @@ function ProductCTAButton({
 
     if (!product || !siteName) return { ctaText: '', ctaBrandColor: 'black' };
 
+    if (isAdminBlockedUser) return { ctaText: '차단된 사용자입니다.', ctaBrandColor: 'gray' };
     if (isBlockedUser) return { ctaText: '차단한 사용자입니다.', ctaBrandColor: 'gray' };
 
     if (isDup && hasTarget) return { ctaText: '다시 올린 매물로 이동하기', ctaBrandColor: 'black' };
@@ -231,6 +234,7 @@ function ProductCTAButton({
   }, [
     product,
     isBlockedUser,
+    isAdminBlockedUser,
     isDup,
     hasTarget,
     isReserving,
@@ -696,7 +700,7 @@ function ProductCTAButton({
         }}
       />
       <Wrapper>
-        {!isBlockedUser && (
+        {!isAdminBlockedUser && !isBlockedUser && (
           <>
             <Tooltip
               open={!isDoneWishOnBoarding}

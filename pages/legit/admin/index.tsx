@@ -15,7 +15,7 @@ import { getCookies } from '@utils/cookies';
 
 function LegitAdmin() {
   const router = useRouter();
-  const { tab = 'home' } = router.query;
+  const { tab = 'request' } = router.query;
 
   return (
     <>
@@ -52,8 +52,6 @@ function LegitAdmin() {
 }
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
-  Initializer.initAccessTokenByCookies(getCookies({ req }));
-
   // TODO 권한 체크 로직 제거, 추후 보완
   const queryClient = new QueryClient();
 

@@ -555,6 +555,7 @@ function ProductDetail() {
                 channels={data?.channels}
                 roleSeller={data?.roleSeller}
                 isBlockedUser={data?.blockUser || false}
+                isAdminBlockedUser={data?.product?.productSeller?.type === 1}
                 isDup={isDup}
                 hasTarget={hasTarget}
                 hasOrder={data?.hasOrder}

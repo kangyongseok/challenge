@@ -286,6 +286,9 @@ function CamelSellerPrice() {
           text="배송비 포함"
           onChange={handleChangeDeliveryPrice}
           checked={deliveryPrice}
+          customStyle={{
+            whiteSpace: 'nowrap'
+          }}
         />
       </Flexbox>
       <Box
