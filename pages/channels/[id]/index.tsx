@@ -415,6 +415,7 @@ function Chanel() {
                         isLoading={isLoading || !isFetched}
                         isEditableProductStatus={isSeller}
                         isDeletedProduct={isDeletedProduct}
+                        isAdminBlockUser={isAdminBlockUser}
                         image={product?.imageThumbnail || product?.imageMain || ''}
                         status={productStatus}
                         title={product?.title || ''}

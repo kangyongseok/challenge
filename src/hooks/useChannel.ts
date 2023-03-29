@@ -228,7 +228,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       isCamelAdminUser: !!router.query.isCamelChannel || channel?.userId === 100,
       productId: product?.id || 0,
       productStatus: product?.status || 0,
-      isDeletedProduct: !!product?.isDeleted
+      isDeletedProduct: product?.status === 3
     };
   }, [accessUser?.userId, router.query.isCamelChannel, useQueryResult.data]);
   const filteredMessages = useMemo(

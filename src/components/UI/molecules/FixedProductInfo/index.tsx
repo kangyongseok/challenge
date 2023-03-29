@@ -30,6 +30,7 @@ interface FixedProductInfoProps {
   isEditableProductStatus?: boolean;
   isDeletedProduct?: boolean;
   isChannel?: boolean;
+  isAdminBlockUser?: boolean;
   image: string;
   title: string;
   status: number;
@@ -45,6 +46,7 @@ function FixedProductInfo({
   isLoading = false,
   isEditableProductStatus = false,
   isDeletedProduct = false,
+  isAdminBlockUser,
   isChannel = true,
   image,
   title,
@@ -155,7 +157,7 @@ function FixedProductInfo({
             {commaNumber(getTenThousandUnitPrice(price))}만원
           </Typography>
         </Flexbox>
-        {onClickSafePayment && !isEditableProductStatus && (
+        {!isAdminBlockUser && onClickSafePayment && !isEditableProductStatus && (
           <Box
             customStyle={{
               flex: 1,

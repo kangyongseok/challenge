@@ -50,9 +50,10 @@ function ChannelMessageInput({
       palette: { common }
     }
   } = useTheme();
-  const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
+  const { mutate: mutateSendMessage, isLoading } = useMutationSendMessage({ lastMessageIndex });
 
   const [message, setMessage] = useState('');
+  const [pending, setPending] = useState(false);
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
   const textareaAutosizeRef = useRef<HTMLTextAreaElement | null>(null);
   const [outsideClickRef] = useOutsideClickRef(() => {
@@ -68,7 +69,7 @@ function ChannelMessageInput({
   }, [scrollToBottom, setIsFocused]);
 
   const handleClickSand = useCallback(async () => {
-    if (!channelId || !channelUrl || !message) return;
+    if (!channelId || !channelUrl || !message || isLoading || pending) return;
 
     hiddenInputRef.current?.focus();
     textareaAutosizeRef.current?.focus();
@@ -82,15 +83,23 @@ function ChannelMessageInput({
       callback: (msg) => {
         updateNewMessage(msg);
         setMessage('');
+        setPending(false);
+      },
+      options: {
+        onSettled() {
+          setPending(true);
+        }
       }
     });
   }, [
     channelId,
     channelUrl,
     fileUrl,
+    isLoading,
     isTargetUserNoti,
     message,
     mutateSendMessage,
+    pending,
     productId,
     targetUserId,
     updateNewMessage
