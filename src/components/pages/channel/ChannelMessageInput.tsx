@@ -50,6 +50,7 @@ function ChannelMessageInput({
       palette: { common }
     }
   } = useTheme();
+
   const { mutate: mutateSendMessage, isLoading } = useMutationSendMessage({ lastMessageIndex });
 
   const [message, setMessage] = useState('');
@@ -71,8 +72,11 @@ function ChannelMessageInput({
   const handleClickSand = useCallback(async () => {
     if (!channelId || !channelUrl || !message || isLoading || pending) return;
 
+    setPending(true);
+
     hiddenInputRef.current?.focus();
     textareaAutosizeRef.current?.focus();
+
     await mutateSendMessage({
       data: { channelId, content: message, event: 'LAST_MESSAGE' },
       channelUrl,
@@ -85,9 +89,12 @@ function ChannelMessageInput({
         setMessage('');
         setPending(false);
       },
+      failCallback: () => {
+        setPending(false);
+      },
       options: {
-        onSettled() {
-          setPending(true);
+        onError() {
+          setPending(false);
         }
       }
     });
@@ -104,6 +111,10 @@ function ChannelMessageInput({
     targetUserId,
     updateNewMessage
   ]);
+
+  useEffect(() => {
+    setPending(false);
+  }, []);
 
   useEffect(() => {
     throttleInputHeight.current(
@@ -131,7 +142,7 @@ function ChannelMessageInput({
                 )
               }
               onFocus={handleFocus}
-              disabled={!channelId || !channelUrl}
+              disabled={!channelId || !channelUrl || isLoading || pending}
             />
           </InputWrapper>
           <Flexbox
@@ -143,7 +154,11 @@ function ChannelMessageInput({
               minWidth: 44
             }}
           >
-            <SandIcon name="SandFilled" disabled={message.length === 0} onClick={handleClickSand} />
+            <SandIcon
+              name="SandFilled"
+              disabled={!channelId || !channelUrl || message.length === 0 || isLoading || pending}
+              onClick={handleClickSand}
+            />
           </Flexbox>
           <FooterBottomBackground />
         </>

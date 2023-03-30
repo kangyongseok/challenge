@@ -32,6 +32,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     fileUrl,
     fileUrls,
     callback,
+    failCallback,
     options,
     userId,
     productId
@@ -45,6 +46,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     userId: number;
     productId: number;
     callback?: (message: SendableMessage) => void;
+    failCallback?: () => void;
     options?:
       | Omit<UseMutationOptions<void, unknown, PostHistoryManageData, unknown>, 'mutationFn'>
       | undefined;
@@ -68,9 +70,16 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
       if (callback) callback(msg);
     };
 
+    const onFailed = () => {
+      if (failCallback) failCallback();
+    };
+
     await mutatePostHistoryManage(data, {
       async onSuccess() {
-        if (!data.content) return;
+        if (!data.content) {
+          onFailed();
+          return;
+        }
 
         if (file) {
           await Sendbird.sendFile({
@@ -78,7 +87,8 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             customType,
             pushNotificationDeliveryOption,
             file,
-            onSucceeded
+            onSucceeded,
+            onFailed
           });
 
           return;
@@ -90,7 +100,8 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             customType,
             pushNotificationDeliveryOption,
             file: await urlToBlob(fileUrl),
-            onSucceeded
+            onSucceeded,
+            onFailed
           });
 
           return;
@@ -107,7 +118,8 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
                 file: await urlToBlob(url)
               }))
             ),
-            onSucceeded
+            onSucceeded,
+            onFailed
           });
 
           return;
@@ -118,7 +130,8 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
           customType,
           pushNotificationDeliveryOption,
           message: data.content,
-          onSucceeded
+          onSucceeded,
+          onFailed
         });
       },
       ...options
