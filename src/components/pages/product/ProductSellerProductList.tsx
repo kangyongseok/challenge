@@ -23,6 +23,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
+import { getFormattedActivatedTime } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
@@ -87,6 +88,8 @@ function ProductSellerProductList({
     SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
   const isNormalseller = product?.sellerType === productSellerType.normal;
+
+  const getTimeForamt = getFormattedActivatedTime(reviewInfo?.dateActivated || '');
 
   const handleClickMoreList = () => {
     if (product)
@@ -215,10 +218,45 @@ function ProductSellerProductList({
               </ProductSellerName>
               {isCamelSeller && !isNormalseller && <CamelAuthLabel />}
             </Flexbox>
-            <Typography customStyle={{ color: common.ui60 }}>
-              {/* {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''} */}
-              {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
-            </Typography>
+            <Flexbox alignment="center" gap={8}>
+              {reviewInfo?.dateActivated && (
+                <Flexbox alignment="center">
+                  {getTimeForamt.icon === 'time' ? (
+                    <Icon
+                      name="TimeOutlined"
+                      customStyle={{
+                        marginRight: 2,
+                        height: '14px !important',
+                        width: 14,
+                        color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      customStyle={{
+                        width: 5,
+                        height: 5,
+                        background: getTimeForamt.icon === 'time' ? common.ui60 : primary.light,
+                        borderRadius: '50%',
+                        marginRight: 5
+                      }}
+                    />
+                  )}
+                  <Typography
+                    variant="body2"
+                    customStyle={{
+                      color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                    }}
+                  >
+                    {getTimeForamt.text}
+                  </Typography>
+                </Flexbox>
+              )}
+              <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+                {/* {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''} */}
+                {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
+              </Typography>
+            </Flexbox>
           </Flexbox>
           {!isCamelSeller && (
             <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>

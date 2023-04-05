@@ -1,4 +1,4 @@
-import { Flexbox, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
 
 import { UserAvatar } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
@@ -6,6 +6,7 @@ import { CamelAuthLabel } from '@components/UI/atoms';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
+import { getFormattedActivatedTime } from '@utils/formats';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import UserInfoTabs from './UserInfoTabs';
@@ -19,6 +20,7 @@ interface UserInfoHeaderProps {
   productCount: string;
   reviewCount: string;
   isCertificationSeller?: boolean;
+  dateActivated?: string;
 }
 
 function UserInfoHeader({
@@ -29,14 +31,17 @@ function UserInfoHeader({
   userId,
   productCount,
   reviewCount,
-  isCertificationSeller
+  isCertificationSeller,
+  dateActivated = ''
 }: UserInfoHeaderProps) {
   const {
     theme: {
-      palette: { common },
+      palette: { common, primary },
       zIndex
     }
   } = useTheme();
+
+  const getTimeForamt = getFormattedActivatedTime(dateActivated);
 
   return triggered ? (
     <>
@@ -58,14 +63,50 @@ function UserInfoHeader({
             isRound
             iconCustomStyle={{ width: 16, height: 16 }}
           />
-          <Typography
-            variant="h3"
-            weight="bold"
-            customStyle={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-          >
-            {userName}
-          </Typography>
-          {isCertificationSeller && <CamelAuthLabel />}
+          <Flexbox direction="vertical">
+            <Flexbox alignment="center" gap={4}>
+              <Typography
+                weight="bold"
+                customStyle={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+              >
+                {userName}
+              </Typography>
+              {isCertificationSeller && <CamelAuthLabel />}
+            </Flexbox>
+            {dateActivated && (
+              <Flexbox alignment="center">
+                {getTimeForamt.icon === 'time' ? (
+                  <Icon
+                    name="TimeOutlined"
+                    customStyle={{
+                      marginRight: 2,
+                      height: '14px !important',
+                      width: 14,
+                      color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                    }}
+                  />
+                ) : (
+                  <Box
+                    customStyle={{
+                      width: 5,
+                      height: 5,
+                      background: getTimeForamt.icon === 'time' ? common.ui60 : primary.light,
+                      borderRadius: '50%',
+                      marginRight: 5
+                    }}
+                  />
+                )}
+                <Typography
+                  variant="body3"
+                  customStyle={{
+                    color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                  }}
+                >
+                  {getTimeForamt.text}
+                </Typography>
+              </Flexbox>
+            )}
+          </Flexbox>
         </Flexbox>
       </Header>
       <UserInfoTabs

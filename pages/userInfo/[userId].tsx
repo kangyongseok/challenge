@@ -71,10 +71,10 @@ function UserInfo() {
       curnScore,
       maxScore,
       productCount,
-      reviewCount
+      reviewCount,
+      dateActivated
     } = {}
   } = useQuery(queryKeys.users.infoByUserId(userId), () => fetchInfoByUserId(userId));
-
   const {
     userName,
     userImageProfile,
@@ -158,6 +158,7 @@ function UserInfo() {
             productCount={userProductCount}
             reviewCount={userReviewCount}
             isCertificationSeller={isCertificationSeller}
+            dateActivated={dateActivated as string}
           />
         }
         footer={<BottomNavigation />}
@@ -174,6 +175,7 @@ function UserInfo() {
               shopDescription={userShopDescription}
               curnScore={Number(curnScore || '')}
               maxScore={Number(maxScore || '')}
+              dateActivated={dateActivated as string}
             />
           ) : (
             <UserInfoProfile
@@ -185,6 +187,7 @@ function UserInfo() {
               isCertificationSeller={isCertificationSeller}
               curnScore={Number(curnScore || '')}
               maxScore={Number(maxScore || '')}
+              dateActivated={dateActivated as string}
             />
           )}
           <UserInfoTabs

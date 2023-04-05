@@ -44,7 +44,7 @@ export const IconBox = styled.div<{
 `;
 
 export const Status = styled.div`
-  position: absolute;
+  /* position: absolute; */
   display: inline-flex;
   justify-content: center;
   width: 100%;

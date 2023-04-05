@@ -1,4 +1,4 @@
-import { Box, Icon, Label, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { getFormattedActivatedTime } from '@utils/formats';
@@ -33,10 +33,15 @@ function UserAvatar({
   } = useTheme();
 
   const labelText = getFormattedActivatedTime(dateActivated);
-  const isActive = labelText === '접속중';
+  const isActive = labelText.text === '접속중';
+  const todayActivated = labelText.text === '오늘 접속';
 
   return (
-    <Box customStyle={{ position: 'relative', ...customStyle }}>
+    <Flexbox
+      direction="vertical"
+      alignment="center"
+      customStyle={{ position: 'relative', ...customStyle, width: 'fit-content' }}
+    >
       {src ? (
         <UserImage
           url={src}
@@ -54,18 +59,39 @@ function UserAvatar({
           />
         </IconBox>
       )}
-
       {dateActivated?.length > 0 && (
         <Status>
           <Label
-            text={labelText}
+            text={
+              <>
+                {labelText.icon === 'time' ? (
+                  <Icon
+                    name="TimeOutlined"
+                    customStyle={{ marginRight: 2, height: '14px !important' }}
+                  />
+                ) : (
+                  <Box
+                    customStyle={{
+                      width: 5,
+                      height: 5,
+                      background: 'white',
+                      borderRadius: '50%',
+                      marginRight: 5
+                    }}
+                  />
+                )}
+                <Typography variant="body2" customStyle={{ color: 'white' }}>
+                  {labelText.text}
+                </Typography>
+              </>
+            }
             variant="solid"
-            brandColor={isActive ? 'blue' : 'black'}
+            brandColor={isActive || todayActivated ? 'blue' : 'black'}
             size="xsmall"
           />
         </Status>
       )}
-    </Box>
+    </Flexbox>
   );
 }
 

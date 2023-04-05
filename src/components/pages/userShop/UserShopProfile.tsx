@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -14,6 +14,7 @@ import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@cons
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getFormattedActivatedTime } from '@utils/formats';
 import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
@@ -28,6 +29,7 @@ interface UserShopProfileProps {
   areaName?: string;
   shopDescription: string;
   isCertificationSeller?: boolean;
+  dateActivated: string;
 }
 
 function UserShopProfile({
@@ -38,9 +40,15 @@ function UserShopProfile({
   maxScore,
   areaName,
   shopDescription,
-  isCertificationSeller = false
+  isCertificationSeller = false,
+  dateActivated = ''
 }: UserShopProfileProps) {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { common, primary }
+    }
+  } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
   const {
@@ -75,6 +83,8 @@ function UserShopProfile({
       setDialogState({ type: 'SNSShare', shareData });
     }
   }, [description, imageProfile, router.asPath, setDialogState, title]);
+
+  const getTimeForamt = getFormattedActivatedTime(dateActivated);
 
   const handleClickEdit = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_PROFILE_EDIT, {
@@ -156,12 +166,47 @@ function UserShopProfile({
                     })}
                   </Flexbox>
                 )}
-                {!!areaName && data?.info.value.isAreaOpen && (
-                  <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
-                    <Icon name="PinOutlined" width={16} height={16} />
-                    <Typography>{areaName}</Typography>
-                  </Flexbox>
-                )}
+                <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
+                  {getTimeForamt && (
+                    <Flexbox alignment="center">
+                      {getTimeForamt.icon === 'time' ? (
+                        <Icon
+                          name="TimeOutlined"
+                          customStyle={{
+                            marginRight: 2,
+                            height: '14px !important',
+                            width: 14,
+                            color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          customStyle={{
+                            width: 5,
+                            height: 5,
+                            background: getTimeForamt.icon === 'time' ? common.ui60 : primary.light,
+                            borderRadius: '50%',
+                            marginRight: 5
+                          }}
+                        />
+                      )}
+                      <Typography
+                        variant="body2"
+                        customStyle={{
+                          color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                        }}
+                      >
+                        {getTimeForamt.text}
+                      </Typography>
+                    </Flexbox>
+                  )}
+                  {!!areaName && data?.info.value.isAreaOpen && (
+                    <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
+                      <Icon name="PinOutlined" width={16} height={16} />
+                      <Typography variant="body2">{areaName}</Typography>
+                    </Flexbox>
+                  )}
+                </Flexbox>
               </Flexbox>
               {!!shopDescription && (
                 <Description

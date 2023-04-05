@@ -263,6 +263,7 @@ export type UserInfo = {
   undisplayProductCount: number;
   userRoleLegit: UserRoleLegit | null;
   userRoleSeller: UserRoleSeller | null;
+  dateActivated: string;
 };
 
 export type UserReview = {

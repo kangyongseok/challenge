@@ -575,6 +575,7 @@ export interface SellerReview {
   site: Site;
   siteUrl: SiteUrl;
   totalCount: number;
+  dateActivated: string;
 }
 
 export type ProductOrder = 'postedDesc' | 'postedAllDesc' | 'recommDesc' | 'priceAsc' | 'priceDesc';

@@ -54,7 +54,8 @@ function UserShop() {
       sellerType,
       displayProductCount = 0,
       undisplayProductCount = 0,
-      reviewCount = 0
+      reviewCount = 0,
+      dateActivated = ''
     } = {},
     data
   } = useQuery(queryKeys.users.infoByUserId(userId || 0), () => fetchInfoByUserId(userId || 0), {
@@ -140,6 +141,7 @@ function UserShop() {
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
               shopDescription={shopDescription || ''}
+              dateActivated={dateActivated}
             />
           ) : (
             <UserShopProfile
@@ -151,6 +153,7 @@ function UserShop() {
               areaName={area?.name}
               shopDescription={shopDescription || ''}
               isCertificationSeller={sellerType === productSellerType.certification}
+              dateActivated={dateActivated}
             />
           )}
           <UserShopTabs

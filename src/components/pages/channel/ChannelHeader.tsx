@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Icon, Skeleton, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -13,6 +13,7 @@ import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getFormattedActivatedTime } from '@utils/formats';
 import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel/atom';
@@ -28,6 +29,7 @@ interface ChannelHeaderProps {
   sellerUserId?: number;
   isAdminBlockUser?: boolean;
   isTargetUserBlocked?: boolean;
+  dateActivated?: string;
 }
 
 function ChannelHeader({
@@ -40,13 +42,19 @@ function ChannelHeader({
   isExternalPlatform,
   sellerUserId,
   isAdminBlockUser,
-  isTargetUserBlocked
+  isTargetUserBlocked,
+  dateActivated = ''
 }: ChannelHeaderProps) {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { primary, common }
+    }
+  } = useTheme();
 
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
   const setChannelPushPageState = useSetRecoilState(channelPushPageState);
-
+  const getTimeForamt = getFormattedActivatedTime(dateActivated);
   const handleClickClose = useCallback(() => {
     if (checkAgent.isIOSApp()) {
       window.webkit?.messageHandlers?.callClose?.postMessage?.(0);
@@ -133,14 +141,48 @@ function ChannelHeader({
                   iconCustomStyle={{ width: 16, height: 16 }}
                 />
               )}
-              <UserName
-                variant="h3"
-                weight="bold"
-                disabled={isTargetUserBlocked || isAdminBlockUser || isDeletedTargetUser}
-              >
-                {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
-                {!isDeletedTargetUser && (isTargetUserBlocked || isAdminBlockUser) && ' (차단)'}
-              </UserName>
+              <Flexbox direction="vertical">
+                <UserName
+                  weight="bold"
+                  disabled={isTargetUserBlocked || isAdminBlockUser || isDeletedTargetUser}
+                >
+                  {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
+                  {!isDeletedTargetUser && (isTargetUserBlocked || isAdminBlockUser) && ' (차단)'}
+                </UserName>
+                {dateActivated && (
+                  <Flexbox alignment="center">
+                    {getTimeForamt.icon === 'time' ? (
+                      <Icon
+                        name="TimeOutlined"
+                        customStyle={{
+                          marginRight: 2,
+                          height: '14px !important',
+                          width: 14,
+                          color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        customStyle={{
+                          width: 5,
+                          height: 5,
+                          background: getTimeForamt.icon === 'time' ? common.ui60 : primary.light,
+                          borderRadius: '50%',
+                          marginRight: 5
+                        }}
+                      />
+                    )}
+                    <Typography
+                      variant="body3"
+                      customStyle={{
+                        color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                      }}
+                    >
+                      {getTimeForamt.text}
+                    </Typography>
+                  </Flexbox>
+                )}
+              </Flexbox>
             </Title>
             <IconBox onClick={handleClickMore}>
               <Icon name="MoreHorizFilled" />

@@ -8,6 +8,9 @@ import { DEFAUT_BACKGROUND_IMAGE, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@cons
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import UserInfoStar from './UserInfoStar';
+import UserInfoConnectTime from './UserInfoConnectTime';
+
 interface UserInfoProfileProps {
   imageProfile: string;
   imageBackground: string;
@@ -17,6 +20,7 @@ interface UserInfoProfileProps {
   isCertificationSeller: boolean;
   curnScore: number;
   maxScore: number;
+  dateActivated: string;
 }
 
 function UserInfoProfile({
@@ -27,7 +31,8 @@ function UserInfoProfile({
   shopDescription,
   isCertificationSeller,
   curnScore,
-  maxScore
+  maxScore,
+  dateActivated
 }: UserInfoProfileProps) {
   return (
     <Box component="section">
@@ -54,37 +59,17 @@ function UserInfoProfile({
               {isCertificationSeller && <CamelAuthLabel />}
             </Flexbox>
             <Flexbox direction="vertical" gap={8}>
+              <Flexbox alignment="center" gap={6}>
+                {dateActivated && <UserInfoConnectTime dateActivated={dateActivated} />}
+                {areaName.length > 0 && (
+                  <Flexbox alignment="center">
+                    <Icon name="PinOutlined" width={16} height={16} />
+                    <Typography variant="body2">{areaName}</Typography>
+                  </Flexbox>
+                )}
+              </Flexbox>
               {!!curnScore && !!maxScore && (
-                <Flexbox alignment="center" justifyContent="center" gap={1}>
-                  {Array.from({ length: 5 }, (_, index) => {
-                    return index <
-                      (maxScore === 10 ? Math.floor(Number(curnScore) / 2) : Number(curnScore)) ? (
-                      <Icon
-                        name="StarFilled"
-                        width={16}
-                        height={16}
-                        customStyle={{
-                          color: '#FFD911'
-                        }}
-                      />
-                    ) : (
-                      <Icon
-                        name="StarOutlined"
-                        width={16}
-                        height={16}
-                        customStyle={{
-                          color: '#FFD911'
-                        }}
-                      />
-                    );
-                  })}
-                </Flexbox>
-              )}
-              {areaName.length > 0 && (
-                <Flexbox alignment="center">
-                  <Icon name="PinOutlined" width={16} height={16} />
-                  <Typography>{areaName}</Typography>
-                </Flexbox>
+                <UserInfoStar curnScore={curnScore} maxScore={maxScore} />
               )}
             </Flexbox>
           </Flexbox>

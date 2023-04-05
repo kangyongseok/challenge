@@ -68,6 +68,7 @@ export interface ChannelDetail {
   userBlocks: UserBlock[] | null;
   offers: ProductOffer[];
   lastMessageManage: ChannelHistoryManage | null;
+  dateActivated: string;
 }
 
 export type PageChannelDetail = Paged<ChannelDetail>;

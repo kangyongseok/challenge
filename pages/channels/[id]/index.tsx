@@ -447,6 +447,7 @@ function Chanel() {
               targetUserName={targetUserName}
               targetUserId={targetUserId}
               isAdminBlockUser={isAdminBlockUser}
+              dateActivated={useQueryChannel?.data?.dateActivated}
             />
             {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
               !isCamelAdminUser && (
