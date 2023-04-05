@@ -505,15 +505,12 @@ function ProductInfo({
               round={8}
               disableAspectRatio
               customStyle={{
-                marginBottom: 8
+                marginBottom: 8,
+                '&:has(.fallback)': {
+                  margin: '-16px 0'
+                }
               }}
-              fallbackElement={
-                <Box
-                  customStyle={{
-                    margin: '-16px 0'
-                  }}
-                />
-              }
+              fallbackElement={<Box className="fallback" />}
             />
           </Flexbox>
         )}
