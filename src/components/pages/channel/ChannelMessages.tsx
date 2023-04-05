@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import type { MutableRefObject, UIEvent } from 'react';
 
 import { Box } from 'mrcamel-ui';
@@ -18,6 +18,7 @@ import ChannelMessage from '@components/pages/channel/ChannelMessage';
 import ChannelAdminMessage from '@components/pages/channel/ChannelAdminMessage';
 import { ChannelAdminBlockMessage } from '@components/pages/channel';
 
+import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
@@ -49,13 +50,17 @@ interface ChannelMessagesProps {
   hasUserReview: boolean;
   hasTargetUserReview: boolean;
   isSeller: boolean;
+  isTargetUserBlocked: boolean;
   isAdminBlockUser: boolean;
   orders: Order[];
+  offers: ProductOffer[];
+  status: number;
   fetchPrevMessages: () => Promise<void>;
   scrollToBottom(behavior?: ScrollBehavior): void;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
+  onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 function ChannelMessages({
@@ -72,12 +77,16 @@ function ChannelMessages({
   hasUserReview,
   isCamelAdminUser,
   isSeller,
+  isTargetUserBlocked,
   isAdminBlockUser,
   orders,
+  offers,
+  status,
   isCamelAuthSeller,
   fetchPrevMessages,
   scrollToBottom,
-  refetchChannel
+  refetchChannel,
+  onClickSafePayment
 }: ChannelMessagesProps) {
   const [initialized, setInitialized] = useState(false);
 
@@ -108,7 +117,12 @@ function ChannelMessages({
                   refetchChannel={refetchChannel}
                   isSeller={isSeller}
                   orders={orders}
+                  offers={offers}
                   hasUserReview={hasUserReview}
+                  isTargetUserBlocked={isTargetUserBlocked}
+                  isAdminBlockUser={isAdminBlockUser}
+                  status={status}
+                  onClickSafePayment={onClickSafePayment}
                 />
               ) : (
                 <ChannelMessage
@@ -136,8 +150,12 @@ function ChannelMessages({
       refetchChannel,
       isSeller,
       orders,
+      offers,
       hasUserReview,
-      isAdminBlockUser
+      isTargetUserBlocked,
+      isAdminBlockUser,
+      status,
+      onClickSafePayment
     ]
   );
 

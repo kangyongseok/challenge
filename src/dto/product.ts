@@ -1,3 +1,4 @@
+import type { ProductOffer } from '@dto/productOffer';
 import type { Channel } from '@dto/channel';
 
 import type { productSellerType } from '@constants/user';
@@ -532,6 +533,7 @@ export interface ProductDetail {
   units: CommonCode[];
   stores: CommonCode[];
   distances: CommonCode[];
+  offers: ProductOffer[];
   hasOrder: boolean;
 }
 

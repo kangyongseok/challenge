@@ -274,21 +274,23 @@ function Header({
                 ))}
             </Title>
             <Flexbox alignment="center" customStyle={{ paddingRight: 8 }}>
-              <IconBox
-                show={showRight}
-                onClick={() => router.push('/wishes')}
-                css={{ padding: showRight ? '16px 8px' : 0 }}
-              >
-                {showRight && (
-                  <Icon
-                    name="HeartOutlined"
-                    customStyle={{
-                      visibility: hideHeart ? 'hidden' : 'visible',
-                      opacity: Number(!hideHeart)
-                    }}
-                  />
-                )}
-              </IconBox>
+              {!rightIcon && (
+                <IconBox
+                  show={showRight}
+                  onClick={() => router.push('/wishes')}
+                  css={{ padding: showRight ? '16px 8px' : 0 }}
+                >
+                  {showRight && (
+                    <Icon
+                      name="HeartOutlined"
+                      customStyle={{
+                        visibility: hideHeart ? 'hidden' : 'visible',
+                        opacity: Number(!hideHeart)
+                      }}
+                    />
+                  )}
+                </IconBox>
+              )}
               {rightIcon || (
                 <IconBox
                   show={showRight}

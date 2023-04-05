@@ -27,51 +27,59 @@ function ProductDetailLegitImageBottomBanner({
   const router = useRouter();
   const {
     theme: {
-      palette: { common, secondary, primary }
+      palette: { secondary, primary, common }
     }
   } = useTheme();
 
   const setLegitBottomSheet = useSetRecoilState(productLegitToggleBottomSheetState);
 
-  const { backgroundColor, iconName, description } = useMemo(() => {
+  const { color, iconName, description } = useMemo(() => {
     if (data?.status === 10 || data?.status === 12 || data?.status === 13 || data?.status === 20) {
       return {
-        backgroundColor: common.ui60,
-        iconName: 'LegitFilled',
-        description: '이 모델을 잘 아는 전문가들이 사진감정중입니다'
+        color: '',
+        iconName: '',
+        description: ''
       };
     }
 
     if (data?.status === 11 || (data?.status === 30 && data?.result === 3)) {
       return {
-        backgroundColor: common.ui60,
-        iconName: 'OpinionImpossibleOutlined',
-        description: '이 매물의 현재 사진들로는 사진감정이 불가해요'
+        color: '',
+        iconName: '',
+        description: ''
       };
     }
 
     if (data?.status === 30 && data?.result === 1) {
       return {
-        backgroundColor: primary.dark,
+        color: primary.light,
         iconName: 'OpinionAuthenticOutlined',
-        description: '정품의견이 우세한 매물입니다'
+        description: '전문가들의 사진감정결과, <span>정품의견</span>이 우세해요!'
       };
     }
 
     if (data?.status === 30 && data?.result === 2) {
       return {
-        backgroundColor: secondary.red.dark,
+        color: secondary.red.light,
         iconName: 'OpinionFakeOutlined',
-        description: '가품의심 의견이 있는 매물입니다'
+        description: '전문가들의 사진감정결과, <span>의심의견</span>이 있어요.'
+      };
+    }
+
+    if (!data?.status) {
+      return {
+        color: common.ui20,
+        iconName: 'LegitFilled',
+        description: '지금 보는 사진 그대로 정가품 의견 받아보기'
       };
     }
 
     return {
-      backgroundColor: '',
+      color: '',
       iconName: '',
       description: ''
     };
-  }, [common.ui60, data?.result, data?.status, primary.dark, secondary.red.dark]);
+  }, [common.ui20, data?.result, data?.status, primary.light, secondary.red.light]);
 
   const handleClickBanner = () => {
     if (product)
@@ -101,39 +109,44 @@ function ProductDetailLegitImageBottomBanner({
     router.push(`/legit/${router.query.id}`);
   };
 
+  if (!iconName.length) return null;
+
   return (
     <Box customStyle={{ width: '100%', height: 53 }}>
-      <Banner
-        alignment="center"
-        gap={10}
-        backgroundColor={backgroundColor}
-        onClick={handleClickBanner}
-      >
-        <Flexbox gap={2} alignment="center">
+      <Banner alignment="center" gap={10} onClick={handleClickBanner}>
+        <Flexbox gap={4} alignment="center">
           {iconName.length > 0 && (
-            <Icon
-              name={iconName as IconName}
-              customStyle={{ color: common.cmnW, width: 16, height: 16 }}
-            />
+            <Icon name={iconName as IconName} width={20} height={20} color={color} />
           )}
           {description.length > 0 && (
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.cmnW }}>
-              {description}
-            </Typography>
+            <Typography
+              dangerouslySetInnerHTML={{ __html: description }}
+              customStyle={{
+                '& span': {
+                  color,
+                  fontWeight: 700
+                }
+              }}
+            />
           )}
         </Flexbox>
+        <Icon name="Arrow2RightOutlined" width={16} height={16} />
       </Banner>
     </Box>
   );
 }
 
-const Banner = styled(Flexbox)<{ backgroundColor: string }>`
-  background: ${({ backgroundColor }) => backgroundColor};
-  width: 100%;
-  height: 32px;
-  padding: 0 20px;
+const Banner = styled(Flexbox)`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  padding: 0 20px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.line02};
 `;
 
 export default ProductDetailLegitImageBottomBanner;

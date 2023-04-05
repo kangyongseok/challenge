@@ -539,7 +539,9 @@ function ProductDetail() {
         })}`}
       />
       <GeneralTemplate
-        header={<ProductDetailHeader data={data} />}
+        header={
+          <ProductDetailHeader data={data} isWish={data?.wish} onClickWish={handleClickWish} />
+        }
         footer={
           <ProductDetailFooter
             data={data}
@@ -562,11 +564,10 @@ function ProductDetail() {
                 isPriceCrm={isPriceCrm}
                 salePrice={salePrice}
                 isPriceDown={isPriceDown}
-                isWish={data?.wish}
-                onClickWish={handleClickWish}
                 onClickSMS={handleClickSMS}
                 mutateMetaInfo={mutateMetaInfo}
                 refetch={refetch}
+                offers={data?.offers}
               />
             }
           />
@@ -613,6 +614,8 @@ function ProductDetail() {
                   unitText={data?.units[0]?.description}
                   storeText={data?.stores[0]?.description}
                   distanceText={data?.distances[0]?.description}
+                  isWish={data?.wish}
+                  onClickWish={handleClickWish}
                 />
                 <ProductActions
                   product={product}

@@ -72,8 +72,6 @@ function ChannelMessageInput({
   const handleClickSand = useCallback(async () => {
     if (!channelId || !channelUrl || !message || isLoading || pending) return;
 
-    setPending(true);
-
     hiddenInputRef.current?.focus();
     textareaAutosizeRef.current?.focus();
 
@@ -93,8 +91,8 @@ function ChannelMessageInput({
         setPending(false);
       },
       options: {
-        onError() {
-          setPending(false);
+        onSettled() {
+          setPending(true);
         }
       }
     });

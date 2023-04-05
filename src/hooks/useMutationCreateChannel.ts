@@ -34,7 +34,9 @@ function useMutationCreateChannel() {
   const mutate = async (
     params: CreateChannelParams,
     options?: Omit<UseMutationOptions<number, unknown, PostChannelData, unknown>, 'mutationFn'>,
-    callback?: (channelId?: number) => void
+    callback?: (channelId?: number) => void,
+    afterCallback?: (channelId?: number) => void,
+    deActiveRouting?: boolean
   ) => {
     if (!!userId && !state.initialized) {
       await initializeSendbird(userId.toString(), userNickName, userImageProfile);
@@ -59,12 +61,16 @@ function useMutationCreateChannel() {
                 queryKeys.products.product({ productId: +params.productId })
               );
 
-              if (checkAgent.isIOSApp()) {
+              if (checkAgent.isIOSApp() && !deActiveRouting) {
                 window.webkit?.messageHandlers?.callChannel?.postMessage?.(
                   `/channels/${channelId}`
                 );
-              } else {
+              } else if (!deActiveRouting) {
                 router.push(`/channels/${channelId}`);
+              }
+
+              if (afterCallback && typeof afterCallback === 'function') {
+                await afterCallback(channelId);
               }
             },
             onError() {

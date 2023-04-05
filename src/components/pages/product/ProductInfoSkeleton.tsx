@@ -1,62 +1,45 @@
-import { Flexbox } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
 
 import { Divider } from '@components/UI/molecules';
-
-import { pulse } from '@styles/transition';
 
 function ProductInfoSkeleton() {
   return (
     <>
-      <LoadingTitle />
-      <LoadingPrice />
-      <Flexbox justifyContent="space-between">
-        <LoadingMeta />
-        <LoadingMeta />
+      <Box customStyle={{ marginTop: 20 }}>
+        <Skeleton width="100%" maxWidth={70} height={32} round={8} disableAspectRatio />
+        <Flexbox
+          justifyContent="space-between"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          <Skeleton width="100%" maxWidth={150} height={46} round={8} disableAspectRatio />
+          <Skeleton width="100%" maxWidth={28} height={46} round={8} disableAspectRatio />
+        </Flexbox>
+        <Skeleton
+          width="100%"
+          maxWidth={40}
+          height={16}
+          round={8}
+          disableAspectRatio
+          customStyle={{ marginTop: 12 }}
+        />
+      </Box>
+      <Divider
+        css={{
+          margin: '24px 0'
+        }}
+      />
+      <Flexbox direction="vertical" gap={4}>
+        <Skeleton width="100%" height={18} maxWidth={120} round={8} disableAspectRatio />
+        <Skeleton width="100%" height={18} maxWidth={70} round={8} disableAspectRatio />
+        <Skeleton width="100%" height={18} maxWidth={100} round={8} disableAspectRatio />
       </Flexbox>
-      <Divider />
-      <LoadingDescription />
-      <LastDivider />
+      <Box customStyle={{ margin: '0 -20px' }}>
+        <Skeleton width="100%" height={80} customStyle={{ marginTop: 20 }} />
+      </Box>
     </>
   );
 }
-
-const BaseSkeleton = styled.div`
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui90};
-  animation: ${pulse} 800ms linear 0s infinite alternate;
-  border-radius: 8px;
-`;
-
-const LoadingTitle = styled(BaseSkeleton)`
-  margin-top: 24px;
-  height: 24px;
-  width: 60%;
-`;
-
-const LoadingPrice = styled(BaseSkeleton)`
-  margin-top: 4px;
-  height: 27px;
-  width: 20%;
-`;
-
-const LoadingMeta = styled(BaseSkeleton)`
-  margin-top: 8px;
-  height: 15px;
-  width: 35%;
-`;
-
-const LoadingDescription = styled(BaseSkeleton)`
-  margin: 24px 0;
-  height: 200px;
-`;
-
-const LastDivider = styled(Divider)`
-  margin-top: 0;
-  margin-bottom: 32px;
-`;
 
 export default ProductInfoSkeleton;

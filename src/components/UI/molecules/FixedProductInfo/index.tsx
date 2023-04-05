@@ -1,18 +1,10 @@
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import {
-  Avatar,
-  Box,
-  Button,
-  CustomStyle,
-  Flexbox,
-  Icon,
-  Skeleton,
-  Typography,
-  useTheme
-} from 'mrcamel-ui';
+import { Avatar, Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from 'mrcamel-ui';
 
+import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 
 import { PRODUCT_INFORMATION_HEIGHT } from '@constants/common';
@@ -37,6 +29,7 @@ interface FixedProductInfoProps {
   status: number;
   price: number;
   order?: Order | null;
+  offer?: ProductOffer | null;
   onClick?: () => void;
   onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
   onClickStatus?: () => void;
@@ -55,6 +48,7 @@ function FixedProductInfo({
   status,
   price,
   order,
+  offer,
   onClick,
   onClickSafePayment,
   onClickStatus,
@@ -62,7 +56,7 @@ function FixedProductInfo({
 }: FixedProductInfoProps) {
   const {
     theme: {
-      palette: { common }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -151,13 +145,28 @@ function FixedProductInfo({
               {title}
             </Title>
           </Flexbox>
-          <Typography
-            variant="h4"
-            weight="bold"
-            customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
-          >
-            {commaNumber(getTenThousandUnitPrice(price))}만원
-          </Typography>
+          {!isDeletedProduct && offer?.status === 1 && (
+            <Flexbox gap={4} alignment="center">
+              <Typography variant="h4" weight="bold" customStyle={{ color: primary.main }}>
+                {commaNumber(getTenThousandUnitPrice(offer?.price))}만원
+              </Typography>
+              <Typography
+                variant="body2"
+                customStyle={{ textDecoration: 'line-through', color: common.ui60 }}
+              >
+                {commaNumber(getTenThousandUnitPrice(price))}만원
+              </Typography>
+            </Flexbox>
+          )}
+          {offer?.status !== 1 && (
+            <Typography
+              variant="h4"
+              weight="bold"
+              customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
+            >
+              {commaNumber(getTenThousandUnitPrice(price))}만원
+            </Typography>
+          )}
         </Flexbox>
         {onClickSafePayment && !isEditableProductStatus && (
           <Box

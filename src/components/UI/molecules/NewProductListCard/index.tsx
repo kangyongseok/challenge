@@ -7,6 +7,7 @@ import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from '
 import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import type { ProductOffer } from '@dto/productOffer';
 import type { Product, ProductResult } from '@dto/product';
 
 import UserTraceRecord from '@library/userTraceRecord';
@@ -38,6 +39,7 @@ import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles
 export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductListCardVariant;
   product: Product | ProductResult;
+  offer?: ProductOffer | null;
   subText?: string;
   bottomLabel?: ReactElement;
   // TODO A/B 테스트 이후 제거 예정
@@ -63,6 +65,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
 function NewProductListCard({
   variant,
   product,
+  offer,
   subText,
   bottomLabel,
   camelAuthLabelType,
@@ -392,7 +395,9 @@ function NewProductListCard({
             }}
           >
             <Typography variant="h3" weight="bold">
-              {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+              {offer?.status === 1
+                ? `${commaNumber(getTenThousandUnitPrice(offer?.price))}만원`
+                : `${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
             {subText && (
               <Typography

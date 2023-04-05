@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MouseEvent, useMemo } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -14,6 +14,7 @@ import type {
 import type { AdminMessage } from '@sendbird/chat/message';
 import styled from '@emotion/styled';
 
+import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
@@ -50,6 +51,10 @@ import ChannelOrderPaymentCompleteMessage from './ChannelOrderPaymentCompleteMes
 import ChannelOrderPaymentCancelMessage from './ChannelOrderPaymentCancelMessage';
 import ChannelOrderDeliveryProgressRemindMessage from './ChannelOrderDeliveryProgressRemindMessage';
 import ChannelOrderDeliveryProgressMessage from './ChannelOrderDeliveryProgressMessage';
+import ChannelOfferRequestTipMessage from './ChannelOfferRequestTipMessage';
+import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
+import ChannelOfferApproveMessage from './ChannelOfferApproveMessage';
+import ChannelOfferAdminTextMessage from './ChannelOfferAdminTextMessage';
 
 interface ChannelAdminMessageProps {
   message: AdminMessage;
@@ -58,10 +63,15 @@ interface ChannelAdminMessageProps {
   targetUserName: string;
   isSeller: boolean;
   orders: Order[];
+  offers: ProductOffer[];
   hasUserReview: boolean;
+  isTargetUserBlocked: boolean;
+  isAdminBlockUser: boolean;
+  status: number;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
+  onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES = [
@@ -80,8 +90,13 @@ function ChannelAdminMessage({
   targetUserName,
   isSeller,
   orders,
+  offers,
   hasUserReview,
-  refetchChannel
+  isTargetUserBlocked,
+  isAdminBlockUser,
+  status,
+  refetchChannel,
+  onClickSafePayment
 }: ChannelAdminMessageProps) {
   const router = useRouter();
   const messageInfos = message.message.split('|');
@@ -91,6 +106,7 @@ function ChannelAdminMessage({
 
   const messageProductId = useMemo(() => Number(messageInfos[1] || 0), [messageInfos]);
   const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
+  const currentOffer = offers.find((findOffer) => findOffer.id === Number(message.message));
   const { data: productDetail } = useQuery(
     queryKeys.products.productList([messageProductId]),
     () => fetchProductList([messageProductId]),
@@ -332,6 +348,45 @@ function ChannelAdminMessage({
         {message.message}
       </PushNotiMessage>
     );
+  }
+
+  if (message.customType === 'offerRequest') {
+    return (
+      <ChannelOfferRequestMessage
+        message={message}
+        offer={currentOffer}
+        offersSize={offers.length}
+        isSeller={isSeller}
+        refetchChannel={refetchChannel}
+      />
+    );
+  }
+
+  if (
+    ['offerCancel', 'offerRefuse', 'offerTimeout', 'offerApproveTimeout'].includes(
+      message.customType || ''
+    )
+  ) {
+    return <ChannelOfferAdminTextMessage message={message} offer={currentOffer} />;
+  }
+
+  if (message.customType === 'offerApprove') {
+    return (
+      <ChannelOfferApproveMessage
+        message={message}
+        offer={currentOffer}
+        order={orders[0]}
+        isTargetUserBlocked={isTargetUserBlocked}
+        isAdminBlockUser={isAdminBlockUser}
+        isSeller={isSeller}
+        status={status}
+        onClickSafePayment={onClickSafePayment}
+      />
+    );
+  }
+
+  if (message.customType === 'offerRequestTip') {
+    return <ChannelOfferRequestTipMessage />;
   }
 
   if (message.customType === 'orderPaymentProgress') {

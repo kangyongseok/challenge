@@ -54,6 +54,13 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
       }
 
       if (
+        message.customType?.indexOf('order') !== -1 ||
+        message.customType?.indexOf('offer') !== -1
+      ) {
+        useQueryResult.refetch();
+      }
+
+      if (
         !compareIds(channel?.url, currentChannel.current?.url) ||
         messages.some((msg) => compareIds(msg.messageId, message.messageId))
       )

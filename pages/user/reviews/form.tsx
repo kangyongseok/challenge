@@ -35,6 +35,7 @@ function ReviewForm() {
       palette: { common }
     }
   } = useTheme();
+
   const router = useRouter();
 
   useViewportUnitsTrick();
@@ -56,7 +57,7 @@ function ReviewForm() {
 
   const setToastState = useSetRecoilState(toastState);
 
-  const { data: { product } = {}, isLoading } = useQuery(
+  const { data: { product, offers = [] } = {}, isLoading } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId }),
     { enabled: !!productId }
@@ -135,6 +136,7 @@ function ReviewForm() {
           status={1}
           title={product?.title || ''}
           price={product?.price || 0}
+          offer={offers[0]}
         />
       )}
       <Flexbox

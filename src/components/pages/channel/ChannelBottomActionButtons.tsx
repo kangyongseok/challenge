@@ -14,16 +14,19 @@ import type {
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
+import type { ProductOffer } from '@dto/productOffer';
 import type { ProductResult } from '@dto/product';
 import type { Order } from '@dto/order';
 import type { ChannelAppointmentResult, ChannelDetail, UserReview } from '@dto/channel';
 
+import SessionStorage from '@library/sessionStorage';
 import ChannelTalk from '@library/channelTalk';
 import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
 
 import { productSellerType } from '@constants/user';
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { photoActionType, productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -54,6 +57,7 @@ interface ChannelBottomActionButtonsProps {
   targetUserReview: UserReview | null | undefined;
   hasLastMessage: boolean;
   order?: Order | null;
+  offers?: ProductOffer[] | null;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
@@ -79,6 +83,7 @@ function ChannelBottomActionButtons({
   targetUserReview,
   hasLastMessage,
   order,
+  offers,
   refetchChannel,
   updateNewMessage
 }: ChannelBottomActionButtonsProps) {
@@ -91,6 +96,8 @@ function ChannelBottomActionButtons({
   const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
 
   const [openCameraOptionMenu, setOpenCameraOptionMenu] = useState(false);
+  const [currentOffer, setCurrentOffer] = useState<ProductOffer | null>(null);
+  const [isPossibleOffer, setIsPossibleOffer] = useState(false);
 
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -272,6 +279,18 @@ function ChannelBottomActionButtons({
     ChannelTalk.showMessenger();
   };
 
+  const handleClickPriceOffer = () => {
+    SessionStorage.set(sessionStorageKeys.productDetailOfferEventProperties, {
+      source: 'CHANNEL_DETAIL'
+    });
+
+    if (checkAgent.isIOSApp()) {
+      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
+    }
+
+    router.push(`/channels/${router.query.id}/priceOffer`);
+  };
+
   useEffect(() => {
     ChannelTalk.onShowMessenger(() => {
       if (checkAgent.isIOSApp()) {
@@ -289,6 +308,19 @@ function ChannelBottomActionButtons({
       ChannelTalk.clearCallbacks();
     };
   }, []);
+
+  useEffect(() => {
+    if (!offers) return;
+
+    setCurrentOffer(offers[0]);
+    setIsPossibleOffer(
+      offers.filter(({ status: offerStatus }) => [1, 2, 4].includes(offerStatus)).length < 3 &&
+        ![productStatus[1], productStatus[2], productStatus[3]].includes(
+          productStatus[status as keyof typeof productStatus]
+        ) &&
+        isTargetUserSeller
+    );
+  }, [offers, status, isTargetUserSeller]);
 
   return (
     <ActionButtons messageInputHeight={messageInputHeight}>
@@ -311,6 +343,19 @@ function ChannelBottomActionButtons({
       </Chip>
       {!isDeletedProduct && !isExternalPlatform && (
         <>
+          {isPossibleOffer && currentOffer?.status !== 1 && (
+            <Chip
+              size="large"
+              variant="outline"
+              startIcon={<Icon name="WonCircleFilled" />}
+              onClick={handleClickPriceOffer}
+              disabled={isLoading}
+            >
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                가격제안
+              </Typography>
+            </Chip>
+          )}
           {showAppointmentButton && !showPurchaseConfirmButton && (
             <Chip
               size="large"
@@ -402,10 +447,12 @@ const ActionButtons = styled.div<{ messageInputHeight: number }>`
   left: 0;
   z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
   box-sizing: content-box;
-  margin: 0 16px
+  margin: 0 0
     ${({ messageInputHeight }) => (checkAgent.isIOSApp() ? 0 : messageInputHeight + 12) + 8}px;
+  padding: 0 16px;
   display: flex;
   column-gap: 8px;
+  overflow-x: auto;
 
   button {
     padding: 8px 10px;

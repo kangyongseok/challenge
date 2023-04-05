@@ -1,4 +1,5 @@
 import type { ChannelUser, User, UserBlock } from '@dto/user';
+import type { ProductOffer } from '@dto/productOffer';
 import type { ProductResult } from '@dto/product';
 import { Order } from '@dto/order';
 import type { Paged } from '@dto/common';
@@ -65,6 +66,7 @@ export interface ChannelDetail {
   product: ProductResult | null;
   orders: Order[];
   userBlocks: UserBlock[] | null;
+  offers: ProductOffer[];
   lastMessageManage: ChannelHistoryManage | null;
 }
 

@@ -13,10 +13,9 @@ function ProductDetail() {
 
   return (
     <GeneralTemplate
-      header={<ProductDetailHeader hideRightIcon />}
+      header={<ProductDetailHeader />}
       footer={
         <CtaButtonWrapper>
-          <Skeleton width={48} height={44} round={8} disableAspectRatio />
           <Skeleton width="100%" height={52} round={8} disableAspectRatio />
         </CtaButtonWrapper>
       }
@@ -30,24 +29,24 @@ function ProductDetail() {
         <Skeleton />
       </Box>
       <Box customStyle={{ marginTop: 20 }}>
-        <Skeleton width="100%" maxWidth={150} height={20} round={8} disableAspectRatio />
+        <Skeleton width="100%" maxWidth={70} height={32} round={8} disableAspectRatio />
+        <Flexbox
+          justifyContent="space-between"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          <Skeleton width="100%" maxWidth={150} height={46} round={8} disableAspectRatio />
+          <Skeleton width="100%" maxWidth={28} height={46} round={8} disableAspectRatio />
+        </Flexbox>
         <Skeleton
           width="100%"
-          maxWidth={70}
-          height={32}
+          maxWidth={40}
+          height={16}
           round={8}
           disableAspectRatio
-          customStyle={{ marginTop: 4 }}
-        />
-        <Flexbox
-          alignment="center"
-          justifyContent="space-between"
-          gap={6}
           customStyle={{ marginTop: 12 }}
-        >
-          <Skeleton width="100%" maxWidth={40} height={12} round={8} disableAspectRatio />
-          <Skeleton width="100%" maxWidth={30} height={12} round={8} disableAspectRatio />
-        </Flexbox>
+        />
       </Box>
       <Divider
         css={{

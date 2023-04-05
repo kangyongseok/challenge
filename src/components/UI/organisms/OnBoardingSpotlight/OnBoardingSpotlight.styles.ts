@@ -30,12 +30,11 @@ export const Spotlight = styled.div<{
   targetWidth: number;
   targetHeight: number;
 }>`
-  position: absolute;
-  top: ${({ offsetTop }) => offsetTop}px;
-  left: ${({ offsetLeft }) => offsetLeft}px;
+  position: fixed;
   width: ${({ targetWidth }) => targetWidth}px;
   height: ${({ targetHeight }) => targetHeight}px;
   opacity: 1;
   background-color: #999999;
   z-index: ${({ theme: { zIndex } }) => zIndex.dialog};
+  transform: translate(${({ offsetLeft }) => offsetLeft}px, ${({ offsetTop }) => offsetTop}px);
 `;

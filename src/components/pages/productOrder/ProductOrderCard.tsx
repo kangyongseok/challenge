@@ -14,7 +14,7 @@ function ProductOrderCard() {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  const { data: { product } = {}, isLoading } = useQuery(
+  const { data: { product, offers = [] } = {}, isLoading } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId }),
     {
@@ -34,6 +34,7 @@ function ProductOrderCard() {
       {!isLoading && product && (
         <NewProductListCard
           product={product}
+          offer={offers[0]}
           variant="listB"
           hideLabel
           hideMetaInfo

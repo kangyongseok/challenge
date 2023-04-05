@@ -49,6 +49,8 @@ export interface DeliveryInfo {
   phone: string;
 }
 
+/* ---------- Request Parameters ---------- */
+
 export interface OrderPaymentsData {
   id: number;
   channelId?: number;

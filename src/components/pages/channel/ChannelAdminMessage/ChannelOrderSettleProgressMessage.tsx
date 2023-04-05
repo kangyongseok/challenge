@@ -112,7 +112,7 @@ function ChannelOrderSettleProgressMessage({
               marginTop: 8
             }}
           >
-            정산계좌로 7일 이내에 판매대금이 입금예정이에요.
+            정산계좌로 영업일 기준 7일 이내에 판매대금이 입금예정이에요.
             <br />
             <br />
             {targetUserName}님과 거래는 어떠셨나요? 거래후기도 남겨주세요.

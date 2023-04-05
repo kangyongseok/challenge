@@ -65,8 +65,7 @@ function useQueryProduct(): UseQueryProductResult {
       return resultProduct;
     },
     {
-      keepPreviousData: true,
-      staleTime: 5 * 60 * 1000,
+      refetchOnMount: true,
       enabled: !!params.deviceId
     }
   );

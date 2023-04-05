@@ -76,10 +76,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
 
     await mutatePostHistoryManage(data, {
       async onSuccess() {
-        if (!data.content) {
-          onFailed();
-          return;
-        }
+        if (!data.content) return;
 
         if (file) {
           await Sendbird.sendFile({
