@@ -103,7 +103,6 @@ function ProductDetail() {
   const {
     data,
     isLoading,
-    isFetching,
     mutatePostProductsAdd,
     mutatePostProductsRemove,
     mutateMetaInfo,
@@ -124,7 +123,6 @@ function ProductDetail() {
   const [targetProductUrl, setTargetProductUrl] = useState('');
 
   const loggedBrazeRef = useRef(false);
-  const contentRef = useRef<HTMLHRElement | null>(null);
 
   const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
     const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
@@ -196,7 +194,7 @@ function ProductDetail() {
   const isDeletedProduct = productStatusCode.deleted === data?.product.status;
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
-  const product = !isLoading && !isFetching ? data?.product : undefined;
+  const product = !isLoading ? data?.product : undefined;
 
   const handleClickWish = useCallback(
     (isWish: boolean) => {
@@ -600,13 +598,12 @@ function ProductDetail() {
             ) : (
               <>
                 <ProductImages
-                  isLoading={isLoading || isFetching}
+                  isLoading={isLoading}
                   product={data?.product}
                   getProductImageOverlay={getProductImageOverlay}
                   isProductLegit={data?.productLegit}
                 />
                 <ProductInfo
-                  contentRef={contentRef}
                   product={product}
                   isCamelSellerProduct={isCamelSellerProduct}
                   sizeData={sizeParser()}

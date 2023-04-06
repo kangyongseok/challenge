@@ -64,6 +64,7 @@ function UserShopLegitProfile({
   const { data: accessUser } = useQueryAccessUser();
 
   const {
+    userId,
     userNickName: nickName,
     userImageProfile: imageProfile,
     userImageBackground: imageBackground,
@@ -80,9 +81,9 @@ function UserShopLegitProfile({
       title,
       description,
       image: imageProfile,
-      url: `${typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'}${
-        router.asPath
-      }`
+      url: `${
+        typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
+      }/userInfo/${userId}`
     };
 
     if (
@@ -94,7 +95,7 @@ function UserShopLegitProfile({
     ) {
       setDialogState({ type: 'SNSShare', shareData });
     }
-  }, [description, imageProfile, router.asPath, setDialogState, title]);
+  }, [description, imageProfile, setDialogState, title, userId]);
 
   const handleClickEdit = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_PROFILE_EDIT, {

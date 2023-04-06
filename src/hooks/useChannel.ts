@@ -106,7 +106,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
         currentChannel.current = channel;
         channel
-          .getMessagesByTimestamp(new Date().getTime(), {
+          .getMessagesByTimestamp(new Date().getTime() + 5000, {
             prevResultSize: PREV_RESULT_SIZE,
             nextResultSize: 0
           })
@@ -149,7 +149,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
 
           channel
-            .getMessagesByTimestamp(new Date().getTime(), {
+            .getMessagesByTimestamp(new Date().getTime() + 5000, {
               prevResultSize: PREV_RESULT_SIZE,
               nextResultSize: 0
             })
@@ -268,7 +268,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
     try {
       const newMessages = await currentChannel.current?.getMessagesByTimestamp(
-        oldestMessageTimeStamp || new Date().getTime(),
+        oldestMessageTimeStamp || new Date().getTime() + 5000,
         {
           prevResultSize: PREV_RESULT_SIZE,
           nextResultSize: 0,

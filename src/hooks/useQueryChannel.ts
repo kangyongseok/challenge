@@ -57,8 +57,9 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         if (externalId) {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
 
+          // TODO 메시지를 불러오지 못하는 문제가 있어 임시로 +5초 처리 추후 분석 후 수정
           channel
-            .getMessagesByTimestamp(new Date().getTime(), {
+            .getMessagesByTimestamp(new Date().getTime() + 5000, {
               prevResultSize: PREV_RESULT_SIZE,
               nextResultSize: 0
             })
@@ -287,7 +288,7 @@ function useQueryChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
     try {
       const newMessages = await currentChannel.current?.getMessagesByTimestamp(
-        oldestMessageTimeStamp || new Date().getTime(),
+        oldestMessageTimeStamp || new Date().getTime() + 5000,
         {
           prevResultSize: PREV_RESULT_SIZE,
           nextResultSize: 0,

@@ -52,6 +52,7 @@ function UserShopProfile({
 
   const setDialogState = useSetRecoilState(dialogState);
   const {
+    userId,
     userNickName: nickName,
     userImageProfile: imageProfile,
     userImageBackground: imageBackground,
@@ -68,9 +69,9 @@ function UserShopProfile({
       title,
       description,
       image: imageProfile,
-      url: `${typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'}${
-        router.asPath
-      }`
+      url: `${
+        typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
+      }/userInfo/${userId}`
     };
 
     if (
@@ -82,7 +83,7 @@ function UserShopProfile({
     ) {
       setDialogState({ type: 'SNSShare', shareData });
     }
-  }, [description, imageProfile, router.asPath, setDialogState, title]);
+  }, [description, imageProfile, setDialogState, title, userId]);
 
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
 

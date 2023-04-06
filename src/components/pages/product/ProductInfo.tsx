@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { MouseEvent, MutableRefObject } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import LinesEllipsis from 'react-lines-ellipsis';
@@ -24,7 +24,6 @@ import styled from '@emotion/styled';
 
 import { OnBoardingSpotlight } from '@components/UI/organisms';
 import ProductGridCard from '@components/UI/molecules/ProductGridCard';
-import { Divider } from '@components/UI/molecules';
 import { ProductInfoSkeleton } from '@components/pages/product';
 
 import type { Product } from '@dto/product';
@@ -67,7 +66,6 @@ type ReportType =
   | typeof REPORT_TYPE_PRICE;
 
 interface ProductInfoProps {
-  contentRef: MutableRefObject<HTMLHRElement | null>;
   product?: Product;
   isCamelSellerProduct?: boolean;
   sizeData?: string[];
@@ -79,7 +77,6 @@ interface ProductInfoProps {
 }
 
 function ProductInfo({
-  contentRef,
   product,
   isCamelSellerProduct = false,
   sizeData,
@@ -628,10 +625,15 @@ function ProductInfo({
           </Tooltip>
         </Flexbox>
         {renderCertificationBanner()}
-        {!isCertificationSeller && <CustomDivider ref={contentRef} />}
         {product?.site.code === 'CAMELSELLER' &&
           (!!product?.area || !!distanceText || find(product.labels, { name: '33' })) && (
-            <Flexbox alignment="center" gap={4} customStyle={{ margin: '20px 0' }}>
+            <Flexbox
+              alignment="center"
+              gap={4}
+              customStyle={{
+                margin: renderCertificationBanner() ? '20px 0' : '32px 0 20px'
+              }}
+            >
               {!!product.labels.length && find(product.labels, { name: '33' }) ? (
                 <Label variant="ghost" brandColor="gray" text="배송비 포함" />
               ) : (
@@ -870,11 +872,6 @@ function ProductInfo({
     </>
   );
 }
-
-const CustomDivider = styled(Divider)<{ isClamped?: boolean }>`
-  margin-top: 24px;
-  margin-bottom: ${({ isClamped }) => !isClamped && '24px'};
-`;
 
 const Content = styled(Typography)<{ isClamped: boolean }>`
   margin-top: 24px;

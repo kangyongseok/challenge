@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, Flexbox, Icon, Input, Toast, Typography, useTheme } from 'mrcamel-ui';
@@ -33,6 +33,9 @@ function ChannelPriceOfferForm() {
   const [showHelperText, setShowHelperText] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputSelectionEndRef = useRef(0);
+
   const { data: { product } = {}, isLoading } = useQuery(
     queryKeys.channels.channel(Number(id)),
     () => fetchChannel(Number(id)),
@@ -50,6 +53,8 @@ function ChannelPriceOfferForm() {
       setValue(product?.price || 0);
       return;
     }
+
+    inputSelectionEndRef.current = e.currentTarget.selectionEnd || 0;
 
     setValue(newValue);
   };
@@ -146,6 +151,19 @@ function ChannelPriceOfferForm() {
     setValue(Number(product?.price));
   }, [product]);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      const inputElement = inputRef.current.getElementsByTagName('input');
+
+      if (inputElement[0]) {
+        inputElement[0].setSelectionRange(
+          inputSelectionEndRef.current,
+          inputSelectionEndRef.current
+        );
+      }
+    }
+  }, [value]);
+
   return (
     <>
       <Flexbox
@@ -165,6 +183,7 @@ function ChannelPriceOfferForm() {
           제안가격
         </Typography>
         <Input
+          ref={inputRef}
           pattern="[0-9,]*"
           inputMode="numeric"
           size="xlarge"

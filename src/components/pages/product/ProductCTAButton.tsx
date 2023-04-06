@@ -753,13 +753,22 @@ function ProductCTAButton({
               variant="h3"
               weight="bold"
               customStyle={{
+                fontSize: 20,
+                lineHeight: '26px',
                 color: primary.light
               }}
             >
               {commaNumber(getTenThousandUnitPrice(currentOffer?.price || 0))}만원
             </Typography>
           ) : (
-            <Typography variant="h3" weight="bold">
+            <Typography
+              variant="h3"
+              weight="bold"
+              customStyle={{
+                fontSize: 20,
+                lineHeight: '26px'
+              }}
+            >
               {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
             </Typography>
           )}
@@ -817,9 +826,7 @@ function ProductCTAButton({
                 (product.status === productStatusCode.soldOut ||
                   product.status === productStatusCode.duplicate ||
                   product.status === productStatusCode.deleted)) ||
-              isHiding ||
-              isLoadingMutateCreateChannel ||
-              pendingCreateChannel
+              isHiding
             }
             onClick={handleClickCTAButton}
             customStyle={{

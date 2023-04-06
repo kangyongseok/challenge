@@ -13,9 +13,8 @@ import {
   WindowScroller
 } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import styled from '@emotion/styled';
 
 import { ReviewCard } from '@components/UI/organisms';
 
@@ -42,11 +41,6 @@ interface UserInfoReviewsPanelProps {
 function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const setToastState = useSetRecoilState(toastState);
 
@@ -218,76 +212,61 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       </Typography>
     </Flexbox>
   ) : (
-    <>
-      {!isLoading && (
-        <Banner>
-          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-            판매자의 최근 후기만 보여드려요
-          </Typography>
-        </Banner>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      gap={isLoading ? 12 : 0}
+      customStyle={{ padding: 20 }}
+    >
+      {isLoading ? (
+        Array.from({ length: 10 }).map((_, index) => (
+          <Skeleton
+            // eslint-disable-next-line react/no-array-index-key
+            key={`profle-review-card-${index}`}
+            width="100%"
+            height={62}
+            round={8}
+            disableAspectRatio
+          />
+        ))
+      ) : (
+        // @ts-ignore
+        <InfiniteLoader
+          isRowLoaded={({ index }: Index) => !!userReviews[index]}
+          loadMoreRows={loadMoreRows}
+          rowCount={hasNextPage ? userReviews.length + 1 : userReviews.length}
+        >
+          {({ registerChild, onRowsRendered }) => (
+            // @ts-ignore
+            <WindowScroller>
+              {({ height, isScrolling, scrollTop, scrollLeft }) => (
+                // @ts-ignore
+                <AutoSizer disableHeight onResize={handleResize}>
+                  {({ width }) => (
+                    // @ts-ignore
+                    <List
+                      ref={registerChild}
+                      onRowsRendered={onRowsRendered}
+                      width={width}
+                      autoHeight
+                      height={height}
+                      rowCount={userReviews.length}
+                      rowHeight={cache.rowHeight}
+                      rowRenderer={rowRenderer}
+                      scrollTop={scrollTop}
+                      scrollLeft={scrollLeft}
+                      isScrolling={isScrolling}
+                      deferredMeasurementCache={cache}
+                    />
+                  )}
+                </AutoSizer>
+              )}
+            </WindowScroller>
+          )}
+        </InfiniteLoader>
       )}
-      <Flexbox
-        component="section"
-        direction="vertical"
-        gap={isLoading ? 12 : 0}
-        customStyle={{ padding: 20 }}
-      >
-        {isLoading ? (
-          Array.from({ length: 10 }).map((_, index) => (
-            <Skeleton
-              // eslint-disable-next-line react/no-array-index-key
-              key={`profle-review-card-${index}`}
-              width="100%"
-              height={62}
-              round={8}
-              disableAspectRatio
-            />
-          ))
-        ) : (
-          // @ts-ignore
-          <InfiniteLoader
-            isRowLoaded={({ index }: Index) => !!userReviews[index]}
-            loadMoreRows={loadMoreRows}
-            rowCount={hasNextPage ? userReviews.length + 1 : userReviews.length}
-          >
-            {({ registerChild, onRowsRendered }) => (
-              // @ts-ignore
-              <WindowScroller>
-                {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                  // @ts-ignore
-                  <AutoSizer disableHeight onResize={handleResize}>
-                    {({ width }) => (
-                      // @ts-ignore
-                      <List
-                        ref={registerChild}
-                        onRowsRendered={onRowsRendered}
-                        width={width}
-                        autoHeight
-                        height={height}
-                        rowCount={userReviews.length}
-                        rowHeight={cache.rowHeight}
-                        rowRenderer={rowRenderer}
-                        scrollTop={scrollTop}
-                        scrollLeft={scrollLeft}
-                        isScrolling={isScrolling}
-                        deferredMeasurementCache={cache}
-                      />
-                    )}
-                  </AutoSizer>
-                )}
-              </WindowScroller>
-            )}
-          </InfiniteLoader>
-        )}
-      </Flexbox>
-    </>
+    </Flexbox>
   );
 }
-
-const Banner = styled.section`
-  background-color: ${({ theme: { palette } }) => palette.common.bg02};
-  padding: 12px 20px;
-  text-align: center;
-`;
 
 export default UserInfoReviewsPanel;
