@@ -5,7 +5,7 @@ import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Label, Skeleton, Typography, light } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Skeleton, light } from 'mrcamel-ui';
 import type { TypographyVariant } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -19,7 +19,6 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchSearchRelatedProducts } from '@api/product';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -31,7 +30,6 @@ interface ProductImagesProps {
   isLoading: boolean;
   product?: Product;
   isProductLegit?: boolean;
-  isCamelSellerProduct?: boolean;
   getProductImageOverlay: ({
     status,
     variant
@@ -45,8 +43,7 @@ function ProductImages({
   isLoading,
   product,
   isProductLegit,
-  getProductImageOverlay,
-  isCamelSellerProduct
+  getProductImageOverlay
 }: ProductImagesProps) {
   const router = useRouter();
 
@@ -72,12 +69,6 @@ function ProductImages({
       enabled: !!searchRelatedProductsParams
     }
   );
-
-  const isNormalseller = product?.sellerType === productSellerType.normal;
-  // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
-  const isTransferred =
-    (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
-    product?.productSeller?.type === 4;
 
   const detailImages = useMemo(() => {
     if (product?.imageDetailsLarge) {
@@ -166,74 +157,6 @@ function ProductImages({
     return false;
   };
 
-  const renderLabel = () => {
-    if (!isTransferred && isCamelSellerProduct) {
-      return (
-        <Platform alignment="center" justifyContent="center">
-          <Avatar
-            width={16}
-            height={16}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (product?.site?.hasImage && product?.site?.id) || ''
-            }.png`}
-            alt={`${product?.siteUrl?.name || '플랫폼'} 로고 이미지`}
-          />
-          <Typography
-            variant="body2"
-            weight="bold"
-            customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
-          >
-            {product?.site?.name}
-          </Typography>
-        </Platform>
-      );
-    }
-    if (SELLER_STATUS[product?.sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) {
-      return (
-        <Label
-          variant="solid"
-          brandColor="black"
-          startIcon={<Icon name="ShieldFilled" />}
-          text="인증판매자"
-          customStyle={{
-            position: 'absolute',
-            top: 12,
-            left: 12,
-            zIndex: 1
-          }}
-        />
-      );
-    }
-    if (
-      !isCamelSellerProduct &&
-      SELLER_STATUS[product?.sellerType as keyof typeof SELLER_STATUS] !== SELLER_STATUS['3'] &&
-      !isNormalseller
-    ) {
-      return (
-        <Platform alignment="center" justifyContent="center">
-          <Avatar
-            width={16}
-            height={16}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (product?.siteUrl?.hasImage && product?.siteUrl?.id) ||
-              (product?.site?.hasImage && product?.site?.id) ||
-              ''
-            }.png`}
-            alt={`${product?.siteUrl?.name || '플랫폼'} 로고 이미지`}
-          />
-          <Typography
-            variant="body2"
-            weight="bold"
-            customStyle={{ marginLeft: 6, color: light.palette.common.uiWhite }}
-          >
-            {product?.siteUrl?.name || product?.site?.name}
-          </Typography>
-        </Platform>
-      );
-    }
-    return null;
-  };
-
   useEffect(() => {
     if (searchRelatedProducts && !isLoading && isFetched) {
       if (searchRelatedProducts.page.content.length < 8) {
@@ -314,10 +237,7 @@ function ProductImages({
           preventClicks
         >
           {product && !lowerPriceDisplay() && (
-            <>
-              {getProductImageOverlay({ status: product.status })}
-              {renderLabel()}
-            </>
+            <>{getProductImageOverlay({ status: product.status })}</>
           )}
           <SwiperSlide>
             <Img
@@ -441,20 +361,6 @@ function ProductImages({
     </>
   );
 }
-
-const Platform = styled(Flexbox)`
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1;
-  padding: 4px;
-  background-color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui20};
-  border-radius: 4px;
-`;
 
 const Pagination = styled.div`
   position: absolute;

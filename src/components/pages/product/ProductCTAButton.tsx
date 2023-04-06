@@ -208,7 +208,7 @@ function ProductCTAButton({
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
     if (roleSeller?.userId || product?.sellerType === productSellerType.externalPlatform)
-      return { ctaText: '채팅하기', ctaBrandColor: 'black' };
+      return { ctaText: '채팅', ctaBrandColor: 'black' };
 
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
       return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
@@ -675,7 +675,7 @@ function ProductCTAButton({
 
     setIsPossibleOffer(
       !isExternalPlatformSeller &&
-        ['채팅하기'].includes(ctaText) &&
+        ['채팅'].includes(ctaText) &&
         validOffers.length < 3 &&
         !isAdminBlockedUser &&
         !isBlockedUser
@@ -688,7 +688,7 @@ function ProductCTAButton({
 
   return (
     <>
-      {open && ['채팅하기'].includes(ctaText) && (
+      {open && ['채팅'].includes(ctaText) && (
         <Flexbox
           alignment="center"
           justifyContent="space-between"
@@ -745,7 +745,7 @@ function ProductCTAButton({
           direction="vertical"
           gap={2}
           customStyle={{
-            width: 97
+            width: 112
           }}
         >
           {isPossibleOffer && !hasOffer && currentOffer ? (
@@ -807,7 +807,7 @@ function ProductCTAButton({
           }}
         >
           <Button
-            variant={['채팅하기'].includes(ctaText) ? 'outline' : 'solid'}
+            variant={['채팅'].includes(ctaText) ? 'outline' : 'solid'}
             brandColor={ctaBrandColor}
             size="xlarge"
             fullWidth
@@ -823,7 +823,7 @@ function ProductCTAButton({
             }
             onClick={handleClickCTAButton}
             customStyle={{
-              maxWidth: ['채팅하기'].includes(ctaText) ? 89 : undefined,
+              maxWidth: ['채팅'].includes(ctaText) ? 64 : undefined,
               gap: 0,
               whiteSpace: 'nowrap',
               paddingLeft: 12,
@@ -836,7 +836,7 @@ function ProductCTAButton({
               customStyle={{
                 display: 'flex',
                 alignItems: 'center',
-                color: ['채팅하기'].includes(ctaText) ? undefined : common.uiWhite
+                color: ['채팅'].includes(ctaText) ? undefined : common.uiWhite
               }}
             >
               {!roleSeller &&
@@ -898,7 +898,7 @@ function ProductCTAButton({
               customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
             />
           </Button>
-          {['채팅하기'].includes(ctaText) && (
+          {['채팅'].includes(ctaText) && (
             <Button
               fullWidth
               variant="solid"
@@ -910,7 +910,7 @@ function ProductCTAButton({
                 paddingRight: 12
               }}
             >
-              안전결제하기
+              안전결제
             </Button>
           )}
         </Flexbox>

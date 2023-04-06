@@ -604,7 +604,6 @@ function ProductDetail() {
                   product={data?.product}
                   getProductImageOverlay={getProductImageOverlay}
                   isProductLegit={data?.productLegit}
-                  isCamelSellerProduct={isCamelSellerProduct}
                 />
                 <ProductInfo
                   contentRef={contentRef}

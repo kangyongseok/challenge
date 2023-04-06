@@ -589,7 +589,9 @@ function ProductInfo({
                 onClick={handleClickWish}
                 customStyle={{
                   position: 'relative',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  paddingLeft: 18,
+                  borderLeft: `1px solid ${common.line01}`
                 }}
               >
                 {isWish ? (
@@ -608,13 +610,12 @@ function ProductInfo({
                   </>
                 ) : (
                   <>
-                    <Icon name="HeartOutlined" width={28} height={28} color={common.ui80} />
+                    <Icon name="HeartOutlined" width={28} height={28} />
                     <Typography
                       variant="body2"
                       weight="bold"
                       customStyle={{
-                        textAlign: 'center',
-                        color: common.ui80
+                        textAlign: 'center'
                       }}
                     >
                       {product?.wishCount || 0}
