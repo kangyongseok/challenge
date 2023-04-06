@@ -1,8 +1,14 @@
-import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
 
 import { Divider } from '@components/UI/molecules';
 
 function ProductInfoSkeleton() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   return (
     <>
       <Box customStyle={{ marginTop: 20 }}>
@@ -14,7 +20,16 @@ function ProductInfoSkeleton() {
           }}
         >
           <Skeleton width="100%" maxWidth={150} height={46} round={8} disableAspectRatio />
-          <Skeleton width="100%" maxWidth={28} height={46} round={8} disableAspectRatio />
+          <Flexbox>
+            <Box
+              customStyle={{
+                height: '100%',
+                paddingRight: 18,
+                borderLeft: `1px solid ${common.line01}`
+              }}
+            />
+            <Skeleton width={28} height={46} round={8} disableAspectRatio />
+          </Flexbox>
         </Flexbox>
         <Skeleton
           width="100%"

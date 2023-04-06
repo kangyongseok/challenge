@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { Divider, ProductDetailHeader } from '@components/UI/molecules';
@@ -8,6 +8,12 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 function ProductDetail() {
   const router = useRouter();
   const { redirect } = router.query;
+
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
 
@@ -37,7 +43,16 @@ function ProductDetail() {
           }}
         >
           <Skeleton width="100%" maxWidth={150} height={46} round={8} disableAspectRatio />
-          <Skeleton width="100%" maxWidth={28} height={46} round={8} disableAspectRatio />
+          <Flexbox>
+            <Box
+              customStyle={{
+                height: '100%',
+                paddingRight: 18,
+                borderLeft: `1px solid ${common.line01}`
+              }}
+            />
+            <Skeleton width={28} height={46} round={8} disableAspectRatio />
+          </Flexbox>
         </Flexbox>
         <Skeleton
           width="100%"

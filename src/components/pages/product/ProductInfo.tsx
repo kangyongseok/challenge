@@ -484,8 +484,9 @@ function ProductInfo({
         onClose={handleClickWishOnBoarding}
         targetRef={wishButtonRef}
         customSpotlightPosition={{
-          width: 24,
-          height: 26
+          width: 6,
+          height: 26,
+          left: 10
         }}
         customStyle={{
           borderRadius: 8
@@ -578,7 +579,7 @@ function ProductInfo({
             triangleLeft={179}
             customStyle={{
               top: -3,
-              left: -68
+              left: -48
             }}
           >
             {!isCamelSellerProduct && (
