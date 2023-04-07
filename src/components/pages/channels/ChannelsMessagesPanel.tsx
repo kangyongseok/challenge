@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { AutoSizer, InfiniteLoader, List, WindowScroller } from 'react-virtualized';
-import type { Index, ListRowProps } from 'react-virtualized';
 import { Box, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
@@ -35,26 +33,8 @@ function ChannelsMessagesPanel({
     }
   } = useTheme();
 
-  const { channels, isLoading, isFetched, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { channels, isInitialLoading, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQueryChannels(props);
-
-  const loadMoreRows = useCallback(async () => {
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    await fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const rowRenderer = useCallback(
-    ({ key, index, style }: ListRowProps) => {
-      const channel = channels[index];
-      return channel ? (
-        <div key={key} style={style}>
-          <ChannelsSwipeActionList channel={channel} isSelectTargetUser={isSelectTargetUser} />
-        </div>
-      ) : null;
-    },
-    [channels, isSelectTargetUser]
-  );
 
   useEffect(() => {
     const { type, productId } = props;
@@ -68,7 +48,43 @@ function ChannelsMessagesPanel({
     // eslint-disable-next-line
   }, []);
 
-  return isLoading || (isFetched && channels.length > 0) ? (
+  useEffect(() => {
+    const handleScroll = async () => {
+      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+
+      const isFloor = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+
+      if (hasNextPage && !isFetchingNextPage && isFloor) {
+        await fetchNextPage();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  if (!isLoading && !channels.length) {
+    return (
+      <Flexbox
+        component="section"
+        direction="vertical"
+        justifyContent="center"
+        alignment="center"
+        gap={20}
+        customStyle={{ padding: '84px 20px' }}
+      >
+        <Box customStyle={{ fontSize: 52 }}>💬</Box>
+        <Typography variant="h3" weight="bold" customStyle={{ color: common.ui60 }}>
+          채팅 내역이 없어요
+        </Typography>
+      </Flexbox>
+    );
+  }
+
+  return (
     <Flexbox
       component="section"
       direction="vertical"
@@ -78,57 +94,18 @@ function ChannelsMessagesPanel({
         ...customStyle
       }}
     >
-      {channels.length === 0 && isLoading ? (
-        Array.from({ length: 10 }, (__, j) => <ChannelListSkeleton key={`channel-skeleton-${j}`} />)
-      ) : (
-        // @ts-ignore
-        <InfiniteLoader
-          isRowLoaded={({ index }: Index) => !!channels[index]}
-          loadMoreRows={loadMoreRows}
-          rowCount={hasNextPage ? channels.length + 1 : channels.length}
-        >
-          {({ registerChild, onRowsRendered }) => (
-            // @ts-ignore
-            <WindowScroller>
-              {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                // @ts-ignore
-                <AutoSizer disableHeight>
-                  {({ width }) => (
-                    // @ts-ignore
-                    <List
-                      ref={registerChild}
-                      onRowsRendered={onRowsRendered}
-                      width={width}
-                      autoHeight
-                      height={height}
-                      rowCount={channels.length}
-                      rowHeight={76}
-                      rowRenderer={rowRenderer}
-                      scrollTop={scrollTop}
-                      scrollLeft={scrollLeft}
-                      isScrolling={isScrolling}
-                    />
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
-          )}
-        </InfiniteLoader>
-      )}
-    </Flexbox>
-  ) : (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      justifyContent="center"
-      alignment="center"
-      gap={20}
-      customStyle={{ padding: '84px 20px' }}
-    >
-      <Box customStyle={{ fontSize: 52 }}>💬</Box>
-      <Typography variant="h3" weight="bold" customStyle={{ color: common.ui60 }}>
-        채팅 내역이 없어요
-      </Typography>
+      {isInitialLoading &&
+        Array.from({ length: 10 }, (__, j) => (
+          <ChannelListSkeleton key={`channel-skeleton-${j}`} />
+        ))}
+      {!isInitialLoading &&
+        channels.map((channel) => (
+          <ChannelsSwipeActionList
+            key={`channel-${channel?.camel?.channel?.id}`}
+            channel={channel}
+            isSelectTargetUser={isSelectTargetUser}
+          />
+        ))}
     </Flexbox>
   );
 }

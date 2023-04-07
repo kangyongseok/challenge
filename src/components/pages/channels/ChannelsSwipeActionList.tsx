@@ -28,7 +28,6 @@ import { putProductUpdateStatus } from '@api/product';
 import { channelUserType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
-import { PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -357,11 +356,6 @@ function ChannelsSwipeActionList({
               )}
               <ProductImage
                 url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
-                isVisible={
-                  !!camelChannel.product?.status &&
-                  PRODUCT_STATUS[camelChannel.product?.status as keyof typeof PRODUCT_STATUS] ===
-                    PRODUCT_STATUS['3']
-                }
               />
             </>
           }
@@ -402,7 +396,7 @@ const ActionContent = styled.div<{ isRed?: boolean; disabled?: boolean }>`
   cursor: pointer;
 `;
 
-const ProductImage = styled.div<{ url?: string; isVisible: boolean }>`
+const ProductImage = styled.div<{ url?: string }>`
   display: flex;
   flex-direction: column;
   width: 44px;
@@ -414,7 +408,7 @@ const ProductImage = styled.div<{ url?: string; isVisible: boolean }>`
   background-repeat: no-repeat;
   background-size: cover;
   cursor: pointer;
-  visibility: ${({ isVisible }) => (isVisible ? 'hidden' : 'visible')};
+  visibility: visible;
 `;
 
 export default ChannelsSwipeActionList;

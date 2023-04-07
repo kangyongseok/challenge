@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
@@ -27,6 +27,8 @@ import { dialogState } from '@recoil/common';
 
 function ProductOrder() {
   const setDialogState = useSetRecoilState(dialogState);
+
+  const [focus, setFocus] = useState(false);
 
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
@@ -62,7 +64,23 @@ function ProductOrder() {
         disabledOnClose: true
       });
     }
-  }, [setDialogState]);
+  }, [setDialogState, focus]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      setFocus((prevState) => !prevState);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+    };
+  }, []);
 
   return (
     <GeneralTemplate header={<ProductOrderHeader />} disablePadding hideAppDownloadBanner>
