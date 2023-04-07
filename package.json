@@ -31,7 +31,7 @@
     "@stomp/stompjs": "^6.1.2",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.4",
-    "@tosspayments/payment-sdk": "^1.2.5",
+    "@tosspayments/payment-widget-sdk": "^0.7.1",
     "@typeform/embed-react": "^1.18.0",
     "amplitude-js": "^8.18.1",
     "axios": "^1.3.2",

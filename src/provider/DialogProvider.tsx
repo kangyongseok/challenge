@@ -78,6 +78,8 @@ function DialogProvider() {
       case 'cancelAppointment':
       case 'legitPermissionCheck':
         return 'textWithTwoVerticalButton';
+      case 'requiredAppUpdateForSafePayment':
+        return 'textWithOneButton';
       default:
         return 'text';
     }

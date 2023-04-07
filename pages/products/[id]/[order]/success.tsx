@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import { Icon } from 'mrcamel-ui';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+
+import type { OrderPaymentsData } from '@dto/order';
 
 import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
@@ -22,12 +24,12 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent } from '@utils/common';
 
 import type { Payment } from '@typings/tosspayments';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
+// TODO 추후 결제 로직 리팩토링 및 서버에서 처리 되도록 수정 필요
 function ProductOrderSuccess() {
   const router = useRouter();
   const { id, camelOrderId, paymentKey, orderId, amount } = router.query;
@@ -106,29 +108,59 @@ function ProductOrderSuccess() {
       .then(async (response) => {
         const {
           data: {
+            method,
+            orderId: newOrderId,
             paymentKey: newPaymentKey,
-            virtualAccount: { bankCode, dueDate, accountNumber, customerName },
+            card,
+            virtualAccount,
             receipt: { url }
           }
         }: { data: Payment } = response;
+        const {
+          issuerCode,
+          installmentPlanMonths,
+          isInterestFree,
+          number,
+          approveNo,
+          acquireStatus,
+          amount: cardAmount
+        } = card || {};
+        const { bankCode = '', dueDate = '', accountNumber = '' } = virtualAccount || {};
 
         const channelId = (channels || []).find(
           (channel) => channel.userId === accessUser.userId
         )?.id;
 
+        const orderPaymentsData: OrderPaymentsData =
+          method === '카드'
+            ? {
+                id: Number(camelOrderId),
+                channelId,
+                partnerId: 0,
+                method: 0,
+                externalKey: newOrderId,
+                externalPaymentKey: newPaymentKey,
+                agencyCode: String(issuerCode),
+                data: `${installmentPlanMonths}|${isInterestFree}|${number}|${approveNo}|${acquireStatus}`,
+                receiptUrl: url,
+                amount: Number(cardAmount)
+              }
+            : {
+                id: Number(camelOrderId),
+                channelId,
+                partnerId: 0,
+                method: 1,
+                externalKey: newOrderId,
+                externalPaymentKey: newPaymentKey,
+                agencyCode: String(bankCode),
+                dateExpired: dueDate,
+                data: accountNumber,
+                receiptUrl: url,
+                amount: Number(amount)
+              };
+
         if (channelId) {
-          postOrderPayments({
-            id: Number(camelOrderId),
-            channelId,
-            partnerId: 0,
-            method: 1,
-            externalPaymentKey: newPaymentKey,
-            agencyCode: bankCode,
-            dateExpired: dueDate,
-            data: accountNumber || customerName,
-            receiptUrl: url,
-            amount: Number(amount)
-          }).then((res) => {
+          postOrderPayments(orderPaymentsData).then((res) => {
             const { source } =
               SessionStorage.get<{ source?: string }>(
                 sessionStorageKeys.productDetailOrderEventProperties
@@ -145,16 +177,12 @@ function ProductOrderSuccess() {
               source
             });
 
-            if (checkAgent.isIOSApp()) {
-              router.push({
-                pathname: '/channels',
-                query: {
-                  channelId
-                }
-              });
-            } else {
-              router.push(`/channels/${channelId}`);
-            }
+            router.push({
+              pathname: '/channels',
+              query: {
+                channelId
+              }
+            });
           });
         } else {
           await mutate(
@@ -167,35 +195,35 @@ function ProductOrderSuccess() {
             },
             undefined,
             async (newChannelId?: number) => {
-              await postOrderPayments({
-                id: Number(camelOrderId),
-                channelId: newChannelId,
-                partnerId: 0,
-                method: 1,
-                externalPaymentKey: newPaymentKey,
-                agencyCode: bankCode,
-                dateExpired: dueDate,
-                data: accountNumber || customerName,
-                receiptUrl: url,
-                amount: Number(amount)
-              }).then((res) => {
-                const { source } =
-                  SessionStorage.get<{ source?: string }>(
-                    sessionStorageKeys.productDetailOrderEventProperties
-                  ) || {};
+              await postOrderPayments({ ...orderPaymentsData, channelId: newChannelId }).then(
+                (res) => {
+                  const { source } =
+                    SessionStorage.get<{ source?: string }>(
+                      sessionStorageKeys.productDetailOrderEventProperties
+                    ) || {};
 
-                logEvent(attrKeys.productOrder.SUBMIT_ORDER_PAYMENT, {
-                  name: attrProperty.name.ORDER_PAYMENT,
-                  title: attrProperty.title.PAYMENT,
-                  data: {
-                    product,
-                    data,
-                    res
-                  },
-                  source
-                });
-              });
-            }
+                  logEvent(attrKeys.productOrder.SUBMIT_ORDER_PAYMENT, {
+                    name: attrProperty.name.ORDER_PAYMENT,
+                    title: attrProperty.title.PAYMENT,
+                    data: {
+                      product,
+                      data,
+                      res
+                    },
+                    source
+                  });
+
+                  router.push({
+                    pathname: '/channels',
+                    query: {
+                      channelId
+                    }
+                  });
+                }
+              );
+            },
+            undefined,
+            true
           );
         }
       })

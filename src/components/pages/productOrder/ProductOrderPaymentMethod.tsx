@@ -1,50 +1,76 @@
-import { Box, Flexbox, RadioGroup, Typography, useTheme } from 'mrcamel-ui';
+import { useEffect } from 'react';
+import type { MutableRefObject } from 'react';
 
-function ProductOrderPaymentMethod() {
-  const {
-    theme: {
-      palette: { common }
+import { useRouter } from 'next/router';
+import { loadPaymentWidget } from '@tosspayments/payment-widget-sdk';
+import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchProductOrder } from '@api/order';
+
+import queryKeys from '@constants/queryKeys';
+
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
+
+interface ProductOrderPaymentMethodProps {
+  paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
+  paymentMethodsWidgetRef: MutableRefObject<ReturnType<
+    PaymentWidgetInstance['renderPaymentMethods']
+  > | null>;
+}
+
+function ProductOrderPaymentMethod({
+  paymentWidgetRef,
+  paymentMethodsWidgetRef
+}: ProductOrderPaymentMethodProps) {
+  const router = useRouter();
+  const { id } = router.query;
+  const splitId = String(id).split('-');
+  const productId = Number(splitId[splitId.length - 1] || 0);
+
+  const { data: accessUser } = useQueryAccessUser();
+
+  const { data: { totalPrice = 0 } = {} } = useQuery(
+    queryKeys.orders.productOrder({ productId, isCreated: true }),
+    () => fetchProductOrder({ productId, isCreated: true }),
+    {
+      enabled: !!accessUser && !!productId,
+      refetchOnMount: true
     }
-  } = useTheme();
-
-  return (
-    <Box
-      component="section"
-      customStyle={{
-        padding: '32px 20px'
-      }}
-    >
-      <Typography variant="h3" weight="bold">
-        결제방법
-      </Typography>
-      <Flexbox
-        direction="vertical"
-        gap={32}
-        customStyle={{
-          marginTop: 32
-        }}
-      >
-        <RadioGroup text="무통장입금" size="large" checked />
-        <RadioGroup
-          text="카드"
-          size="large"
-          customStyle={{
-            color: common.ui80
-          }}
-        />
-        <Typography
-          variant="body2"
-          customStyle={{
-            marginTop: -20,
-            paddingLeft: 28,
-            color: common.ui60
-          }}
-        >
-          카드결제가 곧 업데이트 될 예정이에요.
-        </Typography>
-      </Flexbox>
-    </Box>
   );
+
+  useEffect(() => {
+    if (!accessUser || paymentWidgetRef.current || paymentMethodsWidgetRef.current) return;
+
+    const loadTossPaymentWidget = async () => {
+      const paymentWidget = await loadPaymentWidget(
+        process.env.TOSS_PAYMENTS_CLIENT_KEY,
+        String(accessUser?.userId)
+      );
+
+      const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+        '#payment-widget',
+        totalPrice
+      );
+
+      paymentWidgetRef.current = paymentWidget;
+      paymentMethodsWidgetRef.current = paymentMethodsWidget;
+    };
+
+    loadTossPaymentWidget();
+  }, [accessUser, paymentWidgetRef, paymentMethodsWidgetRef, totalPrice]);
+
+  useEffect(() => {
+    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
+
+    if (!paymentMethodsWidget) {
+      return;
+    }
+
+    paymentMethodsWidget.updateAmount(totalPrice, paymentMethodsWidget.UPDATE_REASON.COUPON);
+  }, [paymentMethodsWidgetRef, totalPrice]);
+
+  return <div id="payment-widget" />;
 }
 
 export default ProductOrderPaymentMethod;

@@ -1107,26 +1107,24 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@tosspayments/payment-sdk@^1.2.5":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@tosspayments/payment-sdk/-/payment-sdk-1.5.1.tgz#4ce25b975b7bf513658e0ac4035d00262b2bbd6d"
-  integrity sha512-XlAOyieE24cfXX6ZtN4qTvpBXIcIJY6iCINSKXa+WUp23SK9Iwg6kzJhAklHB0LDHwpIZKy4gv2x8mKGTF+XeQ==
+"@tosspayments/payment-widget-sdk@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-sdk/-/payment-widget-sdk-0.7.1.tgz#cf9f7d4e62fe2056b2736c56a9ee973452c78d4e"
+  integrity sha512-Grhpo6xCIIVgyhD6oF5ncciHksJU5Nt+6etSymz2FXCFm0sRKjING9MAz5nVm528C1YvRHaqaquo6UCGNPpA7A==
   dependencies:
-    "@tosspayments/payment__types" "^1.58.1"
+    "@tosspayments/payment-widget__types" "^0.0.11"
 
-"@tosspayments/payment__types@^1.58.1":
-  version "1.58.1"
-  resolved "https://registry.yarnpkg.com/@tosspayments/payment__types/-/payment__types-1.58.1.tgz#3ff9ea75119b4226efa58bb2943c1203d280a70a"
-  integrity sha512-mLSjuhxE3lnSyactRmH6Xk1JL2IlLS0ygFt3+a9P8v2261Qjfe0RXW6m8ovzvd2OTgF0IQVRzmaELKe27XTIzQ==
-  dependencies:
-    "@tosspayments/sdk-constants" "^0.2.1"
+"@tosspayments/payment-widget-types@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-types/-/payment-widget-types-0.0.4.tgz#e6016a81805798b61129d0b5c8e6409bc0d59905"
+  integrity sha512-XYazYhks+Ky/WVfUlaEDVQIYk93ALqw2CSQ5/d/ig+MREusucEMRCU6K4Iq/0aeZn3ElpA8X2mkXUP1htykOng==
 
-"@tosspayments/sdk-constants@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@tosspayments/sdk-constants/-/sdk-constants-0.2.1.tgz#a35e10b8bf5f77604029d8d696df8b4103fd7fc7"
-  integrity sha512-svTqRO0vVs78UxG23pa4ywxsWEzVEiO6VYAMhKJClFYlnn1yqetFCL9aFzWwTYnChWuJu3OTC+SC1xslVf1Eqg==
+"@tosspayments/payment-widget__types@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget__types/-/payment-widget__types-0.0.11.tgz#6a80aa6d61bcde0319208f865be6f40cf15adf25"
+  integrity sha512-vtan2pEsypZQFRRcTXmb9WG3npMTJ6QtJirN8sCn7ovYVG5rkl4DBxmV7VQcdKuAaIWaFiTddVbFFwmgDGOuKQ==
   dependencies:
-    type-fest "^2.11.2"
+    "@tosspayments/payment-widget-types" "^0.0.4"
 
 "@typeform/embed-react@^1.18.0":
   version "1.21.0"
@@ -5809,11 +5807,6 @@ type-fest@^0.21.3:
   version "0.21.3"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.21.3.tgz#d260a24b0198436e133fa26a524a6d65fa3b2e37"
   integrity sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==
-
-type-fest@^2.11.2:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.19.0.tgz#88068015bb33036a598b952e55e9311a60fd3a9b"
-  integrity sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==
 
 typed-array-length@^1.0.4:
   version "1.0.4"

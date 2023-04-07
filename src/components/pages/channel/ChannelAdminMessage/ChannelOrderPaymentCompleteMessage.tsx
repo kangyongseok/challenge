@@ -107,8 +107,7 @@ function ChannelOrderPaymentCompleteMessage({
             <br />
             판매하려면 판매승인 버튼을 눌러주세요.
             <br />
-            {dayjs(order?.orderPayments[0]?.dateExpired).format('MM월 DD일')}까지 미확인시 주문이
-            취소됩니다.
+            {dayjs(order?.dateExpired).format('MM월 DD일')}까지 미확인시 주문이 취소됩니다.
           </Typography>
           {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래대기' && (
             <Flexbox
@@ -205,7 +204,11 @@ function ChannelOrderPaymentCompleteMessage({
             >
               결제방법
             </Typography>
-            <Typography variant="body2">무통장입금</Typography>
+            <Typography variant="body2">
+              {order?.orderPayments[0].method === 0
+                ? order?.orderPayments[0].agencyName
+                : '무통장입금'}
+            </Typography>
           </Flexbox>
         </Flexbox>
         <Flexbox

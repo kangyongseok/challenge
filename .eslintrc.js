@@ -103,6 +103,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/react-in-jsx-scope': 'off',
+    'no-param-reassign': ['error', { ignorePropertyModificationsFor: [] }],
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-explicit-any': ['error'],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '_' }],

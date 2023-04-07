@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+
+import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -19,6 +21,11 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrKeys from '@constants/attrKeys';
 
 function ProductOrder() {
+  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
+  const paymentMethodsWidgetRef = useRef<ReturnType<
+    PaymentWidgetInstance['renderPaymentMethods']
+  > | null>(null);
+
   useEffect(() => {
     const { source } =
       SessionStorage.get<{ source?: string }>(
@@ -39,9 +46,12 @@ function ProductOrder() {
       <ProductOrderPaymentInfo />
       <ProductOrderBanner />
       <Gap height={8} />
-      <ProductOrderPaymentMethod />
+      <ProductOrderPaymentMethod
+        paymentWidgetRef={paymentWidgetRef}
+        paymentMethodsWidgetRef={paymentMethodsWidgetRef}
+      />
       <Gap height={8} />
-      <ProductOrderConfirm />
+      <ProductOrderConfirm paymentWidgetRef={paymentWidgetRef} />
     </GeneralTemplate>
   );
 }

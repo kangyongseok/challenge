@@ -52,7 +52,9 @@ function ChannelOrderRefundProgressMessage({
             marginTop: 8
           }}
         >
-          거래가 취소되어 등록된 정산계좌로 영업일 기준 7일 이내에 환불 예정입니다.
+          {order?.orderPayments[0].method === 0
+            ? '거래가 취소되어 결제한 방법으로 영업일 기준 7일 이내에 환불 예정입니다.'
+            : '거래가 취소되어 등록된 정산계좌로 영업일 기준 7일 이내에 환불 예정입니다.'}
         </Typography>
         {order?.reason ? (
           <Box
@@ -123,7 +125,11 @@ function ChannelOrderRefundProgressMessage({
             >
               환불방법
             </Typography>
-            <Typography variant="body2">무통장입금</Typography>
+            <Typography variant="body2">
+              {order?.orderPayments[0].method === 0
+                ? order?.orderPayments[0].agencyName
+                : '무통장입금'}
+            </Typography>
           </Flexbox>
         </Flexbox>
         <Flexbox

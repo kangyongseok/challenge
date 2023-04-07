@@ -155,7 +155,7 @@ function ChannelOrderSettleProgressMessage({
             >
               정산은행
             </Typography>
-            <Typography variant="body2">{userAccounts[0]?.accountHolder}</Typography>
+            <Typography variant="body2">{userAccounts[0]?.bankName}</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
             <Typography

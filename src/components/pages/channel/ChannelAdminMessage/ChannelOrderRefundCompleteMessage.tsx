@@ -52,7 +52,9 @@ function ChannelOrderRefundCompleteMessage({
             marginTop: 8
           }}
         >
-          등록된 정산계좌로 환불되었어요.
+          {order?.orderPayments[0].method === 0
+            ? '거래가 취소되어 결제한 방법으로 환불되었어요.'
+            : '등록된 정산계좌로 환불되었어요.'}
         </Typography>
         {order?.reason ? (
           <Box
@@ -123,7 +125,11 @@ function ChannelOrderRefundCompleteMessage({
             >
               환불방법
             </Typography>
-            <Typography variant="body2">무통장입금</Typography>
+            <Typography variant="body2">
+              {order?.orderPayments[0].method === 0
+                ? order?.orderPayments[0].agencyName
+                : '계좌입금'}
+            </Typography>
           </Flexbox>
         </Flexbox>
         <Flexbox

@@ -63,7 +63,7 @@ export interface Payment {
     refundStatus: 'NONE' | 'PENDING' | 'FAILED' | 'PARTIAL_FAILED' | 'COMPLETED';
     expired: boolean;
     settlementStatus: string;
-  };
+  } | null;
   secret: string | null;
   mobilePhone: {
     customerMobilePhone: string;

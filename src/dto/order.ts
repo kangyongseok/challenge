@@ -56,9 +56,10 @@ export interface OrderPaymentsData {
   channelId?: number;
   partnerId: 0;
   method: 0 | 1;
+  externalKey: string;
   externalPaymentKey: string;
   agencyCode: string;
-  dateExpired: string;
+  dateExpired?: string;
   data: string;
   receiptUrl: string;
   amount: number;

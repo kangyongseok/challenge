@@ -53,7 +53,8 @@ import {
   getProductDetailUrl,
   getRandomNumber,
   isExtendedLayoutIOSVersion,
-  needUpdateChatIOSVersion
+  needUpdateChatIOSVersion,
+  needUpdateSafePaymentIOSVersion
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
@@ -454,6 +455,25 @@ function ProductCTAButton({
         ...product
       }
     });
+
+    if (needUpdateSafePaymentIOSVersion()) {
+      setDialogState({
+        type: 'requiredAppUpdateForSafePayment',
+        customStyleTitle: { minWidth: 269 },
+        secondButtonAction: () => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }
+      });
+
+      return;
+    }
 
     if (hasOrder) {
       setOpenAlreadyHasOrderDialog(true);

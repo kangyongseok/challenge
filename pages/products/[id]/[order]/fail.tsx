@@ -6,7 +6,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function ProductOrderFail() {
   const router = useRouter();
-  const { message } = router.query;
+  const { id, message } = router.query;
 
   return (
     <GeneralTemplate
@@ -15,7 +15,7 @@ function ProductOrderFail() {
           showRight={false}
           hideTitle
           hideLine={false}
-          onClickLeft={() => window.history.go(-3)}
+          onClickLeft={() => router.push(`/products/${id}`)}
         />
       }
       hideAppDownloadBanner
@@ -58,7 +58,7 @@ function ProductOrderFail() {
         variant="ghost"
         size="large"
         brandColor="black"
-        onClick={() => window.history.go(-3)}
+        onClick={() => router.push(`/products/${id}`)}
         customStyle={{
           marginTop: 20
         }}

@@ -48,7 +48,7 @@ function ChannelOrderPaymentCancelMessage({
           }}
         >
           <Typography variant="h4" weight="bold">
-            주문취소
+            거래취소
           </Typography>
           {isSeller ? (
             <Typography
@@ -124,7 +124,7 @@ function ChannelOrderPaymentCancelMessage({
         }}
       >
         <Typography variant="h4" weight="bold">
-          주문취소
+          거래취소
         </Typography>
         <Typography
           customStyle={{

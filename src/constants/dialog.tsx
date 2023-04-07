@@ -75,7 +75,13 @@ export const dialogTitle: Record<
   locationInfo: <Box customStyle={{ marginTop: 12 }}>위치정보 권한을 허용해주세요</Box>,
   endEvent: '종료된 이벤트입니다.',
   notiChannelFalse: '',
-  notiDeviceFalse: ''
+  notiDeviceFalse: '',
+  requiredAppUpdateForSafePayment: (
+    <Box customStyle={{ margin: '12px 0 0' }}>
+      안전결제를 이용하려면
+      <br />앱 업데이트가 필요해요
+    </Box>
+  )
 };
 
 export const dialogContent = {
@@ -207,6 +213,13 @@ export const dialogContent = {
         설정으로 이동하여 알림을 켜주세요.
       </Typography>
     </Box>
+  ),
+  requiredAppUpdateForSafePayment: (
+    <Typography variant="h4" customStyle={{ marginBottom: 12 }}>
+      스토어로 이동하여 최신버전으로
+      <br />
+      업데이트해주세요.
+    </Typography>
   )
 };
 
@@ -292,6 +305,7 @@ export const secondButtonText: Record<
     | 'endEvent'
     | 'notiChannelFalse'
     | 'notiDeviceFalse'
+    | 'requiredAppUpdateForSafePayment'
   >,
   string | number | ReactElement
 > = {
@@ -329,7 +343,8 @@ export const secondButtonText: Record<
   locationInfo: '동의하고 매물보기',
   endEvent: '확인',
   notiChannelFalse: '채팅알림 켜기',
-  notiDeviceFalse: '알림 켜기'
+  notiDeviceFalse: '알림 켜기',
+  requiredAppUpdateForSafePayment: '3초 업데이트'
 };
 
 const dialog = {

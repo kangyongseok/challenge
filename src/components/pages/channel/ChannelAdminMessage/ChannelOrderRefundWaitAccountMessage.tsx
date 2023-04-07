@@ -86,7 +86,7 @@ function ChannelOrderRefundWaitAccountMessage({
         }}
       >
         <Typography variant="h4" weight="bold">
-          주문취소
+          거래취소
         </Typography>
         <Typography
           customStyle={{
@@ -164,7 +164,7 @@ function ChannelOrderRefundWaitAccountMessage({
             >
               환불방법
             </Typography>
-            <Typography variant="body2">무통장입금</Typography>
+            <Typography variant="body2">계좌입금</Typography>
           </Flexbox>
         </Flexbox>
         <Flexbox

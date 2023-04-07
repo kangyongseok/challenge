@@ -65,7 +65,8 @@ function ChannelOrderPaymentProgressMessage({
               marginTop: 8
             }}
           >
-            {dayjs(order?.dateExpired).format('MM월 DD일(ddd)')}까지 결제금액을 입금해주세요.
+            {dayjs(order?.orderPayments[0]?.dateExpired).format('MM월 DD일(ddd) HH:mm')}까지
+            결제금액을 입금해주세요.
             <br />
             미입금시 주문이 취소됩니다.
           </Typography>

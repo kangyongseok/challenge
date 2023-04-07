@@ -169,7 +169,7 @@ function ChannelSaleRequestRefuseDialog({
           disabled={!value || (value === '직접입력' && !reason)}
           onClick={handleClick}
         >
-          주문취소
+          거래취소
         </Button>
         <Button variant="ghost" brandColor="black" size="large" fullWidth onClick={handleClose}>
           취소

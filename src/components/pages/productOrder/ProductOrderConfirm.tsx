@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import type { MutableRefObject } from 'react';
 
 import { useRouter } from 'next/router';
 import { Button, CheckboxGroup, Flexbox, Typography, useTheme } from 'mrcamel-ui';
-import dayjs from 'dayjs';
-import { loadTossPayments } from '@tosspayments/payment-sdk';
+import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 import { useQuery } from '@tanstack/react-query';
 
 import SessionStorage from '@library/sessionStorage';
@@ -21,7 +21,11 @@ import { commaNumber } from '@utils/formats';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-function ProductOrderConfirm() {
+interface ProductOrderConfirmProps {
+  paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
+}
+
+function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
@@ -68,6 +72,7 @@ function ProductOrderConfirm() {
   const [checked, setChecked] = useState(false);
 
   const handleClick = () => {
+    // eslint-disable-next-line no-underscore-dangle
     const { source } =
       SessionStorage.get<{ source?: string }>(
         sessionStorageKeys.productDetailOrderEventProperties
@@ -83,29 +88,14 @@ function ProductOrderConfirm() {
       source
     });
 
-    loadTossPayments(process.env.TOSS_PAYMENTS_CLIENT_KEY).then((tossPaymentInstance) => {
-      tossPaymentInstance.requestPayment('가상계좌', {
-        amount: totalPrice,
-        orderId: externalId,
-        orderName: name,
-        customerName: deliveryInfo?.name,
-        customerEmail: accessUser?.email || undefined,
-        customerMobilePhone: deliveryInfo?.phone,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        dueDate: dayjs()
-          .add(1, 'days')
-          .set('hours', 23)
-          .set('minutes', 59)
-          .set('seconds', 59)
-          .format('YYYY-MM-DDTHH:mm:ss'),
-        successUrl: `${window.location.href}/success?camelOrderId=${orderId}`,
-        failUrl: `${window.location.href}/fail`,
-        cashReceipt: {
-          type: '소득공제'
-        },
-        useEscrow: false
-      });
+    paymentWidgetRef.current?.requestPayment({
+      orderId: externalId,
+      orderName: name,
+      successUrl: `${window.location.href}/success?camelOrderId=${orderId}`,
+      failUrl: `${window.location.href}/fail`,
+      customerName: deliveryInfo?.name,
+      customerMobilePhone: deliveryInfo?.phone,
+      customerEmail: accessUser?.email || undefined
     });
   };
 

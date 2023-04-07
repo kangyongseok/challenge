@@ -194,7 +194,8 @@ export type DialogType =
   | 'locationInfo'
   | 'endEvent'
   | 'notiChannelFalse'
-  | 'notiDeviceFalse';
+  | 'notiDeviceFalse'
+  | 'requiredAppUpdateForSafePayment';
 
 export type ShareData = {
   title: string;

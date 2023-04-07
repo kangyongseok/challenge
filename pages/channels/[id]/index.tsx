@@ -49,7 +49,8 @@ import {
   checkAgent,
   getProductDetailUrl,
   hasImageFile,
-  isExtendedLayoutIOSVersion
+  isExtendedLayoutIOSVersion,
+  needUpdateSafePaymentIOSVersion
 } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
@@ -123,6 +124,8 @@ function Chanel() {
   const { mutate: mutateSendMessage } = useMutationSendMessage({
     lastMessageIndex: messages.length + 1
   });
+
+  const setDialogState = useSetRecoilState(dialogState);
 
   const isAdminBlockUser = product?.productSeller?.type === 1 && !isSeller;
 
@@ -199,6 +202,25 @@ function Chanel() {
 
       e.stopPropagation();
 
+      if (needUpdateSafePaymentIOSVersion()) {
+        setDialogState({
+          type: 'requiredAppUpdateForSafePayment',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
+        return;
+      }
+
       routingRef.current = true;
 
       const pathname = `${getProductDetailUrl({
@@ -223,7 +245,7 @@ function Chanel() {
 
       router.push(pathname);
     },
-    [isDeletedProduct, product, router, setChannelPushPageState]
+    [isDeletedProduct, product, router, setChannelPushPageState, setDialogState]
   );
 
   const handleClickOfferSafePayment = useCallback(
@@ -243,6 +265,25 @@ function Chanel() {
       if (!product || isDeletedProduct || routingRef.current) return;
 
       e.stopPropagation();
+
+      if (needUpdateSafePaymentIOSVersion()) {
+        setDialogState({
+          type: 'requiredAppUpdateForSafePayment',
+          customStyleTitle: { minWidth: 269 },
+          secondButtonAction: () => {
+            if (
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callExecuteApp
+            )
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                'itms-apps://itunes.apple.com/app/id1541101835'
+              );
+          }
+        });
+
+        return;
+      }
 
       routingRef.current = true;
 
@@ -264,7 +305,7 @@ function Chanel() {
 
       router.push(pathname);
     },
-    [isDeletedProduct, product, router, setChannelPushPageState]
+    [isDeletedProduct, product, router, setChannelPushPageState, setDialogState]
   );
 
   const handleClickUnreadCount = useCallback(async () => {
