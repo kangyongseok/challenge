@@ -35,7 +35,7 @@ interface ProductsCategoryTagListProps {
 
 function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const router = useRouter();
-  const { keyword = '', parentIds, subParentIds } = router.query;
+  const { keyword = '', title, parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
   const filterScrollToggleState = useRecoilValue(productFilterScrollToggleState);
@@ -90,7 +90,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
 
     router
       .push({
-        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+        pathname: `/products/${variant}${title ? `/${title}` : ''}${keyword ? `/${keyword}` : ''}`,
         query: { ...excludedSearchParams, parentIds }
       })
       .then(() => window.scrollTo(0, 0));
@@ -109,7 +109,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
 
     router
       .push({
-        pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+        pathname: `/products/${variant}${title ? `/${title}` : ''}${keyword ? `/${keyword}` : ''}`,
         query: { ...excludedSearchParams, parentIds: [parentId] }
       })
       .then(() => window.scrollTo(0, 0));
@@ -149,7 +149,9 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
 
       router
         .replace({
-          pathname: `/products/${variant}${keyword ? `/${keyword}` : ''}`,
+          pathname: `/products/${variant}${title ? `/${title}` : ''}${
+            keyword ? `/${keyword}` : ''
+          }`,
           query: { ...excludedSearchParams, parentIds: [parentId], subParentIds: [subParentId] }
         })
         .then(() => window.scrollTo(0, 0));

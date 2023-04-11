@@ -38,6 +38,7 @@ import { dialogState } from '@recoil/common';
 import { channelPushPageState } from '@recoil/channel';
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 
+import ChannelReviewSentMessage from './ChannelReviewSentMessage';
 import ChannelOrderSettleWaitMessage from './ChannelOrderSettleWaitMessage';
 import ChannelOrderSettleWaitAccountMessage from './ChannelOrderSettleWaitAccountMessage';
 import ChannelOrderSettleProgressMessage from './ChannelOrderSettleProgressMessage';
@@ -55,6 +56,7 @@ import ChannelOfferRequestTipMessage from './ChannelOfferRequestTipMessage';
 import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
 import ChannelOfferApproveMessage from './ChannelOfferApproveMessage';
 import ChannelOfferAdminTextMessage from './ChannelOfferAdminTextMessage';
+import ChannelCreditSellerMessage from './ChannelCreditSellerMessage';
 
 interface ChannelAdminMessageProps {
   message: AdminMessage;
@@ -193,29 +195,6 @@ function ChannelAdminMessage({
     );
   };
 
-  const handleClickViewReviews = () => {
-    logEvent(attrKeys.channel.CLICK_REVIEW_DETAIL, {
-      name: attrProperty.name.CHANNEL_DETAIL,
-      att: 'SEND'
-    });
-
-    const pathname = `/userInfo/${targetUserId}?tab=reviews`;
-
-    if (checkAgent.isIOSApp()) {
-      setChannelPushPageState('userInfo');
-      window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-        JSON.stringify({
-          pathname,
-          redirectChannelUrl: router.asPath
-        })
-      );
-
-      return;
-    }
-
-    router.push(pathname);
-  };
-
   const handleClickAction = () => {
     const result = productDetail
       ? {
@@ -342,6 +321,10 @@ function ChannelAdminMessage({
     );
   }
 
+  if (message.customType === 'creditSeller') {
+    return <ChannelCreditSellerMessage message={message} />;
+  }
+
   if (message.customType === 'appointmentPushNoti') {
     return (
       <PushNotiMessage variant="body2" weight="medium">
@@ -380,6 +363,7 @@ function ChannelAdminMessage({
         isAdminBlockUser={isAdminBlockUser}
         isSeller={isSeller}
         status={status}
+        targetUserName={targetUserName}
         onClickSafePayment={onClickSafePayment}
       />
     );
@@ -500,17 +484,24 @@ function ChannelAdminMessage({
     );
   }
 
+  if (message.customType === 'reviewSent') {
+    return (
+      <ChannelReviewSentMessage
+        message={message}
+        targetUserName={targetUserName}
+        targetUserId={targetUserId}
+      />
+    );
+  }
+
   return (
     <AdminTextMessage variant="body2" weight="medium">
-      {message.message.replace(/예약중으로 변경하기|약속보기|보낸 후기 보기/, '')}
+      {message.message.replace(/예약중으로 변경하기|약속보기/, '')}
       {message.customType === 'productReserve' && (
         <span onClick={handleClickUpdate}>예약중으로 변경하기</span>
       )}
       {message.customType === 'appointmentUpdated' && (
         <span onClick={handleClickViewAppointment}>약속보기</span>
-      )}
-      {message.customType === 'reviewSent' && (
-        <span onClick={handleClickViewReviews}>보낸 후기 보기</span>
       )}
     </AdminTextMessage>
   );

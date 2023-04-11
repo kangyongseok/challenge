@@ -27,7 +27,7 @@ function ProductOrderDeliveryInfoForm() {
 
   const {
     theme: {
-      palette: { common }
+      palette: { secondary, common }
     }
   } = useTheme();
 
@@ -38,6 +38,7 @@ function ProductOrderDeliveryInfoForm() {
     phone: '',
     address: ''
   });
+  const [showHelperText, setShowHelperText] = useState(false);
 
   const { data: { deliveryInfo } = {}, isLoading } = useQuery(
     queryKeys.orders.productOrder({ productId }),
@@ -99,6 +100,14 @@ function ProductOrderDeliveryInfoForm() {
     setDeliveryInfo(deliveryInfo);
   }, [deliveryInfo]);
 
+  useEffect(() => {
+    if (!phone || phone.length < 8) {
+      setShowHelperText(true);
+    } else {
+      setShowHelperText(false);
+    }
+  }, [phone]);
+
   return (
     <>
       <Flexbox
@@ -146,6 +155,16 @@ function ProductOrderDeliveryInfoForm() {
             value={phone.replace(/-/g, '')}
             placeholder="연락처"
           />
+          {showHelperText && (
+            <Typography
+              variant="body2"
+              customStyle={{
+                color: secondary.red.light
+              }}
+            >
+              정확한 연락처를 입력해주세요.
+            </Typography>
+          )}
         </Flexbox>
         <Flexbox direction="vertical" gap={8}>
           <Typography

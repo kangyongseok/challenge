@@ -242,6 +242,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     () =>
       messages.filter((message, index) => {
         if (!isAdminMessage(message)) return true;
+        if (message.customType === 'reviewSent') return true;
 
         const messageData: Record<string, string> = JSON.parse(message.data || '{}');
 

@@ -14,9 +14,12 @@ import queryKeys from '@constants/queryKeys';
 import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import { legitSearchActiveFilterParamsState } from '@recoil/legitSearchFilter';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function LegitSearchGrid() {
   const router = useRouter();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const activeParams = useRecoilValue(legitSearchActiveFilterParamsState);
 
@@ -54,22 +57,8 @@ function LegitSearchGrid() {
   const lastProductLegit = useMemo(() => pages[pages.length - 1], [pages]);
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) {
-        await fetchNextPage();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return (
     <Box component="section" customStyle={{ padding: 20 }}>

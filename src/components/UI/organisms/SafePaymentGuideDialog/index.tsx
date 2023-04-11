@@ -284,7 +284,7 @@ function SafePaymentGuideDialog({
             color: common.ui60
           }}
         >
-          가상계좌를 이용하여 결제합니다.
+          신용카드, 가상계좌를 이용하여 결제합니다.
         </Typography>
       </Box>
       <Box
@@ -312,7 +312,7 @@ function SafePaymentGuideDialog({
             color: common.ui80
           }}
         >
-          2일 이내로 물건을 발송해주세요.
+          판매승인 후, 2일 이내로 물건을 발송해주세요.
         </Typography>
       </Box>
       <Box
@@ -363,6 +363,23 @@ function SafePaymentGuideDialog({
           }}
         >
           영업일 7일 이내 정산됩니다.
+        </Typography>
+        <Box
+          customStyle={{
+            width: '100%',
+            height: 1,
+            margin: '20px 0',
+            backgroundColor: common.alpha20
+          }}
+        />
+        <Typography
+          variant="body2"
+          customStyle={{
+            color: common.ui80
+          }}
+        >
+          최대 7일이 소요되며, 더 빠르게 정산될 수 있습니다. 구매확정 후 즉시 정산될 수 있도록
+          준비중입니다.
         </Typography>
       </Box>
       <Box

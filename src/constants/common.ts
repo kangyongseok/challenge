@@ -18,6 +18,7 @@ export const PRODUCT_INFORMATION_HEIGHT = 65;
 export const MESSAGE_INPUT_HEIGHT = 44;
 export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
 export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
+export const MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT = 56;
 export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
 export const LEGIT_FAKE_BANNER_HEIGHT = 40;
 export const extractTagRegx = /(<([^>]+)>)/gi;

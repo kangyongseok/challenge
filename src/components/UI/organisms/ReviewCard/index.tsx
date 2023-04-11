@@ -15,6 +15,7 @@ interface ReviewCardProps {
   curnScore?: number;
   maxScore: number;
   siteId?: number;
+  reviewCreatedUserId?: number;
   onClickBlock: () => void;
   onClickReport: () => void;
 }
@@ -30,6 +31,7 @@ function ReviewCard({
   curnScore,
   maxScore,
   siteId,
+  reviewCreatedUserId,
   onClickBlock,
   onClickReport
 }: ReviewCardProps) {
@@ -40,7 +42,7 @@ function ReviewCard({
   } = useTheme();
 
   return (
-    <Wrapper>
+    <Wrapper className={`review-${reviewCreatedUserId}`}>
       {REPORT_STATUS[reportStatus] === REPORT_STATUS[0] && (
         <>
           {creator && (

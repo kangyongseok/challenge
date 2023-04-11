@@ -17,6 +17,7 @@ import { commaNumber, getProductDetailUrl } from '@utils/common';
 
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function LegitAdminRequestPanel() {
   const router = useRouter();
@@ -25,6 +26,8 @@ function LegitAdminRequestPanel() {
       palette: { common }
     }
   } = useTheme();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
@@ -100,22 +103,8 @@ function LegitAdminRequestPanel() {
   };
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) {
-        await fetchNextPage();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return (
     <Box component="section" customStyle={{ margin: '20px 0', padding: '0 20px' }}>

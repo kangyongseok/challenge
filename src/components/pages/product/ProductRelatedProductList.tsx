@@ -3,7 +3,7 @@ import { memo, useEffect, useState } from 'react';
 import { Box, Grid, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { Product, SearchRelatedProductsParams } from '@dto/product';
 
@@ -71,59 +71,6 @@ function ProductRelatedProductList({
     });
   }, [brandId, categoryId, line, price, quoteTitle, productId]);
 
-  const handleWishAtt = (product: Product, i: number) => {
-    return {
-      name: attrProperty.productName.PRODUCT_DETAIL,
-      title: attrProperty.title.LIST_RELATED,
-      id: product.id,
-      index: i + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      line: product.line,
-      site: product.site.name,
-      price: product.price,
-      scoreTotal: product.scoreTotal,
-      cluster: product.cluster,
-      source: attrProperty.source.PRODUCT_DETAIL_LIST_RELATED,
-      sellerType: product.sellerType
-    };
-  };
-
-  const handleProductAtt = (product: Product, i: number) => {
-    if (prevProduct) {
-      return {
-        name: attrProperty.productName.PRODUCT_DETAIL,
-        title: attrProperty.title.LIST_RELATED,
-        index: i + 1,
-        id: prevProduct.id,
-        brand: prevProduct.brand.name,
-        category: prevProduct.category.name,
-        parentCategory: FIRST_CATEGORIES[prevProduct.category.parentId as number],
-        line: prevProduct.line,
-        site: prevProduct.site.name,
-        price: prevProduct.price,
-        scoreTotal: prevProduct.scoreTotal,
-        scoreStatus: prevProduct.scoreStatus,
-        scoreSeller: prevProduct.scoreSeller,
-        scorePrice: prevProduct.scorePrice,
-        scorePriceAvg: prevProduct.scorePriceAvg,
-        scorePriceCount: prevProduct.scorePriceCount,
-        scorePriceRate: prevProduct.scorePriceRate,
-        source: attrProperty.source.PRODUCT_DETAIL_LIST_RELATED,
-        sellerType: product.sellerType,
-        nextId: product.id,
-        nextBrand: product.brand.name,
-        nextCategory: product.category.name,
-        nextParentId: product.category.parentId,
-        nextLine: product.line,
-        nextPrice: product.price,
-        nextScoreTotal: product.scoreTotal
-      };
-    }
-    return {};
-  };
-
   if (!searchRelatedProducts?.page?.content?.length) return <Box customStyle={{ marginTop: -1 }} />;
 
   return (
@@ -137,20 +84,41 @@ function ProductRelatedProductList({
         {isLoading
           ? Array.from({ length: 4 }, (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>
-                <ProductGridCardSkeleton isRound />
+                <NewProductGridCardSkeleton variant="gridB" />
               </Grid>
             ))
-          : searchRelatedProducts?.page?.content?.map((product, i) => (
+          : searchRelatedProducts?.page?.content?.map((product, index) => (
               <Grid key={`related-product-${product.id}`} item xs={2}>
-                <ProductGridCard
+                <NewProductGridCard
+                  variant="gridB"
                   product={product}
-                  wishAtt={handleWishAtt(product, i)}
-                  productAtt={handleProductAtt(product, i)}
-                  name={attrProperty.productName.PRODUCT_DETAIL}
-                  isRound
-                  compact
-                  gap={17}
-                  source={attrProperty.productSource.LIST_RELATED}
+                  attributes={{
+                    name: attrProperty.name.PRODUCT_DETAIL,
+                    title: attrProperty.title.LIST_RELATED,
+                    source: attrProperty.source.PRODUCT_DETAIL_LIST_RELATED,
+                    id: prevProduct?.id,
+                    brand: prevProduct?.brand.name,
+                    category: prevProduct?.category.name,
+                    parentCategory: FIRST_CATEGORIES[prevProduct?.category.parentId as number],
+                    line: prevProduct?.line,
+                    site: prevProduct?.site.name,
+                    price: prevProduct?.price,
+                    scoreTotal: prevProduct?.scoreTotal,
+                    scoreStatus: prevProduct?.scoreStatus,
+                    scoreSeller: prevProduct?.scoreSeller,
+                    scorePrice: prevProduct?.scorePrice,
+                    scorePriceAvg: prevProduct?.scorePriceAvg,
+                    scorePriceCount: prevProduct?.scorePriceCount,
+                    scorePriceRate: prevProduct?.scorePriceRate,
+                    index: index + 1,
+                    nextId: product.id,
+                    nextBrand: product.brand.name,
+                    nextCategory: product.category.name,
+                    nextParentId: product.category.parentId,
+                    nextLine: product.line,
+                    nextPrice: product.price,
+                    nextScoreTotal: product.scoreTotal
+                  }}
                 />
               </Grid>
             ))}

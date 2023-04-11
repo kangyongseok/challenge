@@ -378,7 +378,7 @@ function NewProductGridCard({
         )}
       </Box>
       <Content variant={variant}>
-        {!hideMetaInfo && ['gridC', 'swipeX'].includes(variant) && (
+        {!hideWishButton && !hideMetaInfo && ['gridC', 'swipeX'].includes(variant) && (
           <WishButtonB variant={variant} onClick={handleClickWish}>
             <Icon
               name={isWish ? 'HeartFilled' : 'HeartOutlined'}

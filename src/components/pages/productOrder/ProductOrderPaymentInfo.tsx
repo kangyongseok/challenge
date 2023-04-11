@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
+import { fetchProduct } from '@api/product';
 import { fetchProductOrder } from '@api/order';
 
 import queryKeys from '@constants/queryKeys';
@@ -33,6 +34,15 @@ function ProductOrderPaymentInfo() {
     }
   );
 
+  const { data: { product: { price = 0 } = {}, offers = [] } = {} } = useQuery(
+    queryKeys.products.product({ productId }),
+    () => fetchProduct({ productId }),
+    {
+      refetchOnMount: true,
+      enabled: !!productId
+    }
+  );
+
   return (
     <Box
       component="section"
@@ -59,8 +69,30 @@ function ProductOrderPaymentInfo() {
         >
           상품금액
         </Typography>
-        <Typography variant="h4">{commaNumber(totalPrice)}원</Typography>
+        <Typography variant="h4">
+          {commaNumber(offers[0] && offers[0].status === 1 ? price : totalPrice)}원
+        </Typography>
       </Flexbox>
+      {offers[0] && offers[0].status === 1 && (
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
+          customStyle={{
+            marginTop: 8,
+            color: common.ui60
+          }}
+        >
+          <Typography
+            variant="h4"
+            customStyle={{
+              color: common.ui60
+            }}
+          >
+            가격제안 할인
+          </Typography>
+          <Typography variant="h4">- {commaNumber(price - totalPrice)}원</Typography>
+        </Flexbox>
+      )}
       <Flexbox
         alignment="center"
         justifyContent="space-between"

@@ -1,21 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  Index,
-  InfiniteLoader,
-  List,
-  ListRowProps,
-  WindowScroller
-} from 'react-virtualized';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import styled from '@emotion/styled';
 
-import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
+import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -25,9 +13,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-const cache = new CellMeasurerCache({
-  fixedWidth: true
-});
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface SellerInfoProductsPanelProps {
   sellerId: number;
@@ -35,8 +21,12 @@ interface SellerInfoProductsPanelProps {
 
 function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
   const {
-    theme: { palette }
+    theme: {
+      palette: { common }
+    }
   } = useTheme();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const params = useMemo(() => ({ sellerId, size: 20 }), [sellerId]);
   const {
@@ -69,71 +59,9 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
 
   const sellerProducts = useMemo(() => pages.flatMap(({ content }) => content), [pages]);
 
-  const loadMoreRows = useCallback(async () => {
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    await fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const handleResize = useCallback(() => {
-    cache.clearAll();
-  }, []);
-
-  const rowRenderer = useCallback(
-    ({ key, index, parent, style }: ListRowProps) => {
-      const product = sellerProducts[index];
-
-      return product ? (
-        // @ts-ignore
-        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          <div style={{ ...style, paddingBottom: 20 }}>
-            <ProductListCard
-              product={product}
-              productAtt={{
-                name: attrProperty.name.SELLER_INFO,
-                title: attrProperty.title.SELLER_PRODUCT,
-                id: product.id,
-                index: index + 1,
-                brand: product.brand.name,
-                category: product.category.name,
-                parentId: product.category.parentId,
-                site: product.site.name,
-                price: product.price,
-                cluster: product.cluster,
-                source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT
-              }}
-              wishAtt={{
-                name: attrProperty.name.SELLER_INFO,
-                title: attrProperty.title.SELLER_PRODUCT,
-                id: product.id,
-                index: index + 1,
-                brand: product.brand.name,
-                category: product.category.name,
-                parentId: product.category.parentId,
-                site: product.site.name,
-                price: product.price,
-                cluster: product.cluster,
-                source: attrProperty.source.MAIN_PERSONAL
-              }}
-              isRound
-              source={attrProperty.productSource.SELLER_PRODUCT}
-              hideMetaSocialInfo={false}
-              hideProductLabel={false}
-            />
-          </div>
-        </CellMeasurer>
-      ) : null;
-    },
-    [sellerProducts]
-  );
-
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [handleResize]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return !isLoading && sellerProducts.length === 0 ? (
     <Flexbox
@@ -152,72 +80,50 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
   ) : (
     <>
       {!isLoading && (
-        <Banner>
-          <Typography variant="body2" customStyle={{ color: palette.common.ui60 }}>
+        <Box
+          customStyle={{
+            padding: '12px 20px',
+            backgroundColor: common.bg02,
+            textAlign: 'center'
+          }}
+        >
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
             카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)
           </Typography>
-        </Banner>
+        </Box>
       )}
       <Flexbox
         component="section"
         direction="vertical"
-        gap={isLoading ? 20 : 0}
-        customStyle={{ padding: 20 }}
+        gap={20}
+        customStyle={{
+          padding: 20
+        }}
       >
-        {isLoading ? (
-          Array.from({ length: 10 }).map((_, index) => (
-            <ProductListCardSkeleton
-              // eslint-disable-next-line react/no-array-index-key
-              key={`profile-user-product-skeleton-${index}`}
-              isRound
-              imageSkeletonWidth={122}
-            />
-          ))
-        ) : (
-          // @ts-ignore
-          <InfiniteLoader
-            isRowLoaded={({ index }: Index) => !!sellerProducts[index]}
-            loadMoreRows={loadMoreRows}
-            rowCount={hasNextPage ? sellerProducts.length + 1 : sellerProducts.length}
-          >
-            {({ registerChild, onRowsRendered }) => (
-              // @ts-ignore
-              <WindowScroller>
-                {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                  // @ts-ignore
-                  <AutoSizer disableHeight onResize={handleResize}>
-                    {({ width }) => (
-                      // @ts-ignore
-                      <List
-                        ref={registerChild}
-                        onRowsRendered={onRowsRendered}
-                        width={width}
-                        autoHeight
-                        height={height}
-                        rowCount={sellerProducts.length}
-                        rowHeight={cache.rowHeight}
-                        rowRenderer={rowRenderer}
-                        scrollTop={scrollTop}
-                        scrollLeft={scrollLeft}
-                        isScrolling={isScrolling}
-                        deferredMeasurementCache={cache}
-                      />
-                    )}
-                  </AutoSizer>
-                )}
-              </WindowScroller>
-            )}
-          </InfiniteLoader>
-        )}
+        {isLoading
+          ? Array.from({ length: 10 }).map((_, index) => (
+              <NewProductListCardSkeleton
+                // eslint-disable-next-line react/no-array-index-key
+                key={`profile-user-product-skeleton-${index}`}
+                hideMetaInfo
+              />
+            ))
+          : sellerProducts.map((product, index) => (
+              <NewProductListCard
+                key={`profile-user-product-${product.id}`}
+                product={product}
+                hideMetaInfo
+                attributes={{
+                  name: attrProperty.name.SELLER_INFO,
+                  title: attrProperty.title.SELLER_PRODUCT,
+                  index: index + 1,
+                  source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT
+                }}
+              />
+            ))}
       </Flexbox>
     </>
   );
 }
-
-const Banner = styled.section`
-  background-color: ${({ theme: { palette } }) => palette.common.bg02};
-  padding: 12px 20px;
-  text-align: center;
-`;
 
 export default SellerInfoProductsPanel;

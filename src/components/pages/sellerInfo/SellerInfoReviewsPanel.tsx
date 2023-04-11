@@ -1,17 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  Index,
-  InfiniteLoader,
-  List,
-  ListRowProps,
-  WindowScroller
-} from 'react-virtualized';
 import { useRouter } from 'next/router';
 import { Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -30,10 +19,7 @@ import attrKeys from '@constants/attrKeys';
 import { reviewBlockState } from '@recoil/productReview';
 import { deviceIdState, toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-const cache = new CellMeasurerCache({
-  fixedWidth: true
-});
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface SellerInfoReviewsPanelProps {
   sellerId: number;
@@ -42,6 +28,8 @@ interface SellerInfoReviewsPanelProps {
 function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const deviceId = useRecoilValue(deviceIdState);
   const setReviewBlockState = useSetRecoilState(reviewBlockState);
@@ -85,16 +73,6 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
     () => pages.flatMap(({ sellerReviews: { content } }) => content),
     [pages]
   );
-
-  const loadMoreRows = useCallback(async () => {
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    await fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const handleResize = useCallback(() => {
-    cache.clearAll();
-  }, []);
 
   const handleClickBlock = useCallback(
     (productId: number, reviewId: number) => () => {
@@ -208,40 +186,9 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
     ]
   );
 
-  const rowRenderer = useCallback(
-    ({ key, index, parent, style }: ListRowProps) => {
-      const review = sellerReviews[index];
-      const [firstReviewInfo] = pages;
-
-      return review ? (
-        // @ts-ignore
-        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          <div style={{ ...style, paddingBottom: 12 }}>
-            <ReviewCard
-              reportStatus={review.reportStatus as keyof typeof REPORT_STATUS}
-              creator={review.creator}
-              content={review.content}
-              score={Number(review.score || '')}
-              curnScore={Number(firstReviewInfo.curnScore || '')}
-              maxScore={Number(firstReviewInfo.maxScore || '')}
-              siteId={firstReviewInfo.site?.id || 0}
-              onClickBlock={handleClickBlock(review.productId, review.id)}
-              onClickReport={handleClickReport(review.productId, review.creator)}
-            />
-          </div>
-        </CellMeasurer>
-      ) : null;
-    },
-    [handleClickBlock, handleClickReport, pages, sellerReviews]
-  );
-
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [handleResize]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return !isLoading && sellerReviews.length === 0 ? (
     <Flexbox
@@ -258,59 +205,32 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       </Typography>
     </Flexbox>
   ) : (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      gap={isLoading ? 12 : 0}
-      customStyle={{ padding: 20 }}
-    >
-      {isLoading ? (
-        Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton
-            // eslint-disable-next-line react/no-array-index-key
-            key={`profle-review-card-${index}`}
-            width="100%"
-            height={62}
-            round={8}
-            disableAspectRatio
-          />
-        ))
-      ) : (
-        // @ts-ignore
-        <InfiniteLoader
-          isRowLoaded={({ index }: Index) => !!sellerReviews[index]}
-          loadMoreRows={loadMoreRows}
-          rowCount={hasNextPage ? sellerReviews.length + 1 : sellerReviews.length}
-        >
-          {({ registerChild, onRowsRendered }) => (
-            // @ts-ignore
-            <WindowScroller>
-              {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                // @ts-ignore
-                <AutoSizer disableHeight onResize={handleResize}>
-                  {({ width }) => (
-                    // @ts-ignore
-                    <List
-                      ref={registerChild}
-                      onRowsRendered={onRowsRendered}
-                      width={width}
-                      autoHeight
-                      height={height}
-                      rowCount={sellerReviews.length}
-                      rowHeight={cache.rowHeight}
-                      rowRenderer={rowRenderer}
-                      scrollTop={scrollTop}
-                      scrollLeft={scrollLeft}
-                      isScrolling={isScrolling}
-                      deferredMeasurementCache={cache}
-                    />
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
-          )}
-        </InfiniteLoader>
-      )}
+    <Flexbox component="section" direction="vertical" gap={12} customStyle={{ padding: 20 }}>
+      {isLoading
+        ? Array.from({ length: 10 }).map((_, index) => (
+            <Skeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`profle-review-card-skeleton-${index}`}
+              width="100%"
+              height={62}
+              round={8}
+              disableAspectRatio
+            />
+          ))
+        : sellerReviews.map((review) => (
+            <ReviewCard
+              key={`profle-review-card-${review.id}`}
+              reportStatus={review.reportStatus as keyof typeof REPORT_STATUS}
+              creator={review.creator}
+              content={review.content}
+              score={Number(review.score || '')}
+              curnScore={Number(pages[0]?.curnScore || '')}
+              maxScore={Number(pages[0]?.maxScore || '')}
+              siteId={pages[0]?.site?.id || 0}
+              onClickBlock={handleClickBlock(review.productId, review.id)}
+              onClickReport={handleClickReport(review.productId, review.creator)}
+            />
+          ))}
     </Flexbox>
   );
 }

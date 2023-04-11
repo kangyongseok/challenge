@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { BaseButtonProps } from 'mrcamel-ui/dist/components/Button';
 import {
@@ -25,7 +25,7 @@ import type {
 } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { SafePaymentGuideDialog } from '@components/UI/organisms';
+import { OnBoardingSpotlight, SafePaymentGuideDialog } from '@components/UI/organisms';
 
 import type { UserRoleSeller } from '@dto/user';
 import type { ProductOffer } from '@dto/productOffer';
@@ -58,7 +58,7 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState, toastState, userOnBoardingTriggerState } from '@recoil/common';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
@@ -136,6 +136,13 @@ function ProductCTAButton({
 
   const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
+  const [
+    {
+      productWish: { complete: productWishComplete },
+      productPriceOffer: { complete }
+    },
+    setUserOnBoardingTriggerState
+  ] = useRecoilState(userOnBoardingTriggerState);
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -156,6 +163,9 @@ function ProductCTAButton({
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
   const [hasOffer, setHasOffer] = useState(false);
   const [currentOffer, setCurrentOffer] = useState<ProductOffer | null | undefined>(null);
+  const [openPriceOfferOnBoarding, setOpenPriceOfferOnBoarding] = useState(false);
+
+  const priceOfferAreaRef = useRef<HTMLDivElement>(null);
 
   const {
     isCamelProduct,
@@ -661,6 +671,17 @@ function ProductCTAButton({
     }
   };
 
+  const handleClosePriceOfferOnBoarding = () => {
+    setOpenPriceOfferOnBoarding(false);
+    setUserOnBoardingTriggerState((prevState) => ({
+      ...prevState,
+      productPriceOffer: {
+        complete: true,
+        step: 1
+      }
+    }));
+  };
+
   useEffect(() => {
     const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
 
@@ -703,6 +724,14 @@ function ProductCTAButton({
     setHasOffer(validOffers.length < 3 && offers.some(({ status }) => status === 0));
     setCurrentOffer(validOffers.find(({ status }) => status === 1));
   }, [offers, ctaText, isAdminBlockedUser, isBlockedUser, isExternalPlatformSeller]);
+
+  useEffect(() => {
+    if (checkAgent.isMobileApp() && productWishComplete && !complete && isPossibleOffer) {
+      setOpenPriceOfferOnBoarding(true);
+    } else if (!checkAgent.isMobileApp() && !complete && isPossibleOffer) {
+      setOpenPriceOfferOnBoarding(true);
+    }
+  }, [complete, productWishComplete, isPossibleOffer]);
 
   if (!!accessUser && roleSeller?.userId === accessUser.userId) return null;
 
@@ -761,73 +790,98 @@ function ProductCTAButton({
         }}
       />
       <Wrapper>
-        <Flexbox
-          direction="vertical"
-          gap={2}
+        <OnBoardingSpotlight
+          open={openPriceOfferOnBoarding}
+          onClose={handleClosePriceOfferOnBoarding}
+          targetRef={priceOfferAreaRef}
+          customSpotlightPosition={{
+            width: 4,
+            left: -4
+          }}
           customStyle={{
-            width: 112
+            borderRadius: 8
+          }}
+        />
+        <Tooltip
+          open={openPriceOfferOnBoarding}
+          message="원하는 가격이 있다면 눈치 보지 말고 제안해보세요!"
+          triangleLeft={20}
+          customStyle={{
+            top: 10,
+            left: 125
           }}
         >
-          {isPossibleOffer && !hasOffer && currentOffer ? (
-            <Typography
-              variant="h3"
-              weight="bold"
-              customStyle={{
-                fontSize: 20,
-                lineHeight: '26px',
-                color: primary.light
-              }}
-            >
-              {commaNumber(getTenThousandUnitPrice(currentOffer?.price || 0))}만원
-            </Typography>
-          ) : (
-            <Typography
-              variant="h3"
-              weight="bold"
-              customStyle={{
-                fontSize: 20,
-                lineHeight: '26px'
-              }}
-            >
-              {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
-            </Typography>
-          )}
-          {isPossibleOffer && !hasOffer && !currentOffer && (
-            <Typography
-              weight="medium"
-              onClick={handleClickPriceOffer}
-              customStyle={{
-                color: primary.light,
-                textDecorationLine: 'underline',
-                cursor: 'pointer'
-              }}
-            >
-              가격 제안하기
-            </Typography>
-          )}
-          {isPossibleOffer && hasOffer && !currentOffer && (
-            <Typography
-              weight="medium"
-              customStyle={{
-                color: common.ui60,
-                textDecorationLine: 'underline'
-              }}
-            >
-              가격 제안됨
-            </Typography>
-          )}
-          {isPossibleOffer && !hasOffer && currentOffer && (
-            <Typography
-              weight="medium"
-              customStyle={{
-                color: common.ui60,
-                textDecorationLine: 'line-through'
-              }}
-            >
-              {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
-            </Typography>
-          )}
-        </Flexbox>
+          <Flexbox
+            ref={priceOfferAreaRef}
+            direction="vertical"
+            justifyContent="center"
+            gap={2}
+            customStyle={{
+              width: 112,
+              height: 48
+            }}
+          >
+            {isPossibleOffer && !hasOffer && currentOffer ? (
+              <Typography
+                variant="h3"
+                weight="bold"
+                customStyle={{
+                  fontSize: 20,
+                  lineHeight: '26px',
+                  color: primary.light
+                }}
+              >
+                {commaNumber(getTenThousandUnitPrice(currentOffer?.price || 0))}만원
+              </Typography>
+            ) : (
+              <Typography
+                variant="h3"
+                weight="bold"
+                customStyle={{
+                  fontSize: 20,
+                  lineHeight: '26px'
+                }}
+              >
+                {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
+              </Typography>
+            )}
+            {isPossibleOffer && !hasOffer && !currentOffer && (
+              <Typography
+                weight="medium"
+                onClick={handleClickPriceOffer}
+                customStyle={{
+                  color: primary.light,
+                  textDecorationLine: 'underline',
+                  cursor: 'pointer'
+                }}
+              >
+                가격 제안하기
+              </Typography>
+            )}
+            {isPossibleOffer && hasOffer && !currentOffer && (
+              <Typography
+                weight="medium"
+                customStyle={{
+                  color: common.ui60,
+                  textDecorationLine: 'underline'
+                }}
+              >
+                가격 제안됨
+              </Typography>
+            )}
+            {isPossibleOffer && !hasOffer && currentOffer && (
+              <Typography
+                weight="medium"
+                customStyle={{
+                  color: common.ui60,
+                  textDecorationLine: 'line-through'
+                }}
+              >
+                {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
+              </Typography>
+            )}
+          </Flexbox>
+        </Tooltip>
         <Flexbox
           gap={8}
           customStyle={{

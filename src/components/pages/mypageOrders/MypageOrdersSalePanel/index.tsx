@@ -21,6 +21,7 @@ import { commaNumber } from '@utils/formats';
 
 import { mypageOrdersIsConfirmedState } from '@recoil/mypageOrders';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function MypageOrdersSalePanel() {
   const router = useRouter();
@@ -30,6 +31,8 @@ function MypageOrdersSalePanel() {
       palette: { primary, common }
     }
   } = useTheme();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const [isConfirmed, setIsConfirmedState] = useRecoilState(mypageOrdersIsConfirmedState);
 
@@ -86,20 +89,8 @@ function MypageOrdersSalePanel() {
   };
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) await fetchNextPage();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return (
     <>

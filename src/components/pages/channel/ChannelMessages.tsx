@@ -27,6 +27,7 @@ import {
   MESSAGE_ACTION_BUTTONS_HEIGHT,
   MESSAGE_APPOINTMENT_BANNER_HEIGHT,
   MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
+  MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT,
   PRODUCT_INFORMATION_HEIGHT
 } from '@constants/common';
 
@@ -43,6 +44,7 @@ interface ChannelMessagesProps {
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
   showActionButtons: boolean;
+  showSafePaymentGuideBanner: boolean;
   isCamelAdminUser?: boolean;
   isCamelAuthSeller?: boolean;
   messagesRef: MutableRefObject<HTMLDivElement | null>;
@@ -72,6 +74,7 @@ function ChannelMessages({
   showAppointmentBanner,
   showNewMessageNotification,
   showActionButtons,
+  showSafePaymentGuideBanner,
   messagesRef,
   hasMorePrev,
   hasUserReview,
@@ -101,6 +104,7 @@ function ChannelMessages({
           const hasSeparator = !(
             previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'date')
           );
+
           return message ? (
             <Box className="message-scroll" key={`message-${message.messageId}`}>
               {hasSeparator && (
@@ -194,6 +198,7 @@ function ChannelMessages({
         <Content
           showAppointmentBanner={showAppointmentBanner}
           showNewMessageNotification={showNewMessageNotification}
+          showSafePaymentGuideBanner={showSafePaymentGuideBanner}
           isCamelAdminUser={isCamelAdminUser}
         >
           {memorizedAllMessages}
@@ -222,14 +227,21 @@ const ScrollElement = styled.div`
 const Content = styled.div<{
   showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
+  showSafePaymentGuideBanner: boolean;
   isCamelAdminUser?: boolean;
 }>`
-  padding: ${({ showAppointmentBanner, showNewMessageNotification, isCamelAdminUser }) =>
+  padding: ${({
+    showAppointmentBanner,
+    showNewMessageNotification,
+    showSafePaymentGuideBanner,
+    isCamelAdminUser
+  }) =>
     `${
       HEADER_HEIGHT +
       (!isCamelAdminUser ? PRODUCT_INFORMATION_HEIGHT : 0) +
       (showAppointmentBanner ? MESSAGE_APPOINTMENT_BANNER_HEIGHT : 0) +
-      (showNewMessageNotification ? MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT : 0)
+      (showNewMessageNotification ? MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT : 0) +
+      (showSafePaymentGuideBanner ? MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT : 0)
     }px 20px 0px`};
   transition: all 0.3s;
   position: relative;

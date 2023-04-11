@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { ProductGridCard } from '@components/UI/molecules';
+import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
-import type { Product, SearchLowerProductsParams } from '@dto/product';
+import type { SearchLowerProductsParams } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -67,61 +67,6 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
     }
   }, [data, isSuccess]);
 
-  const handleWishAtt = (product: Product, i: number) => {
-    return {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.LOWPRICE_PRODUCT,
-      type: attrProperty.type.RECOMM,
-      id: product.id,
-      index: i + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      line: product.line,
-      site: product.site.name,
-      price: product.price,
-      scoreTotal: product.scoreTotal,
-      cluster: product.cluster,
-      source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
-      sellerType: product.sellerType
-    };
-  };
-
-  const handleProductAtt = (product: Product, i: number) => {
-    if (data?.product) {
-      return {
-        name: attrProperty.name.PRODUCT_DETAIL,
-        title: attrProperty.title.LOWPRICE_PRODUCT,
-        type: attrProperty.type.RECOMM,
-        index: i + 1,
-        id: data?.product.id,
-        brand: data?.product.brand.name,
-        category: data?.product.category.name,
-        parentCategory: FIRST_CATEGORIES[data?.product.category.parentId as number],
-        line: data?.product.line,
-        site: data?.product.site.name,
-        price: data?.product.price,
-        scoreTotal: data?.product.scoreTotal,
-        scoreStatus: data?.product.scoreStatus,
-        scoreSeller: data?.product.scoreSeller,
-        scorePrice: data?.product.scorePrice,
-        scorePriceAvg: data?.product.scorePriceAvg,
-        scorePriceCount: data?.product.scorePriceCount,
-        scorePriceRate: data?.product.scorePriceRate,
-        source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
-        sellerType: product.sellerType,
-        nextId: product.id,
-        nextBrand: product.brand.name,
-        nextCategory: product.category.name,
-        nextParentId: product.category.parentId,
-        nextLine: product.line,
-        nextPrice: product.price,
-        nextScoreTotal: product.scoreTotal
-      };
-    }
-    return {};
-  };
-
   const handleClickProductList = () => {
     logEvent(attrKeys.products.CLICK_PRODUCT_LIST, {
       name: attrProperty.name.productDetail,
@@ -150,57 +95,80 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
         {type &&
           searchRelatedProducts?.page.content.slice(0, 3)?.map((product, i) => (
             <Box customStyle={{ flex: 1 }} key={`related-product-${product.id}`}>
-              <ProductGridCard
+              <NewProductGridCard
+                variant="swipeX"
                 product={product}
-                wishAtt={handleWishAtt(product, i)}
-                productAtt={handleProductAtt(product, i)}
-                name={attrProperty.productName.PRODUCT_DETAIL}
-                isRound
-                compact
-                gap={17}
-                source={attrProperty.productSource.LIST_RELATED}
-                titlePriceStyle={{ color: common.uiWhite }}
-                hidePlatformLogo
-                hideWishButton
-                hideProductLabel
-                hideAreaWithDateInfo
-                hideLegitStatusLabel
-                hideMetaCamelInfo
+                attributes={{
+                  name: attrProperty.name.PRODUCT_DETAIL,
+                  title: attrProperty.title.LOWPRICE_PRODUCT,
+                  type: attrProperty.type.RECOMM,
+                  index: i + 1,
+                  id: data?.product.id,
+                  brand: data?.product.brand.name,
+                  category: data?.product.category.name,
+                  parentCategory: FIRST_CATEGORIES[data?.product.category.parentId as number],
+                  line: data?.product.line,
+                  site: data?.product.site.name,
+                  price: data?.product.price,
+                  scoreTotal: data?.product.scoreTotal,
+                  scoreStatus: data?.product.scoreStatus,
+                  scoreSeller: data?.product.scoreSeller,
+                  scorePrice: data?.product.scorePrice,
+                  scorePriceAvg: data?.product.scorePriceAvg,
+                  scorePriceCount: data?.product.scorePriceCount,
+                  scorePriceRate: data?.product.scorePriceRate,
+                  source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
+                  nextId: product.id,
+                  nextBrand: product.brand.name,
+                  nextCategory: product.category.name,
+                  nextParentId: product.category.parentId,
+                  nextLine: product.line,
+                  nextPrice: product.price,
+                  nextScoreTotal: product.scoreTotal
+                }}
               />
             </Box>
           ))}
         {!type &&
           isLoading &&
           Array.from({ length: 5 }, (_, i) => i).map((v) => (
-            <Flexbox
-              direction="vertical"
-              key={`skeleton-${v}`}
-              customStyle={{ minWidth: 144 }}
-              gap={17}
-            >
-              <Skeleton width={144} height={144} round={8} disableAspectRatio />
-              <Flexbox direction="vertical" gap={3}>
-                <Skeleton width={144} height={15} disableAspectRatio />
-                <Skeleton width={144} height={15} disableAspectRatio />
-                <Skeleton width={144} height={20} disableAspectRatio />
-                <Skeleton width={144} height={15} disableAspectRatio />
-              </Flexbox>
-            </Flexbox>
+            <NewProductGridCardSkeleton key={`related-product-${v}-skeleton`} variant="swipeX" />
           ))}
         {!type &&
           !isLoading &&
           searchRelatedProducts?.page.content?.map((product, i) => (
             <Box customStyle={{ minWidth: 144 }} key={`related-product-${product.id}`}>
-              <ProductGridCard
+              <NewProductGridCard
+                variant="swipeX"
                 product={product}
-                wishAtt={handleWishAtt(product, i)}
-                productAtt={handleProductAtt(product, i)}
-                name={attrProperty.productName.PRODUCT_DETAIL}
-                isRound
-                compact
-                gap={17}
-                source={attrProperty.productSource.LIST_RELATED}
-                titlePriceStyle={{ color: common.uiBlack }}
+                attributes={{
+                  name: attrProperty.name.PRODUCT_DETAIL,
+                  title: attrProperty.title.LOWPRICE_PRODUCT,
+                  type: attrProperty.type.RECOMM,
+                  index: i + 1,
+                  id: data?.product.id,
+                  brand: data?.product.brand.name,
+                  category: data?.product.category.name,
+                  parentCategory: FIRST_CATEGORIES[data?.product.category.parentId as number],
+                  line: data?.product.line,
+                  site: data?.product.site.name,
+                  price: data?.product.price,
+                  scoreTotal: data?.product.scoreTotal,
+                  scoreStatus: data?.product.scoreStatus,
+                  scoreSeller: data?.product.scoreSeller,
+                  scorePrice: data?.product.scorePrice,
+                  scorePriceAvg: data?.product.scorePriceAvg,
+                  scorePriceCount: data?.product.scorePriceCount,
+                  scorePriceRate: data?.product.scorePriceRate,
+                  source: attrProperty.source.PRODUCT_DETAIL_LOWPRICE_PRODUCT,
+                  nextId: product.id,
+                  nextBrand: product.brand.name,
+                  nextCategory: product.category.name,
+                  nextParentId: product.category.parentId,
+                  nextLine: product.line,
+                  nextPrice: product.price,
+                  nextScoreTotal: product.scoreTotal
+                }}
               />
             </Box>
           ))}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect } from 'react';
 
 import { Box, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
@@ -12,6 +11,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useInfiniteQueryChannels from '@hooks/useInfiniteQueryChannels';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 import ChannelsSwipeActionList from './ChannelsSwipeActionList';
 
@@ -33,6 +33,8 @@ function ChannelsMessagesPanel({
     }
   } = useTheme();
 
+  const { triggered } = useDetectScrollFloorTrigger();
+
   const { channels, isInitialLoading, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQueryChannels(props);
 
@@ -49,22 +51,8 @@ function ChannelsMessagesPanel({
   }, []);
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) {
-        await fetchNextPage();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   if (!isLoading && !channels.length) {
     return (

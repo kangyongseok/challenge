@@ -3,7 +3,6 @@ export { default as BottomNavigation } from './BottomNavigation';
 export * from './Divider';
 export { default as Header } from './Header';
 export { default as ProductGridCard } from './ProductGridCard';
-export { default as ProductListCard } from './ProductListCard';
 export { default as SearchBar } from './SearchBar';
 export * from './Skeletons';
 export { default as TextInput } from './TextInput';

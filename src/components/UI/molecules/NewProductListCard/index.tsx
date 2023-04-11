@@ -85,7 +85,7 @@ function NewProductListCard({
   const router = useRouter();
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { primary, secondary, common }
     }
   } = useTheme();
 
@@ -394,11 +394,32 @@ function NewProductListCard({
               marginTop: 4
             }}
           >
-            <Typography variant="h3" weight="bold">
-              {offer?.status === 1
-                ? `${commaNumber(getTenThousandUnitPrice(offer?.price))}만원`
-                : `${commaNumber(getTenThousandUnitPrice(price))}만원`}
-            </Typography>
+            {offer?.status === 1 ? (
+              <Flexbox gap={4} alignment="baseline">
+                <Typography
+                  variant="h3"
+                  weight="bold"
+                  customStyle={{
+                    color: primary.light
+                  }}
+                >
+                  {`${commaNumber(getTenThousandUnitPrice(offer?.price))}만원`}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  customStyle={{
+                    textDecoration: 'line-through',
+                    color: common.ui80
+                  }}
+                >
+                  {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+                </Typography>
+              </Flexbox>
+            ) : (
+              <Typography variant="h3" weight="bold">
+                {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+              </Typography>
+            )}
             {subText && (
               <Typography
                 variant="body2"

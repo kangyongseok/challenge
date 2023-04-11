@@ -23,7 +23,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
 import { OnBoardingSpotlight } from '@components/UI/organisms';
-import ProductGridCard from '@components/UI/molecules/ProductGridCard';
+import { NewProductGridCard } from '@components/UI/molecules';
 import { ProductInfoSkeleton } from '@components/pages/product';
 
 import type { Product } from '@dto/product';
@@ -55,7 +55,7 @@ import { getFormattedDistanceTime, getProductArea } from '@utils/formats';
 import { checkAgent, removeTagAndAddNewLine } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { toastState } from '@recoil/common';
+import { toastState, userOnBoardingTriggerState } from '@recoil/common';
 
 import ProductInfoColorIcon from './ProductInfoColorIcon';
 
@@ -97,6 +97,12 @@ function ProductInfo({
 
   const [getToastState] = useRecoilState(toastState);
   const setToastState = useSetRecoilState(toastState);
+  const [
+    {
+      productWish: { complete }
+    },
+    setUserOnBoardingTriggerState
+  ] = useRecoilState(userOnBoardingTriggerState);
 
   const [isClamped, setIsClamped] = useState(false);
   const [isExpended, setIsExpended] = useState(false);
@@ -350,6 +356,13 @@ function ProductInfo({
 
   const handleClickWishOnBoarding = () => {
     setIsDoneWishOnBoarding(true);
+    setUserOnBoardingTriggerState((prevState) => ({
+      ...prevState,
+      productWish: {
+        complete: true,
+        step: 1
+      }
+    }));
     scrollEnable();
   };
 
@@ -359,10 +372,24 @@ function ProductInfo({
     }
   }, [getToastState]);
 
+  // 기존 온보딩 완료 유저 대응
+  useEffect(() => {
+    if (LocalStorage.get(IS_DONE_WISH_ON_BOARDING)) {
+      setUserOnBoardingTriggerState((prevState) => ({
+        ...prevState,
+        productWish: {
+          complete: true,
+          step: 1
+        }
+      }));
+    }
+  }, [setUserOnBoardingTriggerState]);
+
   useEffect(() => {
     if (
       !LocalStorage.get(IS_DONE_WISH_ON_BOARDING) &&
       checkAgent.isMobileApp() &&
+      !complete &&
       !isCamelSellerProduct &&
       wishButtonRef.current &&
       isIntersecting &&
@@ -373,7 +400,7 @@ function ProductInfo({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isIntersecting]);
+  }, [setUserOnBoardingTriggerState, isIntersecting, complete]);
 
   useEffect(() => {
     let observer: IntersectionObserver;
@@ -826,43 +853,17 @@ function ProductInfo({
           </Typography>
           <ProductCardList onScroll={handleScroll}>
             {relatedProducts?.content.map((relatedProduct, index) => (
-              <ProductGridCard
+              <NewProductGridCard
                 key={`related-product-card-${relatedProduct.id}`}
+                variant="swipeX"
                 product={relatedProduct}
-                compact
-                hideProductLabel
-                hideAreaWithDateInfo
-                name={attrProperty.productName.WISH_MODAL}
-                isRound
-                gap={8}
-                wishAtt={{
-                  name: attrProperty.name.PRODUCT_DETAIL,
-                  title: attrProperty.title.RELATED_LIST,
-                  id: relatedProduct.id,
-                  index: index + 1,
-                  brand: relatedProduct.brand.name,
-                  category: relatedProduct.category.name,
-                  parentId: relatedProduct.category.parentId,
-                  site: relatedProduct.site.name,
-                  price: relatedProduct.price,
-                  cluster: relatedProduct.cluster,
-                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                  sellerType: relatedProduct.sellerType
-                }}
-                productAtt={{
+                hideAreaInfo
+                attributes={{
                   name: attrProperty.name.PRODUCT_DETAIL,
                   title: attrProperty.title.RELATED_LIST,
                   index: index + 1,
-                  id: relatedProduct.id,
-                  brand: relatedProduct.brand.name,
-                  category: relatedProduct.category.name,
-                  parentCategory: FIRST_CATEGORIES[relatedProduct.category.parentId as number],
-                  site: relatedProduct.site.name,
-                  price: relatedProduct.price,
-                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                  sellerType: relatedProduct.sellerType
+                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST
                 }}
-                source={attrProperty.productSource.PRODUCT_RELATED_LIST}
               />
             ))}
           </ProductCardList>

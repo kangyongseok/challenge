@@ -23,21 +23,30 @@ import type {
   ToastType
 } from '@typings/common';
 
-export const userOnBoardingTriggerState = atom({
-  key: 'common/userOnBoardingTriggerState',
-  default: {
-    products: {
-      complete: false,
-      step: 0
-    }
+export const userOnBoardingTriggerDefaultState = {
+  products: {
+    complete: false,
+    step: 0
   },
+  productWish: {
+    complete: false,
+    step: 0
+  },
+  productPriceOffer: {
+    complete: false,
+    step: 0
+  }
+};
+
+export const userOnBoardingTriggerState = atom<typeof userOnBoardingTriggerDefaultState>({
+  key: 'common/userOnBoardingTriggerState',
+  default: userOnBoardingTriggerDefaultState,
   effects: [
     ({ onSet, setSelf }) => {
-      const userOnBoardingTrigger = LocalStorage.get<{
-        products: { complete: boolean; step: number };
-      }>(USER_ON_BOARDING_TRIGGER);
+      const userOnBoardingTrigger =
+        LocalStorage.get<typeof userOnBoardingTriggerDefaultState>(USER_ON_BOARDING_TRIGGER);
       if (userOnBoardingTrigger) {
-        setSelf(userOnBoardingTrigger);
+        setSelf({ ...userOnBoardingTriggerDefaultState, ...userOnBoardingTrigger });
       }
 
       onSet((newValue, _, isReset) => {

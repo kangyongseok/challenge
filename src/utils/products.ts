@@ -654,7 +654,7 @@ export function getEventPropertyViewType(variant: ProductsVariant, parentIds?: s
   return 'SEARCH';
 }
 
-export function getProductType(siteId: number, sellerType: number) {
+export function getProductType(siteId?: number, sellerType?: number) {
   if (SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) {
     return 'authenticated';
   }

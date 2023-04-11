@@ -13,12 +13,15 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 
 import { eventContentProductsParamsState } from '@recoil/eventFilter/atom';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function EventProductList() {
   const router = useRouter();
   const { id } = router.query;
   const splitIds = String(id).split('-');
   const eventId = Number(splitIds[splitIds.length - 1] || 0);
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const [params, setEventContentProductsParamsState] = useRecoilState(
     eventContentProductsParamsState
@@ -65,20 +68,8 @@ function EventProductList() {
   }, [setEventContentProductsParamsState, eventId]);
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) await fetchNextPage();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return (
     <Grid component="section" container columnGap={16} rowGap={48} customStyle={{ marginTop: -2 }}>

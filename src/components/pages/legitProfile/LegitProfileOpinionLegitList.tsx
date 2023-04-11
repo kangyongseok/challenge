@@ -25,6 +25,7 @@ import {
   defaultLegitProfileOpinionLegitsParamsState,
   legitProfileOpinionLegitsParamsState
 } from '@recoil/legitProfile';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface LegitProfileOpinionLegitListProps {
   userId: number;
@@ -44,6 +45,8 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
         palette: { common }
       }
     } = useTheme();
+
+    const { triggered } = useDetectScrollFloorTrigger();
 
     const [params, setLegitProfileOpinionLegitsParamsState] = useRecoilState(
       legitProfileOpinionLegitsParamsState
@@ -138,22 +141,8 @@ const LegitProfileOpinionLegitList = forwardRef<HTMLDivElement, LegitProfileOpin
     }, [setLegitProfileOpinionLegitsParamsState, userId]);
 
     useEffect(() => {
-      const handleScroll = async () => {
-        const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-        const isFloor = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-
-        if (hasNextPage && !isFetchingNextPage && isFloor) {
-          await fetchNextPage();
-        }
-      };
-
-      window.addEventListener('scroll', handleScroll);
-
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+      if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+    }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
     return (
       <Box component="section">

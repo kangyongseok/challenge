@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { ProductListCard, ProductListCardSkeleton } from '@components/UI/molecules';
+import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -79,7 +79,7 @@ function ProductsRelated() {
         <Flexbox direction="vertical" gap={20}>
           {Array.from({ length: 10 }, (_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <ProductListCardSkeleton key={`search-related-product-${index}`} isRound />
+            <NewProductListCardSkeleton key={`search-related-product-${index}`} />
           ))}
         </Flexbox>
       </Box>
@@ -94,11 +94,12 @@ function ProductsRelated() {
         </Typography>
         <Flexbox direction="vertical" gap={20}>
           {content.map((product) => (
-            <ProductListCard
+            <NewProductListCard
               key={`search-related-product-${product.id}`}
               product={product}
-              name={attrProperty.productName.PRODUCT_DETAIL}
-              isRound
+              attributes={{
+                name: attrProperty.productName.PRODUCT_DETAIL
+              }}
             />
           ))}
         </Flexbox>

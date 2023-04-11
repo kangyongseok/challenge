@@ -33,9 +33,6 @@ function ChannelPriceOfferForm() {
   const [showHelperText, setShowHelperText] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const inputSelectionEndRef = useRef(0);
-
   const { data: { product } = {}, isLoading } = useQuery(
     queryKeys.channels.channel(Number(id)),
     () => fetchChannel(Number(id)),
@@ -43,6 +40,9 @@ function ChannelPriceOfferForm() {
       enabled: !!id
     }
   );
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputSelectionEndRef = useRef(String(product?.price || '').length);
 
   const { mutate, isLoading: isLoadingMutate } = useMutation(postProductOffer);
 
@@ -157,8 +157,8 @@ function ChannelPriceOfferForm() {
 
       if (inputElement[0]) {
         inputElement[0].setSelectionRange(
-          inputSelectionEndRef.current,
-          inputSelectionEndRef.current
+          inputSelectionEndRef.current || String(value).length,
+          inputSelectionEndRef.current || String(value).length
         );
       }
     }

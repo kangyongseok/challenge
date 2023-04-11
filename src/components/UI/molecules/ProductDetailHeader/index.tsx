@@ -8,8 +8,7 @@ import amplitude from 'amplitude-js';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import ProductGridCard from '@components/UI/molecules/ProductGridCard';
-import { Header } from '@components/UI/molecules';
+import { Header, NewProductGridCard } from '@components/UI/molecules';
 
 import type { ProductDetail } from '@dto/product';
 
@@ -20,12 +19,11 @@ import { fetchRelatedProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { APP_BANNER } from '@constants/localStorage';
-import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
-import { getProductType } from '@utils/products';
+import { getProductType, productDetailAtt } from '@utils/products';
 import { commaNumber } from '@utils/formats';
 import { checkAgent, executedShareURl } from '@utils/common';
 
@@ -85,6 +83,12 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
 
   const handleClickShare = () => {
     if (data) {
+      productDetailAtt({
+        key: attrKeys.products.CLICK_SHARE,
+        product: data?.product,
+        source: attrProperty.productSource.PRODUCT_LIST
+      });
+
       let viewPrice = data.product ? data.product.price / 10000 : 0;
 
       if (Number.isNaN(viewPrice)) {
@@ -217,43 +221,17 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
             </Typography>
             <ProductCardList onScroll={handleScroll}>
               {relatedProducts?.content.map((relatedProduct, index) => (
-                <ProductGridCard
+                <NewProductGridCard
                   key={`related-product-card-${relatedProduct.id}`}
+                  variant="swipeX"
                   product={relatedProduct}
-                  compact
-                  hideProductLabel
-                  hideAreaWithDateInfo
-                  name={attrProperty.productName.WISH_MODAL}
-                  isRound
-                  gap={8}
-                  wishAtt={{
-                    name: attrProperty.name.PRODUCT_DETAIL,
-                    title: attrProperty.title.RELATED_LIST,
-                    id: relatedProduct.id,
-                    index: index + 1,
-                    brand: relatedProduct.brand.name,
-                    category: relatedProduct.category.name,
-                    parentId: relatedProduct.category.parentId,
-                    site: relatedProduct.site.name,
-                    price: relatedProduct.price,
-                    cluster: relatedProduct.cluster,
-                    source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                    sellerType: relatedProduct.sellerType
-                  }}
-                  productAtt={{
+                  hideAreaInfo
+                  attributes={{
                     name: attrProperty.name.PRODUCT_DETAIL,
                     title: attrProperty.title.RELATED_LIST,
                     index: index + 1,
-                    id: relatedProduct.id,
-                    brand: relatedProduct.brand.name,
-                    category: relatedProduct.category.name,
-                    parentCategory: FIRST_CATEGORIES[relatedProduct.category.parentId as number],
-                    site: relatedProduct.site.name,
-                    price: relatedProduct.price,
-                    source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                    sellerType: relatedProduct.sellerType
+                    source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST
                   }}
-                  source={attrProperty.productSource.PRODUCT_RELATED_LIST}
                 />
               ))}
             </ProductCardList>
@@ -297,43 +275,17 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
           </Typography>
           <ProductCardList onScroll={handleScroll}>
             {relatedProducts?.content.map((relatedProduct, index) => (
-              <ProductGridCard
+              <NewProductGridCard
                 key={`related-product-card-${relatedProduct.id}`}
+                variant="swipeX"
                 product={relatedProduct}
-                compact
-                hideProductLabel
-                hideAreaWithDateInfo
-                name={attrProperty.productName.WISH_MODAL}
-                isRound
-                gap={8}
-                wishAtt={{
-                  name: attrProperty.name.PRODUCT_DETAIL,
-                  title: attrProperty.title.RELATED_LIST,
-                  id: relatedProduct.id,
-                  index: index + 1,
-                  brand: relatedProduct.brand.name,
-                  category: relatedProduct.category.name,
-                  parentId: relatedProduct.category.parentId,
-                  site: relatedProduct.site.name,
-                  price: relatedProduct.price,
-                  cluster: relatedProduct.cluster,
-                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                  sellerType: relatedProduct.sellerType
-                }}
-                productAtt={{
+                hideAreaInfo
+                attributes={{
                   name: attrProperty.name.PRODUCT_DETAIL,
                   title: attrProperty.title.RELATED_LIST,
                   index: index + 1,
-                  id: relatedProduct.id,
-                  brand: relatedProduct.brand.name,
-                  category: relatedProduct.category.name,
-                  parentCategory: FIRST_CATEGORIES[relatedProduct.category.parentId as number],
-                  site: relatedProduct.site.name,
-                  price: relatedProduct.price,
-                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST,
-                  sellerType: relatedProduct.sellerType
+                  source: attrProperty.source.PRODUCT_DETAIL_RELATED_LIST
                 }}
-                source={attrProperty.productSource.PRODUCT_RELATED_LIST}
               />
             ))}
           </ProductCardList>

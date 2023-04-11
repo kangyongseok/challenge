@@ -13,8 +13,11 @@ import queryKeys from '@constants/queryKeys';
 import { commaNumber } from '@utils/formats';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function MypageOrdersBuyPanel() {
+  const { triggered } = useDetectScrollFloorTrigger();
+
   const { data: accessUser } = useQueryAccessUser();
 
   const {
@@ -50,20 +53,8 @@ function MypageOrdersBuyPanel() {
   const { totalElements } = pages[pages.length - 1] || {};
 
   useEffect(() => {
-    const handleScroll = async () => {
-      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-
-      const isFloor = scrollTop + clientHeight >= scrollHeight;
-
-      if (hasNextPage && !isFetchingNextPage && isFloor) await fetchNextPage();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   return (
     <section>

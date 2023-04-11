@@ -14,9 +14,11 @@ import { fetchProductOrder } from '@api/order';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getProductType } from '@utils/products';
 import { commaNumber } from '@utils/formats';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -72,7 +74,6 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
   const [checked, setChecked] = useState(false);
 
   const handleClick = () => {
-    // eslint-disable-next-line no-underscore-dangle
     const { source } =
       SessionStorage.get<{ source?: string }>(
         sessionStorageKeys.productDetailOrderEventProperties
@@ -82,7 +83,35 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
       name: attrProperty.name.ORDER_PAYMENT,
       title: attrProperty.title.PAYMENT,
       data: {
-        product,
+        product: {
+          id: product?.id,
+          brand: product?.brand?.name,
+          category: product?.category?.name,
+          parentId: product?.category?.parentId,
+          parentCategory:
+            FIRST_CATEGORIES[product?.category?.parentId as keyof typeof FIRST_CATEGORIES],
+          line: product?.line,
+          price: product?.price,
+          site: product?.site?.name,
+          cluster: product?.cluster,
+          scoreTotal: product?.scoreTotal,
+          scoreStatus: product?.scoreStatus,
+          scoreSeller: product?.scoreSeller,
+          scorePrice: product?.scorePrice,
+          scorePriceAvg: product?.scorePriceAvg,
+          scorePriceCount: product?.scorePriceCount,
+          scorePriceRate: product?.scorePriceRate,
+          imageCount: product?.imageCount,
+          isProductLegit: product?.isProductLegit,
+          productType: getProductType(
+            product?.productSeller?.site?.id,
+            product?.productSeller?.type
+          ),
+          sellerType: product?.sellerType,
+          productSellerId: product?.productSeller?.id,
+          productSellerType: product?.productSeller?.type,
+          productSellerAccount: product?.productSeller?.account
+        },
         order: data
       },
       source

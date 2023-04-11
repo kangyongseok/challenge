@@ -201,7 +201,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
       component="section"
       direction="vertical"
       gap={32}
-      customStyle={{ padding: '32px 20px 85px' }}
+      customStyle={{ padding: '32px 20px 20px' }}
     >
       {isLoading ? (
         <>

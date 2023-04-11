@@ -22,6 +22,8 @@ import {
   ChannelMoreMenuBottomSheet,
   ChannelProductStatusBottomSheet,
   ChannelPurchaseConfirmDialog,
+  ChannelSafePaymentGuideBanner,
+  ChannelSafePaymentGuideDialog,
   ChannelSaleRequestRefuseDialog
 } from '@components/pages/channel';
 
@@ -33,7 +35,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchChannel } from '@api/channel';
 
-import { SELLER_STATUS, channelUserType, productSellerType } from '@constants/user';
+import { channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import {
   IOS_SAFE_AREA_BOTTOM,
@@ -142,9 +144,6 @@ function Chanel() {
     [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked, isAdminBlockUser]
   );
 
-  const isCamelAuthSeller =
-    SELLER_STATUS[product?.productSeller?.type as keyof typeof SELLER_STATUS] ===
-    SELLER_STATUS['3'];
   const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
 
   const routingRef = useRef(false);
@@ -473,13 +472,13 @@ function Chanel() {
                       })
                     }
                   />
-                  {isCamelAuthSeller && <ChannelCamelAuthFixBanner />}
                   {isExternalPlatform && <ChannelCamelAuthFixBanner type="external" />}
                 </>
               )}
             {!!appointment && showAppointmentBanner && (
               <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
             )}
+            {!showAppointmentBanner && !isExternalPlatform && <ChannelSafePaymentGuideBanner />}
             {unreadCount > 0 && (
               <Flexbox
                 justifyContent="center"
@@ -519,6 +518,7 @@ function Chanel() {
                 showAppointmentBanner={showAppointmentBanner}
                 showNewMessageNotification={unreadCount > 0}
                 showActionButtons={showActionButtons}
+                showSafePaymentGuideBanner={!showAppointmentBanner && !isExternalPlatform}
                 messagesRef={messagesRef}
                 hasMorePrev={hasMorePrev}
                 hasUserReview={!!userReview}
@@ -616,6 +616,7 @@ function Chanel() {
         refetchChannel={refetch}
       />
       <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
+      <ChannelSafePaymentGuideDialog />
     </>
   );
 }

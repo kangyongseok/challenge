@@ -5,11 +5,11 @@ import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQueries } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { ProductGridCard } from '@components/UI/molecules';
+import { NewProductGridCard } from '@components/UI/molecules';
 import { CamelAuthLabel } from '@components/UI/atoms';
 
 import type { AccessUser } from '@dto/userAuth';
-import type { Product, ProductResult } from '@dto/product';
+import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
@@ -18,7 +18,6 @@ import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 import { SELLER_STATUS, productSellerType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
-import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -122,40 +121,6 @@ function ProductSellerProductList({
         tab: 'products'
       }
     });
-  };
-
-  const handleWishAtt = (productResult: ProductResult, i: number) => {
-    return {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.SELLER_INFO,
-      id: productResult.id,
-      index: i + 1,
-      brand: productResult.brand.name,
-      category: productResult.category.name,
-      parentId: productResult.category.parentId,
-      site: productResult.site.name,
-      price: productResult.price,
-      scoreTotal: productResult.scoreTotal,
-      cluster: productResult.cluster,
-      source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO,
-      sellerType: productResult.sellerType
-    };
-  };
-
-  const handleProductAtt = (productResult: ProductResult, i: number) => {
-    return {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.SELLER_INFO,
-      index: i + 1,
-      id: productResult.id,
-      brand: productResult.brand.name,
-      category: productResult.category.name,
-      parentCategory: FIRST_CATEGORIES[productResult.category.parentId as number],
-      site: productResult.site.name,
-      price: productResult.price,
-      source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO,
-      sellerType: productResult.sellerType
-    };
   };
 
   useEffect(() => {
@@ -296,20 +261,18 @@ function ProductSellerProductList({
           ? Array.from({ length: 5 }, (_, index) => (
               <ImageSkeleton key={`seller-product-${index}`} />
             ))
-          : sellerProducts.content?.map((sellerProduct, i) => (
+          : sellerProducts.content?.map((sellerProduct, index) => (
               <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
-                <ProductGridCard
+                <NewProductGridCard
+                  variant="swipeX"
                   product={sellerProduct}
-                  wishAtt={handleWishAtt(sellerProduct, i)}
-                  productAtt={handleProductAtt(sellerProduct, i)}
-                  name={attrProperty.productName.PRODUCT_DETAIL}
-                  isRound
-                  compact
-                  gap={17}
-                  source={attrProperty.source.PRODUCT_DETAIL_SELLER_INFO}
-                  hideProductLabel
-                  hideAreaWithDateInfo
-                  hideWishButton={roleSellerUserId === accessUser?.userId}
+                  hideWishButton
+                  hideMetaInfo
+                  hideAreaInfo
+                  attributes={{
+                    index: index + 1,
+                    source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO
+                  }}
                 />
               </Box>
             ))}

@@ -1,17 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  Index,
-  InfiniteLoader,
-  List,
-  ListRowProps,
-  WindowScroller
-} from 'react-virtualized';
 import { useRouter } from 'next/router';
 import { Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -29,10 +18,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-const cache = new CellMeasurerCache({
-  fixedWidth: true
-});
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface UserInfoReviewsPanelProps {
   userId: number;
@@ -41,6 +27,9 @@ interface UserInfoReviewsPanelProps {
 function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { scrollToReviewUserId } = router.query;
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const setToastState = useSetRecoilState(toastState);
 
@@ -51,12 +40,17 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     useMutation(postReviewReport);
 
   const params = useMemo(() => ({ userId, size: 20 }), [userId]);
+
+  const scrollDoneRef = useRef(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
   const {
     data: { pageParams = [], pages = [] } = {},
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
+    isLoading,
+    isFetching
   } = useInfiniteQuery(
     queryKeys.users.reviewsByUserId(params),
     async ({ pageParam = 0 }) => fetchReviewsByUserId({ ...params, page: pageParam }),
@@ -81,16 +75,6 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
   );
 
   const userReviews = useMemo(() => pages.flatMap(({ content }) => content), [pages]);
-
-  const loadMoreRows = useCallback(async () => {
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    await fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const handleResize = useCallback(() => {
-    cache.clearAll();
-  }, []);
 
   const handleClickBlock = useCallback(
     (reviewId: number) => () => {
@@ -164,38 +148,31 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     ]
   );
 
-  const rowRenderer = useCallback(
-    ({ key, index, parent, style }: ListRowProps) => {
-      const review = userReviews[index];
-
-      return review ? (
-        // @ts-ignore
-        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          <div style={{ ...style, paddingBottom: 12 }}>
-            <ReviewCard
-              reportStatus={review.reportType as keyof typeof REPORT_STATUS}
-              creator={review.creator}
-              isMyReview={review.createUserId === accessUser?.userId}
-              content={review.content}
-              score={Number(review.score || '')}
-              maxScore={Number(review.score || '') > 5 ? 10 : 5}
-              onClickBlock={handleClickBlock(review.id)}
-              onClickReport={handleClickReport(review.id)}
-            />
-          </div>
-        </CellMeasurer>
-      ) : null;
-    },
-    [accessUser?.userId, handleClickBlock, handleClickReport, userReviews]
-  );
+  useEffect(() => {
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    if (!isLoading && !scrollDoneRef.current) {
+      const lastReviewEl = document.getElementsByClassName(`review-${scrollToReviewUserId}`)[0];
 
+      if (lastReviewEl) {
+        scrollDoneRef.current = true;
+        scrollTimerRef.current = setTimeout(() => {
+          window.scrollTo({
+            top: lastReviewEl.getBoundingClientRect().top - 200,
+            behavior: 'smooth'
+          });
+        }, 700);
+      }
+    }
+  }, [scrollToReviewUserId, isLoading, isFetching, pages]);
+
+  useEffect(() => {
     return () => {
-      window.removeEventListener('resize', handleResize);
+      clearTimeout(scrollTimerRef.current);
     };
-  }, [handleResize]);
+  }, []);
 
   return !isLoading && userReviews.length === 0 ? (
     <Flexbox
@@ -212,59 +189,32 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       </Typography>
     </Flexbox>
   ) : (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      gap={isLoading ? 12 : 0}
-      customStyle={{ padding: 20 }}
-    >
-      {isLoading ? (
-        Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton
-            // eslint-disable-next-line react/no-array-index-key
-            key={`profle-review-card-${index}`}
-            width="100%"
-            height={62}
-            round={8}
-            disableAspectRatio
-          />
-        ))
-      ) : (
-        // @ts-ignore
-        <InfiniteLoader
-          isRowLoaded={({ index }: Index) => !!userReviews[index]}
-          loadMoreRows={loadMoreRows}
-          rowCount={hasNextPage ? userReviews.length + 1 : userReviews.length}
-        >
-          {({ registerChild, onRowsRendered }) => (
-            // @ts-ignore
-            <WindowScroller>
-              {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                // @ts-ignore
-                <AutoSizer disableHeight onResize={handleResize}>
-                  {({ width }) => (
-                    // @ts-ignore
-                    <List
-                      ref={registerChild}
-                      onRowsRendered={onRowsRendered}
-                      width={width}
-                      autoHeight
-                      height={height}
-                      rowCount={userReviews.length}
-                      rowHeight={cache.rowHeight}
-                      rowRenderer={rowRenderer}
-                      scrollTop={scrollTop}
-                      scrollLeft={scrollLeft}
-                      isScrolling={isScrolling}
-                      deferredMeasurementCache={cache}
-                    />
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
-          )}
-        </InfiniteLoader>
-      )}
+    <Flexbox component="section" direction="vertical" gap={12} customStyle={{ padding: 20 }}>
+      {isLoading
+        ? Array.from({ length: 10 }).map((_, index) => (
+            <Skeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`profle-review-card-skeleton-${index}`}
+              width="100%"
+              height={62}
+              round={8}
+              disableAspectRatio
+            />
+          ))
+        : userReviews.map((review) => (
+            <ReviewCard
+              key={`profle-review-card-${review.id}`}
+              reportStatus={review.reportType as keyof typeof REPORT_STATUS}
+              creator={review.creator}
+              isMyReview={review.createUserId === accessUser?.userId}
+              content={review.content}
+              score={Number(review.score || '')}
+              maxScore={Number(review.score || '') > 5 ? 10 : 5}
+              reviewCreatedUserId={review.createUserId}
+              onClickBlock={handleClickBlock(review.id)}
+              onClickReport={handleClickReport(review.id)}
+            />
+          ))}
     </Flexbox>
   );
 }

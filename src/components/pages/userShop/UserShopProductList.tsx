@@ -271,12 +271,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   return !isLoading && contents.length === 0 ? (
     <UserShopEmpty tab={tab} />
   ) : (
-    <Flexbox
-      direction="vertical"
-      component="section"
-      gap={20}
-      customStyle={{ padding: '20px 20px 100px 20px' }}
-    >
+    <Flexbox direction="vertical" component="section" gap={20} customStyle={{ padding: 20 }}>
       {isLoading ? (
         <Flexbox direction="vertical" gap={32}>
           {Array.from(new Array(6), (_, index) => (

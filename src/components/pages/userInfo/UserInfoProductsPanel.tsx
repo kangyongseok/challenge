@@ -1,21 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useCallback, useEffect, useMemo } from 'react';
+import { Fragment, useCallback, useEffect, useMemo } from 'react';
 
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  InfiniteLoader,
-  List,
-  WindowScroller
-} from 'react-virtualized';
-import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Grid, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import styled from '@emotion/styled';
 
-import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import { NewProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
 
@@ -30,9 +19,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-const cache = new CellMeasurerCache({
-  fixedWidth: true
-});
+import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface UserInfoProductsPanelProps {
   userId: number;
@@ -40,6 +27,8 @@ interface UserInfoProductsPanelProps {
 
 function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
   const router = useRouter();
+
+  const { triggered } = useDetectScrollFloorTrigger();
 
   const params = useMemo(() => ({ userId, size: 20 }), [userId]);
   const {
@@ -83,44 +72,6 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
     return newGroupedProducts.filter((product) => product.length);
   }, [pages]);
 
-  const handleWishAtt = (product: ProductResult, i: number) => {
-    return {
-      name: attrProperty.name.SELLER_INFO,
-      title: attrProperty.title.SELLER_PRODUCT,
-      id: product.id,
-      index: i + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      site: product.site.name,
-      price: product.price,
-      cluster: product.cluster,
-      source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT,
-      sellerType: product.sellerType
-    };
-  };
-
-  const handleProductAtt = (product: ProductResult, i: number) => {
-    return {
-      name: attrProperty.name.SELLER_INFO,
-      title: attrProperty.title.SELLER_PRODUCT,
-      id: product.id,
-      index: i + 1,
-      brand: product.brand.name,
-      category: product.category.name,
-      parentId: product.category.parentId,
-      site: product.site.name,
-      price: product.price,
-      cluster: product.cluster,
-      source: attrProperty.source.MAIN_PERSONAL,
-      sellerType: product.sellerType,
-      productSellerId: product.productSeller.id,
-      productSellerType: product.productSeller.type,
-      productSellerAccount: product.productSeller.account,
-      useChat: product.sellerType !== productSellerType.collection
-    };
-  };
-
   const handleClickProduct = useCallback(
     (product: ProductResult, id: number) => () => {
       logEvent(attrKeys.userShop.CLICK_PRODUCT_DETAIL, {
@@ -140,70 +91,11 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
     [router]
   );
 
-  const loadMoreRows = useCallback(async () => {
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    await fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const handleResize = useCallback(() => {
-    cache.clearAll();
-  }, []);
-
-  const rowRenderer = useCallback(
-    ({ key, index, parent, style }: ListRowProps) => {
-      const groupedProduct = groupedProducts[index] || [];
-      const firstProduct = groupedProduct[0];
-      const secondProduct = groupedProduct[1];
-
-      return firstProduct || secondProduct ? (
-        // @ts-ignore
-        <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          {({ registerChild, measure }) => (
-            <ProductGridCardBox
-              ref={(ref) => {
-                if (ref && registerChild) registerChild(ref);
-              }}
-              style={style}
-            >
-              {firstProduct && (
-                <ProductGridCard
-                  product={firstProduct}
-                  measure={measure}
-                  wishAtt={handleWishAtt(firstProduct, index)}
-                  productAtt={handleProductAtt(firstProduct, index)}
-                  name={attrProperty.productName.USER_SHOP}
-                  source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(firstProduct, firstProduct.id)}
-                />
-              )}
-              {secondProduct && (
-                <ProductGridCard
-                  product={secondProduct}
-                  measure={measure}
-                  wishAtt={handleWishAtt(secondProduct, index)}
-                  productAtt={handleProductAtt(firstProduct, index)}
-                  name={attrProperty.productName.USER_SHOP}
-                  source={attrProperty.productSource.USER_SHOP_PRODUCT}
-                  onClick={handleClickProduct(secondProduct, secondProduct.id)}
-                />
-              )}
-            </ProductGridCardBox>
-          )}
-        </CellMeasurer>
-      ) : null;
-    },
-    [groupedProducts, handleClickProduct]
-  );
-
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
+  }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [handleResize]);
-
+  // eslint-disable-next-line no-nested-ternary
   return !isLoading && groupedProducts.length === 0 ? (
     <Flexbox
       direction="vertical"
@@ -218,64 +110,48 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
         판매중인 매물이 없어요
       </Typography>
     </Flexbox>
+  ) : isLoading ? (
+    <Grid component="section" container rowGap={32}>
+      {Array.from(new Array(10), (_, index) => (
+        <Grid key={`product-grid-card-skeleton-${index}`} item xs={2}>
+          <ProductGridCardSkeleton />
+        </Grid>
+      ))}
+    </Grid>
   ) : (
-    <Flexbox direction="vertical" component="section" customStyle={{ paddingBottom: 100 }}>
-      {isLoading ? (
-        <ProductGridList>
-          {Array.from(new Array(10), (_, index) => (
-            <ProductGridCardSkeleton key={`product-grid-card-skeleton-${index}`} />
-          ))}
-        </ProductGridList>
-      ) : (
-        // @ts-ignore
-        <InfiniteLoader
-          isRowLoaded={({ index }: Index) => !!groupedProducts[index]}
-          loadMoreRows={loadMoreRows}
-          rowCount={hasNextPage ? groupedProducts.length + 10 : groupedProducts.length}
-        >
-          {({ registerChild, onRowsRendered }) => (
-            // @ts-ignore
-            <WindowScroller>
-              {({ height, isScrolling, scrollTop, scrollLeft }) => (
-                // @ts-ignore
-                <AutoSizer disableHeight onResize={handleResize}>
-                  {({ width }) => (
-                    // @ts-ignore
-                    <List
-                      ref={registerChild}
-                      onRowsRendered={onRowsRendered}
-                      autoHeight
-                      width={width}
-                      height={height}
-                      isScrolling={isScrolling}
-                      scrollTop={scrollTop}
-                      scrollLeft={scrollLeft}
-                      rowCount={groupedProducts.length}
-                      rowHeight={cache.rowHeight}
-                      rowRenderer={rowRenderer}
-                      deferredMeasurementCache={cache}
-                    />
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
+    <Grid component="section" container rowGap={32}>
+      {groupedProducts.map((groupedProduct) => (
+        <Fragment key={`grouped-product-${groupedProduct[0]?.id}-${groupedProduct[1]?.id}`}>
+          {groupedProduct[0] && (
+            <Grid item xs={2}>
+              <NewProductGridCard
+                product={groupedProduct[0]}
+                onClick={handleClickProduct(groupedProduct[0], groupedProduct[0].id)}
+                attributes={{
+                  name: attrProperty.name.SELLER_INFO,
+                  title: attrProperty.title.SELLER_PRODUCT,
+                  source: attrProperty.source.MAIN_PERSONAL
+                }}
+              />
+            </Grid>
           )}
-        </InfiniteLoader>
-      )}
-    </Flexbox>
+          {groupedProduct[1] && (
+            <Grid item xs={2}>
+              <NewProductGridCard
+                product={groupedProduct[1]}
+                onClick={handleClickProduct(groupedProduct[1], groupedProduct[1].id)}
+                attributes={{
+                  name: attrProperty.name.SELLER_INFO,
+                  title: attrProperty.title.SELLER_PRODUCT,
+                  source: attrProperty.source.MAIN_PERSONAL
+                }}
+              />
+            </Grid>
+          )}
+        </Fragment>
+      ))}
+    </Grid>
   );
 }
-
-const ProductGridList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  row-gap: 32px;
-`;
-
-const ProductGridCardBox = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding-bottom: 32px;
-`;
 
 export default UserInfoProductsPanel;

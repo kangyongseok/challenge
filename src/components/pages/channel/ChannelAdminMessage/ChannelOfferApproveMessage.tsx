@@ -21,6 +21,7 @@ interface ChannelOfferApproveMessageProps {
   isAdminBlockUser: boolean;
   isSeller: boolean;
   status: number;
+  targetUserName?: string;
   onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -32,6 +33,7 @@ function ChannelOfferApproveMessage({
   isAdminBlockUser,
   isSeller,
   status,
+  targetUserName,
   onClickSafePayment
 }: ChannelOfferApproveMessageProps) {
   const {
@@ -120,9 +122,8 @@ function ChannelOfferApproveMessage({
     );
   }
 
-  // 1. 구매자가 제안 수락
-  // 2. 판매자가 역제안 한 것을 구매자가 수락했을 때 판매자에게 보여지는 메시지
-  if (!isOfferRequestUser || (isOfferRequestUser && isSeller)) {
+  // 구매자의 제안 수락
+  if (!isOfferRequestUser) {
     return (
       <Typography
         variant="body2"
@@ -141,7 +142,35 @@ function ChannelOfferApproveMessage({
       >
         {offer?.userName}님의 제안을 수락했어요.
         <br />
-        {dayjs(offer?.dateExpired).format('MM월 DD일(ddd)')}까지 {commaNumber(offer?.price || 0)}
+        {dayjs(offer?.dateExpired).format('MM월 DD일(ddd)')}까지 {offer?.userName}님에게만{' '}
+        {commaNumber(offer?.price || 0)}
+        원으로 노출됩니다.
+      </Typography>
+    );
+  }
+
+  // 판매자가 역제안 한 것을 구매자가 수락했을 때
+  if (isOfferRequestUser && isSeller) {
+    return (
+      <Typography
+        variant="body2"
+        weight="medium"
+        customStyle={{
+          margin: '20px 0',
+          textAlign: 'center',
+          color: common.ui60,
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+          '& span': {
+            marginLeft: 3,
+            textDecoration: 'underline'
+          }
+        }}
+      >
+        {offer?.userName}님의 제안을 수락했어요.
+        <br />
+        {dayjs(offer?.dateExpired).format('MM월 DD일(ddd)')}까지 {targetUserName}님에게만{' '}
+        {commaNumber(offer?.price || 0)}
         원으로 노출됩니다.
       </Typography>
     );
