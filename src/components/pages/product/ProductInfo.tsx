@@ -570,16 +570,16 @@ function ProductInfo({
               </Flexbox>
             </Flexbox>
           </Flexbox>
-          <Tooltip
-            open={!isDoneWishOnBoarding}
-            message="찜하면 가격이 내려갔을 때 알려드려요!"
-            triangleLeft={179}
-            customStyle={{
-              top: -3,
-              left: -48
-            }}
-          >
-            {!isCamelSellerProduct && (
+          {!isCamelSellerProduct && (
+            <Tooltip
+              open={!isDoneWishOnBoarding}
+              message="찜하면 가격이 내려갔을 때 알려드려요!"
+              triangleLeft={179}
+              customStyle={{
+                top: -3,
+                left: -48
+              }}
+            >
               <Flexbox
                 ref={wishButtonRef}
                 direction="vertical"
@@ -621,37 +621,36 @@ function ProductInfo({
                   </>
                 )}
               </Flexbox>
-            )}
-          </Tooltip>
+            </Tooltip>
+          )}
         </Flexbox>
         {renderCertificationBanner()}
-        {product?.site.code === 'CAMELSELLER' &&
-          (!!product?.area || !!distanceText || find(product.labels, { name: '33' })) && (
-            <Flexbox
-              alignment="center"
-              gap={4}
-              customStyle={{
-                margin: renderCertificationBanner() ? '20px 0' : '32px 0 20px'
-              }}
-            >
-              {!!product.labels.length && find(product.labels, { name: '33' }) ? (
-                <Label variant="ghost" brandColor="gray" text="배송비 포함" />
-              ) : (
-                <Label variant="ghost" brandColor="gray" text="배송비 별도" />
-              )}
-              {distanceText === '직거래' && (
-                <Label variant="ghost" brandColor="gray" text={distanceText} />
-              )}
-              {product?.area && !!(distanceText === '직거래' || distanceText === '모든위치') && (
-                <Label
-                  variant="ghost"
-                  brandColor="gray"
-                  startIcon={<Icon name="PinFilled" />}
-                  text={getProductArea(product.area)}
-                />
-              )}
-            </Flexbox>
-          )}
+        {(!!product?.area || !!distanceText || find(product.labels, { name: '33' })) && (
+          <Flexbox
+            alignment="center"
+            gap={4}
+            customStyle={{
+              margin: renderCertificationBanner() ? '20px 0' : '32px 0 20px'
+            }}
+          >
+            {!!product.labels.length && find(product.labels, { name: '33' }) ? (
+              <Label variant="ghost" brandColor="gray" text="배송비 포함" />
+            ) : (
+              <Label variant="ghost" brandColor="gray" text="배송비 별도" />
+            )}
+            {distanceText === '직거래' && (
+              <Label variant="ghost" brandColor="gray" text={distanceText} />
+            )}
+            {product?.area && (
+              <Label
+                variant="ghost"
+                brandColor="gray"
+                startIcon={<Icon name="PinFilled" />}
+                text={getProductArea(product.area)}
+              />
+            )}
+          </Flexbox>
+        )}
         {product?.site.code === 'CAMELSELLER' && (
           <Flexbox direction="vertical" gap={8}>
             {templateInfoData.map((stateData) => (
@@ -670,14 +669,14 @@ function ProductInfo({
         )}
         {isExpended ? (
           <Typography
-            variant="body1"
+            variant="h4"
             dangerouslySetInnerHTML={{
               __html: convertedDescription !== 'null' ? convertedDescription : ''
             }}
             customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
           />
         ) : (
-          <Content ref={descriptionRef} component="article" variant="body1" isClamped={isClamped}>
+          <Content ref={descriptionRef} component="article" variant="h4" isClamped={isClamped}>
             <LinesEllipsis
               text={convertedDescription !== 'null' ? convertedDescription : ''}
               maxLine="20"
