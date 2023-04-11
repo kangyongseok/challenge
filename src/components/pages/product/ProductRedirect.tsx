@@ -135,6 +135,12 @@ function ProductRedirect({
               );
               return;
             }
+            if (site.id === PRODUCT_SITE.MJOONGNA.id) {
+              window.webkit.messageHandlers.callExecuteApp.postMessage(
+                `jnapps3://?productseq=${postId}`
+              );
+              return;
+            }
           }
           window.location.replace(productUrl);
           windowCloseTimerRef.current = setTimeout(() => window.close(), windowCloseTimeout);
@@ -150,6 +156,10 @@ function ProductRedirect({
             }
             if (site.id === PRODUCT_SITE.HELLO.id) {
               window.webview.callExecuteApp(`hellomarket://hellomarket.api/item/${postId}`);
+              return;
+            }
+            if (site.id === PRODUCT_SITE.MJOONGNA.id) {
+              window.webview.callExecuteApp(`jnapps3://?productseq=${postId}`);
               return;
             }
           }

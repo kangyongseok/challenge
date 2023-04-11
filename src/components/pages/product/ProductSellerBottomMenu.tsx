@@ -69,6 +69,7 @@ function ProductSellerBottomMenu({
 
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
+  const [openMore, setOpenMore] = useState(false);
 
   const isDeletedProduct = productStatusCode.deleted === status;
   const isTransferred =
@@ -125,6 +126,9 @@ function ProductSellerBottomMenu({
       updateMutation(
         { productId: parameter.productId, status: 1 },
         {
+          onSettled() {
+            refresh();
+          },
           onSuccess() {
             setTimeout(() => {
               setSelectTargetUserBottomSheetState({
@@ -133,7 +137,6 @@ function ProductSellerBottomMenu({
                 location: 'PRODUCT_DETAIL'
               });
             }, 500);
-            refresh();
           }
         }
       );
@@ -147,6 +150,9 @@ function ProductSellerBottomMenu({
         status: Number(dataset.statusId)
       },
       {
+        onSettled() {
+          refresh();
+        },
         onSuccess() {
           if (Number(dataset.statusId) === 0) {
             setToastState({
@@ -160,7 +166,6 @@ function ProductSellerBottomMenu({
             });
           }
           setOpenChangeStatus(false);
-          refresh();
         }
       }
     );
@@ -340,10 +345,7 @@ function ProductSellerBottomMenu({
             alignment="center"
             gap={7}
             customStyle={{ flex: 1 }}
-            onClick={() => {
-              setOpenChangeStatus(true);
-              if (product) setUserShopSelectedProductState(product);
-            }}
+            onClick={() => setOpenMore(true)}
           >
             <Icon name="MoreHorizFilled" color={common.ui60} />
             <Typography
@@ -384,6 +386,21 @@ function ProductSellerBottomMenu({
                 숨기기
               </Menu>
             )}
+          </Flexbox>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="xlarge"
+            onClick={() => setOpenChangeStatus(false)}
+          >
+            취소
+          </Button>
+        </Flexbox>
+      </BottomSheet>
+      <BottomSheet open={openMore} onClose={() => setOpenMore(false)} disableSwipeable>
+        <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
+          <Flexbox direction="vertical">
             {status !== 1 && isTransferred && (
               <Menu variant="h3" weight="medium" data-status-id={8} onClick={handleClickEdit}>
                 수정
@@ -408,7 +425,7 @@ function ProductSellerBottomMenu({
             variant="ghost"
             brandColor="black"
             size="xlarge"
-            onClick={() => setOpenChangeStatus(false)}
+            onClick={() => setOpenMore(false)}
           >
             취소
           </Button>
