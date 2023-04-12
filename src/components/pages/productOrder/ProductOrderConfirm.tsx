@@ -124,7 +124,8 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
       failUrl: `${window.location.href}/fail`,
       customerName: deliveryInfo?.name,
       customerMobilePhone: deliveryInfo?.phone,
-      customerEmail: accessUser?.email || undefined
+      customerEmail: accessUser?.email || undefined,
+      useEscrow: false
     });
   };
 

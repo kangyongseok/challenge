@@ -135,7 +135,6 @@ function SettingsTransferList() {
             {status === 2 && (
               <Chip
                 variant="ghost"
-                brandColor="red"
                 size="small"
                 isRound={false}
                 customStyle={{

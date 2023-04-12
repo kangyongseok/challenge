@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
@@ -32,6 +34,8 @@ function UserAvatar({
     }
   } = useTheme();
 
+  const [loadFail, setLoadFail] = useState(false);
+
   const labelText = getFormattedActivatedTime(dateActivated);
   const isActive = labelText.text === '접속중';
   const todayActivated = labelText.text === '오늘 접속';
@@ -42,14 +46,17 @@ function UserAvatar({
       alignment="center"
       customStyle={{ position: 'relative', ...customStyle, width: 'fit-content' }}
     >
-      {src ? (
+      {!loadFail && src ? (
         <UserImage
-          url={src}
+          src={src}
+          alt="User Avatar Img"
           width={width}
           height={height}
           isActive={isActive}
           isRound={isRound}
+          round={isRound ? '50%' : 16}
           showBorder={showBorder}
+          onError={() => setLoadFail(true)}
         />
       ) : (
         <IconBox width={width} height={height} isRound={isRound}>

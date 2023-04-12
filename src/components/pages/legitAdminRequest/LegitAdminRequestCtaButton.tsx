@@ -242,7 +242,7 @@ function LegitAdminRequestCtaButton() {
           </Button>
           <Button
             fullWidth
-            variant="outlineGhost"
+            variant="outline-ghost"
             brandColor="gray"
             size="xlarge"
             onClick={() =>

@@ -52,6 +52,7 @@ function ProductSellerProductList({
     sellerId,
     size: 3
   });
+  const [loadFail, setLoadFail] = useState(false);
   const [
     {
       data: sellerProducts,
@@ -154,12 +155,13 @@ function ProductSellerProductList({
         onClick={handleClickMoreList}
       >
         <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
-          {reviewInfo?.productSeller.image ? (
+          {!loadFail && reviewInfo?.productSeller?.image ? (
             <UserAvatar>
               <Image
-                src={`${reviewInfo?.productSeller.image}`}
+                src={reviewInfo?.productSeller?.image}
                 alt="프로필 이미지"
                 round="50%"
+                onError={() => setLoadFail(true)}
                 customStyle={{
                   borderRadius: '50%'
                 }}

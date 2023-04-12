@@ -1,4 +1,6 @@
-import { Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { useState } from 'react';
+
+import { Box, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -34,12 +36,33 @@ function UserInfoProfile({
   maxScore,
   dateActivated
 }: UserInfoProfileProps) {
+  const [loadFail, setLoadFail] = useState(false);
+
   return (
     <Box component="section">
       <ImageWrapper>
-        <BackgroundImage src={imageBackground || imageProfile || DEFAUT_BACKGROUND_IMAGE}>
-          <Blur />
-        </BackgroundImage>
+        {!loadFail ? (
+          <>
+            <BackgroundImage
+              src={imageBackground || imageProfile}
+              alt="BackgroundImg"
+              disableAspectRatio
+              disableOnBackground={false}
+              onError={() => setLoadFail(true)}
+            />
+            <Blur />
+          </>
+        ) : (
+          <>
+            <BackgroundImage
+              src={DEFAUT_BACKGROUND_IMAGE}
+              alt="BackgroundImg"
+              disableAspectRatio
+              disableOnBackground={false}
+            />
+            <Blur />
+          </>
+        )}
       </ImageWrapper>
       <Info>
         <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px 36px' }}>
@@ -96,14 +119,10 @@ const ImageWrapper = styled.div`
   );
 `;
 
-const BackgroundImage = styled.div<{ src: string }>`
+const BackgroundImage = styled(Image)`
   position: absolute;
   width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-image: url(${({ src }) => src});
+  min-height: calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + 160px);
 `;
 
 const Blur = styled.div`
@@ -113,6 +132,8 @@ const Blur = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
+  top: 0;
+  left: 0;
   background: ${({ theme: { palette } }) => palette.common.overlay20};
   backdrop-filter: blur(8px);
 `;

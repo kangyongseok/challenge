@@ -132,7 +132,9 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
         {!type &&
           isLoading &&
           Array.from({ length: 5 }, (_, i) => i).map((v) => (
-            <NewProductGridCardSkeleton key={`related-product-${v}-skeleton`} variant="swipeX" />
+            <Box customStyle={{ minWidth: 144 }} key={`related-product-${v}-skeleton`}>
+              <NewProductGridCardSkeleton variant="swipeX" />
+            </Box>
           ))}
         {!type &&
           !isLoading &&

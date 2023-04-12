@@ -188,7 +188,7 @@ function LegitStatusCtaButton() {
           >
             <Flexbox gap={8}>
               <Button
-                variant="outlineGhost"
+                variant="outline-ghost"
                 fullWidth
                 size="xlarge"
                 onClick={handleClickProductDetail}

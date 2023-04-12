@@ -123,7 +123,7 @@ function LegitAdminRequestPanel() {
         {!isLoading && isHead && (
           <>
             <Chip
-              variant={(params.status || []).includes(10) ? 'solid' : 'outlineGhost'}
+              variant={(params.status || []).includes(10) ? 'solid' : 'outline-ghost'}
               brandColor={(params.status || []).includes(10) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -145,7 +145,7 @@ function LegitAdminRequestPanel() {
               감정신청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(21) ? 'solid' : 'outlineGhost'}
+              variant={(params.status || []).includes(21) ? 'solid' : 'outline-ghost'}
               brandColor={(params.status || []).includes(21) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -167,7 +167,7 @@ function LegitAdminRequestPanel() {
               작성완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(12) ? 'solid' : 'outlineGhost'}
+              variant={(params.status || []).includes(12) ? 'solid' : 'outline-ghost'}
               brandColor={(params.status || []).includes(12) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -189,7 +189,7 @@ function LegitAdminRequestPanel() {
               보완요청
             </Chip>
             <Chip
-              variant={(params.status || []).includes(13) ? 'solid' : 'outlineGhost'}
+              variant={(params.status || []).includes(13) ? 'solid' : 'outline-ghost'}
               brandColor={(params.status || []).includes(13) ? 'black' : undefined}
               endIcon={
                 <Typography
@@ -211,7 +211,7 @@ function LegitAdminRequestPanel() {
               보완완료
             </Chip>
             <Chip
-              variant={(params.status || []).includes(30) ? 'solid' : 'outlineGhost'}
+              variant={(params.status || []).includes(30) ? 'solid' : 'outline-ghost'}
               brandColor={(params.status || []).includes(30) ? 'black' : undefined}
               endIcon={
                 <Typography
