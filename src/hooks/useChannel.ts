@@ -49,16 +49,7 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
   const sendbirdSdk = Sendbird.getInstance();
   const channelHandler = new GroupChannelHandler({
     onMessageReceived: (channel, message) => {
-      if (message.customType?.indexOf('order') !== -1) {
-        useQueryResult.refetch();
-      }
-
-      if (
-        message.customType?.indexOf('order') !== -1 ||
-        message.customType?.indexOf('offer') !== -1
-      ) {
-        useQueryResult.refetch();
-      }
+      useQueryResult.refetch();
 
       if (
         !compareIds(channel?.url, currentChannel.current?.url) ||
