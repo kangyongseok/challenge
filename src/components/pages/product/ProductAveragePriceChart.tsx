@@ -142,12 +142,12 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
       setData({
         labels: [
           // `${dayjs().set('month', -6).format('YY년')} ${dayjs().set('month', -6).format('M')}월`,
-          `${dayjs().set('month', -5).format('M')}월`,
-          `${dayjs().set('month', -4).format('M')}월`,
-          `${dayjs().set('month', -3).format('M')}월`,
-          `${dayjs().set('month', -2).format('M')}월`,
-          `${dayjs().set('month', -1).format('M')}월`,
-          `${dayjs().set('month', 0).format('M')}월`
+          `${dayjs().subtract(6, 'month').format('M')}월`,
+          `${dayjs().subtract(5, 'month').format('M')}월`,
+          `${dayjs().subtract(4, 'month').format('M')}월`,
+          `${dayjs().subtract(3, 'month').format('M')}월`,
+          `${dayjs().subtract(2, 'month').format('M')}월`,
+          `${dayjs().subtract(1, 'month').format('M')}월`
         ],
         datasets: [
           {

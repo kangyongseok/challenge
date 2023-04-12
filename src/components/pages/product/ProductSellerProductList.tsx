@@ -115,7 +115,8 @@ function ProductSellerProductList({
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
       pathname:
-        product?.sellerType === productSellerType.collection
+        product?.sellerType === productSellerType.collection ||
+        product?.sellerType === productSellerType.externalPlatform
           ? `/sellerInfo/${sellerId}`
           : `/userInfo/${roleSellerUserId}`,
       query: {
