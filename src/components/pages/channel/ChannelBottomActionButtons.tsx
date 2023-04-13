@@ -324,96 +324,102 @@ function ChannelBottomActionButtons({
 
   return (
     <ActionButtons messageInputHeight={messageInputHeight}>
-      <Chip
-        size="large"
-        variant="outline"
-        startIcon={<Icon name="CameraFilled" />}
-        disabled={isLoading}
-      >
-        <HiddenInput
-          id="fileUpload"
-          ref={hiddenInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <Typography variant="h4" onClick={handleClickPhoto} customStyle={{ whiteSpace: 'nowrap' }}>
-          사진
-        </Typography>
-      </Chip>
-      {!isDeletedProduct && !isExternalPlatform && (
-        <>
-          {isPossibleOffer && currentOffer?.status !== 1 && (
-            <Chip
-              size="large"
-              variant="outline"
-              startIcon={<Icon name="WonCircleFilled" />}
-              onClick={handleClickPriceOffer}
-              disabled={isLoading}
-            >
-              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-                가격제안
-              </Typography>
-            </Chip>
-          )}
-          {showAppointmentButton && !showPurchaseConfirmButton && (
-            <Chip
-              size="large"
-              variant="outline"
-              startIcon={<Icon name="DateFilled" />}
-              disabled={isLoading}
-            >
-              <Typography
-                variant="h4"
-                onClick={handleClickAppointment}
-                customStyle={{ whiteSpace: 'nowrap' }}
+      <ButtonsWrap gap={8}>
+        <Chip
+          size="large"
+          variant="outline"
+          startIcon={<Icon name="CameraFilled" />}
+          disabled={isLoading}
+        >
+          <HiddenInput
+            id="fileUpload"
+            ref={hiddenInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+          <Typography
+            variant="h4"
+            onClick={handleClickPhoto}
+            customStyle={{ whiteSpace: 'nowrap' }}
+          >
+            사진
+          </Typography>
+        </Chip>
+        {!isDeletedProduct && !isExternalPlatform && (
+          <>
+            {isPossibleOffer && currentOffer?.status !== 1 && (
+              <Chip
+                size="large"
+                variant="outline"
+                startIcon={<Icon name="WonCircleFilled" />}
+                onClick={handleClickPriceOffer}
+                disabled={isLoading}
               >
-                직거래 약속
-              </Typography>
-            </Chip>
-          )}
-          {showPurchaseConfirmButton && (
-            <Chip
-              size="large"
-              variant="outline"
-              startIcon={<Icon name="CheckOutlined" />}
-              onClick={() =>
-                setOpenState((prevState) => ({
-                  ...prevState,
-                  open: true
-                }))
-              }
-              disabled={isLoading}
-            >
-              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-                구매확정
-              </Typography>
-            </Chip>
-          )}
-          {showReviewButton && (
-            <Chip size="large" startIcon={<Icon name="EditFilled" />}>
-              <Typography
-                variant="h4"
-                onClick={handleClickReview}
-                customStyle={{ whiteSpace: 'nowrap' }}
+                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                  가격제안
+                </Typography>
+              </Chip>
+            )}
+            {showAppointmentButton && !showPurchaseConfirmButton && (
+              <Chip
+                size="large"
+                variant="outline"
+                startIcon={<Icon name="DateFilled" />}
+                disabled={isLoading}
               >
-                후기 보내기
-              </Typography>
-            </Chip>
-          )}
-          {!showReviewButton && (
-            <Chip size="large" variant="outline" disabled={isLoading}>
-              <Typography
-                variant="h4"
-                onClick={handleClickAsk}
-                customStyle={{ whiteSpace: 'nowrap' }}
+                <Typography
+                  variant="h4"
+                  onClick={handleClickAppointment}
+                  customStyle={{ whiteSpace: 'nowrap' }}
+                >
+                  직거래 약속
+                </Typography>
+              </Chip>
+            )}
+            {showPurchaseConfirmButton && (
+              <Chip
+                size="large"
+                variant="outline"
+                startIcon={<Icon name="CheckOutlined" />}
+                onClick={() =>
+                  setOpenState((prevState) => ({
+                    ...prevState,
+                    open: true
+                  }))
+                }
+                disabled={isLoading}
               >
-                결제/환불 문의
-              </Typography>
-            </Chip>
-          )}
-        </>
-      )}
+                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                  구매확정
+                </Typography>
+              </Chip>
+            )}
+            {showReviewButton && (
+              <Chip size="large" startIcon={<Icon name="EditFilled" />}>
+                <Typography
+                  variant="h4"
+                  onClick={handleClickReview}
+                  customStyle={{ whiteSpace: 'nowrap' }}
+                >
+                  후기 보내기
+                </Typography>
+              </Chip>
+            )}
+            {!showReviewButton && (
+              <Chip size="large" variant="outline" disabled={isLoading}>
+                <Typography
+                  variant="h4"
+                  onClick={handleClickAsk}
+                  customStyle={{ whiteSpace: 'nowrap' }}
+                >
+                  결제/환불 문의
+                </Typography>
+              </Chip>
+            )}
+          </>
+        )}
+      </ButtonsWrap>
       <CameraOptionsWrapper open={openCameraOptionMenu}>
         <CameraOptions>
           <Flexbox
@@ -452,12 +458,15 @@ const ActionButtons = styled.div<{ messageInputHeight: number }>`
   padding: 0 16px;
   display: flex;
   column-gap: 8px;
-  overflow-x: auto;
 
   button {
     padding: 8px 10px;
     border-radius: 8px;
   }
+`;
+
+const ButtonsWrap = styled(Flexbox)`
+  overflow-x: auto;
 `;
 
 const HiddenInput = styled.input`
