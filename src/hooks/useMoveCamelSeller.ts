@@ -33,6 +33,8 @@ import {
 } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
+import useOsAlarm from './useOsAlarm';
+
 interface UseMoveCamelSellerProps {
   attributes: {
     name: string;
@@ -59,6 +61,7 @@ export default function useMoveCamelSeller({
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
 
   const { data: accessUser } = useQueryAccessUser();
+  const setOsAlarm = useOsAlarm();
 
   const handleClick = () => {
     LocalStorage.set(SOURCE, source);
@@ -143,6 +146,8 @@ export default function useMoveCamelSeller({
     resetHasOpenedSurveyBottomSheetState();
 
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+
+    setOsAlarm();
 
     if (checkedProductPhotoUploadGuide) {
       if (router.query.banner) {

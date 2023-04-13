@@ -26,10 +26,11 @@ import {
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
-import { dialogState } from '@recoil/common';
+import { dialogState, loginBottomSheetState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useOsAlarm from '@hooks/useOsAlarm';
 
 function LegitFloatingButton() {
   const {
@@ -42,11 +43,13 @@ function LegitFloatingButton() {
   const [openLegitRecommendBottomSheet, setOpenLegitRecommendBottomSheet] = useRecoilState(
     legitOpenRecommendBottomSheetState
   );
+  const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
+  const setOsAlarm = useOsAlarm();
 
   const { isSuccess } = useQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets, {
     enabled: !!accessUser,
@@ -111,13 +114,25 @@ function LegitFloatingButton() {
     // 매물등록 후 사진감정 신청 중단한 케이스 있을 경우 초기화
     if (userData?.[SAVED_LEGIT_REQUEST]?.state?.productId) removeUserDate(SAVED_LEGIT_REQUEST);
 
+    if (!accessUser) {
+      setLoginBottomSheet({ open: true, returnUrl: '' });
+      return;
+    }
+
+    setOsAlarm();
     resetLegitRequestState();
-    router.push(
-      accessUser
-        ? { pathname: '/legit/request/selectCategory' }
-        : { pathname: '/login', query: { returnUrl: '/legit' } }
-    );
-  }, [userData, removeUserDate, resetLegitRequestState, router, accessUser, setDialogState]);
+
+    router.push({ pathname: '/legit/request/selectCategory' });
+  }, [
+    userData,
+    removeUserDate,
+    setOsAlarm,
+    resetLegitRequestState,
+    accessUser,
+    router,
+    setDialogState,
+    setLoginBottomSheet
+  ]);
 
   useEffect(() => {
     if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {

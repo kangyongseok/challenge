@@ -23,6 +23,8 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { getImagePathStaticParser } from '@utils/common';
+
 import ProductLastLowerPrice from './ProductLastLowerPrice';
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
 
@@ -242,8 +244,8 @@ function ProductImages({
           <SwiperSlide>
             <Img
               className="swiper-lazy"
-              src={product?.imageMain || ''}
-              data-src={product?.imageMain || ''}
+              src={getImagePathStaticParser(product?.imageMain || '')}
+              data-src={getImagePathStaticParser(product?.imageMain || '')}
               alt="Product Main Img"
               onLoad={() => setLoadedImageMain(true)}
               style={{ width: 0, height: 0, display: 'none' }}
@@ -272,7 +274,7 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={image}
+                      src={getImagePathStaticParser(image)}
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
                       data-index={i + 2}
@@ -308,7 +310,7 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={image}
+                      src={getImagePathStaticParser(image)}
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
                       data-index={i + 2}
@@ -321,7 +323,9 @@ function ProductImages({
                       }}
                     >
                       <BackgroundBlurImage
-                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                        imageUrl={getImagePathStaticParser(
+                          product?.imageMainLarge || (product?.imageMain as string)
+                        )}
                       />
                       <LastImageContents justifyContent="center" alignment="center">
                         {image.lastComponent}

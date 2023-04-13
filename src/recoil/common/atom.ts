@@ -217,3 +217,8 @@ export const exitNextStepBottomSheetState = atom({
   key: 'common/exitNextStepBottomSheetState',
   default: false
 });
+
+export const prevChannelAlarmPopup = atom({
+  key: 'common/prevChannelAlarmPopup',
+  default: false
+});

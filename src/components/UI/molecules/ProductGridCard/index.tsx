@@ -41,6 +41,7 @@ import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
+import useOsAlarm from '@hooks/useOsAlarm';
 
 import {
   Area,
@@ -165,6 +166,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
+  const setOsAlarm = useOsAlarm();
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
@@ -179,7 +181,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       if (onWishAfterChangeCallback && typeof onWishAfterChangeCallback === 'function') {
         await onWishAfterChangeCallback(product, isWish);
       }
-      UserTraceRecord.setExitWishChannel();
+
+      setOsAlarm();
+
       setToastState({
         type: 'product',
         status: 'successAddWish',
@@ -191,6 +195,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           router.push('/wishes');
         }
       });
+
+      UserTraceRecord.setExitWishChannel();
     }
   });
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove, {

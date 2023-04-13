@@ -31,6 +31,7 @@ import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductImageResize from '@hooks/useProductImageResize';
+import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard.styles';
 
@@ -131,6 +132,7 @@ function NewProductGridCard({
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
+  const setOsAlarm = useOsAlarm();
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
@@ -150,7 +152,7 @@ function NewProductGridCard({
         await onWishAfterChangeCallback(product, true);
       }
 
-      UserTraceRecord.setExitWishChannel();
+      setOsAlarm();
 
       setToastState({
         type: 'product',
@@ -164,6 +166,8 @@ function NewProductGridCard({
         }
       });
       await refetch();
+
+      UserTraceRecord.setExitWishChannel();
     }
   });
 

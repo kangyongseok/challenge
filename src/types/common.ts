@@ -195,7 +195,8 @@ export type DialogType =
   | 'endEvent'
   | 'notiChannelFalse'
   | 'notiDeviceFalse'
-  | 'requiredAppUpdateForSafePayment';
+  | 'requiredAppUpdateForSafePayment'
+  | 'osAlarm';
 
 export type ShareData = {
   title: string;

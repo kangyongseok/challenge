@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Box, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Label, Typography } from 'mrcamel-ui';
 
 import type { DialogType } from '@typings/common';
 
@@ -81,6 +81,28 @@ export const dialogTitle: Record<
       안전결제를 이용하려면
       <br />앱 업데이트가 필요해요
     </Box>
+  ),
+  osAlarm: (
+    <Flexbox
+      alignment="center"
+      justifyContent="center"
+      customStyle={{ position: 'relative', width: 70, height: 52, margin: '0 auto', marginTop: 10 }}
+    >
+      <Typography customStyle={{ fontSize: 52 }}>🔔</Typography>
+      <Label
+        variant="solid"
+        brandColor="black"
+        text="알림설정"
+        customStyle={{
+          position: 'absolute',
+          top: -5,
+          right: -20,
+          borderRadius: 12,
+          padding: '4px 8px',
+          minWidth: 59
+        }}
+      />
+    </Flexbox>
   )
 };
 
@@ -220,6 +242,16 @@ export const dialogContent = {
       <br />
       업데이트해주세요.
     </Typography>
+  ),
+  osAlarm: (
+    <>
+      <Typography variant="h3" weight="bold" customStyle={{ marginTop: 32 }}>
+        채팅과 가격 변동, 사진 감정결과를
+        <br />
+        실시간으로 보내드려요
+      </Typography>
+      <Typography customStyle={{ marginTop: 8 }}>설정에서 언제든 변경이 가능해요</Typography>
+    </>
   )
 };
 
@@ -306,6 +338,7 @@ export const secondButtonText: Record<
     | 'notiChannelFalse'
     | 'notiDeviceFalse'
     | 'requiredAppUpdateForSafePayment'
+    | 'osAlarm'
   >,
   string | number | ReactElement
 > = {
@@ -344,7 +377,8 @@ export const secondButtonText: Record<
   endEvent: '확인',
   notiChannelFalse: '채팅알림 켜기',
   notiDeviceFalse: '알림 켜기',
-  requiredAppUpdateForSafePayment: '3초 업데이트'
+  requiredAppUpdateForSafePayment: '3초 업데이트',
+  osAlarm: '확인'
 };
 
 const dialog = {

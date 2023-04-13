@@ -11,7 +11,7 @@ import { logEvent } from '@library/amplitude';
 import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
-import { isExtendedLayoutIOSVersion } from '@utils/common';
+import { getImagePathStaticParser, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import ImageTransform from './ImageTransform';
 import {
@@ -373,7 +373,7 @@ function ImageDetailDialog({
           >
             <ImageTransform
               transformsRef={transformsRef}
-              src={image}
+              src={getImagePathStaticParser(image)}
               rotate={rotates[index]}
               index={index}
               disablePanning={panningDisabled}

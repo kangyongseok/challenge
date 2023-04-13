@@ -18,7 +18,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber } from '@utils/common';
+import { commaNumber, getImageResizePath } from '@utils/common';
 
 import {
   BackgroundImage,
@@ -239,7 +239,10 @@ function LegitStatusCardHolder({
             }}
           />
         </Flexbox>
-        <BackgroundImage src={backgroundImageSrc} simplify={simplify}>
+        <BackgroundImage
+          src={getImageResizePath({ imagePath: backgroundImageSrc, h: 335 })}
+          simplify={simplify}
+        >
           {!simplify && result === 1 && (
             <LegitLabel
               text="정품의견"
@@ -322,8 +325,8 @@ function LegitStatusCardHolder({
                           className="product-legit-result-image"
                           width={160}
                           height={160}
-                          src={image}
-                          data-src={image}
+                          src={getImageResizePath({ imagePath: image, w: 160, h: 160 })}
+                          data-src={getImageResizePath({ imagePath: image, w: 160, h: 160 })}
                           alt="Legit Result Img"
                           round={8}
                         />

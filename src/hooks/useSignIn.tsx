@@ -30,6 +30,7 @@ import {
   ACCESS_TOKEN,
   ACCESS_USER,
   IS_DONE_SIGN_IN_PERMISSION,
+  IS_FOR_ALARM_FIRST_VISIT,
   LAST_LOGIN_TYPE,
   ONBOARDING_SKIP_USERIDS,
   SHOW_PRODUCTS_KEYWORD_POPUP,
@@ -42,7 +43,7 @@ import { checkAgent } from '@utils/common';
 
 import { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
-import { dialogState } from '@recoil/common';
+import { dialogState, prevChannelAlarmPopup } from '@recoil/common';
 import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 export const LOGIN_TYPE = {
@@ -55,10 +56,11 @@ export const LOGIN_TYPE = {
 
 interface useSignInProps {
   returnUrl: string;
+  bottomSheet?: boolean;
   authLoginCallback?: () => void;
 }
 
-function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
+function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps) {
   const router = useRouter();
   const {
     theme: {
@@ -83,6 +85,7 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
   } = useRecoilValue(searchParamsState);
   const resetSearchParams = useResetRecoilState(searchParamsState);
   const setDialogState = useSetRecoilState(dialogState);
+  const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
 
   const { mutate: mutatePostAlarm } = useMutationPostAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
@@ -158,7 +161,9 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
             window.webkit.messageHandlers.callAuthPush &&
             window.webkit.messageHandlers.callAuthLocation
           ) {
-            window.webkit.messageHandlers.callAuthPush.postMessage(0);
+            if (bottomSheet) {
+              window.webkit.messageHandlers.callAuthPush.postMessage(0);
+            }
             window.webkit.messageHandlers.callAuthLocation.postMessage(0);
             return;
           } else {
@@ -215,7 +220,8 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
       siteUrlIds,
       state,
       subParentIds,
-      updateUserArea
+      updateUserArea,
+      bottomSheet
     ]
   );
 
@@ -223,7 +229,10 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
     async (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => {
       try {
         Axios.clearAccessToken();
-
+        if (bottomSheet) {
+          LocalStorage.remove(IS_FOR_ALARM_FIRST_VISIT);
+          setPrevChannelAlarmPopup(false);
+        }
         const userSnsLoginResult = await postAuthLogin({
           deviceId: amplitude.getInstance().getDeviceId(),
           userSnsLoginInfo: convertUserSnsLoginInfo(userSnsLoginInfo)
@@ -255,7 +264,7 @@ function useSignIn({ returnUrl, authLoginCallback }: useSignInProps) {
         });
       }
     },
-    [authLoginCallback, setDialogState, successLogin]
+    [bottomSheet, successLogin, authLoginCallback, setPrevChannelAlarmPopup, setDialogState]
   );
 
   useEffect(() => {

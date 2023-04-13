@@ -23,7 +23,12 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedActivatedTime } from '@utils/formats';
-import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
+import {
+  executedShareURl,
+  getImagePathStaticParser,
+  getImageResizePath,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -108,14 +113,16 @@ function UserShopLegitProfile({
     }
   }, [accessUser?.userId, router]);
 
+  const bgImage = !isLoading
+    ? imageBackground ||
+      imageProfile ||
+      `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background-legit.png`
+    : `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background-legit.png`;
+
   return (
     <Wrapper>
       <BackgroundImage
-        src={
-          imageBackground ||
-          imageProfile ||
-          `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background-legit.png`
-        }
+        src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
       >
         <Blur />
       </BackgroundImage>

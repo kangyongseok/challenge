@@ -79,6 +79,7 @@ import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
+import useOsAlarm from '@hooks/useOsAlarm';
 // import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function ProductDetail() {
@@ -98,6 +99,7 @@ function ProductDetail() {
   const [toast, setToastState] = useRecoilState(toastState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
+  const setOsAlarm = useOsAlarm();
 
   const { data: userData, set: setUserDate } = useQueryUserData();
   const {
@@ -209,6 +211,7 @@ function ProductDetail() {
         mutatePostProductsRemove();
       } else {
         mutatePostProductsAdd();
+        setOsAlarm();
       }
 
       return true;
@@ -218,7 +221,8 @@ function ProductDetail() {
       data?.product,
       mutatePostProductsAdd,
       mutatePostProductsRemove,
-      setLoginBottomSheet
+      setLoginBottomSheet,
+      setOsAlarm
     ]
   );
 

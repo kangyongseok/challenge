@@ -4,6 +4,9 @@ import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 
 import { getFormattedActivatedTime } from '@utils/formats';
+// import { getImagePathStaticParser, getProductCardImageResizePath } from '@utils/common';
+
+// import useProductImageResize from '@hooks/useProductImageResize';
 
 import { IconBox, Status, UserImage } from './UserAvatar.styles';
 
@@ -33,6 +36,7 @@ function UserAvatar({
       palette: { common }
     }
   } = useTheme();
+  // const { imageLoadError } = useProductImageResize(src);
 
   const [loadFail, setLoadFail] = useState(false);
 

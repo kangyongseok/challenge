@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import styled from '@emotion/styled';
@@ -10,19 +11,23 @@ import styled from '@emotion/styled';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { AppIntro01, AppIntro02, AppIntro03, AppIntro04 } from '@components/pages/appIntro';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import { IS_FOR_ALARM_FIRST_VISIT } from '@constants/localStorage';
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { isExtendedLayoutIOSVersion } from '@utils/common';
+import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
+import { prevChannelAlarmPopup } from '@recoil/common';
 import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function AppIntroStep() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
+  const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
 
   useViewportUnitsTrick();
 
@@ -42,6 +47,13 @@ function AppIntroStep() {
 
     router.push('/login');
   };
+
+  useEffect(() => {
+    if (checkAgent.isIOSApp()) {
+      LocalStorage.set(IS_FOR_ALARM_FIRST_VISIT, true);
+      setPrevChannelAlarmPopup(true);
+    }
+  }, [setPrevChannelAlarmPopup]);
 
   return (
     <ThemeProvider theme="dark">

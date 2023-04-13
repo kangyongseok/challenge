@@ -49,7 +49,11 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
+import {
+  getImagePathStaticParser,
+  getImageResizePath,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
@@ -277,6 +281,8 @@ function LegitProfileEdit() {
     router.back();
   };
 
+  const bgImage = sellerEditInfo.imageBackground || backgroundImage || DEFAUT_BACKGROUND_IMAGE;
+
   return (
     <GeneralTemplate
       header={
@@ -309,7 +315,7 @@ function LegitProfileEdit() {
       }
     >
       <BackgroundImage
-        src={sellerEditInfo.imageBackground || backgroundImage || DEFAUT_BACKGROUND_IMAGE}
+        src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
         showAppDownloadBanner={showAppDownloadBanner}
       >
         <Blur />

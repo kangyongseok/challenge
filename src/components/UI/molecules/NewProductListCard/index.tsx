@@ -33,6 +33,7 @@ import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductImageResize from '@hooks/useProductImageResize';
+import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles';
 
@@ -137,6 +138,7 @@ function NewProductListCard({
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
+  const setOsAlarm = useOsAlarm();
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
@@ -152,7 +154,7 @@ function NewProductListCard({
         exact: true
       });
 
-      UserTraceRecord.setExitWishChannel();
+      setOsAlarm();
 
       setToastState({
         type: 'product',
@@ -166,6 +168,8 @@ function NewProductListCard({
         }
       });
       await refetch();
+
+      UserTraceRecord.setExitWishChannel();
     }
   });
 

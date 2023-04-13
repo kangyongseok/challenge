@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { BaseButtonProps } from 'mrcamel-ui/dist/components/Button';
 import {
@@ -58,9 +58,16 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { dialogState, toastState, userOnBoardingTriggerState } from '@recoil/common';
+import {
+  dialogState,
+  loginBottomSheetState,
+  prevChannelAlarmPopup,
+  toastState,
+  userOnBoardingTriggerState
+} from '@recoil/common';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useOsAlarm from '@hooks/useOsAlarm';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
@@ -136,6 +143,8 @@ function ProductCTAButton({
 
   const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
+  const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
+  const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
   const [
     {
       productWish: { complete: productWishComplete },
@@ -145,6 +154,7 @@ function ProductCTAButton({
   ] = useRecoilState(userOnBoardingTriggerState);
 
   const { data: accessUser } = useQueryAccessUser();
+  const setOsAlarm = useOsAlarm();
 
   const {
     unblock: { mutate: mutateUnblock, isLoading: isLoadingMutateUnblock }
@@ -342,8 +352,8 @@ function ProductCTAButton({
 
       if (!accessUser) {
         SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
-        push({ pathname: '/login' });
-
+        // push({ pathname: '/login' });
+        setLoginBottomSheet({ open: true, returnUrl: '' });
         return;
       }
 
@@ -361,6 +371,10 @@ function ProductCTAButton({
 
         return;
       }
+
+      setOsAlarm();
+
+      if (prevChannelAlarm && checkAgent.isIOSApp()) return;
 
       if (channelId) {
         UserTraceRecord.setExitWishChannel();
@@ -614,8 +628,8 @@ function ProductCTAButton({
 
       if (!accessUser) {
         SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
-        push({ pathname: '/login' });
-
+        // push({ pathname: '/login' });
+        setLoginBottomSheet({ open: true, returnUrl: '' });
         return;
       }
 

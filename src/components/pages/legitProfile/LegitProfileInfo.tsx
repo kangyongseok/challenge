@@ -34,6 +34,8 @@ import attrKeys from '@constants/attrKeys';
 import {
   commaNumber,
   executedShareURl,
+  getImagePathStaticParser,
+  getImageResizePath,
   getRandomNumber,
   hasImageFile,
   isExtendedLayoutIOSVersion
@@ -156,7 +158,12 @@ function LegitProfileInfo({
 
   return (
     <Wrapper>
-      <BackgroundImage src={userImageBackground}>
+      <BackgroundImage
+        src={getImageResizePath({
+          imagePath: getImagePathStaticParser(userImageBackground),
+          h: 300
+        })}
+      >
         <Blur />
       </BackgroundImage>
       <Flexbox

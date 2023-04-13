@@ -24,6 +24,7 @@ function LoginBottomSheet() {
 
   const { code, loading, setLoading, authLogin, successLogin } = useSignIn({
     returnUrl: returnUrl || router.asPath,
+    bottomSheet: true,
     authLoginCallback() {
       setLoginBottomSheetState({
         open: false,

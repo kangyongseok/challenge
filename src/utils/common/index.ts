@@ -35,3 +35,4 @@ export { getProductCardImageResizePath } from './getProductCardImageResizePath';
 export { getImageResizePath } from './getImageResizePath';
 export { getOrderStatusText } from './getOrderStatusText';
 export { needUpdateSafePaymentIOSVersion } from './needUpdateSafePaymentIOSVersion';
+export { getImagePathStaticParser } from './getImagePathStaticParser';

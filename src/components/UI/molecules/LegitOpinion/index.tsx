@@ -8,6 +8,8 @@ import LegitLabel from '@components/UI/atoms/LegitLabel';
 
 import type { LegitOpinion as ILegitOpinion } from '@dto/productLegit';
 
+import { getImagePathStaticParser, getImageResizePath } from '@utils/common';
+
 interface LegitOpinionProps extends HTMLAttributes<HTMLDivElement> {
   legitOpinion: ILegitOpinion;
 }
@@ -30,7 +32,13 @@ function LegitOpinion({
   return (
     <Flexbox gap={12} {...props}>
       {image && (
-        <OpinionAvatar width={32} height={32} src={image} alt="User Avatar Img" round="50%" />
+        <OpinionAvatar
+          width={32}
+          height={32}
+          src={getImageResizePath({ imagePath: getImagePathStaticParser(image), w: 32, h: 32 })}
+          alt="User Avatar Img"
+          round="50%"
+        />
       )}
       <Box customStyle={{ flexGrow: 1 }}>
         <Flexbox justifyContent="space-between">

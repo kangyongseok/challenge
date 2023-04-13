@@ -288,9 +288,9 @@ function Chanel() {
 
   useEffect(() => {
     document.body.classList.add('channel-body');
-
-    if (checkAgent.isIOSApp() && !isCamelAdminUser)
+    if (checkAgent.isIOSApp() && !isCamelAdminUser) {
       window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
+    }
 
     return () => {
       document.body.classList.remove('channel-body');

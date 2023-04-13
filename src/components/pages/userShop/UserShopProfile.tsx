@@ -15,7 +15,12 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedActivatedTime } from '@utils/formats';
-import { executedShareURl, isExtendedLayoutIOSVersion } from '@utils/common';
+import {
+  executedShareURl,
+  getImagePathStaticParser,
+  getImageResizePath,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 
 import { dialogState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -96,10 +101,16 @@ function UserShopProfile({
     router.push('/user/shop/edit');
   }, [router]);
 
+  const bgImage = !isLoading
+    ? imageBackground || imageProfile || DEFAUT_BACKGROUND_IMAGE
+    : DEFAUT_BACKGROUND_IMAGE;
+
   return (
     <Box component="section">
       <ImageWrapper>
-        <BackgroundImage src={imageBackground || imageProfile || DEFAUT_BACKGROUND_IMAGE}>
+        <BackgroundImage
+          src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 160 })}
+        >
           <Blur />
         </BackgroundImage>
       </ImageWrapper>

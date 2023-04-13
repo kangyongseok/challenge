@@ -19,7 +19,8 @@
     "conventions": "yarn prettier && eslint --fix \"**/*.{js,ts,tsx}\"",
     "test": "jest --watch",
     "cy:open": "cypress open",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "deploy:noah": "eb deploy mrcamel-client-noah"
   },
   "dependencies": {
     "@datadog/browser-logs": "^4.25.0",

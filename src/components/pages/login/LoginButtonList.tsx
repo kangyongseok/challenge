@@ -29,7 +29,6 @@ import { logEvent } from '@library/amplitude';
 import { postDevLogin } from '@api/nextJs';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import queryKeys from '@constants/queryKeys';
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -98,10 +97,9 @@ function LoginButtonList({
       title: 'KAKAO',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.personals.guideAllProducts(),
-      refetchType: 'inactive'
-    });
+
+    queryClient.clear();
+
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginKakao) {
       window.webview.callLoginKakao();
       return;
@@ -129,10 +127,9 @@ function LoginButtonList({
       title: 'FACEBOOK',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.personals.guideAllProducts(),
-      refetchType: 'inactive'
-    });
+
+    queryClient.clear();
+
     const checkFacebookLoginState = (response: FacebookLoginResponse) => {
       const provider = 'facebook';
 
@@ -199,10 +196,9 @@ function LoginButtonList({
       title: 'APPLE',
       name: attName || attrProperty.name.GENERAL
     });
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.personals.guideAllProducts(),
-      refetchType: 'inactive'
-    });
+
+    queryClient.clear();
+
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callLoginApple) {
       window.webview.callLoginApple();
     } else if (

@@ -95,7 +95,7 @@ export function getFormattedActivatedTime(date: string | Date) {
   const monthDiff = dayjs().diff(dayjs(date), 'month');
 
   if (minuteDiff < 11) return { icon: 'dot', text: '접속중' };
-  if (hourDiff < 23 || daysDiff === 0) return { icon: 'dot', text: '오늘 접속' };
+  if (hourDiff < 23 || daysDiff === 0 || !date) return { icon: 'dot', text: '오늘 접속' };
   if (daysDiff > 30 && daysDiff <= 59) return { icon: 'time', text: '1달 전 접속' };
   if (daysDiff > 60 && daysDiff <= 89) return { icon: 'time', text: '2달 전 접속' };
   if (daysDiff > 90 && daysDiff <= 119) return { icon: 'time', text: '3달 전 접속' };

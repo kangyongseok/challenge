@@ -41,6 +41,8 @@ import { getUserName } from '@utils/user';
 import { getCookies } from '@utils/cookies';
 import {
   checkAgent,
+  getImagePathStaticParser,
+  getImageResizePath,
   handleClickAppDownload,
   hasImageFile,
   isExtendedLayoutIOSVersion,
@@ -492,7 +494,12 @@ function UserShopEdit() {
         }}
       >
         <ImageWrapper>
-          <BackgroundImage src={userImageBackground}>
+          <BackgroundImage
+            src={getImageResizePath({
+              imagePath: getImagePathStaticParser(userImageBackground),
+              h: 160
+            })}
+          >
             <Blur />
           </BackgroundImage>
           <BackgroundImageIcon onClick={handleChangeImage(true)}>

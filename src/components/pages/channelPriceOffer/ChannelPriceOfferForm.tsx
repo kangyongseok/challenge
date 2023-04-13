@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, Flexbox, Icon, Input, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -15,6 +16,11 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/formats';
 import { checkAgent } from '@utils/common';
+
+import { prevChannelAlarmPopup } from '@recoil/common';
+import useOsAlarm from '@hooks/useOsAlarm';
+
+// import useOsAlarm from '@hooks/useOsAlarm';
 
 function ChannelPriceOfferForm() {
   const router = useRouter();
@@ -32,6 +38,8 @@ function ChannelPriceOfferForm() {
   const [value, setValue] = useState<string | number>('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [open, setOpen] = useState(false);
+  const setOsAlarm = useOsAlarm();
+  const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
 
   const { data: { product } = {}, isLoading } = useQuery(
     queryKeys.channels.channel(Number(id)),
@@ -79,6 +87,9 @@ function ChannelPriceOfferForm() {
 
   const handleClick = () => {
     if (!product) return;
+
+    setOsAlarm();
+    if (prevChannelAlarm && checkAgent.isIOSApp()) return;
 
     logEvent(attrKeys.channel.SUBMIT_PRODUCT_OFFER, {
       name: attrProperty.name.PRODUCT_OFFER,

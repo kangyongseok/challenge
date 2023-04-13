@@ -70,6 +70,7 @@ function DialogProvider() {
       case 'locationInfo':
       case 'notiChannelFalse':
       case 'notiDeviceFalse':
+      case 'osAlarm':
         return 'textWithOneButton';
       case 'appAuthCheck':
       case 'unblockBlockedUser':
