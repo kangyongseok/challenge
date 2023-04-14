@@ -25,6 +25,11 @@ function MypageAlarmSetting() {
   const { data: myUserInfo } = useQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo);
   const queryClient = useQueryClient();
 
+  const exactFalse = (value: boolean | null | undefined) => {
+    if (value === false) return false;
+    return true;
+  };
+
   useEffect(() => {
     ChannelTalk.hideChannelButton();
     return () => {
@@ -38,26 +43,26 @@ function MypageAlarmSetting() {
       <AllAlarmState alarmsInfo={alarmsInfo} />
       <Gap height={8} />
       <BasicAlarm
-        eventAlarm={alarmsInfo?.isNotiEvent}
-        nightAlarm={alarmsInfo?.isNotiNotNight}
+        eventAlarm={exactFalse(alarmsInfo?.isNotiEvent)}
+        nightAlarm={exactFalse(alarmsInfo?.isNotiNotNight)}
         date={alarmsInfo?.dateIsNotiEventAgree}
       />
       <Gap height={1} />
-      <ChatAlarm alarm={alarmsInfo?.isNotiChannel} />
+      <ChatAlarm alarm={exactFalse(alarmsInfo?.isNotiChannel)} />
       <Gap height={1} />
       <WishProductAlarm
-        wishAlarm={alarmsInfo?.isNotiProductWish}
-        saveProductAlarm={alarmsInfo?.isNotiProductList}
+        wishAlarm={exactFalse(alarmsInfo?.isNotiProductWish)}
+        saveProductAlarm={exactFalse(alarmsInfo?.isNotiProductList)}
       />
       {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
         myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
         <>
           <Gap height={1} />
-          <LegitAlarm alarm={alarmsInfo?.isNotiLegit} />
+          <LegitAlarm alarm={exactFalse(alarmsInfo?.isNotiLegit)} />
         </>
       )}
       <Gap height={1} />
-      <SellerProductAlarm alarm={alarmsInfo?.isNotiMyProductWish} />
+      <SellerProductAlarm alarm={exactFalse(alarmsInfo?.isNotiMyProductWish)} />
     </Box>
   );
 }

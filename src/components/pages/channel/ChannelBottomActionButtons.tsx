@@ -330,6 +330,7 @@ function ChannelBottomActionButtons({
           variant="outline"
           startIcon={<Icon name="CameraFilled" />}
           disabled={isLoading}
+          onClick={handleClickPhoto}
         >
           <HiddenInput
             id="fileUpload"
@@ -338,11 +339,7 @@ function ChannelBottomActionButtons({
             accept="image/*"
             onChange={handleFileChange}
           />
-          <Typography
-            variant="h4"
-            onClick={handleClickPhoto}
-            customStyle={{ whiteSpace: 'nowrap' }}
-          >
+          <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
             사진
           </Typography>
         </Chip>
@@ -367,12 +364,9 @@ function ChannelBottomActionButtons({
                 variant="outline"
                 startIcon={<Icon name="DateFilled" />}
                 disabled={isLoading}
+                onClick={handleClickAppointment}
               >
-                <Typography
-                  variant="h4"
-                  onClick={handleClickAppointment}
-                  customStyle={{ whiteSpace: 'nowrap' }}
-                >
+                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
                   직거래 약속
                 </Typography>
               </Chip>

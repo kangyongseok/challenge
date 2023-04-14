@@ -56,6 +56,7 @@ import { checkAgent, removeTagAndAddNewLine } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
 import { toastState, userOnBoardingTriggerState } from '@recoil/common';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import ProductInfoColorIcon from './ProductInfoColorIcon';
 
@@ -94,6 +95,8 @@ function ProductInfo({
       palette: { primary, secondary, common }
     }
   } = useTheme();
+  const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
+    useQueryUserInfo();
 
   const [getToastState] = useRecoilState(toastState);
   const setToastState = useSetRecoilState(toastState);
@@ -132,7 +135,7 @@ function ProductInfo({
   const brandLogo = `https://${
     process.env.IMAGE_DOMAIN
   }/assets/images/brands/fit/${product?.brand?.nameEng.toLowerCase().replace(/\s/g, '')}.jpg`;
-
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
   const sessionId = amplitude.getInstance().getSessionId();
   const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
     sessionId,
@@ -519,6 +522,16 @@ function ProductInfo({
       <Box customStyle={{ marginTop: 20 }}>
         {brandLogo && (
           <Flexbox
+            onClick={() => {
+              const brandName = product?.brand?.name.replace(/\s/g, '');
+              router.push({
+                pathname: `/products/brands/${brandName}`,
+                query:
+                  !userGender || userGender === 'N'
+                    ? {}
+                    : { genders: userGender === 'M' ? 'male' : 'female' }
+              });
+            }}
             customStyle={{
               justifyContent: 'flex-start'
             }}
@@ -735,6 +748,11 @@ function ProductInfo({
               />
             </Flexbox>
           </MoreInfoButton>
+        )}
+        {isCrawlingProduct && (
+          <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 20 }}>
+            * 카멜Ai검색엔진이 수집·분석한 매물정보입니다.
+          </Typography>
         )}
         <Flexbox
           justifyContent="space-between"

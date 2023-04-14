@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 
 import { useRouter } from 'next/router';
-import { CustomStyle, Tab, TabGroup } from 'mrcamel-ui';
+import { Box, CustomStyle, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -23,6 +23,11 @@ const SellerInfoTabs = forwardRef<HTMLDivElement, SellerInfoTabsProps>(function 
   ref
 ) {
   const router = useRouter();
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
 
   const handleChange = (newValue: string | number) => {
     if (value === 'products') {
@@ -59,6 +64,17 @@ const SellerInfoTabs = forwardRef<HTMLDivElement, SellerInfoTabsProps>(function 
         <Tab text={`매물 ${productCount || 0}`} value="products" />
         <Tab text={`후기 ${reviewCount || 0}`} value="reviews" />
       </TabGroup>
+      <Box
+        customStyle={{
+          padding: '12px 20px',
+          backgroundColor: common.bg02,
+          textAlign: 'center'
+        }}
+      >
+        <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+          카멜Ai검색엔진이 수집·분석한 상점정보입니다.
+        </Typography>
+      </Box>
     </TabWrapper>
   );
 });

@@ -170,7 +170,7 @@ function MypageProfile() {
         </Flexbox>
         <Button
           startIcon={<Icon name="EditOutlined" />}
-          customStyle={{ borderRadius: 22, minWidth: 68, marginLeft: 'auto' }}
+          customStyle={{ borderRadius: 22, minWidth: 70, marginLeft: 'auto' }}
           onClick={handleClickEdit}
         >
           수정
@@ -244,7 +244,7 @@ const LegitBedge = styled(Flexbox)`
   background: ${({ theme: { palette } }) => palette.common.uiBlack};
   padding: 4px 7px;
   border-radius: 10px;
-  min-width: 55px;
+  min-width: 60px;
 `;
 
 export default MypageProfile;

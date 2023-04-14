@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
@@ -20,12 +20,6 @@ interface SellerInfoProductsPanelProps {
 }
 
 function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const { triggered } = useDetectScrollFloorTrigger();
 
   const params = useMemo(() => ({ sellerId, size: 20 }), [sellerId]);
@@ -78,51 +72,36 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
       </Typography>
     </Flexbox>
   ) : (
-    <>
-      {!isLoading && (
-        <Box
-          customStyle={{
-            padding: '12px 20px',
-            backgroundColor: common.bg02,
-            textAlign: 'center'
-          }}
-        >
-          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-            카멜이 다루는 명품 브랜드만 보여드려요 (최근 6개월)
-          </Typography>
-        </Box>
-      )}
-      <Flexbox
-        component="section"
-        direction="vertical"
-        gap={20}
-        customStyle={{
-          padding: 20
-        }}
-      >
-        {isLoading
-          ? Array.from({ length: 10 }).map((_, index) => (
-              <NewProductListCardSkeleton
-                // eslint-disable-next-line react/no-array-index-key
-                key={`profile-user-product-skeleton-${index}`}
-                hideMetaInfo
-              />
-            ))
-          : sellerProducts.map((product, index) => (
-              <NewProductListCard
-                key={`profile-user-product-${product.id}`}
-                product={product}
-                hideMetaInfo
-                attributes={{
-                  name: attrProperty.name.SELLER_INFO,
-                  title: attrProperty.title.SELLER_PRODUCT,
-                  index: index + 1,
-                  source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT
-                }}
-              />
-            ))}
-      </Flexbox>
-    </>
+    <Flexbox
+      component="section"
+      direction="vertical"
+      gap={20}
+      customStyle={{
+        padding: 20
+      }}
+    >
+      {isLoading
+        ? Array.from({ length: 10 }).map((_, index) => (
+            <NewProductListCardSkeleton
+              // eslint-disable-next-line react/no-array-index-key
+              key={`profile-user-product-skeleton-${index}`}
+              hideMetaInfo
+            />
+          ))
+        : sellerProducts.map((product, index) => (
+            <NewProductListCard
+              key={`profile-user-product-${product.id}`}
+              product={product}
+              hideMetaInfo
+              attributes={{
+                name: attrProperty.name.SELLER_INFO,
+                title: attrProperty.title.SELLER_PRODUCT,
+                index: index + 1,
+                source: attrProperty.source.SELLER_INFO_SELLER_PRODUCT
+              }}
+            />
+          ))}
+    </Flexbox>
   );
 }
 

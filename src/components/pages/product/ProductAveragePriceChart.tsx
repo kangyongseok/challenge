@@ -285,6 +285,9 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
           variant="body2"
           weight="bold"
           customStyle={{ color: common.ui60, marginBottom: 4 }}
+          onClick={() => {
+            push(`/products/search/${product?.quoteTitle}`);
+          }}
         >
           #{product?.quoteTitle}
         </Typography>

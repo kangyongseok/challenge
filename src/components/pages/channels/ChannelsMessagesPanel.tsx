@@ -78,7 +78,6 @@ function ChannelsMessagesPanel({
       direction="vertical"
       customStyle={{
         margin: '12px 0',
-        flex: 1,
         ...customStyle
       }}
     >
