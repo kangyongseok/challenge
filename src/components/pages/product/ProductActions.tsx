@@ -8,6 +8,7 @@ import { Gap } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
+import { productSellerType } from '@constants/user';
 import { INITIAL_REPORT_OPTIONS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
@@ -42,7 +43,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
     }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
-
+  const isOperatorProduct = product?.sellerType === productSellerType.operatorProduct;
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const sellerPhoneNumber =
     (checkAgent.isIOSApp() || checkAgent.isAndroidApp() || !checkAgent.isMobileApp()) && product
@@ -95,7 +96,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessUser?.userId, product]);
 
-  if (product && sellerPhoneNumber && !hasRoleSeller) {
+  if (product && sellerPhoneNumber && !hasRoleSeller && !isOperatorProduct) {
     return (
       <>
         <Flexbox

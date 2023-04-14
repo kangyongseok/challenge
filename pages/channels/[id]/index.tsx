@@ -144,7 +144,8 @@ function Chanel() {
     [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked, isAdminBlockUser]
   );
 
-  const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
+  // const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
 
   const routingRef = useRef(false);
 
@@ -432,7 +433,7 @@ function Chanel() {
           <HeaderWrapper>
             <ChannelHeader
               sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
-              isExternalPlatform={isExternalPlatform}
+              isCrawlingProduct={isCrawlingProduct}
               isLoading={isLoading || !isFetched}
               isTargetUserSeller={!isSeller}
               isDeletedTargetUser={isDeletedTargetUser}
@@ -472,13 +473,13 @@ function Chanel() {
                       })
                     }
                   />
-                  {isExternalPlatform && <ChannelCamelAuthFixBanner type="external" />}
+                  {isCrawlingProduct && <ChannelCamelAuthFixBanner type="external" />}
                 </>
               )}
             {!!appointment && showAppointmentBanner && (
               <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
             )}
-            {!showAppointmentBanner && !isExternalPlatform && <ChannelSafePaymentGuideBanner />}
+            {!showAppointmentBanner && !isCrawlingProduct && <ChannelSafePaymentGuideBanner />}
             {unreadCount > 0 && (
               <Flexbox
                 justifyContent="center"
@@ -518,7 +519,7 @@ function Chanel() {
                 showAppointmentBanner={showAppointmentBanner}
                 showNewMessageNotification={unreadCount > 0}
                 showActionButtons={showActionButtons}
-                showSafePaymentGuideBanner={!showAppointmentBanner && !isExternalPlatform}
+                showSafePaymentGuideBanner={!showAppointmentBanner && !isCrawlingProduct}
                 messagesRef={messagesRef}
                 hasMorePrev={hasMorePrev}
                 hasUserReview={!!userReview}

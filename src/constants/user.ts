@@ -128,5 +128,7 @@ export const productSellerType = {
   normal: 1,
   certification: 2,
   legit: 3,
-  externalPlatform: 5
+  operatorProduct: 5,
+  operatorB2CProduct: 6,
+  operatorC2CProduct: 7
 };

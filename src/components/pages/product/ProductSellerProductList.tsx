@@ -42,6 +42,7 @@ function ProductSellerProductList({
   } = useTheme();
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const sellerId = Number(product?.productSeller.id || 0);
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
     sellerId,
@@ -114,11 +115,7 @@ function ProductSellerProductList({
     // 크롤링 판매자 정보 sellerInfo
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
-      pathname:
-        product?.sellerType === productSellerType.collection ||
-        product?.sellerType === productSellerType.externalPlatform
-          ? `/sellerInfo/${sellerId}`
-          : `/userInfo/${roleSellerUserId}`,
+      pathname: isCrawlingProduct ? `/sellerInfo/${sellerId}` : `/userInfo/${roleSellerUserId}`,
       query: {
         tab: 'products'
       }

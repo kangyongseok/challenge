@@ -182,26 +182,29 @@ function ProductCTAButton({
     isCamelSelfSeller,
     isCamelSeller,
     isNormalSeller,
-    isExternalPlatformSeller,
     isSoldOut,
     isReserving,
     isHiding,
-    platformId
+    platformId,
+    isOperatorProduct,
+    isOperatorB2CProduct,
+    isOperatorC2CProduct
   } = useMemo(
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
       isCamelSelfSeller: product?.productSeller.site.id === PRODUCT_SITE.CAMELSELLER.id,
       isCamelSeller: product && product.sellerType === productSellerType.certification,
       isNormalSeller: product && product.sellerType === productSellerType.normal,
-      isExternalPlatformSeller:
-        product && product.sellerType === productSellerType.externalPlatform,
       isSoldOut: product && product.status === productStatusCode.soldOut,
       isReserving: product && product.status === productStatusCode.reservation,
       isHiding: product && product.status === productStatusCode.hidden,
       platformId:
         (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
         (product?.site.hasImage && product?.site?.id) ||
-        ''
+        '',
+      isOperatorProduct: product && product.sellerType === productSellerType.operatorProduct,
+      isOperatorB2CProduct: product && product.sellerType === productSellerType.operatorB2CProduct,
+      isOperatorC2CProduct: product && product.sellerType === productSellerType.operatorC2CProduct
     }),
     [product]
   );
@@ -228,7 +231,11 @@ function ProductCTAButton({
 
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
-    if (roleSeller?.userId || product?.sellerType === productSellerType.externalPlatform)
+    if (isOperatorC2CProduct) {
+      return { ctaText: '보러가기', ctaBrandColor: 'black' };
+    }
+
+    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isOperatorProduct)
       return { ctaText: '채팅', ctaBrandColor: 'black' };
 
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
@@ -237,18 +244,20 @@ function ProductCTAButton({
     return { ctaText: '판매글로 이동', ctaBrandColor: 'black' };
   }, [
     product,
-    isBlockedUser,
     isAdminBlockedUser,
+    isBlockedUser,
     isDup,
     hasTarget,
     isReserving,
     isHiding,
     isSoldOut,
     roleSeller?.userId,
+    isOperatorProduct,
     isCamelProduct,
     isCamelSeller,
     isCamelSelfSeller,
-    isNormalSeller
+    isNormalSeller,
+    isOperatorC2CProduct
   ]);
 
   const sessionId = amplitude.getInstance().getSessionId();
@@ -269,6 +278,19 @@ function ProductCTAButton({
     if (product?.sellerType === productSellerType.collection) return 'REDIRECT';
     if (product?.sellerType === productSellerType.certification) return 'SMS';
     return '';
+  };
+
+  const pageMovePlatform = () => {
+    let userAgent = 0;
+
+    if (checkAgent.isIOSApp()) userAgent = 1;
+    if (checkAgent.isAndroidApp()) userAgent = 2;
+
+    if (product)
+      window.open(
+        `${getProductDetailUrl({ product })}?redirect=1&userAgent=${userAgent}`,
+        '_blank'
+      );
   };
 
   const handleClickCTAButton = async () => {
@@ -324,9 +346,14 @@ function ProductCTAButton({
       return;
     }
 
+    if (isOperatorC2CProduct) {
+      pageMovePlatform();
+      return;
+    }
+
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if (roleSeller?.userId || product.sellerType === productSellerType.externalPlatform) {
+    if (roleSeller?.userId || isOperatorProduct) {
       productDetailAtt({
         key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
         product
@@ -440,16 +467,7 @@ function ProductCTAButton({
       return;
     }
 
-    let userAgent = 0;
-
-    if (checkAgent.isIOSApp()) userAgent = 1;
-    if (checkAgent.isAndroidApp()) userAgent = 2;
-
-    if (product)
-      window.open(
-        `${getProductDetailUrl({ product })}?redirect=1&userAgent=${userAgent}`,
-        '_blank'
-      );
+    pageMovePlatform();
   };
 
   const handleClickBunJangTooltip = () => {
@@ -614,7 +632,7 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if (roleSeller?.userId || product.sellerType === productSellerType.externalPlatform) {
+    if (roleSeller?.userId || product.sellerType === productSellerType.operatorProduct) {
       const createChannelParams = {
         targetUserId: String(roleSeller?.userId || 0),
         productId: String(product.id),
@@ -729,15 +747,11 @@ function ProductCTAButton({
     const validOffers = offers.filter(({ status }) => [1, 2, 4].includes(status));
 
     setIsPossibleOffer(
-      !isExternalPlatformSeller &&
-        ['채팅'].includes(ctaText) &&
-        validOffers.length < 3 &&
-        !isAdminBlockedUser &&
-        !isBlockedUser
+      ['채팅'].includes(ctaText) && validOffers.length < 3 && !isAdminBlockedUser && !isBlockedUser
     );
     setHasOffer(validOffers.length < 3 && offers.some(({ status }) => status === 0));
     setCurrentOffer(validOffers.find(({ status }) => status === 1));
-  }, [offers, ctaText, isAdminBlockedUser, isBlockedUser, isExternalPlatformSeller]);
+  }, [offers, ctaText, isAdminBlockedUser, isBlockedUser, isOperatorProduct]);
 
   useEffect(() => {
     if (checkAgent.isMobileApp() && productWishComplete && !complete && isPossibleOffer) {
@@ -751,7 +765,7 @@ function ProductCTAButton({
 
   return (
     <>
-      {open && ['채팅'].includes(ctaText) && (
+      {open && (['채팅', '보러가기'].includes(ctaText) || isOperatorB2CProduct) && (
         <Flexbox
           alignment="center"
           justifyContent="space-between"
@@ -859,19 +873,23 @@ function ProductCTAButton({
                 {commaNumber(getTenThousandUnitPrice(product?.price || 0))}만원
               </Typography>
             )}
-            {isPossibleOffer && !hasOffer && !currentOffer && (
-              <Typography
-                weight="medium"
-                onClick={handleClickPriceOffer}
-                customStyle={{
-                  color: primary.light,
-                  textDecorationLine: 'underline',
-                  cursor: 'pointer'
-                }}
-              >
-                가격 제안하기
-              </Typography>
-            )}
+            {isPossibleOffer &&
+              !hasOffer &&
+              !currentOffer &&
+              !isOperatorB2CProduct &&
+              !isOperatorC2CProduct && (
+                <Typography
+                  weight="medium"
+                  onClick={handleClickPriceOffer}
+                  customStyle={{
+                    color: primary.light,
+                    textDecorationLine: 'underline',
+                    cursor: 'pointer'
+                  }}
+                >
+                  가격 제안하기
+                </Typography>
+              )}
             {isPossibleOffer && hasOffer && !currentOffer && (
               <Typography
                 weight="medium"
@@ -904,7 +922,7 @@ function ProductCTAButton({
           }}
         >
           <Button
-            variant={['채팅'].includes(ctaText) ? 'outline' : 'solid'}
+            variant={['채팅', '보러가기'].includes(ctaText) ? 'outline' : 'solid'}
             brandColor={ctaBrandColor}
             size="xlarge"
             fullWidth
@@ -922,7 +940,8 @@ function ProductCTAButton({
               gap: 0,
               whiteSpace: 'nowrap',
               paddingLeft: 12,
-              paddingRight: 12
+              paddingRight: 12,
+              display: isOperatorB2CProduct ? 'none' : 'flex'
             }}
           >
             <Typography
@@ -931,7 +950,7 @@ function ProductCTAButton({
               customStyle={{
                 display: 'flex',
                 alignItems: 'center',
-                color: ['채팅'].includes(ctaText) ? undefined : common.uiWhite
+                color: ['채팅', '보러가기'].includes(ctaText) ? undefined : common.uiWhite
               }}
             >
               {!roleSeller &&
@@ -949,6 +968,7 @@ function ProductCTAButton({
                 !isCamelSeller &&
                 !isCamelSelfSeller &&
                 !isNormalSeller &&
+                !isOperatorC2CProduct &&
                 platformId && (
                   <Avatar
                     src={
@@ -993,7 +1013,9 @@ function ProductCTAButton({
               customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
             />
           </Button>
-          {['채팅'].includes(ctaText) && (
+          {(['채팅', '보러가기'].includes(ctaText) ||
+            isOperatorB2CProduct ||
+            isOperatorC2CProduct) && (
             <Button
               fullWidth
               variant="solid"

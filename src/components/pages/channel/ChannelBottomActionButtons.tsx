@@ -148,7 +148,9 @@ function ChannelBottomActionButtons({
     hiddenInputRef.current?.click();
   };
 
-  const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
+  const isOperatorProduct = product?.sellerType === productSellerType.operatorProduct;
+  const isOperatorB2CProduct = product?.sellerType === productSellerType.operatorB2CProduct;
+  const isOperatorC2CProduct = product?.sellerType === productSellerType.operatorC2CProduct;
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -343,7 +345,7 @@ function ChannelBottomActionButtons({
             사진
           </Typography>
         </Chip>
-        {!isDeletedProduct && !isExternalPlatform && (
+        {!isDeletedProduct && !isOperatorB2CProduct && !isOperatorC2CProduct && (
           <>
             {isPossibleOffer && currentOffer?.status !== 1 && (
               <Chip
@@ -358,7 +360,7 @@ function ChannelBottomActionButtons({
                 </Typography>
               </Chip>
             )}
-            {showAppointmentButton && !showPurchaseConfirmButton && (
+            {showAppointmentButton && !showPurchaseConfirmButton && !isOperatorProduct && (
               <Chip
                 size="large"
                 variant="outline"

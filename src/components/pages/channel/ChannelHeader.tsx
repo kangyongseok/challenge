@@ -25,7 +25,7 @@ interface ChannelHeaderProps {
   targetUserImage: string | undefined;
   targetUserName: string;
   targetUserId: number | undefined;
-  isExternalPlatform?: boolean;
+  isCrawlingProduct?: boolean;
   sellerUserId?: number;
   isAdminBlockUser?: boolean;
   isTargetUserBlocked?: boolean;
@@ -39,7 +39,7 @@ function ChannelHeader({
   targetUserImage,
   targetUserName,
   targetUserId,
-  isExternalPlatform,
+  isCrawlingProduct,
   sellerUserId,
   isAdminBlockUser,
   isTargetUserBlocked,
@@ -77,12 +77,12 @@ function ChannelHeader({
       title: isTargetUserSeller ? attrProperty.title.SELLER : attrProperty.title.BUYER
     });
 
-    const pathname = isExternalPlatform
+    const pathname = isCrawlingProduct
       ? `/sellerInfo/${sellerUserId}`
       : `/userInfo/${targetUserId}`;
 
     if (checkAgent.isIOSApp()) {
-      setChannelPushPageState(isExternalPlatform ? 'sellerInfo' : 'userInfo');
+      setChannelPushPageState(isCrawlingProduct ? 'sellerInfo' : 'userInfo');
       window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
         JSON.stringify({
           pathname,
@@ -97,7 +97,7 @@ function ChannelHeader({
     targetUserId,
     isDeletedTargetUser,
     isTargetUserSeller,
-    isExternalPlatform,
+    isCrawlingProduct,
     sellerUserId,
     router,
     setChannelPushPageState
