@@ -176,6 +176,7 @@ function ProductCTAButton({
   const [openPriceOfferOnBoarding, setOpenPriceOfferOnBoarding] = useState(false);
 
   const priceOfferAreaRef = useRef<HTMLDivElement>(null);
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
 
   const {
     isCamelProduct,
@@ -353,7 +354,7 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if (roleSeller?.userId || isOperatorProduct) {
+    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isOperatorProduct) {
       productDetailAtt({
         key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
         product
@@ -632,7 +633,7 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if (roleSeller?.userId || product.sellerType === productSellerType.operatorProduct) {
+    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isCrawlingProduct) {
       const createChannelParams = {
         targetUserId: String(roleSeller?.userId || 0),
         productId: String(product.id),
