@@ -94,10 +94,12 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
       <ProductList alignment="flex-start" gap={12}>
         {type &&
           searchRelatedProducts?.page.content.slice(0, 3)?.map((product, i) => (
-            <Box customStyle={{ flex: 1 }} key={`related-product-${product.id}`}>
+            <CardListWrap key={`related-product-${product.id}`}>
               <NewProductGridCard
                 variant="swipeX"
                 product={product}
+                hideMetaInfo
+                hideAreaInfo
                 attributes={{
                   name: attrProperty.name.PRODUCT_DETAIL,
                   title: attrProperty.title.LOWPRICE_PRODUCT,
@@ -127,7 +129,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
                   nextScoreTotal: product.scoreTotal
                 }}
               />
-            </Box>
+            </CardListWrap>
           ))}
         {!type &&
           isLoading &&
@@ -194,6 +196,13 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
 const Wrap = styled.div<{ disabled: boolean }>`
   display: ${({ disabled }) => (disabled ? 'none' : 'block')};
   margin-top: 32px;
+`;
+
+const CardListWrap = styled.div`
+  flex: 1;
+  * {
+    color: white !important;
+  }
 `;
 
 const ProductList = styled(Flexbox)`

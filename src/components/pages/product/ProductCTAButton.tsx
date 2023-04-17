@@ -176,7 +176,6 @@ function ProductCTAButton({
   const [openPriceOfferOnBoarding, setOpenPriceOfferOnBoarding] = useState(false);
 
   const priceOfferAreaRef = useRef<HTMLDivElement>(null);
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
 
   const {
     isCamelProduct,
@@ -189,7 +188,8 @@ function ProductCTAButton({
     platformId,
     isOperatorProduct,
     isOperatorB2CProduct,
-    isOperatorC2CProduct
+    isOperatorC2CProduct,
+    isChannelSellerType
   } = useMemo(
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
@@ -205,7 +205,8 @@ function ProductCTAButton({
         '',
       isOperatorProduct: product && product.sellerType === productSellerType.operatorProduct,
       isOperatorB2CProduct: product && product.sellerType === productSellerType.operatorB2CProduct,
-      isOperatorC2CProduct: product && product.sellerType === productSellerType.operatorC2CProduct
+      isOperatorC2CProduct: product && product.sellerType === productSellerType.operatorC2CProduct,
+      isChannelSellerType: [1, 2, 3, 5].includes(product?.sellerType || 0)
     }),
     [product]
   );
@@ -236,8 +237,7 @@ function ProductCTAButton({
       return { ctaText: '보러가기', ctaBrandColor: 'black' };
     }
 
-    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isOperatorProduct)
-      return { ctaText: '채팅', ctaBrandColor: 'black' };
+    if (isChannelSellerType) return { ctaText: '채팅', ctaBrandColor: 'black' };
 
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
       return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
@@ -252,13 +252,12 @@ function ProductCTAButton({
     isReserving,
     isHiding,
     isSoldOut,
-    roleSeller?.userId,
-    isOperatorProduct,
+    isOperatorC2CProduct,
+    isChannelSellerType,
     isCamelProduct,
     isCamelSeller,
     isCamelSelfSeller,
-    isNormalSeller,
-    isOperatorC2CProduct
+    isNormalSeller
   ]);
 
   const sessionId = amplitude.getInstance().getSessionId();
@@ -354,7 +353,7 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isOperatorProduct) {
+    if (isChannelSellerType) {
       productDetailAtt({
         key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
         product
@@ -633,7 +632,8 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if ((roleSeller?.userId && roleSeller?.userId !== 111) || isCrawlingProduct) {
+    if (isChannelSellerType) {
+      // (roleSeller?.userId && roleSeller?.userId !== 111) || isCrawlingProduct 이전 조건
       const createChannelParams = {
         targetUserId: String(roleSeller?.userId || 0),
         productId: String(product.id),
