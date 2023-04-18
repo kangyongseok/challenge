@@ -74,6 +74,8 @@ function Butler() {
               })}
               alt="Camel Butler"
               disableAspectRatio
+              disableSkeleton
+              disableSkeletonAnimation
               width="100%"
             />
             <Image
@@ -83,6 +85,8 @@ function Butler() {
               })}
               alt="what is Butler?"
               disableAspectRatio
+              disableSkeleton
+              disableSkeletonAnimation
               width="100%"
             />
             <Image
@@ -92,6 +96,8 @@ function Butler() {
               })}
               alt="No fees!"
               disableAspectRatio
+              disableSkeleton
+              disableSkeletonAnimation
               width="100%"
             />
           </>
