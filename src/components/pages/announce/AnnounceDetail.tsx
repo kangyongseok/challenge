@@ -150,7 +150,7 @@ function AnnounceDetail() {
                     src && (
                       <Image
                         key={`announce-detail-image-${src}`}
-                        ratio="5:6"
+                        ratio={[17, 18].includes(Number(id)) ? '16:9' : '5:6'}
                         src={src}
                         alt="Announce Detail Img"
                       />
