@@ -44,7 +44,8 @@ function Butler() {
         customStyle={{
           background: '#111214',
           position: 'relative',
-          paddingTop: 20,
+          paddingTop: 84,
+          paddingBottom: 150,
           minHeight: '100vh'
         }}
       >
@@ -102,11 +103,7 @@ function Butler() {
             />
           </>
         )}
-        <Flexbox
-          customStyle={{ padding: '0 20px 50px 20px', width: '100%', marginTop: 'auto' }}
-          alignment="center"
-          justifyContent="center"
-        >
+        <SubmiTbuttonWrap alignment="center" justifyContent="center">
           <Button
             fullWidth
             size="xlarge"
@@ -128,7 +125,7 @@ function Butler() {
           >
             {result ? '확인' : '버틀러 신청하기'}
           </Button>
-        </Flexbox>
+        </SubmiTbuttonWrap>
       </Flexbox>
     </>
   );
@@ -140,6 +137,15 @@ const CloseButton = styled(Icon)`
   left: 20px;
   color: white;
   z-index: 1;
+`;
+
+const SubmiTbuttonWrap = styled(Flexbox)`
+  padding: 0 20px 40px 20px;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: #111214;
 `;
 
 export default Butler;
