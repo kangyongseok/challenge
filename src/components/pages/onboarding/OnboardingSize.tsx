@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Box, Chip, Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -23,6 +23,12 @@ interface OnboardingSizeProps {
 }
 
 function OnboardingSize({ onClick }: OnboardingSizeProps) {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const { data: accessUser } = useQueryAccessUser();
   const { data: userInfo } = useQueryUserInfo();
 
@@ -144,14 +150,14 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
   }, [hasSize, mutateAsync, onClick, selectedBottomList, selectedShoesList, selectedTopList]);
 
   return (
-    <ThemeProvider theme="dark">
-      <Box customStyle={{ padding: 32, background: dark.palette.common.uiWhite }}>
+    <>
+      <Box customStyle={{ padding: 32, background: common.uiWhite }}>
         <OnboardingStep />
         <Box customStyle={{ marginTop: 50 }}>
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             사이즈를 알려주세요!
           </Typography>
-          <Typography customStyle={{ color: dark.palette.common.ui60 }}>
+          <Typography customStyle={{ color: common.ui60 }}>
             {accessUser?.userName || '회원'}님 사이즈에 맞는 매물만 보여드릴게요
           </Typography>
         </Box>
@@ -160,7 +166,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
             <Typography
               variant="h4"
               weight="bold"
-              customStyle={{ marginTop: 24, color: dark.palette.common.ui60 }}
+              customStyle={{ marginTop: 24, color: common.ui60 }}
             >
               👕 상의
             </Typography>
@@ -184,7 +190,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
             <Typography
               variant="h4"
               weight="bold"
-              customStyle={{ marginTop: 32, color: dark.palette.common.ui60 }}
+              customStyle={{ marginTop: 32, color: common.ui60 }}
             >
               👖 하의
             </Typography>
@@ -208,7 +214,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
             <Typography
               variant="h4"
               weight="bold"
-              customStyle={{ marginTop: 32, color: dark.palette.common.ui60 }}
+              customStyle={{ marginTop: 32, color: common.ui60 }}
             >
               👟 신발
             </Typography>
@@ -248,7 +254,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
       >
         다음
       </OnboardingBottomCTA>
-    </ThemeProvider>
+    </>
   );
 }
 
@@ -258,9 +264,18 @@ const ChipStyle = styled(Chip)<{ isSelect: boolean }>`
   border-radius: 36px;
   font-weight: ${({ theme: { typography } }) => typography.h3.weight.regular};
   font-size: ${({ theme: { typography } }) => typography.h3.size};
-  background: ${({ isSelect }) =>
-    isSelect ? dark.palette.common.uiBlack : dark.palette.common.ui90};
-  color: ${({ isSelect }) => (isSelect ? dark.palette.common.ui98 : dark.palette.common.uiBlack)};
+  background: ${({
+    theme: {
+      palette: { common }
+    },
+    isSelect
+  }) => (isSelect ? common.uiBlack : common.ui90)};
+  color: ${({
+    theme: {
+      palette: { common }
+    },
+    isSelect
+  }) => (isSelect ? common.ui98 : common.uiBlack)};
 `;
 
 export default OnboardingSize;

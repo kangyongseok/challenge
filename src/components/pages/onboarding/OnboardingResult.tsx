@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import {
-  BottomSheet,
-  Box,
-  Chip,
-  Flexbox,
-  Image,
-  ThemeProvider,
-  Typography,
-  dark
-} from 'mrcamel-ui';
+import { BottomSheet, Box, Chip, Flexbox, Image, Typography, dark } from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -78,7 +69,7 @@ function OnboardingResult() {
   };
 
   return (
-    <ThemeProvider theme="dark">
+    <>
       <Firecracker />
       <Box
         customStyle={{
@@ -197,7 +188,7 @@ function OnboardingResult() {
       >
         <OnboardingPermission />
       </BottomSheet>
-    </ThemeProvider>
+    </>
   );
 }
 
