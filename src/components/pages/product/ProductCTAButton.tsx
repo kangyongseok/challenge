@@ -189,7 +189,8 @@ function ProductCTAButton({
     isOperatorProduct,
     isOperatorB2CProduct,
     isOperatorC2CProduct,
-    isChannelSellerType
+    isChannelSellerType,
+    isCrawlingProduct
   } = useMemo(
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
@@ -206,7 +207,8 @@ function ProductCTAButton({
       isOperatorProduct: product && product.sellerType === productSellerType.operatorProduct,
       isOperatorB2CProduct: product && product.sellerType === productSellerType.operatorB2CProduct,
       isOperatorC2CProduct: product && product.sellerType === productSellerType.operatorC2CProduct,
-      isChannelSellerType: [1, 2, 3, 5].includes(product?.sellerType || 0)
+      isChannelSellerType: [1, 2, 3].includes(product?.sellerType || NaN),
+      isCrawlingProduct: product && product.sellerType === productSellerType.collection
     }),
     [product]
   );
@@ -233,7 +235,7 @@ function ProductCTAButton({
 
     if (isSoldOut) return { ctaText: '판매완료', ctaBrandColor: 'black' };
 
-    if (isOperatorC2CProduct) {
+    if (isOperatorC2CProduct || isOperatorProduct) {
       return { ctaText: '보러가기', ctaBrandColor: 'black' };
     }
 
@@ -242,7 +244,9 @@ function ProductCTAButton({
     if (isCamelProduct || isCamelSeller || isCamelSelfSeller || isNormalSeller)
       return { ctaText: '판매자와 문자하기', ctaBrandColor: 'black' };
 
-    return { ctaText: '판매글로 이동', ctaBrandColor: 'black' };
+    if (isCrawlingProduct) return { ctaText: '판매글로 이동', ctaBrandColor: 'black' };
+
+    return { ctaText: '', ctaBrandColor: 'white' };
   }, [
     product,
     isAdminBlockedUser,
@@ -253,11 +257,13 @@ function ProductCTAButton({
     isHiding,
     isSoldOut,
     isOperatorC2CProduct,
+    isOperatorProduct,
     isChannelSellerType,
     isCamelProduct,
     isCamelSeller,
     isCamelSelfSeller,
-    isNormalSeller
+    isNormalSeller,
+    isCrawlingProduct
   ]);
 
   const sessionId = amplitude.getInstance().getSessionId();

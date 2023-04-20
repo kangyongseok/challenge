@@ -51,9 +51,9 @@ function useQueryProduct(): UseQueryProductResult {
     source: source || PRODUCT_SOURCE.DIRECT
   });
 
-  useQuery(queryKeys.products.productLogging(params), () => fetchProduct(params), {
-    enabled: !!params.deviceId
-  });
+  // useQuery(queryKeys.products.productLogging(params), () => fetchProduct(params), {
+  //   enabled: !!params.deviceId
+  // });
 
   const queryResult = useQuery(
     queryKeys.products.product({ productId: params.productId }),
@@ -66,6 +66,7 @@ function useQueryProduct(): UseQueryProductResult {
     },
     {
       refetchOnMount: true,
+      retry: 2,
       enabled: !!params.deviceId
     }
   );

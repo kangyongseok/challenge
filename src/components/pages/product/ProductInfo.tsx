@@ -135,7 +135,7 @@ function ProductInfo({
   const brandLogo = `https://${
     process.env.IMAGE_DOMAIN
   }/assets/images/brands/fit/${product?.brand?.nameEng.toLowerCase().replace(/\s/g, '')}.jpg`;
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
   const sessionId = amplitude.getInstance().getSessionId();
   const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
     sessionId,

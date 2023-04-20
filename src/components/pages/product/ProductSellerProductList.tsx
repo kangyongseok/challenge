@@ -42,7 +42,7 @@ function ProductSellerProductList({
   } = useTheme();
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const sellerId = Number(product?.productSeller.id || 0);
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
     sellerId,

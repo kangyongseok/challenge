@@ -145,7 +145,7 @@ function Chanel() {
   );
 
   // const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || 0);
+  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
 
   const routingRef = useRef(false);
 
