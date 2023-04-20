@@ -16,4 +16,4 @@ export { default as ProductDetailFooter } from './ProductDetailFooter';
 export { default as ProductStructuredData } from './ProductStructuredData';
 export { default as ProductDeletedCard } from './ProductDeletedCard';
 export { default as ProductEventBannerBottomSheet } from './ProductEventBannerBottomSheet'; // 제거 대상
-export { default as ProductInterfereKingBottomSheet } from './ProductInterfereKingBottomSheet';
+// export { default as ProductInterfereKingBottomSheet } from './ProductInterfereKingBottomSheet';

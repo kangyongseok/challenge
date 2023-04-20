@@ -29,7 +29,7 @@ import {
   ProductDetailLegitBottomSheet,
   ProductImages,
   ProductInfo,
-  ProductInterfereKingBottomSheet,
+  // ProductInterfereKingBottomSheet,
   ProductMowebAppContents,
   ProductRedirect,
   ProductRelatedProductList,
@@ -725,7 +725,7 @@ function ProductDetail() {
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <UserShopProductDeleteConfirmDialog redirect />
-      <ProductInterfereKingBottomSheet />
+      {/* <ProductInterfereKingBottomSheet /> */}
     </>
   );
 }

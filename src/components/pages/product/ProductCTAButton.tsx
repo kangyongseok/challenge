@@ -638,7 +638,7 @@ function ProductCTAButton({
 
     // roleSeller.userId 존재하면 카멜 판매자로 채팅 가능
     // sellerType === 5 인경우 채팅 가능 (외부 플랫폼 판매자)
-    if (isChannelSellerType) {
+    if (isChannelSellerType || isOperatorProduct) {
       // (roleSeller?.userId && roleSeller?.userId !== 111) || isCrawlingProduct 이전 조건
       const createChannelParams = {
         targetUserId: String(roleSeller?.userId || 0),
@@ -754,11 +754,24 @@ function ProductCTAButton({
     const validOffers = offers.filter(({ status }) => [1, 2, 4].includes(status));
 
     setIsPossibleOffer(
-      ['채팅'].includes(ctaText) && validOffers.length < 3 && !isAdminBlockedUser && !isBlockedUser
+      ['채팅', '보러가기'].includes(ctaText) &&
+        validOffers.length < 3 &&
+        !isAdminBlockedUser &&
+        !isBlockedUser &&
+        !isOperatorB2CProduct &&
+        !isOperatorC2CProduct
     );
     setHasOffer(validOffers.length < 3 && offers.some(({ status }) => status === 0));
     setCurrentOffer(validOffers.find(({ status }) => status === 1));
-  }, [offers, ctaText, isAdminBlockedUser, isBlockedUser, isOperatorProduct]);
+  }, [
+    offers,
+    ctaText,
+    isAdminBlockedUser,
+    isBlockedUser,
+    isOperatorProduct,
+    isOperatorB2CProduct,
+    isOperatorC2CProduct
+  ]);
 
   useEffect(() => {
     if (checkAgent.isMobileApp() && productWishComplete && !complete && isPossibleOffer) {
