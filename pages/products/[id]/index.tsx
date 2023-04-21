@@ -4,7 +4,7 @@ import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Flexbox, Image, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
+import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -23,6 +23,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
+  ProductBanner,
   ProductCTAButton,
   ProductDeletedCard,
   ProductDetailFooter,
@@ -197,6 +198,12 @@ function ProductDetail() {
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading ? data?.product : undefined;
+  const bulterTargetBrands = ['샤넬', '디올', '구찌', '보테가베네타', '루이비통', '고야드'];
+
+  const isButlerBrand = bulterTargetBrands.includes(product?.brand.name || '');
+  const categoryBag = product?.category.parentId === 45;
+  const isButlerPrice = (product?.price || 0) >= 3000000;
+  const isButlerBanner = isButlerBrand && categoryBag && isButlerPrice;
 
   const handleClickWish = useCallback(
     (isWish: boolean) => {
@@ -317,7 +324,7 @@ function ProductDetail() {
     setViewDetail(true);
   };
 
-  const handleClick = () => {
+  const handleClickTransfer = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: attrProperty.title.PRODUCT_DETAIL,
@@ -336,6 +343,18 @@ function ProductDetail() {
     }
 
     push('/mypage/settings/transfer');
+  };
+
+  const handleClickButler = () => {
+    logEvent(attrKeys.products.CLICK_BANNER, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PRODUCT_DETAIL,
+      att: 'BUTLER'
+    });
+
+    SessionStorage.set(sessionStorageKeys.butlerSource, 'PRODUCT_DETAIL');
+
+    push('/events/butlerIntro');
   };
 
   useEffect(() => {
@@ -625,21 +644,21 @@ function ProductDetail() {
                   onClickSMS={handleClickSMS}
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
-                <Box
-                  onClick={handleClick}
-                  customStyle={{
-                    margin: '0 -20px',
-                    borderBottom: `8px solid ${common.bg02}`,
-                    backgroundColor: '#111A3D'
-                  }}
-                >
-                  <Image
-                    height={104}
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
-                    alt="Banner Img"
-                    disableAspectRatio
+                {!isButlerBanner ? (
+                  <ProductBanner
+                    handleClick={handleClickButler}
+                    bannerColor="#161617"
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/butler_banner.png`}
+                    alt="사고싶은 가방 아직 찾지 못했다면?"
                   />
-                </Box>
+                ) : (
+                  <ProductBanner
+                    handleClick={handleClickTransfer}
+                    bannerColor="#111A3D"
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
+                    alt="내 상품 가져오기로 한번에 판매 등록!"
+                  />
+                )}
               </>
             )}
             <ProductMowebAppContents data={data} />

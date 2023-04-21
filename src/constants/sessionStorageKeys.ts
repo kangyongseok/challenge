@@ -12,6 +12,7 @@ const personalProductsCache = 'personalProductsCache';
 const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
 const savedCreateChannelParams = 'savedCreateChannelParams';
 const camelSellerSelectBrandSource = 'camelSellerSelectBrandSource';
+const butlerSource = 'butlerSource';
 const submitLegitProcessName = 'submitLegitProcessName';
 const legitIntroSource = 'legitIntroSource';
 const isFirstVisitCamelSellerRegisterConfirm = 'isFirstVisitCamelSellerRegisterConfirm';
@@ -35,7 +36,8 @@ const sessionStorageKeys = {
   submitLegitProcessName,
   legitIntroSource,
   isFirstVisitCamelSellerRegisterConfirm,
-  lastPageUrl
+  lastPageUrl,
+  butlerSource
 };
 
 export default sessionStorageKeys;

@@ -16,8 +16,6 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-import { PageHead } from '@components/UI/atoms';
-
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
@@ -25,15 +23,10 @@ import { postSurvey } from '@api/user';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 
-import { getImageResizePath } from '@utils/common';
-
 import { deviceIdState } from '@recoil/common';
 
-function Butler() {
+function ButlerIntro() {
   const router = useRouter();
-  const { result } = router.query;
-
-  const { mutate, isLoading } = useMutation(postSurvey);
 
   const deviceId = useRecoilValue(deviceIdState);
 
@@ -41,6 +34,8 @@ function Butler() {
 
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  const { mutate, isLoading } = useMutation(postSurvey);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.name === 'name') {
@@ -93,10 +88,10 @@ function Butler() {
     logEvent('VIEW_EVENT_DETAIL', {
       name: 'EVENT_DETAIL',
       title: '2304_CAMEL_BUTLER',
-      att: 'LANDING',
+      att: 'INTRO',
       source: SessionStorage.get(sessionStorageKeys.butlerSource) || 'PUSH'
     });
-  }, [result]);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -111,102 +106,50 @@ function Butler() {
 
   return (
     <>
-      <PageHead
-        title="원하는 명품을 카멜이 대신 찾아드립니다 | Camel Butler"
-        description="Camel Butler 서비스는, 원하는 모델과 예산을 알려주시면 카멜이 대신 사서 대신 검수 후 보내드리는 서비스 입니다"
-        ogTitle="원하는 명품을 카멜이 대신 찾아드립니다 | Camel Butler"
-        ogDescription="Camel Butler 서비스는, 원하는 모델과 예산을 알려주시면 카멜이 대신 사서 대신 검수 후 보내드리는 서비스 입니다"
-        ogImage={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/butler_img01.png`}
-      />
-      <Flexbox
-        direction="vertical"
-        alignment="center"
-        justifyContent="center"
-        gap={120}
-        customStyle={{
-          background: '#111214',
-          position: 'relative',
-          paddingBottom: 150,
-          minHeight: '100vh'
-        }}
-      >
-        <CloseButton name="CloseOutlined" onClick={() => router.back()} />
-        <ButlerLogo
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/butler_logo.png`}
-          alt="Camel Butler Logo"
-          disableAspectRatio
-          height={18}
+      <Wrap direction="vertical" alignment="center" justifyContent="center" gap={10}>
+        <CloseButton
+          name="CloseOutlined"
+          onClick={() => {
+            router.back();
+          }}
         />
-        {result ? (
-          <Image
-            src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/new_butler_img04.png`,
-              h: 300
-            })}
-            alt="Thank you for applying"
-            disableAspectRatio
-            width="100%"
-            customStyle={{ flex: 1 }}
-          />
-        ) : (
-          <>
-            <Image
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/new_butler_img01.png`,
-                h: 919
-              })}
-              alt="Camel Butler"
-              disableAspectRatio
-              disableSkeleton
-              disableSkeletonAnimation
-              width="100%"
-            />
-            <Image
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/new_butler_img02.png`,
-                h: 512
-              })}
-              alt="what is Butler?"
-              disableAspectRatio
-              disableSkeleton
-              disableSkeletonAnimation
-              width="100%"
-            />
-            <Image
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/new_butler_img03.png`,
-                h: 798
-              })}
-              alt="No fees!"
-              disableAspectRatio
-              disableSkeleton
-              disableSkeletonAnimation
-              width="100%"
-            />
-          </>
-        )}
-        <SubmiTbuttonWrap alignment="center" justifyContent="center">
-          <Button
-            fullWidth
-            size="xlarge"
-            customStyle={{ background: '#3D57FF' }}
-            variant="solid"
-            onClick={() => {
-              if (result) {
-                router.replace('/');
-              } else {
-                logEvent('CLICK_EVENT_DETAIL', {
-                  name: 'EVENT_DETAIL',
-                  title: '2304_CAMEL_BUTLER'
-                });
-                setOpen(true);
-              }
-            }}
-          >
-            {result ? '확인' : '버틀러 신청하기'}
-          </Button>
-        </SubmiTbuttonWrap>
-      </Flexbox>
+        <Typography weight="bold" variant="h2" color="white">
+          사고싶은 가방,
+          <br />
+          찾기 어려우신가요?
+        </Typography>
+        <Typography color="ui60" variant="h4">
+          신청해주시면 대신 찾아서
+          <br />
+          안전하게 구매까지 도와드릴께요.
+        </Typography>
+        <Image
+          disableAspectRatio
+          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/butler_intro.png`}
+          alt="카멜이 조건에 딱 맞는 매물을 공유하려 합니다."
+          round={10}
+          onClick={() => {
+            logEvent('CLICK_EVENT_DETAIL', {
+              name: 'EVENT_DETAIL',
+              title: '2304_CAMEL_BUTLER'
+            });
+            setOpen(true);
+          }}
+          customStyle={{ marginTop: 32 }}
+        />
+        <Typography
+          color="ui98"
+          weight="medium"
+          variant="h4"
+          customStyle={{ textDecoration: 'underline', marginTop: 20 }}
+          onClick={() => {
+            SessionStorage.set(sessionStorageKeys.butlerSource, 'EVENT_DETAIL');
+            router.push('/events/butler');
+          }}
+        >
+          자세히보기
+        </Typography>
+      </Wrap>
       <ThemeProvider theme="dark">
         <BottomSheet
           open={open}
@@ -299,29 +242,20 @@ function Butler() {
   );
 }
 
-const ButlerLogo = styled(Image)`
-  position: fixed;
-  top: 25px;
-  left: 50%;
-  margin-left: -75px;
-  z-index: 1;
+const Wrap = styled(Flexbox)`
+  background: #111214;
+  position: relative;
+  padding: 84px 32px 50px 32px;
+  min-height: 100vh;
+  text-align: center;
 `;
 
 const CloseButton = styled(Icon)`
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
   color: white;
   z-index: 1;
 `;
 
-const SubmiTbuttonWrap = styled(Flexbox)`
-  padding: 0 20px 40px 20px;
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  background: #111214;
-`;
-
-export default Butler;
+export default ButlerIntro;
