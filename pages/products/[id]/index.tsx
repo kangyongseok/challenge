@@ -644,7 +644,7 @@ function ProductDetail() {
                   onClickSMS={handleClickSMS}
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
-                {!isButlerBanner ? (
+                {isButlerBanner ? (
                   <ProductBanner
                     handleClick={handleClickButler}
                     bannerColor="#161617"
