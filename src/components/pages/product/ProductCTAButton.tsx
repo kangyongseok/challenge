@@ -190,7 +190,8 @@ function ProductCTAButton({
     isOperatorB2CProduct,
     isOperatorC2CProduct,
     isChannelSellerType,
-    isCrawlingProduct
+    isCrawlingProduct,
+    isAllOperatorType
   } = useMemo(
     () => ({
       isCamelProduct: product?.productSeller.site.id === PRODUCT_SITE.CAMEL.id,
@@ -208,6 +209,7 @@ function ProductCTAButton({
       isOperatorB2CProduct: product && product.sellerType === productSellerType.operatorB2CProduct,
       isOperatorC2CProduct: product && product.sellerType === productSellerType.operatorC2CProduct,
       isChannelSellerType: [1, 2, 3].includes(product?.sellerType || NaN),
+      isAllOperatorType: [5, 6, 7].includes(product?.sellerType || NaN),
       isCrawlingProduct: product && product.sellerType === productSellerType.collection
     }),
     [product]
@@ -577,6 +579,8 @@ function ProductCTAButton({
   };
 
   const handleClickSafePaymentFreeBanner = () => {
+    if (isAllOperatorType) return;
+
     logEvent(attrKeys.products.CLICK_BANNER, {
       name: attrProperty.name.PRODUCT_DETAIL,
       title: attrProperty.title.ORDER
@@ -785,7 +789,7 @@ function ProductCTAButton({
 
   return (
     <>
-      {open && (['채팅', '보러가기'].includes(ctaText) || isOperatorB2CProduct) && (
+      {open && (['채팅', '보러가기'].includes(ctaText) || isAllOperatorType) && (
         <Flexbox
           alignment="center"
           justifyContent="space-between"
@@ -798,17 +802,19 @@ function ProductCTAButton({
             width: '100%',
             height: 44,
             padding: '12px 20px',
-            backgroundColor: common.ui20,
-            zIndex: zIndex.button
+            backgroundColor: isAllOperatorType ? primary.light : common.ui20,
+            zIndex: zIndex.button + 1
           }}
         >
+          {isAllOperatorType && <Triangle />}
           <Flexbox
             gap={4}
             customStyle={{
               flex: 1,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              justifyContent: isAllOperatorType ? 'center' : 'initial'
             }}
           >
             <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
@@ -819,17 +825,21 @@ function ProductCTAButton({
                 color: common.uiWhite
               }}
             >
-              카멜은 안전결제 수수료 무료!
+              {isAllOperatorType
+                ? '수수료 없이, 카멜이 대신 구매해드려요.'
+                : '카멜은 안전결제 수수료 무료!'}
             </Typography>
           </Flexbox>
-          <Box
-            onClick={handleClickTodayHide}
-            customStyle={{
-              minWidth: 'fit-content'
-            }}
-          >
-            <Icon name="CloseOutlined" width={20} height={20} color={common.uiWhite} />
-          </Box>
+          {!isAllOperatorType && (
+            <Box
+              onClick={handleClickTodayHide}
+              customStyle={{
+                minWidth: 'fit-content'
+              }}
+            >
+              <Icon name="CloseOutlined" width={20} height={20} color={common.uiWhite} />
+            </Box>
+          )}
         </Flexbox>
       )}
       <Box
@@ -1033,9 +1043,7 @@ function ProductCTAButton({
               customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
             />
           </Button>
-          {(['채팅', '보러가기'].includes(ctaText) ||
-            isOperatorB2CProduct ||
-            isOperatorC2CProduct) && (
+          {(['채팅', '보러가기'].includes(ctaText) || isAllOperatorType) && (
             <Button
               fullWidth
               variant="solid"
@@ -1044,10 +1052,11 @@ function ProductCTAButton({
               onClick={handleClickSafePayment}
               customStyle={{
                 paddingLeft: 12,
-                paddingRight: 12
+                paddingRight: 12,
+                minWidth: isAllOperatorType ? 130 : 'auto'
               }}
             >
-              안전결제
+              {isAllOperatorType ? '구매대행 요청' : '안전결제'}
             </Button>
           )}
         </Flexbox>
@@ -1135,6 +1144,22 @@ const Wrapper = styled.div`
   }) => common.uiWhite};
   padding: 12px 20px ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '12px'};
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+`;
+
+const Triangle = styled.div`
+  width: 0px;
+  height: 0px;
+  border-top: 10px solid
+    ${({
+      theme: {
+        palette: { primary }
+      }
+    }) => primary.light};
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  position: absolute;
+  bottom: -7px;
+  right: 60px;
 `;
 
 export default ProductCTAButton;

@@ -95,7 +95,7 @@ function LegitStatusCardHolder({
 
   const { isNormalseller, isRequestLegit } = useMemo(
     () => ({
-      isNormalseller: (siteId === 34 || productSeller.type === 4) && productSeller.type !== 3,
+      isNormalseller: siteId === 34 || productSeller.type === 4 || productSeller.type === 3,
       isRequestLegit: postType === 2
     }),
     [productSeller.type, siteId, postType]

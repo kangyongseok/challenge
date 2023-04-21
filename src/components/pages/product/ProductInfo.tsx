@@ -127,7 +127,8 @@ function ProductInfo({
   // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
   const isTransferred =
     (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
-    product?.productSeller?.type === 4;
+    product?.productSeller?.type === 4 ||
+    product?.productSeller?.type === 3;
   const hasCheckedReportOption = Object.values(reportOptions).some(({ checked }) => checked);
   const platformId =
     (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
@@ -444,25 +445,6 @@ function ProductInfo({
   }, []);
 
   const renderCertificationBanner = () => {
-    if (!isTransferred && isCamelSellerProduct) {
-      return (
-        <Flexbox
-          alignment="center"
-          gap={4}
-          customStyle={{
-            marginTop: 20,
-            padding: 12,
-            borderRadius: 8,
-            backgroundColor: common.bg02
-          }}
-        >
-          <Icon name="Rotate2Outlined" width={16} height={16} color={primary.light} />
-          <Typography variant="body2" weight="medium">
-            {product?.site?.name} 플랫폼과 동기화된 매물이에요.
-          </Typography>
-        </Flexbox>
-      );
-    }
     if (isCertificationSeller) {
       return (
         <CertificationCard>

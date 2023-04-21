@@ -251,7 +251,7 @@ function EventDogHoneyProductCard({
           width={20}
           height={20}
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-            product.productSeller.type === 4 || siteId === 34
+            product.productSeller.type === 4 || siteId === 34 || product.productSeller.type === 3
               ? IMG_CAMEL_PLATFORM_NUMBER
               : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
           }.png`}

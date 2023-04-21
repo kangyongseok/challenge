@@ -31,7 +31,8 @@ function ProductGridCardSkeleton({
   gap,
   customStyle
 }: ProductGridCardSkeletonPros) {
-  const isNormalSeller = productSeller?.type === 4 || productSeller?.site.id === 34;
+  const isNormalSeller =
+    productSeller?.type === 4 || productSeller?.site.id === 34 || productSeller?.type === 3;
   const isSafe = useMemo(() => {
     const { site } = productSeller || {};
 

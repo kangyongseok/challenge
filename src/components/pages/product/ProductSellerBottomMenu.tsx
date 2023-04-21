@@ -74,7 +74,8 @@ function ProductSellerBottomMenu({
   const isDeletedProduct = productStatusCode.deleted === status;
   const isTransferred =
     (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
-    product?.productSeller?.type === 4;
+    product?.productSeller?.type === 4 ||
+    product?.productSeller?.type === 3;
 
   const getTitle = useMemo(() => {
     if (status === 0) return attrProperty.title.SALE;

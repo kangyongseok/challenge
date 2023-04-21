@@ -321,7 +321,9 @@ function NewProductGridCard({
           )}
         {!hideLabel &&
           (!isAuthSeller || isAuthProduct) &&
-          (product.productSeller.type === 4 || siteId === 34) && (
+          (product.productSeller.type === 4 ||
+            siteId === 34 ||
+            product.productSeller.type === 3) && (
             <Flexbox
               gap={4}
               customStyle={{

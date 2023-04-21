@@ -173,7 +173,8 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
       const isTransferred =
         (contents[index].productSeller?.type === 0 &&
           contents[index].productSeller?.site.id === 34) ||
-        contents[index].productSeller.type === 4;
+        contents[index].productSeller.type === 4 ||
+        contents[index].productSeller.type === 3;
       const isSavedLegitRequest =
         getSavedLegitData?.savedLegitRequest?.state?.productId === contents[index].id;
 
@@ -198,8 +199,6 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
                 <UserShopProductActionBanner
                   labelId={isSavedLegitRequest ? 0 : shopBannerList[0].id}
                   productId={contents[index].id}
-                  isTransferred={isTransferred}
-                  platformName={contents[index].site?.name}
                   savedLegitData={getSavedLegitData?.savedLegitRequest?.state}
                   synonyms={shopBannerList[0]?.synonyms || ''}
                   attributes={handleProductAtt(contents[index], index)}

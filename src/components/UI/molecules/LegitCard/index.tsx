@@ -50,7 +50,7 @@ function LegitCard({
   } = productLegit;
   const { id: siteId = 0, hasImage: siteHasImage = false } = site || {};
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
-  const isNormalseller = (siteId === 34 || productSeller?.type === 4) && productSeller?.type !== 3;
+  const isNormalseller = siteId === 34 || productSeller?.type === 4 || productSeller?.type === 3;
 
   const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
 
