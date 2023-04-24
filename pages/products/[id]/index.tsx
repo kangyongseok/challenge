@@ -678,6 +678,7 @@ function ProductDetail() {
         variant="wish"
         open={isShowAppDownloadDialog}
         onClose={() => setIsShowAppDownloadDialog(false)}
+        productId={data?.product.id}
       />
       <Toast
         open={isOpenDuplicatedToast}

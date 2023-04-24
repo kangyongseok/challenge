@@ -45,9 +45,9 @@ export function handleClickAppDownload({
 
   if (name === PRODUCT_NAME.PRODUCT_DETAIL) {
     window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&deep_link_value=${encodeURIComponent(
-      `mrcamel://view?view=product/${productId}&isCrm=true${deepLinkParams}`
+      `mrcamel://view?view=/products/${productId}&isCrm=true${deepLinkParams}`
     )}&af_dp=${encodeURIComponent(
-      `mrcamel://view?view=product/${productId}&isCrm=true${deepLinkParams}`
+      `mrcamel://view?view=/products/${productId}&isCrm=true${deepLinkParams}`
     )}&af_adset=detail${oneLinkParams}`;
     return;
   }
