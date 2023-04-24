@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
@@ -23,9 +23,9 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
-  ProductBanner,
   ProductCTAButton,
   ProductDeletedCard,
+  ProductDetailBannerGroup,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
   ProductImages,
@@ -72,10 +72,6 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-import {
-  settingsTransferDataState,
-  settingsTransferPlatformsState
-} from '@recoil/settingsTransfer';
 import { loginBottomSheetState, toastState } from '@recoil/common';
 import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryUserData from '@hooks/useQueryUserData';
@@ -85,7 +81,6 @@ import useOsAlarm from '@hooks/useOsAlarm';
 
 function ProductDetail() {
   const {
-    push,
     query: { id: productId, redirect, chainPrice },
     asPath
   } = useRouter();
@@ -98,8 +93,6 @@ function ProductDetail() {
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const [toast, setToastState] = useRecoilState(toastState);
-  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
-  const resetDataState = useResetRecoilState(settingsTransferDataState);
   const setOsAlarm = useOsAlarm();
 
   const { data: userData, set: setUserDate } = useQueryUserData();
@@ -198,12 +191,6 @@ function ProductDetail() {
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading ? data?.product : undefined;
-  const bulterTargetBrands = ['샤넬', '디올', '구찌', '보테가베네타', '루이비통', '고야드'];
-
-  const isButlerBrand = bulterTargetBrands.includes(product?.brand.name || '');
-  const categoryBag = product?.category.parentId === 45;
-  const isButlerPrice = (product?.price || 0) >= 3000000;
-  const isButlerBanner = isButlerBrand && categoryBag && isButlerPrice;
 
   const handleClickWish = useCallback(
     (isWish: boolean) => {
@@ -322,39 +309,6 @@ function ProductDetail() {
     });
 
     setViewDetail(true);
-  };
-
-  const handleClickTransfer = () => {
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.PRODUCT_DETAIL,
-      att: 'TRANSFER'
-    });
-
-    resetPlatformsState();
-    resetDataState();
-
-    if (!accessUser) {
-      setLoginBottomSheet({
-        open: true,
-        returnUrl: '/mypage/settings/transfer'
-      });
-      return;
-    }
-
-    push('/mypage/settings/transfer');
-  };
-
-  const handleClickButler = () => {
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.PRODUCT_DETAIL,
-      att: 'BUTLER'
-    });
-
-    SessionStorage.set(sessionStorageKeys.butlerSource, 'PRODUCT_DETAIL');
-
-    push('/events/butlerIntro');
   };
 
   useEffect(() => {
@@ -644,21 +598,7 @@ function ProductDetail() {
                   onClickSMS={handleClickSMS}
                   isCamelSellerProduct={isCamelSellerProduct}
                 />
-                {isButlerBanner ? (
-                  <ProductBanner
-                    handleClick={handleClickButler}
-                    bannerColor="#161617"
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/butler_banner.png`}
-                    alt="사고싶은 가방 아직 찾지 못했다면?"
-                  />
-                ) : (
-                  <ProductBanner
-                    handleClick={handleClickTransfer}
-                    bannerColor="#111A3D"
-                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
-                    alt="내 상품 가져오기로 한번에 판매 등록!"
-                  />
-                )}
+                <ProductDetailBannerGroup product={product} />
               </>
             )}
             <ProductMowebAppContents data={data} />
