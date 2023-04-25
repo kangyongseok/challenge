@@ -70,7 +70,6 @@ const TextArea = styled(TextareaAutosize)`
   max-height: 120px;
   outline: 0;
   border-radius: 8px;
-  overflow: hidden;
   resize: none;
   ${({
     theme: {
