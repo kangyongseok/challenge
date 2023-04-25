@@ -213,7 +213,7 @@ function UserShopProfile({
                     </Flexbox>
                   )}
                   {!!areaName && data?.info.value.isAreaOpen && (
-                    <Flexbox alignment="center" customStyle={{ marginTop: 4 }}>
+                    <Flexbox alignment="center">
                       <Icon name="PinOutlined" width={16} height={16} />
                       <Typography variant="body2">{areaName}</Typography>
                     </Flexbox>
