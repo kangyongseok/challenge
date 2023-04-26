@@ -149,7 +149,7 @@ function Channel() {
   );
 
   // const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
-  const isCrawlingProduct = !!sendbirdChannel && ![1, 2, 3].includes(product?.sellerType || 0);
+  const isCrawlingProduct = !!sendbirdChannel && ![1, 2, 3].includes(product?.sellerType || NaN);
 
   const handleClickProduct = useCallback(() => {
     if (!product || isDeletedProduct) return;
