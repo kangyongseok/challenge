@@ -20,8 +20,6 @@ import { checkAgent } from '@utils/common';
 import { prevChannelAlarmPopup } from '@recoil/common';
 import useOsAlarm from '@hooks/useOsAlarm';
 
-// import useOsAlarm from '@hooks/useOsAlarm';
-
 function ChannelPriceOfferForm() {
   const router = useRouter();
   const { id, from } = router.query;
@@ -108,11 +106,7 @@ function ChannelPriceOfferForm() {
       {
         onSuccess() {
           if (from === 'productDetail') {
-            if (checkAgent.isIOSApp()) {
-              window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${id}`);
-            } else {
-              router.replace(`/channels/${id}`);
-            }
+            router.replace(`/channels/${id}`);
           } else {
             router.back();
           }
@@ -168,8 +162,8 @@ function ChannelPriceOfferForm() {
 
       if (inputElement[0]) {
         inputElement[0].setSelectionRange(
-          inputSelectionEndRef.current || String(value).length,
-          inputSelectionEndRef.current || String(value).length
+          inputSelectionEndRef.current || String(commaNumber(value)).length,
+          inputSelectionEndRef.current || String(commaNumber(value)).length
         );
       }
     }

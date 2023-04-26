@@ -177,12 +177,7 @@ function ProductOrderSuccess() {
               source
             });
 
-            router.push({
-              pathname: '/channels',
-              query: {
-                channelId
-              }
-            });
+            router.push(`/channels/${channelId}`);
           });
         } else {
           await mutate(
@@ -213,12 +208,7 @@ function ProductOrderSuccess() {
                     source
                   });
 
-                  router.push({
-                    pathname: '/channels',
-                    query: {
-                      channelId
-                    }
-                  });
+                  router.push(`/channels/${channelId}`);
                 }
               );
             },

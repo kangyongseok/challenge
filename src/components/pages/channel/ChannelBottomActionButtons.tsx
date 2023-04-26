@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Chip, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 import type {
@@ -11,7 +11,7 @@ import type {
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
-import type { SendableMessage } from '@sendbird/chat/lib/__definition';
+import type { FileMessageCreateParams, SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';
@@ -27,19 +27,20 @@ import { putProductUpdateStatus } from '@api/product';
 
 import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { photoActionType, productStatus } from '@constants/channel';
+import { productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getProductType } from '@utils/products';
-import { checkAgent, getOrderStatusText } from '@utils/common';
+import { getOrderStatusText } from '@utils/common';
 
 import { toastState } from '@recoil/common';
 import { channelDialogStateFamily } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
 interface ChannelBottomActionButtonsProps {
-  messageInputHeight: number;
+  hasSentMessage?: boolean;
+  isFocused: boolean;
   lastMessageIndex: number;
   channelId: number;
   channelUrl: string;
@@ -65,7 +66,8 @@ interface ChannelBottomActionButtonsProps {
 }
 
 function ChannelBottomActionButtons({
-  messageInputHeight,
+  hasSentMessage,
+  isFocused,
   lastMessageIndex,
   channelId,
   channelUrl,
@@ -89,15 +91,21 @@ function ChannelBottomActionButtons({
 }: ChannelBottomActionButtonsProps) {
   const router = useRouter();
 
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
+
   const setToastState = useSetRecoilState(toastState);
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
   const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
 
-  const [openCameraOptionMenu, setOpenCameraOptionMenu] = useState(false);
   const [currentOffer, setCurrentOffer] = useState<ProductOffer | null>(null);
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
+  const [pending, setPending] = useState(false);
 
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -140,11 +148,10 @@ function ChannelBottomActionButtons({
   const handleClickPhoto = () => {
     if (isLoading) return;
 
-    if (checkAgent.isIOSApp()) {
-      setOpenCameraOptionMenu((prevState) => !prevState);
-      return;
-    }
-
+    // if (checkAgent.isIOSApp()) {
+    //   setOpenCameraOptionMenu((prevState) => !prevState);
+    //   return;
+    // }
     hiddenInputRef.current?.click();
   };
 
@@ -154,7 +161,8 @@ function ChannelBottomActionButtons({
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      const file = e.target.files[0];
+      // const file = e.target.files[0];
+      const arr = Object.entries(e.target.files).map(([_, value]) => value);
       await mutateSendMessage({
         data: {
           channelId,
@@ -163,7 +171,7 @@ function ChannelBottomActionButtons({
         },
         channelUrl,
         isTargetUserNoti,
-        file,
+        multipleImage: arr as FileMessageCreateParams[],
         userId: targetUserId,
         productId,
         callback: (msg) => {
@@ -172,11 +180,6 @@ function ChannelBottomActionButtons({
         }
       });
     }
-  };
-
-  const handleClickCameraOption = (option: number) => () => {
-    setOpenCameraOptionMenu(false);
-    window.webkit?.messageHandlers?.callPhotoAttach?.postMessage?.(option);
   };
 
   const handleClickAppointment = () => {
@@ -197,13 +200,9 @@ function ChannelBottomActionButtons({
       return;
     }
 
-    router
-      .push({
-        pathname: `/channels/${router.query.id}/appointment`
-      })
-      .then(() => {
-        if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      });
+    router.push({
+      pathname: `/channels/${router.query.id}/appointment`
+    });
   };
 
   const handleClickReview = () => {
@@ -213,10 +212,6 @@ function ChannelBottomActionButtons({
     logEvent(attrKeys.channel.VIEW_REVIEW_SEND_POPUP, {
       att: isTargetUserSeller ? 'BUYER' : 'SELLER'
     });
-
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
 
     if (isLoading) return;
 
@@ -286,30 +281,27 @@ function ChannelBottomActionButtons({
       source: 'CHANNEL_DETAIL'
     });
 
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
-
     router.push(`/channels/${router.query.id}/priceOffer`);
   };
 
-  useEffect(() => {
-    ChannelTalk.onShowMessenger(() => {
-      if (checkAgent.isIOSApp()) {
-        window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      }
-    });
+  const handleClickPresetMessage = (message: string) => () => {
+    if (pending) return;
 
-    ChannelTalk.onHideMessenger(() => {
-      if (checkAgent.isIOSApp()) {
-        window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-      }
-    });
+    setPending(true);
 
-    return () => {
-      ChannelTalk.clearCallbacks();
-    };
-  }, []);
+    mutateSendMessage({
+      data: { channelId, content: message, event: 'LAST_MESSAGE' },
+      channelUrl,
+      isTargetUserNoti,
+      userId: targetUserId,
+      productId,
+      callback: (msg) => {
+        updateNewMessage(msg);
+        setPending(false);
+      },
+      failCallback: () => setPending(false)
+    });
+  };
 
   useEffect(() => {
     if (!offers) return;
@@ -324,145 +316,161 @@ function ChannelBottomActionButtons({
     );
   }, [offers, status, isTargetUserSeller]);
 
-  return (
-    <ActionButtons messageInputHeight={messageInputHeight}>
-      <ButtonsWrap gap={8}>
-        <Chip
-          size="large"
-          variant="outline"
-          startIcon={<Icon name="CameraFilled" />}
-          disabled={isLoading}
-          onClick={handleClickPhoto}
+  if (!hasSentMessage && !isFocused && (!offers || !offers.length)) {
+    return (
+      <Box
+        customStyle={{
+          padding: '20px 20px 8px',
+          borderTop: `1px solid ${common.line02}`,
+          boxShadow: '0px -2px 4px 0px rgba(0, 0, 0, 0.08)'
+        }}
+      >
+        <Typography variant="body2" weight="medium" color="ui60">
+          간단한 질문 또는 가격제안으로 대화를 시작해보세요.
+        </Typography>
+        <Flexbox
+          direction="vertical"
+          gap={16}
+          customStyle={{
+            margin: '20px 0 28px'
+          }}
         >
-          <HiddenInput
-            id="fileUpload"
-            ref={hiddenInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-          <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-            사진
-          </Typography>
-        </Chip>
-        {!isDeletedProduct && !isOperatorB2CProduct && !isOperatorC2CProduct && (
-          <>
-            {isPossibleOffer && currentOffer?.status !== 1 && (
-              <Chip
-                size="large"
-                variant="outline"
-                startIcon={<Icon name="WonCircleFilled" />}
-                onClick={handleClickPriceOffer}
-                disabled={isLoading}
-              >
-                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-                  가격제안
-                </Typography>
-              </Chip>
-            )}
-            {showAppointmentButton && !showPurchaseConfirmButton && !isOperatorProduct && (
-              <Chip
-                size="large"
-                variant="outline"
-                startIcon={<Icon name="DateFilled" />}
-                disabled={isLoading}
-                onClick={handleClickAppointment}
-              >
-                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-                  직거래 약속
-                </Typography>
-              </Chip>
-            )}
-            {showPurchaseConfirmButton && (
-              <Chip
-                size="large"
-                variant="outline"
-                startIcon={<Icon name="CheckOutlined" />}
-                onClick={() =>
-                  setOpenState((prevState) => ({
-                    ...prevState,
-                    open: true
-                  }))
-                }
-                disabled={isLoading}
-              >
-                <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
-                  구매확정
-                </Typography>
-              </Chip>
-            )}
-            {showReviewButton && (
-              <Chip size="large" startIcon={<Icon name="EditFilled" />}>
-                <Typography
-                  variant="h4"
-                  onClick={handleClickReview}
-                  customStyle={{ whiteSpace: 'nowrap' }}
-                >
-                  후기 보내기
-                </Typography>
-              </Chip>
-            )}
-            {!showReviewButton && (
-              <Chip size="large" variant="outline" disabled={isLoading}>
-                <Typography
-                  variant="h4"
-                  onClick={handleClickAsk}
-                  customStyle={{ whiteSpace: 'nowrap' }}
-                >
-                  결제/환불 문의
-                </Typography>
-              </Chip>
-            )}
-          </>
-        )}
-      </ButtonsWrap>
-      <CameraOptionsWrapper open={openCameraOptionMenu}>
-        <CameraOptions>
           <Flexbox
+            gap={8}
             alignment="center"
-            gap={4}
-            customStyle={{ padding: 8 }}
-            onClick={handleClickCameraOption(photoActionType.album)}
+            onClick={handleClickPresetMessage('안녕하세요, 구매가능한가요?')}
           >
-            <Icon name="ImageFilled" />
-            <Typography variant="body1">앨범에서 선택하기</Typography>
+            <Icon name="MessageFilled" width={20} height={20} color="ui80" />
+            <Typography>안녕하세요, 구매가능한가요?</Typography>
           </Flexbox>
           <Flexbox
+            gap={8}
             alignment="center"
-            gap={4}
-            customStyle={{ padding: 8 }}
-            onClick={handleClickCameraOption(photoActionType.camera)}
+            onClick={handleClickPresetMessage('안전결제 가능한가요?')}
           >
-            <Icon name="CameraFilled" />
-            <Typography variant="body1">사진 촬영하기</Typography>
+            <Icon name="MessageFilled" width={20} height={20} color="ui80" />
+            <Typography>안전결제 가능한가요?</Typography>
           </Flexbox>
-        </CameraOptions>
-      </CameraOptionsWrapper>
+          {[119, 97, 104, 282, 283, 14].includes(product?.category?.parentId || 0) && (
+            <Flexbox
+              gap={8}
+              alignment="center"
+              onClick={handleClickPresetMessage('실착 사이즈가 어떻게 되나요?')}
+            >
+              <Icon name="MessageFilled" width={20} height={20} color="ui80" />
+              <Typography>실착 사이즈가 어떻게 되나요?</Typography>
+            </Flexbox>
+          )}
+          <Flexbox gap={8} alignment="center" onClick={handleClickPresetMessage('정품인가요?')}>
+            <Icon name="MessageFilled" width={20} height={20} color="ui80" />
+            <Typography>정품인가요?</Typography>
+          </Flexbox>
+        </Flexbox>
+        <Flexbox gap={8} alignment="center" onClick={handleClickPriceOffer}>
+          <Icon name="WonCircleFilled" width={20} height={20} />
+          <Typography>가격 제안하기</Typography>
+        </Flexbox>
+      </Box>
+    );
+  }
+
+  return (
+    <ActionButtons>
+      <Chip
+        variant="outline"
+        startIcon={<Icon name="CameraFilled" />}
+        disabled={isLoading}
+        onClick={handleClickPhoto}
+      >
+        <HiddenInput
+          id="fileUpload"
+          ref={hiddenInputRef}
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+          사진
+        </Typography>
+      </Chip>
+      {!isDeletedProduct && !isOperatorB2CProduct && !isOperatorC2CProduct && (
+        <>
+          {isPossibleOffer && currentOffer?.status !== 1 && (
+            <Chip
+              variant="outline"
+              startIcon={<Icon name="WonCircleFilled" />}
+              onClick={handleClickPriceOffer}
+              disabled={isLoading}
+            >
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                가격제안
+              </Typography>
+            </Chip>
+          )}
+          {showAppointmentButton && !showPurchaseConfirmButton && !isOperatorProduct && (
+            <Chip
+              variant="outline"
+              startIcon={<Icon name="TimeFilled" />}
+              disabled={isLoading}
+              onClick={handleClickAppointment}
+            >
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                직거래 약속
+              </Typography>
+            </Chip>
+          )}
+          {showPurchaseConfirmButton && (
+            <Chip
+              variant="outline"
+              startIcon={<Icon name="CheckOutlined" />}
+              onClick={() =>
+                setOpenState((prevState) => ({
+                  ...prevState,
+                  open: true
+                }))
+              }
+              disabled={isLoading}
+            >
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                구매확정
+              </Typography>
+            </Chip>
+          )}
+          {showReviewButton && (
+            <Chip startIcon={<Icon name="EditFilled" />} onClick={handleClickReview}>
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                후기 보내기
+              </Typography>
+            </Chip>
+          )}
+          {!showReviewButton && (
+            <Chip variant="outline" disabled={isLoading} onClick={handleClickAsk}>
+              <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
+                결제/환불 문의
+              </Typography>
+            </Chip>
+          )}
+        </>
+      )}
     </ActionButtons>
   );
 }
 
-const ActionButtons = styled.div<{ messageInputHeight: number }>`
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
-  box-sizing: content-box;
-  margin: 0 0
-    ${({ messageInputHeight }) => (checkAgent.isIOSApp() ? 0 : messageInputHeight + 12) + 8}px;
-  padding: 0 16px;
-  display: flex;
-  column-gap: 8px;
-
-  button {
-    padding: 8px 10px;
-    border-radius: 8px;
-  }
-`;
-
-const ButtonsWrap = styled(Flexbox)`
+const ActionButtons = styled.div`
+  width: 100%;
+  padding: 12px 20px 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  column-gap: 4px;
   overflow-x: auto;
+  border-top: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line02};
 `;
 
 const HiddenInput = styled.input`
@@ -473,25 +481,6 @@ const HiddenInput = styled.input`
   overflow: hidden;
   clip: rect(0px, 0px, 0px, 0px);
   clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
-`;
-
-const CameraOptionsWrapper = styled.div<{ open: boolean }>`
-  position: fixed;
-  transform: translateY(-100%);
-  left: 0;
-  padding-left: 16px;
-  padding-bottom: 8px;
-  opacity: ${({ open }) => Number(open)};
-  visibility: ${({ open }) => (open ? 'visible' : 'hidden')};
-  transition: opacity 0.1s ease-in 0s;
-`;
-
-const CameraOptions = styled.div`
-  padding: 4px;
-  border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.palette.common.uiWhite};
 `;
 
 export default ChannelBottomActionButtons;

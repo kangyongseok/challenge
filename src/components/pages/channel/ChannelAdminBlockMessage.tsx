@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
@@ -9,8 +7,6 @@ import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { checkAgent } from '@utils/common';
 
 interface ChannelAdminBlockMessageProps {
   message: AdminMessage;
@@ -30,24 +26,6 @@ function ChannelAdminBlockMessage({ message: { createdAt } }: ChannelAdminBlockM
 
     ChannelTalk.showMessenger();
   };
-
-  useEffect(() => {
-    ChannelTalk.onShowMessenger(() => {
-      if (checkAgent.isIOSApp()) {
-        window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      }
-    });
-
-    ChannelTalk.onHideMessenger(() => {
-      if (checkAgent.isIOSApp()) {
-        window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-      }
-    });
-
-    return () => {
-      ChannelTalk.clearCallbacks();
-    };
-  }, []);
 
   return (
     <Flexbox

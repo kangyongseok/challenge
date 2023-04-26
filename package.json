@@ -20,7 +20,8 @@
     "test": "jest --watch",
     "cy:open": "cypress open",
     "prepare": "husky install",
-    "deploy:noah": "eb deploy mrcamel-client-noah"
+    "noah": "eb deploy mrcamel-client-noah",
+    "beta": "eb deploy mrcamel-client-beta"
   },
   "dependencies": {
     "@datadog/browser-logs": "^4.25.0",
@@ -42,7 +43,7 @@
     "heic2any": "^0.0.3",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.10.0",
-    "mrcamel-ui": "^0.1.58",
+    "mrcamel-ui": "^0.1.59",
     "next": "^13.1.6",
     "next-i18next": "^12.1.0",
     "qs": "^6.10.3",
@@ -53,7 +54,7 @@
     "react-lines-ellipsis": "^0.15.0",
     "react-swipeable-list": "^1.6.0",
     "react-textarea-autosize": "^8.3.4",
-    "react-virtualized": "^9.22.3",
+    "react-virtualized": "^9.22.5",
     "react-zoom-pan-pinch": "^2.5.0",
     "recoil": "^0.7.6",
     "sockjs-client": "^1.6.1",

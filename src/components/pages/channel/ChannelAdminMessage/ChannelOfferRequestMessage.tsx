@@ -28,7 +28,6 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/formats';
-import { checkAgent } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -121,10 +120,6 @@ function ChannelOfferRequestMessage({
     SessionStorage.set(sessionStorageKeys.productDetailOfferEventProperties, {
       source: 'CHANNEL_DETAIL'
     });
-
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
 
     router.push({
       pathname: `/channels/${router.query.id}/priceOffer`,

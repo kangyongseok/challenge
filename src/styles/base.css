@@ -96,6 +96,3 @@ input[type=time]::-webkit-clear-button {
   margin: -10px;
 }
 
-.channel-body {
-  overflow: hidden;
-}

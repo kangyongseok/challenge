@@ -32,13 +32,13 @@ function useOutsideClickRef(
   useEffect(() => {
     if (when) {
       document.addEventListener('click', memoizedCallback, true);
-      document.addEventListener('touchstart', memoizedCallback, true);
+      document.addEventListener('mouseout', memoizedCallback, true);
     }
 
     return () => {
       if (when) {
         document.removeEventListener('click', memoizedCallback, true);
-        document.removeEventListener('touchstart', memoizedCallback, true);
+        document.removeEventListener('mouseout', memoizedCallback, true);
       }
     };
   }, [when, memoizedCallback]);

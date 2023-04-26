@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -11,9 +10,6 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
-
-import { channelPushPageState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ChannelReviewSentMessageProps {
@@ -37,8 +33,6 @@ function ChannelReviewSentMessage({
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
-
   const [isMyReview, setIsMyReview] = useState(false);
 
   const handleClick = () => {
@@ -50,18 +44,6 @@ function ChannelReviewSentMessage({
     const pathname = `/userInfo/${
       isMyReview ? accessUser?.userId : targetUserId
     }?tab=reviews&scrollToReviewUserId=${!isMyReview ? accessUser?.userId : targetUserId}`;
-
-    if (checkAgent.isIOSApp()) {
-      setChannelPushPageState('userInfo');
-      window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-        JSON.stringify({
-          pathname,
-          redirectChannelUrl: router.asPath
-        })
-      );
-
-      return;
-    }
 
     router.push(pathname);
   };

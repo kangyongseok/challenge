@@ -24,8 +24,6 @@ import { getProductDetailUrl } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { toastState } from '@recoil/common';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
-import useRedirectVC from '@hooks/useRedirectVC';
 
 function LegitIntro() {
   const router = useRouter();
@@ -35,13 +33,10 @@ function LegitIntro() {
     }
   } = useTheme();
 
-  useViewportUnitsTrick();
-
   const setLegitRequestState = useSetRecoilState(legitRequestState);
   const setToastState = useSetRecoilState(toastState);
 
   const productId = useMemo(() => Number(router.query.productId || ''), [router.query.productId]);
-  useRedirectVC(`/legit/intro?productId=${productId}`);
 
   const { data: { product } = {} } = useQuery(
     queryKeys.products.product({ productId }),

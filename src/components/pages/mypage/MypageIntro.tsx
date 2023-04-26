@@ -17,13 +17,10 @@ import attrKeys from '@constants/attrKeys';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function MypageIntro() {
   const router = useRouter();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-
-  useViewportUnitsTrick();
 
   const handleClickLogin = () => {
     logEvent(attrKeys.mypage.CLICK_LOGIN, {

@@ -15,13 +15,9 @@ import { logEvent } from '@library/amplitude';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrKeys from '@constants/attrKeys';
 
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
-
 function ChannelPriceOffer() {
   const router = useRouter();
   const { att = 'BUYER' } = router.query;
-
-  useViewportUnitsTrick();
 
   useEffect(() => {
     const { source } =

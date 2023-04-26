@@ -63,4 +63,5 @@ export interface putProductUpdateStatusParams {
   status: number;
   soldType?: 0 | 1;
   targetUserId?: number;
+  channelId?: number;
 }

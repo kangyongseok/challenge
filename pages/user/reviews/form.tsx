@@ -23,11 +23,9 @@ import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent } from '@utils/common';
 
 import { toastState } from '@recoil/common';
 import { AnimationLoading } from '@pages/user/report';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function ReviewForm() {
   const {
@@ -37,8 +35,6 @@ function ReviewForm() {
   } = useTheme();
 
   const router = useRouter();
-
-  useViewportUnitsTrick();
 
   const { productId, userId, userName, isSeller } = useMemo(
     () => ({
@@ -107,12 +103,6 @@ function ReviewForm() {
       });
     }
   }, [isLoading, isSeller, product, productId, router, userId]);
-
-  useEffect(() => {
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
-  }, []);
 
   return (
     <GeneralTemplate

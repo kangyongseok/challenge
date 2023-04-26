@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import type { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
+import { ConnectionHandler } from '@sendbird/chat';
 
 import type { Channel, ChannelsParams } from '@dto/channel';
 
@@ -15,6 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import { getChannelHandler } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 type UseInfiniteQueryChannelsProps = ChannelsParams;
 
@@ -24,6 +26,8 @@ function useInfiniteQueryChannels({
   ...params
 }: UseInfiniteQueryChannelsProps) {
   const queryClient = useQueryClient();
+
+  const { data: accessUser } = useQueryAccessUser();
 
   const [sendbird, setSendbirdState] = useRecoilState(sendbirdState);
 
@@ -145,6 +149,23 @@ function useInfiniteQueryChannels({
             }),
     [data?.pages, sendbird.allChannels, sendbird.receivedChannels, sendbird.sendChannels, type]
   );
+
+  useEffect(() => {
+    Sendbird.getInstance().addConnectionHandler(
+      `${String(accessUser?.userId || '')}-channels`,
+      new ConnectionHandler({
+        onReconnectSucceeded: async () => {
+          groupChannelCollection.current?.dispose();
+          const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+          setSendbirdState((prevState) => ({
+            ...prevState,
+            unreadMessagesCount: newUnreadMessagesCount
+          }));
+          await useInfiniteQueryResult.refetch();
+        }
+      })
+    );
+  }, [accessUser?.userId, setSendbirdState, useInfiniteQueryResult]);
 
   useEffect(() => {
     return () => {

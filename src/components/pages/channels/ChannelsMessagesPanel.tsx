@@ -35,7 +35,7 @@ function ChannelsMessagesPanel({
 
   const { triggered } = useDetectScrollFloorTrigger();
 
-  const { channels, isInitialLoading, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { channels, isInitialLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQueryChannels(props);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function ChannelsMessagesPanel({
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
-  if (!isLoading && !channels.length) {
+  if (!isInitialLoading && !channels.length) {
     return (
       <Flexbox
         component="section"

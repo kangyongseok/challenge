@@ -14,9 +14,9 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedActivatedTime } from '@utils/formats';
-import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel/atom';
+import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 
 interface ChannelHeaderProps {
   isLoading?: boolean;
@@ -53,14 +53,8 @@ function ChannelHeader({
   } = useTheme();
 
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
-  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
   const handleClickClose = useCallback(() => {
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callClose?.postMessage?.(0);
-      return;
-    }
-
     if (window.history.length > 2) {
       router.back();
       return;
@@ -81,17 +75,6 @@ function ChannelHeader({
       ? `/sellerInfo/${sellerUserId}`
       : `/userInfo/${targetUserId}`;
 
-    if (checkAgent.isIOSApp()) {
-      setChannelPushPageState(isCrawlingProduct ? 'sellerInfo' : 'userInfo');
-      window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-        JSON.stringify({
-          pathname,
-          redirectChannelUrl: router.asPath
-        })
-      );
-      return;
-    }
-
     router.push(pathname);
   }, [
     targetUserId,
@@ -99,8 +82,7 @@ function ChannelHeader({
     isTargetUserSeller,
     isCrawlingProduct,
     sellerUserId,
-    router,
-    setChannelPushPageState
+    router
   ]);
 
   const handleClickMore = useCallback(() => {
@@ -194,13 +176,13 @@ function ChannelHeader({
   );
 }
 
-const Layout = styled.header`
+const Layout = styled.div`
   position: relative;
+  top: 0;
   height: calc(${HEADER_HEIGHT}px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
 `;
 
 const Wrapper = styled.div`
-  /* position: fixed; */
   width: 100%;
   height: calc(${HEADER_HEIGHT}px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'});
   display: flex;

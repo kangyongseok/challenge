@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   Type as ListType,
   SwipeAction,
@@ -31,7 +30,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, hasImageFile } from '@utils/common';
+import { hasImageFile } from '@utils/common';
 import {
   getChannelTitle,
   getLastMessage,
@@ -40,7 +39,7 @@ import {
 } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
+import { channelBottomSheetStateFamily } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
 import useMutationChannelNoti from '@hooks/useMutationChannelNoti';
@@ -66,7 +65,6 @@ function ChannelsSwipeActionList({
   const [{ location }, setSelectTargetUserBottomSheetState] = useRecoilState(
     channelBottomSheetStateFamily('selectTargetUser')
   );
-  const resetChannelPushPageState = useResetRecoilState(channelPushPageState);
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -161,18 +159,9 @@ function ChannelsSwipeActionList({
     logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.CHANNEL });
 
     SessionStorage.remove(sessionStorageKeys.pushToSavedRedirectChannel);
-    resetChannelPushPageState();
 
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callChannel?.postMessage?.(
-        `/channels/${camelChannel.channel.id}${
-          camelChannel.channel.userId === 100 ? '?isCamelChannel=true' : ''
-        }`
-      );
-    } else {
-      router.push(`/channels/${camelChannel.channel.id}`);
-    }
-  }, [camelChannel.channel, resetChannelPushPageState, router]);
+    router.push(`/channels/${camelChannel.channel.id}`);
+  }, [camelChannel.channel, router]);
 
   const handleClickSelectTargetUser = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {

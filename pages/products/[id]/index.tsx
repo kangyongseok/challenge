@@ -73,7 +73,6 @@ import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@
 
 import { userShopSelectedProductState } from '@recoil/userShop';
 import { loginBottomSheetState, toastState } from '@recoil/common';
-import useRedirectVC from '@hooks/useRedirectVC';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useOsAlarm from '@hooks/useOsAlarm';
@@ -104,9 +103,6 @@ function ProductDetail() {
     mutateMetaInfo,
     refetch
   } = useQueryProduct();
-  useRedirectVC(
-    data?.product ? getProductDetailUrl({ product: data?.product }) : `/products/${productId}`
-  );
 
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);

@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Chip, Flexbox, Icon } from 'mrcamel-ui';
-import { QueryClient, dehydrate } from '@tanstack/react-query';
-import styled from '@emotion/styled';
+import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
+import type { FileMessage } from '@sendbird/chat/message';
 
-import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
-import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
+import { ImageDetailDialog, SelectTargetUserBottomSheet } from '@components/UI/organisms';
 import FixedProductInfo from '@components/UI/molecules/FixedProductInfo';
-import GeneralTemplate from '@components/templates/GeneralTemplate';
+import FlexibleTemplate from '@components/templates/FlexibleTemplate';
+import ChannelReservingBanner from '@components/pages/channel/ChannelReservingBanner';
 import {
   ChannelAppointmentBanner,
   ChannelBottomActionButtons,
@@ -22,6 +21,7 @@ import {
   ChannelMoreMenuBottomSheet,
   ChannelProductStatusBottomSheet,
   ChannelPurchaseConfirmDialog,
+  ChannelReservingDialog,
   ChannelSafePaymentGuideBanner,
   ChannelSafePaymentGuideDialog,
   ChannelSaleRequestRefuseDialog
@@ -33,56 +33,48 @@ import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { fetchChannel } from '@api/channel';
-
 import { channelUserType, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import {
-  IOS_SAFE_AREA_BOTTOM,
-  MESSAGE_INPUT_HEIGHT,
-  MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT
-} from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
-import {
-  checkAgent,
-  getProductDetailUrl,
-  hasImageFile,
-  isExtendedLayoutIOSVersion
-} from '@utils/common';
+import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import {
-  channelBottomSheetStateFamily,
-  channelPushPageState,
-  channelThumbnailMessageImageState
-} from '@recoil/channel';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
+import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useChannel from '@hooks/useChannel';
 
-function Chanel() {
+function Channel() {
   const router = useRouter();
 
-  useViewportUnitsTrick();
+  const {
+    theme: {
+      palette: { common },
+      zIndex
+    }
+  } = useTheme();
 
-  const [isIOSApp, setIsIOSApp] = useState(false);
+  const [focusScrollY, setFocusScrollY] = useState(0);
 
   const [channelThumbnailMessageImage, setChannelThumbnailMessageImage] = useRecoilState(
     channelThumbnailMessageImageState
   );
-  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
+  const [detailImages, setDetailImages] = useState<string[]>([]);
   const resetDialogState = useResetRecoilState(dialogState);
   const resetMoreBottomSheetState = useResetRecoilState(channelBottomSheetStateFamily('more'));
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
 
-  const messagesRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const aosFocusTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const loggingTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
   const {
     useQueryChannel,
     useQueryChannel: {
@@ -102,6 +94,7 @@ function Chanel() {
       isFetched,
       refetch
     },
+    pending,
     channelData: {
       userName,
       isSeller,
@@ -120,8 +113,12 @@ function Chanel() {
     messages,
     hasMorePrev,
     fetchPrevMessages,
-    updateNewMessage
-  } = useChannel(messagesRef);
+    updateNewMessage,
+    isPrevFetching,
+    unreadCount,
+    hasSentMessage
+  } = useChannel();
+
   const { mutate: mutateSendMessage } = useMutationSendMessage({
     lastMessageIndex: messages.length + 1
   });
@@ -129,37 +126,33 @@ function Chanel() {
   const isAdminBlockUser = product?.productSeller?.type === 1 && !isSeller;
 
   const [isFocused, setIsFocused] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [messageInputHeight, setMessageInputHeight] = useState(MESSAGE_INPUT_HEIGHT);
-  const { showMessageInput, showActionButtons } = useMemo(
+  const [documentVisibilityState, setDocumentVisibilityState] = useState('hidden');
+
+  const { showActionButtons } = useMemo(
     () => ({
-      showMessageInput:
-        (!checkAgent.isIOSApp() && isFetched) ||
-        isTargetUserBlocked ||
-        isDeletedTargetUser ||
-        isCamelAdminUser,
       showActionButtons:
-        !isDeletedTargetUser && !isTargetUserBlocked && !isCamelAdminUser && !isAdminBlockUser
+        !isDeletedTargetUser &&
+        !isTargetUserBlocked &&
+        !isCamelAdminUser &&
+        !isAdminBlockUser &&
+        !isLoading &&
+        !pending
     }),
-    [isCamelAdminUser, isDeletedTargetUser, isFetched, isTargetUserBlocked, isAdminBlockUser]
+    [
+      isCamelAdminUser,
+      isDeletedTargetUser,
+      isTargetUserBlocked,
+      isAdminBlockUser,
+      isLoading,
+      pending
+    ]
   );
 
   // const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
-
-  const routingRef = useRef(false);
-
-  const scrollToBottom = useCallback((behavior?: ScrollBehavior) => {
-    messagesRef.current?.scrollTo({
-      top: messagesRef.current.scrollHeight,
-      behavior
-    });
-  }, []);
+  const isCrawlingProduct = !!sendbirdChannel && ![1, 2, 3].includes(product?.sellerType || 0);
 
   const handleClickProduct = useCallback(() => {
-    if (!product || isDeletedProduct || routingRef.current) return;
-
-    routingRef.current = true;
+    if (!product || isDeletedProduct) return;
 
     const pathname = getProductDetailUrl({ type: 'productResult', product });
 
@@ -167,19 +160,8 @@ function Chanel() {
       source: attrProperty.source.CHANNEL_DETAIL
     });
 
-    if (checkAgent.isIOSApp()) {
-      setChannelPushPageState('product');
-      window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-        JSON.stringify({
-          pathname,
-          redirectChannelUrl: router.asPath
-        })
-      );
-      return;
-    }
-
     router.push(pathname);
-  }, [isDeletedProduct, product, router, setChannelPushPageState]);
+  }, [isDeletedProduct, product, router]);
 
   const handleClickSafePayment = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -195,11 +177,9 @@ function Chanel() {
         }
       });
 
-      if (!product || isDeletedProduct || routingRef.current) return;
+      if (!product || isDeletedProduct) return;
 
       e.stopPropagation();
-
-      routingRef.current = true;
 
       const pathname = `${getProductDetailUrl({
         product: product as ProductResult,
@@ -210,20 +190,9 @@ function Chanel() {
         source: 'CHANNEL_DETAIL'
       });
 
-      if (checkAgent.isIOSApp()) {
-        setChannelPushPageState('order');
-        window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-          JSON.stringify({
-            pathname,
-            redirectChannelUrl: router.asPath
-          })
-        );
-        return;
-      }
-
       router.push(pathname);
     },
-    [isDeletedProduct, product, router, setChannelPushPageState]
+    [isDeletedProduct, product, router]
   );
 
   const handleClickOfferSafePayment = useCallback(
@@ -240,68 +209,46 @@ function Chanel() {
         }
       });
 
-      if (!product || isDeletedProduct || routingRef.current) return;
+      if (!product || isDeletedProduct) return;
 
       e.stopPropagation();
-
-      routingRef.current = true;
 
       const pathname = `${getProductDetailUrl({
         product: product as ProductResult,
         type: 'productResult'
       })}/order`;
 
-      if (checkAgent.isIOSApp()) {
-        setChannelPushPageState('offer');
-        window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-          JSON.stringify({
-            pathname,
-            redirectChannelUrl: router.asPath
-          })
-        );
-        return;
-      }
-
       router.push(pathname);
     },
-    [isDeletedProduct, product, router, setChannelPushPageState]
+    [isDeletedProduct, product, router]
   );
 
   const handleClickUnreadCount = useCallback(async () => {
-    setUnreadCount(0);
+    const { scrollHeight } = window.flexibleContent;
 
-    if (messagesRef.current?.scrollTop)
-      messagesRef.current.scrollTop =
-        messagesRef.current.scrollHeight - messagesRef.current.offsetHeight;
-
-    try {
-      await sendbirdChannel?.markAsRead();
-    } catch {
-      //
-    }
-  }, [sendbirdChannel]);
+    window.flexibleContent.scrollTo({
+      top: scrollHeight,
+      behavior: 'smooth'
+    });
+  }, []);
 
   const handleCloseImageDetailDialog = useCallback(() => {
     setChannelThumbnailMessageImage('');
-
-    if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
   }, [setChannelThumbnailMessageImage]);
 
   useEffect(() => {
-    document.body.classList.add('channel-body');
-    if (checkAgent.isIOSApp() && !isCamelAdminUser) {
-      window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-    }
-
     return () => {
-      document.body.classList.remove('channel-body');
       setChannelThumbnailMessageImage('');
       resetDialogState();
       resetProductStatusBottomSheetState();
       resetMoreBottomSheetState();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    resetDialogState,
+    resetMoreBottomSheetState,
+    resetProductStatusBottomSheetState,
+    setChannelThumbnailMessageImage
+  ]);
 
   useEffect(() => {
     if (typeof channelUser?.type === 'number') {
@@ -336,38 +283,6 @@ function Chanel() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
-
-  useEffect(() => {
-    if (messagesRef.current) {
-      const { clientHeight, scrollTop, scrollHeight } = messagesRef.current;
-
-      setUnreadCount(
-        Math.ceil(clientHeight + scrollTop) >= scrollHeight
-          ? 0
-          : sendbirdChannel?.unreadMessageCount || 0
-      );
-    }
-  }, [sendbirdChannel?.unreadMessageCount]);
-
-  useEffect(() => {
-    const handleResize = () => scrollToBottom('smooth');
-
-    if (checkAgent.isMobileApp()) window.addEventListener('resize', handleResize);
-
-    return () => {
-      if (checkAgent.isMobileApp()) window.removeEventListener('resize', handleResize);
-    };
-  }, [scrollToBottom]);
-
-  useEffect(() => {
-    if (checkAgent.isIOSApp()) {
-      if (isTargetUserBlocked || isDeletedTargetUser || isCamelAdminUser || isAdminBlockUser) {
-        window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      } else {
-        window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-      }
-    }
-  }, [isCamelAdminUser, isDeletedTargetUser, isTargetUserBlocked, isAdminBlockUser]);
 
   useEffect(() => {
     window.getChannelMessage = (message: string) => {
@@ -421,16 +336,182 @@ function Chanel() {
     userName
   ]);
 
+  // IOS 사파리 환경 키보드 focus 이슈 대응
   useEffect(() => {
-    setIsIOSApp(!!checkAgent.isIOSApp());
+    const handleScroll = () => {
+      if (!window.initFocusScrollY && window.scrollY && isFocused) {
+        window.initFocusScrollY = window.scrollY;
+      }
+
+      if (!window.scrollY || !isFocused) {
+        setFocusScrollY(0);
+        setIsFocused(false);
+        return;
+      }
+
+      window.scrollTo({
+        top: window.initFocusScrollY
+      });
+      setFocusScrollY(window.initFocusScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isFocused]);
+
+  // IOS 크롬 환경 키보드 상단 완료 버튼으로 input blur 시 focus 처리가 정상 동작하지 않는 문제 대응
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!isFocused && window.scrollY && window.scrollY === window.initFocusScrollY) {
+        setFocusScrollY(window.initFocusScrollY);
+        setIsFocused(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isFocused]);
+
+  // IOS 사파리 환경 키보드 focus 이슈 대응, 간헐적으로 키보드 focus 에 따라 레이아웃이 올라가지 않는 문제 대응
+  useEffect(() => {
+    if (isFocused) {
+      if (focusTimerRef.current) {
+        clearTimeout(focusTimerRef.current);
+      }
+
+      focusTimerRef.current = setTimeout(() => {
+        window.scrollTo({
+          top: window.initFocusScrollY,
+          behavior: 'smooth'
+        });
+      }, 350);
+    }
+  }, [isFocused]);
+
+  // IOS 사파리 환경 키보드 focus 이슈 대응, 키보드가 올라올 때 메시지 목록 컨테이너의 스크롤이 최하단에 위치할 수 있도록 처리
+  useEffect(() => {
+    if (isFocused && focusScrollY) {
+      window.flexibleContent.scrollTo({
+        top: window.flexibleContent.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [isFocused, focusScrollY]);
+
+  // AOS 환경 최초 키보드 focus 시 메시지 목록 컨테이너 스크롤이 동작하지 않는 문제 대응
+  useEffect(() => {
+    if (isFocused && checkAgent.isAndroid()) {
+      if (aosFocusTimerRef.current) {
+        clearTimeout(aosFocusTimerRef.current);
+      }
+
+      aosFocusTimerRef.current = setTimeout(() => {
+        window.flexibleContent.scrollTo({
+          top: window.flexibleContent.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 350);
+    }
+  }, [isFocused]);
+
+  // IOS 사파리 환경, 백그라운드 상태에서 웹/앱으로 돌아오는 경우 레이아웃이 깨지는 문제 대응
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setDocumentVisibilityState(
+        isFocused && document.visibilityState === 'visible' ? 'visible' : 'hidden'
+      );
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (documentVisibilityState === 'visible') {
+      if (window.initFocusScrollY) {
+        setIsFocused(true);
+        setFocusScrollY(window.initFocusScrollY);
+        window.scrollTo({
+          top: window.initFocusScrollY,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [documentVisibilityState]);
+
+  useEffect(() => {
+    setDetailImages(
+      messages
+        .filter((message) => (message as FileMessage).url)
+        .map((message) => (message as FileMessage).url)
+    );
+  }, [messages]);
+
+  useEffect(() => {
+    loggingTimerRef.current = setTimeout(() => {
+      window.getAuthPush = (result: string) => {
+        logEvent(attrKeys.channel.LOAD_ALARM, {
+          name: attrProperty.name.CHANNEL_DETAIL,
+          title: attrProperty.title.DEVICE_ALARM,
+          att: String(result || 'false').toUpperCase()
+        });
+      };
+
+      if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
+        window.webview.callAuthPush();
+        return;
+      }
+
+      if (
+        checkAgent.isIOSApp() &&
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.callAuthPush &&
+        window.webkit.messageHandlers.callAuthPush.postMessage
+      ) {
+        window.webkit.messageHandlers.callAuthPush.postMessage(0);
+      }
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      window.initFocusScrollY = 0;
+      if (focusTimerRef.current) {
+        clearTimeout(focusTimerRef.current);
+      }
+      if (aosFocusTimerRef.current) {
+        clearTimeout(aosFocusTimerRef.current);
+      }
+      if (loggingTimerRef.current) {
+        clearTimeout(loggingTimerRef.current);
+      }
+    };
   }, []);
 
   return (
     <>
-      <GeneralTemplate
-        hideAppDownloadBanner={!checkAgent.isMobileApp()}
+      <FlexibleTemplate
         header={
-          <HeaderWrapper>
+          <Box
+            ref={headerRef}
+            component="header"
+            customStyle={{
+              position: 'sticky',
+              top: 0,
+              transform: `translateY(${isFocused ? focusScrollY : 0}px)`,
+              zIndex: zIndex.header
+            }}
+          >
             <ChannelHeader
               sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
               isCrawlingProduct={isCrawlingProduct}
@@ -449,99 +530,59 @@ function Chanel() {
               isAdminBlockUser={isAdminBlockUser}
               dateActivated={useQueryChannel?.data?.dateActivated}
             />
-            {(isLoading || !isFetched || ((!isLoading || isFetched) && !!product)) &&
-              !isCamelAdminUser && (
-                <>
-                  <FixedProductInfo
-                    isLoading={isLoading || !isFetched}
-                    isEditableProductStatus={isSeller}
-                    isDeletedProduct={isDeletedProduct}
-                    isTargetUserBlocked={isTargetUserBlocked}
-                    isAdminBlockUser={isAdminBlockUser}
-                    image={product?.imageThumbnail || product?.imageMain || ''}
-                    status={productStatus}
-                    title={product?.title || ''}
-                    price={product?.price || 0}
-                    order={orders[0]}
-                    offer={offers[0]}
-                    onClick={handleClickProduct}
-                    onClickSafePayment={handleClickSafePayment}
-                    onClickStatus={() =>
-                      logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                        name: attrProperty.name.CHANNEL_DETAIL,
-                        title: getLogEventTitle(product?.status || 0)
-                      })
-                    }
-                  />
-                  {isCrawlingProduct && <ChannelCamelAuthFixBanner type="external" />}
-                </>
-              )}
+            {!isCamelAdminUser && (
+              <FixedProductInfo
+                isLoading={isLoading || !isFetched}
+                isEditableProductStatus={isSeller}
+                isDeletedProduct={isDeletedProduct}
+                isTargetUserBlocked={isTargetUserBlocked}
+                isAdminBlockUser={isAdminBlockUser}
+                isReserved={channel?.isReserved}
+                image={product?.imageThumbnail || product?.imageMain || ''}
+                status={productStatus}
+                title={product?.title || ''}
+                price={product?.price || 0}
+                order={orders[0]}
+                offer={offers[0]}
+                onClick={handleClickProduct}
+                onClickSafePayment={handleClickSafePayment}
+                onClickStatus={() =>
+                  logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
+                    name: attrProperty.name.CHANNEL_DETAIL,
+                    title: getLogEventTitle(product?.status || 0)
+                  })
+                }
+              />
+            )}
+            {!channel?.isReserved && isCrawlingProduct && (
+              <ChannelCamelAuthFixBanner type="external" />
+            )}
+            {!channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
+              <ChannelSafePaymentGuideBanner />
+            )}
+            {channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
+              <ChannelReservingBanner
+                targetUserName={targetUserName}
+                isSeller={isSeller}
+                hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
+              />
+            )}
             {!!appointment && showAppointmentBanner && (
               <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
             )}
-            {!showAppointmentBanner && !isCrawlingProduct && <ChannelSafePaymentGuideBanner />}
-            {unreadCount > 0 && (
-              <Flexbox
-                justifyContent="center"
-                customStyle={{
-                  minHeight: MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
-                  position: 'relative',
-                  marginTop: 12
-                }}
-              >
-                <Chip
-                  size="medium"
-                  variant="solid"
-                  isRound
-                  brandColor="blue"
-                  startIcon={<Icon name="Arrow1DownOutlined" />}
-                  customStyle={{ gap: 2 }}
-                  onClick={handleClickUnreadCount}
-                >
-                  새 메세지 {unreadCount}개
-                </Chip>
-              </Flexbox>
-            )}
-          </HeaderWrapper>
+          </Box>
         }
-        disablePadding
-        customStyle={{ position: 'relative' }}
-      >
-        <Inner isIOSApp={isIOSApp}>
-          <ContentWrapper>
-            {!!sendbirdChannel && (
-              <ChannelMessages
-                sendbirdChannel={sendbirdChannel}
-                messages={messages}
-                productId={productId}
-                targetUserId={targetUserId}
-                targetUserName={targetUserName}
-                showAppointmentBanner={showAppointmentBanner}
-                showNewMessageNotification={unreadCount > 0}
-                showActionButtons={showActionButtons}
-                showSafePaymentGuideBanner={!showAppointmentBanner && !isCrawlingProduct}
-                messagesRef={messagesRef}
-                hasMorePrev={hasMorePrev}
-                hasUserReview={!!userReview}
-                hasTargetUserReview={!!targetUserReview}
-                fetchPrevMessages={fetchPrevMessages}
-                scrollToBottom={scrollToBottom}
-                refetchChannel={refetch}
-                isCamelAdminUser={isCamelAdminUser}
-                isSeller={isSeller}
-                isTargetUserBlocked={isTargetUserBlocked}
-                isAdminBlockUser={isAdminBlockUser}
-                orders={orders}
-                offers={offers}
-                status={productStatus}
-                onClickSafePayment={handleClickOfferSafePayment}
-              />
-            )}
-          </ContentWrapper>
-          <FooterWrapper showInputMessage={showMessageInput} isFocused={isFocused}>
-            {!!channel && showActionButtons && (
+        footer={
+          <Box
+            customStyle={{
+              position: 'relative',
+              minHeight: 'fit-content'
+            }}
+          >
+            {!!channel && showActionButtons && sendbirdChannel ? (
               <ChannelBottomActionButtons
-                messageInputHeight={messageInputHeight}
+                hasSentMessage={hasSentMessage}
+                isFocused={isFocused}
                 lastMessageIndex={messages.length + 1}
                 channelId={channel.id}
                 channelUrl={channel.externalId}
@@ -563,29 +604,94 @@ function Chanel() {
                 order={orders[0]}
                 offers={offers}
               />
+            ) : (
+              <Flexbox
+                gap={4}
+                customStyle={{
+                  padding: '12px 20px 0',
+                  borderTop: `1px solid ${common.line02}`
+                }}
+              >
+                <Skeleton width={72.66} height={32} round={16} disableAspectRatio />
+                <Skeleton width={99.31} height={32} round={16} disableAspectRatio />
+                <Skeleton width={116.56} height={32} round={16} disableAspectRatio />
+              </Flexbox>
             )}
-            {showMessageInput && (
-              <ChannelMessageInput
-                channelId={channel?.id}
-                channelUrl={channel?.externalId}
-                setMessageInputHeight={setMessageInputHeight}
-                setIsFocused={setIsFocused}
-                isTargetUserNoti={isTargetUserNoti}
-                isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
-                isTargetUserBlocked={isTargetUserBlocked}
-                isAdminBlockUser={isAdminBlockUser}
-                scrollToBottom={scrollToBottom}
-                updateNewMessage={updateNewMessage}
-                productId={productId}
-                targetUserId={targetUserId}
-                lastMessageIndex={messages.length + 1}
-              />
-            )}
-          </FooterWrapper>
-        </Inner>
-      </GeneralTemplate>
+            <ChannelMessageInput
+              isLoading={isLoading || !sendbirdChannel}
+              channelId={channel?.id}
+              channelUrl={channel?.externalId}
+              setIsFocused={setIsFocused}
+              isTargetUserNoti={isTargetUserNoti}
+              isDeletedTargetUser={isDeletedTargetUser || isCamelAdminUser}
+              isTargetUserBlocked={isTargetUserBlocked}
+              isAdminBlockUser={isAdminBlockUser}
+              updateNewMessage={updateNewMessage}
+              productId={productId}
+              targetUserId={targetUserId}
+              lastMessageIndex={messages.length + 1}
+            />
+          </Box>
+        }
+        disablePadding
+      >
+        {!isLoading && sendbirdChannel && !pending ? (
+          <ChannelMessages
+            sendbirdChannel={sendbirdChannel}
+            messages={messages}
+            productId={productId}
+            targetUserId={targetUserId}
+            targetUserName={targetUserName}
+            showNewMessageNotification={unreadCount > 0}
+            hasMorePrev={hasMorePrev}
+            hasUserReview={!!userReview}
+            hasTargetUserReview={!!targetUserReview}
+            fetchPrevMessages={fetchPrevMessages}
+            refetchChannel={refetch}
+            isSeller={isSeller}
+            isTargetUserBlocked={isTargetUserBlocked}
+            isAdminBlockUser={isAdminBlockUser}
+            orders={orders}
+            offers={offers}
+            status={productStatus}
+            unreadCount={unreadCount}
+            isFocused={isFocused}
+            isPrevFetching={isPrevFetching}
+            focusScrollY={focusScrollY}
+            onClickSafePayment={handleClickOfferSafePayment}
+            onClickUnreadCount={handleClickUnreadCount}
+          />
+        ) : (
+          <Flexbox
+            direction="vertical"
+            gap={12}
+            customStyle={{
+              padding: 20
+            }}
+          >
+            <Flexbox
+              justifyContent="center"
+              customStyle={{
+                marginBottom: 8
+              }}
+            >
+              <Skeleton width="100%" maxWidth={70} height={16} round={8} disableAspectRatio />
+            </Flexbox>
+            <Flexbox direction="vertical" gap={4}>
+              <Skeleton width="100%" maxWidth={100} height={44} round={20} disableAspectRatio />
+              <Skeleton width="100%" maxWidth={150} height={44} round={20} disableAspectRatio />
+            </Flexbox>
+            <Flexbox direction="vertical" alignment="flex-end" gap={4}>
+              <Skeleton width="100%" maxWidth={200} height={44} round={20} disableAspectRatio />
+              <Skeleton width="100%" maxWidth={120} height={44} round={20} disableAspectRatio />
+              <Skeleton width="100%" maxWidth={150} height={44} round={20} disableAspectRatio />
+            </Flexbox>
+          </Flexbox>
+        )}
+      </FlexibleTemplate>
       <ChannelProductStatusBottomSheet
         id={productId}
+        channelId={channel?.id}
         status={productStatus}
         onSuccessProductUpdateStatus={refetch}
         isChannel
@@ -608,8 +714,9 @@ function Chanel() {
       <ImageDetailDialog
         open={channelThumbnailMessageImage.length > 0}
         onClose={handleCloseImageDetailDialog}
-        images={[channelThumbnailMessageImage]}
+        images={detailImages}
         name={attrProperty.name.CHANNEL_DETAIL}
+        syncIndex={detailImages.indexOf(channelThumbnailMessageImage)}
       />
       <ChannelSaleRequestRefuseDialog
         order={orders[0]}
@@ -618,79 +725,17 @@ function Chanel() {
       />
       <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
       <ChannelSafePaymentGuideDialog />
+      <ChannelReservingDialog />
     </>
   );
 }
 
-export async function getServerSideProps({ req, query: { id } }: GetServerSidePropsContext) {
-  const channelId = String(id);
-  const queryClient = new QueryClient();
-
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
-  if (channelId.length > 0) {
-    const { channelUser } = await fetchChannel(+channelId);
-
-    if (channelUser) {
-      return {
-        props: {
-          dehydratedState: dehydrate(queryClient)
-        }
-      };
-    }
-  }
-
   return {
-    redirect: {
-      destination: `/login?returnUrl=/channels/${channelId}&isRequiredLogin=true`,
-      permanent: false
-    }
+    props: {}
   };
 }
 
-const HeaderWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.header};
-  overflow: hidden;
-  transition: all 0.5s;
-  background: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-`;
-
-const Inner = styled.div<{ isIOSApp: boolean }>`
-  display: flex;
-  flex-direction: column;
-  height: ${({ isIOSApp }) => (isIOSApp ? 'calc(100vh - 55px)' : '100%')};
-  overflow: hidden;
-`;
-
-const ContentWrapper = styled.section`
-  position: relative;
-  flex: 1 1 0;
-  -webkit-box-flex: 1;
-  height: auto;
-  isolation: isolate;
-`;
-
-const FooterWrapper = styled.section<{
-  showInputMessage: boolean;
-  isFocused: boolean;
-}>`
-  position: ${({ isFocused }) => (isFocused ? 'static' : 'sticky')};
-  bottom: ${({ isFocused }) =>
-    // eslint-disable-next-line no-nested-ternary
-    isFocused ? 0 : isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : 0};
-  left: 0;
-  z-index: ${({ theme: { zIndex } }) => zIndex.bottomNav};
-  box-sizing: content-box;
-  width: 100%;
-  min-height: ${({ showInputMessage }) => (showInputMessage ? MESSAGE_INPUT_HEIGHT + 16 : 0)}px;
-`;
-
-export default Chanel;
+export default Channel;

@@ -13,8 +13,6 @@ import type { ChannelDetail } from '@dto/channel';
 
 import { putProductUpdateStatus } from '@api/product';
 
-import { checkAgent } from '@utils/common';
-
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ChannelOrderSettleWaitMessageProps {
@@ -53,10 +51,6 @@ function ChannelOrderSettleWaitMessage({
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
   const handleClick = () => {
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
-
     mutate(
       { productId, status: 1, soldType: 1, targetUserId },
       {

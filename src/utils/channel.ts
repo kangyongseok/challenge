@@ -204,20 +204,28 @@ export const getLogEventAtt = (status: number) => {
 };
 
 export const scrollIntoLast = (intialTry = 0) => {
-  const MAX_TRIES = 10;
+  const MAX_TRIES = 20;
   const currentTry = intialTry;
 
   if (currentTry > MAX_TRIES) return;
 
   try {
-    const scrollDOM = document.querySelector('.messages');
+    const scrollDOM = window.flexibleContent;
+    const { clientHeight, scrollTop, scrollHeight } = scrollDOM;
 
-    // eslint-disable-next-line no-multi-assign
-    if (scrollDOM) scrollDOM.scrollTop = scrollDOM.scrollHeight;
-  } catch (error) {
-    setTimeout(() => {
-      scrollIntoLast(currentTry + 1);
-    }, 500 * currentTry);
+    if (scrollDOM) {
+      scrollDOM.scrollTo({
+        top: scrollDOM.scrollHeight
+      });
+
+      if (Math.ceil(clientHeight + scrollTop) < scrollHeight) {
+        setTimeout(() => {
+          scrollIntoLast(currentTry + 1);
+        }, 100 * currentTry);
+      }
+    }
+  } catch {
+    //
   }
 };
 
@@ -293,6 +301,8 @@ export const getChannelHandler = ({
           unreadMessagesCount
         };
       });
+
+      channelsRefetch();
     },
     onChannelsDeleted: (_, channelUrls) => {
       setSendbirdState((currVal) => {

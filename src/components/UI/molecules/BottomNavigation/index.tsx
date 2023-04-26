@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { IconName } from 'mrcamel-ui';
 import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
+import { ConnectionHandler } from '@sendbird/chat';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { Badge } from '@components/UI/atoms';
 
+import Sendbird from '@library/sendbird';
 import { logEvent } from '@library/amplitude';
 
 import queryKeys from '@constants/queryKeys';
@@ -36,6 +39,7 @@ import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 import {
@@ -103,9 +107,12 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const router = useRouter();
 
   const queryClient = useQueryClient();
+
+  const { data: accessUser } = useQueryAccessUser();
+
   const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
 
-  const { initialized, unreadMessagesCount } = useRecoilValue(sendbirdState);
+  const [{ initialized, unreadMessagesCount }, setSendbirdState] = useRecoilState(sendbirdState);
 
   const setDialogState = useSetRecoilState(dialogState);
 
@@ -327,6 +334,49 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
     router.pathname,
     setLegitResultTooltipCloseState
   ]);
+
+  useEffect(() => {
+    if (accessUser) {
+      Sendbird.getInstance().groupChannel?.addGroupChannelHandler(
+        `${accessUser.userId}-btm-urm-updater`,
+        new GroupChannelHandler({
+          onMessageReceived: async () => {
+            const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount: newUnreadMessagesCount
+            }));
+          },
+          onChannelChanged: async () => {
+            const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount: newUnreadMessagesCount
+            }));
+          },
+          onUnreadMemberStatusUpdated: async () => {
+            const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount: newUnreadMessagesCount
+            }));
+          }
+        })
+      );
+      Sendbird.getInstance().addConnectionHandler(
+        `${accessUser.userId}-btm-urm-updater-connection`,
+        new ConnectionHandler({
+          onReconnectSucceeded: async () => {
+            const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount: newUnreadMessagesCount
+            }));
+          }
+        })
+      );
+    }
+  }, [setSendbirdState, accessUser]);
 
   return (
     <>

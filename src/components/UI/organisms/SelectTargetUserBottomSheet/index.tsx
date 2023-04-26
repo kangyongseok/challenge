@@ -82,8 +82,8 @@ function SelectTargetUserBottomSheet({
         //
       }}
     >
-      <Box customStyle={{ userSelect: 'none', position: 'relative' }}>
-        <Box customStyle={{ height: 164 }}>
+      <Box customStyle={{ userSelect: 'none', position: 'relative', paddingTop: 20 }}>
+        <Box customStyle={{ minHeight: 'fit-content', marginBottom: 20 }}>
           <Title variant="h2" weight="bold">
             거래한 사람을 선택해주세요.
           </Title>

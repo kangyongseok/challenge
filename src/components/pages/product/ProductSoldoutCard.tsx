@@ -51,7 +51,14 @@ function ProductSoldoutCard({
         </Typography>
       </Box>
       <Box customStyle={{ marginLeft: 20, width: 72, height: 72 }}>
-        <Image src={product?.imageMain || ''} alt="Product Img" round={8} disableAspectRatio />
+        <Image
+          width={72}
+          height={72}
+          src={product?.imageMain || ''}
+          alt="Product Img"
+          round={8}
+          disableAspectRatio
+        />
       </Box>
     </StyledWrap>
   );

@@ -33,13 +33,14 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
   useEffect(() => {
     if (
       !!userId &&
-      (!!userInfo?.hasChannel || router.pathname === '/channels') &&
+      (!!userInfo?.hasChannel || router.pathname.indexOf('channels') !== -1) &&
+      !state.loading &&
       !state.initialized
     ) {
       initialize(userId.toString(), userNickName, userImageProfile);
     }
     // eslint-disable-next-line
-  }, [userId, state.initialized, userInfo?.hasChannel]);
+  }, [userId, state.initialized, state.loading, userInfo?.hasChannel]);
 
   useEffect(() => {
     const typingHandlerId = uuidv4();
@@ -64,35 +65,6 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
               typingChannels: JSON.parse(
                 JSON.stringify(typingMemberCount > 0 ? [...channelList, channel] : channelList)
               )
-            };
-          });
-        },
-        onUnreadMemberStatusUpdated: (channel) => {
-          setState((currVal) => {
-            if (!isProduction)
-              console.log('Sendbird onUnreadMemberStatusUpdated::', { state: currVal, channel });
-
-            return {
-              ...currVal,
-              allChannels: getUpdatedChannels(currVal.allChannels, channel),
-              receivedChannels: getUpdatedChannels(currVal.receivedChannels, channel),
-              sendChannels: getUpdatedChannels(currVal.sendChannels, channel)
-            };
-          });
-        },
-        onUndeliveredMemberStatusUpdated: (channel) => {
-          setState((currVal) => {
-            if (!isProduction)
-              console.log('Sendbird onUndeliveredMemberStatusUpdated::', {
-                state: currVal,
-                channel
-              });
-
-            return {
-              ...currVal,
-              allChannels: getUpdatedChannels(currVal.allChannels, channel),
-              receivedChannels: getUpdatedChannels(currVal.receivedChannels, channel),
-              sendChannels: getUpdatedChannels(currVal.sendChannels, channel)
             };
           });
         },
@@ -131,6 +103,20 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sdk?.currentUser?.userId]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        Sendbird.getInstance().reconnect();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   return children;
 }

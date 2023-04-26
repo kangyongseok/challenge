@@ -1,30 +1,31 @@
 /* eslint-disable no-console */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MutableRefObject } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import has from 'lodash-es/has';
 import dayjs from 'dayjs';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { FileMessage, UserMessage } from '@sendbird/chat/message';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
+import { ConnectionHandler } from '@sendbird/chat';
 
 import type { ChannelAppointmentResult } from '@dto/channel';
 
 import StompJs from '@library/stompJs';
 import Sendbird from '@library/sendbird';
 
-import { fetchChannel } from '@api/channel';
+import { fetchChannel, postHistoryManage } from '@api/channel';
 
 import { channelUserType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { productStatus } from '@constants/channel';
 
 import { getUserName } from '@utils/user';
-import { isProduction, uuidv4 } from '@utils/common';
-import { compareIds, isAdminMessage, scrollIntoLast } from '@utils/channel';
+import { isProduction } from '@utils/common';
+import { compareIds, isAdminMessage } from '@utils/channel';
 
 import type { CoreMessageType } from '@typings/channel';
 import { sendbirdState } from '@recoil/channel';
@@ -32,133 +33,14 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const PREV_RESULT_SIZE = 30;
 
-function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
+function useChannel() {
   const router = useRouter();
+  const { id } = router.query;
 
-  const { initialized } = useRecoilValue(sendbirdState);
+  const [{ initialized }, setSendbirdState] = useRecoilState(sendbirdState);
 
   const { data: accessUser } = useQueryAccessUser();
-
-  const { channelId, channelHandlerId } = useMemo(
-    () => ({
-      channelId: Number(router.query.id || ''),
-      channelHandlerId: uuidv4()
-    }),
-    [router.query.id]
-  );
-  const sendbirdSdk = Sendbird.getInstance();
-  const channelHandler = new GroupChannelHandler({
-    onMessageReceived: (channel, message) => {
-      useQueryResult.refetch();
-
-      if (
-        !compareIds(channel?.url, currentChannel.current?.url) ||
-        messages.some((msg) => compareIds(msg.messageId, message.messageId))
-      )
-        return;
-
-      if (!isProduction) console.log('Channel | onMessageReceived', message);
-
-      let scrollToEnd = false;
-
-      try {
-        if (messagesRef.current) {
-          const { clientHeight, scrollTop, scrollHeight } = messagesRef.current;
-
-          scrollToEnd = Math.round(clientHeight + scrollTop) >= scrollHeight;
-        }
-      } catch {
-        //
-      }
-
-      currentChannel.current = channel as GroupChannel;
-      setState((prevState) => ({
-        ...prevState,
-        messages: [
-          ...prevState.messages.filter(({ messageId }) => messageId !== message.messageId),
-          message
-        ] as CoreMessageType[]
-      }));
-
-      if (scrollToEnd) {
-        try {
-          setTimeout(async () => {
-            await currentChannel.current?.markAsRead();
-            scrollIntoLast();
-          }, 100);
-        } catch (error) {
-          console.warn('Channel | onMessageReceived | scroll to end failed');
-        }
-      }
-    },
-    onUnreadMemberStatusUpdated: (channel) => {
-      if (compareIds(channel?.url, currentChannel.current?.url)) {
-        if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
-
-        currentChannel.current = channel;
-        channel
-          .getMessagesByTimestamp(new Date().getTime() + 5000, {
-            prevResultSize: PREV_RESULT_SIZE,
-            nextResultSize: 0
-          })
-          .then((baseMessages) => {
-            setState({
-              messages: baseMessages as CoreMessageType[],
-              hasMorePrev: baseMessages.length === 30,
-              oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
-            });
-          });
-      }
-    },
-    // before(onDeliveryReceiptUpdated)
-    onUndeliveredMemberStatusUpdated: (channel) => {
-      if (compareIds(channel?.url, currentChannel.current?.url)) {
-        if (!isProduction) console.log('Channel | onDeliveryReceiptUpdated', channel);
-        currentChannel.current = channel;
-      }
-    },
-    onChannelChanged: (channel) => {
-      if (compareIds(channel?.url, currentChannel.current?.url)) {
-        if (!isProduction) console.log('Channel | onChannelChanged', channel);
-        currentChannel.current = channel as GroupChannel;
-      }
-    }
-  });
-
-  const useQueryResult = useQuery(
-    queryKeys.channels.channel(channelId),
-    () => fetchChannel(channelId),
-    {
-      enabled: !!channelId && initialized,
-      refetchOnMount: true,
-      async onSuccess(data) {
-        if (messages.length > 0) return; // 최초 채널 입장시에만 초기화
-
-        const { externalId } = data?.channel || {};
-
-        if (externalId) {
-          const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
-
-          channel
-            .getMessagesByTimestamp(new Date().getTime() + 5000, {
-              prevResultSize: PREV_RESULT_SIZE,
-              nextResultSize: 0
-            })
-            .then((baseMessages) => {
-              currentChannel.current = channel;
-              setState({
-                messages: baseMessages as CoreMessageType[],
-                hasMorePrev: baseMessages.length === 30,
-                oldestMessageTimeStamp: baseMessages[0]?.createdAt || new Date().getTime()
-              });
-            });
-          await channel.markAsRead();
-
-          sendbirdSdk.groupChannel?.addGroupChannelHandler?.(channelHandlerId, channelHandler);
-        }
-      }
-    }
-  );
+  const { mutate: mutatePostHistoryManage } = useMutation(postHistoryManage);
 
   const [{ messages, hasMorePrev, oldestMessageTimeStamp }, setState] = useState<{
     messages: CoreMessageType[];
@@ -169,9 +51,68 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     hasMorePrev: false,
     oldestMessageTimeStamp: 0
   });
+  const [pending, setPending] = useState(false);
+  const [isPrevFetching, setIsPrevFetching] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [senderUserId, setSenderUserId] = useState(0);
 
   const currentChannel = useRef<GroupChannel | null>(null);
-  const prevScrollHeight = useRef(0);
+  const prevScrollHeightRef = useRef(0);
+  const fetchingPrevMessagesRef = useRef(false);
+  const initializedChannelRef = useRef(false);
+  const markAsReadTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const useQueryResult = useQuery(
+    queryKeys.channels.channel(Number(id)),
+    () => fetchChannel(Number(id)),
+    {
+      enabled: !!id && initialized && !!accessUser,
+      refetchOnMount: true,
+      async onSuccess(data) {
+        // 최초 채널 입장시에만 초기화
+        if (messages.length > 0 && initializedChannelRef.current) {
+          return;
+        }
+        if (!messages.length) {
+          setPending(true);
+        }
+
+        initializedChannelRef.current = true;
+
+        const { externalId } = data?.channel || {};
+
+        if (externalId) {
+          const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
+          if (!currentChannel.current) currentChannel.current = channel;
+          await currentChannel.current.markAsRead();
+          const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+          setSendbirdState((prevState) => ({
+            ...prevState,
+            unreadMessagesCount
+          }));
+          setUnreadCount(0);
+
+          const newMessages = await currentChannel.current.getMessagesByTimestamp(
+            new Date().getTime() + 5000,
+            {
+              prevResultSize: PREV_RESULT_SIZE,
+              nextResultSize: 0
+            }
+          );
+
+          setState({
+            messages: newMessages as CoreMessageType[],
+            hasMorePrev: newMessages.length === 30,
+            oldestMessageTimeStamp: newMessages[0]?.createdAt || new Date().getTime() + 5000
+          });
+
+          setPending(false);
+        } else {
+          setPending(false);
+        }
+      }
+    }
+  );
 
   const channelData = useMemo<{
     userName: string;
@@ -255,10 +196,29 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
     [accessUser?.userId, channelData.showProductReserveMessage, messages]
   );
 
-  const fetchPrevMessages = useCallback(async () => {
-    prevScrollHeight.current = messagesRef.current?.scrollHeight || 0;
+  const hasSentMessage = useMemo(() => {
+    if (
+      currentChannel.current &&
+      !channelData.isSeller &&
+      filteredMessages.length <= 30 &&
+      !useQueryResult.data?.isSentMessage &&
+      accessUser
+    ) {
+      return filteredMessages.some(
+        (filteredMessage) =>
+          (filteredMessage as UserMessage | FileMessage).sender?.userId ===
+          String(accessUser?.userId)
+      );
+    }
+    return true;
+  }, [accessUser, channelData.isSeller, filteredMessages, useQueryResult.data?.isSentMessage]);
 
+  const fetchPrevMessages = useCallback(async () => {
     try {
+      prevScrollHeightRef.current = window.flexibleContent.scrollHeight;
+      fetchingPrevMessagesRef.current = true;
+      setIsPrevFetching(true);
+
       const newMessages = await currentChannel.current?.getMessagesByTimestamp(
         oldestMessageTimeStamp || new Date().getTime() + 5000,
         {
@@ -300,26 +260,15 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
             messages: [...filteredNewMessages, ...updatedOldMessages] as CoreMessageType[]
           };
         });
-
-        setTimeout(() => {
-          try {
-            if (messagesRef.current) {
-              // eslint-disable-next-line no-param-reassign
-              messagesRef.current.scrollTop =
-                messagesRef.current.scrollHeight - prevScrollHeight.current;
-              prevScrollHeight.current = 0;
-            }
-          } catch (error) {
-            //
-          }
-        }, 50);
       } else {
         setState((prevState) => ({ ...prevState, hasMorePrev: false }));
       }
     } catch {
       //
+    } finally {
+      setIsPrevFetching(false);
     }
-  }, [currentChannel, oldestMessageTimeStamp, messagesRef]);
+  }, [currentChannel, oldestMessageTimeStamp]);
 
   const updateNewMessage = useCallback((msg: SendableMessage) => {
     setState((prevState) => ({
@@ -329,14 +278,13 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
         msg
       ] as CoreMessageType[]
     }));
-    setTimeout(() => scrollIntoLast(), 50);
   }, []);
 
   useEffect(() => {
-    StompJs.initialize(channelId);
+    StompJs.initialize(Number(id));
     setTimeout(() => {
       StompJs.subScribeChannel({
-        channelId,
+        channelId: Number(id),
         callback: () => {
           useQueryResult.refetch();
         }
@@ -345,19 +293,210 @@ function useChannel(messagesRef: MutableRefObject<HTMLDivElement | null>) {
 
     return () => {
       StompJs.finalize();
-      sendbirdSdk.groupChannel?.removeGroupChannelHandler?.(channelHandlerId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 이전 메시지를 불러오기를 시도했을 때의 스크롤 위치를 유지하도록 처리
+  useEffect(() => {
+    if (fetchingPrevMessagesRef.current) {
+      fetchingPrevMessagesRef.current = false;
+
+      window.flexibleContent.scrollTo({
+        top: window.flexibleContent.scrollHeight - prevScrollHeightRef.current
+      });
+    }
+  }, [filteredMessages]);
+
+  // 메시지 목록 컨테이너의 스크롤이 최하단에 위치한 경우 읽음 처리
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
+
+      if (
+        Math.ceil(scrollTop + clientHeight) >= scrollHeight &&
+        currentChannel.current &&
+        !pending &&
+        document.visibilityState === 'visible'
+      ) {
+        if (markAsReadTimerRef.current) {
+          clearTimeout(markAsReadTimerRef.current);
+        }
+        markAsReadTimerRef.current = setTimeout(() => {
+          if (!currentChannel.current) return;
+
+          currentChannel.current.markAsRead().then(async () => {
+            setUnreadCount(0);
+            const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount
+            }));
+          });
+        }, 500);
+      }
+    };
+
+    window.flexibleContent.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.flexibleContent.removeEventListener('scroll', handleScroll);
+    };
+  }, [setSendbirdState, pending]);
+
+  // 메시지 목록 컨테이너의 스크롤이 하단 1/4 만큼 위치한 경우, 항상 최신 메시지를 볼 수 있도록 스크롤 처리
+  useEffect(() => {
+    if (senderUserId && senderUserId !== accessUser?.userId && !useQueryResult.isFetching) {
+      const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
+
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight - scrollHeight / 4) {
+        window.flexibleContent.scrollTo({
+          top: scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [senderUserId, accessUser, useQueryResult.isFetching, filteredMessages]);
+
+  useEffect(() => {
+    Sendbird.getInstance().addConnectionHandler(
+      String(accessUser?.userId || ''),
+      new ConnectionHandler({
+        onReconnectSucceeded: async () => {
+          if (!useQueryResult.data?.channel?.externalId) return;
+          const newChannel = await Sendbird.getInstance().groupChannel.getChannel(
+            useQueryResult.data?.channel?.externalId || ''
+          );
+          currentChannel.current = newChannel;
+          newChannel.refresh().then(async () => {
+            initializedChannelRef.current = false;
+            await useQueryResult.refetch();
+          });
+        }
+      })
+    );
+    Sendbird.getInstance().groupChannel?.addGroupChannelHandler?.(
+      String(accessUser?.userId || ''),
+      new GroupChannelHandler({
+        onMessageReceived: async (channel, message) => {
+          const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+          setSendbirdState((prevState) => ({
+            ...prevState,
+            unreadMessagesCount
+          }));
+          await useQueryResult.refetch();
+
+          if (
+            !compareIds(channel?.url, currentChannel.current?.url) ||
+            messages.some((msg) => compareIds(msg.messageId, message.messageId))
+          )
+            return;
+
+          if (!isProduction) console.log('Channel | onMessageReceived', message);
+
+          const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          setSenderUserId((channel as GroupChannel).lastMessage.sender?.userId);
+
+          if (
+            Math.ceil(scrollTop + clientHeight) >= scrollHeight &&
+            document.visibilityState === 'visible'
+          ) {
+            setUnreadCount(0);
+            (channel as GroupChannel).markAsRead().then(async () => {
+              const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+              setSendbirdState((prevState) => ({
+                ...prevState,
+                unreadMessagesCount: newUnreadMessagesCount
+              }));
+            });
+          }
+
+          setState((prevState) => ({
+            ...prevState,
+            messages: [
+              ...prevState.messages.filter(({ messageId }) => messageId !== message.messageId),
+              message
+            ] as CoreMessageType[]
+          }));
+        },
+        // before(onDeliveryReceiptUpdated)
+        onChannelChanged: async (channel) => {
+          const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+          setSendbirdState((prevState) => ({
+            ...prevState,
+            unreadMessagesCount
+          }));
+          await useQueryResult.refetch();
+
+          if (compareIds(channel?.url, currentChannel.current?.url)) {
+            if (!isProduction) console.log('Channel | onChannelChanged', channel);
+          }
+        },
+        onUnreadMemberStatusUpdated: async (channel) => {
+          const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+          setSendbirdState((prevState) => ({
+            ...prevState,
+            unreadMessagesCount
+          }));
+
+          if (compareIds(channel?.url, currentChannel.current?.url)) {
+            if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
+            setUnreadCount(channel.unreadMessageCount);
+            mutatePostHistoryManage({
+              channelId: Number(router.query.id || ''),
+              event: 'LAST_CHECK'
+            });
+            channel
+              .getMessagesByTimestamp(new Date().getTime() + 5000, {
+                prevResultSize: PREV_RESULT_SIZE,
+                nextResultSize: 0
+              })
+              .then((baseMessages) => {
+                setState((prevState) => ({
+                  ...prevState,
+                  messages: prevState.messages.map(
+                    (prevMessage) =>
+                      baseMessages.find(({ messageId }) => prevMessage.messageId === messageId) ||
+                      prevMessage
+                  ) as CoreMessageType[]
+                }));
+              });
+          }
+        }
+      })
+    );
+  }, [
+    accessUser,
+    messages,
+    mutatePostHistoryManage,
+    router.query.id,
+    setSendbirdState,
+    useQueryResult
+  ]);
+
+  useEffect(() => {
+    return () => {
+      Sendbird.getInstance().removeConnectionHandler(String(accessUser?.userId || ''));
+      Sendbird.getInstance().groupChannel?.removeGroupChannelHandler?.(
+        String(accessUser?.userId || '')
+      );
+    };
+  }, [accessUser]);
+
   return {
     useQueryChannel: useQueryResult,
+    pending,
     channelData,
     sendbirdChannel: currentChannel.current,
     messages: filteredMessages,
     hasMorePrev,
     fetchPrevMessages,
-    updateNewMessage
+    updateNewMessage,
+    isPrevFetching,
+    unreadCount,
+    hasSentMessage
   };
 }
 

@@ -8,7 +8,7 @@ interface ChannelCreditSellerMessageProps {
 function ChannelCreditSellerMessage({ message: { message } }: ChannelCreditSellerMessageProps) {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { primary }
     }
   } = useTheme();
 
@@ -23,7 +23,6 @@ function ChannelCreditSellerMessage({ message: { message } }: ChannelCreditSelle
         padding: 12,
         margin: '20px 0',
         textAlign: 'center',
-        color: common.ui60,
         backgroundColor: primary.bgLight,
         borderRadius: 8,
         whiteSpace: 'pre-wrap',

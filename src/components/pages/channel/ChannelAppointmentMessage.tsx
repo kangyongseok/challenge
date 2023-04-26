@@ -11,8 +11,6 @@ import { putProductUpdateStatus } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 import { productStatus } from '@constants/channel';
 
-import { checkAgent } from '@utils/common';
-
 import type { MemorizedMessage } from '@typings/channel';
 
 interface ChannelAppointmentMessageProps extends Omit<MemorizedMessage, 'message' | 'userReview'> {
@@ -46,13 +44,9 @@ function ChannelAppointmentMessage({
     productStatus[status as keyof typeof productStatus] === productStatus[0];
 
   const handleClickViewAppointment = () => {
-    router
-      .push({
-        pathname: `/channels/${router.query.id}/appointment`
-      })
-      .then(() => {
-        if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      });
+    router.push({
+      pathname: `/channels/${router.query.id}/appointment`
+    });
   };
 
   const handleClickUpdate = () => {

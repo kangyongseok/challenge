@@ -367,7 +367,7 @@ function ProductSellerBottomMenu({
       >
         <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
           <Flexbox direction="vertical">
-            {status !== 4 && status !== 8 && isTransferred && (
+            {status !== 4 && status !== 8 && (
               <Menu variant="h3" weight="medium" data-status-id={4} onClick={handleClickStatus}>
                 예약중으로 변경
               </Menu>

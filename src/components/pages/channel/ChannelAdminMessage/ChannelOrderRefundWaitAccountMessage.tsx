@@ -1,4 +1,4 @@
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
@@ -12,10 +12,8 @@ import { fetchUserAccounts } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
-import { checkAgent } from '@utils/common';
 
 import { settingsAccountData } from '@recoil/settingsAccount';
-import { channelPushPageState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ChannelOrderRefundWaitAccountMessageProps {
@@ -35,7 +33,6 @@ function ChannelOrderRefundWaitAccountMessage({
     }
   } = useTheme();
 
-  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
 
   const { data: accessUser } = useQueryAccessUser();
@@ -52,18 +49,6 @@ function ChannelOrderRefundWaitAccountMessage({
 
   const handleClick = () => {
     resetAccountDataState();
-
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      setChannelPushPageState('account');
-      window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-        JSON.stringify({
-          pathname: '/mypage/settings/account',
-          redirectChannelUrl: router.asPath
-        })
-      );
-      return;
-    }
 
     router.push('/mypage/settings/account');
   };

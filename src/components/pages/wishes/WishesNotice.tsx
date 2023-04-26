@@ -17,7 +17,6 @@ import {
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 interface WishesNoticeProps {
   message: string | ReactElement;
@@ -31,8 +30,6 @@ function WishesNotice({ imgName, message, moveTo, buttonLabel, onClickLog }: Wis
   const router = useRouter();
   const { hiddenTab } = router.query;
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-
-  useViewportUnitsTrick();
 
   const handleClick = () => {
     if (onClickLog) onClickLog();

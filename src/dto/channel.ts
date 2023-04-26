@@ -11,6 +11,7 @@ export type Channel = {
   dateUpdated: string;
   externalId: string;
   id: number;
+  isReserved: boolean;
   isDeleted: boolean;
   productId: number;
   targetUserId: number;
@@ -48,6 +49,7 @@ export type UserReview = {
   dateCreated: string;
   dateUpdated: string;
   id: number;
+  isReserved: boolean;
   isDeleted: boolean;
   productId: number;
   score: string;
@@ -60,6 +62,7 @@ export interface ChannelDetail {
   channelAppointments: ChannelAppointmentResult[] | null;
   channelTargetUser: ChannelUser | null;
   channelUser: ChannelUser | null;
+  isSentMessage: boolean;
   isTargetUserNoti: boolean;
   targetUserReview: UserReview | null;
   userReview: UserReview | null;

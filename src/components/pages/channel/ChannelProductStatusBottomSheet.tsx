@@ -19,6 +19,7 @@ import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 
 interface ChannelProductStatusBottomSheetProps {
   id: number;
+  channelId?: number;
   status: number;
   targetUserId?: number;
   isChannel?: boolean;
@@ -27,6 +28,7 @@ interface ChannelProductStatusBottomSheetProps {
 
 function ChannelProductStatusBottomSheet({
   id,
+  channelId,
   status,
   isChannel = false,
   onSuccessProductUpdateStatus
@@ -54,7 +56,7 @@ function ChannelProductStatusBottomSheet({
   }, [isChannel, setProductStatusBottomSheetState]);
 
   const handleClickStatus = useCallback(
-    (newStatus: number) => () => {
+    (newStatus: number, newChannelId?: number) => () => {
       if (isLoading || !id) return;
 
       logEvent(attrKeys.channel.CLICK_PRODUCT_MODAL, {
@@ -65,7 +67,7 @@ function ChannelProductStatusBottomSheet({
 
       setProductStatusBottomSheetState({ open: false, isChannel });
       mutatePutProductUpdateStatus(
-        { productId: id, status: newStatus },
+        { productId: id, status: newStatus, channelId: newChannelId },
         {
           onSuccess() {
             if (onSuccessProductUpdateStatus) onSuccessProductUpdateStatus();
@@ -114,7 +116,7 @@ function ChannelProductStatusBottomSheet({
           {[productStatus[0], productStatus[1], productStatus[2], productStatus[3]].includes(
             productStatus[status as keyof typeof productStatus]
           ) && (
-            <Menu variant="h3" weight="medium" onClick={handleClickStatus(4)}>
+            <Menu variant="h3" weight="medium" onClick={handleClickStatus(4, channelId)}>
               예약중
             </Menu>
           )}

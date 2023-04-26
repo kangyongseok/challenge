@@ -9,6 +9,7 @@ import type {
   UserMessageCreateParams,
   UserUpdateParams
 } from '@sendbird/chat/lib/__definition';
+import { GroupChannelCollection } from '@sendbird/chat/lib/__definition';
 import type {
   GroupChannel,
   GroupChannelCollectionEventHandler,
@@ -44,6 +45,7 @@ const sb = SendbirdChat.init({
   appId: process.env.SENDBIRD_APP_ID,
   modules: [new GroupChannelModule()]
 });
+let groupChannelCollection: GroupChannelCollection | null = null;
 
 const SendBird = {
   getInstance() {
@@ -52,6 +54,7 @@ const SendBird = {
   async initialize(userId: string, nickname: string, image?: string | null) {
     try {
       const user = await sb.connect(userId);
+
       const userUpdateParams: UserUpdateParams = { nickname };
 
       if (image) userUpdateParams.profileUrl = image;
@@ -104,20 +107,24 @@ const SendBird = {
   },
   async loadChannels(channelHandler: GroupChannelCollectionEventHandler, channelUrls?: string[]) {
     const groupChannelFilter = new GroupChannelFilter();
+
     groupChannelFilter.includeEmpty = true;
     // groupChannelFilter.hiddenChannelFilter = HiddenChannelFilter.HIDDEN_ALLOW_AUTO_UNHIDE;
 
     if (channelUrls) groupChannelFilter.channelUrlsFilter = channelUrls;
 
-    const collection = sb.groupChannel.createGroupChannelCollection({
+    groupChannelCollection?.dispose();
+
+    groupChannelCollection = sb.groupChannel.createGroupChannelCollection({
       filter: groupChannelFilter,
       order: GroupChannelListOrder.LATEST_LAST_MESSAGE
     });
-    collection.setGroupChannelCollectionHandler(channelHandler);
 
-    const channels = await collection.loadMore();
+    groupChannelCollection.setGroupChannelCollectionHandler(channelHandler);
 
-    return { channels, collection };
+    const channels = await groupChannelCollection.loadMore();
+
+    return { channels, collection: groupChannelCollection };
   },
   async getCustomTypeChannels(customType: string) {
     const query = sb.groupChannel.createMyGroupChannelListQuery({
@@ -216,6 +223,8 @@ const SendBird = {
     } catch (e) {
       // eslint-disable-next-line no-param-reassign,no-plusplus
       retry++;
+
+      if (sb.connectionState === 'CLOSED') sb.reconnect();
 
       if (retry < 3 && sb.connectionState === 'CLOSED') {
         await wait(1000);

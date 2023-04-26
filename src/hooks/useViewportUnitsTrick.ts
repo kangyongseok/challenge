@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 
-export default function useViewportUnitsTrick() {
+export default function useViewportUnitsTrick(disabled = false) {
   useEffect(() => {
     const handleResize = () => {
+      if (disabled) return;
+
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
@@ -12,14 +14,16 @@ export default function useViewportUnitsTrick() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [disabled]);
 
   useEffect(() => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    if (!disabled) {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
 
     return () => {
       document.documentElement.removeAttribute('style');
     };
-  }, []);
+  }, [disabled]);
 }

@@ -11,3 +11,4 @@ export { default as ChannelPurchaseConfirmDialog } from './ChannelPurchaseConfir
 export { default as ChannelAdminBlockMessage } from './ChannelAdminBlockMessage';
 export { default as ChannelSafePaymentGuideBanner } from './ChannelSafePaymentGuideBanner';
 export { default as ChannelSafePaymentGuideDialog } from './ChannelSafePaymentGuideDialog';
+export { default as ChannelReservingDialog } from './ChannelReservingDialog';

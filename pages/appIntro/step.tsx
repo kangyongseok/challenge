@@ -22,14 +22,11 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { prevChannelAlarmPopup } from '@recoil/common';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function AppIntroStep() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
-
-  useViewportUnitsTrick();
 
   const handleChange = (swiper: SwiperClass) => {
     const { activeIndex } = swiper;

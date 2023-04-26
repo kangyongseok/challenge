@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
-import { Toast, useTheme } from 'mrcamel-ui';
+import { Toast } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -68,11 +68,6 @@ const originUrl = 'https://mrcamel.co.kr';
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const [open, setOpen] = useState(false);
   const queryClient = useRef(
@@ -98,16 +93,6 @@ function App({ Component, pageProps }: AppProps) {
     const asPath = router.asPath === '/' ? '' : router.asPath.split('?')[0];
     return decodeURI(`${originUrl}${asPath}`).replace(/ /g, '-');
   }, [router.asPath, router.pathname]);
-
-  const themeColor = useMemo(() => {
-    if (router.asPath.split('?')[0] === '/') return common.cmn80;
-
-    if (['myPortfolio', 'crazycuration'].includes(router.pathname.split('/')[1])) {
-      return common.uiBlack;
-    }
-
-    return common.uiWhite;
-  }, [router.asPath, router.pathname, common.cmn80, common.uiWhite, common.uiBlack]);
 
   useEffect(() => {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
@@ -150,8 +135,8 @@ function App({ Component, pageProps }: AppProps) {
         <meta charSet="utf-8" />
         <meta
           name="viewport"
-          content={`minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0, ${
-            isExtendedLayoutIOSVersion() ? 'viewport-fit=cover' : ''
+          content={`minimum-scale=1, maximum-scale=1, initial-scale=1, width=device-width, user-scalable=0${
+            isExtendedLayoutIOSVersion() ? ', viewport-fit=cover' : ''
           }`}
         />
         <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -161,7 +146,6 @@ function App({ Component, pageProps }: AppProps) {
           name="description"
           content="여러분은 카멜에서 검색만 하세요. 전국 중고명품 매물은 카멜이 다 모아서 비교하고 분석해드릴게요!"
         />
-        <meta name="theme-color" content={themeColor} />
         <title>전국 중고명품 통합검색은 카멜에서</title>
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       </Head>

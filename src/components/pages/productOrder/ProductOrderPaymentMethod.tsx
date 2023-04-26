@@ -40,7 +40,8 @@ function ProductOrderPaymentMethod({
   );
 
   useEffect(() => {
-    if (!accessUser || paymentWidgetRef.current || paymentMethodsWidgetRef.current) return;
+    if (!accessUser || !totalPrice || paymentWidgetRef.current || paymentMethodsWidgetRef.current)
+      return;
 
     const loadTossPaymentWidget = async () => {
       const paymentWidget = await loadPaymentWidget(
@@ -59,16 +60,6 @@ function ProductOrderPaymentMethod({
 
     loadTossPaymentWidget();
   }, [accessUser, paymentWidgetRef, paymentMethodsWidgetRef, totalPrice]);
-
-  useEffect(() => {
-    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
-
-    if (!paymentMethodsWidget) {
-      return;
-    }
-
-    paymentMethodsWidget.updateAmount(totalPrice, paymentMethodsWidget.UPDATE_REASON.COUPON);
-  }, [paymentMethodsWidgetRef, totalPrice]);
 
   return <div id="payment-widget" />;
 }

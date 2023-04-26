@@ -3,12 +3,7 @@ import type { GroupChannel } from '@sendbird/chat/groupChannel';
 
 import LocalStorage from '@library/localStorage';
 
-import {
-  IS_CHECKED_RECEIVED_MESSAGE_FILTER,
-  PUSH_PAGE_FROM_CHAENNEL
-} from '@constants/localStorage';
-
-import { checkAgent } from '@utils/common';
+import { IS_CHECKED_RECEIVED_MESSAGE_FILTER } from '@constants/localStorage';
 
 export type SendbirdState = {
   initialized: boolean;
@@ -45,20 +40,7 @@ export const channelBottomSheetStateFamily = atomFamily<
   default: {
     open: false,
     isChannel: true
-  },
-  effects: [
-    ({ onSet }) => {
-      onSet(({ open, isChannel }, _, isReset) => {
-        if (!!checkAgent.isIOSApp() && isChannel) {
-          if (open || isReset) {
-            window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-          } else {
-            window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-          }
-        }
-      });
-    }
-  ]
+  }
 });
 
 export const channelDialogStateFamily = atomFamily<
@@ -67,26 +49,13 @@ export const channelDialogStateFamily = atomFamily<
     isChannel: boolean;
     location?: string;
   },
-  'purchaseConfirm' | 'saleRequestRefuse' | 'safePaymentGuide'
+  'purchaseConfirm' | 'saleRequestRefuse' | 'safePaymentGuide' | 'reserving'
 >({
   key: 'channel/dialogStateFamily',
   default: {
     open: false,
     isChannel: true
-  },
-  effects: [
-    ({ onSet }) => {
-      onSet(({ open, isChannel }, _, isReset) => {
-        if (!!checkAgent.isIOSApp() && isChannel) {
-          if (open || isReset) {
-            window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-          } else {
-            window.webkit?.messageHandlers?.callInputShow?.postMessage?.(0);
-          }
-        }
-      });
-    }
-  ]
+  }
 });
 
 export const channelReceivedMessageFilteredState = atom({
@@ -109,20 +78,4 @@ export const channelReceivedMessageFilteredState = atom({
 export const channelThumbnailMessageImageState = atom({
   key: 'channel/thumbnailMessageImageState',
   default: ''
-});
-
-export const channelPushPageState = atom({
-  key: 'channel/pushPageState',
-  default: '',
-  effects: [
-    ({ onSet }) => {
-      onSet((newValue, _, isReset) => {
-        if (isReset) {
-          LocalStorage.remove(PUSH_PAGE_FROM_CHAENNEL);
-        } else {
-          LocalStorage.set(PUSH_PAGE_FROM_CHAENNEL, newValue);
-        }
-      });
-    }
-  ]
 });

@@ -35,12 +35,9 @@ import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
-import useRedirectVC from '@hooks/useRedirectVC';
 
 function UserShop() {
   const router = useRouter();
-
-  useRedirectVC('/user/shop');
 
   const { userId, nickName, profileImage } = useMyProfileInfo();
 

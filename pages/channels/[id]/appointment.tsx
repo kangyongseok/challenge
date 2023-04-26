@@ -33,7 +33,6 @@ import {
 } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 
 function Appointment() {
   const {
@@ -44,8 +43,6 @@ function Appointment() {
   } = useTheme();
 
   const router = useRouter();
-
-  useViewportUnitsTrick();
 
   const queryClient = new QueryClient();
 
@@ -141,7 +138,7 @@ function Appointment() {
                 });
 
                 mutateUpdateProductStatus(
-                  { productId: channel.productId, status: 4 },
+                  { productId: channel.productId, status: 4, channelId: channel.id },
                   {
                     async onSuccess() {
                       await queryClient.invalidateQueries(

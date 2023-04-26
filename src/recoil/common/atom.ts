@@ -222,3 +222,8 @@ export const prevChannelAlarmPopup = atom({
   key: 'common/prevChannelAlarmPopup',
   default: false
 });
+
+export const activeViewportTrickState = atom({
+  key: 'common/activeViewportTrickState',
+  default: false
+});

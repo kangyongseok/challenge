@@ -413,11 +413,7 @@ function ProductCTAButton({
 
       if (channelId) {
         UserTraceRecord.setExitWishChannel();
-        if (checkAgent.isIOSApp()) {
-          window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
-        } else {
-          push(`/channels/${channelId}`);
-        }
+        push(`/channels/${channelId}`);
 
         return;
       }
@@ -1147,8 +1143,8 @@ const Wrapper = styled.div`
 `;
 
 const Triangle = styled.div`
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
   border-top: 10px solid
     ${({
       theme: {

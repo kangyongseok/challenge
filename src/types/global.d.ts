@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,import/prefer-default-export */
+
 export declare global {
   interface Window {
     Kakao: any;
@@ -6,6 +7,8 @@ export declare global {
     FB: any;
     webview: any;
     webkit: any;
+    flexibleContent: HTMLElement;
+    initFocusScrollY: number;
     ChannelIO: any;
     AndroidShareHandler: any;
     getPushState: any;
@@ -27,6 +30,7 @@ export declare global {
     getAuthPhotoLibrary: any;
     getAuthCamera: any;
     opera: any;
+    performance: any;
     getChannelMessage: (message: string) => void; // Chat View Controller 내의 Message Bottom Fixed Input return value
     getPhotoAttach: (fileUrls: string[]) => void; // Chat View Controller 내 native camera/photoAlbum에서 선택한 파일을 S3에 저장후 fileUrl 리턴
     getRedirect: (parsedUrl: { pathname: string; redirectChannelUrl: string }) => void; // Chat View Controller 에서 전달한 url을 MainVC로 전달

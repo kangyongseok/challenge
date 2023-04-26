@@ -4589,10 +4589,10 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-mrcamel-ui@^0.1.58:
-  version "0.1.58"
-  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.58.tgz#c41a18fd8cf89159599bc3a5bb5b8bfdcca44046"
-  integrity sha512-smI6M4jd9dQkqLWAvY+BZoqNZW0zDFaT3Afsz1LC6dTx9N038OGbh7sMgq3rX64t3fD6I06531bX7BVzfdmgwQ==
+mrcamel-ui@^0.1.59:
+  version "0.1.59"
+  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.59.tgz#1c24f908f7727e08452d5e2d5b801ce496dea168"
+  integrity sha512-+6AlmrSCVE329KVTk71R239wV2VnBaTNBP4H2Cxr1GIWqFTwWB+wjV23WPXixZR5lNJ5jZtjtynkp1TV2Z/RsA==
 
 ms@2.1.2:
   version "2.1.2"
@@ -5136,10 +5136,10 @@ react-textarea-autosize@^8.3.4:
     use-composed-ref "^1.3.0"
     use-latest "^1.2.1"
 
-react-virtualized@^9.22.3:
-  version "9.22.3"
-  resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.22.3.tgz#f430f16beb0a42db420dbd4d340403c0de334421"
-  integrity sha512-MKovKMxWTcwPSxE1kK1HcheQTWfuCxAuBoSTf2gwyMM21NdX/PXUhnoP8Uc5dRKd+nKm8v41R36OellhdCpkrw==
+react-virtualized@^9.22.5:
+  version "9.22.5"
+  resolved "https://registry.yarnpkg.com/react-virtualized/-/react-virtualized-9.22.5.tgz#bfb96fed519de378b50d8c0064b92994b3b91620"
+  integrity sha512-YqQMRzlVANBv1L/7r63OHa2b0ZsAaDp1UhVNEdUaXI8A5u6hTpA5NYtUueLH2rFuY/27mTGIBl7ZhqFKzw18YQ==
   dependencies:
     "@babel/runtime" "^7.7.2"
     clsx "^1.0.4"

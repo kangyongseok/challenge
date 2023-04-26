@@ -1,4 +1,5 @@
-import { MouseEvent, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -12,6 +13,8 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { UserMessage } from '@sendbird/chat/message';
+import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import styled from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';
@@ -27,18 +30,21 @@ import { productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PROMOTION_ATT, productStatusCode } from '@constants/product';
+import { messageStates } from '@constants/channel';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { checkAgent, commaNumber } from '@utils/common';
+import { commaNumber } from '@utils/common';
+import { getOutgoingMessageState } from '@utils/channel';
 
 import { dialogState } from '@recoil/common';
-import { channelPushPageState } from '@recoil/channel';
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
+import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import ChannelReviewSentMessage from './ChannelReviewSentMessage';
+import ChannelReserveMessage from './ChannelReserveMessage';
 import ChannelOrderSettleWaitMessage from './ChannelOrderSettleWaitMessage';
 import ChannelOrderSettleWaitAccountMessage from './ChannelOrderSettleWaitAccountMessage';
 import ChannelOrderSettleProgressMessage from './ChannelOrderSettleProgressMessage';
@@ -57,8 +63,10 @@ import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
 import ChannelOfferApproveMessage from './ChannelOfferApproveMessage';
 import ChannelOfferAdminTextMessage from './ChannelOfferAdminTextMessage';
 import ChannelCreditSellerMessage from './ChannelCreditSellerMessage';
+import ChannelAppointmentMessage from './ChannelAppointmentMessage';
 
 interface ChannelAdminMessageProps {
+  sendbirdChannel: GroupChannel;
   message: AdminMessage;
   productId: number;
   targetUserId: number;
@@ -86,6 +94,7 @@ const CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES = [
 ];
 
 function ChannelAdminMessage({
+  sendbirdChannel: channel,
   message,
   productId,
   targetUserId,
@@ -107,8 +116,16 @@ function ChannelAdminMessage({
   const resetCamelSellerMoveScroll = useResetRecoilState(camelSellerIsMovedScrollState);
 
   const messageProductId = useMemo(() => Number(messageInfos[1] || 0), [messageInfos]);
+  const messageStatus = useMemo(
+    () => getOutgoingMessageState(channel, message as UserMessage),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [channel.getUnreadMemberCount?.(message), channel.getUndeliveredMemberCount?.(message)]
+  );
+
   const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
   const currentOffer = offers.find((findOffer) => findOffer.id === Number(message.message));
+
+  const { data: accessUser } = useQueryAccessUser();
   const { data: productDetail } = useQuery(
     queryKeys.products.productList([messageProductId]),
     () => fetchProductList([messageProductId]),
@@ -167,19 +184,14 @@ function ChannelAdminMessage({
 
   const buttonData = find(messageButtonData, { id: message.customType || '' });
   const isAdminMessageType = CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES.includes(message.customType || '');
-
-  const setChannelPushPageState = useSetRecoilState(channelPushPageState);
+  const isByMe = message.data && accessUser?.userId !== Number(JSON.parse(message.data)?.userId);
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
 
   const handleClickViewAppointment = () => {
-    router
-      .push({
-        pathname: `/channels/${router.query.id}/appointment`
-      })
-      .then(() => {
-        if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      });
+    router.push({
+      pathname: `/channels/${router.query.id}/appointment`
+    });
   };
 
   const handleClickUpdate = () => {
@@ -250,16 +262,6 @@ function ChannelAdminMessage({
       }
     }
     if (buttonData?.action) {
-      if (checkAgent.isIOSApp()) {
-        setChannelPushPageState(buttonData.action.split('/')[1]);
-        window.webkit?.messageHandlers?.callRedirect?.postMessage?.(
-          JSON.stringify({
-            pathname: buttonData.action,
-            redirectChannelUrl: router.asPath
-          })
-        );
-        return;
-      }
       resetCamelSellerMoveScroll();
 
       SessionStorage.set(sessionStorageKeys.legitIntroSource, 'CHANNEL');
@@ -267,6 +269,15 @@ function ChannelAdminMessage({
       router.push(buttonData.action);
     }
   };
+
+  useEffect(() => {
+    if (isByMe && messageStates.sent === messageStatus) {
+      window.flexibleContent.scrollTo({
+        top: window.flexibleContent.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [isByMe, messageStatus]);
 
   if (isAdminMessageType) {
     return (
@@ -492,6 +503,14 @@ function ChannelAdminMessage({
         targetUserId={targetUserId}
       />
     );
+  }
+
+  if (message.customType === 'channelReserve') {
+    return <ChannelReserveMessage targetUserName={targetUserName} />;
+  }
+
+  if (message.customType === 'channelAppointment') {
+    return <ChannelAppointmentMessage />;
   }
 
   return (

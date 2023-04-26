@@ -18,7 +18,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { checkAgent, getOrderStatusText } from '@utils/common';
+import { getOrderStatusText } from '@utils/common';
 
 import { mypageOrdersPurchaseConfirmDialogState } from '@recoil/mypageOrders';
 
@@ -63,11 +63,7 @@ function MypageOrdersCard({
       name: attrProperty.name.ORDER_LIST
     });
 
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
-    } else {
-      router.push(`/channels/${channelId}`);
-    }
+    router.push(`/channels/${channelId}`);
   };
 
   const handeClickReviewWrite = (e: MouseEvent<HTMLButtonElement>) => {

@@ -1,9 +1,10 @@
 import type { PropsWithChildren, ReactElement } from 'react';
+import { useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { CustomStyle } from 'mrcamel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import MowebFooter from '@components/UI/organisms/MowebFooter';
 import { AppDownloadBanner } from '@components/UI/organisms';
@@ -12,7 +13,8 @@ import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
 import { checkAgent } from '@utils/common';
 
-import { showAppDownloadBannerState } from '@recoil/common';
+import { activeViewportTrickState, showAppDownloadBannerState } from '@recoil/common';
+import useViewportUnitsTrick from '@hooks/useViewportUnitsTrick';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 interface GeneralTemplateProps {
@@ -27,14 +29,18 @@ function GeneralTemplate({
   children,
   header,
   footer,
-  disablePadding = false,
-  hideAppDownloadBanner = false,
+  disablePadding,
+  hideAppDownloadBanner,
   customStyle
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
 
-  const triggered = useReverseScrollTrigger(true);
   const isAppdownBannerState = useRecoilValue(showAppDownloadBannerState);
+  const [activeViewportTrick, setActiveViewportTrickState] =
+    useRecoilState(activeViewportTrickState);
+
+  const triggered = useReverseScrollTrigger(true);
+  useViewportUnitsTrick(!activeViewportTrick);
 
   const showMowebFooterCase = ['/', '/products/[id]', '/mypage', '/wishes'].includes(
     router.pathname
@@ -48,8 +54,13 @@ function GeneralTemplate({
     return 0;
   };
 
+  useEffect(() => {
+    setActiveViewportTrickState(true);
+  }, [setActiveViewportTrickState]);
+
   return (
     <Wrapper
+      activeViewportTrick={activeViewportTrick}
       css={{
         paddingTop: paddingTopParser(),
         ...customStyle
@@ -67,13 +78,18 @@ function GeneralTemplate({
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ activeViewportTrick: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
-  height: calc((var(--vh, 1vh) * 100));
+  height: ${({ activeViewportTrick }) => (activeViewportTrick ? '100vh' : '100%')};
+  ${({ activeViewportTrick }): CSSObject =>
+    activeViewportTrick
+      ? {
+          height: 'calc((var(--vh, 1vh) * 100))'
+        }
+      : {}};
   background-color: ${({
     theme: {
       palette: { common }
@@ -82,7 +98,7 @@ const Wrapper = styled.div`
   transition: padding-top 0.5s;
 `;
 
-const Content = styled.main<{ disablePadding: boolean }>`
+const Content = styled.main<{ disablePadding?: boolean }>`
   display: flex;
   flex-direction: column;
   flex-grow: 1;

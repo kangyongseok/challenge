@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import { PushNotificationDeliveryOption } from '@sendbird/chat/message';
-import type { SendableMessage } from '@sendbird/chat/lib/__definition';
+import type { FileMessageCreateParams, SendableMessage } from '@sendbird/chat/lib/__definition';
 import type { FileCompat } from '@sendbird/chat';
 
 import type { PostHistoryManageData } from '@dto/channel';
@@ -31,6 +31,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     file,
     fileUrl,
     fileUrls,
+    multipleImage,
     callback,
     failCallback,
     options,
@@ -43,6 +44,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     file?: FileCompat | undefined;
     fileUrl?: string;
     fileUrls?: string[];
+    multipleImage?: FileMessageCreateParams[];
     userId: number;
     productId: number;
     callback?: (message: SendableMessage) => void;
@@ -77,7 +79,6 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     await mutatePostHistoryManage(data, {
       async onSuccess() {
         if (!data.content) return;
-
         if (file) {
           await Sendbird.sendFile({
             channelUrl,
@@ -87,7 +88,23 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             onSucceeded,
             onFailed
           });
+          return;
+        }
 
+        if (multipleImage) {
+          await Sendbird.sendFiles({
+            channelUrl,
+            // eslint-disable-next-line no-return-await
+            paramsList: await Promise.all(
+              multipleImage.map(async (a) => ({
+                customType,
+                pushNotificationDeliveryOption,
+                file: a
+              })) as FileMessageCreateParams[]
+            ),
+            onSucceeded,
+            onFailed
+          });
           return;
         }
 
@@ -100,7 +117,6 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             onSucceeded,
             onFailed
           });
-
           return;
         }
 
@@ -118,7 +134,6 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             onSucceeded,
             onFailed
           });
-
           return;
         }
 

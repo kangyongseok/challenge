@@ -9,8 +9,6 @@ import { fetchUserAccounts } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 
-import { checkAgent } from '@utils/common';
-
 import { settingsAccountData } from '@recoil/settingsAccount';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -45,10 +43,6 @@ function ChannelOrderSettleWaitAccountMessage({
 
   const handleClick = () => {
     resetAccountDataState();
-
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
 
     router.push('/mypage/settings/account');
   };

@@ -3,6 +3,7 @@ import type { MouseEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { Avatar, Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
+import styled, { CSSObject } from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
@@ -13,7 +14,7 @@ import { productStatus } from '@constants/channel';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getOrderStatusText } from '@utils/common';
 
-import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
+import { channelBottomSheetStateFamily, channelDialogStateFamily } from '@recoil/channel/atom';
 
 import { Title, Wrapper } from './FixedProductInfo.styles';
 
@@ -24,6 +25,7 @@ interface FixedProductInfoProps {
   isChannel?: boolean;
   isTargetUserBlocked?: boolean;
   isAdminBlockUser?: boolean;
+  isReserved?: boolean;
   image: string;
   title: string;
   status: number;
@@ -43,6 +45,7 @@ function FixedProductInfo({
   isTargetUserBlocked,
   isAdminBlockUser,
   isChannel = true,
+  isReserved,
   image,
   title,
   status,
@@ -63,6 +66,7 @@ function FixedProductInfo({
   const setProductStatusBottomSheetState = useSetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
+  const setReservingDialogState = useSetRecoilState(channelDialogStateFamily('reserving'));
 
   const handleClickProductStatus = (e: MouseEvent<HTMLDivElement>) => {
     if (!isEditableProductStatus || isDeletedProduct) return;
@@ -71,6 +75,34 @@ function FixedProductInfo({
     setProductStatusBottomSheetState({ open: true, isChannel });
 
     if (onClickStatus) onClickStatus();
+  };
+
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    if (status === 4) {
+      setReservingDialogState((prevState) => ({
+        ...prevState,
+        open: true
+      }));
+      return;
+    }
+
+    if (
+      (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
+        getOrderStatusText({ status: order?.status, result: order?.result })
+      ) &&
+        !!order) ||
+      status !== 0 ||
+      isTargetUserBlocked ||
+      isAdminBlockUser ||
+      isReserved
+    )
+      return;
+
+    if (onClickSafePayment) {
+      onClickSafePayment(e);
+    }
   };
 
   return isLoading ? (
@@ -99,7 +131,6 @@ function FixedProductInfo({
       onClick={onClick}
       customStyle={{
         minHeight: PRODUCT_INFORMATION_HEIGHT,
-        position: 'relative',
         ...customStyle
       }}
     >
@@ -175,30 +206,50 @@ function FixedProductInfo({
               textAlign: 'right'
             }}
           >
-            <Button
+            <SafePaymentButton
               variant="solid"
               brandColor="black"
-              onClick={onClickSafePayment}
-              disabled={
+              onClick={handleClick}
+              customDisabled={
                 (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
                   getOrderStatusText({ status: order?.status, result: order?.result })
                 ) &&
                   !!order) ||
                 status !== 0 ||
                 isTargetUserBlocked ||
-                isAdminBlockUser
+                isAdminBlockUser ||
+                isReserved
               }
               customStyle={{
                 whiteSpace: 'nowrap'
               }}
             >
               안전결제
-            </Button>
+            </SafePaymentButton>
           </Box>
         )}
       </Wrapper>
     </Flexbox>
   );
 }
+
+const SafePaymentButton = styled(Button)<{ customDisabled?: boolean }>`
+  ${({
+    theme: {
+      palette: { common }
+    },
+    customDisabled
+  }): CSSObject =>
+    customDisabled
+      ? {
+          borderColor: 'transparent',
+          backgroundColor: common.ui90,
+          color: common.ui80,
+          '& svg': {
+            color: common.ui80
+          }
+        }
+      : {}}
+`;
 
 export default FixedProductInfo;

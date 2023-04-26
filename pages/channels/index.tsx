@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 
@@ -17,19 +17,16 @@ import Initializer from '@library/initializer';
 import { channelType } from '@constants/channel';
 
 import { getCookies } from '@utils/cookies';
-import { checkAgent, needUpdateChatIOSVersion } from '@utils/common';
+import { needUpdateChatIOSVersion } from '@utils/common';
 
 import { dialogState } from '@recoil/common';
-import { channelBottomSheetStateFamily, channelPushPageState } from '@recoil/channel';
-import useRedirectVC from '@hooks/useRedirectVC';
+import { channelBottomSheetStateFamily } from '@recoil/channel';
 
 const labels = Object.entries(channelType).map(([key, value]) => ({ key, value }));
 
 function Channels() {
   const router = useRouter();
-  useRedirectVC('/channels');
 
-  const channelPushPage = useRecoilValue(channelPushPageState);
   const setDialogState = useSetRecoilState(dialogState);
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
@@ -43,8 +40,6 @@ function Channels() {
   );
 
   useEffect(() => {
-    const { channelId, isCamelChannel } = router.query;
-
     if (needUpdateChatIOSVersion()) {
       setDialogState({
         type: 'requiredAppUpdateForChat',
@@ -56,17 +51,6 @@ function Channels() {
           );
         }
       });
-    } else if (channelId) {
-      router.replace('/channels').then(() => {
-        if (checkAgent.isIOSApp()) {
-          window.webkit?.messageHandlers?.callChannel?.postMessage?.(
-            `/channels/${channelId}${isCamelChannel ? 'isCamelChannel=true' : ''}`
-          );
-          return;
-        }
-
-        router.push(`/channels/${channelId}`);
-      });
     }
 
     return () => {
@@ -75,10 +59,13 @@ function Channels() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return channelPushPage ? (
-    <div />
-  ) : (
-    <GeneralTemplate header={<Header />} footer={<BottomNavigation />} disablePadding>
+  return (
+    <GeneralTemplate
+      header={<Header />}
+      footer={<BottomNavigation />}
+      disablePadding
+      hideAppDownloadBanner
+    >
       <ChannelsTabs labels={labels} value={type.toString()} />
       {type === +labels[0].key && <ChannelsMessagesPanel type={0} />}
       {type === +labels[1].key && <ChannelsFilteredMessagesPanel />}

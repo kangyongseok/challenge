@@ -8,7 +8,7 @@ export default function useDetectScrollFloorTrigger() {
     const handleScroll = async () => {
       const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
 
-      const isFloor = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+      const isFloor = Math.floor(scrollTop + clientHeight) >= scrollHeight - 100;
 
       if (isFloor) {
         setTriggered(true);

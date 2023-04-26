@@ -1,17 +1,16 @@
-import { MouseEvent, useEffect, useMemo, useState } from 'react';
-import type { MutableRefObject, UIEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 
-import { Box } from 'mrcamel-ui';
-import debounce from 'lodash-es/debounce';
+import { Box, Chip, Icon } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type {
   QueryObserverResult,
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
+import { useIsFetching } from '@tanstack/react-query';
 import type { AdminMessage, FileMessage, UserMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
-import styled from '@emotion/styled';
 
 import DateSeparator from '@components/UI/molecules/DateSeparator';
 import ChannelMessage from '@components/pages/channel/ChannelMessage';
@@ -21,15 +20,6 @@ import { ChannelAdminBlockMessage } from '@components/pages/channel';
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
-
-import {
-  HEADER_HEIGHT,
-  MESSAGE_ACTION_BUTTONS_HEIGHT,
-  MESSAGE_APPOINTMENT_BANNER_HEIGHT,
-  MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT,
-  MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT,
-  PRODUCT_INFORMATION_HEIGHT
-} from '@constants/common';
 
 import { isAdminMessage } from '@utils/channel';
 
@@ -41,13 +31,7 @@ interface ChannelMessagesProps {
   productId: number;
   targetUserId: number;
   targetUserName: string;
-  showAppointmentBanner: boolean;
   showNewMessageNotification: boolean;
-  showActionButtons: boolean;
-  showSafePaymentGuideBanner: boolean;
-  isCamelAdminUser?: boolean;
-  isCamelAuthSeller?: boolean;
-  messagesRef: MutableRefObject<HTMLDivElement | null>;
   hasMorePrev: boolean;
   hasUserReview: boolean;
   hasTargetUserReview: boolean;
@@ -57,12 +41,16 @@ interface ChannelMessagesProps {
   orders: Order[];
   offers: ProductOffer[];
   status: number;
+  unreadCount: number;
+  isFocused: boolean;
+  isPrevFetching: boolean;
+  focusScrollY: number;
   fetchPrevMessages: () => Promise<void>;
-  scrollToBottom(behavior?: ScrollBehavior): void;
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
   onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClickUnreadCount?: () => void;
 }
 
 function ChannelMessages({
@@ -71,27 +59,34 @@ function ChannelMessages({
   productId,
   targetUserId,
   targetUserName,
-  showAppointmentBanner,
   showNewMessageNotification,
-  showActionButtons,
-  showSafePaymentGuideBanner,
-  messagesRef,
   hasMorePrev,
   hasUserReview,
-  isCamelAdminUser,
   isSeller,
   isTargetUserBlocked,
   isAdminBlockUser,
   orders,
   offers,
   status,
-  isCamelAuthSeller,
+  unreadCount,
+  isFocused,
+  isPrevFetching,
+  focusScrollY,
   fetchPrevMessages,
-  scrollToBottom,
   refetchChannel,
-  onClickSafePayment
+  onClickSafePayment,
+  onClickUnreadCount
 }: ChannelMessagesProps) {
+  const fetchingCount = useIsFetching();
+
   const [initialized, setInitialized] = useState(false);
+  const [translateY, setTranslateY] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const initScrollRef = useRef(false);
+  const chipRef = useRef<HTMLButtonElement>(null);
+  const scrollingTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const prevScrollHeightRef = useRef(0);
 
   const memorizedAllMessages = useMemo(
     () =>
@@ -106,7 +101,7 @@ function ChannelMessages({
           );
 
           return message ? (
-            <Box className="message-scroll" key={`message-${message.messageId}`}>
+            <Box key={`message-${message.messageId}`}>
               {hasSeparator && (
                 <DateSeparator customStyle={{ margin: '20px 0' }}>
                   {dayjs(currentCreatedAt).format('YYYY년 MM월 DD일')}
@@ -114,6 +109,7 @@ function ChannelMessages({
               )}
               {isAdminMessage(message) ? (
                 <ChannelAdminMessage
+                  sendbirdChannel={sendbirdChannel}
                   message={message as AdminMessage}
                   productId={productId}
                   targetUserId={targetUserId}
@@ -140,13 +136,12 @@ function ChannelMessages({
           ) : null;
         })
       ) : (
-        <DateSeparator customStyle={{ margin: isCamelAuthSeller ? '60px 0' : '20px 0' }}>
+        <DateSeparator customStyle={{ margin: '20px 0' }}>
           {dayjs(sendbirdChannel.createdAt).format('YYYY년 MM월 DD일')}
         </DateSeparator>
       ),
     [
       messages,
-      isCamelAuthSeller,
       sendbirdChannel,
       productId,
       targetUserId,
@@ -163,90 +158,129 @@ function ChannelMessages({
     ]
   );
 
-  const handleScroll = debounce((e: UIEvent<HTMLDivElement>) => {
-    const element = e.target;
-    const { clientHeight, scrollTop, scrollHeight } = element as HTMLDivElement;
-
-    if (scrollTop === 0) {
-      if (!hasMorePrev) return;
-
-      fetchPrevMessages();
-    }
-
-    setTimeout(async () => {
-      if (showNewMessageNotification && Math.round(clientHeight + scrollTop) >= scrollHeight) {
-        try {
-          await sendbirdChannel.markAsRead();
-        } catch {
-          //
-        }
-      }
-    }, 500);
-  }, 200);
-
+  // 최초 로드 시 메시지 목록 컨테이너 스크롤이 최하단에 위치하도록 처리
   useEffect(() => {
     if (messages.length > 0 && !initialized) {
-      scrollToBottom();
+      window.flexibleContent.scrollTo({
+        top: window.flexibleContent.scrollHeight
+      });
       setInitialized(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
+  // 메시지 목록 컨테이너 스크롤이 최상단에 위치할 경우 이전 메시지를 불러오도록 처리
+  useEffect(() => {
+    const handleScroll = async (e: Event) => {
+      const { scrollTop, scrollHeight } = e.currentTarget as HTMLElement;
+
+      if (scrollTop === 0) {
+        if (!hasMorePrev || isPrevFetching) return;
+        prevScrollHeightRef.current = scrollHeight;
+
+        await fetchPrevMessages();
+      }
+    };
+
+    window.flexibleContent.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.flexibleContent.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchPrevMessages, hasMorePrev, sendbirdChannel, showNewMessageNotification, isPrevFetching]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
+
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
+        if (scrollingTimerRef.current) {
+          clearTimeout(scrollingTimerRef.current);
+        }
+        setTranslateY(0);
+        setIsScrolling(false);
+        return;
+      }
+
+      setIsScrolling(true);
+
+      if (scrollingTimerRef.current) {
+        clearTimeout(scrollingTimerRef.current);
+      }
+
+      scrollingTimerRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 200);
+
+      if (chipRef.current) {
+        setTranslateY(window.flexibleContent.scrollTop + (isFocused ? focusScrollY : 0));
+      }
+    };
+
+    window.flexibleContent.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.flexibleContent.removeEventListener('scroll', handleScroll);
+    };
+  }, [focusScrollY, isFocused]);
+
+  useEffect(() => {
+    if (!unreadCount) {
+      setIsScrolling(false);
+    } else if (chipRef.current) {
+      setTranslateY(window.flexibleContent.scrollTop + (isFocused ? focusScrollY : 0));
+    }
+  }, [focusScrollY, isFocused, unreadCount]);
+
+  // 최초 로드 시 메시지 목록 컨테이너 스크롤이 최하단에 위치하도록 처리 보완
+  useEffect(() => {
+    if (!fetchingCount && initialized && !initScrollRef.current) {
+      initScrollRef.current = true;
+      window.flexibleContent.scrollTo({
+        top: window.flexibleContent.scrollHeight
+      });
+    }
+  }, [fetchingCount, initialized]);
+
   return (
-    <FixedScroll className="messages" ref={messagesRef} onScroll={handleScroll}>
-      <ScrollElement>
-        <Content
-          showAppointmentBanner={showAppointmentBanner}
-          showNewMessageNotification={showNewMessageNotification}
-          showSafePaymentGuideBanner={showSafePaymentGuideBanner}
-          isCamelAdminUser={isCamelAdminUser}
+    <Box
+      component="section"
+      customStyle={{
+        position: 'relative',
+        padding: `${isFocused ? `${focusScrollY}px` : 0} 20px 0`,
+        flexGrow: 1,
+        userSelect: 'auto',
+        '& *': {
+          userSelect: 'auto'
+        }
+      }}
+    >
+      {unreadCount > 0 && (
+        <Chip
+          ref={chipRef}
+          size="medium"
+          variant="solid"
+          isRound
+          brandColor="blue"
+          startIcon={<Icon name="Arrow1DownOutlined" />}
+          customStyle={{
+            position: 'absolute',
+            top: 20,
+            left: '50%',
+            gap: 2,
+            transform: `translate(-50%, ${isScrolling ? 0 : translateY}px)`,
+            opacity: isScrolling ? 0 : 1,
+            transition: 'transform 0.6s, opacity 0.2s',
+            zIndex: 1
+          }}
+          onClick={onClickUnreadCount}
         >
-          {memorizedAllMessages}
-          <Box
-            customStyle={{ height: showActionButtons ? MESSAGE_ACTION_BUTTONS_HEIGHT + 8 : 0 }}
-          />
-        </Content>
-      </ScrollElement>
-    </FixedScroll>
+          새 메세지 {unreadCount}개
+        </Chip>
+      )}
+      {memorizedAllMessages}
+    </Box>
   );
 }
-
-const FixedScroll = styled.div`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  overflow: hidden scroll;
-`;
-
-const ScrollElement = styled.div`
-  position: relative;
-  width: 100%;
-  height: auto;
-`;
-
-const Content = styled.div<{
-  showAppointmentBanner: boolean;
-  showNewMessageNotification: boolean;
-  showSafePaymentGuideBanner: boolean;
-  isCamelAdminUser?: boolean;
-}>`
-  padding: ${({
-    showAppointmentBanner,
-    showNewMessageNotification,
-    showSafePaymentGuideBanner,
-    isCamelAdminUser
-  }) =>
-    `${
-      HEADER_HEIGHT +
-      (!isCamelAdminUser ? PRODUCT_INFORMATION_HEIGHT : 0) +
-      (showAppointmentBanner ? MESSAGE_APPOINTMENT_BANNER_HEIGHT : 0) +
-      (showNewMessageNotification ? MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT : 0) +
-      (showSafePaymentGuideBanner ? MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT : 0)
-    }px 20px 0px`};
-  transition: all 0.3s;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-`;
 
 export default ChannelMessages;

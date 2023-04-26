@@ -19,8 +19,6 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
-
 import { dialogState, toastState } from '@recoil/common';
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
@@ -102,14 +100,10 @@ function ChannelMoreMenuBottomSheet({
 
     setMoreBottomSheetState({ open: false, isChannel: true });
 
-    router
-      .push({
-        pathname: '/user/report',
-        query: { targetUserId, targetUserName, isTargetUserSeller }
-      })
-      .then(() => {
-        if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-      });
+    router.push({
+      pathname: '/user/report',
+      query: { targetUserId, targetUserName, isTargetUserSeller }
+    });
   };
 
   const handleClickBlock = async () => {

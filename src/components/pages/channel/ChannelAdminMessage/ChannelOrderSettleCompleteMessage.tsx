@@ -17,7 +17,6 @@ import { fetchUserAccounts } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
-import { checkAgent } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -70,10 +69,6 @@ function ChannelOrderSettleCompleteMessage({
     return null;
 
   const handleClick = async () => {
-    if (checkAgent.isIOSApp()) {
-      window.webkit?.messageHandlers?.callInputHide?.postMessage?.(0);
-    }
-
     await refetchChannel();
     router.push({
       pathname: '/user/reviews/form',

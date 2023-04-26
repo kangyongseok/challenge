@@ -46,14 +46,11 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
-import useRedirectVC from '@hooks/useRedirectVC';
 
 function RegisterConfirmEdit() {
   const { query } = useRouter();
   const deviceId = useRecoilValue(deviceIdState);
   const productId = Number(query.id || 0);
-
-  useRedirectVC(`/camelSeller/registerConfirm/${query.id}`);
 
   const resetPhotoState = useResetRecoilState(camelSellerBooleanStateFamily('requirePhotoValid'));
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);

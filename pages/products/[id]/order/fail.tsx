@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useRouter } from 'next/router';
 import { Box, Button, Typography } from 'mrcamel-ui';
 
@@ -7,6 +9,12 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 function ProductOrderFail() {
   const router = useRouter();
   const { id, message } = router.query;
+
+  useEffect(() => {
+    router.beforePopState(() => {
+      return false;
+    });
+  }, [router]);
 
   return (
     <GeneralTemplate

@@ -11,8 +11,6 @@ import { postChannel } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
-import { checkAgent } from '@utils/common';
-
 import type { CreateChannelParams } from '@typings/channel';
 import { toastState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
@@ -61,13 +59,17 @@ function useMutationCreateChannel() {
                 queryKeys.products.product({ productId: +params.productId })
               );
 
-              if (checkAgent.isIOSApp() && !deActiveRouting) {
-                window.webkit?.messageHandlers?.callChannel?.postMessage?.(
-                  `/channels/${channelId}`
-                );
-              } else if (!deActiveRouting) {
+              if (!deActiveRouting) {
                 router.push(`/channels/${channelId}`);
               }
+
+              // if (checkAgent.isIOSApp() && !deActiveRouting) {
+              //   window.webkit?.messageHandlers?.callChannel?.postMessage?.(
+              //     `/channels/${channelId}`
+              //   );
+              // } else if (!deActiveRouting) {
+              //   router.push(`/channels/${channelId}`);
+              // }
 
               if (afterCallback && typeof afterCallback === 'function') {
                 await afterCallback(channelId);

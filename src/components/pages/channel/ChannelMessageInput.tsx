@@ -1,27 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import throttle from 'lodash-es/throttle';
+import { Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
-
-import { MESSAGE_ACTION_BUTTONS_HEIGHT, MESSAGE_INPUT_HEIGHT } from '@constants/common';
 
 import useOutsideClickRef from '@hooks/useOutsideClickRef';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
 interface ChannelMessageInputProps {
+  isLoading: boolean;
   channelId: number | undefined;
   channelUrl: string | undefined;
-  setMessageInputHeight: Dispatch<SetStateAction<number>>;
   setIsFocused: Dispatch<SetStateAction<boolean>>;
   isDeletedTargetUser: boolean;
   isTargetUserBlocked: boolean;
   isTargetUserNoti: boolean | undefined;
   isAdminBlockUser: boolean;
-  scrollToBottom(behavior?: ScrollBehavior): void;
   updateNewMessage: (msg: SendableMessage) => void;
   targetUserId: number;
   productId: number;
@@ -30,15 +26,14 @@ interface ChannelMessageInputProps {
 }
 
 function ChannelMessageInput({
+  isLoading,
   channelId,
   channelUrl,
-  setMessageInputHeight,
   setIsFocused,
   isDeletedTargetUser,
   isTargetUserBlocked,
   isTargetUserNoti,
   isAdminBlockUser,
-  scrollToBottom,
   updateNewMessage,
   targetUserId,
   productId,
@@ -51,29 +46,39 @@ function ChannelMessageInput({
     }
   } = useTheme();
 
-  const { mutate: mutateSendMessage, isLoading } = useMutationSendMessage({ lastMessageIndex });
+  const { mutate: mutateSendMessage, isLoading: isLoadingMutate } = useMutationSendMessage({
+    lastMessageIndex
+  });
 
   const [message, setMessage] = useState('');
   const [pending, setPending] = useState(false);
-  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
-  const textareaAutosizeRef = useRef<HTMLTextAreaElement | null>(null);
-  const [outsideClickRef] = useOutsideClickRef(() => {
-    setIsFocused(false);
-  });
-  const throttleInputHeight = useRef(
-    throttle((height: number) => setMessageInputHeight(height > 84 ? 84 : height), 200)
-  );
 
-  const handleFocus = useCallback(() => {
-    scrollToBottom('smooth');
-    setIsFocused(true);
-  }, [scrollToBottom, setIsFocused]);
+  const textareaAutosizeRef = useRef<HTMLTextAreaElement>(null);
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+  const [outsideClickRef] = useOutsideClickRef(() => setIsFocused(false));
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.currentTarget.value);
+
+  // const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (
+  //     e.keyCode === 13 &&
+  //     !checkAgent.isMobileApp() &&
+  //     window.performance &&
+  //     window.performance.memory
+  //   ) {
+  //     if (e.shiftKey) return;
+  //     e.preventDefault();
+  //     handleClickSand();
+  //   }
+  // };
 
   const handleClickSand = useCallback(async () => {
-    if (!channelId || !channelUrl || !message || isLoading || pending) return;
+    if (!channelId || !channelUrl || !message || isLoadingMutate || pending) return;
 
     hiddenInputRef.current?.focus();
     textareaAutosizeRef.current?.focus();
+
+    setPending(true);
 
     await mutateSendMessage({
       data: { channelId, content: message, event: 'LAST_MESSAGE' },
@@ -87,20 +92,13 @@ function ChannelMessageInput({
         setMessage('');
         setPending(false);
       },
-      failCallback: () => {
-        setPending(false);
-      },
-      options: {
-        onSettled() {
-          setPending(true);
-        }
-      }
+      failCallback: () => setPending(false)
     });
   }, [
     channelId,
     channelUrl,
     fileUrl,
-    isLoading,
+    isLoadingMutate,
     isTargetUserNoti,
     message,
     mutateSendMessage,
@@ -114,11 +112,14 @@ function ChannelMessageInput({
     setPending(false);
   }, []);
 
-  useEffect(() => {
-    throttleInputHeight.current(
-      (textareaAutosizeRef.current?.clientHeight || MESSAGE_INPUT_HEIGHT) + 12
+  if (isLoading) {
+    return (
+      <InputLayout>
+        <Skeleton width="100%" height={45} round={8} disableAspectRatio />
+        <Skeleton width={44} height={45} round={8} disableAspectRatio />
+      </InputLayout>
     );
-  }, [message]);
+  }
 
   return (
     <InputLayout ref={outsideClickRef}>
@@ -128,37 +129,23 @@ function ChannelMessageInput({
             <HiddenInput ref={hiddenInputRef} />
             <HiddenLabel htmlFor="message_input">message input textarea</HiddenLabel>
             <TextareaAutosize
-              id="message_input"
               ref={textareaAutosizeRef}
               maxRows={3}
               maxLength={500}
               placeholder="메시지 보내기"
               value={message}
-              onChange={(e) =>
-                setMessage((prevState) =>
-                  prevState.length > 0 ? e.target.value : e.target.value.trim()
-                )
-              }
-              onFocus={handleFocus}
-              disabled={!channelId || !channelUrl || isLoading || pending}
+              onChange={handleChange}
+              // onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
             />
           </InputWrapper>
-          <Flexbox
-            alignment="center"
-            justifyContent="center"
-            customStyle={{
-              height: MESSAGE_ACTION_BUTTONS_HEIGHT + 8,
-              marginTop: 'auto',
-              minWidth: 44
-            }}
-          >
+          <Flexbox alignment="center" justifyContent="center">
             <SandIcon
               name="SandFilled"
-              disabled={!channelId || !channelUrl || message.length === 0 || isLoading || pending}
               onClick={handleClickSand}
+              disabled={!channelId || !channelUrl || !message || isLoadingMutate || pending}
             />
           </Flexbox>
-          <FooterBottomBackground />
         </>
       )}
       {isDeletedTargetUser && (
@@ -176,11 +163,9 @@ function ChannelMessageInput({
 }
 
 const InputLayout = styled.div`
-  position: relative;
   display: flex;
-  min-height: ${MESSAGE_INPUT_HEIGHT}px;
-  margin: 8px 8px 8px 16px;
-  column-gap: 8px;
+  padding: 12px 20px 8px 20px;
+  gap: 16px;
 `;
 
 const InputWrapper = styled.div`
@@ -219,6 +204,14 @@ const InputWrapper = styled.div`
   }
 `;
 
+const SandIcon = styled(Icon)<{ disabled: boolean }>`
+  min-width: 28px;
+  width: 28px;
+  height: 28px;
+  color: ${({ disabled, theme: { palette } }) => (disabled ? palette.common.ui90 : '#425BFF')};
+  cursor: pointer;
+`;
+
 const HiddenInput = styled.input`
   position: absolute;
   pointer-events: none;
@@ -233,25 +226,6 @@ const HiddenLabel = styled.label`
   overflow: hidden;
   clip: rect(0px, 0px, 0px, 0px);
   clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
-`;
-
-const SandIcon = styled(Icon)<{ disabled: boolean }>`
-  min-width: 28px;
-  width: 28px;
-  height: 28px;
-  color: ${({ disabled, theme: { palette } }) => (disabled ? palette.common.ui90 : '#425BFF')};
-  cursor: pointer;
-`;
-
-const FooterBottomBackground = styled.div`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: calc(env(safe-area-inset-bottom, 0) + 8px);
-  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
-  transform: translateY(calc(env(safe-area-inset-bottom, 0) + 8px));
 `;
 
 export default ChannelMessageInput;

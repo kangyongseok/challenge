@@ -97,11 +97,7 @@ function Home() {
         )?.id;
 
         if (channelId) {
-          if (checkAgent.isIOSApp()) {
-            window.webkit?.messageHandlers?.callChannel?.postMessage?.(`/channels/${channelId}`);
-          } else {
-            router.push(`/channels/${channelId}`);
-          }
+          router.push(`/channels/${channelId}`);
         } else {
           mutateCreateChannel({
             userId: String(accessUser.userId || 0),
