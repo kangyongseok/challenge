@@ -197,11 +197,13 @@ function useChannel() {
   );
 
   const hasSentMessage = useMemo(() => {
+    if (useQueryResult.data?.isSentMessage) return true;
+    if (filteredMessages.length >= 30) return true;
+
     if (
       currentChannel.current &&
       !channelData.isSeller &&
-      filteredMessages.length <= 30 &&
-      !useQueryResult.data?.isSentMessage &&
+      filteredMessages.length < 30 &&
       accessUser
     ) {
       return filteredMessages.some(
@@ -210,6 +212,7 @@ function useChannel() {
           String(accessUser?.userId)
       );
     }
+
     return true;
   }, [accessUser, channelData.isSeller, filteredMessages, useQueryResult.data?.isSentMessage]);
 
