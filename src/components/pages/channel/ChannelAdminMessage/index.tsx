@@ -184,7 +184,9 @@ function ChannelAdminMessage({
 
   const buttonData = find(messageButtonData, { id: message.customType || '' });
   const isAdminMessageType = CAMEL_ADMIN_MESSAGE_CUSTOM_TYPES.includes(message.customType || '');
-  const isByMe = message.data && accessUser?.userId !== Number(JSON.parse(message.data)?.userId);
+  const isByMe =
+    (message.data && accessUser?.userId !== Number(JSON.parse(message.data)?.userId)) ||
+    !message.data;
 
   const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
 
@@ -271,7 +273,7 @@ function ChannelAdminMessage({
   };
 
   useEffect(() => {
-    if (isByMe && messageStates.sent === messageStatus) {
+    if (isByMe && messageStates.read === messageStatus) {
       window.flexibleContent.scrollTo({
         top: window.flexibleContent.scrollHeight,
         behavior: 'smooth'

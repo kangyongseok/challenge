@@ -799,7 +799,7 @@ function ProductCTAButton({
             height: 44,
             padding: '12px 20px',
             backgroundColor: isAllOperatorType ? primary.light : common.ui20,
-            zIndex: zIndex.button + 1
+            zIndex: !openPriceOfferOnBoarding ? zIndex.button + 1 : 1
           }}
         >
           {isAllOperatorType && <Triangle />}

@@ -52,10 +52,7 @@ function Channel() {
   const router = useRouter();
 
   const {
-    theme: {
-      palette: { common },
-      zIndex
-    }
+    theme: { zIndex }
   } = useTheme();
 
   const [focusScrollY, setFocusScrollY] = useState(0);
@@ -131,21 +128,9 @@ function Channel() {
   const { showActionButtons } = useMemo(
     () => ({
       showActionButtons:
-        !isDeletedTargetUser &&
-        !isTargetUserBlocked &&
-        !isCamelAdminUser &&
-        !isAdminBlockUser &&
-        !isLoading &&
-        !pending
+        !isDeletedTargetUser && !isTargetUserBlocked && !isCamelAdminUser && !isAdminBlockUser
     }),
-    [
-      isCamelAdminUser,
-      isDeletedTargetUser,
-      isTargetUserBlocked,
-      isAdminBlockUser,
-      isLoading,
-      pending
-    ]
+    [isCamelAdminUser, isDeletedTargetUser, isTargetUserBlocked, isAdminBlockUser]
   );
 
   // const isExternalPlatform = product?.sellerType === productSellerType.externalPlatform;
@@ -579,13 +564,14 @@ function Channel() {
               minHeight: 'fit-content'
             }}
           >
-            {!!channel && showActionButtons && sendbirdChannel ? (
+            {showActionButtons && (
               <ChannelBottomActionButtons
+                isLoading={isLoading || pending || !sendbirdChannel}
                 hasSentMessage={hasSentMessage}
                 isFocused={isFocused}
                 lastMessageIndex={messages.length + 1}
-                channelId={channel.id}
-                channelUrl={channel.externalId}
+                channelId={channel?.id || 0}
+                channelUrl={channel?.externalId || ''}
                 userName={userName}
                 isTargetUserNoti={isTargetUserNoti}
                 isTargetUserSeller={!isSeller}
@@ -604,21 +590,9 @@ function Channel() {
                 order={orders[0]}
                 offers={offers}
               />
-            ) : (
-              <Flexbox
-                gap={4}
-                customStyle={{
-                  padding: '12px 20px 0',
-                  borderTop: `1px solid ${common.line02}`
-                }}
-              >
-                <Skeleton width={72.66} height={32} round={16} disableAspectRatio />
-                <Skeleton width={99.31} height={32} round={16} disableAspectRatio />
-                <Skeleton width={116.56} height={32} round={16} disableAspectRatio />
-              </Flexbox>
             )}
             <ChannelMessageInput
-              isLoading={isLoading || !sendbirdChannel}
+              isLoading={isLoading || pending || !sendbirdChannel}
               channelId={channel?.id}
               channelUrl={channel?.externalId}
               setIsFocused={setIsFocused}
@@ -635,7 +609,7 @@ function Channel() {
         }
         disablePadding
       >
-        {!isLoading && sendbirdChannel && !pending ? (
+        {sendbirdChannel && !isLoading && !pending ? (
           <ChannelMessages
             sendbirdChannel={sendbirdChannel}
             messages={messages}

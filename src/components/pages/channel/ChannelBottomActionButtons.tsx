@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 import type {
@@ -39,6 +39,7 @@ import { channelDialogStateFamily } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
 interface ChannelBottomActionButtonsProps {
+  isLoading: boolean;
   hasSentMessage?: boolean;
   isFocused: boolean;
   lastMessageIndex: number;
@@ -66,6 +67,7 @@ interface ChannelBottomActionButtonsProps {
 }
 
 function ChannelBottomActionButtons({
+  isLoading,
   hasSentMessage,
   isFocused,
   lastMessageIndex,
@@ -100,7 +102,8 @@ function ChannelBottomActionButtons({
   const setToastState = useSetRecoilState(toastState);
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
-  const { mutate: mutatePutProductUpdateStatus, isLoading } = useMutation(putProductUpdateStatus);
+  const { mutate: mutatePutProductUpdateStatus, isLoading: isLoadingMutate } =
+    useMutation(putProductUpdateStatus);
   const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
 
   const [currentOffer, setCurrentOffer] = useState<ProductOffer | null>(null);
@@ -146,7 +149,7 @@ function ChannelBottomActionButtons({
     isTargetUserSeller;
 
   const handleClickPhoto = () => {
-    if (isLoading) return;
+    if (isLoadingMutate) return;
 
     // if (checkAgent.isIOSApp()) {
     //   setOpenCameraOptionMenu((prevState) => !prevState);
@@ -183,7 +186,7 @@ function ChannelBottomActionButtons({
   };
 
   const handleClickAppointment = () => {
-    if (isLoading || !router.query.id) return;
+    if (isLoadingMutate || !router.query.id) return;
 
     logEvent(attrKeys.channel.CLICK_APPOINTMENT, {
       name: attrProperty.name.CHANNEL_DETAIL,
@@ -206,14 +209,14 @@ function ChannelBottomActionButtons({
   };
 
   const handleClickReview = () => {
-    if (isLoading || !targetUserId) return;
+    if (isLoadingMutate || !targetUserId) return;
 
     logEvent(attrKeys.channel.CLICK_REVIEW_SEND, { name: attrProperty.name.CHANNEL_DETAIL });
     logEvent(attrKeys.channel.VIEW_REVIEW_SEND_POPUP, {
       att: isTargetUserSeller ? 'BUYER' : 'SELLER'
     });
 
-    if (isLoading) return;
+    if (isLoadingMutate) return;
 
     logEvent(attrKeys.channel.CLICK_CAMEL, {
       name: attrProperty.name.REVIEW_SEND,
@@ -316,6 +319,22 @@ function ChannelBottomActionButtons({
     );
   }, [offers, status, isTargetUserSeller]);
 
+  if (isLoading) {
+    return (
+      <Flexbox
+        gap={4}
+        customStyle={{
+          padding: '12px 20px 0',
+          borderTop: `1px solid ${common.line02}`
+        }}
+      >
+        <Skeleton width={72.66} height={32} round={16} disableAspectRatio />
+        <Skeleton width={99.31} height={32} round={16} disableAspectRatio />
+        <Skeleton width={116.56} height={32} round={16} disableAspectRatio />
+      </Flexbox>
+    );
+  }
+
   if (!hasSentMessage && !isFocused && (!offers || !offers.length)) {
     return (
       <Box
@@ -379,7 +398,7 @@ function ChannelBottomActionButtons({
       <Chip
         variant="outline"
         startIcon={<Icon name="CameraFilled" />}
-        disabled={isLoading}
+        disabled={isLoadingMutate}
         onClick={handleClickPhoto}
       >
         <HiddenInput
@@ -401,7 +420,7 @@ function ChannelBottomActionButtons({
               variant="outline"
               startIcon={<Icon name="WonCircleFilled" />}
               onClick={handleClickPriceOffer}
-              disabled={isLoading}
+              disabled={isLoadingMutate}
             >
               <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
                 가격제안
@@ -412,7 +431,7 @@ function ChannelBottomActionButtons({
             <Chip
               variant="outline"
               startIcon={<Icon name="TimeFilled" />}
-              disabled={isLoading}
+              disabled={isLoadingMutate}
               onClick={handleClickAppointment}
             >
               <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
@@ -430,7 +449,7 @@ function ChannelBottomActionButtons({
                   open: true
                 }))
               }
-              disabled={isLoading}
+              disabled={isLoadingMutate}
             >
               <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
                 구매확정
@@ -445,7 +464,7 @@ function ChannelBottomActionButtons({
             </Chip>
           )}
           {!showReviewButton && (
-            <Chip variant="outline" disabled={isLoading} onClick={handleClickAsk}>
+            <Chip variant="outline" disabled={isLoadingMutate} onClick={handleClickAsk}>
               <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
                 결제/환불 문의
               </Typography>
