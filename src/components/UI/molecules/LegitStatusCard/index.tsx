@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 
 import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
@@ -15,7 +15,6 @@ import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 
 interface LegitStatusCardProps extends HTMLAttributes<HTMLDivElement> {
   productLegit: ProductLegit;
@@ -44,9 +43,10 @@ function LegitStatusCard({
     }
   } = useTheme();
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
   const { data: accessUser } = useQueryAccessUser();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
-  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
 
   const isMine = accessUser && accessUser.userId === userId;
 
@@ -168,12 +168,13 @@ function LegitStatusCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageThumbnail || imageMain
               : getProductCardImageResizePath(imageThumbnail || imageMain)
           }
           alt={`${title} 이미지`}
           round={8}
+          onError={() => setLoadFailed(true)}
         />
         {labelText === '감정신청' && (
           <Label

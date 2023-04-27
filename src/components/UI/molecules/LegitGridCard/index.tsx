@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { useState } from 'react';
 
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -11,7 +12,6 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import type { ProductGridCardVariant } from '@typings/common';
-import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Content, MoreButton, Overlay } from './LegitGridCard.styles';
 
@@ -63,7 +63,7 @@ function LegitGridCard({
     price
   } = product || {};
 
-  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   return (
     <Flexbox {...props} direction="vertical" customStyle={{ cursor: 'pointer' }} css={customStyle}>
@@ -75,12 +75,13 @@ function LegitGridCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageMain || imageThumbnail
               : getProductCardImageResizePath(imageMain || imageThumbnail)
           }
           alt={`${title} 이미지`}
           round={variant !== 'gridA' ? 8 : 0}
+          onError={() => setLoadFailed(true)}
         />
         {!hideLabel && (
           <>

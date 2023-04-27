@@ -31,7 +31,6 @@ import { openDeleteToastState, removeIdState } from '@recoil/wishes';
 import { deviceIdState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
 
 import { Content, PriceDownLabel, Title } from './ProductWishesCard.styles';
@@ -106,7 +105,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       productLegitStatusText,
       discountedPrice
     } = useProductCardState(product);
-    const { imageLoadError } = useProductImageResize(imageUrl);
+    const [loadFailed, setLoadFailed] = useState(false);
 
     const {
       id,
@@ -245,9 +244,10 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         >
           <Content size={100} isTimeline={router.query.tab === 'history'}>
             <Image
-              src={imageLoadError ? imageUrl : getProductCardImageResizePath(imageUrl)}
+              src={loadFailed ? imageUrl : getProductCardImageResizePath(imageUrl)}
               alt={imageUrl?.slice(imageUrl.lastIndexOf('/') + 1)}
               round={8}
+              onError={() => setLoadFailed(true)}
             />
             <Avatar
               width={20}

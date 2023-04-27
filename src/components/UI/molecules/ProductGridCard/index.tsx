@@ -39,7 +39,6 @@ import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/u
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 import useProductCardState from '@hooks/useProductCardState';
 import useOsAlarm from '@hooks/useOsAlarm';
 
@@ -214,8 +213,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     }
   });
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
-  const { imageLoadError } = useProductImageResize(imageUrl);
 
+  const [loadFailed, setLoadFailed] = useState(false);
   const [cardCustomStyle] = useState({ ...customStyle, cursor: 'pointer' });
   const [isWish, setIsWish] = useState(false);
 
@@ -306,9 +305,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     >
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
         <Image
-          src={imageLoadError ? imageUrl : getProductCardImageResizePath(imageUrl)}
+          src={loadFailed ? imageUrl : getProductCardImageResizePath(imageUrl)}
           alt={`${product.title} 이미지`}
           round={isRound ? 8 : 0}
+          onError={() => setLoadFailed(true)}
         />
         {!hideProductLabel && productLabels.length > 0 && (
           <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>

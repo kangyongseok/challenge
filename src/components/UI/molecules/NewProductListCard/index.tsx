@@ -32,7 +32,6 @@ import type { ProductListCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles';
@@ -135,6 +134,7 @@ function NewProductListCard({
   const [isAuthSeller, setIsAuthSeller] = useState(false);
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [authOpinionCount, setAuthOpinionCount] = useState(0);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -142,7 +142,6 @@ function NewProductListCard({
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
-  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
@@ -340,12 +339,13 @@ function NewProductListCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL
               : getProductCardImageResizePath(imageMain || imageThumbnail)
           }
           alt={`${productTitle} 이미지`}
           round={8}
+          onError={() => setLoadFailed(true)}
         />
         {variant === 'listA' && status !== 0 && (
           <Overlay>

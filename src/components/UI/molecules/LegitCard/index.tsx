@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { useState } from 'react';
 
 import { Avatar, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -11,8 +12,6 @@ import type { ProductLegit } from '@dto/productLegit';
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 
 import { getProductCardImageResizePath } from '@utils/common';
-
-import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Content, ImageBox, Title } from './LegitCard.styles';
 
@@ -52,7 +51,7 @@ function LegitCard({
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
   const isNormalseller = siteId === 34 || productSeller?.type === 4 || productSeller?.type === 3;
 
-  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const {
     theme: { box }
@@ -69,11 +68,12 @@ function LegitCard({
         <ImageBox>
           <Image
             src={
-              imageLoadError
+              loadFailed
                 ? imageThumbnail || imageMain
                 : getProductCardImageResizePath(imageThumbnail || imageMain)
             }
             alt="Product Legit Img"
+            onError={() => setLoadFailed(true)}
           />
           {!hidePlatformLogo && postType !== 2 && (
             <Avatar
@@ -159,11 +159,12 @@ function LegitCard({
       )}
       <Image
         src={
-          imageLoadError
+          loadFailed
             ? imageThumbnail || imageMain
             : getProductCardImageResizePath(imageThumbnail || imageMain)
         }
         alt="Product Legit Img"
+        onError={() => setLoadFailed(true)}
       />
       <Flexbox
         direction="vertical"

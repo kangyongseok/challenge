@@ -360,7 +360,13 @@ function LegitRequestForm() {
       </Contents>
       <LegitRequestBottomButton
         onClick={handleSubmit}
-        disabled={isCompleted || isLoadingGetPhoto || isLoadingMutate || !isAllUploadRequiredPhoto}
+        disabled={
+          isCompleted ||
+          isLoadingGetPhoto ||
+          isLoadingMutate ||
+          !isAllUploadRequiredPhoto ||
+          !photoGuideImages.length
+        }
         text="감정 신청하기"
         showTooltip={photoGuideImages.length > 0 && !isAllUploadRequiredPhoto}
         tooltipMessage="필수입력 사진을 올려주세요!"

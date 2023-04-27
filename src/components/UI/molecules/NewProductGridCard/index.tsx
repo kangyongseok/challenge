@@ -30,7 +30,6 @@ import type { ProductGridCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard.styles';
@@ -129,6 +128,7 @@ function NewProductGridCard({
   const [sizeText, setSizeText] = useState('');
   const [isAuthSeller, setIsAuthSeller] = useState(false);
   const [isAuthProduct, setIsAuthProduct] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -136,7 +136,6 @@ function NewProductGridCard({
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
-  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
@@ -352,12 +351,13 @@ function NewProductGridCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageMain || imageThumbnail
               : getProductCardImageResizePath(imageMain || imageThumbnail)
           }
           alt={`${productTitle} 이미지`}
           round={variant === 'gridA' ? 0 : 8}
+          onError={() => setLoadFailed(true)}
         />
         {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && (
           <WishButtonA variant={variant} onClick={handleClickWish}>

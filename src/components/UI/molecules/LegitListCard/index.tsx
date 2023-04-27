@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
@@ -12,7 +12,6 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
 import type { ProductListCardVariant } from '@typings/common';
-import useProductImageResize from '@hooks/useProductImageResize';
 
 import { Description, MoreButton } from './LegitListCard.styles';
 
@@ -56,7 +55,7 @@ function LegitListCard({
     legitOpinions = []
   } = productLegit;
 
-  const { imageLoadError } = useProductImageResize(imageThumbnail || imageMain);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const { authenticCount, fakeCount } = useMemo(
     () => ({
@@ -88,12 +87,13 @@ function LegitListCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageThumbnail || imageMain
               : getProductCardImageResizePath(imageThumbnail || imageMain)
           }
           alt={`${productTitle} 이미지`}
           round={8}
+          onError={() => setLoadFailed(true)}
         />
         {variant === 'listA' && (
           <>

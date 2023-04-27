@@ -37,7 +37,6 @@ import type { ProductGridCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useProductImageResize from '@hooks/useProductImageResize';
 
 export interface EventDogHoneyProductCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductGridCardVariant;
@@ -135,7 +134,7 @@ function EventDogHoneyProductCard({
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-  const { imageLoadError } = useProductImageResize(imageMain || imageThumbnail);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -240,12 +239,13 @@ function EventDogHoneyProductCard({
         <Image
           ratio="5:6"
           src={
-            imageLoadError
+            loadFailed
               ? imageMain || imageThumbnail
               : getProductCardImageResizePath(imageMain || imageThumbnail)
           }
           alt={`${productTitle} 이미지`}
           round={isRound ? 8 : 0}
+          onError={() => setLoadFailed(true)}
         />
         <Avatar
           width={20}

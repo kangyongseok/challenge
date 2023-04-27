@@ -53,6 +53,7 @@ function LegitPhotoGuideCard({
     }
   } = useTheme();
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   // 0: optional, 1: 필수, 2: 수정, 3: 수정완료
   const status = useMemo(() => {
@@ -71,9 +72,11 @@ function LegitPhotoGuideCard({
     const newImage = document.createElement('img');
     if (staticImageUrl) {
       newImage.src = `${staticImageUrl}?w=250&f=webp`;
-      newImage.addEventListener('load', () => {
+      newImage.onload = () => setIsImageLoading(false);
+      newImage.onerror = () => {
         setIsImageLoading(false);
-      });
+        setLoadFailed(true);
+      };
     } else {
       setIsImageLoading(false);
     }
@@ -82,7 +85,7 @@ function LegitPhotoGuideCard({
   return (
     <StyledLegitPhotoGuideCard
       imageSample={hideSample ? '' : imageSample}
-      imageUrl={staticImageUrl ? `${staticImageUrl}?w=250&f=webp` : imageUrl}
+      imageUrl={staticImageUrl && !loadFailed ? `${staticImageUrl}?w=250&f=webp` : imageUrl}
       status={status}
       isInvalid={isInvalid}
       hideStatusHighLite={hideStatusHighLite}
@@ -141,7 +144,7 @@ function LegitPhotoGuideCard({
             src={isDark ? imageWatermarkDark : imageWatermark}
             alt="WaterMark Img"
             round={8}
-            fallbackElement={<div />}
+            disableFallback
             disableAspectRatio
           />
         )}

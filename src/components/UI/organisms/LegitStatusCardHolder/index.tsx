@@ -90,6 +90,7 @@ function LegitStatusCardHolder({
   const [syncIndex, setSyncIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
   const [labelText, setLabelText] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const swiperRef = useRef<SwiperClass | null>();
 
@@ -325,10 +326,19 @@ function LegitStatusCardHolder({
                           className="product-legit-result-image"
                           width={160}
                           height={160}
-                          src={getImageResizePath({ imagePath: image, w: 160, h: 160 })}
-                          data-src={getImageResizePath({ imagePath: image, w: 160, h: 160 })}
+                          src={
+                            loadFailed
+                              ? image
+                              : getImageResizePath({ imagePath: image, w: 160, h: 160 })
+                          }
+                          data-src={
+                            loadFailed
+                              ? image
+                              : getImageResizePath({ imagePath: image, w: 160, h: 160 })
+                          }
                           alt="Legit Result Img"
                           round={8}
+                          onError={() => setLoadFailed(true)}
                         />
                         <ImageShield isActive={isActive} />
                       </>
