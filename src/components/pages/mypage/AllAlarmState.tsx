@@ -80,7 +80,8 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
         isNotiMyProductWish: false,
         isNotiNotNight: false,
         isNotiProductList: false,
-        isNotiProductWish: false
+        isNotiProductWish: false,
+        isNotiKeyword: false
       });
     } else {
       switchAlarm({
@@ -90,7 +91,8 @@ function AllAlarmState({ alarmsInfo }: { alarmsInfo?: AlarmsParams }) {
         isNotiMyProductWish: true,
         isNotiNotNight: true,
         isNotiProductList: true,
-        isNotiProductWish: true
+        isNotiProductWish: true,
+        isNotiKeyword: true
       });
     }
     setAllAlarm((props) => !props);

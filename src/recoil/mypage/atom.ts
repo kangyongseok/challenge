@@ -11,6 +11,7 @@ export const AllAlarmControllState = atom<AlarmsParams>({
     isNotiProductList: false,
     isNotiProductWish: false,
     isNotiLegit: false,
-    isNotiMyProductWish: false
+    isNotiMyProductWish: false,
+    isNotiKeyword: false
   }
 });

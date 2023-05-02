@@ -17,4 +17,6 @@ export { default as PageSkeleton } from './PageSkeleton';
 export { default as ReviewCard } from './ReviewCard';
 export { default as CamelSellerAppUpdateDialog } from './CamelSellerAppUpdateDialog';
 export { default as SafePaymentGuideDialog } from './SafePaymentGuideDialog';
+export { default as KeywordAlertManageBottomSheet } from './KeywordAlertManageBottomSheet';
+export { default as KeywordAlertOffDialog } from './KeywordAlertOffDialog';
 export { default as SelectTargetUserBottomSheet } from './SelectTargetUserBottomSheet';

@@ -16,7 +16,7 @@ import attrKeys from '@constants/attrKeys';
 import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
-function SettingAlarm() {
+function SettingsAlarm() {
   const router = useRouter();
   const [systemSetting, setSystemSetting] = useState(false);
 
@@ -116,4 +116,4 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   };
 }
 
-export default SettingAlarm;
+export default SettingsAlarm;

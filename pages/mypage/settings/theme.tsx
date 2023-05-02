@@ -14,7 +14,7 @@ import { getCookies } from '@utils/cookies';
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
 
-function SettingTheme() {
+function SettingsTheme() {
   const {
     theme: {
       palette: { common }
@@ -99,4 +99,4 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   };
 }
 
-export default SettingTheme;
+export default SettingsTheme;

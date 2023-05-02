@@ -161,7 +161,8 @@ const users = {
   transfers: () => [...users.all, 'transfers'] as const,
   fixedChannel: (userId: number) => [...users.all, 'fixedChannel', userId] as const,
   userAccounts: () => [...users.all, 'userAccounts'] as const,
-  userCerts: () => [...users.all, 'userCerts'] as const
+  userCerts: () => [...users.all, 'userCerts'] as const,
+  userKeywords: () => [...users.all, 'userKeywords'] as const
 };
 
 const userAuth = {

@@ -17,14 +17,17 @@ import { AllAlarmControllState } from '@recoil/mypage';
 
 function WishProductAlarm({
   wishAlarm,
-  saveProductAlarm
+  saveProductAlarm,
+  keywordAlarm
 }: {
   wishAlarm?: boolean;
   saveProductAlarm?: boolean;
+  keywordAlarm?: boolean;
 }) {
   const queryClient = useQueryClient();
   const [isWishAlarm, setIsWishAlarm] = useState(false);
   const [isSaveAlarm, setIsSaveAlarm] = useState(false);
+  const [isKeywordAlarm, setIsKeywordAlarm] = useState(false);
   const { mutate: switchAlarm } = useMutation(putAlarm, {
     onSuccess() {
       queryClient.invalidateQueries({
@@ -38,7 +41,8 @@ function WishProductAlarm({
   useEffect(() => {
     setIsWishAlarm(!!wishAlarm);
     setIsSaveAlarm(!!saveProductAlarm);
-  }, [saveProductAlarm, wishAlarm]);
+    setIsKeywordAlarm(!!keywordAlarm);
+  }, [saveProductAlarm, wishAlarm, keywordAlarm]);
 
   const handleSaveProductsSwitch = () => {
     logEvent(attrKeys.mypage.CLICK_MYLIST_ALARM, { att: isSaveAlarm ? 'OFF' : 'ON' });
@@ -72,6 +76,21 @@ function WishProductAlarm({
     );
   };
 
+  const handleClickKeywordSwitch = () => {
+    setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiKeyword: !isKeywordAlarm });
+
+    switchAlarm(
+      {
+        isNotiKeyword: !isKeywordAlarm
+      },
+      {
+        onSuccess: () => {
+          setIsKeywordAlarm((props) => !props);
+        }
+      }
+    );
+  };
+
   const infoMenu = [
     {
       label: '저장한 매물 관련 알림',
@@ -82,6 +101,11 @@ function WishProductAlarm({
       label: '찜한 매물 관련 알림',
       check: isWishAlarm,
       onSwitch: handleWishSwitch
+    },
+    {
+      label: '키워드 알림',
+      check: isKeywordAlarm,
+      onSwitch: handleClickKeywordSwitch
     }
   ];
   return (

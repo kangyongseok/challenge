@@ -45,6 +45,7 @@ import type {
   UserSizeSuggestParams,
   UserTransfer
 } from '@dto/user';
+import { PostUserKeywordData, PutUserKeywordData, UserKeywordInfo } from '@dto/user';
 import type { PageProductResult, ProductResult, UserPersonalStyleParams } from '@dto/product';
 
 import Axios from '@library/axios';
@@ -406,4 +407,22 @@ export async function postUserCerts(
   const response = await Axios.getInstance().post<UserCert>(`${BASE_PATH}/certs`, data);
 
   return response.data;
+}
+
+export async function fetchUserKeywords() {
+  const { data } = await Axios.getInstance().get<UserKeywordInfo[]>(`${BASE_PATH}/keywords`);
+
+  return data;
+}
+
+export async function postUserKeywords(data: PostUserKeywordData) {
+  await Axios.getInstance().post(`${BASE_PATH}/keywords`, data);
+}
+
+export async function putUserKeywords({ id, ...data }: PutUserKeywordData) {
+  await Axios.getInstance().put(`${BASE_PATH}/keywords/${id}`, data);
+}
+
+export async function deleteUserKeywords(id: number) {
+  await Axios.getInstance().delete(`${BASE_PATH}/keywords/${id}`);
 }

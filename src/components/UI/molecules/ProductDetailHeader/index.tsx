@@ -41,7 +41,7 @@ interface ProductDetailHeaderProps {
 function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetailHeaderProps) {
   const {
     push,
-    query: { id: redirect, isCrm }
+    query: { id: redirect, isCrm, keyword }
   } = useRouter();
 
   const {
@@ -159,6 +159,16 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
     }
   };
 
+  const handleClickLeft = () => {
+    if (isCrm) {
+      push(`/products/search/${data?.product.quoteTitle || ''}`);
+      return;
+    }
+    if (keyword) {
+      push(`/products/search/${keyword}`);
+    }
+  };
+
   const handleCloseRelatedProductListBottomSheet = () => {
     logEvent(attrKeys.products.CLICK_WISHMOAL_CLOSE, {
       name: attrProperty.productName.PRODUCT_DETAIL
@@ -180,9 +190,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
       <>
         <Header
           showRight={!isRedirectPage}
-          onClickLeft={
-            isCrm ? () => push(`/products/search/${data?.product.quoteTitle || ''}`) : undefined
-          }
+          onClickLeft={isCrm || keyword ? handleClickLeft : undefined}
           rightIcon={
             <Flexbox alignment="center">
               <Box

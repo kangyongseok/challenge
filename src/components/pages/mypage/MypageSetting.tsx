@@ -80,6 +80,11 @@ function MypageSetting() {
     };
   }, [router, setDialogState]);
 
+  const handleClickKeywordAlert = useCallback(
+    () => router.push('/mypage/settings/keywordAlert'),
+    [router]
+  );
+
   const handleClickBlockedUsers = useCallback(() => {
     logEvent(attrKeys.mypage.CLICK_BLOCK_LIST, { name: attrProperty.name.MY });
     router.push('/mypage/settings/blockedUsers');
@@ -108,6 +113,7 @@ function MypageSetting() {
     () => [
       { label: '정산계좌', isNew: false, onClick: handleClickAccount },
       { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
+      { label: '키워드 알림', isNew: false, onClick: handleClickKeywordAlert },
       { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
       { label: '채팅 고정 메시지 설정', isNew: true, onClick: handleClickFixMessage },
       { label: '내 상품 가져오기', isNew: true, onClick: handleClickTransfer }
@@ -115,9 +121,10 @@ function MypageSetting() {
     [
       handleClickAccount,
       handleClickAlarmSetting,
+      handleClickKeywordAlert,
       handleClickBlockedUsers,
-      handleClickTransfer,
-      handleClickFixMessage
+      handleClickFixMessage,
+      handleClickTransfer
     ]
   );
 

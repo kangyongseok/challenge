@@ -549,6 +549,15 @@ export interface UserCert {
   userId: number;
 }
 
+export interface UserKeywordInfo {
+  id: number;
+  userId: number;
+  keyword: string;
+  minPrice: number | null;
+  maxPrice: number | null;
+  isMySize: boolean;
+}
+
 /* ---------- Request Parameters ---------- */
 export interface CategoryWishesParams {
   categoryIds?: number[];
@@ -634,6 +643,7 @@ export type AlarmsParams = {
   isNotiProductWish?: boolean;
   isNotiLegit?: boolean;
   isNotiMyProductWish?: boolean;
+  isNotiKeyword?: boolean;
   dateIsNotiEventAgree?: string;
 };
 
@@ -658,18 +668,18 @@ export interface PostReportData {
   description?: string;
 }
 
-export type PostReviewData = {
+export interface PostReviewData {
   content?: string;
   productId?: number;
   score?: string;
   userId: number;
-};
+}
 
-export type BanWordParams = {
+export interface BanWordParams {
   legitTitle?: string;
   nickName?: string;
   shopDescription?: string;
-};
+}
 
 export interface UpdateUserProfileData {
   imageBackground?: string;
@@ -683,27 +693,31 @@ export interface UpdateUserProfileData {
   shopDescription?: string;
 }
 
-export type PostSurveyData = {
+export interface PostSurveyData {
   deviceId?: string;
   answer: number;
   options: string;
   surveyId: number;
-};
+}
 
-export type PostTransferData = {
+export interface PostTransferData {
   siteId: number;
   url: string;
   isUrlPattern?: boolean;
-};
+}
 
-export type PostUserDeliveryData = {
+export interface PostUserDeliveryData {
   address: string;
   name: string;
   phone: string;
-};
+}
 
-export type PostUserAccountData = {
+export interface PostUserAccountData {
   bankCode: BankCode;
   accountNumber: string;
   accountHolder: string;
-};
+}
+
+export type PostUserKeywordData = Omit<UserKeywordInfo, 'id' | 'userId'>;
+
+export type PutUserKeywordData = Omit<UserKeywordInfo, 'userId'>;

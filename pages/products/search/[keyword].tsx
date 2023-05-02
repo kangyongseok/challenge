@@ -1,6 +1,7 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
+import { KeywordAlertManageBottomSheet, KeywordAlertOffDialog } from '@components/UI/organisms';
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -9,6 +10,7 @@ import {
   ProductsFilterBottomSheet,
   ProductsHeader,
   ProductsInfiniteGrid,
+  ProductsKeywordAlertFab,
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
@@ -22,6 +24,7 @@ import {
 import { fetchSearchMeta } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
 
@@ -50,7 +53,13 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
       </GeneralTemplate>
       <ProductsTopButton />
       <ProductsFilterBottomSheet variant="search" />
+      <ProductsKeywordAlertFab />
       <ProductsOrderFilterBottomSheet />
+      <KeywordAlertManageBottomSheet
+        name={attrProperty.name.PRODUCT_LIST}
+        title={attrProperty.title.FLOATING}
+      />
+      <KeywordAlertOffDialog />
     </>
   );
 }

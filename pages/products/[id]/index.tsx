@@ -318,8 +318,6 @@ function ProductDetail() {
   useEffect(() => {
     if (data?.roleSeller?.userId && accessUser?.userId) {
       setCamelSellerProduct(data?.roleSeller?.userId === accessUser?.userId);
-    } else {
-      setCamelSellerProduct(false);
     }
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {

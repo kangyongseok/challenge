@@ -33,7 +33,6 @@ function useOsAlarm() {
       });
     }
   };
-
   return checkOsAlarm;
 }
 

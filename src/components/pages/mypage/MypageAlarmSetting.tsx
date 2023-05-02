@@ -53,6 +53,7 @@ function MypageAlarmSetting() {
       <WishProductAlarm
         wishAlarm={exactFalse(alarmsInfo?.isNotiProductWish)}
         saveProductAlarm={exactFalse(alarmsInfo?.isNotiProductList)}
+        keywordAlarm={exactFalse(alarmsInfo?.isNotiKeyword)}
       />
       {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
         myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
