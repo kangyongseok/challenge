@@ -302,9 +302,7 @@ function CategoryTabPanel() {
               key={`gender-filter-option-${genderId}`}
               title={`${genderName} 카테고리`}
               subText={56}
-              expandIcon={
-                <Icon name="Arrow2RightOutlined" width={20} height={20} color={common.ui80} />
-              }
+              expandIcon={<Icon name="Arrow2RightOutlined" width={20} height={20} color="ui80" />}
               onClick={handleClickCategory(genderCodeId, genderId)}
             />
           ))}

@@ -1,9 +1,9 @@
-import { HTMLAttributes, ReactElement, forwardRef, memo, useEffect, useRef, useState } from 'react';
-import type { MouseEvent } from 'react';
+import { forwardRef, memo, useEffect, useRef, useState } from 'react';
+import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Typography } from 'mrcamel-ui';
 import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -154,11 +154,6 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
   const queryClient = useQueryClient();
   const router = useRouter();
-  const {
-    theme: {
-      palette: { secondary, common }
-    }
-  } = useTheme();
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -338,15 +333,15 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         )}
         {showShopManageButton && (
           <ShopMoreButton onClick={handleClickManageProduct}>
-            <Icon name="MoreHorizFilled" color={common.uiWhite} />
+            <Icon name="MoreHorizFilled" color="uiWhite" />
           </ShopMoreButton>
         )}
         {!hideWishButton && (
           <WishButton onClick={handleClickWish}>
             {isWish ? (
-              <Icon name="HeartFilled" color={secondary.red.main} />
+              <Icon name="HeartFilled" color="red" />
             ) : (
-              <Icon name="HeartOutlined" color={common.uiWhite} />
+              <Icon name="HeartOutlined" color="uiWhite" />
             )}
           </WishButton>
         )}
@@ -453,7 +448,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
           <MetaSocial>
             {viewCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="ViewOutlined" width={14} height={14} color={common.ui60} />
+                <Icon name="ViewOutlined" width={14} height={14} color="ui60" />
                 <Typography variant="small2" weight="medium" color="ui60">
                   {viewCount}
                 </Typography>
@@ -461,7 +456,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             )}
             {wishCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />
+                <Icon name="HeartOutlined" width={14} height={14} color="ui60" />
                 <Typography variant="small2" weight="medium" color="ui60">
                   {wishCount}
                 </Typography>
@@ -469,7 +464,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             )}
             {purchaseCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="MessageOutlined" width={14} height={14} color={common.ui60} />
+                <Icon name="MessageOutlined" width={14} height={14} color="ui60" />
                 <Typography variant="small2" weight="medium" color="ui60">
                   {purchaseCount}
                 </Typography>

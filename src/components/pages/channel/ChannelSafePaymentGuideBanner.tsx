@@ -29,7 +29,7 @@ function ChannelSafePaymentGuideBanner() {
       }}
     >
       <Flexbox gap={8} alignment="flex-start">
-        <Icon name="BangCircleFilled" width={16} height={16} color={primary.light} />
+        <Icon name="BangCircleFilled" width={16} height={16} color="primary-light" />
         <Flexbox direction="vertical" gap={2}>
           <Typography
             variant="body2"
@@ -53,7 +53,7 @@ function ChannelSafePaymentGuideBanner() {
           </Typography>
         </Flexbox>
       </Flexbox>
-      <Icon name="Arrow2RightOutlined" width={16} height={16} color={common.ui60} />
+      <Icon name="Arrow2RightOutlined" width={16} height={16} color="ui60" />
     </Flexbox>
   );
 }

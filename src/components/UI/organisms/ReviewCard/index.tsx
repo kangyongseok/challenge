@@ -80,27 +80,11 @@ function ReviewCard({
                   Array.from({ length: 5 }, (_, index) => index + 1).map((num) => {
                     if (num <= (maxScore === 10 ? Math.floor(score / 2) : score)) {
                       return (
-                        <Icon
-                          name="StarFilled"
-                          width={16}
-                          height={16}
-                          customStyle={{
-                            color: '#FFD911'
-                          }}
-                          key={num}
-                        />
+                        <Icon name="StarFilled" width={16} height={16} color="#FFD911" key={num} />
                       );
                     }
                     return (
-                      <Icon
-                        key={num}
-                        name="StarOutlined"
-                        width={16}
-                        height={16}
-                        customStyle={{
-                          color: '#FFD911'
-                        }}
-                      />
+                      <Icon key={num} name="StarOutlined" width={16} height={16} color="#FFD911" />
                     );
                   })}
               </Flexbox>

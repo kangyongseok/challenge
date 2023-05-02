@@ -29,7 +29,7 @@ function AppDownloadDialog({
 }: AppDownloadDialogProps) {
   const {
     theme: {
-      palette: { primary, secondary, common }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -84,7 +84,7 @@ function AppDownloadDialog({
     return (
       <Dialog open={open} onClose={onClose}>
         <Flexbox justifyContent="center" alignment="center" customStyle={{ marginBottom: 5 }}>
-          <Icon name="HeartFilled" customStyle={{ color: secondary.red.main }} />
+          <Icon name="HeartFilled" color="red" />
         </Flexbox>
         <Typography
           variant="body1"

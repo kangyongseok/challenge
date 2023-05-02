@@ -40,6 +40,8 @@ function Channels() {
   );
 
   useEffect(() => {
+    const { channelId } = router.query;
+
     if (needUpdateChatIOSVersion()) {
       setDialogState({
         type: 'requiredAppUpdateForChat',
@@ -51,6 +53,8 @@ function Channels() {
           );
         }
       });
+    } else if (channelId) {
+      router.replace('/channels').then(() => router.push(`/channels/${channelId}`));
     }
 
     return () => {

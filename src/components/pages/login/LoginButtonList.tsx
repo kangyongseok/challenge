@@ -280,7 +280,7 @@ function LoginButtonList({
             <Button
               ref={kakaoLoginButtonRef}
               fullWidth
-              startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
+              startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
               size="xlarge"
               onClick={handleClickKakaoLogin}
               customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
@@ -293,7 +293,7 @@ function LoginButtonList({
           <Button
             ref={kakaoLoginButtonRef}
             fullWidth
-            startIcon={<Icon name="BrandKakaoFilled" color={common.cmnB} />}
+            startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
             size="xlarge"
             onClick={handleClickKakaoLogin}
             customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
@@ -339,7 +339,7 @@ function LoginButtonList({
               fullWidth
               variant="solid"
               size="xlarge"
-              startIcon={<Icon name="BrandAppleFilled" color={common.uiWhite} />}
+              startIcon={<Icon name="BrandAppleFilled" color="uiWhite" />}
               onClick={handleClickAppleLogin}
               customStyle={{
                 backgroundColor: common.uiBlack,

@@ -814,14 +814,8 @@ function ProductCTAButton({
               justifyContent: isAllOperatorType ? 'center' : 'initial'
             }}
           >
-            <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
-            <Typography
-              weight="medium"
-              noWrap
-              customStyle={{
-                color: common.uiWhite
-              }}
-            >
+            <Icon name="WonCircleFilled" width={20} height={20} color="uiWhite" />
+            <Typography weight="medium" noWrap color="uiWhite">
               {isAllOperatorType
                 ? '수수료 없이, 카멜이 대신 구매해드려요.'
                 : '카멜은 안전결제 수수료 무료!'}
@@ -834,7 +828,7 @@ function ProductCTAButton({
                 minWidth: 'fit-content'
               }}
             >
-              <Icon name="CloseOutlined" width={20} height={20} color={common.uiWhite} />
+              <Icon name="CloseOutlined" width={20} height={20} color="uiWhite" />
             </Box>
           )}
         </Flexbox>

@@ -344,7 +344,7 @@ function CamelSellerRecentBottomSheet() {
                   }}
                 />
                 <Flexbox gap={4}>
-                  <Icon name="BangCircleFilled" width={16} height={16} color={common.ui60} />
+                  <Icon name="BangCircleFilled" width={16} height={16} color="ui60" />
                   <Typography
                     variant="body2"
                     customStyle={{
@@ -409,7 +409,7 @@ function CamelSellerRecentBottomSheet() {
                   }}
                 />
                 <Flexbox gap={4}>
-                  <Icon name="BangCircleFilled" width={16} height={16} color={common.ui60} />
+                  <Icon name="BangCircleFilled" width={16} height={16} color="ui60" />
                   <Typography
                     variant="body2"
                     customStyle={{

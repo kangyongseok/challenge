@@ -116,7 +116,8 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
               name="DeleteCircleFilled"
               width={20}
               height={20}
-              customStyle={{ color: common.ui80, minWidth: 20 }}
+              color="ui80"
+              customStyle={{ minWidth: 20 }}
               onClick={handleClickSearchIcon}
             />
           }
@@ -146,7 +147,8 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
             component="h1"
             variant="h3"
             weight="bold"
-            customStyle={{ textAlign: 'center', whiteSpace: 'nowrap' }}
+            textAlign="center"
+            customStyle={{ whiteSpace: 'nowrap' }}
           >
             {title || newTitle}
           </Typography>

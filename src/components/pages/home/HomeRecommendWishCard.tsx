@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 
@@ -49,12 +49,6 @@ interface HomeRecommendIwshCardProps {
 
 function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
   const router = useRouter();
-
-  const {
-    theme: {
-      palette: { primary, secondary, common }
-    }
-  } = useTheme();
 
   const [isIntersecting, setIntersecting] = useState(false);
   const [error, setError] = useState(false);
@@ -138,9 +132,9 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
         />
         <Badge>
           {productResult.priceBefore ? (
-            <Icon name="Arrow1DownOutlined" color={secondary.red.light} size="small" />
+            <Icon name="Arrow1DownOutlined" color="red-light" size="small" />
           ) : (
-            <Icon name="StarFilled" color={primary.main} size="small" />
+            <Icon name="StarFilled" color="primary" size="small" />
           )}
         </Badge>
       </Box>
@@ -171,19 +165,19 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
           <Flexbox alignment="center" justifyContent="space-between">
             <Flexbox gap={8}>
               <Flexbox gap={2}>
-                <Icon name="ViewOutlined" color={common.ui60} size="small" />
+                <Icon name="ViewOutlined" color="ui60" size="small" />
                 <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.viewCount || 0)}
                 </Typography>
               </Flexbox>
               <Flexbox gap={2}>
-                <Icon name="HeartOutlined" color={common.ui60} size="small" />
+                <Icon name="HeartOutlined" color="ui60" size="small" />
                 <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.wishCount || 0)}
                 </Typography>
               </Flexbox>
               <Flexbox gap={2}>
-                <Icon name="MessageOutlined" color={common.ui60} size="small" />
+                <Icon name="MessageOutlined" color="ui60" size="small" />
                 <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.purchaseCount || 0)}
                 </Typography>

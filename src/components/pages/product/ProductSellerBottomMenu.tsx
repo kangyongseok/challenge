@@ -310,13 +310,8 @@ function ProductSellerBottomMenu({
               customStyle={{ flex: 1 }}
               onClick={handleClickHoisting}
             >
-              <Icon name="PullUpOutlined" color={common.ui60} />
-              <Typography
-                draggable={false}
-                variant="body2"
-                weight="medium"
-                customStyle={{ color: common.ui60 }}
-              >
+              <Icon name="PullUpOutlined" color="ui60" />
+              <Typography draggable={false} variant="body2" weight="medium" color="ui60">
                 끌어올리기
               </Typography>
             </Flexbox>
@@ -331,13 +326,8 @@ function ProductSellerBottomMenu({
               if (product) setUserShopSelectedProductState(product);
             }}
           >
-            <Icon name="ChangeStatusOutlined" color={common.ui60} />
-            <Typography
-              draggable={false}
-              variant="body2"
-              weight="medium"
-              customStyle={{ color: common.ui60 }}
-            >
+            <Icon name="ChangeStatusOutlined" color="ui60" />
+            <Typography draggable={false} variant="body2" weight="medium" color="ui60">
               상태변경
             </Typography>
           </Flexbox>
@@ -348,13 +338,8 @@ function ProductSellerBottomMenu({
             customStyle={{ flex: 1 }}
             onClick={() => setOpenMore(true)}
           >
-            <Icon name="MoreHorizFilled" color={common.ui60} />
-            <Typography
-              draggable={false}
-              variant="body2"
-              weight="medium"
-              customStyle={{ color: common.ui60 }}
-            >
+            <Icon name="MoreHorizFilled" color="ui60" />
+            <Typography draggable={false} variant="body2" weight="medium" color="ui60">
               더보기
             </Typography>
           </Flexbox>

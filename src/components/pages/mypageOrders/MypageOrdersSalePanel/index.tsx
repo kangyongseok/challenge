@@ -28,7 +28,7 @@ function MypageOrdersSalePanel() {
 
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -105,7 +105,7 @@ function MypageOrdersSalePanel() {
             backgroundColor: common.bg02
           }}
         >
-          <Icon name="BangCircleFilled" width={16} height={16} color={primary.light} />
+          <Icon name="BangCircleFilled" width={16} height={16} color="primary-light" />
           <Typography variant="body2">정산계좌를 등록해주세요.</Typography>
         </Flexbox>
       )}

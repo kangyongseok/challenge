@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 import { IOS_SAFE_AREA_BOTTOM, IOS_SAFE_AREA_TOP } from '@constants/common';
@@ -39,11 +39,6 @@ function MyPortfolioLanding01({
   onClick: () => void;
   onClickNext: () => void;
 }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
   const { data: userInfo, isSuccess } = useQueryUserInfo();
 
@@ -72,7 +67,7 @@ function MyPortfolioLanding01({
             name="LogoText_96_20"
             width={72}
             height={15}
-            customStyle={{ color: common.cmnW }}
+            color="cmnW"
             onClick={() => router.replace('/')}
           />
           <GradationText />
@@ -148,7 +143,7 @@ function MyPortfolioLanding01({
           customStyle={{ flexDirection: 'column' }}
           fullWidth
         >
-          <Typography weight="bold" variant="h3" color="cmnW" customStyle={{ color: common.cmnW }}>
+          <Typography weight="bold" variant="h3" color="cmnW">
             <Icon name="AlarmFilled" /> 오픈 알림 받기
           </Typography>
           <Typography variant="body2" color="cmnW">

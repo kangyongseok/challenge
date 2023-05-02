@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Rating, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Rating, Typography } from 'mrcamel-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -36,11 +36,6 @@ function ProductSellerReviews({
   roleSellerUserId?: number;
 }) {
   const router = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const [reviewBlock, setReviewBlockState] = useRecoilState(reviewBlockState);
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
 
@@ -162,8 +157,8 @@ function ProductSellerReviews({
         </Flexbox>
         {reviewInfo?.curnScore && (
           <Flexbox alignment="center" gap={2}>
-            <Icon name="StarFilled" customStyle={{ color: '#FFD911' }} size="medium" />
-            <Typography variant="h4" weight="bold" customStyle={{ color: common.ui20 }}>
+            <Icon name="StarFilled" color="#FFD911" size="medium" />
+            <Typography variant="h4" weight="bold">
               {`${
                 reviewInfo.curnScore.length > 1
                   ? reviewInfo?.curnScore
@@ -175,7 +170,8 @@ function ProductSellerReviews({
         <Icon
           name="CaretRightOutlined"
           size="medium"
-          customStyle={{ color: common.ui60, marginLeft: 5 }}
+          color="ui60"
+          customStyle={{ marginLeft: 5 }}
         />
       </Flexbox>
       {!reviewInfo?.sellerReviews

@@ -110,13 +110,7 @@ function Report() {
                   ? userReportType[params.type as keyof typeof userReportType]
                   : '신고사유 선택'}
               </Label>
-              <Icon
-                name="DropdownFilled"
-                viewBox="0 0 12 24"
-                width="10px"
-                height="20px"
-                customStyle={{ color: common.ui60 }}
-              />
+              <Icon name="DropdownFilled" viewBox="0 0 12 24" width={10} height={20} color="ui60" />
             </SelectBox>
           </Flexbox>
           <Flexbox direction="vertical" gap={8}>

@@ -10,7 +10,7 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 function SettingsAccountCertificationBanner() {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -31,7 +31,7 @@ function SettingsAccountCertificationBanner() {
       alignment="center"
       customStyle={{ padding: '12px 20px', backgroundColor: common.bg02 }}
     >
-      <Icon name="CheckOutlined" width={16} height={16} color={primary.light} />
+      <Icon name="CheckOutlined" width={16} height={16} color="primary-light" />
       <Typography variant="body2">본인인증이 완료되었어요!</Typography>
     </Flexbox>
   );

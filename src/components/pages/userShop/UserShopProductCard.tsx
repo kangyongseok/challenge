@@ -140,11 +140,12 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
           <Flexbox gap={6} alignment="center" customStyle={{ marginTop: 4, height: 12 }}>
             {wishCount > 0 && (
               <Flexbox>
-                <Icon name="HeartOutlined" width={12} height={12} color={common.ui60} />
+                <Icon name="HeartOutlined" width={12} height={12} color="ui60" />
                 <Typography
                   variant="small2"
                   weight="medium"
-                  customStyle={{ marginLeft: 4, color: common.ui60 }}
+                  color="ui60"
+                  customStyle={{ marginLeft: 4 }}
                 >
                   {wishCount}
                 </Typography>
@@ -152,11 +153,12 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
             )}
             {purchaseCount > 0 && (
               <Flexbox>
-                <Icon name="MessageOutlined" width={12} height={12} color={common.ui60} />
+                <Icon name="MessageOutlined" width={12} height={12} color="ui60" />
                 <Typography
                   variant="small2"
                   weight="medium"
-                  customStyle={{ marginLeft: 4, color: common.ui60 }}
+                  color="ui60"
+                  customStyle={{ marginLeft: 4 }}
                 >
                   {purchaseCount}
                 </Typography>
@@ -169,7 +171,7 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
         <Icon
           name="MoreFilled"
           size="medium"
-          color={common.ui80}
+          color="ui80"
           customStyle={{ minWidth: 16, cursor: 'pointer' }}
         />
       </Box>

@@ -147,8 +147,8 @@ function SettingsTransferForm() {
                 </Typography>
                 <Icon
                   name="CloseOutlined"
-                  customStyle={{ color: common.uiWhite }}
                   size="small"
+                  color="uiWhite"
                   onClick={() => setIsOpen(false)}
                 />
               </Flexbox>

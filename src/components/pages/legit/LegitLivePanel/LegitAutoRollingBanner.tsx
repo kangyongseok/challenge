@@ -155,7 +155,7 @@ function LegitAutoRollingBanner() {
                   width={8}
                   height={16}
                   viewBox="0 0 12 24"
-                  color={secondary.red.light}
+                  color="red-light"
                 />
                 <Typography
                   variant="body2"

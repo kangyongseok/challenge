@@ -1,6 +1,6 @@
 import type { MouseEvent } from 'react';
 
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from 'mrcamel-ui';
 import styled from '@emotion/styled';
 
 function PhotoIconBox({
@@ -12,15 +12,9 @@ function PhotoIconBox({
   totalImageCount: number;
   onClick: (e: MouseEvent<HTMLDivElement>) => void;
 }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   return (
     <PhotoBox onClick={onClick} data-id={0}>
-      <Icon name="CameraFilled" width={32} height={32} color={common.ui80} />
+      <Icon name="CameraFilled" width={32} height={32} color="ui80" />
       <Flexbox customStyle={{ marginTop: 8 }} gap={3}>
         <Typography variant="body2" weight="medium">
           {count}

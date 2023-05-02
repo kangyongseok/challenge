@@ -166,9 +166,9 @@ function FixedProductInfo({
                 <Icon
                   name="DropdownFilled"
                   viewBox="0 0 12 26"
-                  width="8px"
-                  height="16px"
-                  color={isDeletedProduct ? common.ui80 : common.ui20}
+                  width={8}
+                  height={16}
+                  color={isDeletedProduct ? 'ui80' : 'ui20'}
                 />
               )}
             </Flexbox>
