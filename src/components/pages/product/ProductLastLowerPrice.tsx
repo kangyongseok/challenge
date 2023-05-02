@@ -196,10 +196,11 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
 const Wrap = styled.div<{ disabled: boolean }>`
   display: ${({ disabled }) => (disabled ? 'none' : 'block')};
   margin-top: 32px;
+  width: 100%;
 `;
 
 const CardListWrap = styled.div`
-  flex: 1;
+  width: 30%;
   * {
     color: white !important;
   }

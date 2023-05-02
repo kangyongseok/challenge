@@ -582,9 +582,7 @@ function ProductInfo({
                   </>
                 )}
                 <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-                  {isCamelSellerProduct && product.datePosted > product.dateFirstPosted
-                    ? '끌올 '
-                    : ''}
+                  {product.datePosted > product.dateFirstPosted ? '끌올 ' : ''}
                   {getFormattedDistanceTime(
                     hoistingState ? new Date() : new Date(product.datePosted)
                   )}
