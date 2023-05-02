@@ -148,7 +148,7 @@ function CamelSellerSurveyForm() {
         구매자가 가장 많이 하는 질문에 답하고
         <br />내 매물 <b>메인노출</b>하세요!
       </Typography>
-      <Typography customStyle={{ marginTop: 4, color: common.ui60 }}>
+      <Typography color="ui60" customStyle={{ marginTop: 4 }}>
         5초 답변완료하고, 빠른 판매혜택 받으세요
       </Typography>
       {!open && (
@@ -308,12 +308,7 @@ function CamelSellerSurveyForm() {
       <Box
         customStyle={{ width: '100%', height: 1, margin: '20px 0', backgroundColor: common.line01 }}
       />
-      <Typography
-        variant="body2"
-        customStyle={{
-          color: common.ui60
-        }}
-      >
+      <Typography variant="body2" color="ui60">
         빠른 판매를 위해 메인화면 고정노출, 매일 자동 끌올과 함께 비슷한 매물을 찾는 구매자에게
         알림을 보내 드립니다.
       </Typography>

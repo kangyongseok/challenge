@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography } from 'mrcamel-ui';
 // import ProductListCard from '@components/UI/molecules/ProductListCard';
 import styled from '@emotion/styled';
 
@@ -22,11 +22,6 @@ interface HistoryDateItemProps {
 }
 
 function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
 
   const handleWishAtt = (product: Product, i: number) => {
@@ -52,8 +47,7 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
         variant="h4"
         weight="bold"
         customStyle={{
-          marginBottom: 20,
-          color: common.ui20
+          marginBottom: 20
         }}
       >
         {date}

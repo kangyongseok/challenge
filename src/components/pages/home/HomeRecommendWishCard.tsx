@@ -149,21 +149,21 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
         {productResult.priceBefore ? (
           <Flexbox alignment="center" justifyContent="space-between">
             <Flexbox gap={4} customStyle={{ alignItems: 'baseline' }}>
-              <Typography variant="h4" weight="bold" customStyle={{ color: secondary.red.light }}>
+              <Typography variant="h4" weight="bold" color="red-light">
                 {`${getTenThousandUnitPrice(productResult.price)}만원`}
               </Typography>
               <Typography
                 variant="body2"
                 weight="medium"
+                color="ui60"
                 customStyle={{
-                  textDecorationLine: 'line-through',
-                  color: common.ui60
+                  textDecorationLine: 'line-through'
                 }}
               >
                 {`${getTenThousandUnitPrice(productResult.priceBefore)}만원`}
               </Typography>
             </Flexbox>
-            <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body2" color="ui60">
               {dayjs(productResult.datePosted).fromNow()}
             </Typography>
           </Flexbox>
@@ -172,42 +172,24 @@ function HomeRecommendWishCard({ productResult }: HomeRecommendIwshCardProps) {
             <Flexbox gap={8}>
               <Flexbox gap={2}>
                 <Icon name="ViewOutlined" color={common.ui60} size="small" />
-                <Typography
-                  variant="body2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.ui60
-                  }}
-                >
+                <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.viewCount || 0)}
                 </Typography>
               </Flexbox>
               <Flexbox gap={2}>
                 <Icon name="HeartOutlined" color={common.ui60} size="small" />
-                <Typography
-                  variant="body2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.ui60
-                  }}
-                >
+                <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.wishCount || 0)}
                 </Typography>
               </Flexbox>
               <Flexbox gap={2}>
                 <Icon name="MessageOutlined" color={common.ui60} size="small" />
-                <Typography
-                  variant="body2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.ui60
-                  }}
-                >
+                <Typography variant="body2" weight="medium" color="ui60">
                   {commaNumber(productResult.purchaseCount || 0)}
                 </Typography>
               </Flexbox>
             </Flexbox>
-            <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body2" color="ui60">
               {dayjs(productResult.datePosted).fromNow()}
             </Typography>
           </Flexbox>

@@ -22,13 +22,13 @@ function PhotoIconBox({
     <PhotoBox onClick={onClick} data-id={0}>
       <Icon name="CameraFilled" width={32} height={32} color={common.ui80} />
       <Flexbox customStyle={{ marginTop: 8 }} gap={3}>
-        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui20 }}>
+        <Typography variant="body2" weight="medium">
           {count}
         </Typography>
-        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+        <Typography variant="body2" weight="medium" color="ui80">
           /
         </Typography>
-        <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+        <Typography variant="body2" weight="medium" color="ui80">
           {totalImageCount}
         </Typography>
       </Flexbox>

@@ -35,7 +35,7 @@ function LegitRequestOpinion({
         <>
           <Box>
             <Typography weight="bold">camel</Typography>
-            <Typography variant="body2" customStyle={{ marginTop: 4, color: common.ui60 }}>
+            <Typography variant="body2" color="ui60" customStyle={{ marginTop: 4 }}>
               카멜 실시간 사진감정팀
             </Typography>
             <Typography

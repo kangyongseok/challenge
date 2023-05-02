@@ -423,10 +423,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                     <Typography
                       variant="small2"
                       weight={isActive ? 'bold' : 'regular'}
+                      color={isActive ? common.ui20 : common.ui80}
                       customStyle={{
                         position: 'relative',
-                        marginTop: 4,
-                        color: isActive ? common.ui20 : common.ui80
+                        marginTop: 4
                       }}
                     >
                       {title}
@@ -448,10 +448,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         open={openLegitNotProcessedTooltip}
         message={
           <Flexbox justifyContent="space-between" gap={10}>
-            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+            <Typography variant="body2" weight="bold" color="uiWhite">
               🔔 감정신청이 {commaNumber(notProcessedLegitCount)}건 있습니다!
             </Typography>
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+            <Typography variant="body2" weight="medium" color="ui80">
               바로가기
             </Typography>
           </Flexbox>
@@ -463,10 +463,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         open={openTooltip}
         message={
           <Flexbox justifyContent="space-between" gap={10}>
-            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+            <Typography variant="body2" weight="bold" color="uiWhite">
               🔔 미확인 감정결과가 {commaNumber(notViewedLegitCount)}건 있습니다!
             </Typography>
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.ui80 }}>
+            <Typography variant="body2" weight="medium" color="ui80">
               바로가기
             </Typography>
           </Flexbox>

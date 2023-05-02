@@ -39,9 +39,9 @@ function CamelSellerAppUpdateDialog() {
       <Typography
         variant="h3"
         weight="bold"
+        textAlign="center"
         customStyle={{
-          marginTop: 12,
-          textAlign: 'center'
+          marginTop: 12
         }}
       >
         판매하려면
@@ -50,9 +50,9 @@ function CamelSellerAppUpdateDialog() {
       </Typography>
       <Typography
         variant="h4"
+        textAlign="center"
         customStyle={{
-          marginTop: 8,
-          textAlign: 'center'
+          marginTop: 8
         }}
       >
         앱 버전이 낮아 판매등록이 불가능해요.

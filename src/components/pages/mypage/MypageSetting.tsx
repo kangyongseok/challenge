@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Badge, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Badge, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
@@ -27,12 +27,6 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageSetting() {
   const router = useRouter();
-
-  const {
-    theme: {
-      palette: { secondary }
-    }
-  } = useTheme();
 
   const setDialogState = useSetRecoilState(dialogState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
@@ -136,13 +130,7 @@ function MypageSetting() {
           action={
             <Flexbox gap={4} alignment="center">
               {label === '정산계좌' && (
-                <Typography
-                  customStyle={{
-                    color: secondary.blue.main
-                  }}
-                >
-                  {userAccounts[0]?.bankName}
-                </Typography>
+                <Typography color="blue">{userAccounts[0]?.bankName}</Typography>
               )}
               <Icon name="Arrow2RightOutlined" size="small" />
             </Flexbox>

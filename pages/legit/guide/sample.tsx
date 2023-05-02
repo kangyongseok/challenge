@@ -1,17 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
-import {
-  Alert,
-  Box,
-  Flexbox,
-  Icon,
-  Image,
-  ThemeProvider,
-  Typography,
-  dark,
-  useTheme
-} from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Icon, Image, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 
 import { Header } from '@components/UI/molecules';
@@ -31,12 +21,6 @@ function LegitGuideSample() {
 
   const photoGuideDetailsRef = useRef<HTMLDivElement[]>([]);
   const scrollToElementTimerRef = useRef<ReturnType<typeof setTimeout>>();
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const { data: { photoGuideDetails = [] } = {}, isFetched } = useQuery(
     queryKeys.commons.photoGuide({
@@ -155,7 +139,7 @@ function LegitGuideSample() {
                   <Typography variant="h3" weight="bold">
                     {name}
                   </Typography>
-                  <Typography customStyle={{ marginTop: 4, color: common.ui60 }}>
+                  <Typography color="ui60" customStyle={{ marginTop: 4 }}>
                     {description}
                   </Typography>
                 </div>

@@ -101,7 +101,7 @@ function Report() {
         </Typography>
         <Flexbox component="section" direction="vertical" gap={20} customStyle={{ flex: 1 }}>
           <Flexbox direction="vertical" gap={8}>
-            <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body1" weight="medium" color="ui60">
               신고사유
             </Typography>
             <SelectBox onClick={() => setOpen(true)}>
@@ -120,7 +120,7 @@ function Report() {
             </SelectBox>
           </Flexbox>
           <Flexbox direction="vertical" gap={8}>
-            <Typography variant="body1" weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography variant="body1" weight="medium" color="ui60">
               상세내용 입력(선택)
             </Typography>
             <Description>

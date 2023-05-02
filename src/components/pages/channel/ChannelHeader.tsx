@@ -156,9 +156,7 @@ function ChannelHeader({
                     )}
                     <Typography
                       variant="body3"
-                      customStyle={{
-                        color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
-                      }}
+                      color={getTimeForamt.icon === 'time' ? 'ui60' : 'primary-light'}
                     >
                       {getTimeForamt.text}
                     </Typography>

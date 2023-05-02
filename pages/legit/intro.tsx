@@ -109,15 +109,13 @@ function LegitIntro() {
         </Flexbox>
         <Flexbox justifyContent="center" customStyle={{ position: 'relative' }}>
           <IntroImage>
-            {(product?.imageThumbnail || product?.imageMain) && (
-              <Image
-                width={164}
-                height={164}
-                src={product?.imageThumbnail || product?.imageMain || ''}
-                alt="Product Img"
-                disableAspectRatio
-              />
-            )}
+            <Image
+              width={164}
+              height={164}
+              src={product?.imageThumbnail || product?.imageMain || ''}
+              alt="Product Img"
+              disableAspectRatio
+            />
           </IntroImage>
           <Image
             width={180}

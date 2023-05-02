@@ -133,13 +133,7 @@ function LegitGridCard({
         )}
         {rank && (
           <Overlay>
-            <Typography
-              variant="body2"
-              weight="medium"
-              customStyle={{
-                color: common.cmn20
-              }}
-            >
+            <Typography variant="body2" weight="medium" color="cmn20">
               {`주간 ${rank}위`}
             </Typography>
           </Overlay>
@@ -167,9 +161,9 @@ function LegitGridCard({
           variant="body2"
           noWrap
           lineClamp={2}
+          color="ui60"
           customStyle={{
             marginTop: 2,
-            color: common.ui60,
             ...customTitleStyle
           }}
         >
@@ -195,25 +189,13 @@ function LegitGridCard({
           >
             <Flexbox gap={2}>
               <Icon name="OpinionAuthenticFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
+              <Typography variant="small2" weight="medium" color="ui80">
                 {authenticCount}
               </Typography>
             </Flexbox>
             <Flexbox gap={2}>
               <Icon name="OpinionFakeFilled" width={12} height={12} color={common.ui80} />
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{
-                  color: common.ui80
-                }}
-              >
+              <Typography variant="small2" weight="medium" color="ui80">
                 {fakeCount}
               </Typography>
             </Flexbox>

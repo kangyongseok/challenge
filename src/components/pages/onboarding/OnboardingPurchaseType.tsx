@@ -62,9 +62,7 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             중고구매에서 가장 중요한 것은?
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>
-            조건에 맞는 매물을 더 먼저 보여드릴게요
-          </Typography>
+          <Typography color="ui60">조건에 맞는 매물을 더 먼저 보여드릴게요</Typography>
         </Box>
         <PurchaseType />
       </Box>

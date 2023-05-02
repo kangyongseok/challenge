@@ -110,13 +110,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
         >
           <Flexbox gap={4} alignment="center" onClick={handleClickSendSMS}>
             <Icon name="PhoneFilled" color={common.ui60} />
-            <Typography
-              customStyle={{
-                color: common.ui60
-              }}
-            >
-              판매자에게 문자보내기
-            </Typography>
+            <Typography color="ui60">판매자에게 문자보내기</Typography>
           </Flexbox>
         </Flexbox>
         <Gap

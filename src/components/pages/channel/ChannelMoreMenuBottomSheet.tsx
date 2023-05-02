@@ -134,12 +134,12 @@ function ChannelMoreMenuBottomSheet({
         customStyle: { minWidth: 311, 'button + button': { backgroundColor: secondary.red.main } },
         content: (
           <Flexbox direction="vertical" gap={8} customStyle={{ margin: '12px 0' }}>
-            <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
+            <Typography variant="h3" weight="bold" textAlign="center">
               {`${isTargetUserSeller ? '판매자' : '구매자'} ${targetUserName}님을`}
               <br />
               차단할까요?
             </Typography>
-            <Typography variant="h4" customStyle={{ textAlign: 'center' }}>
+            <Typography variant="h4" textAlign="center">
               차단하면 서로의 글을 볼 수 없고
               <br />
               채팅을 할 수 없어요.

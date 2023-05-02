@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Toast, Tooltip, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Toast, Tooltip, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -22,11 +22,6 @@ import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusCtaButton() {
-  const {
-    theme: {
-      palette: { primary, common }
-    }
-  } = useTheme();
   const router = useRouter();
   const isAnimation = useRecoilValue(firstUserAnimationState);
   const splitIds = String(router.query.id || '').split('-');
@@ -178,7 +173,7 @@ function LegitStatusCtaButton() {
           <Tooltip
             open
             message={
-              <Typography weight="medium" variant="body2" customStyle={{ color: common.uiWhite }}>
+              <Typography weight="medium" variant="body2" color="uiWhite">
                 판매자에게 추가 사진을 받으셨다면, 1:1 상담 요청하세요!
               </Typography>
             }
@@ -228,7 +223,7 @@ function LegitStatusCtaButton() {
             }
             message={
               <Flexbox justifyContent="space-between" alignment="center" gap={4}>
-                <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+                <Typography variant="body2" weight="bold" color="uiWhite">
                   {data?.status === 20 && isAuthUser
                     ? '🔔 의견이 모두 남겨지면 앱푸시로 알려드릴게요!'
                     : '🔔 나도 감정결과를 받아보고싶다면?'}
@@ -237,7 +232,7 @@ function LegitStatusCtaButton() {
                   <Typography
                     variant="body2"
                     weight="medium"
-                    customStyle={{ color: primary.light }}
+                    color="primary-light"
                     onClick={handleClick}
                   >
                     내 사진감정 추가

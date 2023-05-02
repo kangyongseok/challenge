@@ -34,7 +34,7 @@ function MypageEtc() {
       customStyle={{ padding: '32px 20px 52px', backgroundColor: common.bg03 }}
     >
       <Flexbox direction="vertical" gap={12}>
-        <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+        <Typography weight="bold" color="ui80">
           카멜 SNS
         </Typography>
         <Flexbox alignment="center" gap={8}>
@@ -56,7 +56,8 @@ function MypageEtc() {
       <Box customStyle={{ padding: 4 }} onClick={handleLogout}>
         <Typography
           variant="body2"
-          customStyle={{ width: 'fit-content', color: common.ui60, textDecoration: 'underline' }}
+          color="ui60"
+          customStyle={{ width: 'fit-content', textDecoration: 'underline' }}
         >
           로그아웃
         </Typography>

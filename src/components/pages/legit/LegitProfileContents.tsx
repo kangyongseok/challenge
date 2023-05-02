@@ -23,7 +23,7 @@ import { toastState } from '@recoil/common';
 function LegitProfileContents() {
   const {
     theme: {
-      palette: { common, secondary }
+      palette: { common }
     }
   } = useTheme();
   const descriptionRef = useRef<null | HTMLTextAreaElement>(null);
@@ -76,7 +76,7 @@ function LegitProfileContents() {
 
   return (
     <Wrap>
-      <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+      <Typography weight="bold" color="ui80">
         감정사 한 줄 소개
       </Typography>
       <TextAreaWrap ban={isBanWord}>
@@ -102,18 +102,14 @@ function LegitProfileContents() {
           alignment="center"
           customStyle={{ marginTop: 'auto' }}
         >
-          <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
+          <Typography variant="small2" weight="medium" color="ui80">
             <span style={{ color: common.ui60 }}>
               {(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '').length}
             </span>{' '}
             / 100자
           </Typography>
           {isBanWord && (
-            <Typography
-              variant="small2"
-              weight="medium"
-              customStyle={{ color: secondary.red.light }}
-            >
+            <Typography variant="small2" weight="medium" color="red-light">
               욕설 및 비속어는 사용할 수 없어요!
             </Typography>
           )}

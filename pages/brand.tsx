@@ -103,7 +103,7 @@ function Brand() {
         disablePadding
         header={
           <Header customStyle={{ borderBottom: `${common.ui90} 1px solid` }}>
-            <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
+            <Typography variant="h3" weight="bold" textAlign="center">
               브랜드
             </Typography>
           </Header>

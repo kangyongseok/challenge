@@ -101,10 +101,8 @@ function ProductDetailLegitBottomSheet({ product }: { product?: Product }) {
           </Typography>
         </Box>
         <Box>
-          <Typography customStyle={{ color: common.ui60 }}>전국 명품 전문가들이</Typography>
-          <Typography customStyle={{ color: common.ui60 }}>
-            실시간으로 정가품 의견 드릴게요
-          </Typography>
+          <Typography color="ui60">전국 명품 전문가들이</Typography>
+          <Typography color="ui60">실시간으로 정가품 의견 드릴게요</Typography>
         </Box>
       </Flexbox>
       <Flexbox

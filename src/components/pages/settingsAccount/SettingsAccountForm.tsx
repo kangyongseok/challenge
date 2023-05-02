@@ -140,12 +140,7 @@ function SettingsAccountForm() {
       }}
     >
       <Flexbox direction="vertical" gap={8}>
-        <Typography
-          weight="medium"
-          customStyle={{
-            color: common.ui60
-          }}
-        >
+        <Typography weight="medium" color="ui60">
           예금주
         </Typography>
         <Input
@@ -158,33 +153,18 @@ function SettingsAccountForm() {
         />
       </Flexbox>
       <Flexbox direction="vertical" gap={8}>
-        <Typography
-          weight="medium"
-          customStyle={{
-            color: common.ui60
-          }}
-        >
+        <Typography weight="medium" color="ui60">
           은행
         </Typography>
         <SelectBox onClick={() => setOpenState(true)}>
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: bankName ? undefined : common.ui80
-            }}
-          >
+          <Typography variant="h4" color={bankName ? undefined : common.ui80}>
             {bankName || '은행선택'}
           </Typography>
           <Icon name="DropdownFilled" viewBox="0 0 12 24" color={common.ui60} />
         </SelectBox>
       </Flexbox>
       <Flexbox direction="vertical" gap={8}>
-        <Typography
-          weight="medium"
-          customStyle={{
-            color: common.ui60
-          }}
-        >
+        <Typography weight="medium" color="ui60">
           계좌번호
         </Typography>
         <Input

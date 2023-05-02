@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Label, Typography, light, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Button, Flexbox, Label, Typography, light } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -26,12 +26,6 @@ function WishesBottomCtaButton() {
     router.query;
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const [open, setOpen] = useState(false);
 
@@ -124,7 +118,7 @@ function WishesBottomCtaButton() {
             {userNickName}님이 찜한 상품 중 사진감정 가능한 {userWishes.length}건 모두
             <strong> 실시간 정가품 의견</strong> 받아보시겠어요?
           </Typography>
-          <Typography weight="medium" customStyle={{ marginTop: 16, color: common.ui60 }}>
+          <Typography weight="medium" color="ui60" customStyle={{ marginTop: 16 }}>
             🤑 감정비용은 무료입니다!
           </Typography>
           <Flexbox gap={8} customStyle={{ marginTop: 32 }}>

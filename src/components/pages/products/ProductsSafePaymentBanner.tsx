@@ -43,6 +43,7 @@ function ProductsSafePaymentBanner() {
         <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
         <Typography
           weight="medium"
+          color="uiWhite"
           customStyle={{
             color: common.uiWhite
           }}

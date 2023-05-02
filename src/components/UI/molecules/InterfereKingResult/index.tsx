@@ -73,11 +73,11 @@ function InterfereKingResult() {
       <Typography weight="bold" variant="h3" customStyle={{ marginBottom: 8 }}>
         {exitUserNextStepText.text}
       </Typography>
-      <Typography customStyle={{ color: common.ui60 }}>
+      <Typography color="ui60">
         추가 설문에 참여하신{' '}
         <span style={{ fontWeight: 700, color: common.ui20 }}>모든 분께 네이버페이 포인트</span>
       </Typography>
-      <Typography customStyle={{ color: common.ui60 }}>
+      <Typography color="ui60">
         <span style={{ fontWeight: 700, color: common.ui20 }}>1,000원</span>, 추첨된{' '}
         <span style={{ fontWeight: 700, color: primary.main }}>두 분께는 10만원</span> 을 드려요!
       </Typography>

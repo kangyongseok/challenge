@@ -238,9 +238,9 @@ function CamelSellerTitle() {
                 {model.tmpBrands[0] && (
                   <Typography
                     variant="body2"
+                    color="ui60"
                     customStyle={{
-                      marginTop: 2,
-                      color: common.ui60
+                      marginTop: 2
                     }}
                   >
                     {model.tmpBrands[0].nameEng

@@ -71,19 +71,12 @@ function CamelSellerCategoryBrand() {
         {name && brandName ? (
           <Typography
             variant="h4"
-            customStyle={{
-              color: status === 20 || (status === 30 && result === 1) ? common.ui80 : undefined
-            }}
+            color={status === 20 || (status === 30 && result === 1) ? 'ui80' : undefined}
           >
             {name} / {brandName}
           </Typography>
         ) : (
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: common.ui80
-            }}
-          >
+          <Typography variant="h4" color="ui80">
             카테고리 / 브랜드
           </Typography>
         )}

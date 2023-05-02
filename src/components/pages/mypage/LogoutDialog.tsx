@@ -32,13 +32,13 @@ function LogoutDialog({ status, setLogoutToggle }: LogoutProps) {
 
   return (
     <Dialog open={status} onClose={() => setLogoutToggle(false)}>
-      <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
+      <Typography weight="medium" textAlign="center">
         모든 기기에서 로그아웃되고,
       </Typography>
-      <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
+      <Typography weight="medium" textAlign="center">
         다시 로그인하는 수고를 해야합니다
       </Typography>
-      <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
+      <Typography weight="medium" textAlign="center">
         그래도 로그아웃 하시겠어요?
       </Typography>
       <ButtonArea alignment="center" gap={10}>

@@ -111,7 +111,7 @@ function MypageUserInfo() {
       <Typography
         variant="h4"
         weight="bold"
-        customStyle={{ color: common.ui20, marginBottom: 16 }}
+        customStyle={{ marginBottom: 16 }}
         onClick={() => router.push('/onboarding')}
       >
         내 정보

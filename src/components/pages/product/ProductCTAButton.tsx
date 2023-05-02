@@ -326,7 +326,8 @@ function ProductCTAButton({
           <Typography
             variant="h3"
             weight="bold"
-            customStyle={{ minWidth: 270, padding: '12px 0', textAlign: 'center' }}
+            textAlign="center"
+            customStyle={{ minWidth: 270, padding: '12px 0' }}
           >
             회원님이 차단한 사용자에요.
             <br />

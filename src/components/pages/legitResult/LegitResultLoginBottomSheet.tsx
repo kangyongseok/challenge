@@ -52,7 +52,7 @@ function LegitResultLoginBottomSheet() {
           <Icon name="Logo_45_45" width={35} height={35} />
           <Icon name="LogoText_96_20" width={106} height={30} />
         </Flexbox>
-        <Typography customStyle={{ margin: '24px 0 66px', textAlign: 'center' }}>
+        <Typography textAlign="center" customStyle={{ margin: '24px 0 66px' }}>
           로그인하면
           <br />
           <strong>사진감정 결과를 실시간</strong>으로 알려드리고
@@ -64,7 +64,7 @@ function LegitResultLoginBottomSheet() {
         <Tooltip
           open
           message={
-            <Typography variant="body2" weight="bold" customStyle={{ color: common.uiWhite }}>
+            <Typography variant="body2" weight="bold" color="uiWhite">
               ⚡ 3초만에 빠른 로그인
             </Typography>
           }
@@ -87,11 +87,7 @@ function LegitResultLoginBottomSheet() {
               src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-kakao-icon.png`}
               alt="Kakao Logo Img"
             />
-            <Typography
-              variant="h4"
-              weight="medium"
-              customStyle={{ color: light.palette.common.ui20 }}
-            >
+            <Typography variant="h4" weight="medium" color={light.palette.common.ui20}>
               카카오톡으로 계속하기
             </Typography>
           </KakaoLoginButton>

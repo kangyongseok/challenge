@@ -31,7 +31,7 @@ function LegitStatusFailContents() {
 
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { secondary }
     }
   } = useTheme();
 
@@ -154,7 +154,7 @@ function LegitStatusFailContents() {
           <Typography weight="bold" customStyle={{ marginBottom: 4 }}>
             camel
           </Typography>
-          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" color="ui60">
             카멜 실시간 사진감정팀
           </Typography>
           <Typography
@@ -185,7 +185,8 @@ function LegitStatusFailContents() {
             <Typography
               variant="h4"
               weight="medium"
-              customStyle={{ textAlign: 'left', marginBottom: 12 }}
+              textAlign="left"
+              customStyle={{ marginBottom: 12 }}
             >
               필요사진 가이드라인
             </Typography>

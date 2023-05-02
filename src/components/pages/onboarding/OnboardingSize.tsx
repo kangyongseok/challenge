@@ -157,17 +157,13 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             사이즈를 알려주세요!
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>
+          <Typography color="ui60">
             {accessUser?.userName || '회원'}님 사이즈에 맞는 매물만 보여드릴게요
           </Typography>
         </Box>
         {gender.length > 0 && userInfo && (
           <Box customStyle={{ flex: 1 }}>
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{ marginTop: 24, color: common.ui60 }}
-            >
+            <Typography variant="h4" weight="bold" color="ui60" customStyle={{ marginTop: 24 }}>
               👕 상의
             </Typography>
             <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: 7 }}>
@@ -187,11 +183,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                 </ChipStyle>
               ))}
             </Flexbox>
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{ marginTop: 32, color: common.ui60 }}
-            >
+            <Typography variant="h4" weight="bold" color="ui60" customStyle={{ marginTop: 32 }}>
               👖 하의
             </Typography>
             <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 8, gap: '8px 6px' }}>
@@ -211,11 +203,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
                 </ChipStyle>
               ))}
             </Flexbox>
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{ marginTop: 32, color: common.ui60 }}
-            >
+            <Typography variant="h4" weight="bold" color="ui60" customStyle={{ marginTop: 32 }}>
               👟 신발
             </Typography>
             <Flexbox

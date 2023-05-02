@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { BottomSheet, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Flexbox, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -16,11 +16,6 @@ import attrKeys from '@constants/attrKeys';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
 function CamelSellerConditionBottomSheet() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const [{ open }, setOpen] = useRecoilState(camelSellerDialogStateFamily('condition'));
   const { data: codeDetails } = useQuery(queryKeys.commons.codeDetails({ codeId: 14 }), () =>
@@ -79,7 +74,7 @@ function CamelSellerConditionBottomSheet() {
                 {name}
               </Typography>
             </Flexbox>
-            <Typography customStyle={{ color: common.ui60, marginTop: 4, marginLeft: 36 }}>
+            <Typography color="ui60" customStyle={{ marginTop: 4, marginLeft: 36 }}>
               {description}
             </Typography>
           </ConditionCard>

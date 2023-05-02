@@ -34,12 +34,7 @@ function CamelSellerCondition() {
       customStyle={{ height: 61, borderBottom: `1px solid ${common.line01}`, cursor: 'pointer' }}
       onClick={handleClick}
     >
-      <Typography
-        variant="h4"
-        customStyle={{
-          color: !tempData.condition.name ? common.ui80 : undefined
-        }}
-      >
+      <Typography variant="h4" color={!tempData.condition.name ? 'ui80' : undefined}>
         {tempData.condition.name || '상태'}
       </Typography>
       <Icon

@@ -109,9 +109,9 @@ function SafePaymentGuideDialog({
       <Typography
         variant="h1"
         weight="bold"
+        textAlign="center"
         customStyle={{
-          marginTop: 32,
-          textAlign: 'center'
+          marginTop: 32
         }}
       >
         수수료 없이 거래하는
@@ -120,9 +120,9 @@ function SafePaymentGuideDialog({
       </Typography>
       <Typography
         variant="h4"
+        textAlign="center"
         customStyle={{
-          marginTop: 12,
-          textAlign: 'center'
+          marginTop: 12
         }}
       >
         누구나 안심하고 중고거래할 수 있는
@@ -173,12 +173,7 @@ function SafePaymentGuideDialog({
               }}
             />
           </Flexbox>
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography variant="h4" color="ui60">
             구매자가 안전결제로 구매한 금액은
             <br />
             거래가 끝날때까지 카멜이 안전하게 보호해요.
@@ -210,12 +205,7 @@ function SafePaymentGuideDialog({
               }}
             />
           </Flexbox>
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography variant="h4" color="ui60">
             구매자, 판매자 모두 수수료 부담없이
             <br />
             안심하고 거래해보세요.
@@ -237,12 +227,7 @@ function SafePaymentGuideDialog({
             </Typography>
             <Icon width={48} height={48} name="ShieldFilled" color="primary" />
           </Flexbox>
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography variant="h4" color="ui60">
             카멜인증판매자와 거래하면
             <br />
             정품 고민 없이 거래할 수 있어요.

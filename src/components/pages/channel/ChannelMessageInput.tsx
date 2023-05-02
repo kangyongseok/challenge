@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
 import styled from '@emotion/styled';
 
@@ -40,12 +40,6 @@ function ChannelMessageInput({
   fileUrl,
   lastMessageIndex
 }: ChannelMessageInputProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const { mutate: mutateSendMessage, isLoading: isLoadingMutate } = useMutationSendMessage({
     lastMessageIndex
   });
@@ -149,12 +143,12 @@ function ChannelMessageInput({
         </>
       )}
       {isDeletedTargetUser && (
-        <Typography variant="h4" customStyle={{ color: common.ui60, padding: 12 }}>
+        <Typography variant="h4" color="ui60" customStyle={{ padding: 12 }}>
           상대방과 대화가 불가능해요.
         </Typography>
       )}
       {(isTargetUserBlocked || (!isDeletedTargetUser && isAdminBlockUser)) && (
-        <Typography variant="h4" customStyle={{ color: common.ui60, padding: 12 }}>
+        <Typography variant="h4" color="ui60" customStyle={{ padding: 12 }}>
           차단된 상대와는 대화할 수 없어요.
         </Typography>
       )}

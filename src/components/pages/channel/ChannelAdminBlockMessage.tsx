@@ -15,7 +15,7 @@ interface ChannelAdminBlockMessageProps {
 function ChannelAdminBlockMessage({ message: { createdAt } }: ChannelAdminBlockMessageProps) {
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -47,9 +47,9 @@ function ChannelAdminBlockMessage({ message: { createdAt } }: ChannelAdminBlockM
         <Typography
           variant="h4"
           weight="bold"
+          color="red-light"
           customStyle={{
-            marginTop: 20,
-            color: secondary.red.light
+            marginTop: 20
           }}
         >
           거래를 즉시 중단해주세요.
@@ -77,6 +77,7 @@ function ChannelAdminBlockMessage({ message: { createdAt } }: ChannelAdminBlockM
       </Box>
       <Typography
         variant="small2"
+        color="ui60"
         customStyle={{
           color: common.ui60
         }}

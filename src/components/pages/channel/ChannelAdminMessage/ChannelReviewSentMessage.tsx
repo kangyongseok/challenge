@@ -95,6 +95,7 @@ function ChannelReviewSentMessage({
         </Box>
         <Typography
           variant="small2"
+          color="ui60"
           customStyle={{
             color: common.ui60
           }}
@@ -143,12 +144,7 @@ function ChannelReviewSentMessage({
           후기 확인하기
         </Button>
       </Box>
-      <Typography
-        variant="small2"
-        customStyle={{
-          color: common.ui60
-        }}
-      >
+      <Typography variant="small2" color="ui60">
         {dayjs(createdAt).format('A hh:mm')}
       </Typography>
     </Flexbox>

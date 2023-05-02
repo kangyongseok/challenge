@@ -66,10 +66,10 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
           </Typography>
         </Box>
         <Box>
-          <Typography variant="h4" customStyle={{ color: common.ui60 }}>
+          <Typography variant="h4" color="ui60">
             프로필을 만들어주시면,
           </Typography>
-          <Typography variant="h4" customStyle={{ color: common.ui60 }}>
+          <Typography variant="h4" color="ui60">
             {accessUser?.userName || '회원'}님이 찾는 매물을 찰떡같이 보여드릴게요😍
           </Typography>
         </Box>

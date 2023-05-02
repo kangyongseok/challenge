@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Input, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Input, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
@@ -24,12 +24,6 @@ function ProductOrderDeliveryInfoForm() {
   const { id } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
-
-  const {
-    theme: {
-      palette: { secondary, common }
-    }
-  } = useTheme();
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -119,12 +113,7 @@ function ProductOrderDeliveryInfoForm() {
         }}
       >
         <Flexbox direction="vertical" gap={8}>
-          <Typography
-            weight="medium"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography weight="medium" color="ui60">
             이름
           </Typography>
           <Input
@@ -137,13 +126,7 @@ function ProductOrderDeliveryInfoForm() {
           />
         </Flexbox>
         <Flexbox direction="vertical" gap={8}>
-          <Typography
-            customStyle={{
-              color: common.ui60
-            }}
-          >
-            연락처
-          </Typography>
+          <Typography color="ui60">연락처</Typography>
           <Input
             type="number"
             inputMode="numeric"
@@ -156,24 +139,13 @@ function ProductOrderDeliveryInfoForm() {
             placeholder="연락처"
           />
           {showHelperText && (
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: secondary.red.light
-              }}
-            >
+            <Typography variant="body2" color="red-light">
               정확한 연락처를 입력해주세요.
             </Typography>
           )}
         </Flexbox>
         <Flexbox direction="vertical" gap={8}>
-          <Typography
-            customStyle={{
-              color: common.ui60
-            }}
-          >
-            주소
-          </Typography>
+          <Typography color="ui60">주소</Typography>
           <TextArea name="address" onChange={handleChangeTextArea} value={address} />
         </Flexbox>
       </Flexbox>

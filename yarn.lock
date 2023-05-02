@@ -438,7 +438,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.8.0.tgz#f580f9beb67176fa57aae70b08ed510e1b18980f"
   integrity sha512-G/YwXTkv7Den9mXDO7AhLWkE3q+I92B+VqAE+dYG4NGPaHZGvt3G8Q0p9vmE+sq7rTGphUbAvmQ9YpbfMQGGlA==
 
-"@emotion/react@^11.10.5":
+"@emotion/react@^11.10.6":
   version "11.10.6"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.10.6.tgz#dbe5e650ab0f3b1d2e592e6ab1e006e75fd9ac11"
   integrity sha512-6HT8jBmcSkfzO7mc+N1L9uwvOnlcGoix8Zn7srt+9ga0MjREo6lRpuVX0kzo6Jp6oTqDhREOFsygN6Ew4fEQbw==
@@ -468,7 +468,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/sheet/-/sheet-1.2.1.tgz#0767e0305230e894897cadb6c8df2c51e61a6c2c"
   integrity sha512-zxRBwl93sHMsOj4zs+OslQKg/uhF38MB+OMKoCrVuS0nyTkqnau+BM3WGEoOptg9Oz45T/aIGs1qbVAsEFo3nA==
 
-"@emotion/styled@^11.10.5":
+"@emotion/styled@^11.10.6":
   version "11.10.6"
   resolved "https://registry.yarnpkg.com/@emotion/styled/-/styled-11.10.6.tgz#d886afdc51ef4d66c787ebde848f3cc8b117ebba"
   integrity sha512-OXtBzOmDSJo5Q0AFemHCfl+bUueT8BIcPSxu0EGTpGk6DmI5dnhSzQANm1e1ze0YZL7TDyAyy6s/b/zmGOS3Og==
@@ -4589,10 +4589,10 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-mrcamel-ui@^0.1.59:
-  version "0.1.59"
-  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.59.tgz#1c24f908f7727e08452d5e2d5b801ce496dea168"
-  integrity sha512-+6AlmrSCVE329KVTk71R239wV2VnBaTNBP4H2Cxr1GIWqFTwWB+wjV23WPXixZR5lNJ5jZtjtynkp1TV2Z/RsA==
+mrcamel-ui@^0.1.60:
+  version "0.1.60"
+  resolved "https://registry.yarnpkg.com/mrcamel-ui/-/mrcamel-ui-0.1.60.tgz#c271f18fdff101c7b7d0668b39714f389c886f4d"
+  integrity sha512-OLfA7APulsnlD3St0Z35lkoMacDrf//hHF3kVtn5lOswBva2jU+115wKodQRgNTMbApyiUdeEUTYYrrZk2xBcA==
 
 ms@2.1.2:
   version "2.1.2"

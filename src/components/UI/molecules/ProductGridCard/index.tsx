@@ -454,7 +454,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {viewCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="ViewOutlined" width={14} height={14} color={common.ui60} />
-                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Typography variant="small2" weight="medium" color="ui60">
                   {viewCount}
                 </Typography>
               </Flexbox>
@@ -462,7 +462,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {wishCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="HeartOutlined" width={14} height={14} color={common.ui60} />
-                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Typography variant="small2" weight="medium" color="ui60">
                   {wishCount}
                 </Typography>
               </Flexbox>
@@ -470,7 +470,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
             {purchaseCount > 0 && (
               <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
                 <Icon name="MessageOutlined" width={14} height={14} color={common.ui60} />
-                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Typography variant="small2" weight="medium" color="ui60">
                   {purchaseCount}
                 </Typography>
               </Flexbox>

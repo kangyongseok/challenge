@@ -97,10 +97,10 @@ function MyPortfolioLanding01({
             </SwiperSlide>
           ))}
         </Swiper>
-        <Typography weight="bold" variant="h2" customStyle={{ color: common.cmnW }}>
+        <Typography weight="bold" variant="h2" color="cmnW">
           지금 팔면 얼마일까?
         </Typography>
-        <Typography variant="h4" customStyle={{ color: common.ui80, marginTop: 8 }}>
+        <Typography variant="h4" color="ui80" customStyle={{ marginTop: 8 }}>
           내 명품의 시세정보, 이제 카멜이 알려드려요!
         </Typography>
       </Flexbox>
@@ -148,16 +148,18 @@ function MyPortfolioLanding01({
           customStyle={{ flexDirection: 'column' }}
           fullWidth
         >
-          <Typography weight="bold" variant="h3" customStyle={{ color: common.cmnW }}>
+          <Typography weight="bold" variant="h3" color="cmnW" customStyle={{ color: common.cmnW }}>
             <Icon name="AlarmFilled" /> 오픈 알림 받기
           </Typography>
-          <Typography variant="body2" customStyle={{ color: common.cmnW }}>
+          <Typography variant="body2" color="cmnW">
             내 명품의 가치를 가장 먼저 확인하세요
           </Typography>
         </RevervationCtaButton>
         <Typography
           variant="body1"
-          customStyle={{ color: 'white', marginTop: '20px', textAlign: 'center' }}
+          color="white"
+          textAlign="center"
+          customStyle={{ marginTop: '20px' }}
           onClick={onClickNext}
         >
           더 알아보기
