@@ -1,5 +1,7 @@
 import { Box, Image, useTheme } from 'mrcamel-ui';
 
+import { getImageResizePath } from '@utils/common';
+
 function ProductBanner({
   handleClick,
   bannerColor,
@@ -25,7 +27,15 @@ function ProductBanner({
         backgroundColor: bannerColor
       }}
     >
-      <Image height={104} src={src} alt={alt} disableAspectRatio />
+      <Image
+        height={104}
+        src={getImageResizePath({
+          imagePath: src,
+          h: 52
+        })}
+        alt={alt}
+        disableAspectRatio
+      />
     </Box>
   );
 }

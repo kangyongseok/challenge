@@ -8,10 +8,8 @@ import { fetchRecommendProducts } from '@api/personal';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
-import abTestTaskNameKeys from '@constants/abTestTaskNameKeys';
 
 import { hasHomeTabChangeState } from '@recoil/home';
-import { ABTestGroup } from '@provider/ABTestProvider';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function HomeStyleRecommendProductList() {
@@ -43,53 +41,28 @@ function HomeStyleRecommendProductList() {
         {userNickName}님을 위한 추천
       </Typography>
       <Grid container rowGap={20} columnGap={12}>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="A">
-          {isFetching &&
-            Array.from({ length: 4 }, (_, index) => (
-              <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
-                <NewProductGridCardSkeleton />
-              </Grid>
-            ))}
-          {!isFetching &&
-            data?.products?.content.map((product, index) => (
-              <Grid key={`home-style-recommend-product-${product.id}`} item xs={2}>
-                <NewProductGridCard
-                  product={product}
-                  variant="gridB"
-                  attributes={{
-                    name: attrProperty.name.MAIN,
-                    title: attrProperty.title.STYLERECOMM,
-                    source: attrProperty.source.MAIN_STYLE,
-                    index: index + 1
-                  }}
-                />
-              </Grid>
-            ))}
-        </ABTestGroup>
-        <ABTestGroup name={abTestTaskNameKeys.BETTER_CARD_2302} belong="B">
-          {isFetching &&
-            Array.from({ length: 4 }, (_, index) => (
-              <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
-                <NewProductGridCardSkeleton />
-              </Grid>
-            ))}
-          {!isFetching &&
-            data?.products?.content.map((product, index) => (
-              <Grid key={`home-style-recommend-product-${product.id}`} item xs={2}>
-                <NewProductGridCard
-                  product={product}
-                  hideSize={false}
-                  variant="gridB"
-                  attributes={{
-                    name: attrProperty.name.MAIN,
-                    title: attrProperty.title.STYLERECOMM,
-                    source: attrProperty.source.MAIN_STYLE,
-                    index: index + 1
-                  }}
-                />
-              </Grid>
-            ))}
-        </ABTestGroup>
+        {isFetching &&
+          Array.from({ length: 4 }, (_, index) => (
+            <Grid key={`home-style-recommend-product-skeleton-${index}`} item xs={2}>
+              <NewProductGridCardSkeleton />
+            </Grid>
+          ))}
+        {!isFetching &&
+          data?.products?.content.map((product, index) => (
+            <Grid key={`home-style-recommend-product-${product.id}`} item xs={2}>
+              <NewProductGridCard
+                product={product}
+                hideSize={false}
+                variant="gridB"
+                attributes={{
+                  name: attrProperty.name.MAIN,
+                  title: attrProperty.title.STYLERECOMM,
+                  source: attrProperty.source.MAIN_STYLE,
+                  index: index + 1
+                }}
+              />
+            </Grid>
+          ))}
       </Grid>
     </Box>
   );

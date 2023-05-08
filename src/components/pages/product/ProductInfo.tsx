@@ -52,7 +52,7 @@ import attrKeys from '@constants/attrKeys';
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { getProductType } from '@utils/products';
 import { getFormattedDistanceTime, getProductArea } from '@utils/formats';
-import { checkAgent, removeTagAndAddNewLine } from '@utils/common';
+import { checkAgent, getImageResizePath, removeTagAndAddNewLine } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
 import { toastState, userOnBoardingTriggerState } from '@recoil/common';
@@ -520,7 +520,10 @@ function ProductInfo({
           >
             <Image
               height={32}
-              src={brandLogo}
+              src={getImageResizePath({
+                imagePath: brandLogo,
+                h: 32
+              })}
               alt="Brand Logo Img"
               round={8}
               disableAspectRatio

@@ -23,7 +23,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { getImagePathStaticParser } from '@utils/common';
+import { getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import ProductLastLowerPrice from './ProductLastLowerPrice';
 import ProductDetailLegitImageBottomBanner from './ProductDetailLegitImageBottomBanner';
@@ -244,8 +244,14 @@ function ProductImages({
           <SwiperSlide>
             <Img
               className="swiper-lazy"
-              src={getImagePathStaticParser(product?.imageMain || '')}
-              data-src={getImagePathStaticParser(product?.imageMain || '')}
+              src={getImageResizePath({
+                imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                w: 212.5
+              })}
+              data-src={getImageResizePath({
+                imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                w: 212.5
+              })}
               alt="Product Main Img"
               onLoad={() => setLoadedImageMain(true)}
               style={{ width: 0, height: 0, display: 'none' }}
@@ -254,7 +260,10 @@ function ProductImages({
               <Skeleton />
             ) : (
               <Image
-                src={product.imageMain}
+                src={getImageResizePath({
+                  imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                  w: 212.5
+                })}
                 alt={`${product.title} 이미지`}
                 onClick={handleImageModal}
                 data-index={1}
@@ -274,7 +283,10 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={getImagePathStaticParser(image)}
+                      src={getImageResizePath({
+                        imagePath: getImagePathStaticParser(image),
+                        w: 212.5
+                      })}
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
                       data-index={i + 2}
@@ -287,7 +299,12 @@ function ProductImages({
                       }}
                     >
                       <BackgroundBlurImage
-                        imageUrl={product?.imageMainLarge || (product?.imageMain as string)}
+                        imageUrl={getImageResizePath({
+                          imagePath: getImagePathStaticParser(
+                            product?.imageMainLarge || (product?.imageMain as string) || ''
+                          ),
+                          w: 212.5
+                        })}
                       />
                       <LastImageContents justifyContent="center" alignment="center">
                         {image.lastComponent}
@@ -310,7 +327,10 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={getImagePathStaticParser(image)}
+                      src={getImageResizePath({
+                        imagePath: getImagePathStaticParser(image),
+                        w: 425
+                      })}
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
                       data-index={i + 2}

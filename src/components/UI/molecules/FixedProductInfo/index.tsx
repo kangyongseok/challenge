@@ -12,7 +12,12 @@ import { PRODUCT_INFORMATION_HEIGHT } from '@constants/common';
 import { productStatus } from '@constants/channel';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import { commaNumber, getOrderStatusText } from '@utils/common';
+import {
+  commaNumber,
+  getImagePathStaticParser,
+  getImageResizePath,
+  getOrderStatusText
+} from '@utils/common';
 
 import { channelBottomSheetStateFamily, channelDialogStateFamily } from '@recoil/channel/atom';
 
@@ -138,7 +143,10 @@ function FixedProductInfo({
         <Avatar
           width={48}
           height={48}
-          src={image}
+          src={getImageResizePath({
+            imagePath: getImagePathStaticParser(image || ''),
+            w: 48
+          })}
           alt="Product Img"
           round={8}
           customStyle={{

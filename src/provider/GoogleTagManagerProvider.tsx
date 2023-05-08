@@ -22,10 +22,11 @@ function GoogleTagManagerProvider() {
     };
   }, [router.events]);
 
+  if (!process.env.GOOGLE_TAG_MANAGER_ID) return null;
+
   return (
     <Script
       id="gtag-manager"
-      strategy="afterInteractive"
       dangerouslySetInnerHTML={{
         __html: `
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

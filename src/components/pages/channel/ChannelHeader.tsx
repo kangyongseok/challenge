@@ -14,7 +14,11 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedActivatedTime } from '@utils/formats';
-import { isExtendedLayoutIOSVersion } from '@utils/common';
+import {
+  getImagePathStaticParser,
+  getImageResizePath,
+  isExtendedLayoutIOSVersion
+} from '@utils/common';
 
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 
@@ -116,9 +120,12 @@ function ChannelHeader({
             <Title disabled={isDeletedTargetUser} onClick={handleClickTitle}>
               {!isTargetUserBlocked && !isAdminBlockUser && !isDeletedTargetUser && (
                 <UserAvatar
-                  src={targetUserImage || ''}
                   width={32}
                   height={32}
+                  src={getImageResizePath({
+                    imagePath: getImagePathStaticParser(targetUserImage || ''),
+                    w: 32
+                  })}
                   isRound
                   iconCustomStyle={{ width: 16, height: 16 }}
                 />

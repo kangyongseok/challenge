@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import localFont from 'next/font/local';
 import { ThemeProvider } from 'mrcamel-ui';
-import { Global } from '@emotion/react';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
@@ -51,15 +50,15 @@ function ThemeModeProvider({ children }: PropsWithChildren) {
   }, [theme]);
 
   return (
-    <ThemeProvider theme="light" disableResetCSS={false}>
-      {/* // TODO UI 라이브러리 resetCSS 커스텀이 가능하도록 보완 */}
-      <Global
-        styles={{
-          body: {
-            fontFamily: font.style.fontFamily
-          }
-        }}
-      />
+    <ThemeProvider
+      theme="light"
+      disableResetCSS={false}
+      customResetStyle={{
+        'html, body': {
+          fontFamily: font.style.fontFamily
+        }
+      }}
+    >
       {children}
     </ThemeProvider>
   );

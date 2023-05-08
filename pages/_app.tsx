@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
@@ -64,8 +64,6 @@ if (global.navigator) {
   Amplitude.init();
 }
 
-const originUrl = 'https://mrcamel.co.kr';
-
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
@@ -85,14 +83,6 @@ function App({ Component, pageProps }: AppProps) {
       })
     })
   );
-
-  const canonicalUrl = useMemo(() => {
-    // 해당 페이지 내에서 렌더링하기 위함
-    if (router.pathname === '/products/[id]') return '';
-
-    const asPath = router.asPath === '/' ? '' : router.asPath.split('?')[0];
-    return decodeURI(`${originUrl}${asPath}`).replace(/ /g, '-');
-  }, [router.asPath, router.pathname]);
 
   useEffect(() => {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
@@ -146,13 +136,98 @@ function App({ Component, pageProps }: AppProps) {
           name="description"
           content="여러분은 카멜에서 검색만 하세요. 전국 중고명품 매물은 카멜이 다 모아서 비교하고 분석해드릴게요!"
         />
+        <meta name="application-name" content="카멜" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="apple-mobile-web-app-title" content="카멜" />
+        <link
+          rel="apple-touch-icon"
+          sizes="57x57"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-57x57.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="60x60"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-60x60.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="72x72"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-72x72.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="76x76"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-76x76.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="114x114"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-114x114.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="120x120"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-120x120.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="144x144"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-144x144.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="152x152"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-152x152.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/apple-icon-180x180.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="192x192"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/android-icon-192x192.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/favicon-32x32.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="96x96"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/favicon-96x96.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/favicon-16x16.png`}
+        />
+        <link
+          rel="manifest"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/manifest.json`}
+        />
+        <meta
+          name="msapplication-TileImage"
+          content={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/ms-icon-144x144.png`}
+        />
+        <link
+          rel="shortcut icon"
+          href={`https://${process.env.IMAGE_DOMAIN}/assets/favicon/favicon.ico`}
+        />
         <title>전국 중고명품 통합검색은 카멜에서</title>
-        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       </Head>
       <ChannelTalkProvider />
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
-      {process.env.GOOGLE_TAG_MANAGER_ID && <GoogleTagManagerProvider />}
+      <GoogleTagManagerProvider />
       <QueryClientProvider client={queryClient.current}>
         <Hydrate state={pageProps.dehydratedState}>
           <RecoilRoot>

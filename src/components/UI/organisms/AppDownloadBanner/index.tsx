@@ -7,7 +7,7 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import { handleClickAppDownload } from '@utils/common';
+import { getImageResizePath, handleClickAppDownload } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -81,7 +81,10 @@ function AppDownloadBanner() {
       <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
         <CamelIconBox>
           <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/logo_icon_blue.png`}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/logo_icon_blue.png`,
+              w: 32
+            })}
             alt="Logo Img"
           />
         </CamelIconBox>

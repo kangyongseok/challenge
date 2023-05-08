@@ -30,7 +30,6 @@ import {
   ProductDetailLegitBottomSheet,
   ProductImages,
   ProductInfo,
-  // ProductInterfereKingBottomSheet,
   ProductMowebAppContents,
   ProductRedirect,
   ProductRelatedProductList,
@@ -635,10 +634,10 @@ function ProductDetail() {
           </Typography>
           <Typography
             weight="medium"
+            color="ui80"
             customStyle={{
               textDecoration: 'underline',
-              whiteSpace: 'nowrap',
-              color: common.ui80
+              whiteSpace: 'nowrap'
             }}
             onClick={() => {
               logEvent(attrKeys.products.clickProductDetail, {

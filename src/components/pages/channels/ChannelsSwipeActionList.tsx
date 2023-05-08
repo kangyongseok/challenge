@@ -30,7 +30,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { hasImageFile } from '@utils/common';
+import { getImagePathStaticParser, getImageResizePath, hasImageFile } from '@utils/common';
 import {
   getChannelTitle,
   getLastMessage,
@@ -304,15 +304,18 @@ function ChannelsSwipeActionList({
         }
       >
         <ListItem
-          avatarUrl={
-            !camelChannel.channelTargetUser?.user?.isDeleted
-              ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
-                  camelChannel?.channelTargetUser?.user?.imageProfile) ||
-                (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
-                  camelChannel?.channelTargetUser?.user?.image) ||
-                ''
-              : ''
-          }
+          avatarUrl={getImageResizePath({
+            imagePath: getImagePathStaticParser(
+              !camelChannel.channelTargetUser?.user?.isDeleted
+                ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
+                    camelChannel?.channelTargetUser?.user?.imageProfile) ||
+                    (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
+                      camelChannel?.channelTargetUser?.user?.image) ||
+                    ''
+                : ''
+            ),
+            w: 52
+          })}
           title={getChannelTitle({
             targetUser: camelChannel.channelTargetUser,
             groupChannel: sendbirdChannel,
@@ -344,7 +347,12 @@ function ChannelsSwipeActionList({
                 />
               )}
               <ProductImage
-                url={camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain}
+                url={getImageResizePath({
+                  imagePath: getImagePathStaticParser(
+                    camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain || ''
+                  ),
+                  w: 44
+                })}
               />
             </>
           }

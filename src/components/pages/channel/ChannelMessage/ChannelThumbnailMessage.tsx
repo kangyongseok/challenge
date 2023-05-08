@@ -5,7 +5,6 @@ import { Image } from 'mrcamel-ui';
 import type { FileMessage } from '@sendbird/chat/message';
 import styled from '@emotion/styled';
 
-import { heicToBlob } from '@utils/common';
 import { isVideoMessage } from '@utils/channel';
 
 import { channelThumbnailMessageImageState } from '@recoil/channel';
@@ -28,21 +27,13 @@ function ChannelThumbnailMessage({
   const setChannelThumbnailMessageImageState = useSetRecoilState(channelThumbnailMessageImageState);
 
   const [imageRendered, setImageRendered] = useState(false);
-  const [imageUrl, setImageUrl] = useState(message.url);
+  const [imageUrl] = useState(message.url);
 
   const handleClickImage = () => {
     if (!imageRendered) return;
 
     setChannelThumbnailMessageImageState(message.url);
   };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && ['image/heic', 'image/heif'].includes(message.type)) {
-      heicToBlob(message.url, message.name).then((url) => {
-        if (url) setImageUrl(url);
-      });
-    }
-  }, [message.name, message.type, message.url]);
 
   useEffect(() => {
     if (imageUrl) {
