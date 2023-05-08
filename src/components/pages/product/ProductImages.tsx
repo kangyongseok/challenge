@@ -59,6 +59,7 @@ function ProductImages({
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchLowerProductsParams | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const { data: searchRelatedProducts, isFetched } = useQuery(
     queryKeys.products.searchRelatedProducts(
@@ -244,28 +245,42 @@ function ProductImages({
           <SwiperSlide>
             <Img
               className="swiper-lazy"
-              src={getImageResizePath({
-                imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                w: 212.5
-              })}
-              data-src={getImageResizePath({
-                imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                w: 212.5
-              })}
+              src={
+                !loadFailed
+                  ? getImageResizePath({
+                      imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                      w: 212.5
+                    })
+                  : product?.imageMain || ''
+              }
+              data-src={
+                !loadFailed
+                  ? getImageResizePath({
+                      imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                      w: 212.5
+                    })
+                  : product?.imageMain || ''
+              }
               alt="Product Main Img"
               onLoad={() => setLoadedImageMain(true)}
+              onError={() => setLoadFailed(true)}
               style={{ width: 0, height: 0, display: 'none' }}
             />
             {isLoading || !product || !loadedImageMain ? (
               <Skeleton />
             ) : (
               <Image
-                src={getImageResizePath({
-                  imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                  w: 212.5
-                })}
+                src={
+                  !loadFailed
+                    ? getImageResizePath({
+                        imagePath: getImagePathStaticParser(product?.imageMain || ''),
+                        w: 212.5
+                      })
+                    : product?.imageMain || ''
+                }
                 alt={`${product.title} 이미지`}
                 onClick={handleImageModal}
+                onError={() => setLoadFailed(true)}
                 data-index={1}
               />
             )}
@@ -283,12 +298,17 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={getImageResizePath({
-                        imagePath: getImagePathStaticParser(image),
-                        w: 212.5
-                      })}
+                      src={
+                        !loadFailed
+                          ? getImageResizePath({
+                              imagePath: getImagePathStaticParser(image),
+                              w: 212.5
+                            })
+                          : image
+                      }
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
+                      onError={() => setLoadFailed(true)}
                       data-index={i + 2}
                     />
                   ) : (
@@ -299,12 +319,16 @@ function ProductImages({
                       }}
                     >
                       <BackgroundBlurImage
-                        imageUrl={getImageResizePath({
-                          imagePath: getImagePathStaticParser(
-                            product?.imageMainLarge || (product?.imageMain as string) || ''
-                          ),
-                          w: 212.5
-                        })}
+                        imageUrl={
+                          !loadFailed
+                            ? getImageResizePath({
+                                imagePath: getImagePathStaticParser(
+                                  product?.imageMainLarge || (product?.imageMain as string) || ''
+                                ),
+                                w: 212.5
+                              })
+                            : product?.imageMainLarge || product?.imageMain || ''
+                        }
                       />
                       <LastImageContents justifyContent="center" alignment="center">
                         {image.lastComponent}
@@ -327,12 +351,17 @@ function ProductImages({
                 >
                   {typeof image === 'string' ? (
                     <Image
-                      src={getImageResizePath({
-                        imagePath: getImagePathStaticParser(image),
-                        w: 425
-                      })}
+                      src={
+                        !loadFailed
+                          ? getImageResizePath({
+                              imagePath: getImagePathStaticParser(image),
+                              w: 425
+                            })
+                          : image
+                      }
                       alt={`${product?.title} 이미지 ${i + 1}`}
                       onClick={handleImageModal}
+                      onError={() => setLoadFailed(true)}
                       data-index={i + 2}
                     />
                   ) : (
@@ -343,9 +372,13 @@ function ProductImages({
                       }}
                     >
                       <BackgroundBlurImage
-                        imageUrl={getImagePathStaticParser(
-                          product?.imageMainLarge || (product?.imageMain as string)
-                        )}
+                        imageUrl={
+                          !loadFailed
+                            ? getImagePathStaticParser(
+                                product?.imageMainLarge || (product?.imageMain as string)
+                              )
+                            : product?.imageMainLarge || product?.imageMain || ''
+                        }
                       />
                       <LastImageContents justifyContent="center" alignment="center">
                         {image.lastComponent}
