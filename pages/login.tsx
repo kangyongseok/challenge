@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { ThemeProvider } from 'mrcamel-ui';
 import { animated, useTransition } from '@react-spring/web';
@@ -41,32 +40,29 @@ function Login() {
   }, []);
 
   return (
-    <>
-      <Script src="https://developers.kakao.com/sdk/js/kakao.min.js" />
-      <ThemeProvider theme="dark">
-        {(code || loading) && <PuffLoader />}
-        {transitions(
-          (styles, item) =>
-            item && (
-              <animated.div style={styles}>
-                <Wrapper>
-                  <GeneralTemplate>
-                    <LoginMainContent />
-                    <LoginButtonList
-                      authLogin={authLogin}
-                      successLogin={successLogin}
-                      returnUrl={returnUrl}
-                      setShow={setShow}
-                      setLoading={setLoading}
-                    />
-                    <LoginUserAgreement />
-                  </GeneralTemplate>
-                </Wrapper>
-              </animated.div>
-            )
-        )}
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme="dark">
+      {(code || loading) && <PuffLoader />}
+      {transitions(
+        (styles, item) =>
+          item && (
+            <animated.div style={styles}>
+              <Wrapper>
+                <GeneralTemplate>
+                  <LoginMainContent />
+                  <LoginButtonList
+                    authLogin={authLogin}
+                    successLogin={successLogin}
+                    returnUrl={returnUrl}
+                    setShow={setShow}
+                    setLoading={setLoading}
+                  />
+                  <LoginUserAgreement />
+                </GeneralTemplate>
+              </Wrapper>
+            </animated.div>
+          )
+      )}
+    </ThemeProvider>
   );
 }
 

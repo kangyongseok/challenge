@@ -10,6 +10,7 @@ class MyDocument extends Document {
             content="7prKl76G0FB_U38s9lbBEiQDRbi6JnhgZYMJKnGw_hE"
           />
           <meta name="facebook-domain-verification" content="wldrbh2d5e7wpicfcndrlgz2sf8tmu" />
+          <script defer src="https://developers.kakao.com/sdk/js/kakao.min.js" />
           <link rel="preconnect" href="https://connect.facebook.net" />
           <link rel="preconnect" href="https://cdn.channel.io" />
           <link rel="preconnect" href="https://www.googletagmanager.com" />
