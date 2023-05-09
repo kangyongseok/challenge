@@ -5,12 +5,14 @@ import { useRouter } from 'next/router';
 
 import GoogleTagManager from '@library/googleTagManager';
 
+import { isProduction } from '@utils/common';
+
 function GoogleTagManagerProvider() {
   const router = useRouter();
 
   useEffect(() => {
     const handleRouteChangeComplete = (url: string) => {
-      GoogleTagManager.paveView(url);
+      if (process.env.GOOGLE_TAG_MANAGER_ID && isProduction) GoogleTagManager.paveView(url);
     };
 
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
@@ -22,7 +24,7 @@ function GoogleTagManagerProvider() {
     };
   }, [router.events]);
 
-  if (!process.env.GOOGLE_TAG_MANAGER_ID) return null;
+  if (!process.env.GOOGLE_TAG_MANAGER_ID || !isProduction) return null;
 
   return (
     <Script

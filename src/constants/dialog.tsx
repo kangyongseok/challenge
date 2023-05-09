@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Box, Flexbox, Label, Typography } from 'mrcamel-ui';
+import { Box, Typography } from 'mrcamel-ui';
 
 import type { DialogType } from '@typings/common';
 
@@ -82,28 +82,7 @@ export const dialogTitle: Record<
       <br />앱 업데이트가 필요해요
     </Box>
   ),
-  osAlarm: (
-    <Flexbox
-      alignment="center"
-      justifyContent="center"
-      customStyle={{ position: 'relative', width: 70, height: 52, margin: '0 auto', marginTop: 10 }}
-    >
-      <Typography customStyle={{ fontSize: 52 }}>🔔</Typography>
-      <Label
-        variant="solid"
-        brandColor="black"
-        text="알림설정"
-        customStyle={{
-          position: 'absolute',
-          top: -5,
-          right: -20,
-          borderRadius: 12,
-          padding: '4px 8px',
-          minWidth: 59
-        }}
-      />
-    </Flexbox>
-  )
+  osAlarm: <Box customStyle={{ marginTop: 12 }}>🔕 기기 알림이 꺼져있어요!</Box>
 };
 
 export const dialogContent = {
@@ -244,14 +223,10 @@ export const dialogContent = {
     </Typography>
   ),
   osAlarm: (
-    <>
-      <Typography variant="h3" weight="bold" customStyle={{ marginTop: 32 }}>
-        채팅과 가격 변동, 사진 감정결과를
-        <br />
-        실시간으로 보내드려요
-      </Typography>
-      <Typography customStyle={{ marginTop: 8 }}>설정에서 언제든 변경이 가능해요</Typography>
-    </>
+    <Typography customStyle={{ marginTop: 8 }}>
+      채팅 알림, 가격 변동, 꿀매물 알림을
+      <br /> 놓치지 않도록 알림을 켜주세요.
+    </Typography>
   )
 };
 

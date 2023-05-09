@@ -12,7 +12,7 @@ function GoogleAnalyticsProvider() {
 
   useEffect(() => {
     const handleRouteChangeComplete = (url: string) => {
-      GoogleAnalytics.paveView(url);
+      if (isProduction) GoogleAnalytics.paveView(url);
     };
 
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
