@@ -9,28 +9,6 @@ function useOsAlarm() {
   const setDialogState = useSetRecoilState(dialogState);
 
   const checkOsAlarm = () => {
-    setDialogState({
-      type: 'osAlarm',
-      disabledOnClose: true,
-      customStyleTitle: {
-        minWidth: 270
-      },
-      secondButtonAction: () => {
-        if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
-          window.webview.moveToSetting();
-        }
-        if (
-          checkAgent.isIOSApp() &&
-          window.webkit &&
-          window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.callMoveToSetting &&
-          window.webkit.messageHandlers.callMoveToSetting.postMessage
-        ) {
-          window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
-        }
-      }
-    });
-
     window.getAuthPush = (result: string) => {
       if (!JSON.parse(result)) {
         setPrevChannelAlarmPopup(false);
