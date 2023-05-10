@@ -2,9 +2,9 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import { debounce, findIndex } from 'lodash-es';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 

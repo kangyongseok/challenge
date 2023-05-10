@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { BottomSheet, Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { BottomSheet, Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { FixedProductInfo } from '@components/UI/molecules';

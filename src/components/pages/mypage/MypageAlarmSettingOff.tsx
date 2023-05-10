@@ -1,4 +1,4 @@
-import { Box, Flexbox, Image, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 

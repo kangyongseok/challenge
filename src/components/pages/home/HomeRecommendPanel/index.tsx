@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box } from 'mrcamel-ui';
+import { Box } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { IOS_SAFE_AREA_BOTTOM, IOS_SAFE_AREA_TOP } from '@constants/common';

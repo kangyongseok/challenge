@@ -3,9 +3,9 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Label, Typography } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Avatar, Box, Flexbox, Icon, Image, Label, Typography } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { ProductLabel } from '@components/UI/organisms';
 import {
@@ -212,6 +212,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const [loadFailed, setLoadFailed] = useState(false);
   const [cardCustomStyle] = useState({ ...customStyle, cursor: 'pointer' });
   const [isWish, setIsWish] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageUrl));
 
   const imageBoxRef = useRef<HTMLDivElement>(null);
 
@@ -280,6 +281,10 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     }
   }, [measure]);
 
+  useEffect(() => {
+    if (loadFailed) setSrc(imageUrl);
+  }, [imageUrl, loadFailed]);
+
   const handleClickManageProduct = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setUserShopSelectedProductState(product as Product & ProductResult);
@@ -300,7 +305,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
     >
       <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
         <Image
-          src={loadFailed ? imageUrl : getProductCardImageResizePath(imageUrl)}
+          src={src}
           alt={`${product.title} 이미지`}
           round={isRound ? 8 : 0}
           onError={() => setLoadFailed(true)}

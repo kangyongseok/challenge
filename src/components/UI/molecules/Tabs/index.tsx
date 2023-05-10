@@ -1,7 +1,7 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 import { forwardRef } from 'react';
 
-import type { BrandColor, CustomStyle } from 'mrcamel-ui';
+import type { BrandColor, CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { BadgeText, StyledTabs, Tab } from './Tabs.styles';
 

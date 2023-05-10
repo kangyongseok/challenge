@@ -1,4 +1,4 @@
-import { Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function NonMemberWelcome() {

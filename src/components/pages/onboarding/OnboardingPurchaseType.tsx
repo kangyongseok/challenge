@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import PurchaseType from '@components/UI/organisms/PurchaseType';
 

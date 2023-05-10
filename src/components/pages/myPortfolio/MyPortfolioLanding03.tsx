@@ -1,4 +1,4 @@
-import { Box, Image, Typography } from 'mrcamel-ui';
+import { Box, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 

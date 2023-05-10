@@ -1,8 +1,8 @@
 import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import capitalize from 'lodash-es/capitalize';
+import { Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { AllBrand } from '@dto/brand';
 

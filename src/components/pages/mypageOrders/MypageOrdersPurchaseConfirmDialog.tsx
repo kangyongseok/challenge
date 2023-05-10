@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

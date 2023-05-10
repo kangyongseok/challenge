@@ -1,8 +1,8 @@
 import { memo, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQueries } from '@tanstack/react-query';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { NewProductGridCard } from '@components/UI/molecules';

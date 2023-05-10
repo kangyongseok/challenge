@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { ThemeProvider } from 'mrcamel-ui';
+import { ThemeProvider } from '@mrcamelhub/camel-ui';
 
 import {
   LegitRequestEdit,

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import { animated, useTransition } from '@react-spring/web';
+import { BottomSheet, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { PuffLoader } from '@components/UI/atoms';
 import { LoginButtonList } from '@components/pages/login';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { GetServerSidePropsContext } from 'next';
-import { Alert, Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Alert, Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {

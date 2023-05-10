@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import type { UIEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import debounce from 'lodash-es/debounce';
+import { Chip, Flexbox, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';

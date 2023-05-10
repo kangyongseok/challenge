@@ -1,4 +1,4 @@
-import { Box, Flexbox, Grid, Skeleton, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Header, LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';

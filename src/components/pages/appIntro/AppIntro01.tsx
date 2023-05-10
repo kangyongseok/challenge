@@ -1,4 +1,4 @@
-import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 const animationItems = [

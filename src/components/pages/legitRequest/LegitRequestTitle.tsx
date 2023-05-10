@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 interface LegitRequestTitleProps {
   brandLogo: string;

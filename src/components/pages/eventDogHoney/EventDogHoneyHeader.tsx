@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Box, Icon, Typography } from 'mrcamel-ui';
+import { Box, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 

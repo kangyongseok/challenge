@@ -3,10 +3,10 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

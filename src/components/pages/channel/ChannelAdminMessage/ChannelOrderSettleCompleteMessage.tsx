@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import {
   QueryObserverResult,
@@ -8,6 +7,7 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';

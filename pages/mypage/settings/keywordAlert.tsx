@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 
 import { KeywordAlertManageBottomSheet, KeywordAlertOffDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';

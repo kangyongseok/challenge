@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { Box, Button, CustomStyle, Typography } from 'mrcamel-ui';
+import { Box, Button, CustomStyle, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { searchHelperPopupStateFamily } from '@recoil/searchHelper';

@@ -1,7 +1,7 @@
 import type { HTMLAttributes, PropsWithChildren } from 'react';
 
-import { Flexbox } from 'mrcamel-ui';
-import type { BrandColor, CSSValue, CustomStyle } from 'mrcamel-ui';
+import { Flexbox } from '@mrcamelhub/camel-ui';
+import type { BrandColor, CSSValue, CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { StyledBadge } from './Badge.styles';
 

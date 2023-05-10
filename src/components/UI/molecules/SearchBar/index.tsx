@@ -1,6 +1,6 @@
 import { InputHTMLAttributes, ReactElement, forwardRef } from 'react';
 
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { EndIcon, Input, InputBox, StartIcon, StyledSearchBar, Wrapper } from './SearchBar.styles';
 

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Skeleton, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ReviewCard } from '@components/UI/organisms';
 

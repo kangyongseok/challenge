@@ -2,7 +2,7 @@ import type { PropsWithChildren, ReactElement } from 'react';
 import { useEffect, useRef } from 'react';
 
 import { useRecoilState } from 'recoil';
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { activeViewportTrickState } from '@recoil/common';

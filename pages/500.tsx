@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';

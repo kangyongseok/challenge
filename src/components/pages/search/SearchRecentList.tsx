@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Chip, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

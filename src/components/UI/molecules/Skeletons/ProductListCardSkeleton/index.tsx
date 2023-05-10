@@ -1,5 +1,5 @@
-import { Box, Flexbox, Skeleton } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 interface ProductListCardSkeletonPros {
   isRound?: boolean;

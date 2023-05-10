@@ -3,6 +3,8 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import isEmpty from 'lodash-es/isEmpty';
+import { debounce } from 'lodash-es';
 import {
   Avatar,
   Box,
@@ -13,9 +15,7 @@ import {
   Input,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import isEmpty from 'lodash-es/isEmpty';
-import { debounce } from 'lodash-es';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductDynamicOptionCodeDetail, ProductDynamicOptionCodeType } from '@dto/product';

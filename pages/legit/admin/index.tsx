@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { Box } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';

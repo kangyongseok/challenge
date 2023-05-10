@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { Box, Button, Toast } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Button, Toast } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

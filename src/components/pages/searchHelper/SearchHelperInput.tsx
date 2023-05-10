@@ -1,8 +1,8 @@
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes, MouseEvent, ReactElement } from 'react';
 import { forwardRef, useState } from 'react';
 
-import { CustomStyle } from 'mrcamel-ui/dist/types/component';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 interface SearchHelperInputProps extends InputHTMLAttributes<HTMLInputElement> {

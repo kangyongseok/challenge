@@ -1,11 +1,11 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
 import type {
   QueryObserverResult,
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
+import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import type { ProductResult } from '@dto/product';
 import type { Order } from '@dto/order';

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Image } from 'mrcamel-ui';
+import { Box, Image } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

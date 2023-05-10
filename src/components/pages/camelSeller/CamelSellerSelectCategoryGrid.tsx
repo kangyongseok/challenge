@@ -1,7 +1,7 @@
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ParentCategory } from '@dto/category';
 

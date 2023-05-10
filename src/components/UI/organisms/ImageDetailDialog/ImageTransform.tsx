@@ -3,8 +3,11 @@ import type { MutableRefObject } from 'react';
 
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
+import { Box } from '@mrcamelhub/camel-ui';
 
-import { Img } from './ImageDetailDialog.styles';
+import { heicToBlob } from '@utils/common';
+
+import { Img, LoadingIcon } from './ImageDetailDialog.styles';
 
 interface ImageTransformProps {
   transformsRef: MutableRefObject<(ReactZoomPanPinchRef | null)[]>;
@@ -31,6 +34,8 @@ function ImageTransform({
 }: ImageTransformProps) {
   const [panningDisabled, setPanningDisabled] = useState(true);
   const [currentScale, setCurrentScale] = useState(1);
+  const [newSrc, setNewSrc] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const imageRef = useRef<HTMLImageElement>(null);
   const zoomStopTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -58,6 +63,20 @@ function ImageTransform({
       if (scale <= 1) onChangeSwiperOption(true);
       zoomStopTimerRef.current = undefined;
     }, 200);
+  };
+
+  const handleError = () => {
+    setIsLoading(true);
+    heicToBlob(
+      src.replace(
+        /https:\/\/static.mrcamel.co.kr\//g,
+        'https://mrcamel.s3.ap-northeast-2.amazonaws.com/'
+      ),
+      'image'
+    ).then((response) => {
+      setNewSrc(response || '');
+      setIsLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -110,7 +129,28 @@ function ImageTransform({
           justifyContent: 'center'
         }}
       >
-        <Img ref={imageRef} src={src} alt="Transform Img" rotate={rotate} onLoad={onImageLoad} />
+        {isLoading && (
+          <Box
+            customStyle={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1000
+            }}
+          >
+            <LoadingIcon width={50} height={50} name="LoadingFilled" color="uiWhite" />
+          </Box>
+        )}
+        <Img
+          ref={imageRef}
+          src={newSrc || src}
+          alt="Transform Img"
+          rotate={rotate}
+          onLoad={onImageLoad}
+          onError={handleError}
+          isLoading={isLoading}
+        />
       </TransformComponent>
     </TransformWrapper>
   );

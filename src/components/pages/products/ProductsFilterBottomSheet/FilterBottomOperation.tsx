@@ -1,7 +1,7 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Button, Chip, Icon, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
+import { Avatar, Button, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

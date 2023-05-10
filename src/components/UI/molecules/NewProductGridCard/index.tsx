@@ -3,9 +3,18 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Avatar,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
@@ -129,6 +138,7 @@ function NewProductGridCard({
   const [isAuthSeller, setIsAuthSeller] = useState(false);
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -255,6 +265,12 @@ function NewProductGridCard({
     setIsAuthProduct(legitStatus === 30 && result === 1);
   }, [productLegit]);
 
+  useEffect(() => {
+    if (loadFailed) {
+      setSrc(imageMain || imageThumbnail);
+    }
+  }, [imageMain, imageThumbnail, loadFailed]);
+
   return (
     <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
       <Box
@@ -350,11 +366,7 @@ function NewProductGridCard({
           )}
         <Image
           ratio="5:6"
-          src={
-            loadFailed
-              ? imageMain || imageThumbnail
-              : getProductCardImageResizePath(imageMain || imageThumbnail)
-          }
+          src={src}
           alt={`${productTitle} 이미지`}
           round={variant === 'gridA' ? 0 : 8}
           onError={() => setLoadFailed(true)}
@@ -418,7 +430,7 @@ function NewProductGridCard({
             color: common.ui60
           }}
         >
-          {productTitle}
+          {productTitle} {String(loadFailed)}
         </Typography>
         {!hidePrice && (
           <Flexbox

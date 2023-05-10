@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { ErrorBoundary } from '@components/UI/organisms';
 

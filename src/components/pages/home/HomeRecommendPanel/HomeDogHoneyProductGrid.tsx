@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Grid, Icon, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Grid, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 

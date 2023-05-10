@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Grid } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Grid } from '@mrcamelhub/camel-ui';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 

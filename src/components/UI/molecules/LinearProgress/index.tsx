@@ -1,4 +1,4 @@
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { ProgressBar, StyledLinearProgress } from './LinearProgress.styles';
 

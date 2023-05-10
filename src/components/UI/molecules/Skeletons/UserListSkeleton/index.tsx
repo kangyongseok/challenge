@@ -1,4 +1,4 @@
-import { Flexbox, Skeleton } from 'mrcamel-ui';
+import { Flexbox, Skeleton } from '@mrcamelhub/camel-ui';
 
 function UserListSkeleton() {
   return (

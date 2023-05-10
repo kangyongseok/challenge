@@ -1,6 +1,6 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { BottomSheet, Button, Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { BottomSheet, Button, Flexbox, Icon, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchCommonCodeDetails } from '@api/common';
 

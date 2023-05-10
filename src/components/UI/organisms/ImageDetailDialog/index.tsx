@@ -4,7 +4,7 @@ import type { ReactElement, TouchEvent } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
 import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
-import { Box, Dialog, Icon, light, useTheme } from 'mrcamel-ui';
+import { Box, Dialog, Icon, light, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

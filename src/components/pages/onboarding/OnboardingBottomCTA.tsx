@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react';
 
-import { Box, Button, dark } from 'mrcamel-ui';
+import { Box, Button, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 interface OnboardingBottomCTAProps {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

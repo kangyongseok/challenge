@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

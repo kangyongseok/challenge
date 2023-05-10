@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { Box, Input } from 'mrcamel-ui';
+import { Box, Input } from '@mrcamelhub/camel-ui';
 
 import FlexibleTemplate from '@components/templates/FlexibleTemplate';
 

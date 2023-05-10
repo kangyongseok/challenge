@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import {
   QueryObserverResult,
@@ -10,6 +9,7 @@ import {
   useMutation
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductOffer } from '@dto/productOffer';
 import type { ChannelDetail } from '@dto/channel';

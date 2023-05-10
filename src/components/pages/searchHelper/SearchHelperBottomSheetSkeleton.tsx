@@ -1,4 +1,4 @@
-import { Flexbox, Skeleton } from 'mrcamel-ui';
+import { Flexbox, Skeleton } from '@mrcamelhub/camel-ui';
 
 import { getRandomNumber } from '@utils/common';
 

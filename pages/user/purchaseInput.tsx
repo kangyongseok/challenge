@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import PurchaseType from '@components/UI/organisms/PurchaseType';

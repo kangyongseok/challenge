@@ -1,4 +1,4 @@
-import { Avatar, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Avatar, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { PRODUCT_SITE } from '@constants/product';

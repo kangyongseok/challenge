@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Grid, Image, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';

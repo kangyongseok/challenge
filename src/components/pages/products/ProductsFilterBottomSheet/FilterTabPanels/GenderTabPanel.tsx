@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon } from 'mrcamel-ui';
+import { Box, Flexbox, Icon } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { PostProductLegitData } from '@dto/productLegit';

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

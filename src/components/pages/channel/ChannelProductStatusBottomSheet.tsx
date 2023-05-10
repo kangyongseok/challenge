@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { BottomSheet, Button, Flexbox, Typography } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { BottomSheet, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

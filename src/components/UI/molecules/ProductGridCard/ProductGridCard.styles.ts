@@ -1,4 +1,4 @@
-import { Flexbox, Label, Typography } from 'mrcamel-ui';
+import { Flexbox, Label, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 export const WishButton = styled.button`

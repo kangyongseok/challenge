@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
 import { useRouter } from 'next/router';
-import { Grid, Label } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Grid, Label } from '@mrcamelhub/camel-ui';
 
 import {
   ImageDetailDialog,

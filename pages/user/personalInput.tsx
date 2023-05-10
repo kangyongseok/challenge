@@ -3,10 +3,10 @@ import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Button, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Box, Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GenderYearInput from '@components/UI/organisms/GenderYearInput';

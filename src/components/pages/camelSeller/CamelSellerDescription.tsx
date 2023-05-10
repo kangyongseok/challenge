@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

@@ -1,8 +1,17 @@
 import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
-import { Alert, Box, Flexbox, Icon, Image, ThemeProvider, Typography, dark } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import {
+  Alert,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  ThemeProvider,
+  Typography,
+  dark
+} from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

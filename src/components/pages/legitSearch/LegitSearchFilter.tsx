@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { Box, Chip, Flexbox } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Chip, Flexbox } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

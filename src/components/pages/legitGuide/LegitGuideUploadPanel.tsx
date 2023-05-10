@@ -1,4 +1,4 @@
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function LegitGuideUploadPanel() {
   const {

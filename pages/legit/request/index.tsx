@@ -5,9 +5,9 @@ import type { Swiper } from 'swiper';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Flexbox, Grid, Icon, Label, ThemeProvider, dark } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Grid, Icon, Label, ThemeProvider, dark } from '@mrcamelhub/camel-ui';
 
 import { ImageDetailDialog, LegitUploadInfoPaper } from '@components/UI/organisms';
 import { Header, LegitPhotoGuideCard } from '@components/UI/molecules';

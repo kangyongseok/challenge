@@ -9,10 +9,10 @@ import CellMeasurer from 'react-virtualized/dist/commonjs/CellMeasurer';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import { CellMeasurerCache, Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from 'mrcamel-ui';
 import throttle from 'lodash-es/throttle';
 import { isEmpty } from 'lodash-es';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 

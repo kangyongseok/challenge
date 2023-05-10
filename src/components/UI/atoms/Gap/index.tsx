@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-import { CSSValue, CustomStyle } from 'mrcamel-ui';
+import { CSSValue, CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { StyledGap } from './Gap.styles';
 

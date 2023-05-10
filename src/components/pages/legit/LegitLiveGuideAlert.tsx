@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Alert, Flexbox, Icon, Typography } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Alert, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

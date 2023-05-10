@@ -3,9 +3,9 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Chip, Flexbox, Input, Typography, useTheme } from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
 import { useQuery } from '@tanstack/react-query';
+import { Chip, Flexbox, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Models } from '@dto/model';

@@ -1,4 +1,4 @@
-import { Tooltip } from 'mrcamel-ui';
+import { Tooltip } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 

@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Input, useTheme } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Chip, Flexbox, Icon, Input, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

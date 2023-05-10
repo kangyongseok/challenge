@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Grid, Icon, Input, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Grid, Icon, Input, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

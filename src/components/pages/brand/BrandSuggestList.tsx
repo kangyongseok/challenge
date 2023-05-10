@@ -1,4 +1,4 @@
-import { Flexbox } from 'mrcamel-ui';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import BrandItem from '@components/pages/brand/BrandItem';
 

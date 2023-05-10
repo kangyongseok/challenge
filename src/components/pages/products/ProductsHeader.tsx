@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Header, SearchBar } from '@components/UI/molecules';
 

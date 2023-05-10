@@ -1,4 +1,4 @@
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Divider } from '@components/UI/molecules';
 import LegitUploadPhoto from '@components/pages/legitRequest/LegitUploadPhoto';

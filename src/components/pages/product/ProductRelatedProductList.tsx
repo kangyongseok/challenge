@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 
-import { Box, Grid, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Grid, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 

@@ -12,8 +12,8 @@ import {
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import EventDogHoneyProductCard from '@components/pages/eventDogHoney/EventDogHoneyProductCard';

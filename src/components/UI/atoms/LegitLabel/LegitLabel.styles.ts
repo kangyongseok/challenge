@@ -1,4 +1,4 @@
-import { Label, light } from 'mrcamel-ui';
+import { Label, light } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { LegitLabelProps } from '.';

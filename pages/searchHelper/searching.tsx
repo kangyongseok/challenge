@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Label, Typography } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { animated, useSpring } from '@react-spring/web';
+import { Flexbox, Label, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';

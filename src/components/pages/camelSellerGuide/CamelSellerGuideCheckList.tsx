@@ -1,4 +1,4 @@
-import { Box, CheckboxGroup, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CheckboxGroup, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function CamelSellerGuideCheckList() {
   const {

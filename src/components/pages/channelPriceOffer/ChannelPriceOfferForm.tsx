@@ -2,8 +2,18 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Flexbox, Icon, Input, Toast, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  Box,
+  Button,
+  Chip,
+  Flexbox,
+  Icon,
+  Input,
+  Toast,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

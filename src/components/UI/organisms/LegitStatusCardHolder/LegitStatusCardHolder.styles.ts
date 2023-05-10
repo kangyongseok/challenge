@@ -1,4 +1,4 @@
-import { Typography, dark } from 'mrcamel-ui';
+import { Typography, dark } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { LegitStatusCardHolderProps } from '.';

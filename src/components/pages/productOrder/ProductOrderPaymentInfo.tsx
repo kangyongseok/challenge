@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Label, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchProduct } from '@api/product';
 import { fetchProductOrder } from '@api/order';

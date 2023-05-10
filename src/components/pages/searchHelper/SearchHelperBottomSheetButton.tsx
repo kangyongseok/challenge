@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react';
 
-import { Button, useTheme } from 'mrcamel-ui';
+import { Button, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 const SearchHelperBottomSheetButton = forwardRef<

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
 
-import { Button, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Button, CustomStyle, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

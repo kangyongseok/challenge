@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { GetServerSidePropsContext } from 'next';
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

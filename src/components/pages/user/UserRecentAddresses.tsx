@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 import { Dispatch, SetStateAction } from 'react';
 
-import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 interface UserRecentAddressesProps {
   recentAddresses: string[];

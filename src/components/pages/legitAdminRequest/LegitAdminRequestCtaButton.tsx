@@ -3,8 +3,16 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Grid, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  BottomSheet,
+  Box,
+  Button,
+  Flexbox,
+  Grid,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import LegitPhotoGuideCard from '@components/UI/molecules/LegitPhotoGuideCard';

@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Box, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductResult } from '@dto/product';

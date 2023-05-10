@@ -2,7 +2,6 @@ import { memo, useEffect, useMemo, useState } from 'react';
 
 import { Line } from 'react-chartjs-2';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import {
   CategoryScale,
@@ -13,6 +12,7 @@ import {
   Tooltip
 } from 'chart.js';
 import type { ChartData, ChartOptions } from 'chart.js';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

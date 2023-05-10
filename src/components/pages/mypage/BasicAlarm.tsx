@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Flexbox, Switch, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Flexbox, Switch, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 

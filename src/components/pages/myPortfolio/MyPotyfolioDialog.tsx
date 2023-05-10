@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';

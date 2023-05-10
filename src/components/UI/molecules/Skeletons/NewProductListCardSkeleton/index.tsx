@@ -1,4 +1,4 @@
-import { Box, CustomStyle, Flexbox, Skeleton } from 'mrcamel-ui';
+import { Box, CustomStyle, Flexbox, Skeleton } from '@mrcamelhub/camel-ui';
 
 import type { ProductListCardVariant } from '@typings/common';
 

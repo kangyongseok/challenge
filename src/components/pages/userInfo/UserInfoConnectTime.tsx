@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { getFormattedActivatedTime } from '@utils/formats';

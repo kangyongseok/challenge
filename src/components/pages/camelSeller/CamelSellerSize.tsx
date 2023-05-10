@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { CategorySizes } from '@dto/category';

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Flexbox, Switch } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Flexbox, Switch } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 

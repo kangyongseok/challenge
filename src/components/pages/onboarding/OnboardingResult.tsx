@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { BottomSheet, Box, Chip, Flexbox, Image, Typography, dark } from 'mrcamel-ui';
 import { sortBy } from 'lodash-es';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { BottomSheet, Box, Chip, Flexbox, Image, Typography, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';

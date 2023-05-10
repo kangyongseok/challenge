@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import MowebFooter from '@components/UI/organisms/MowebFooter';

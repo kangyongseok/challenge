@@ -5,10 +5,10 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
-import { Toast } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toast } from '@mrcamelhub/camel-ui';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';

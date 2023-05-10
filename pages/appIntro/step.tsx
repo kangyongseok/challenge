@@ -5,7 +5,7 @@ import { Pagination } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, ThemeProvider, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, ThemeProvider, Typography, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';

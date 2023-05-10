@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Divider, ProductDetailHeader } from '@components/UI/molecules';

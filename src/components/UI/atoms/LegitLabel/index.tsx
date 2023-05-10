@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react';
 
-import type { CustomStyle, Size } from 'mrcamel-ui';
-import { Icon } from 'mrcamel-ui';
+import type { CustomStyle, Size } from '@mrcamelhub/camel-ui';
+import { Icon } from '@mrcamelhub/camel-ui';
 
 import type { LegitOpinionType } from '@typings/common';
 

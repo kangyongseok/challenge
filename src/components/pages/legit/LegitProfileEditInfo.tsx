@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

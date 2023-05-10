@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Button, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';

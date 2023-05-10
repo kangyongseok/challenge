@@ -12,13 +12,13 @@ import {
 } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
-import { Box, Flexbox } from 'mrcamel-ui';
 import type {
   QueryObserverResult,
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Flexbox } from '@mrcamelhub/camel-ui';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 import NewProductListCardSkeleton from '@components/UI/molecules/Skeletons/NewProductListCardSkeleton';

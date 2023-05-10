@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Icon } from 'mrcamel-ui';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -208,7 +208,7 @@ function ProductOrderSuccess() {
                     source
                   });
 
-                  router.push(`/channels/${channelId}`);
+                  router.push(`/channels/${newChannelId}`);
                 }
               );
             },

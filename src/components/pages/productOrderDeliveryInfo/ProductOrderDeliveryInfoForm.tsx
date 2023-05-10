@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Input, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Input, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { DeliveryInfo } from '@dto/order';

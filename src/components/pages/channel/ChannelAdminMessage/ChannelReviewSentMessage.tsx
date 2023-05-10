@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

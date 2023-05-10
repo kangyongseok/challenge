@@ -10,9 +10,9 @@ import {
   TrailingActions
 } from 'react-swipeable-list';
 import { useRouter } from 'next/router';
-import { Button, Icon, Label, useTheme } from 'mrcamel-ui';
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
+import { Button, Icon, Label, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ListItem } from '@components/UI/atoms';

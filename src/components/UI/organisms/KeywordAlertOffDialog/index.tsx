@@ -1,6 +1,6 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchAlarm, putAlarm } from '@api/user';
 

@@ -2,7 +2,7 @@ import type { PropsWithChildren, ReactElement } from 'react';
 import { useEffect, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import Axios from '@library/axios';

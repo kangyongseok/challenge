@@ -1,8 +1,8 @@
 import type { HTMLAttributes } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { LegitLabel } from '@components/UI/atoms';
 
@@ -64,6 +64,11 @@ function LegitGridCard({
   } = product || {};
 
   const [loadFailed, setLoadFailed] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
+
+  useEffect(() => {
+    if (loadFailed) setSrc(imageThumbnail || imageMain);
+  }, [imageMain, imageThumbnail, loadFailed]);
 
   return (
     <Flexbox {...props} direction="vertical" customStyle={{ cursor: 'pointer' }} css={customStyle}>
@@ -74,11 +79,7 @@ function LegitGridCard({
       >
         <Image
           ratio="5:6"
-          src={
-            loadFailed
-              ? imageMain || imageThumbnail
-              : getProductCardImageResizePath(imageMain || imageThumbnail)
-          }
+          src={src}
           alt={`${title} 이미지`}
           round={variant !== 'gridA' ? 8 : 0}
           onError={() => setLoadFailed(true)}

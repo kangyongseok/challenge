@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Flexbox } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';

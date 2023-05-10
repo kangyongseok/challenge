@@ -1,4 +1,4 @@
-import { Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

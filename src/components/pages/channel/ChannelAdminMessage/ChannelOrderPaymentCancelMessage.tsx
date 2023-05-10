@@ -1,6 +1,6 @@
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 

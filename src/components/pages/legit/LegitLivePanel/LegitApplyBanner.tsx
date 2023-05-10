@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { PopupButton } from '@typeform/embed-react';
+import { Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function LegitApplyBanner() {
   const {

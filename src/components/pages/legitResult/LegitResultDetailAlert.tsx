@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Alert, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Alert, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchProductLegit } from '@api/productLegit';
 

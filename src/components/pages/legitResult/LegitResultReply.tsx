@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ProductLegitReply } from '@dto/productLegit';

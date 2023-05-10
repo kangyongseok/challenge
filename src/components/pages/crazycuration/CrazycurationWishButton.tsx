@@ -2,14 +2,14 @@ import { memo, useCallback } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Icon } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import type {
   QueryObserverResult,
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
+import { Button, Icon } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { ProductContent } from '@dto/product';
 

@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { GetServerSidePropsContext } from 'next';
-import { Flexbox, Radio, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Radio, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

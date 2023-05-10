@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import type { GetServerSidePropsContext } from 'next';
-import { Flexbox } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import { Gap, PageHead } from '@components/UI/atoms';

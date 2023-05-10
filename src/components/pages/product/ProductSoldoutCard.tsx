@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

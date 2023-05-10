@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function ChannelCamelAuthFixBanner({ type }: { type?: 'external' }) {
   const {

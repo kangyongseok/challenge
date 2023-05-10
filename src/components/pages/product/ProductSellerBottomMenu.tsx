@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

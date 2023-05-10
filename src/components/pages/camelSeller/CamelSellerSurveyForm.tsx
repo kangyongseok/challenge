@@ -2,7 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Chip,
+  Flexbox,
+  Icon,
+  Image,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

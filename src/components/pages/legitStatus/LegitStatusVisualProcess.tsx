@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, dark, useTheme } from 'mrcamel-ui';
 import { isEmpty } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/styled';
 import { Keyframes, keyframes } from '@emotion/react';

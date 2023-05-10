@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box, Icon, Input, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Input, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

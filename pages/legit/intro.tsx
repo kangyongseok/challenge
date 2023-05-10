@@ -3,8 +3,8 @@ import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Button, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Button, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -17,6 +17,7 @@ import { fetchProduct } from '@api/product';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
@@ -70,6 +71,10 @@ function LegitIntro() {
   };
 
   const handleClickCancel = () => {
+    logEvent(attrKeys.legitIntro.CLICK_CANCEL, {
+      name: attrProperty.name.LEGIT_POPUP
+    });
+
     if (!product) return;
     const newRegister = !!router.query.register;
     if (newRegister) {

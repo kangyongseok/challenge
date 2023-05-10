@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

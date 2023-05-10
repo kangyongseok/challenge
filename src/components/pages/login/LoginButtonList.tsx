@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -13,8 +14,7 @@ import {
   Tooltip,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { useQueryClient } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';

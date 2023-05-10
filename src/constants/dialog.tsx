@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { Box, Typography } from 'mrcamel-ui';
+import { Box, Typography } from '@mrcamelhub/camel-ui';
 
 import type { DialogType } from '@typings/common';
 

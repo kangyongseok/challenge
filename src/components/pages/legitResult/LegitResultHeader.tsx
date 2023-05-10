@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, dark } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Icon, dark } from '@mrcamelhub/camel-ui';
 
 import Header from '@components/UI/molecules/Header';
 

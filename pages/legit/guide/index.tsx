@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Icon, ThemeProvider, dark } from 'mrcamel-ui';
+import { Box, Icon, ThemeProvider, dark } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

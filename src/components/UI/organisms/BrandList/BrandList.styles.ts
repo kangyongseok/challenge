@@ -1,4 +1,4 @@
-import { Image, Typography } from 'mrcamel-ui';
+import { Image, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { BrandListProps } from './index';

@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { BottomSheet, Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

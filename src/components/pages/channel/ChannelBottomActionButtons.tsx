@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 import type {
@@ -12,6 +11,7 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import type { FileMessageCreateParams, SendableMessage } from '@sendbird/chat/lib/__definition';
+import { Box, Chip, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';

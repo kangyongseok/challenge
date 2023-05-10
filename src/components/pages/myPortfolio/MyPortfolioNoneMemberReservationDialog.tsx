@@ -3,8 +3,8 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { TextInput } from '@components/UI/molecules';
 

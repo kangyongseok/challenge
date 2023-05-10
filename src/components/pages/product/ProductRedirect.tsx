@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import amplitude from 'amplitude-js';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';

@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
   useTheme
-} from 'mrcamel-ui';
+} from '@mrcamelhub/camel-ui';
 
 import {
   settingsTransferDataState,

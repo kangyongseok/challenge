@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useTheme } from 'mrcamel-ui';
+import { useTheme } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

@@ -2,8 +2,17 @@ import { useMemo, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import {
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Image,
+  Skeleton,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';

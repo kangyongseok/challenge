@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
-import { Flexbox, Image, Typography } from 'mrcamel-ui';
-import type { TypographyVariant } from 'mrcamel-ui';
+import { Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
+import type { TypographyVariant } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 

@@ -1,8 +1,8 @@
 import type { MouseEvent } from 'react';
 
-import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import type { CustomStyle, IconName } from 'mrcamel-ui';
-import { Icon } from 'mrcamel-ui';
+import type { IconProps } from '@mrcamelhub/camel-ui/dist/src/components/Icon';
+import type { CustomStyle, IconName } from '@mrcamelhub/camel-ui';
+import { Icon } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 interface TouchIcon extends IconProps {

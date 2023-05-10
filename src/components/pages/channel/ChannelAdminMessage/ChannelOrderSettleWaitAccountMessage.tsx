@@ -1,9 +1,9 @@
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchUserAccounts } from '@api/user';
 

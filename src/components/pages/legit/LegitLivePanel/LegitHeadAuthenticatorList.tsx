@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';

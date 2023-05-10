@@ -3,8 +3,8 @@ import { ReactElement, useMemo, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
-import { Avatar, Box, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Avatar, Box, Flexbox, Image, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';
 import { LegitLabel } from '@components/UI/atoms';

@@ -1,4 +1,4 @@
-import { Label } from 'mrcamel-ui';
+import { Label } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 export const LabelDivider = styled.hr`

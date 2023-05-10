@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, CustomStyle, Tab, TabGroup, useTheme } from 'mrcamel-ui';
+import { Box, CustomStyle, Tab, TabGroup, useTheme } from '@mrcamelhub/camel-ui';
 
 // import Tabs from '@components/UI/molecules/Tabs';
 

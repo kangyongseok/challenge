@@ -1,4 +1,4 @@
-import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Models } from '@dto/model';

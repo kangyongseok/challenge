@@ -1,5 +1,5 @@
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchUserCerts } from '@api/user';
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { Box } from 'mrcamel-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Box } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

@@ -1,7 +1,7 @@
 import type { MutableRefObject } from 'react';
 import { Fragment } from 'react';
 
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import BrandItem from '@components/pages/brand/BrandItem';

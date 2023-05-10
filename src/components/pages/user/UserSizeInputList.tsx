@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { Dispatch, MouseEvent, SetStateAction } from 'react';
 
-import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import uniqBy from 'lodash-es/uniqBy';
 import find from 'lodash-es/find';
 import filter from 'lodash-es/filter';
+import { Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { SizeValue } from '@dto/user';
 

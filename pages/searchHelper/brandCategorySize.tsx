@@ -2,11 +2,11 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from '
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import debounce from 'lodash-es/debounce';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Divider } from '@components/UI/molecules';

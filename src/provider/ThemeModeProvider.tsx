@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import localFont from 'next/font/local';
-import { ThemeProvider } from 'mrcamel-ui';
+import { ThemeProvider } from '@mrcamelhub/camel-ui';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';

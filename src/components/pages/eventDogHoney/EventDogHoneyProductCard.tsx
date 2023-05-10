@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Avatar, Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import {
   Content,

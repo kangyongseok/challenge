@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';

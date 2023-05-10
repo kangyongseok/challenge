@@ -2,7 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Switch, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  Flexbox,
+  Icon,
+  Switch,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Badge } from '@components/UI/atoms';

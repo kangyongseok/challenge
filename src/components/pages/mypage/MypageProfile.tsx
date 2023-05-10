@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import type { IconName } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

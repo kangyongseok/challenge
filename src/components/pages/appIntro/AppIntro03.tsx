@@ -1,4 +1,4 @@
-import { Box, Flexbox, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 function AppIntro03({ animationStart }: { animationStart: boolean }) {

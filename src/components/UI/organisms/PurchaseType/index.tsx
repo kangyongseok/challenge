@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

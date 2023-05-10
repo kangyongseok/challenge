@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
-import { Avatar, Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Avatar, Box, Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchTransfers } from '@api/user';
 

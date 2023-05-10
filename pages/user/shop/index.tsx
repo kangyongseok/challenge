@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Flexbox } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
 import { CamelSellerFloatingButton } from '@components/UI/molecules';

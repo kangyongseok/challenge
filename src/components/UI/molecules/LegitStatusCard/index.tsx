@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 
-import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Box, Flexbox, Icon, Image, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Badge } from '@components/UI/atoms';
 
@@ -44,6 +44,7 @@ function LegitStatusCard({
   } = useTheme();
 
   const [loadFailed, setLoadFailed] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
@@ -154,6 +155,10 @@ function LegitStatusCard({
     return newLabelText;
   }, [useInAdmin, isMine, status, role, legitOpinions, accessUser, result]);
 
+  useEffect(() => {
+    if (loadFailed) setSrc(imageThumbnail || imageMain);
+  }, [imageMain, imageThumbnail, loadFailed]);
+
   return (
     <Flexbox {...props} gap={16} customStyle={{ cursor: 'pointer', userSelect: 'none' }}>
       <Box
@@ -167,11 +172,7 @@ function LegitStatusCard({
       >
         <Image
           ratio="5:6"
-          src={
-            loadFailed
-              ? imageThumbnail || imageMain
-              : getProductCardImageResizePath(imageThumbnail || imageMain)
-          }
+          src={src}
           alt={`${title} 이미지`}
           round={8}
           onError={() => setLoadFailed(true)}

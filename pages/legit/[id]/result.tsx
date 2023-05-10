@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Alert, Box, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { Alert, Box, ThemeProvider, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {

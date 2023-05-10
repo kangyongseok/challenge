@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { Typography, useTheme } from 'mrcamel-ui';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductOffer } from '@dto/productOffer';
 

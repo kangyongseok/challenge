@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { checkAgent } from '@utils/common';
 

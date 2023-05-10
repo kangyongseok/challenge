@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { ThemeProvider } from 'mrcamel-ui';
 import { animated, useTransition } from '@react-spring/web';
+import { ThemeProvider } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import PuffLoader from '@components/UI/atoms/PuffLoader';

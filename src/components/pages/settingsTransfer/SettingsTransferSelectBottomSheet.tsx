@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { Avatar, BottomSheet, Button, Flexbox } from 'mrcamel-ui';
+import { Avatar, BottomSheet, Button, Flexbox } from '@mrcamelhub/camel-ui';
 
 import {
   settingsTransferPlatformsState,

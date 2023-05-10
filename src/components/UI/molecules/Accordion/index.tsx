@@ -1,8 +1,7 @@
 import type { HTMLAttributes, MouseEvent, PropsWithChildren, ReactElement } from 'react';
 
-import type { ColorKey } from 'mrcamel-ui/dist/types';
-import type { CustomStyle, TypographyVariant, Variant } from 'mrcamel-ui';
-import { Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import type { ColorKey, CustomStyle, TypographyVariant, Variant } from '@mrcamelhub/camel-ui';
+import { Chip, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { Details, StyledAccordion, Summary } from './Accordion.styles';
 
@@ -37,10 +36,6 @@ function Accordion({
   children,
   ...props
 }: PropsWithChildren<AccordionProps>) {
-  const {
-    theme: { palette }
-  } = useTheme();
-
   const handleClick = (isExpanded: boolean) => (e: MouseEvent<HTMLDivElement>) => {
     changeExpandedStatus(e, isExpanded);
   };
@@ -75,7 +70,7 @@ function Accordion({
         {showExpandIcon && !expandIcon && (
           <Icon
             name={expanded ? 'CaretUpOutlined' : 'CaretDownOutlined'}
-            color={palette.common[`ui${expandIconGreyColorKey}`]}
+            color={`ui${expandIconGreyColorKey}`}
             size="small"
             customStyle={{
               transitionProperty: 'all',

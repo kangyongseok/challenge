@@ -1,4 +1,4 @@
-import { CustomStyle, Fab, Icon } from 'mrcamel-ui';
+import { CustomStyle, Fab, Icon } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

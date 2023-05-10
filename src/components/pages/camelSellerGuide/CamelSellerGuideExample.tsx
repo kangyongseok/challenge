@@ -1,6 +1,16 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Alert, Box, Button, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Alert,
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { historyState } from '@recoil/common';
 

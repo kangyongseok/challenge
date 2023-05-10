@@ -3,9 +3,18 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Avatar,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { ProductOffer } from '@dto/productOffer';
 import type { Product, ProductResult } from '@dto/product';
@@ -20,7 +29,6 @@ import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
-import { NEXT_IMAGE_BLUR_URL } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrKeys from '@constants/attrKeys';
 
@@ -135,6 +143,7 @@ function NewProductListCard({
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [authOpinionCount, setAuthOpinionCount] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -257,6 +266,12 @@ function NewProductListCard({
     }
   }, [productLegit]);
 
+  useEffect(() => {
+    if (loadFailed) {
+      setSrc(imageMain || imageThumbnail);
+    }
+  }, [imageMain, imageThumbnail, loadFailed]);
+
   return (
     <Flexbox
       onClick={handleClick}
@@ -338,11 +353,7 @@ function NewProductListCard({
         )}
         <Image
           ratio="5:6"
-          src={
-            loadFailed
-              ? imageMain || imageThumbnail || NEXT_IMAGE_BLUR_URL
-              : getProductCardImageResizePath(imageMain || imageThumbnail)
-          }
+          src={src}
           alt={`${productTitle} 이미지`}
           round={8}
           onError={() => setLoadFailed(true)}

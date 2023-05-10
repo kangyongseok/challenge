@@ -1,8 +1,8 @@
 import { memo, useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Icon, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { fetchLegit } from '@api/dashboard';

@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Dialog, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductLegit } from '@dto/productLegit';
 

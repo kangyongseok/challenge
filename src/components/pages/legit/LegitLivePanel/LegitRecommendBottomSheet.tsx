@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { BottomSheet, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import LegitCard from '@components/UI/molecules/LegitCard';
 

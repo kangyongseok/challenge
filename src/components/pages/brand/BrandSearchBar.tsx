@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Icon } from 'mrcamel-ui';
+import { Box, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';

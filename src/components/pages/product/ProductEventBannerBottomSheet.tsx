@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Image } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { BottomSheet, Button, Flexbox, Image } from '@mrcamelhub/camel-ui';
 
 import UserTraceRecord from '@library/userTraceRecord';
 import LocalStorage from '@library/localStorage';

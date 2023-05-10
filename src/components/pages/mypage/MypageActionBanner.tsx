@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Image, Typography, dark, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Box, Flexbox, Icon, Image, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';

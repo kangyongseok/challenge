@@ -1,8 +1,8 @@
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import debounce from 'lodash-es/debounce';
+import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

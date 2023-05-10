@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box, Tab, TabGroup, useTheme } from 'mrcamel-ui';
+import { Box, Tab, TabGroup, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

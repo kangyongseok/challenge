@@ -1,8 +1,8 @@
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Box, Chip, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Chip, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { UserKeywordInfo } from '@dto/user';
 

@@ -3,9 +3,17 @@ import { useEffect, useState } from 'react';
 import { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Avatar, BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
+import {
+  Avatar,
+  BottomSheet,
+  Box,
+  Flexbox,
+  Icon,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SearchHelperBottomSheetSkeleton from '@components/pages/searchHelper/SearchHelperBottomSheetSkeleton';

@@ -2,8 +2,17 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import {
+  BottomSheet,
+  Box,
+  Button,
+  Flexbox,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

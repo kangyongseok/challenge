@@ -1,4 +1,4 @@
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 interface ChannelReserveMessageProps {
   targetUserName: string;

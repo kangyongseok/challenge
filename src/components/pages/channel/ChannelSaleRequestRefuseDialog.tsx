@@ -2,13 +2,13 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, RadioGroup, Typography } from 'mrcamel-ui';
 import type {
   QueryObserverResult,
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
+import { Button, Dialog, Flexbox, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ChannelUser } from '@dto/user';

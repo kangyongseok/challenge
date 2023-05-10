@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Icon } from 'mrcamel-ui';
+import { Flexbox, Icon } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 import { Badge } from '@components/UI/atoms';

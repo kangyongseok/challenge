@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Image } from 'mrcamel-ui';
 import type { FileMessage } from '@sendbird/chat/message';
+import { Image } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { isVideoMessage } from '@utils/channel';

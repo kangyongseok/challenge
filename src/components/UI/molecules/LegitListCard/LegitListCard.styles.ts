@@ -1,4 +1,4 @@
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { LegitListCardProps } from '.';

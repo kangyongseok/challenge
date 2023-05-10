@@ -1,4 +1,4 @@
-import { Image, Typography } from 'mrcamel-ui';
+import { Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function LegitGuideIntro() {

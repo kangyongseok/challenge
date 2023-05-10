@@ -1,12 +1,14 @@
-import { Button, Icon } from 'mrcamel-ui';
+import { Button, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-export const Img = styled.img<{ rotate: number }>`
+export const Img = styled.img<{ rotate: number; isLoading: boolean }>`
   transform: rotate(${({ rotate }) => rotate}deg);
+  opacity: ${({ isLoading }) => (isLoading ? 0 : 1)};
+  transition: opacity 0.2s;
 `;
 
 export const CloseIcon = styled(Icon)`
@@ -53,4 +55,18 @@ export const RotateButton = styled(Button)`
   right: 20px;
   bottom: 20px;
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+`;
+
+export const LoadingIcon = styled(Icon)`
+  animation: rotate 1s linear infinite;
+  z-index: ${({ theme: { zIndex } }) => zIndex.button};
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `;

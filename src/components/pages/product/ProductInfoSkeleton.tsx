@@ -1,4 +1,4 @@
-import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Divider } from '@components/UI/molecules';
 

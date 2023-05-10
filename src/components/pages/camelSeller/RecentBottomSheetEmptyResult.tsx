@@ -1,4 +1,4 @@
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function RecentBottomSheetEmptyResult({ title }: { title: string }) {

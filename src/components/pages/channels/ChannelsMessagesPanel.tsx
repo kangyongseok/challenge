@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, CustomStyle, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CustomStyle, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
 

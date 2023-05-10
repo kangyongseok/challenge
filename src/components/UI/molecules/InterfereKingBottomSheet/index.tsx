@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
-import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { exitNextStepBottomSheetState, toastState } from '@recoil/common';
 

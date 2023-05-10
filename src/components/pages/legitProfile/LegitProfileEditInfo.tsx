@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
+import { useMutation } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -13,8 +14,7 @@ import {
   Typography,
   dark,
   useTheme
-} from 'mrcamel-ui';
-import { useMutation } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';

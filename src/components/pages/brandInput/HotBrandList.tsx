@@ -1,9 +1,9 @@
 import type { MouseEvent } from 'react';
 
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Icon, Image, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { Box, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Brand } from '@dto/brand';

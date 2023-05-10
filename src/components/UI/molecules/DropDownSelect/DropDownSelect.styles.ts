@@ -1,4 +1,4 @@
-import { Button, Flexbox } from 'mrcamel-ui';
+import { Button, Flexbox } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import { CSSObject } from '@emotion/react';
 

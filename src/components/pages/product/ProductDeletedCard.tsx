@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function ProductDeletedCard() {
   const rotuer = useRouter();

@@ -1,4 +1,4 @@
-import { Avatar, Flexbox } from 'mrcamel-ui';
+import { Avatar, Flexbox } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { filterColors, filterImageColorNames } from '@constants/productsFilter';

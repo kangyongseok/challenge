@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Button, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Image } from 'mrcamel-ui';
+import { Box, Image } from '@mrcamelhub/camel-ui';
 
 import { SafePaymentGuideDialog } from '@components/UI/organisms';
 

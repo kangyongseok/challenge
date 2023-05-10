@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { ThemeProvider } from 'mrcamel-ui';
+import { ThemeProvider } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import {

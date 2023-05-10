@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { TypographyVariant } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { TypographyVariant } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import {

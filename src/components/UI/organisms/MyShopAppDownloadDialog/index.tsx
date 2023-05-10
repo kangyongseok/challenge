@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { handleClickAppDownload } from '@utils/common';
 

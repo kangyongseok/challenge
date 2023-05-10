@@ -5,6 +5,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -14,8 +15,7 @@ import {
   ThemeProvider,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { UserAvatar } from '@components/UI/organisms';

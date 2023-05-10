@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
-import { Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 

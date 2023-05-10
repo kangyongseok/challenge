@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
-import { CSSValue } from 'mrcamel-ui';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
+import { CSSValue } from '@mrcamelhub/camel-ui';
 
 require('dayjs/locale/ko');
 

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Button, Dialog, Flexbox, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

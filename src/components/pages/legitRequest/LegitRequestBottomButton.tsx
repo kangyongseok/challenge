@@ -1,5 +1,5 @@
-import { Button, Tooltip } from 'mrcamel-ui';
-import type { Color } from 'mrcamel-ui';
+import { Button, Tooltip } from '@mrcamelhub/camel-ui';
+import type { Color } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 interface LegitRequestBottomButtonProps {

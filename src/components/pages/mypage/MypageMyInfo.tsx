@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Menu, MenuItem } from '@components/UI/molecules';

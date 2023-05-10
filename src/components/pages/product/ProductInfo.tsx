@@ -4,6 +4,9 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useRouter } from 'next/router';
+import { debounce, find } from 'lodash-es';
+import amplitude from 'amplitude-js';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Avatar,
   BottomSheet,
@@ -16,10 +19,7 @@ import {
   Tooltip,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { debounce, find } from 'lodash-es';
-import amplitude from 'amplitude-js';
-import { useMutation, useQuery } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { OnBoardingSpotlight } from '@components/UI/organisms';

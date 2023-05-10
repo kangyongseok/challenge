@@ -3,8 +3,18 @@ import type { HTMLAttributes, MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Alert, Avatar, Box, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { HideOverlay, ReservingOverlay, SoldOutOverlay } from '@components/UI/molecules';
 

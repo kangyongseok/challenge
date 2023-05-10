@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { PropsWithChildren, RefObject } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { scrollEnable } from '@utils/scroll';
 

@@ -3,8 +3,8 @@ import type { MouseEvent, TouchEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Image, Label } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Icon, Image, Label } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import ImageDetailDialog from '@components/UI/organisms/ImageDetailDialog';

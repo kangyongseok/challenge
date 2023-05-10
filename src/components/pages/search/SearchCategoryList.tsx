@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { CategoryList } from '@components/UI/organisms';
 

@@ -1,6 +1,9 @@
 import { Fragment, useMemo, useState } from 'react';
 
 import { useRouter } from 'next/router';
+import { entries, groupBy, isEmpty } from 'lodash-es';
+import dayjs from 'dayjs';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -11,10 +14,7 @@ import {
   Toast,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { entries, groupBy, isEmpty } from 'lodash-es';
-import dayjs from 'dayjs';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';

@@ -1,4 +1,4 @@
-import { Box, Image, useTheme } from 'mrcamel-ui';
+import { Box, Image, useTheme } from '@mrcamelhub/camel-ui';
 
 import { getImageResizePath } from '@utils/common';
 

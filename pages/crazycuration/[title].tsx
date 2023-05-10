@@ -3,8 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { CustomStyle, Flexbox, Typography } from 'mrcamel-ui';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { CustomStyle, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { PageHead } from '@components/UI/atoms';

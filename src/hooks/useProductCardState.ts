@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useTheme } from 'mrcamel-ui';
+import { useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 

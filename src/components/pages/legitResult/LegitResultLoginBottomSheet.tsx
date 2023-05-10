@@ -11,7 +11,7 @@ import {
   Typography,
   light,
   useTheme
-} from 'mrcamel-ui';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react';
 
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 
 import { StyledMenu, StyledMenuItem, Title } from './Menu.styles';
 

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import { useTheme } from '@emotion/react';
 
 import HomeFooter from '@components/pages/home/HomeFooter';

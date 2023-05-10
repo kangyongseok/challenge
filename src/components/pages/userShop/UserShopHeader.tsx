@@ -1,4 +1,4 @@
-import { Flexbox, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, ThemeProvider, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { UserAvatar } from '@components/UI/organisms';
 import Header from '@components/UI/molecules/Header';

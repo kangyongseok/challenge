@@ -3,9 +3,9 @@ import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Label, Typography, dark, useTheme } from 'mrcamel-ui';
 import { uniqBy } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Grid, Label, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 
 import {
   ImageDetailDialog,

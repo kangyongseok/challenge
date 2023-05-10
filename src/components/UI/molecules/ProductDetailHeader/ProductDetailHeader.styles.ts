@@ -1,4 +1,4 @@
-import { Flexbox } from 'mrcamel-ui';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';

@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
-import { Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

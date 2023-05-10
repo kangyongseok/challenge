@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { BottomSheet, Box, Button, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { PopupButton } from '@typeform/embed-react';
+import { BottomSheet, Box, Button, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';

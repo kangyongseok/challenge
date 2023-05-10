@@ -1,8 +1,17 @@
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Avatar, Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import {
+  Avatar,
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';

@@ -1,4 +1,4 @@
-import { Flexbox, Icon } from 'mrcamel-ui';
+import { Flexbox, Icon } from '@mrcamelhub/camel-ui';
 
 function LoginMainContent() {
   return (

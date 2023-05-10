@@ -3,6 +3,7 @@ import type { ChangeEvent, MouseEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { useMutation } from '@tanstack/react-query';
 import {
   Alert,
   BottomSheet,
@@ -15,8 +16,7 @@ import {
   Toast,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { useMutation } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/react';
 

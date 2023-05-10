@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Flexbox, Typography } from 'mrcamel-ui';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 interface UserShopEmptyProps {
   tab: string;

@@ -1,5 +1,5 @@
-import { Flexbox, Typography } from 'mrcamel-ui';
 import type { UserMessage } from '@sendbird/chat/message';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import ChannelMessageStatus from './ChannelMessageStatus';

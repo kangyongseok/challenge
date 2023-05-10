@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, ThemeProvider, dark } from 'mrcamel-ui';
+import { Box, ThemeProvider, dark } from '@mrcamelhub/camel-ui';
 
 import Header from '@components/UI/molecules/Header';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

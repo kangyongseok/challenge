@@ -1,4 +1,4 @@
-import { Flexbox } from 'mrcamel-ui';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 export const CenterContents = styled.section`

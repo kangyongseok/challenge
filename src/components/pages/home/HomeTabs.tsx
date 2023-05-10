@@ -1,6 +1,6 @@
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import Badge from '@components/UI/atoms/Badge';
 

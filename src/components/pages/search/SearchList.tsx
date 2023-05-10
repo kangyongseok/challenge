@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
 import capitalize from 'lodash-es/capitalize';
+import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { SuggestKeyword } from '@dto/product';

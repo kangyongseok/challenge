@@ -1,4 +1,4 @@
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';

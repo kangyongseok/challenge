@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import { BottomSheet, Flexbox, Typography } from 'mrcamel-ui';
+import { BottomSheet, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { PostReportData } from '@dto/user';

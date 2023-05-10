@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
   const {

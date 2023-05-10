@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow } from 'swiper';
-import { Box, Flexbox, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 

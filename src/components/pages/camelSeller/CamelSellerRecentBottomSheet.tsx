@@ -3,6 +3,7 @@ import type { UIEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { isEmpty } from 'lodash-es';
 import {
   BottomSheet,
   Box,
@@ -12,8 +13,7 @@ import {
   Skeleton,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import { isEmpty } from 'lodash-es';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { RecentSearchParams } from '@dto/product';

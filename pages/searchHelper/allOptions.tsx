@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { SearchHelperFixedBottomCTAButton } from '@components/pages/searchHelper';

@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 
-import { Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Image, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { CommonPhotoGuideDetail } from '@dto/common';
+
+import { heicToBlob } from '@utils/common';
 
 import {
   AnimationLoading,
@@ -54,6 +56,8 @@ function LegitPhotoGuideCard({
   } = useTheme();
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [defaultImageLoadFailed, setDefaultImageLoadFailed] = useState(false);
+  const [newImageUrl, setNewImageUrl] = useState('');
 
   // 0: optional, 1: 필수, 2: 수정, 3: 수정완료
   const status = useMemo(() => {
@@ -70,22 +74,45 @@ function LegitPhotoGuideCard({
 
   useEffect(() => {
     const newImage = document.createElement('img');
-    if (staticImageUrl) {
+    if (staticImageUrl && imageUrl) {
       newImage.src = `${staticImageUrl}?w=250&f=webp`;
       newImage.onload = () => setIsImageLoading(false);
       newImage.onerror = () => {
         setIsImageLoading(false);
         setLoadFailed(true);
+        const defaultImage = document.createElement('img');
+        defaultImage.src = imageUrl;
+        defaultImage.onerror = () => setDefaultImageLoadFailed(true);
       };
     } else {
       setIsImageLoading(false);
     }
-  }, [staticImageUrl]);
+  }, [staticImageUrl, imageUrl]);
+
+  useEffect(() => {
+    if (defaultImageLoadFailed && imageUrl) {
+      setIsImageLoading(true);
+      heicToBlob(
+        imageUrl.replace(
+          /https:\/\/static.mrcamel.co.kr\//g,
+          'https://mrcamel.s3.ap-northeast-2.amazonaws.com/'
+        ),
+        'image'
+      ).then((response) => {
+        setNewImageUrl(response || '');
+        setIsImageLoading(false);
+      });
+    }
+  }, [defaultImageLoadFailed, imageUrl]);
 
   return (
     <StyledLegitPhotoGuideCard
       imageSample={hideSample ? '' : imageSample}
-      imageUrl={staticImageUrl && !loadFailed ? `${staticImageUrl}?w=250&f=webp` : imageUrl}
+      imageUrl={
+        staticImageUrl && !loadFailed && !defaultImageLoadFailed
+          ? `${staticImageUrl}?w=250&f=webp`
+          : newImageUrl
+      }
       status={status}
       isInvalid={isInvalid}
       hideStatusHighLite={hideStatusHighLite}

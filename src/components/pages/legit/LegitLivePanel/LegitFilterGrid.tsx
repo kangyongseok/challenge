@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Chip, Flexbox, Grid, Icon, Skeleton } from 'mrcamel-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, Chip, Flexbox, Grid, Icon, Skeleton } from '@mrcamelhub/camel-ui';
 
 import { LegitGridCard } from '@components/UI/molecules';
 

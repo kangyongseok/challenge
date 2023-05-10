@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Icon, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Avatar, Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ProductResult } from '@dto/product';

@@ -5,9 +5,9 @@ import type { Swiper as SwiperClass } from 'swiper/types';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Lazy } from 'swiper';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Image, Skeleton, light } from 'mrcamel-ui';
-import type { TypographyVariant } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Image, Skeleton, light } from '@mrcamelhub/camel-ui';
+import type { TypographyVariant } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 

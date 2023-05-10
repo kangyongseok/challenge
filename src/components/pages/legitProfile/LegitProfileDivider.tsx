@@ -1,4 +1,4 @@
-import { Box, useTheme } from 'mrcamel-ui';
+import { Box, useTheme } from '@mrcamelhub/camel-ui';
 
 interface LegitProfileDividerProps {
   isLoading: boolean;

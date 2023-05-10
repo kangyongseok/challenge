@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Avatar, Box, Flexbox, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Avatar, Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 

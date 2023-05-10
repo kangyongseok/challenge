@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Icon, ThemeProvider, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Icon, ThemeProvider, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

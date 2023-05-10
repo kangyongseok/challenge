@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 
 import { atom } from 'recoil';
-import type { CustomStyle } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { Product } from '@dto/product';
 

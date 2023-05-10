@@ -1,7 +1,7 @@
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Icon, Typography, dark, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { Flexbox, Icon, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

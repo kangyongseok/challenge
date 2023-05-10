@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 
 function ChannelAppointmentMessage() {
   const router = useRouter();

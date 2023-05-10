@@ -2,9 +2,9 @@ import { memo } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

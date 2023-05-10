@@ -1,4 +1,4 @@
-import { Button, Tooltip, Typography } from 'mrcamel-ui';
+import { Button, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { fadeOut } from '@styles/transition';

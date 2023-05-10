@@ -1,7 +1,15 @@
 import { useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, CustomStyle, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  CustomStyle,
+  Flexbox,
+  Skeleton,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';

@@ -1,9 +1,9 @@
 import type { HTMLAttributes } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Avatar, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Avatar, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { LegitLabel } from '@components/UI/atoms';
 
@@ -52,10 +52,15 @@ function LegitCard({
   const isNormalseller = siteId === 34 || productSeller?.type === 4 || productSeller?.type === 3;
 
   const [loadFailed, setLoadFailed] = useState(false);
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
 
   const {
     theme: { box }
   } = useTheme();
+
+  useEffect(() => {
+    if (loadFailed) setSrc(imageThumbnail || imageMain);
+  }, [imageMain, imageThumbnail, loadFailed]);
 
   if (variant === 'list') {
     return (
@@ -66,15 +71,7 @@ function LegitCard({
         customStyle={{ ...customStyle, maxHeight: 56, cursor: 'pointer' }}
       >
         <ImageBox>
-          <Image
-            src={
-              loadFailed
-                ? imageThumbnail || imageMain
-                : getProductCardImageResizePath(imageThumbnail || imageMain)
-            }
-            alt="Product Legit Img"
-            onError={() => setLoadFailed(true)}
-          />
+          <Image src={src} alt="Product Legit Img" onError={() => setLoadFailed(true)} />
           {!hidePlatformLogo && postType !== 2 && (
             <Avatar
               width={15}

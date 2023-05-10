@@ -1,4 +1,4 @@
-import { Image } from 'mrcamel-ui';
+import { Image } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { CommonPhotoGuideDetail } from '@dto/common';

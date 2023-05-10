@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Switch, Toast, Typography, useTheme } from 'mrcamel-ui';
 import sortBy from 'lodash-es/sortBy';
+import { Box, Button, Flexbox, Switch, Toast, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -13,8 +14,7 @@ import {
   Typography,
   dark,
   useTheme
-} from 'mrcamel-ui';
-import { useQuery } from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

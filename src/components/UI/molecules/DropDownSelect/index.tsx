@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Box, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { Box, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

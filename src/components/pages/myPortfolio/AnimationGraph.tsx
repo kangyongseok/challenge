@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Flexbox } from 'mrcamel-ui';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function AnimationGraph({ activeIndex }: { activeIndex: number }) {

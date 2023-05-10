@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Icon } from 'mrcamel-ui';
+import { Flexbox, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import Badge from '@components/UI/atoms/Badge';

@@ -1,5 +1,4 @@
 import { useSetRecoilState } from 'recoil';
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import {
   QueryObserverResult,
@@ -8,6 +7,7 @@ import {
   useMutation
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';

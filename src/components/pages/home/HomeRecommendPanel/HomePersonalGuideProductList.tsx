@@ -3,10 +3,10 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { debounce, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';

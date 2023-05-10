@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import type { IconName } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductLegit } from '@dto/productLegit';

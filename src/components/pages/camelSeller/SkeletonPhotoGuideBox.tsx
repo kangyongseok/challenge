@@ -1,4 +1,4 @@
-import { Skeleton } from 'mrcamel-ui';
+import { Skeleton } from '@mrcamelhub/camel-ui';
 
 function SkeletonPhotoGuideBox() {
   return (

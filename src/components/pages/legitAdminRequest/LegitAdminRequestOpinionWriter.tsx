@@ -4,8 +4,8 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import LegitOpinionButton from '@components/UI/molecules/LegitOpinionButton';

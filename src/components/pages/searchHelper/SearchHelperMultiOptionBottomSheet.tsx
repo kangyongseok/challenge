@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import SearchHelperBottomSheetSkeleton from '@components/pages/searchHelper/SearchHelperBottomSheetSkeleton';
 

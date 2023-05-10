@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Gender } from '@dto/user';
 

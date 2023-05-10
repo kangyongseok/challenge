@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Typography, dark } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 export const ParentStyleCard = styled(Flexbox)<{ isSelect: boolean; themeType?: boolean }>`

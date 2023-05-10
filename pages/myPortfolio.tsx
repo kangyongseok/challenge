@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, useTheme } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Icon, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { PageHead, TouchIcon } from '@components/UI/atoms';

@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-import { Box, Flexbox, Image } from 'mrcamel-ui';
+import { Box, Flexbox, Image } from '@mrcamelhub/camel-ui';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 

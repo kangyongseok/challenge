@@ -4,8 +4,8 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Flexbox, Skeleton, useTheme } from 'mrcamel-ui';
 import type { FileMessage } from '@sendbird/chat/message';
+import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 
 import { ImageDetailDialog, SelectTargetUserBottomSheet } from '@components/UI/organisms';
 import FixedProductInfo from '@components/UI/molecules/FixedProductInfo';

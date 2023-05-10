@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Dialog, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

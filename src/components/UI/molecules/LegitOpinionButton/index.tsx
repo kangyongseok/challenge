@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import type { LegitOpinionType } from '@typings/common';
 

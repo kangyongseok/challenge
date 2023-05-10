@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Flexbox, Skeleton, ThemeProvider, Typography, dark, useTheme } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Skeleton, ThemeProvider, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { LegitGridCard } from '@components/UI/molecules';

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Flexbox, Switch, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Flexbox, Switch, Typography } from '@mrcamelhub/camel-ui';
 
 import type { AlarmsParams } from '@dto/user';
 

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { PostProductLegitData } from '@dto/productLegit';
 

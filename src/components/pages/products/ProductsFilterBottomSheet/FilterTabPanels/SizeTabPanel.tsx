@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Grid, Icon } from 'mrcamel-ui';
+import { Box, Button, Flexbox, Grid, Icon } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

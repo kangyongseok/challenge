@@ -1,4 +1,4 @@
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 export const StyledListItem = styled.li`

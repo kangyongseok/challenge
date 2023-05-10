@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { Flexbox, ThemeProvider, Toast, Typography } from 'mrcamel-ui';
+import { Flexbox, ThemeProvider, Toast, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { toastActionButtonText, toastText } from '@constants/toast';

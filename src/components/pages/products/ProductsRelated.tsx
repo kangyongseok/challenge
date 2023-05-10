@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 

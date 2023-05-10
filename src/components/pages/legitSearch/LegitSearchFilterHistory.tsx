@@ -1,4 +1,4 @@
-import { Box, Chip, Icon, useTheme } from 'mrcamel-ui';
+import { Box, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function LegitSearchFilterHistory() {

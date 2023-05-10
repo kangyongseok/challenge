@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Grid } from 'mrcamel-ui';
+import { Box, Flexbox, Grid } from '@mrcamelhub/camel-ui';
 
 import FilterSorter from '@components/pages/products/ProductsFilterBottomSheet/FilterSorter';
 import FilterOption from '@components/pages/products/ProductsFilterBottomSheet/FilterOption';

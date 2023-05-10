@@ -1,7 +1,7 @@
 import { MouseEvent, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Typography, dark } from 'mrcamel-ui';
+import { BottomSheet, Button, Flexbox, Typography, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';

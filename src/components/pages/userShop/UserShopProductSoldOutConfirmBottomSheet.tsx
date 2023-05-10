@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { BottomSheet, Box, Button, Flexbox, Image, Typography } from 'mrcamel-ui';
 import { useMutation } from '@tanstack/react-query';
+import { BottomSheet, Box, Button, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import type { Product } from '@dto/product';
 

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper';
-import { Box, Flexbox, Image, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

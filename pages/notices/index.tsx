@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';

@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Grid, Skeleton, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { LegitGridCard, LegitGridCardSkeleton } from '@components/UI/molecules';
 

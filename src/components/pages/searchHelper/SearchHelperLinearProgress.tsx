@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { commaNumber } from '@utils/common';

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Input, Label, Switch, Typography, useTheme } from 'mrcamel-ui';
+import { Button, Flexbox, Input, Label, Switch, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

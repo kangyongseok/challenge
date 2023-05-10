@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Icon, Image, useTheme } from 'mrcamel-ui';
+import { Box, Icon, Image, useTheme } from '@mrcamelhub/camel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';

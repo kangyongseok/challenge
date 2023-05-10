@@ -1,4 +1,4 @@
-import { Box } from 'mrcamel-ui';
+import { Box } from '@mrcamelhub/camel-ui';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';

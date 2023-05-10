@@ -3,7 +3,7 @@ import type { Dispatch, FocusEvent, SetStateAction } from 'react';
 import type { Address } from 'react-daum-postcode';
 import DaumPostcode from 'react-daum-postcode';
 import { useRouter } from 'next/router';
-import { Box, Icon, Typography } from 'mrcamel-ui';
+import { Box, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SearchBar from '@components/UI/molecules/SearchBar';

@@ -1,4 +1,4 @@
-import type { Variant } from 'mrcamel-ui/dist/types';
+import type { Variant } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/react';
 

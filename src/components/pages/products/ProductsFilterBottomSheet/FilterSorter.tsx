@@ -1,7 +1,7 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 
-import type { CustomStyle } from 'mrcamel-ui';
-import { Button, Flexbox } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
+import { Button, Flexbox } from '@mrcamelhub/camel-ui';
 
 interface FilterSorterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick' | 'onChange'> {
   options: {

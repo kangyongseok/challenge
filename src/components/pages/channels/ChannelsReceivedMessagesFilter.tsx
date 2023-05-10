@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

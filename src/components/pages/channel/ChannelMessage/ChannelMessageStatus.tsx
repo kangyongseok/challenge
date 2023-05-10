@@ -1,5 +1,5 @@
-import { Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { messageStates } from '@constants/channel';

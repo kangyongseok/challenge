@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Avatar, Chip, Icon, Toast, useTheme } from 'mrcamel-ui';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
+import { Avatar, Chip, Icon, Toast, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

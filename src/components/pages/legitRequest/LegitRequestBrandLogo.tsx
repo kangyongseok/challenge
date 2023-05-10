@@ -1,4 +1,4 @@
-import { Image } from 'mrcamel-ui';
+import { Image } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { IOS_SAFE_AREA_TOP } from '@constants/common';

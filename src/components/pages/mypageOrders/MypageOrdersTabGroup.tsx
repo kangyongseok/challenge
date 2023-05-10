@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Tab, TabGroup } from 'mrcamel-ui';
+import { Box, Tab, TabGroup } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';

@@ -3,7 +3,6 @@ import type { MouseEvent } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
 import { find } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -15,6 +14,7 @@ import type {
 import type { AdminMessage } from '@sendbird/chat/message';
 import { UserMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
+import { Box, Button, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductOffer } from '@dto/productOffer';

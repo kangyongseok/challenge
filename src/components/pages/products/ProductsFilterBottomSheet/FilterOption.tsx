@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
-import { Avatar, Box, Button, Icon, Typography, useTheme } from 'mrcamel-ui';
+import { Avatar, Box, Button, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { filterImageColorNames, needReverseCheckFilterColorNames } from '@constants/productsFilter';

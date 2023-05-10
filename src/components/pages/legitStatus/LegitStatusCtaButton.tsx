@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Toast, Tooltip, Typography } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Toast, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import ChannelTalk from '@library/channelTalk';

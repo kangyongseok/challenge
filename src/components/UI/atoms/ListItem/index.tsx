@@ -1,7 +1,7 @@
 import type { MouseEvent, ReactElement } from 'react';
 
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 

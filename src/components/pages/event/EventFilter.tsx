@@ -1,8 +1,8 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Chip, Skeleton } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Chip, Skeleton } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

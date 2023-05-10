@@ -1,7 +1,17 @@
 import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';

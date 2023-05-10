@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { Icon } from 'mrcamel-ui';
 import axios from 'axios';
+import { Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';

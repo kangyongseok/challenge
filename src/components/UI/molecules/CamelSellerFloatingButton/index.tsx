@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Icon, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchUserInfo } from '@api/user';
 

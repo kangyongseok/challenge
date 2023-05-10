@@ -2,9 +2,9 @@ import { useState } from 'react';
 import type { MutableRefObject } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, CheckboxGroup, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 import { useQuery } from '@tanstack/react-query';
+import { Button, CheckboxGroup, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';

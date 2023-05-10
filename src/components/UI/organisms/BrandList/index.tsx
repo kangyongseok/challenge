@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import type { CustomStyle } from 'mrcamel-ui';
-import { Skeleton, useTheme } from 'mrcamel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
+import { Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 
 import { GENDER } from '@constants/user';
 import { BRANDS_BY_GENDER } from '@constants/brand';

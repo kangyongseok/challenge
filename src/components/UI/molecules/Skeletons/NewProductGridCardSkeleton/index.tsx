@@ -1,5 +1,5 @@
-import { Flexbox, Skeleton } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Flexbox, Skeleton } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { ProductGridCardVariant } from '@typings/common';
 

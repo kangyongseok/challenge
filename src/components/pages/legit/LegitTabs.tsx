@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Tab, TabGroup, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Tab, TabGroup, useTheme } from '@mrcamelhub/camel-ui';
 
 import Badge from '@components/UI/atoms/Badge';
 

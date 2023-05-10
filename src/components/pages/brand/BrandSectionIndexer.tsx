@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import { memo, useCallback } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Typography } from 'mrcamel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

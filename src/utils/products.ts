@@ -1,6 +1,6 @@
 import { ParsedUrlQuery } from 'querystring';
 
-import { MrCamelTheme } from 'mrcamel-ui/dist/types';
+import type { MrCamelTheme } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@dto/product';
 

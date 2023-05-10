@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { Button, Flexbox, Input } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Button, Flexbox, Input } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

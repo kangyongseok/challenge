@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Icon, Typography } from 'mrcamel-ui';
+import { Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

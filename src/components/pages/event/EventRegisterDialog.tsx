@@ -3,8 +3,8 @@ import type { ChangeEvent, FormEvent } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Input, Typography, useTheme } from 'mrcamel-ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Box, Button, Dialog, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchSurvey, postSurvey } from '@api/user';
 

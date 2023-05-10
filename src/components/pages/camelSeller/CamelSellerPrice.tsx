@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import {
   Box,
   Button,
@@ -13,8 +14,7 @@ import {
   Input,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import dayjs from 'dayjs';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product, RecentSearchParams } from '@dto/product';

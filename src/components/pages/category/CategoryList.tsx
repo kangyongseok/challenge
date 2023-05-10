@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Flexbox, Image, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';

@@ -1,4 +1,4 @@
-import { Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Icon, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { PRODUCT_SITE, REPORT_STATUS } from '@constants/product';
 

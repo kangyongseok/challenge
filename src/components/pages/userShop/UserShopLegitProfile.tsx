@@ -11,7 +11,7 @@ import {
   ThemeProvider,
   Typography,
   useTheme
-} from 'mrcamel-ui';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

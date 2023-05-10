@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { CheckboxGroup, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { CheckboxGroup, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCardSkeleton } from '@components/UI/molecules';
 import { MypageOrdersCard } from '@components/pages/mypageOrders';

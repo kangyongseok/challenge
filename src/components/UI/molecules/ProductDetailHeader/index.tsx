@@ -2,10 +2,10 @@ import { MouseEvent, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
 import amplitude from 'amplitude-js';
 import { useQuery } from '@tanstack/react-query';
+import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Header, NewProductGridCard } from '@components/UI/molecules';

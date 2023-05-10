@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Toast } from 'mrcamel-ui';
+import { Toast } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';

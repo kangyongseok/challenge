@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { Box, Flexbox, Icon, Label, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { getFormattedActivatedTime } from '@utils/formats';
 // import { getImagePathStaticParser, getProductCardImageResizePath } from '@utils/common';

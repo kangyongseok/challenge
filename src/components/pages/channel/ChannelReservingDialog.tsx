@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Typography } from 'mrcamel-ui';
+import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
 
 import { channelDialogStateFamily } from '@recoil/channel';
 

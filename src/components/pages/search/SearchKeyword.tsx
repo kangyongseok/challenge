@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Chip, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import find from 'lodash-es/find';
+import { Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';

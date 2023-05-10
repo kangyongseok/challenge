@@ -4,9 +4,9 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
-import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';

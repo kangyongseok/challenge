@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Flexbox, Grid, Icon, Typography } from 'mrcamel-ui';
+import { Button, Flexbox, Grid, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { LegitPhotoGuideCard } from '@components/UI/molecules';

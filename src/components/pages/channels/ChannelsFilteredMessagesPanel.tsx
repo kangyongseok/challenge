@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
 

@@ -4,6 +4,13 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import {
+  QueryClient,
+  dehydrate,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query';
+import {
   Box,
   Button,
   Flexbox,
@@ -12,14 +19,7 @@ import {
   ThemeProvider,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import {
-  QueryClient,
-  dehydrate,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';

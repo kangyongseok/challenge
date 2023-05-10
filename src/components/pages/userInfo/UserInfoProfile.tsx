@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Flexbox, Icon, Image, Typography } from 'mrcamel-ui';
+import { Box, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';

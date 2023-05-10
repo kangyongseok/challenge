@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Flexbox, Tooltip, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { sortBy, uniqBy } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
 import { Gap } from '@components/UI/atoms';

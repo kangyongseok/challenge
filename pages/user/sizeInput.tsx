@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import Header from '@components/UI/molecules/Header';

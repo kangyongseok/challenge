@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Button, Flexbox, Icon } from 'mrcamel-ui';
 import { filter, find, sortBy } from 'lodash-es';
+import { Button, Flexbox, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { DropDownSelect } from '@components/UI/molecules';

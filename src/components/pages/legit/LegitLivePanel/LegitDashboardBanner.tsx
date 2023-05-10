@@ -5,10 +5,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Pagination } from 'swiper';
 import type { Swiper as SwiperClass } from 'swiper';
 import { useRouter } from 'next/router';
-import type { IconProps } from 'mrcamel-ui/dist/components/Icon';
-import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import type { IconProps } from '@mrcamelhub/camel-ui/dist/src/components/Icon';
+import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

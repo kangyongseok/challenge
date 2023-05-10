@@ -3,7 +3,15 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import type { BaseButtonProps } from 'mrcamel-ui/dist/components/Button';
+import dayjs from 'dayjs';
+import amplitude from 'amplitude-js';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  UseMutateFunction
+} from '@tanstack/react-query';
+import type { BaseButtonProps } from '@mrcamelhub/camel-ui/dist/src/components/Button';
 import {
   Avatar,
   Box,
@@ -14,15 +22,7 @@ import {
   Tooltip,
   Typography,
   useTheme
-} from 'mrcamel-ui';
-import dayjs from 'dayjs';
-import amplitude from 'amplitude-js';
-import type {
-  QueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters,
-  UseMutateFunction
-} from '@tanstack/react-query';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { OnBoardingSpotlight, SafePaymentGuideDialog } from '@components/UI/organisms';

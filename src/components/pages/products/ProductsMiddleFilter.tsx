@@ -14,7 +14,7 @@ import {
   Input,
   Typography,
   useTheme
-} from 'mrcamel-ui';
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Gap } from '@components/UI/atoms';

@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, CustomStyle, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
+import { Box, CustomStyle, Tab, TabGroup, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

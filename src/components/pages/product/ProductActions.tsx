@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
+import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 

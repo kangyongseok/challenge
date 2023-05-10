@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Typography } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { fetchProductLegit } from '@api/productLegit';

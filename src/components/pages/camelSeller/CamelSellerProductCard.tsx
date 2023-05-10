@@ -1,8 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { Avatar, Box, Button, Flexbox, Icon, Image, Label, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
+import {
+  Avatar,
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Image,
+  Label,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { ImageDetailDialog } from '@components/UI/organisms';
 

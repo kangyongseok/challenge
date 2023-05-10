@@ -2,8 +2,8 @@ import { useState } from 'react';
 import type { RefObject } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import { LegitResultCommentSkeleton } from '@components/UI/molecules';
 

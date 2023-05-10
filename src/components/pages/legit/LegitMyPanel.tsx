@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Image, Skeleton, Typography } from 'mrcamel-ui';
 import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Image, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
 

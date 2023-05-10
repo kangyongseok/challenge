@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from 'mrcamel-ui';
+import { Box, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 function ChannelOfferRequestTipMessage() {
   const {

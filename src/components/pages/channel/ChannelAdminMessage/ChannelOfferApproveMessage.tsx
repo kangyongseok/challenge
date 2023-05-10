@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Box, Button, Flexbox, Typography, useTheme } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';

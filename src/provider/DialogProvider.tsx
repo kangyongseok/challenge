@@ -2,8 +2,16 @@ import { useEffect, useMemo } from 'react';
 
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, ThemeProvider, Typography } from 'mrcamel-ui';
 import has from 'lodash-es/has';
+import {
+  Box,
+  Button,
+  Dialog,
+  Flexbox,
+  Icon,
+  ThemeProvider,
+  Typography
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';

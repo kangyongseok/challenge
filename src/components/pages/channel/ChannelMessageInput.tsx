@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { Flexbox, Icon, Skeleton, Typography } from 'mrcamel-ui';
 import type { SendableMessage } from '@sendbird/chat/lib/__definition';
+import { Flexbox, Icon, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import useOutsideClickRef from '@hooks/useOutsideClickRef';

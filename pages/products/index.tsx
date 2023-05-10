@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Box, Icon, useTheme } from 'mrcamel-ui';
+import { Box, Icon, useTheme } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';

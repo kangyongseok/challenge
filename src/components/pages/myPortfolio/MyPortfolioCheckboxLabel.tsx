@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 
-import { Flexbox, Icon, Typography } from 'mrcamel-ui';
+import { Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 interface MyPortfolioCheckboxLabelProps {

@@ -1,9 +1,9 @@
 import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
-import type { ChipProps } from 'mrcamel-ui/dist/components/Chip';
-import { Chip, Skeleton } from 'mrcamel-ui';
 import { debounce } from 'lodash-es';
+import type { ChipProps } from '@mrcamelhub/camel-ui/dist/src/components/Chip';
+import { Chip, Skeleton } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { CategoryValue } from '@dto/category';

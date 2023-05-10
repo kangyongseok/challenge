@@ -4,11 +4,11 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import type { IconName } from 'mrcamel-ui';
-import { Box, Flexbox, Icon, Typography, useTheme } from 'mrcamel-ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 import { ConnectionHandler } from '@sendbird/chat';
+import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';

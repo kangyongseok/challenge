@@ -1,4 +1,4 @@
-import { Flexbox, useTheme } from 'mrcamel-ui';
+import { Flexbox, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function MyPortfolioPagenation({

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { Box, Flexbox, Skeleton, Typography } from 'mrcamel-ui';
-import type { CustomStyle } from 'mrcamel-ui';
+import { Box, Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import type { ProductSeller } from '@dto/product';
 import type { CommonCode } from '@dto/common';

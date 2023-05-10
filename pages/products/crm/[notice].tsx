@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Typography } from 'mrcamel-ui';
+import { Box, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';

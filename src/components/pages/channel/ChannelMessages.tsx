@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { Box, Chip, Icon } from 'mrcamel-ui';
 import dayjs from 'dayjs';
 import type {
   QueryObserverResult,
@@ -11,6 +10,7 @@ import type {
 import { useIsFetching } from '@tanstack/react-query';
 import type { AdminMessage, FileMessage, UserMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
+import { Box, Chip, Icon } from '@mrcamelhub/camel-ui';
 
 import DateSeparator from '@components/UI/molecules/DateSeparator';
 import ChannelMessage from '@components/pages/channel/ChannelMessage';

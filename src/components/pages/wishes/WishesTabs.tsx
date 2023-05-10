@@ -1,7 +1,16 @@
 import { useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Tab, TabGroup, Typography, useTheme } from 'mrcamel-ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  Flexbox,
+  Tab,
+  TabGroup,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

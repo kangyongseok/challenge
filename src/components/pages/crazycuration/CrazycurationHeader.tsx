@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Typography, useTheme } from 'mrcamel-ui';
+import { Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 

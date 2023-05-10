@@ -1,8 +1,8 @@
 import { Fragment, useCallback, useEffect, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
-import { Flexbox, Grid, Typography } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Flexbox, Grid, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
 

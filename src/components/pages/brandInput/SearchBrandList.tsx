@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 
-import { Checkbox, Typography, useTheme } from 'mrcamel-ui';
 import { find } from 'lodash-es';
+import { Checkbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { AllBrand } from '@dto/brand';

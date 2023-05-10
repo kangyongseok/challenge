@@ -1,4 +1,4 @@
-import { Button } from 'mrcamel-ui';
+import { Button } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';

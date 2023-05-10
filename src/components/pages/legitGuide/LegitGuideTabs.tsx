@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Tab, TabGroup } from 'mrcamel-ui';
+import { Tab, TabGroup } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 

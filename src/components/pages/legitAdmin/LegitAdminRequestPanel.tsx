@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Chip, Flexbox, Skeleton, Typography, useTheme } from 'mrcamel-ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { Box, Chip, Flexbox, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
