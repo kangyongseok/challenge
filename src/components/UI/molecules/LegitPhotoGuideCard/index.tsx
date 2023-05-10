@@ -55,9 +55,9 @@ function LegitPhotoGuideCard({
     }
   } = useTheme();
   const [isImageLoading, setIsImageLoading] = useState(true);
-  const [loadFailed, setLoadFailed] = useState(false);
   const [defaultImageLoadFailed, setDefaultImageLoadFailed] = useState(false);
-  const [newImageUrl, setNewImageUrl] = useState('');
+  const [blobImageUrl, setBlobImageUrl] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState(`${staticImageUrl}?w=250&f=webp`);
 
   // 0: optional, 1: 필수, 2: 수정, 3: 수정완료
   const status = useMemo(() => {
@@ -79,7 +79,6 @@ function LegitPhotoGuideCard({
       newImage.onload = () => setIsImageLoading(false);
       newImage.onerror = () => {
         setIsImageLoading(false);
-        setLoadFailed(true);
         const defaultImage = document.createElement('img');
         defaultImage.src = imageUrl;
         defaultImage.onerror = () => setDefaultImageLoadFailed(true);
@@ -92,27 +91,27 @@ function LegitPhotoGuideCard({
   useEffect(() => {
     if (defaultImageLoadFailed && imageUrl) {
       setIsImageLoading(true);
-      heicToBlob(
-        imageUrl.replace(
-          /https:\/\/static.mrcamel.co.kr\//g,
-          'https://mrcamel.s3.ap-northeast-2.amazonaws.com/'
-        ),
-        'image'
-      ).then((response) => {
-        setNewImageUrl(response || '');
+      const fetchImageUrl = imageUrl.replace(
+        /https:\/\/static.mrcamel.co.kr\//g,
+        'https://mrcamel.s3.ap-northeast-2.amazonaws.com/'
+      );
+      heicToBlob(fetchImageUrl, fetchImageUrl.split('.')[0]).then((response) => {
+        setBlobImageUrl(response || '');
         setIsImageLoading(false);
       });
     }
   }, [defaultImageLoadFailed, imageUrl]);
 
+  useEffect(() => {
+    if (blobImageUrl) {
+      setNewImageUrl(blobImageUrl);
+    }
+  }, [blobImageUrl]);
+
   return (
     <StyledLegitPhotoGuideCard
       imageSample={hideSample ? '' : imageSample}
-      imageUrl={
-        staticImageUrl && !loadFailed && !defaultImageLoadFailed
-          ? `${staticImageUrl}?w=250&f=webp`
-          : newImageUrl
-      }
+      imageUrl={newImageUrl}
       status={status}
       isInvalid={isInvalid}
       hideStatusHighLite={hideStatusHighLite}

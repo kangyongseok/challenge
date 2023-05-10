@@ -14,7 +14,8 @@ export async function heicToBlob(url: string, name: string): Promise<string | un
       });
 
       imageUrl = window.URL.createObjectURL(file);
-    } catch {
+    } catch (e) {
+      throw new Error(String(e));
       //
     }
   }

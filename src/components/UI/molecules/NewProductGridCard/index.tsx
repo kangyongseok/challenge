@@ -138,7 +138,7 @@ function NewProductGridCard({
   const [isAuthSeller, setIsAuthSeller] = useState(false);
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -267,7 +267,7 @@ function NewProductGridCard({
 
   useEffect(() => {
     if (loadFailed) {
-      setSrc(imageMain || imageThumbnail);
+      setSrc(imageThumbnail || imageMain);
     }
   }, [imageMain, imageThumbnail, loadFailed]);
 
@@ -430,7 +430,7 @@ function NewProductGridCard({
             color: common.ui60
           }}
         >
-          {productTitle} {String(loadFailed)}
+          {productTitle}
         </Typography>
         {!hidePrice && (
           <Flexbox

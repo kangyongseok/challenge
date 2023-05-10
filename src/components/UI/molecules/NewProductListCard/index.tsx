@@ -143,7 +143,7 @@ function NewProductListCard({
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [authOpinionCount, setAuthOpinionCount] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
+  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -268,7 +268,7 @@ function NewProductListCard({
 
   useEffect(() => {
     if (loadFailed) {
-      setSrc(imageMain || imageThumbnail);
+      setSrc(imageThumbnail || imageMain);
     }
   }, [imageMain, imageThumbnail, loadFailed]);
 
