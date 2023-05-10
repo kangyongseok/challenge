@@ -791,53 +791,54 @@ function ProductCTAButton({
 
   return (
     <>
-      {open && (['채팅', '보러가기'].includes(ctaText) || isAllOperatorType) && (
-        <Flexbox
-          alignment="center"
-          justifyContent="space-between"
-          gap={4}
-          onClick={handleClickSafePaymentFreeBanner}
-          customStyle={{
-            position: 'fixed',
-            left: 0,
-            bottom: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`,
-            width: '100%',
-            height: 44,
-            padding: '12px 20px',
-            backgroundColor: isAllOperatorType ? primary.light : common.ui20,
-            zIndex: !openPriceOfferOnBoarding ? zIndex.button + 1 : 1
-          }}
-        >
-          {isAllOperatorType && <Triangle />}
+      {open &&
+        (['채팅', '보러가기'].includes(ctaText) || (isAllOperatorType && !isDup && !hasTarget)) && (
           <Flexbox
+            alignment="center"
+            justifyContent="space-between"
             gap={4}
+            onClick={handleClickSafePaymentFreeBanner}
             customStyle={{
-              flex: 1,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              justifyContent: isAllOperatorType ? 'center' : 'initial'
+              position: 'fixed',
+              left: 0,
+              bottom: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`,
+              width: '100%',
+              height: 44,
+              padding: '12px 20px',
+              backgroundColor: isAllOperatorType ? primary.light : common.ui20,
+              zIndex: !openPriceOfferOnBoarding ? zIndex.button + 1 : 1
             }}
           >
-            <Icon name="WonCircleFilled" width={20} height={20} color="uiWhite" />
-            <Typography weight="medium" noWrap color="uiWhite">
-              {isAllOperatorType
-                ? '수수료 없이, 카멜이 대신 구매해드려요.'
-                : '카멜은 안전결제 수수료 무료!'}
-            </Typography>
-          </Flexbox>
-          {!isAllOperatorType && (
-            <Box
-              onClick={handleClickTodayHide}
+            {isAllOperatorType && <Triangle />}
+            <Flexbox
+              gap={4}
               customStyle={{
-                minWidth: 'fit-content'
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                justifyContent: isAllOperatorType ? 'center' : 'initial'
               }}
             >
-              <Icon name="CloseOutlined" width={20} height={20} color="uiWhite" />
-            </Box>
-          )}
-        </Flexbox>
-      )}
+              <Icon name="WonCircleFilled" width={20} height={20} color="uiWhite" />
+              <Typography weight="medium" noWrap color="uiWhite">
+                {isAllOperatorType
+                  ? '수수료 없이, 카멜이 대신 구매해드려요.'
+                  : '카멜은 안전결제 수수료 무료!'}
+              </Typography>
+            </Flexbox>
+            {!isAllOperatorType && (
+              <Box
+                onClick={handleClickTodayHide}
+                customStyle={{
+                  minWidth: 'fit-content'
+                }}
+              >
+                <Icon name="CloseOutlined" width={20} height={20} color="uiWhite" />
+              </Box>
+            )}
+          </Flexbox>
+        )}
       <Box
         customStyle={{
           minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
@@ -1018,8 +1019,7 @@ function ProductCTAButton({
               disableShadow
               message={
                 <Typography variant="body2" weight="bold">
-                  {commaNumber(getTenThousandUnitPrice(salePrice))}만원 내려간 지금이 바로 득템
-                  기회🎁
+                  {commaNumber(salePrice)}만원 내려간 지금이 바로 득템 기회🎁
                 </Typography>
               }
               customStyle={{ marginTop: -19, marginLeft: -80 }}
@@ -1039,7 +1039,8 @@ function ProductCTAButton({
               customStyle={{ marginTop: -27, marginLeft: -70, '&:after': { left: '80%' } }}
             />
           </Button>
-          {(['채팅', '보러가기'].includes(ctaText) || isAllOperatorType) && (
+          {(['채팅', '보러가기'].includes(ctaText) ||
+            (isAllOperatorType && !isDup && !hasTarget)) && (
             <Button
               fullWidth
               variant="solid"
