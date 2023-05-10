@@ -282,8 +282,13 @@ function ProductCTAButton({
   };
 
   const attParser = () => {
-    if (product?.sellerType === productSellerType.normal || roleSeller?.userId) return 'CHANNEL';
-    if (product?.sellerType === productSellerType.collection) return 'REDIRECT';
+    if (isChannelSellerType) return 'CHANNEL';
+    if (
+      product?.sellerType === productSellerType.collection ||
+      isOperatorC2CProduct ||
+      isOperatorProduct
+    )
+      return 'REDIRECT';
     if (product?.sellerType === productSellerType.certification) return 'SMS';
     return '';
   };
