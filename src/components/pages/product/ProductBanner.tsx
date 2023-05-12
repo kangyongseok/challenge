@@ -31,7 +31,7 @@ function ProductBanner({
         height={104}
         src={getImageResizePath({
           imagePath: src,
-          h: 52
+          h: 104
         })}
         alt={alt}
         disableAspectRatio
