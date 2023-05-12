@@ -134,7 +134,7 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
           <Typography variant="h2" weight="bold" customStyle={{ marginBottom: 8 }}>
             성별과 나이를 알려주세요!
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>인기매물을 추천해드릴게요</Typography>
+          <Typography color="ui60">인기매물을 추천해드릴게요</Typography>
         </Box>
         <GenderYearInput
           onClickGender={handleclickGender}

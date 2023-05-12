@@ -1,8 +1,10 @@
-import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -23,12 +25,9 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { toastState } from '@recoil/common';
 import { channelBottomSheetStateFamily } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-
-const TOAST_BOTTOM = 20;
 
 interface UserShopProductManageBottomSheetProps {
   refetchData: () => Promise<void>;
@@ -45,6 +44,8 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
 
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('manage'));
   const {
@@ -70,7 +71,6 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
   const { mutate: updateMutation, isLoading: isLoadingMutatePutProductUpdateStatus } =
     useMutation(putProductUpdateStatus);
 
-  const setToastState = useSetRecoilState(toastState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
   const setSelectTargetUserBottomSheetState = useSetRecoilState(
@@ -147,16 +147,14 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       { productId: id },
       {
         onSuccess() {
-          setToastState({
-            type: 'sellerProductState',
-            status: 'hoisting',
-            customStyle: { bottom: TOAST_BOTTOM }
+          refetchData();
+          toastStack({
+            children: '끌어올리기가 완료되었어요. 👍'
           });
           setOpenState(({ type }) => ({
             type,
             open: false
           }));
-          refetchData();
         }
       }
     );
@@ -196,10 +194,8 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
             );
           },
           onSettled() {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'soldout',
-              customStyle: { bottom: TOAST_BOTTOM }
+            toastStack({
+              children: '판매완료 처리되었어요!'
             });
             setTimeout(() => refetchData(), 500);
           }
@@ -214,22 +210,16 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       {
         onSettled: () => {
           if (dataStatus === productStatusCode.sale) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'sell',
-              customStyle: { bottom: TOAST_BOTTOM }
+            toastStack({
+              children: '판매중으로 변경되었어요.'
             });
           } else if (dataStatus === productStatusCode.reservation) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'reserve',
-              customStyle: { bottom: TOAST_BOTTOM }
+            toastStack({
+              children: '예약중으로 변경되었어요.'
             });
           } else if (dataStatus === productStatusCode.hidden) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'hide',
-              customStyle: { bottom: TOAST_BOTTOM }
+            toastStack({
+              children: '숨김 처리되었어요!'
             });
           }
 

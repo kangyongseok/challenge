@@ -10,6 +10,7 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -56,7 +57,7 @@ import {
 } from '@utils/common';
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
-import { dialogState, showAppDownloadBannerState, toastState } from '@recoil/common';
+import { dialogState, showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -71,13 +72,14 @@ function LegitProfileEdit() {
 
   const { id, targetTab } = router.query;
 
+  const toastStack = useToastStack();
+
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
     legitProfileUpdatedProfileDataState
   );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { backgroundImage } = useMyProfileInfo();
@@ -96,7 +98,9 @@ function LegitProfileEdit() {
         queryKey: queryKeys.users.infoByUserId(Number(id)),
         refetchType: 'inactive'
       });
-      setToastState({ type: 'user', status: 'saved' });
+      toastStack({
+        children: '저장을 완료했어요.'
+      });
       setLegitProfileUpdatedProfileDataState(false);
       router.back();
     }
@@ -107,13 +111,19 @@ function LegitProfileEdit() {
         props.invalidReasons.forEach((reasons) => {
           switch (reasons.type) {
             case 'ADMIN':
-              setToastState({ type: 'user', status: 'invalidAdminWord' });
+              toastStack({
+                children: '관리자로 오해할 수 있는 단어는 쓸 수 없어요.'
+              });
               break;
             case 'DUPLICATE':
-              setToastState({ type: 'user', status: 'duplicatedNickName' });
+              toastStack({
+                children: '이미 사용 중인 닉네임이에요.'
+              });
               break;
             default:
-              setToastState({ type: 'user', status: 'invalidBanWord' });
+              toastStack({
+                children: '욕설 및 비속어는 사용할 수 없어요!'
+              });
           }
           switch (reasons.param) {
             case 'NICKNAME':

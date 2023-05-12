@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ReviewCard } from '@components/UI/organisms';
@@ -16,7 +16,6 @@ import { REPORT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
@@ -29,9 +28,8 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
   const router = useRouter();
   const { scrollToReviewUserId } = router.query;
 
+  const toastStack = useToastStack();
   const { triggered } = useDetectScrollFloorTrigger();
-
-  const setToastState = useSetRecoilState(toastState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostReviewBlock, isLoading: isLoadingPostReviewBlock } =
@@ -95,7 +93,14 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
               )
             }))
           });
-          setToastState({ type: 'user', status: 'reviewBlock' });
+          toastStack({
+            children: (
+              <>
+                차단 처리되었습니다.
+                <br />이 사용자는 가려드릴게요!
+              </>
+            )
+          });
         }
       });
     },
@@ -108,7 +113,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       params,
       queryClient,
       router,
-      setToastState
+      toastStack
     ]
   );
 
@@ -131,7 +136,14 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
               )
             }))
           });
-          setToastState({ type: 'user', status: 'reviewReport' });
+          toastStack({
+            children: (
+              <>
+                신고가 접수되었습니다.
+                <br />이 리뷰는 가려드릴게요!
+              </>
+            )
+          });
         }
       });
     },
@@ -144,7 +156,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       params,
       queryClient,
       router,
-      setToastState
+      toastStack
     ]
   );
 

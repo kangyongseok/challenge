@@ -4,6 +4,7 @@ import type { HTMLAttributes, MouseEvent } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Alert,
   Avatar,
@@ -38,7 +39,7 @@ import { getProductCardImageResizePath, getProductDetailUrl } from '@utils/commo
 
 import type { WishAtt } from '@typings/product';
 import { openDeleteToastState, removeIdState } from '@recoil/wishes';
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
@@ -76,6 +77,9 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         palette: { common, primary, secondary }
       }
     } = useTheme();
+
+    const toastStack = useToastStack();
+
     const queryClient = useQueryClient();
     const { data: accessUser } = useQueryAccessUser();
     const [isWish, setIsWish] = useState(false);
@@ -83,7 +87,6 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     const setRemoveId = useSetRecoilState(removeIdState);
     const router = useRouter();
     const deviceId = useRecoilValue(deviceIdState);
-    const setToastState = useSetRecoilState(toastState);
     const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
       useQueryCategoryWishes({ deviceId });
     const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove);
@@ -93,12 +96,14 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
           exact: true
         });
         await refetchCategoryWishes();
-        setToastState({
-          type: 'product',
-          status: 'successAddWish',
-          action: () => {
-            logEvent(attrKeys.products.clickWishList, { name, type: 'TOAST' });
-            router.push('/wishes');
+        toastStack({
+          children: '찜목록에 추가했어요!',
+          action: {
+            text: '찜목록 보기',
+            onClick: () => {
+              logEvent(attrKeys.products.clickWishList, { name, type: 'TOAST' });
+              router.push('/wishes');
+            }
           }
         });
       }
@@ -196,7 +201,9 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
                 exact: true
               });
               await refetchCategoryWishes();
-              setToastState({ type: 'product', status: 'successRemoveWish' });
+              toastStack({
+                children: '찜목록에서 삭제했어요.'
+              });
             }
           }
         );

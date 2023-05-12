@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { useRouter } from 'next/router';
 import { debounce, find } from 'lodash-es';
 import amplitude from 'amplitude-js';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Avatar,
   BottomSheet,
@@ -55,7 +56,7 @@ import { getFormattedDistanceTime, getProductArea } from '@utils/formats';
 import { checkAgent, getImageResizePath, removeTagAndAddNewLine } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { toastState, userOnBoardingTriggerState } from '@recoil/common';
+import { userOnBoardingTriggerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import ProductInfoColorIcon from './ProductInfoColorIcon';
@@ -95,11 +96,12 @@ function ProductInfo({
       palette: { primary, secondary, common }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
+
   const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
     useQueryUserInfo();
 
-  const [getToastState] = useRecoilState(toastState);
-  const setToastState = useSetRecoilState(toastState);
   const [
     {
       productWish: { complete }
@@ -109,7 +111,6 @@ function ProductInfo({
 
   const [isClamped, setIsClamped] = useState(false);
   const [isExpended, setIsExpended] = useState(false);
-  const [hoistingState, setHoistingState] = useState(false);
   const [isOpenReportTooltip, setIsOpenReportTooltip] = useState(false);
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
@@ -286,10 +287,9 @@ function ProductInfo({
 
               return newState;
             });
-            setToastState({
-              type: 'product',
-              status: 'successReport',
-              hideDuration: 1500
+            toastStack({
+              children: '감사합니다! 신고 접수 완료되었습니다 😇',
+              autoHideDuration: 1500
             });
           }
         }
@@ -320,15 +320,19 @@ function ProductInfo({
 
     if (onClickWish(isWish)) {
       if (isWish) {
-        setToastState({ type: 'product', status: 'successRemoveWish' });
+        toastStack({
+          children: '찜목록에서 삭제했어요.'
+        });
       } else {
         appBanner.counts.WISH = (appBanner.counts.WISH || 0) + 1;
         LocalStorage.set(APP_BANNER, appBanner);
 
-        setToastState({
-          type: 'product',
-          status: 'successAddWish',
-          action: () => router.push('/wishes')
+        toastStack({
+          children: '찜목록에 추가했어요!',
+          action: {
+            text: '찜목록 보기',
+            onClick: () => router.push('/wishes')
+          }
         });
 
         if ((relatedProducts?.content || []).length >= 6) {
@@ -369,12 +373,6 @@ function ProductInfo({
     }));
     scrollEnable();
   };
-
-  useEffect(() => {
-    if (getToastState.status === 'hoisting') {
-      setHoistingState(true);
-    }
-  }, [getToastState]);
 
   // 기존 온보딩 완료 유저 대응
   useEffect(() => {
@@ -586,9 +584,7 @@ function ProductInfo({
                 )}
                 <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                   {product.datePosted > product.dateFirstPosted ? '끌올 ' : ''}
-                  {getFormattedDistanceTime(
-                    hoistingState ? new Date() : new Date(product.datePosted)
-                  )}
+                  {getFormattedDistanceTime(new Date(product.datePosted))}
                 </Typography>
               </Flexbox>
             </Flexbox>

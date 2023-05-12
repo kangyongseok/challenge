@@ -5,17 +5,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash-es';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Box,
-  Button,
-  Dialog,
-  Flexbox,
-  Skeleton,
-  Toast,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
+import Toast from '@mrcamelhub/camel-ui-toast';
+import { Box, Button, Dialog, Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ProductWishesCard, ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
 
@@ -64,11 +55,6 @@ function WishesPanel({
   initialCategories,
   setInitialCategories
 }: WishesPanelProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
   const { order = 'updatedDesc', hiddenTab }: { order?: OrderOptionKeys; hiddenTab?: string } =
     router.query;
@@ -415,18 +401,16 @@ function WishesPanel({
           </Button>
         </Flexbox>
       </Dialog>
-      <Toast open={deleteToast} onClose={() => setDeleteToast(false)} autoHideDuration={4000}>
-        <Flexbox justifyContent="space-between" alignment="center" gap={8}>
-          <Typography
-            weight="medium"
-            customStyle={{ flexGrow: 1, color: common.uiWhite, textAlign: 'left' }}
-          >
-            찜 목록에서 삭제했어요.
-          </Typography>
-          <RollbackButton variant="solid" onClick={handleClickRollback}>
-            되돌리기
-          </RollbackButton>
-        </Flexbox>
+      <Toast
+        open={deleteToast}
+        onClose={() => setDeleteToast(false)}
+        autoHideDuration={4000}
+        action={{
+          text: '되돌리기',
+          onClick: handleClickRollback
+        }}
+      >
+        찜 목록에서 삭제했어요.
       </Toast>
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
         삭제한 찜 목록을 다시 저장했어요.
@@ -443,17 +427,5 @@ function WishesPanel({
     </>
   );
 }
-
-const RollbackButton = styled(Button)`
-  background: none;
-  padding: 0;
-  height: auto;
-  text-decoration: underline;
-  color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.ui80};
-`;
 
 export default WishesPanel;

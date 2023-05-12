@@ -3,6 +3,7 @@ import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   Icon,
   Label,
   Skeleton,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';

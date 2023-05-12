@@ -4,7 +4,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
-import { Avatar, Chip, Icon, Toast, useTheme } from '@mrcamelhub/camel-ui';
+import Toast from '@mrcamelhub/camel-ui-toast';
+import { Avatar, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

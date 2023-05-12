@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import { BottomSheet, Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { BottomSheet, Box, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { FixedProductInfo } from '@components/UI/molecules';
@@ -27,11 +27,6 @@ function SelectTargetUserBottomSheet({
   productId,
   isChannel = false
 }: SelectTargetUserBottomSheetProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const [{ open, location }, setSelectTargetUserBottomSheetState] = useRecoilState(
     channelBottomSheetStateFamily('selectTargetUser')
   );
@@ -118,7 +113,7 @@ function SelectTargetUserBottomSheet({
             customStyle={{ padding: '32px 20px' }}
             gap={20}
           >
-            <Typography variant="h4" weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography variant="h4" weight="medium" color="ui60">
               다른 플랫폼에서 판매하셨나요?
             </Typography>
             <Button

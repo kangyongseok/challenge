@@ -165,7 +165,7 @@ function UserShopLegitProfile({
                       {nickName}
                     </Typography>
                     <BadgeLabel>
-                      <Icon name="LegitFilled" size="small" customStyle={{ color: common.cmnW }} />
+                      <Icon name="LegitFilled" size="small" color="cmnW" />
                       <Typography variant="body2" weight="medium">
                         감정사
                       </Typography>
@@ -177,11 +177,11 @@ function UserShopLegitProfile({
                         {getTimeForamt.icon === 'time' ? (
                           <Icon
                             name="TimeOutlined"
+                            color="uiWhite"
                             customStyle={{
                               marginRight: 2,
                               height: '14px !important',
-                              width: 14,
-                              color: common.uiWhite
+                              width: 14
                             }}
                           />
                         ) : (
@@ -195,12 +195,7 @@ function UserShopLegitProfile({
                             }}
                           />
                         )}
-                        <Typography
-                          variant="body2"
-                          customStyle={{
-                            color: common.uiWhite
-                          }}
-                        >
+                        <Typography variant="body2" color="uiWhite">
                           {getTimeForamt.text}
                         </Typography>
                       </Flexbox>
@@ -224,23 +219,9 @@ function UserShopLegitProfile({
                           (maxScore === 10
                             ? Math.floor(Number(curnScore) / 2)
                             : Number(curnScore)) ? (
-                          <Icon
-                            name="StarFilled"
-                            width={16}
-                            height={16}
-                            customStyle={{
-                              color: '#FFD911'
-                            }}
-                          />
+                          <Icon name="StarFilled" width={16} height={16} color="#FFD911" />
                         ) : (
-                          <Icon
-                            name="StarOutlined"
-                            width={16}
-                            height={16}
-                            customStyle={{
-                              color: '#FFD911'
-                            }}
-                          />
+                          <Icon name="StarOutlined" width={16} height={16} color="#FFD911" />
                         );
                       })}
                     </Flexbox>

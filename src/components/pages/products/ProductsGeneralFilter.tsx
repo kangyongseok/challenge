@@ -5,16 +5,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import sortBy from 'lodash-es/sortBy';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Box,
-  Button,
-  Flexbox,
-  Icon,
-  Skeleton,
-  Toast,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { SearchParams } from '@dto/product';
@@ -64,7 +56,7 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import { showAppDownloadBannerState, toastState } from '@recoil/common';
+import { showAppDownloadBannerState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -81,13 +73,16 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     { channelFilterButtonRef, mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant },
     ref
   ) {
+    const router = useRouter();
+
     const {
       theme: {
         palette: { primary, common }
       }
     } = useTheme();
 
-    const router = useRouter();
+    const toastStack = useToastStack();
+
     const atomParam = router.asPath.split('?')[0];
 
     const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
@@ -127,7 +122,6 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       productsFilterStateFamily(`legit-${atomParam}`)
     );
     const setActiveTabCodeIdState = useSetRecoilState(activeTabCodeIdState);
-    const setToastState = useSetRecoilState(toastState);
 
     const { data: accessUser } = useQueryAccessUser();
     const {
@@ -427,29 +421,33 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
           logEvent(attrKeys.products.clickApplyMapFilter);
 
           if (!accessUser) {
-            setToastState({
-              type: 'mapFilter',
-              status: 'signIn',
-              action: () => {
-                logEvent(attrKeys.products.clickLogin, {
-                  name: attrProperty.name.filterMapToast
-                });
-                router.push({ pathname: '/login', query: { returnUrl: '/user/addressInput' } });
+            toastStack({
+              children: '로그인이 필요해요',
+              action: {
+                text: '로그인하기',
+                onClick: () => {
+                  logEvent(attrKeys.products.clickLogin, {
+                    name: attrProperty.name.filterMapToast
+                  });
+                  router.push({ pathname: '/login', query: { returnUrl: '/user/addressInput' } });
+                }
               }
             });
             return;
           }
 
           if (accessUser && areaValues.length === 0) {
-            setToastState({
-              type: 'mapFilter',
-              status: 'locationInfo',
-              action: () => {
-                logEvent(attrKeys.products.clickPersonalInput, {
-                  name: attrProperty.name.filterMapToast,
-                  att: 'NEW'
-                });
-                router.push('/user/addressInput');
+            toastStack({
+              children: '위치 정보가 필요해요!',
+              action: {
+                text: '입력하기',
+                onClick: () => {
+                  logEvent(attrKeys.products.clickPersonalInput, {
+                    name: attrProperty.name.filterMapToast,
+                    att: 'NEW'
+                  });
+                  router.push('/user/addressInput');
+                }
               }
             });
             return;
@@ -527,7 +525,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         setSearchOptionsParamsState,
         setSearchParamsState,
         setSelectedSearchOptionsState,
-        setToastState
+        toastStack
       ]
     );
 

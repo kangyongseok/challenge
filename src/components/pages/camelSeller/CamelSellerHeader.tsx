@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-import { Box, Icon, Toast, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import { Box, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 
@@ -21,7 +22,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import type { SaveCamelSellerProductData, SubmitType } from '@typings/camelSeller';
-import { exitUserNextStepState, exitUserViewBottomSheetState, toastState } from '@recoil/common';
+import { exitUserNextStepState, exitUserViewBottomSheetState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerChangeDetectSelector,
@@ -44,6 +45,8 @@ function CamelSellerHeader() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const productId = Number(query.id || 0);
   const [open, setOpen] = useState(false);
   const isValid = useRecoilValue(camelSellerSubmitValidatorState);
@@ -64,7 +67,6 @@ function CamelSellerHeader() {
   const resetHasOpenedSurveyBottomSheetState = useResetRecoilState(
     camelSellerHasOpenedSurveyBottomSheetState
   );
-  const setToastState = useSetRecoilState(toastState);
   const setSubmitClickState = useSetRecoilState(camelSellerBooleanStateFamily('submitClick'));
   const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
 
@@ -239,10 +241,14 @@ function CamelSellerHeader() {
           });
         } else {
           replace(`/products/${id}?success=true`).then(() => {
-            setToastState({
-              type: 'product',
-              status: 'saleSuccess',
-              hideDuration: 3000
+            toastStack({
+              children: (
+                <>
+                  <p>내 매물이 등록되었어요! 판매시작!</p>
+                  <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+                </>
+              ),
+              autoHideDuration: 3000
             });
             resetTempData();
             resetSurveyState();

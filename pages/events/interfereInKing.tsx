@@ -4,6 +4,7 @@ import type { ChangeEvent, MouseEvent } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   Alert,
   BottomSheet,
@@ -13,7 +14,6 @@ import {
   Icon,
   Image,
   Input,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';

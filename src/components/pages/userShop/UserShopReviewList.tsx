@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import {
   AutoSizer,
   CellMeasurer,
@@ -13,6 +12,7 @@ import {
 import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -24,7 +24,6 @@ import { fetchReviewsByUserId, postReviewBlock, postReviewReport } from '@api/us
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 
-import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 const cache = new CellMeasurerCache({
@@ -47,7 +46,8 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
     }
   } = useTheme();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
+
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostReviewBlock, isLoading: isLoadingPostReviewBlock } =
     useMutation(postReviewBlock);
@@ -106,7 +106,14 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
               )
             }))
           });
-          setToastState({ type: 'user', status: 'reviewBlock' });
+          toastStack({
+            children: (
+              <>
+                차단 처리되었습니다.
+                <br />이 사용자는 가려드릴게요!
+              </>
+            )
+          });
         }
       });
     },
@@ -119,7 +126,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
       params,
       queryClient,
       router,
-      setToastState
+      toastStack
     ]
   );
 
@@ -142,7 +149,14 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
               )
             }))
           });
-          setToastState({ type: 'user', status: 'reviewReport' });
+          toastStack({
+            children: (
+              <>
+                신고가 접수되었습니다.
+                <br />이 리뷰는 가려드릴게요!
+              </>
+            )
+          });
         }
       });
     },
@@ -155,7 +169,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
       params,
       queryClient,
       router,
-      setToastState
+      toastStack
     ]
   );
 

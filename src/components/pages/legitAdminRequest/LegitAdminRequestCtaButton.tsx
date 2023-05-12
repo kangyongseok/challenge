@@ -4,6 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   BottomSheet,
   Box,
@@ -31,7 +32,7 @@ import {
   legitAdminOpinionDataState,
   legitAdminOpinionEditableState
 } from '@recoil/legitAdminOpinion/atom';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitAdminRequestCtaButton() {
@@ -44,10 +45,11 @@ function LegitAdminRequestCtaButton() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const { result, description } = useRecoilValue(legitAdminOpinionDataState);
   const editable = useRecoilValue(legitAdminOpinionEditableState);
   const setLegitAdminOpinionEditableState = useSetRecoilState(legitAdminOpinionEditableState);
-  const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
   const resetLegitAdminOpinionDataState = useResetRecoilState(legitAdminOpinionDataState);
 
@@ -115,14 +117,12 @@ function LegitAdminRequestCtaButton() {
               })
               .then(() => {
                 if (isLegitHead && result === 3) {
-                  setToastState({
-                    type: 'legitAdminOpinion',
-                    status: 'preConfirmEdited'
+                  toastStack({
+                    children: '사진보완 요청이 완료되었습니다.'
                   });
                 } else {
-                  setToastState({
-                    type: 'legitAdminOpinion',
-                    status: 'saved'
+                  toastStack({
+                    children: '감정 의견 작성이 완료되었습니다.'
                   });
                 }
               });
@@ -186,9 +186,8 @@ function LegitAdminRequestCtaButton() {
               }
             })
             .then(() =>
-              setToastState({
-                type: 'legitAdminOpinion',
-                status: 'preConfirmEdited'
+              toastStack({
+                children: '사진보완 요청이 완료되었습니다.'
               })
             )
       }

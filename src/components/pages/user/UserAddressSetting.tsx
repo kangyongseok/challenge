@@ -74,7 +74,8 @@ function UserAddressSetting({ isSearchMode, address, setAddress }: UserAddressSe
             <Typography
               variant="h1"
               weight="bold"
-              customStyle={{ padding: '84px 0', textAlign: 'center' }}
+              textAlign="center"
+              customStyle={{ padding: '84px 0' }}
             >
               📍
               <br />

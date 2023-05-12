@@ -119,7 +119,7 @@ function LegitSearchHeader() {
           fullWidth
           startAdornment={<Icon name="SearchOutlined" />}
           endAdornment={
-            <Icon name="DeleteCircleFilled" color={common.ui80} onClick={() => setValue('')} />
+            <Icon name="DeleteCircleFilled" color="ui80" onClick={() => setValue('')} />
           }
           size="large"
           placeholder="감정결과 내 키워드 검색"

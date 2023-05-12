@@ -5,6 +5,7 @@ import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { AxiosError } from 'axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   BottomSheet,
   Box,
@@ -14,7 +15,6 @@ import {
   Icon,
   Input,
   Switch,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';

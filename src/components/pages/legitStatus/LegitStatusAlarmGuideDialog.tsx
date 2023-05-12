@@ -34,12 +34,15 @@ function LegitStatusAlarmGuideDialog() {
       palette: { secondary, common }
     }
   } = useTheme();
+
   const setLegitStatusBottomSheetOpenTriggerState = useSetRecoilState(
     legitStatusBottomSheetOpenTriggerState
   );
+
   const [open, setOpen] = useState(false);
 
   const callAuthPushTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const loggingTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { userNickName } = useQueryMyUserInfo();
 
@@ -88,37 +91,39 @@ function LegitStatusAlarmGuideDialog() {
   };
 
   useEffect(() => {
-    if (
-      firstLegit === 'true' &&
-      checkAgent.isAndroidApp() &&
-      window.webview &&
-      window.webview.callAuthPush
-    ) {
-      window.webview.callAuthPush();
-    } else if (
-      firstLegit === 'true' &&
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthPush.postMessage
-    ) {
-      window.webkit.messageHandlers.callAuthPush.postMessage(0);
-    } else {
-      setLegitStatusBottomSheetOpenTriggerState(true);
-    }
+    loggingTimerRef.current = setTimeout(() => {
+      window.getAuthPush = (result: string) => {
+        if (!JSON.parse(result)) {
+          logEvent(attrKeys.legit.VIEW_LEGIT_POPUP, {
+            name: attrProperty.legitName.LEGIT_INFO,
+            title: attrProperty.legitTitle.LEGIT_PUSHALERT
+          });
+          setOpen(true);
+        } else {
+          setLegitStatusBottomSheetOpenTriggerState(true);
+        }
+      };
 
-    window.getAuthPush = (result: string) => {
-      if (!JSON.parse(result)) {
-        logEvent(attrKeys.legit.VIEW_LEGIT_POPUP, {
-          name: attrProperty.legitName.LEGIT_INFO,
-          title: attrProperty.legitTitle.LEGIT_PUSHALERT
-        });
-        setOpen(true);
+      if (
+        firstLegit === 'true' &&
+        checkAgent.isAndroidApp() &&
+        window.webview &&
+        window.webview.callAuthPush
+      ) {
+        window.webview.callAuthPush();
+      } else if (
+        firstLegit === 'true' &&
+        checkAgent.isIOSApp() &&
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.callAuthPush &&
+        window.webkit.messageHandlers.callAuthPush.postMessage
+      ) {
+        window.webkit.messageHandlers.callAuthPush.postMessage(0);
       } else {
         setLegitStatusBottomSheetOpenTriggerState(true);
       }
-    };
+    }, 1000);
   }, [firstLegit, setLegitStatusBottomSheetOpenTriggerState]);
 
   useEffect(() => {
@@ -130,6 +135,14 @@ function LegitStatusAlarmGuideDialog() {
       }
     };
   }, [setLegitStatusBottomSheetOpenTriggerState]);
+
+  useEffect(() => {
+    return () => {
+      if (loggingTimerRef.current) {
+        clearTimeout(loggingTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Dialog open={open} onClose={handleClose} customStyle={{ width: '100%', maxWidth: 303 }}>

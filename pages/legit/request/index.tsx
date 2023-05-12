@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import type { Swiper } from 'swiper';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Flexbox, Grid, Icon, Label, ThemeProvider, dark } from '@mrcamelhub/camel-ui';
 
 import { ImageDetailDialog, LegitUploadInfoPaper } from '@components/UI/organisms';
@@ -25,7 +26,6 @@ import attrProperty from '@constants/attrProperty';
 import { getCookies } from '@utils/cookies';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
-import { toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function getLegitResultLabel(result?: 0 | 1 | 2 | 3) {
@@ -48,8 +48,9 @@ function LegitRequest() {
   const router = useRouter();
   const { id = '' } = router.query;
 
+  const toastStack = useToastStack();
+
   const { modelImage, isCompleted, productId: savedProductId } = useRecoilValue(legitRequestState);
-  const setToastState = useSetRecoilState(toastState);
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
 
@@ -80,14 +81,17 @@ function LegitRequest() {
   const handleClick = useCallback(() => {
     if (isCompleted) {
       if (savedProductId) {
-        setToastState({
-          type: 'product',
-          status: 'saleSuccess'
+        toastStack({
+          children: (
+            <>
+              <p>내 매물이 등록되었어요! 판매시작!</p>
+              <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+            </>
+          )
         });
       } else {
-        setToastState({
-          type: 'legit',
-          status: 'successRequest'
+        toastStack({
+          children: '감정신청이 완료되었습니다'
         });
       }
     }
@@ -105,7 +109,7 @@ function LegitRequest() {
     roles,
     router,
     savedProductId,
-    setToastState
+    toastStack
   ]);
 
   const handleClickPhotoGuide = (e: MouseEvent<HTMLDivElement>) => {

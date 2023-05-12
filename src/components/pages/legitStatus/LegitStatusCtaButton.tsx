@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Box, Button, Flexbox, Toast, Tooltip, Typography } from '@mrcamelhub/camel-ui';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import { Box, Button, Flexbox, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import ChannelTalk from '@library/channelTalk';
@@ -17,19 +18,20 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { firstUserAnimationState } from '@recoil/legitStatus';
-import { toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusCtaButton() {
   const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const isAnimation = useRecoilValue(firstUserAnimationState);
   const splitIds = String(router.query.id || '').split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
-  const setToastState = useSetRecoilState(toastState);
 
   const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
   const [showLegitTooltip, setShowLegitTooltip] = useState(true);
@@ -133,9 +135,8 @@ function LegitStatusCtaButton() {
               }
             })
             .then(() =>
-              setToastState({
-                type: 'legit',
-                status: 'preConfirmEdited'
+              toastStack({
+                children: '사진감정 계속하기가 신청되었습니다.'
               })
             );
         }

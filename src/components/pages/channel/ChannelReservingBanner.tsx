@@ -1,13 +1,11 @@
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { toastState } from '@recoil/common';
 
 interface ChannelReservingBannerProps {
   targetUserName: string;
@@ -29,7 +27,7 @@ function ChannelReservingBanner({
     }
   } = useTheme();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
 
   const handleClick = () => {
     logEvent(attrKeys.channel.CLICK_APPOINTMENT, {
@@ -38,10 +36,8 @@ function ChannelReservingBanner({
     });
 
     if (!hasLastMessage) {
-      setToastState({
-        type: 'channel',
-        status: 'disabledMakeAppointment',
-        params: { userName: targetUserName }
+      toastStack({
+        children: `${targetUserName}님과 대화를 나눈 뒤 약속을 잡을 수 있어요.`
       });
 
       return;

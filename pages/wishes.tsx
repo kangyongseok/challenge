@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Toast } from '@mrcamelhub/camel-ui';
+import Toast from '@mrcamelhub/camel-ui-toast';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -88,7 +88,7 @@ function WishesPage() {
       </GeneralTemplate>
       <Toast
         open={toastMessage !== null && showToast}
-        bottom="74px"
+        bottom={74}
         onClose={() => setToast([false, toastMessage])}
         autoHideDuration={1000}
       >

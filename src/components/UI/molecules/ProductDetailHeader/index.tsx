@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { debounce } from 'lodash-es';
 import amplitude from 'amplitude-js';
 import { useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -28,7 +29,7 @@ import { commaNumber } from '@utils/formats';
 import { checkAgent, executedShareURl } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 
@@ -50,8 +51,9 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
 
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
     useState(false);
@@ -137,15 +139,19 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
 
     if (onClickWish && onClickWish(isWish)) {
       if (isWish) {
-        setToastState({ type: 'product', status: 'successRemoveWish' });
+        toastStack({
+          children: '찜목록에서 삭제했어요.'
+        });
       } else {
         appBanner.counts.WISH = (appBanner.counts.WISH || 0) + 1;
         LocalStorage.set(APP_BANNER, appBanner);
 
-        setToastState({
-          type: 'product',
-          status: 'successAddWish',
-          action: () => push('/wishes')
+        toastStack({
+          children: '찜목록에 추가했어요!',
+          action: {
+            text: '찜목록 보기',
+            onClick: () => push('/wishes')
+          }
         });
 
         if ((relatedProducts?.content || []).length >= 6) {

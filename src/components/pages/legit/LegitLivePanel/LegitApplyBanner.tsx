@@ -38,13 +38,15 @@ function LegitApplyBanner() {
           <Typography
             variant="body1"
             weight="bold"
-            customStyle={{ whiteSpace: 'pre-wrap', wordBreak: 'keep-all', color: common.cmnW }}
+            color="cmnW"
+            customStyle={{ whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}
           >
             {`${randomBrand.name} 잘 아신다면?`}
           </Typography>
           <Typography
             variant="body2"
-            customStyle={{ whiteSpace: 'pre-wrap', wordBreak: 'keep-all', color: common.cmnW }}
+            color="cmnW"
+            customStyle={{ whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}
           >
             사진 감정사가 되고 혜택 받아가세요!
           </Typography>

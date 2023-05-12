@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { animated, useTransition } from '@react-spring/web';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { PuffLoader } from '@components/UI/atoms';
@@ -13,14 +14,15 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { loginBottomSheetState, toastState } from '@recoil/common';
+import { loginBottomSheetState } from '@recoil/common';
 import useSignIn from '@hooks/useSignIn';
 
 function LoginBottomSheet() {
   const router = useRouter();
 
+  const toastStack = useToastStack();
+
   const [{ open, returnUrl }, setLoginBottomSheetState] = useRecoilState(loginBottomSheetState);
-  const setToastState = useSetRecoilState(toastState);
 
   const { code, loading, setLoading, authLogin, successLogin } = useSignIn({
     returnUrl: returnUrl || router.asPath,
@@ -30,9 +32,8 @@ function LoginBottomSheet() {
         open: false,
         returnUrl: ''
       });
-      setToastState({
-        type: 'bottomSheetLogin',
-        status: 'loginSuccess'
+      toastStack({
+        children: '로그인 되었습니다.'
       });
     }
   });

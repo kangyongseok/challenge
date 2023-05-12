@@ -2,12 +2,12 @@
 import type { MouseEvent } from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { AutoSizer, InfiniteLoader, List, WindowScroller } from 'react-virtualized';
 import type { Index, ListRowProps } from 'react-virtualized';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -27,7 +27,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 
-import { toastState } from '@recoil/common';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 
 function BlockedUsers() {
@@ -37,7 +36,7 @@ function BlockedUsers() {
     }
   } = useTheme();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
 
   const {
     unblock: { mutate: mutateUnblock, isLoading: isLoadingMutateUnblock }
@@ -88,12 +87,14 @@ function BlockedUsers() {
       e.stopPropagation();
       await mutateUnblock(userId, {
         onSuccess() {
-          setToastState({ type: 'user', status: 'unBlock', params: { userName } });
+          toastStack({
+            children: `${userName}님을 차단 해제했어요.`
+          });
           refetch();
         }
       });
     },
-    [isLoadingMutateUnblock, mutateUnblock, refetch, setToastState]
+    [isLoadingMutateUnblock, mutateUnblock, refetch, toastStack]
   );
 
   const rowRenderer = useCallback(

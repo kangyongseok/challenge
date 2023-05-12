@@ -1,6 +1,6 @@
-import { useSetRecoilState } from 'recoil';
 import { useMutation } from '@tanstack/react-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 
 import type { AlarmsParams } from '@dto/user';
 
@@ -8,12 +8,10 @@ import Sendbird from '@library/sendbird';
 
 import { putAlarm } from '@api/user';
 
-import { toastState } from '@recoil/common';
-
 import useQueryUserInfo from './useQueryUserInfo';
 
 function useMutationPostAlarm() {
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
 
   const { refetch: refetchUserInfo } = useQueryUserInfo();
   const { mutate: mutatePostAlarm, ...useMutationResult } = useMutation(putAlarm, {
@@ -32,9 +30,8 @@ function useMutationPostAlarm() {
         if (snoozePeriod) {
           mutatePostAlarm(data, options);
         } else {
-          setToastState({
-            type: 'sendbird',
-            status: 'settingError'
+          toastStack({
+            children: '설정 변경에 실패했어요. 잠시 후 다시 시도해 주세요.'
           });
         }
       });

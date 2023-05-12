@@ -4,16 +4,9 @@ import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
-import {
-  Box,
-  Flexbox,
-  Icon,
-  IconName,
-  Image,
-  Toast,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import Toast from '@mrcamelhub/camel-ui-toast';
+import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { UserNoti } from '@dto/user';

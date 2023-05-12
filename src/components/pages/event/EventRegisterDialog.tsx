@@ -1,25 +1,29 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Dialog, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchSurvey, postSurvey } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function EventRegisterDialog({ open, close }: { open: boolean; close: () => void }) {
+  const router = useRouter();
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const { data: accessUser } = useQueryAccessUser();
   const { mutate } = useMutation(postSurvey);
@@ -28,7 +32,6 @@ function EventRegisterDialog({ open, close }: { open: boolean; close: () => void
     enabled: !!accessUser,
     refetchOnMount: true
   });
-  const setToastState = useSetRecoilState(toastState);
 
   useEffect(() => {
     if (accessUser?.phone) {
@@ -42,9 +45,8 @@ function EventRegisterDialog({ open, close }: { open: boolean; close: () => void
 
   const handleClickRegister = () => {
     if (data) {
-      setToastState({
-        type: 'event',
-        status: 'onready'
+      toastStack({
+        children: '이미 참여 하셨습니다.'
       });
     } else {
       mutate(

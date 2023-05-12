@@ -1,26 +1,28 @@
-import { useSetRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 
 import { deleteNoti, postNoti } from '@api/channel';
 
 import queryKeys from '@constants/queryKeys';
 
-import { toastState } from '@recoil/common';
-
 function useMutationChannelNoti() {
   const queryClient = useQueryClient();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
 
   const { mutate: mutatePostNoti, ...useMutationResultPost } = useMutation(postNoti, {
     onSuccess() {
-      setToastState({ type: 'channel', status: 'notiOn' });
+      toastStack({
+        children: '채팅 알림을 받아요.'
+      });
     }
   });
   const { mutate: mutateDeleteNoti, ...useMutationResultDelete } = useMutation(deleteNoti, {
     onSuccess() {
-      setToastState({ type: 'channel', status: 'notiOff' });
+      toastStack({
+        children: '채팅 알림을 받지 않아요.'
+      });
     }
   });
 

@@ -5,6 +5,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { find, uniq } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { StyleDetails } from '@dto/common';
@@ -22,7 +23,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { LikeStyleSelectedModelDetail } from '@typings/common';
 import { openState, selectedModelCardState } from '@recoil/onboarding';
-import { toastState } from '@recoil/common';
 
 import {
   ModelCardText,
@@ -40,9 +40,10 @@ function StylesCards({ themeType }: { themeType?: 'normal' }) {
     theme: { palette }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const [selectedModelCard, setSelectedModelCard] = useRecoilState(selectedModelCardState);
   const [styleCardId, setStyleCardId] = useState<number[]>([]);
-  const setToastState = useSetRecoilState(toastState);
   const setOpenTooltip = useSetRecoilState(openState('likeTooltip'));
 
   const {
@@ -191,9 +192,8 @@ function StylesCards({ themeType }: { themeType?: 'normal' }) {
     } else {
       if (selectedModelCard.length > 4) {
         if (themeType === 'normal') {
-          setToastState({
-            type: 'mypage',
-            status: 'overFiveStyle'
+          toastStack({
+            children: '최대 5개까지 고를 수 있어요!'
           });
         }
         setOpenTooltip(({ type }) => ({

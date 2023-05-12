@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Box, Button, Flexbox, Label, Typography, light } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -15,7 +16,7 @@ import { postRequestProductLegits } from '@api/productLegit';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
@@ -25,7 +26,8 @@ function WishesBottomCtaButton() {
   const { order = 'updatedDesc', hiddenTab }: { order?: OrderOptionKeys; hiddenTab?: string } =
     router.query;
   const deviceId = useRecoilValue(deviceIdState);
-  const setToastState = useSetRecoilState(toastState);
+
+  const toastStack = useToastStack();
 
   const [open, setOpen] = useState(false);
 
@@ -79,13 +81,12 @@ function WishesBottomCtaButton() {
           }
         })
         .then(() =>
-          setToastState({
-            type: 'legit',
-            status: 'saved'
+          toastStack({
+            children: '감정신청이 완료되었습니다!'
           })
         );
     }
-  }, [router, isSuccess, open, setToastState]);
+  }, [router, isSuccess, open, toastStack]);
 
   useEffect(() => {
     if (open) {

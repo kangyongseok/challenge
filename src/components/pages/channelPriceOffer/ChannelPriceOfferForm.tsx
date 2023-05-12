@@ -3,6 +3,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   Flexbox,
   Icon,
   Input,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -24,7 +24,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
 
-import { toastState } from '@recoil/common';
 import { AnimationLoading } from '@pages/user/report';
 
 function ReviewForm() {
@@ -35,6 +34,8 @@ function ReviewForm() {
   } = useTheme();
 
   const router = useRouter();
+
+  const toastStack = useToastStack();
 
   const { productId, userId, userName, isSeller } = useMemo(
     () => ({
@@ -50,8 +51,6 @@ function ReviewForm() {
       router.query.targetUserName
     ]
   );
-
-  const setToastState = useSetRecoilState(toastState);
 
   const { data: { product, offers = [] } = {}, isLoading } = useQuery(
     queryKeys.products.product({ productId }),
@@ -84,7 +83,9 @@ function ReviewForm() {
           description: params.content
         });
 
-        setToastState({ type: 'user', status: 'successSendReview' });
+        toastStack({
+          children: '후기를 보냈어요.'
+        });
         router.back();
       }
     });

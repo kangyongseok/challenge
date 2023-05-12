@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ReviewCard } from '@components/UI/organisms';
@@ -17,7 +18,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { reviewBlockState } from '@recoil/productReview';
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
@@ -26,14 +27,15 @@ interface SellerInfoReviewsPanelProps {
 }
 
 function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
-  const queryClient = useQueryClient();
   const router = useRouter();
 
+  const toastStack = useToastStack();
   const { triggered } = useDetectScrollFloorTrigger();
 
   const deviceId = useRecoilValue(deviceIdState);
   const setReviewBlockState = useSetRecoilState(reviewBlockState);
-  const setToastState = useSetRecoilState(toastState);
+
+  const queryClient = useQueryClient();
 
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: muatePostSellerReport, isLoading: isLoadingMutation } =
@@ -109,7 +111,14 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
               }))
             });
             setReviewBlockState(true);
-            setToastState({ type: 'user', status: 'reviewBlock' });
+            toastStack({
+              children: (
+                <>
+                  차단 처리되었습니다.
+                  <br />이 사용자는 가려드릴게요!
+                </>
+              )
+            });
           }
         }
       );
@@ -126,7 +135,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       router,
       sellerId,
       setReviewBlockState,
-      setToastState
+      toastStack
     ]
   );
 
@@ -165,7 +174,14 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
               }))
             });
             setReviewBlockState(true);
-            setToastState({ type: 'user', status: 'reviewReport' });
+            toastStack({
+              children: (
+                <>
+                  신고가 접수되었습니다.
+                  <br />이 리뷰는 가려드릴게요!
+                </>
+              )
+            });
           }
         }
       );
@@ -182,7 +198,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       queryClient,
       router,
       setReviewBlockState,
-      setToastState
+      toastStack
     ]
   );
 

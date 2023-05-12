@@ -128,12 +128,12 @@ function MypageProfile() {
           )}
           {snsType === 'facebook' && (
             <SnsIconWrap bgColor="#528BFF">
-              <Icon name="BrandFacebookFilled" customStyle={{ color: common.uiWhite }} />
+              <Icon name="BrandFacebookFilled" color="uiWhite" />
             </SnsIconWrap>
           )}
           {snsType === 'apple' && (
             <SnsIconWrap bgColor="#313438">
-              <Icon name="AppleFilled" customStyle={{ color: common.uiWhite }} />
+              <Icon name="AppleFilled" color="uiWhite" />
             </SnsIconWrap>
           )}
         </Box>
@@ -150,15 +150,8 @@ function MypageProfile() {
             {isCertifiedSeller && !isLegit && <CamelAuthLabel />}
             {isLegit && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
-                <Icon
-                  name="LegitFilled"
-                  customStyle={{ color: common.uiWhite, width: 10, height: 10 }}
-                />
-                <Typography
-                  variant="small2"
-                  weight="medium"
-                  customStyle={{ color: common.uiWhite }}
-                >
+                <Icon name="LegitFilled" color="uiWhite" customStyle={{ width: 10, height: 10 }} />
+                <Typography variant="small2" weight="medium" color="uiWhite">
                   감정사
                 </Typography>
               </LegitBedge>

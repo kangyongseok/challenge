@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Toast } from '@mrcamelhub/camel-ui';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import { Button } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';
@@ -18,7 +19,6 @@ import { MIN_PRICE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { toastState } from '@recoil/common';
 import {
   camelSellerBooleanStateFamily,
   camelSellerHasOpenedSurveyBottomSheetState,
@@ -31,6 +31,8 @@ import {
 function CamelSellerCTAButton() {
   const router = useRouter();
   const { id: productId } = router.query;
+
+  const toastStack = useToastStack();
 
   const {
     images,
@@ -51,7 +53,6 @@ function CamelSellerCTAButton() {
   const { units, stores, distances, colors } = useRecoilValue(camelSellerSurveyState);
   const isValid = useRecoilValue(camelSellerSubmitValidatorState);
   const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
-  const setToastState = useSetRecoilState(toastState);
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
   const resetValidatorPhoto = useResetRecoilState(
@@ -195,10 +196,14 @@ function CamelSellerCTAButton() {
             });
           } else {
             router.replace(`/products/${id}?success=true`).then(() => {
-              setToastState({
-                type: 'product',
-                status: 'saleSuccess',
-                hideDuration: 3000
+              toastStack({
+                children: (
+                  <>
+                    <p>내 매물이 등록되었어요! 판매시작!</p>
+                    <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+                  </>
+                ),
+                autoHideDuration: 3000
               });
               resetSurveyState();
               resetTempData();

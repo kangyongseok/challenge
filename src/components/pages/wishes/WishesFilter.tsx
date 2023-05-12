@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { BottomSheet, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -52,12 +52,6 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
   const [open, setOpen] = useState(false);
   const openSoldoutDialog = useSetRecoilState(openSoldoutDialogState);
 
-  const {
-    theme: {
-      palette: { common, primary }
-    }
-  } = useTheme();
-
   const handleClickSoldOutDelete = () => {
     // 판매완료 삭제 api 추가 필요
     logEvent(attrKeys.wishes.CLICK_DELETESOLDOUT_BUTTON, {
@@ -70,7 +64,7 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
   return (
     <Flexbox justifyContent="space-between" customStyle={{ marginBottom: 16 }}>
       <Flexbox alignment="center" gap={3}>
-        <Typography customStyle={{ color: common.ui60 }}>찜한 매물</Typography>
+        <Typography color="ui60">찜한 매물</Typography>
         <Typography weight="bold"> {userWishCount}</Typography>
       </Flexbox>
       {!hiddenTab && (
@@ -140,10 +134,7 @@ function WishesFilter({ order, userWishCount }: WishesFilterProps) {
               });
             }}
           >
-            <Typography
-              weight="medium"
-              customStyle={{ color: optionKey === order ? primary.main : common.ui20 }}
-            >
+            <Typography weight="medium" color={optionKey === order ? 'primary' : 'ui20'}>
               {optionName}
             </Typography>
           </FilterOption>

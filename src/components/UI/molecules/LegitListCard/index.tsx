@@ -196,26 +196,14 @@ function LegitListCard({
             {!hideResult && (
               <Flexbox gap={12}>
                 <Flexbox gap={2}>
-                  <Icon name="OpinionAuthenticFilled" width={12} height={12} color={common.ui80} />
-                  <Typography
-                    variant="small2"
-                    weight="medium"
-                    customStyle={{
-                      color: common.ui80
-                    }}
-                  >
+                  <Icon name="OpinionAuthenticFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
                     {authenticCount}
                   </Typography>
                 </Flexbox>
                 <Flexbox gap={2}>
-                  <Icon name="OpinionFakeFilled" width={12} height={12} color={common.ui80} />
-                  <Typography
-                    variant="small2"
-                    weight="medium"
-                    customStyle={{
-                      color: common.ui80
-                    }}
-                  >
+                  <Icon name="OpinionFakeFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
                     {fakeCount}
                   </Typography>
                 </Flexbox>

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useQuery } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import { Box, Chip, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -18,7 +19,6 @@ import attrKeys from '@constants/attrKeys';
 import { shake } from '@styles/transition';
 
 import { legitProfileEditState } from '@recoil/legitProfile';
-import { toastState } from '@recoil/common';
 
 function LegitProfileContents() {
   const {
@@ -32,7 +32,7 @@ function LegitProfileContents() {
   );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const [isBanWord, setIsBanWord] = useState(false);
-  const setToastState = useSetRecoilState(toastState);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setIsBanWord(extractTagRegx.test(sellerEditInfo.legitTitle || ''));
@@ -49,11 +49,7 @@ function LegitProfileContents() {
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length > 100) {
-      setToastState({
-        type: 'common',
-        status: 'overLimitText',
-        params: { length: 100 }
-      });
+      setOpen(true);
       return;
     }
     setSellerEditInfo({ ...sellerEditInfo, legitTitle: e.target.value.substring(0, 100) });
@@ -75,71 +71,76 @@ function LegitProfileContents() {
   };
 
   return (
-    <Wrap>
-      <Typography weight="bold" color="ui80">
-        감정사 한 줄 소개
-      </Typography>
-      <TextAreaWrap ban={isBanWord}>
-        <AutoTextArea
-          ref={descriptionRef}
-          onClick={() =>
-            logEvent(attrKeys.legitProfile.CLICK_LEGIT_PROFILE_EDIT, {
-              att: 'LEGIT_SELLER'
-            })
-          }
-          onChange={handleChange}
-          value={(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '')}
-          ban={isBanWord}
-          placeholder={'한 줄 소개를 입력해주세요\n(명품 관련 주요 업무 경력, 감정 경력 등)'}
-        />
-        <BanWordText
-          variant="h4"
-          dangerouslySetInnerHTML={{ __html: sellerEditInfo.legitTitle || '' }}
-          onClick={handleClickInput}
-        />
-        <Flexbox
-          justifyContent="space-between"
-          alignment="center"
-          customStyle={{ marginTop: 'auto' }}
-        >
-          <Typography variant="small2" weight="medium" color="ui80">
-            <span style={{ color: common.ui60 }}>
-              {(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '').length}
-            </span>{' '}
-            / 100자
-          </Typography>
-          {isBanWord && (
-            <Typography variant="small2" weight="medium" color="red-light">
-              욕설 및 비속어는 사용할 수 없어요!
-            </Typography>
-          )}
-        </Flexbox>
-      </TextAreaWrap>
-      <Box customStyle={{ marginTop: 32 }}>
-        <Typography weight="bold" customStyle={{ color: common.ui80, marginBottom: 12 }}>
-          감정가능 브랜드 (최대 15개 선택)
+    <>
+      <Wrap>
+        <Typography weight="bold" color="ui80">
+          감정사 한 줄 소개
         </Typography>
-        <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
-          {legitsBrands.map(({ id, name: brandName }) => (
-            <Chip
-              key={`target-brand-${id}`}
-              size="large"
-              variant={sellerEditInfo.legitTargetBrandIds?.includes(id) ? 'solid' : 'outline'}
-              brandColor="black"
-              customStyle={{
-                whiteSpace: 'nowrap',
-                border: sellerEditInfo.legitTargetBrandIds?.includes(id)
-                  ? `1px solid ${common.ui20}`
-                  : `1px solid ${common.line01}`
-              }}
-              onClick={() => handleClickChip(id)}
-            >
-              #{brandName}
-            </Chip>
-          ))}
-        </Flexbox>
-      </Box>
-    </Wrap>
+        <TextAreaWrap ban={isBanWord}>
+          <AutoTextArea
+            ref={descriptionRef}
+            onClick={() =>
+              logEvent(attrKeys.legitProfile.CLICK_LEGIT_PROFILE_EDIT, {
+                att: 'LEGIT_SELLER'
+              })
+            }
+            onChange={handleChange}
+            value={(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '')}
+            ban={isBanWord}
+            placeholder={'한 줄 소개를 입력해주세요\n(명품 관련 주요 업무 경력, 감정 경력 등)'}
+          />
+          <BanWordText
+            variant="h4"
+            dangerouslySetInnerHTML={{ __html: sellerEditInfo.legitTitle || '' }}
+            onClick={handleClickInput}
+          />
+          <Flexbox
+            justifyContent="space-between"
+            alignment="center"
+            customStyle={{ marginTop: 'auto' }}
+          >
+            <Typography variant="small2" weight="medium" color="ui80">
+              <span style={{ color: common.ui60 }}>
+                {(sellerEditInfo.legitTitle || '').replace(extractTagRegx, '').length}
+              </span>{' '}
+              / 100자
+            </Typography>
+            {isBanWord && (
+              <Typography variant="small2" weight="medium" color="red-light">
+                욕설 및 비속어는 사용할 수 없어요!
+              </Typography>
+            )}
+          </Flexbox>
+        </TextAreaWrap>
+        <Box customStyle={{ marginTop: 32 }}>
+          <Typography weight="bold" customStyle={{ color: common.ui80, marginBottom: 12 }}>
+            감정가능 브랜드 (최대 15개 선택)
+          </Typography>
+          <Flexbox gap={8} customStyle={{ flexWrap: 'wrap' }}>
+            {legitsBrands.map(({ id, name: brandName }) => (
+              <Chip
+                key={`target-brand-${id}`}
+                size="large"
+                variant={sellerEditInfo.legitTargetBrandIds?.includes(id) ? 'solid' : 'outline'}
+                brandColor="black"
+                customStyle={{
+                  whiteSpace: 'nowrap',
+                  border: sellerEditInfo.legitTargetBrandIds?.includes(id)
+                    ? `1px solid ${common.ui20}`
+                    : `1px solid ${common.line01}`
+                }}
+                onClick={() => handleClickChip(id)}
+              >
+                #{brandName}
+              </Chip>
+            ))}
+          </Flexbox>
+        </Box>
+      </Wrap>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        100글자만 입력할 수 있어요.
+      </Toast>
+    </>
   );
 }
 

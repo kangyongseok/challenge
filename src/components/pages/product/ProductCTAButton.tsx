@@ -11,6 +11,7 @@ import type {
   RefetchQueryFilters,
   UseMutateFunction
 } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import type { BaseButtonProps } from '@mrcamelhub/camel-ui/dist/src/components/Button';
 import {
   Avatar,
@@ -62,7 +63,6 @@ import {
   dialogState,
   loginBottomSheetState,
   prevChannelAlarmPopup,
-  toastState,
   userOnBoardingTriggerState
 } from '@recoil/common';
 import type { MetaInfoMutateParams } from '@hooks/useQueryProduct';
@@ -139,9 +139,10 @@ function ProductCTAButton({
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const [open, setOpen] = useState(false);
 
-  const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
@@ -346,10 +347,9 @@ function ProductCTAButton({
             await mutateUnblock(roleSeller.userId, {
               onSuccess() {
                 refetch();
-                setToastState({
-                  type: 'user',
-                  status: 'unBlockWithRole',
-                  params: { role: '판매자', userName: product.productSeller.name }
+
+                toastStack({
+                  children: `${product.productSeller.name}님을 차단 해제했어요.`
                 });
               }
             });
@@ -438,7 +438,9 @@ function ProductCTAButton({
     }
 
     if (isSoldOut && !isReserving && (!isDup || !hasTarget)) {
-      setToastState({ type: 'product', status: 'soldout' });
+      toastStack({
+        children: '죄송합니다. 판매 완료된 매물입니다!'
+      });
 
       return;
     }
@@ -552,10 +554,8 @@ function ProductCTAButton({
             await mutateUnblock(roleSeller.userId, {
               onSuccess() {
                 refetch();
-                setToastState({
-                  type: 'user',
-                  status: 'unBlockWithRole',
-                  params: { role: '판매자', userName: product.productSeller.name }
+                toastStack({
+                  children: `${product.productSeller.name}님을 차단 해제했어요.`
                 });
               }
             });
@@ -628,10 +628,8 @@ function ProductCTAButton({
             await mutateUnblock(roleSeller.userId, {
               onSuccess() {
                 refetch();
-                setToastState({
-                  type: 'user',
-                  status: 'unBlockWithRole',
-                  params: { role: '판매자', userName: product.productSeller.name }
+                toastStack({
+                  children: `${product.productSeller.name}님을 차단 해제했어요.`
                 });
               }
             });

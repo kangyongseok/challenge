@@ -1,11 +1,11 @@
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -24,7 +24,6 @@ import { getCookies } from '@utils/cookies';
 
 import { shake } from '@styles/transition';
 
-import { toastState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function ChannelFixMessage() {
@@ -33,11 +32,15 @@ function ChannelFixMessage() {
       palette: { common, secondary }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
+
   const { back } = useRouter();
   const queryClient = useQueryClient();
-  const setToastState = useSetRecoilState(toastState);
   const [description, setDescription] = useState('');
   const [isMinDescription, setIsMinDesciption] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const { mutate } = useMutation(putFixedChannel);
   const { data: accessUser } = useQueryAccessUser();
   const { data: fixedChannel } = useQuery(
@@ -54,16 +57,13 @@ function ChannelFixMessage() {
     }
   }, [description, isMinDescription]);
 
-  const handleChangeDescription = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      if (e.target.value.length > 300) {
-        setToastState({ type: 'common', status: 'overLimitText', params: { length: 300 } });
-      } else {
-        setDescription(e.target.value);
-      }
-    },
-    [setToastState]
-  );
+  const handleChangeDescription = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length > 300) {
+      setOpen(true);
+    } else {
+      setDescription(e.target.value);
+    }
+  }, []);
 
   const handleClickSave = () => {
     logEvent(attrKeys.channel.CLICK_CHANNEL_DEFAULT_MESSAGE, {
@@ -72,7 +72,9 @@ function ChannelFixMessage() {
 
     if (description.length < 20) {
       setIsMinDesciption(true);
-      setToastState({ type: 'common', status: 'undeLimitText', params: { length: 20 } });
+      toastStack({
+        children: '최소 20자 이상으로 작성해주세요.'
+      });
       return;
     }
 
@@ -81,7 +83,9 @@ function ChannelFixMessage() {
       {
         onSuccess() {
           queryClient.invalidateQueries(queryKeys.users.fixedChannel(accessUser?.userId || 0));
-          setToastState({ type: 'common', status: 'savedChannelMessage' });
+          toastStack({
+            children: '저장되었습니다'
+          });
           back();
         }
       }
@@ -100,54 +104,59 @@ function ChannelFixMessage() {
   }, [fixedChannel]);
 
   return (
-    <GeneralTemplate
-      header={
-        <Header showRight={false}>
-          <Typography variant="h3" weight="bold">
-            채팅 고정 메시지 설정
-          </Typography>
-        </Header>
-      }
-    >
-      <Typography weight="bold" customStyle={{ margin: '32px 0 12px', color: common.ui80 }}>
-        채팅에서 고정 메시지를 설정해보세요!
-      </Typography>
-      <Description isMinDescription={isMinDescription}>
-        <TextareaAutosize
-          // ref={descriptionRef}
-          // className={descriptionError.text.length > 0 ? 'invalid' : ''}
-          placeholder="메세지를 입력해주세요"
-          value={description}
-          onChange={handleChangeDescription}
-          style={{ border: 'none' }}
-        />
-        <DescriptionInfo variant="small2" weight="medium">
-          {description?.length || 0}
-          <span>/ 300자</span>
-          {isMinDescription && (
-            <Typography
-              variant="small2"
-              weight="medium"
-              customStyle={{ color: secondary.red.light, marginLeft: 'auto', marginRight: 30 }}
-            >
-              최소 20자 이상으로 작성해주세요
+    <>
+      <GeneralTemplate
+        header={
+          <Header showRight={false}>
+            <Typography variant="h3" weight="bold">
+              채팅 고정 메시지 설정
             </Typography>
-          )}
-        </DescriptionInfo>
-      </Description>
-      <ButtonBox>
-        <Button
-          type="submit"
-          size="xlarge"
-          variant="solid"
-          brandColor="primary"
-          fullWidth
-          onClick={handleClickSave}
-        >
-          저장
-        </Button>
-      </ButtonBox>
-    </GeneralTemplate>
+          </Header>
+        }
+      >
+        <Typography weight="bold" customStyle={{ margin: '32px 0 12px', color: common.ui80 }}>
+          채팅에서 고정 메시지를 설정해보세요!
+        </Typography>
+        <Description isMinDescription={isMinDescription}>
+          <TextareaAutosize
+            // ref={descriptionRef}
+            // className={descriptionError.text.length > 0 ? 'invalid' : ''}
+            placeholder="메세지를 입력해주세요"
+            value={description}
+            onChange={handleChangeDescription}
+            style={{ border: 'none' }}
+          />
+          <DescriptionInfo variant="small2" weight="medium">
+            {description?.length || 0}
+            <span>/ 300자</span>
+            {isMinDescription && (
+              <Typography
+                variant="small2"
+                weight="medium"
+                customStyle={{ color: secondary.red.light, marginLeft: 'auto', marginRight: 30 }}
+              >
+                최소 20자 이상으로 작성해주세요
+              </Typography>
+            )}
+          </DescriptionInfo>
+        </Description>
+        <ButtonBox>
+          <Button
+            type="submit"
+            size="xlarge"
+            variant="solid"
+            brandColor="primary"
+            fullWidth
+            onClick={handleClickSave}
+          >
+            저장
+          </Button>
+        </ButtonBox>
+      </GeneralTemplate>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        300글자만 입력할 수 있어요.
+      </Toast>
+    </>
   );
 }
 

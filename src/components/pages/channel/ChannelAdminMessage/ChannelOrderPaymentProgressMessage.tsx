@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
-import { Box, Button, Flexbox, Toast, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Toast from '@mrcamelhub/camel-ui-toast';
+import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 

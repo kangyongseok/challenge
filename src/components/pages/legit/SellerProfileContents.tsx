@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import { Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -13,7 +14,6 @@ import attrKeys from '@constants/attrKeys';
 import { shake } from '@styles/transition';
 
 import { legitProfileEditState } from '@recoil/legitProfile';
-import { toastState } from '@recoil/common';
 
 function SellerProfileContents() {
   const {
@@ -22,10 +22,12 @@ function SellerProfileContents() {
     }
   } = useTheme();
 
-  const shopDescriptionRef = useRef<null | HTMLTextAreaElement>(null);
   const [isBanWord, setIsBanWord] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
-  const setToastState = useSetRecoilState(toastState);
+
+  const shopDescriptionRef = useRef<null | HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setIsBanWord(extractTagRegx.test(sellerEditInfo.shopDescription || ''));
@@ -33,11 +35,7 @@ function SellerProfileContents() {
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length > 100) {
-      setToastState({
-        type: 'common',
-        status: 'overLimitText',
-        params: { length: 100 }
-      });
+      setOpen(true);
       return;
     }
     setSellerEditInfo({ ...sellerEditInfo, shopDescription: e.target.value.substring(0, 100) });
@@ -53,50 +51,55 @@ function SellerProfileContents() {
   };
 
   return (
-    <Wrap>
-      <Typography weight="bold" customStyle={{ color: common.ui80 }}>
-        내 상점 소개
-      </Typography>
-      <TextAreaWrap ban={isBanWord}>
-        <AutoTextArea
-          ref={shopDescriptionRef}
-          onClick={() =>
-            logEvent(attrKeys.legitProfile.CLICK_STORE_EDIT, {
-              att: 'LEGIT_SELLER'
-            })
-          }
-          onChange={handleChange}
-          value={(sellerEditInfo.shopDescription || '').replace(extractTagRegx, '')}
-          ban={isBanWord}
-        />
-        <BanWordText
-          variant="h4"
-          dangerouslySetInnerHTML={{ __html: sellerEditInfo.shopDescription || '' }}
-          onClick={handleClickInput}
-        />
-        <Flexbox
-          justifyContent="space-between"
-          alignment="center"
-          customStyle={{ marginTop: 'auto' }}
-        >
-          <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
-            <span style={{ color: common.ui60 }}>
-              {(sellerEditInfo.shopDescription || '').replace(extractTagRegx, '').length}
-            </span>{' '}
-            / 100자
-          </Typography>
-          {isBanWord && (
-            <Typography
-              variant="small2"
-              weight="medium"
-              customStyle={{ color: secondary.red.light }}
-            >
-              욕설 및 비속어는 사용할 수 없어요!
+    <>
+      <Wrap>
+        <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+          내 상점 소개
+        </Typography>
+        <TextAreaWrap ban={isBanWord}>
+          <AutoTextArea
+            ref={shopDescriptionRef}
+            onClick={() =>
+              logEvent(attrKeys.legitProfile.CLICK_STORE_EDIT, {
+                att: 'LEGIT_SELLER'
+              })
+            }
+            onChange={handleChange}
+            value={(sellerEditInfo.shopDescription || '').replace(extractTagRegx, '')}
+            ban={isBanWord}
+          />
+          <BanWordText
+            variant="h4"
+            dangerouslySetInnerHTML={{ __html: sellerEditInfo.shopDescription || '' }}
+            onClick={handleClickInput}
+          />
+          <Flexbox
+            justifyContent="space-between"
+            alignment="center"
+            customStyle={{ marginTop: 'auto' }}
+          >
+            <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
+              <span style={{ color: common.ui60 }}>
+                {(sellerEditInfo.shopDescription || '').replace(extractTagRegx, '').length}
+              </span>{' '}
+              / 100자
             </Typography>
-          )}
-        </Flexbox>
-      </TextAreaWrap>
-    </Wrap>
+            {isBanWord && (
+              <Typography
+                variant="small2"
+                weight="medium"
+                customStyle={{ color: secondary.red.light }}
+              >
+                욕설 및 비속어는 사용할 수 없어요!
+              </Typography>
+            )}
+          </Flexbox>
+        </TextAreaWrap>
+      </Wrap>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        100글자만 입력할 수 있어요.
+      </Toast>
+    </>
   );
 }
 

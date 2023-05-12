@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash-es/isEmpty';
 import { useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Flexbox, Grid, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -20,7 +20,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { copyToClipboard } from '@utils/common';
 
-import { toastState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -35,10 +34,10 @@ function LegitStatusFailContents() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const { data: accessUser } = useQueryAccessUser();
   const { userNickName } = useQueryMyUserInfo();
-
-  const setToastState = useSetRecoilState(toastState);
 
   const [isAuthUser, setIsAuthUser] = useState(false);
   const [description, setDescription] = useState('');
@@ -77,11 +76,10 @@ function LegitStatusFailContents() {
     logEvent(attrKeys.legit.CLICK_LEGIT_COPY, {
       name: attrProperty.name.PRE_CONFIRM_EDIT
     });
-    setToastState({
-      type: 'legitStatus',
-      status: 'successCopy',
-      theme: 'dark'
+    toastStack({
+      children: '문구가 복사되었습니다!'
     });
+
     copyToClipboard(description);
   };
 

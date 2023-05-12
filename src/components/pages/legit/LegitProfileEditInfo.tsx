@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useQueryClient } from '@tanstack/react-query';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -26,7 +27,7 @@ import {
 import { shake } from '@styles/transition';
 
 import { legitProfileEditState } from '@recoil/legitProfile';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 function LegitProfileEditInfo() {
   const {
@@ -34,13 +35,16 @@ function LegitProfileEditInfo() {
       palette: { common }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
+
   const queryClient = useQueryClient();
   const nickNameRef = useRef<null | HTMLInputElement>(null);
 
-  const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const [isBanWord, setIsBanWord] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [{ imageType, isLoadingGetPhoto }, setGetPhotoState] = useState<{
     imageType: 'profile' | 'background';
@@ -171,7 +175,9 @@ function LegitProfileEditInfo() {
         switch (imageType) {
           case 'profile': {
             setSellerEditInfo({ ...sellerEditInfo, imageProfile: firstPhotoGuideImage.imageUrl });
-            setToastState({ type: 'user', status: 'savedProfileImage' });
+            toastStack({
+              children: '프로필 사진을 저장했어요.'
+            });
             break;
           }
           case 'background': {
@@ -179,7 +185,9 @@ function LegitProfileEditInfo() {
               ...sellerEditInfo,
               imageBackground: firstPhotoGuideImage.imageUrl
             });
-            setToastState({ type: 'user', status: 'savedBackgroundImage' });
+            toastStack({
+              children: '배경 사진을 저장했어요.'
+            });
             break;
           }
           default: {
@@ -193,7 +201,7 @@ function LegitProfileEditInfo() {
         500
       );
     };
-  }, [imageType, queryClient, sellerEditInfo, setSellerEditInfo, setToastState]);
+  }, [imageType, queryClient, sellerEditInfo, setSellerEditInfo, toastStack]);
 
   useEffect(() => {
     setIsBanWord(extractTagRegx.test(sellerEditInfo.nickName || ''));
@@ -212,11 +220,7 @@ function LegitProfileEditInfo() {
     const target = e.target as HTMLInputElement;
 
     if (target.value.replace(/[^a-zA-Z\s+]/gi, '').length > 16) {
-      setToastState({
-        type: 'common',
-        status: 'overLimitText',
-        params: { length: 16 }
-      });
+      setOpen(true);
       return;
     }
 
@@ -227,77 +231,82 @@ function LegitProfileEditInfo() {
   };
 
   return (
-    <Wrap>
-      <Flexbox justifyContent="space-between" alignment="center" gap={18}>
-        <Box customStyle={{ width: '100%' }}>
-          <Typography
-            variant="h4"
-            weight="bold"
-            customStyle={{ color: common.uiWhite, marginBottom: 12 }}
-          >
-            닉네임
-          </Typography>
-          <TextAreaWrap>
-            <NickNameInputWrap ban={isBanWord}>
-              <TextInputArea
-                ref={nickNameRef}
-                ban={isBanWord}
-                onClick={() =>
-                  logEvent(attrKeys.legitProfile.CLICK_NICKNAME_EDIT, {
-                    att: 'LEGIT_SELLER'
-                  })
-                }
-                onChange={handleChange}
-                value={(sellerEditInfo.nickName || '').replace(extractTagRegx, '')}
-                type="search"
-                placeholder="영어이름을 입력해주세요"
-                customStyle={{ padding: 0, height: '100%' }}
-              />
-              <FakeTextInput
-                ban={isBanWord}
-                dangerouslySetInnerHTML={{ __html: sellerEditInfo.nickName || '' }}
-                onClick={handleClickInput}
-              />
-            </NickNameInputWrap>
-            <Flexbox
-              justifyContent="space-between"
-              alignment="center"
-              customStyle={{ marginTop: 8 }}
+    <>
+      <Wrap>
+        <Flexbox justifyContent="space-between" alignment="center" gap={18}>
+          <Box customStyle={{ width: '100%' }}>
+            <Typography
+              variant="h4"
+              weight="bold"
+              customStyle={{ color: common.uiWhite, marginBottom: 12 }}
             >
-              <Typography
-                variant="small2"
-                weight="medium"
-                customStyle={{ color: common.uiWhite, marginLeft: 12 }}
+              닉네임
+            </Typography>
+            <TextAreaWrap>
+              <NickNameInputWrap ban={isBanWord}>
+                <TextInputArea
+                  ref={nickNameRef}
+                  ban={isBanWord}
+                  onClick={() =>
+                    logEvent(attrKeys.legitProfile.CLICK_NICKNAME_EDIT, {
+                      att: 'LEGIT_SELLER'
+                    })
+                  }
+                  onChange={handleChange}
+                  value={(sellerEditInfo.nickName || '').replace(extractTagRegx, '')}
+                  type="search"
+                  placeholder="영어이름을 입력해주세요"
+                  customStyle={{ padding: 0, height: '100%' }}
+                />
+                <FakeTextInput
+                  ban={isBanWord}
+                  dangerouslySetInnerHTML={{ __html: sellerEditInfo.nickName || '' }}
+                  onClick={handleClickInput}
+                />
+              </NickNameInputWrap>
+              <Flexbox
+                justifyContent="space-between"
+                alignment="center"
+                customStyle={{ marginTop: 8 }}
               >
-                {(sellerEditInfo.nickName || '').replace(extractTagRegx, '').length}/16
-              </Typography>
-            </Flexbox>
-          </TextAreaWrap>
-        </Box>
-        <Box
-          customStyle={{ position: 'relative' }}
-          onClick={handleChangeImage({ isBackground: false })}
-        >
-          <UserAvatar src={sellerEditInfo.imageProfile || ''} isRound />
-          <IconBox>
-            <Icon name="CameraFilled" />
-          </IconBox>
-        </Box>
-      </Flexbox>
-      <Flexbox direction="vertical" gap={8} customStyle={{ zIndex: 1, marginTop: 33 }}>
-        <Button
-          startIcon={
-            <Icon name={isLoadingGetPhoto ? 'LoadingFilled' : 'CameraFilled'} color="white" />
-          }
-          fullWidth
-          onClick={handleChangeImage({ isBackground: true })}
-          disabled={isLoadingGetPhoto} // isLoadingMutate
-          customStyle={{ background: 'none', color: common.uiWhite }}
-        >
-          배경 사진 변경
-        </Button>
-      </Flexbox>
-    </Wrap>
+                <Typography
+                  variant="small2"
+                  weight="medium"
+                  customStyle={{ color: common.uiWhite, marginLeft: 12 }}
+                >
+                  {(sellerEditInfo.nickName || '').replace(extractTagRegx, '').length}/16
+                </Typography>
+              </Flexbox>
+            </TextAreaWrap>
+          </Box>
+          <Box
+            customStyle={{ position: 'relative' }}
+            onClick={handleChangeImage({ isBackground: false })}
+          >
+            <UserAvatar src={sellerEditInfo.imageProfile || ''} isRound />
+            <IconBox>
+              <Icon name="CameraFilled" />
+            </IconBox>
+          </Box>
+        </Flexbox>
+        <Flexbox direction="vertical" gap={8} customStyle={{ zIndex: 1, marginTop: 33 }}>
+          <Button
+            startIcon={
+              <Icon name={isLoadingGetPhoto ? 'LoadingFilled' : 'CameraFilled'} color="white" />
+            }
+            fullWidth
+            onClick={handleChangeImage({ isBackground: true })}
+            disabled={isLoadingGetPhoto} // isLoadingMutate
+            customStyle={{ background: 'none', color: common.uiWhite }}
+          >
+            배경 사진 변경
+          </Button>
+        </Flexbox>
+      </Wrap>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        16글자만 입력할 수 있어요.
+      </Toast>
+    </>
   );
 }
 

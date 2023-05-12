@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Box, Button, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import type { Product } from '@dto/product';
@@ -15,21 +16,20 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { toastState } from '@recoil/common';
 
 function UserShopProductSoldOutConfirmBottomSheet() {
+  const toastStack = useToastStack();
+
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('soldOutConfirm'));
   const setOpenSoldOutFeedbackState = useSetRecoilState(userShopOpenStateFamily('soldOutFeedback'));
-  const setToastState = useSetRecoilState(toastState);
 
   const product = useRecoilValue(userShopSelectedProductState) as Product;
 
   const { mutate: updateStatusMutate } = useMutation(putProductUpdateStatus, {
     onSuccess: () => {
-      setToastState({
-        type: 'sellerProductState',
-        status: 'soldout',
-        customStyle: { bottom: 20 }
+      toastStack({
+        children: '판매완료 처리되었어요!',
+        bottom: 20
       });
     },
     onSettled: () => {

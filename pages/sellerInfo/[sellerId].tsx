@@ -116,11 +116,7 @@ function SellerInfo() {
                 overflow: 'hidden'
               }}
             >
-              <Typography
-                variant="h3"
-                weight="bold"
-                customStyle={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-              >
+              <Typography variant="h3" weight="bold" noWrap>
                 {sellerName}
               </Typography>
             </Header>

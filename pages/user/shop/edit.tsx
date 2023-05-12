@@ -6,6 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -53,7 +54,7 @@ import {
 import { shake } from '@styles/transition';
 
 import { userShopUpdatedProfileDataState } from '@recoil/userShop';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -67,10 +68,12 @@ function UserShopEdit() {
       palette: { common }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
+
   const queryClient = useQueryClient();
 
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
   const [userShopUpdatedProfileData, setUserShopUpdatedProfileDataState] = useRecoilState(
     userShopUpdatedProfileDataState
   );
@@ -101,7 +104,9 @@ function UserShopEdit() {
         queryKey: queryKeys.users.infoByUserId(accessUser?.userId || 0),
         refetchType: 'inactive'
       });
-      setToastState({ type: 'user', status: 'saved' });
+      toastStack({
+        children: '저장을 완료했어요.'
+      });
       setUserShopUpdatedProfileDataState(false);
       router.back();
     }
@@ -122,6 +127,8 @@ function UserShopEdit() {
       text: ''
     }
   });
+  const [open, setOpen] = useState(false);
+  const [openNicknameToast, setOpenNicknameToast] = useState(false);
 
   const nickNameRef = useRef<null | HTMLInputElement>(null);
   const descriptionRef = useRef<null | HTMLTextAreaElement>(null);
@@ -139,13 +146,17 @@ function UserShopEdit() {
   const { imageType, isLoadingGetPhoto, setGetPhotoState } = useGetImage((imageUrl) => {
     switch (imageType) {
       case 'profile': {
+        toastStack({
+          children: '프로필 사진을 저장했어요.'
+        });
         setUserProfileParams((prevState) => ({ ...prevState, imageProfile: imageUrl }));
-        setToastState({ type: 'user', status: 'savedProfileImage' });
         break;
       }
       case 'background': {
+        toastStack({
+          children: '배경 사진을 저장했어요.'
+        });
         setUserProfileParams((prevState) => ({ ...prevState, imageBackground: imageUrl }));
-        setToastState({ type: 'user', status: 'savedBackgroundImage' });
         break;
       }
       default: {
@@ -298,7 +309,7 @@ function UserShopEdit() {
         setError((prevState) => ({ ...prevState, nickNameError: { message: '', text: '' } }));
 
       if (e.target.value.length > 16) {
-        setToastState({ type: 'common', status: 'overLimitText', params: { length: 16 } });
+        setOpenNicknameToast(true);
       } else {
         setUserProfileParams((prevState) => ({
           ...prevState,
@@ -308,7 +319,7 @@ function UserShopEdit() {
         }));
       }
     },
-    [nickNameError.text.length, setToastState]
+    [nickNameError.text.length]
   );
 
   const handleChangeDescription = useCallback(
@@ -317,7 +328,7 @@ function UserShopEdit() {
         setError((prevState) => ({ ...prevState, descriptionError: { message: '', text: '' } }));
 
       if (e.target.value.length > 100) {
-        setToastState({ type: 'common', status: 'overLimitText', params: { length: 100 } });
+        setOpen(true);
       } else {
         setUserProfileParams((prevState) => ({
           ...prevState,
@@ -327,7 +338,7 @@ function UserShopEdit() {
         }));
       }
     },
-    [descriptionError.text.length, setToastState]
+    [descriptionError.text.length]
   );
 
   const handleClickSave = useCallback(() => {
@@ -383,11 +394,17 @@ function UserShopEdit() {
           });
 
           if (invalidReasons.some(({ type }) => type === 'DUPLICATE')) {
-            setToastState({ type: 'user', status: 'duplicatedNickName' });
+            toastStack({
+              children: '이미 사용 중인 닉네임이에요.'
+            });
           } else if (invalidReasons.some(({ type }) => type === 'ADMIN')) {
-            setToastState({ type: 'user', status: 'invalidAdminWord' });
+            toastStack({
+              children: '관리자로 오해할 수 있는 단어는 쓸 수 없어요.'
+            });
           } else if (invalidReasons.some(({ type }) => type === 'BAN')) {
-            setToastState({ type: 'user', status: 'invalidBanWord' });
+            toastStack({
+              children: '욕설 및 비속어는 사용할 수 없어요!'
+            });
           }
         } else {
           mutateProfile(userProfileParams);
@@ -405,9 +422,9 @@ function UserShopEdit() {
     name,
     nickName,
     nickNameError.message.length,
-    setToastState,
     userNickName,
-    userProfileParams
+    userProfileParams,
+    toastStack
   ]);
 
   const handleClickDeleteAccount = useCallback(() => {
@@ -469,189 +486,203 @@ function UserShopEdit() {
   };
 
   return (
-    <GeneralTemplate
-      header={
-        <ThemeProvider theme={triggered ? 'light' : 'dark'}>
-          <Header
-            isTransparent={!triggered}
-            titleCustomStyle={{ color: common.cmnW }}
-            showRight={false}
-            onClickLeft={handleClickBack}
-          >
-            <Typography variant="h3" weight="bold">
-              프로필 수정
-            </Typography>
-          </Header>
-        </ThemeProvider>
-      }
-      disablePadding
-    >
-      <Flexbox
-        direction="vertical"
-        customStyle={{
-          userSelect: 'none',
-          height: '100%'
-        }}
-      >
-        <ImageWrapper>
-          <BackgroundImage
-            src={getImageResizePath({
-              imagePath: getImagePathStaticParser(userImageBackground),
-              h: 160
-            })}
-          >
-            <Blur />
-          </BackgroundImage>
-          <BackgroundImageIcon onClick={handleChangeImage(true)}>
-            <Icon name="CameraFilled" size="medium" />
-          </BackgroundImageIcon>
-        </ImageWrapper>
-        <InfoWrapper ref={infoRef}>
-          <Box
-            customStyle={{ position: 'relative', margin: '-40px auto 0' }}
-            onClick={handleChangeImage(false)}
-          >
-            {isLoadingGetPhoto && imageType === 'profile' ? (
-              <Skeleton width={96} height={96} disableAspectRatio round={16} />
-            ) : (
-              <UserAvatar src={userImageProfile} showBorder />
-            )}
-            <ProfileImageIcon>
-              <Icon name="CameraFilled" size="medium" />
-            </ProfileImageIcon>
-          </Box>
-          <Flexbox direction="vertical" gap={32} customStyle={{ marginTop: 52 }}>
-            <Flexbox direction="vertical" gap={12}>
-              <Typography weight="bold" customStyle={{ color: common.ui80 }}>
-                닉네임
+    <>
+      <GeneralTemplate
+        header={
+          <ThemeProvider theme={triggered ? 'light' : 'dark'}>
+            <Header
+              isTransparent={!triggered}
+              titleCustomStyle={{ color: common.cmnW }}
+              showRight={false}
+              onClickLeft={handleClickBack}
+            >
+              <Typography variant="h3" weight="bold">
+                프로필 수정
               </Typography>
-              <Flexbox direction="vertical" gap={8}>
-                <TextInput
-                  ref={nickNameRef}
-                  wrapperClassName={nickNameError.text.length > 0 ? 'invalid' : ''}
-                  type="search"
-                  placeholder="닉네임을 입력해주세요"
-                  value={userProfileParams.nickName}
-                  onClick={() =>
-                    logEvent(attrKeys.userShop.CLICK_NICKNAME_EDIT, {
-                      att: 'SELLER'
-                    })
-                  }
-                  onChange={handleChangeNickName}
-                  customStyle={{
-                    padding: 12,
-                    height: 52,
-                    borderRadius: 8,
-                    border: `1px solid ${common.line01}`
-                  }}
-                  inputStyle={{
-                    height: 24,
-                    width: '100%',
-                    color: nickNameError.text.length > 0 ? 'transparent' : undefined,
-                    caretColor: common.ui20
-                  }}
-                  label={
-                    <NickNameErrorLabel
-                      variant="h3"
-                      dangerouslySetInnerHTML={{ __html: nickNameError.text }}
-                      onClick={() => nickNameRef.current?.focus()}
-                    />
-                  }
-                />
-                <NickNameLabel
-                  variant="small2"
-                  weight="medium"
-                  invalid={nickNameError.message.length > 0}
-                >
-                  {nickNameError.message || `${userProfileParams.nickName?.length || 0}/16`}
-                </NickNameLabel>
+            </Header>
+          </ThemeProvider>
+        }
+        disablePadding
+      >
+        <Flexbox
+          direction="vertical"
+          customStyle={{
+            userSelect: 'none',
+            height: '100%'
+          }}
+        >
+          <ImageWrapper>
+            <BackgroundImage
+              src={getImageResizePath({
+                imagePath: getImagePathStaticParser(userImageBackground),
+                h: 160
+              })}
+            >
+              <Blur />
+            </BackgroundImage>
+            <BackgroundImageIcon onClick={handleChangeImage(true)}>
+              <Icon name="CameraFilled" size="medium" />
+            </BackgroundImageIcon>
+          </ImageWrapper>
+          <InfoWrapper ref={infoRef}>
+            <Box
+              customStyle={{ position: 'relative', margin: '-40px auto 0' }}
+              onClick={handleChangeImage(false)}
+            >
+              {isLoadingGetPhoto && imageType === 'profile' ? (
+                <Skeleton width={96} height={96} disableAspectRatio round={16} />
+              ) : (
+                <UserAvatar src={userImageProfile} showBorder />
+              )}
+              <ProfileImageIcon>
+                <Icon name="CameraFilled" size="medium" />
+              </ProfileImageIcon>
+            </Box>
+            <Flexbox direction="vertical" gap={32} customStyle={{ marginTop: 52 }}>
+              <Flexbox direction="vertical" gap={12}>
+                <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+                  닉네임
+                </Typography>
+                <Flexbox direction="vertical" gap={8}>
+                  <TextInput
+                    ref={nickNameRef}
+                    wrapperClassName={nickNameError.text.length > 0 ? 'invalid' : ''}
+                    type="search"
+                    placeholder="닉네임을 입력해주세요"
+                    value={userProfileParams.nickName}
+                    onClick={() =>
+                      logEvent(attrKeys.userShop.CLICK_NICKNAME_EDIT, {
+                        att: 'SELLER'
+                      })
+                    }
+                    onChange={handleChangeNickName}
+                    customStyle={{
+                      padding: 12,
+                      height: 52,
+                      borderRadius: 8,
+                      border: `1px solid ${common.line01}`
+                    }}
+                    inputStyle={{
+                      height: 24,
+                      width: '100%',
+                      color: nickNameError.text.length > 0 ? 'transparent' : undefined,
+                      caretColor: common.ui20
+                    }}
+                    label={
+                      <NickNameErrorLabel
+                        variant="h3"
+                        dangerouslySetInnerHTML={{ __html: nickNameError.text }}
+                        onClick={() => nickNameRef.current?.focus()}
+                      />
+                    }
+                  />
+                  <NickNameLabel
+                    variant="small2"
+                    weight="medium"
+                    invalid={nickNameError.message.length > 0}
+                  >
+                    {nickNameError.message || `${userProfileParams.nickName?.length || 0}/16`}
+                  </NickNameLabel>
+                </Flexbox>
+              </Flexbox>
+              <Flexbox direction="vertical" gap={12}>
+                <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+                  내 상점 소개
+                </Typography>
+                <Description>
+                  <DescriptionErrorLabel
+                    variant="h4"
+                    onClick={() => descriptionRef.current?.focus()}
+                  >
+                    {descriptionError.text
+                      .split(/<\/?div[^>]*>/g)
+                      .filter((t) => t)
+                      .map(
+                        (t) =>
+                          (t.startsWith('<b>') && <b>{t.replace(/<\/?b[^>]*>/g, '')}</b>) || (
+                            <span
+                              key={`description-${t}`}
+                              dangerouslySetInnerHTML={{ __html: t }}
+                            />
+                          )
+                      )}
+                  </DescriptionErrorLabel>
+                  <TextareaAutosize
+                    ref={descriptionRef}
+                    className={descriptionError.text.length > 0 ? 'invalid' : ''}
+                    placeholder="상점 소개를 입력해주세요"
+                    value={userProfileParams.shopDescription}
+                    onClick={() =>
+                      logEvent(attrKeys.userShop.CLICK_STORE_EDIT, {
+                        att: 'SELLER'
+                      })
+                    }
+                    onChange={handleChangeDescription}
+                  />
+                  <DescriptionInfo variant="small2" weight="medium">
+                    {userProfileParams.shopDescription?.length || 0}
+                    <span>/ 100자</span>
+                  </DescriptionInfo>
+                  {descriptionError.message.length > 0 && (
+                    <ErrorLabel variant="small2" weight="medium">
+                      {descriptionError.message}
+                    </ErrorLabel>
+                  )}
+                </Description>
               </Flexbox>
             </Flexbox>
-            <Flexbox direction="vertical" gap={12}>
-              <Typography weight="bold" customStyle={{ color: common.ui80 }}>
-                내 상점 소개
-              </Typography>
-              <Description>
-                <DescriptionErrorLabel variant="h4" onClick={() => descriptionRef.current?.focus()}>
-                  {descriptionError.text
-                    .split(/<\/?div[^>]*>/g)
-                    .filter((t) => t)
-                    .map(
-                      (t) =>
-                        (t.startsWith('<b>') && <b>{t.replace(/<\/?b[^>]*>/g, '')}</b>) || (
-                          <span key={`description-${t}`} dangerouslySetInnerHTML={{ __html: t }} />
-                        )
-                    )}
-                </DescriptionErrorLabel>
-                <TextareaAutosize
-                  ref={descriptionRef}
-                  className={descriptionError.text.length > 0 ? 'invalid' : ''}
-                  placeholder="상점 소개를 입력해주세요"
-                  value={userProfileParams.shopDescription}
-                  onClick={() =>
-                    logEvent(attrKeys.userShop.CLICK_STORE_EDIT, {
-                      att: 'SELLER'
-                    })
-                  }
-                  onChange={handleChangeDescription}
-                />
-                <DescriptionInfo variant="small2" weight="medium">
-                  {userProfileParams.shopDescription?.length || 0}
-                  <span>/ 100자</span>
-                </DescriptionInfo>
-                {descriptionError.message.length > 0 && (
-                  <ErrorLabel variant="small2" weight="medium">
-                    {descriptionError.message}
-                  </ErrorLabel>
-                )}
-              </Description>
-            </Flexbox>
+          </InfoWrapper>
+          <Flexbox
+            component="section"
+            justifyContent="center"
+            customStyle={{ padding: '0 20px 92px', userSelect: 'none', marginTop: 'auto' }}
+          >
+            <Typography
+              variant="body2"
+              customStyle={{
+                textDecorationLine: 'underline',
+                color: common.ui60,
+                cursor: 'pointer'
+              }}
+              onClick={handleClickDeleteAccount}
+            >
+              회원탈퇴
+            </Typography>
           </Flexbox>
-        </InfoWrapper>
-        <Flexbox
-          component="section"
-          justifyContent="center"
-          customStyle={{ padding: '0 20px 92px', userSelect: 'none', marginTop: 'auto' }}
-        >
-          <Typography
-            variant="body2"
-            customStyle={{
-              textDecorationLine: 'underline',
-              color: common.ui60,
-              cursor: 'pointer'
-            }}
-            onClick={handleClickDeleteAccount}
-          >
-            회원탈퇴
-          </Typography>
+          <ButtonBox>
+            <Button
+              type="submit"
+              size="xlarge"
+              variant="solid"
+              brandColor="primary"
+              fullWidth
+              disabled={
+                isLoadingMutateBanWord ||
+                isLoadingMutateProfile ||
+                isLoadingGetPhoto ||
+                !userProfileParams.nickName?.length ||
+                !isUpdatedProfileData ||
+                nickNameError.message.length > 0 ||
+                descriptionError.message.length > 0
+              }
+              onClick={handleClickSave}
+            >
+              {isLoadingMutateBanWord || isLoadingMutateProfile ? (
+                <Icon name="LoadingFilled" />
+              ) : (
+                '저장'
+              )}
+            </Button>
+          </ButtonBox>
         </Flexbox>
-        <ButtonBox>
-          <Button
-            type="submit"
-            size="xlarge"
-            variant="solid"
-            brandColor="primary"
-            fullWidth
-            disabled={
-              isLoadingMutateBanWord ||
-              isLoadingMutateProfile ||
-              isLoadingGetPhoto ||
-              !userProfileParams.nickName?.length ||
-              !isUpdatedProfileData ||
-              nickNameError.message.length > 0 ||
-              descriptionError.message.length > 0
-            }
-            onClick={handleClickSave}
-          >
-            {isLoadingMutateBanWord || isLoadingMutateProfile ? (
-              <Icon name="LoadingFilled" />
-            ) : (
-              '저장'
-            )}
-          </Button>
-        </ButtonBox>
-      </Flexbox>
-    </GeneralTemplate>
+      </GeneralTemplate>
+      <Toast open={open} onClose={() => setOpen(false)}>
+        100글자만 입력할 수 있어요.
+      </Toast>
+      <Toast open={openNicknameToast} onClose={() => setOpenNicknameToast(false)}>
+        16글자만 입력할 수 있어요.
+      </Toast>
+    </>
   );
 }
 

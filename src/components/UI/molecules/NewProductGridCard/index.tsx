@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Avatar,
   Box,
@@ -36,7 +37,7 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { ProductGridCardVariant } from '@typings/common';
-import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
+import { deviceIdState, loginBottomSheetState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useOsAlarm from '@hooks/useOsAlarm';
@@ -85,6 +86,8 @@ function NewProductGridCard({
       palette: { secondary, common }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
 
   const {
     id,
@@ -140,7 +143,6 @@ function NewProductGridCard({
   const [loadFailed, setLoadFailed] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
-  const setToastState = useSetRecoilState(toastState);
   const setOsAlarm = useOsAlarm();
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
@@ -162,17 +164,20 @@ function NewProductGridCard({
 
       setOsAlarm();
 
-      setToastState({
-        type: 'product',
-        status: 'successAddWish',
-        action: () => {
-          logEvent(attrKeys.products.clickWishList, {
-            name: name || 'NONE_PRODUCT_LIST_CARD',
-            type: 'TOAST'
-          });
-          router.push('/wishes');
+      toastStack({
+        children: '찜목록에 추가했어요!',
+        action: {
+          text: '찜목록 보기',
+          onClick: () => {
+            logEvent(attrKeys.products.clickWishList, {
+              name: name || 'NONE_PRODUCT_LIST_CARD',
+              type: 'TOAST'
+            });
+            router.push('/wishes');
+          }
         }
       });
+
       await refetch();
 
       UserTraceRecord.setExitWishChannel();
@@ -190,7 +195,9 @@ function NewProductGridCard({
         await onWishAfterChangeCallback(product, false);
       }
 
-      setToastState({ type: 'product', status: 'successRemoveWish' });
+      toastStack({
+        children: '찜목록에서 삭제했어요.'
+      });
       await refetch();
     }
   });
@@ -220,9 +227,8 @@ function NewProductGridCard({
     if (Number(product.productSeller.account) === accessUser?.userId) {
       logEvent(attrKeys.products.CLICK_WISH_SELF, eventParams);
 
-      setToastState({
-        type: 'product',
-        status: 'selfCamelProduct'
+      toastStack({
+        children: '내 매물은 찜할 수 없어요.'
       });
       return;
     }
@@ -286,9 +292,9 @@ function NewProductGridCard({
             <Typography
               variant="small2"
               weight="bold"
+              color="uiWhite"
               customStyle={{
-                padding: '3px 4px 3px 2px',
-                color: common.uiWhite
+                padding: '3px 4px 3px 2px'
               }}
             >
               인증판매자
@@ -380,13 +386,7 @@ function NewProductGridCard({
         )}
         {status > 0 && (
           <Overlay isRound={variant !== 'gridA'}>
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{
-                color: common.cmnW
-              }}
-            >
+            <Typography variant="h4" weight="bold" color="cmnW">
               {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
             </Typography>
           </Overlay>
@@ -422,9 +422,9 @@ function NewProductGridCard({
           variant="body2"
           noWrap
           lineClamp={2}
+          color="ui60"
           customStyle={{
-            marginTop: 2,
-            color: common.ui60
+            marginTop: 2
           }}
         >
           {productTitle}
@@ -447,14 +447,7 @@ function NewProductGridCard({
               {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
             </Typography>
             {hideSize && subText && (
-              <Typography
-                variant="body2"
-                weight="medium"
-                noWrap
-                customStyle={{
-                  color: secondary.red.light
-                }}
-              >
+              <Typography variant="body2" weight="medium" noWrap color="red-light">
                 {subText}
               </Typography>
             )}

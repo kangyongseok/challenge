@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -26,8 +26,6 @@ import { getCookies } from '@utils/cookies';
 
 import { rotate } from '@styles/transition';
 
-import { toastState } from '@recoil/common';
-
 function Report() {
   const {
     theme: {
@@ -36,11 +34,13 @@ function Report() {
   } = useTheme();
   const router = useRouter();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
 
   const { mutate: mutatePostReport, isLoading: isLoadingMutate } = useMutation(postReport, {
     onSuccess() {
-      setToastState({ type: 'user', status: 'report' });
+      toastStack({
+        children: '신고 접수 완료되었습니다.'
+      });
       router.back();
     }
   });

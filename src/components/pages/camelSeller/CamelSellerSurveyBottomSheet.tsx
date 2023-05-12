@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQuery } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   BottomSheet,
   Box,
@@ -12,7 +13,6 @@ import {
   Icon,
   Image,
   Skeleton,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';

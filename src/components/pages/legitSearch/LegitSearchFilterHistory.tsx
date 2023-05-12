@@ -1,12 +1,7 @@
-import { Box, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Chip, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 function LegitSearchFilterHistory() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   return (
     <Box
       component="section"
@@ -15,7 +10,7 @@ function LegitSearchFilterHistory() {
       <List>
         <Chip
           isRound={false}
-          endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
+          endIcon={<Icon name="CloseOutlined" width={14} height={14} color="ui80" />}
           // TODO UI 라이브러리 수정 필요
           customStyle={{
             '& > svg': {
@@ -28,7 +23,7 @@ function LegitSearchFilterHistory() {
         </Chip>
         <Chip
           isRound={false}
-          endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
+          endIcon={<Icon name="CloseOutlined" width={14} height={14} color="ui80" />}
           customStyle={{
             '& > svg': {
               width: 14,
@@ -40,7 +35,7 @@ function LegitSearchFilterHistory() {
         </Chip>
       </List>
       <ResetButton>
-        <Icon name="RotateOutlined" color={common.ui60} />
+        <Icon name="RotateOutlined" color="ui60" />
       </ResetButton>
     </Box>
   );

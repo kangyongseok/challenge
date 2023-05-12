@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -24,7 +25,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitRequestTitleWithModelImage from './LegitRequestTitleWithModelImage';
@@ -40,11 +41,12 @@ function LegitRequestEdit() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const [productLegitEditParams, setProductLegitEditParamsState] = useRecoilState(
     productLegitEditParamsState
   );
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
   const resetProductLegitEditParamsState = useResetRecoilState(productLegitEditParamsState);
 
   const productId = useMemo(() => Number(router.query?.productId || 0), [router.query?.productId]);
@@ -107,9 +109,8 @@ function LegitRequestEdit() {
     {
       onSettled() {
         resetProductLegitEditParamsState();
-        setToastState({
-          type: 'legit',
-          status: 'successEdit'
+        toastStack({
+          children: '수정이 완료되어 다시 감정에 들어갑니다!'
         });
         router.push({ pathname: '/legit', query: { tab: 'my' } });
       }

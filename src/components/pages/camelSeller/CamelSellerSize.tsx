@@ -155,7 +155,7 @@ function CamelSellerSize() {
             name="Arrow2RightOutlined"
             width={20}
             height={20}
-            color={common.ui80}
+            color="ui80"
             customStyle={{
               minWidth: 20
             }}

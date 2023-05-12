@@ -1,30 +1,41 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
 import { deleteProduct } from '@api/product';
 
+import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { toastState } from '@recoil/common';
-
-const TOAST_BOTTOM = 20;
 
 function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }) {
   const router = useRouter();
+  const { tab } = router.query;
+
+  const queryClient = useQueryClient();
+
+  const toastStack = useToastStack();
+
+  const params = useMemo(
+    () => ({
+      page: 0,
+      status: tab === '0' ? [Number(tab || 0), 4, 8, 20, 21] : [1]
+    }),
+    [tab]
+  );
 
   const [{ open }, setOpenState] = useRecoilState(userShopOpenStateFamily('deleteConfirm'));
-  // const setOpenDeleteFeedbackState = useSetRecoilState(userShopOpenStateFamily('deleteFeedback'));
   const { id } = useRecoilValue(userShopSelectedProductState);
+
   const { mutate: deleteMutation } = useMutation(deleteProduct);
-  const setToastState = useSetRecoilState(toastState);
 
   const handleClick = () => {
     if (!id) return;
@@ -38,10 +49,8 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
       { productId: id },
       {
         onSuccess() {
-          setToastState({
-            type: 'sellerProductState',
-            status: 'deleted',
-            customStyle: { bottom: TOAST_BOTTOM }
+          toastStack({
+            children: '상품이 삭제되었어요.'
           });
           setOpenState(({ type }) => ({
             type,
@@ -50,6 +59,8 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
 
           if (redirect) {
             router.replace('/user/shop');
+          } else {
+            queryClient.invalidateQueries(queryKeys.users.products(params));
           }
         }
       }

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
-import { Flexbox, Toast, Typography, TypographyVariant, useTheme } from '@mrcamelhub/camel-ui';
+import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import { Flexbox, Typography, TypographyVariant, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
@@ -71,11 +72,10 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-import { loginBottomSheetState, toastState } from '@recoil/common';
+import { loginBottomSheetState } from '@recoil/common';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useOsAlarm from '@hooks/useOsAlarm';
-// import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function ProductDetail() {
   const {
@@ -88,9 +88,10 @@ function ProductDetail() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-  const [toast, setToastState] = useRecoilState(toastState);
   const setOsAlarm = useOsAlarm();
 
   const { data: userData, set: setUserDate } = useQueryUserData();
@@ -149,12 +150,6 @@ function ProductDetail() {
   useEffect(() => {
     scrollEnable();
   }, [data]);
-
-  useEffect(() => {
-    if (toast.status === 'soldout' && isCamelSellerProduct) {
-      refetch();
-    }
-  }, [refetch, isCamelSellerProduct, toast.status]);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -455,9 +450,13 @@ function ProductDetail() {
 
   useEffect(() => {
     if (userData?.savedLegitRequest?.showToast) {
-      setToastState({
-        type: 'product',
-        status: 'saleSuccess'
+      toastStack({
+        children: (
+          <>
+            <p>내 매물이 등록되었어요! 판매시작!</p>
+            <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+          </>
+        )
       });
       setUserDate({
         [SAVED_LEGIT_REQUEST]: {
@@ -466,7 +465,7 @@ function ProductDetail() {
         }
       });
     }
-  }, [setToastState, setUserDate, userData?.savedLegitRequest]);
+  }, [setUserDate, userData?.savedLegitRequest, toastStack]);
 
   useEffect(() => {
     logEvent(attrKeys.products.VIEW_BANNER, {

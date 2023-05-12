@@ -4,6 +4,7 @@ import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Avatar, Box, Flexbox, Icon, Image, Label, Typography } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
@@ -36,7 +37,7 @@ import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from 
 
 import type { WishAtt } from '@typings/product';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
+import { deviceIdState, loginBottomSheetState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
@@ -155,8 +156,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const toastStack = useToastStack();
+
   const deviceId = useRecoilValue(deviceIdState);
-  const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
@@ -178,15 +180,17 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
 
       setOsAlarm();
 
-      setToastState({
-        type: 'product',
-        status: 'successAddWish',
-        action: () => {
-          logEvent(attrKeys.products.clickWishList, {
-            name: wishAtt?.name || name || 'NONE_PRODUCT_LIST_CARD',
-            type: 'TOAST'
-          });
-          router.push('/wishes');
+      toastStack({
+        children: '찜목록에 추가했어요!',
+        action: {
+          text: '찜목록 보기',
+          onClick: () => {
+            logEvent(attrKeys.products.clickWishList, {
+              name: wishAtt?.name || name || 'NONE_PRODUCT_LIST_CARD',
+              type: 'TOAST'
+            });
+            router.push('/wishes');
+          }
         }
       });
 
@@ -204,7 +208,9 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         await onWishAfterChangeCallback(product, isWish);
       }
 
-      setToastState({ type: 'product', status: 'successRemoveWish' });
+      toastStack({
+        children: '찜목록에서 삭제했어요.'
+      });
     }
   });
   const { imageUrl, isSafe, productLabels, productLegitStatusText } = useProductCardState(product);
@@ -252,9 +258,8 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         ...wishAtt
       });
 
-      setToastState({
-        type: 'product',
-        status: 'selfCamelProduct'
+      toastStack({
+        children: '내 매물은 찜할 수 없어요.'
       });
       return;
     }

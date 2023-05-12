@@ -257,11 +257,7 @@ function OnboardingPermission() {
           padding: '32px 20px'
         }}
       >
-        <Typography
-          variant="h3"
-          weight="bold"
-          customStyle={{ color: common.ui98, marginBottom: 20 }}
-        >
+        <Typography variant="h3" weight="bold" color="ui98" customStyle={{ marginBottom: 20 }}>
           카멜을 더 잘 즐기기 위해
           <br />
           권한을 허용해주세요
@@ -271,10 +267,10 @@ function OnboardingPermission() {
             <Flexbox gap={12} alignment="center" key={`permisstion-contents-${content.title}`}>
               <IconBox>{content.icon}</IconBox>
               <Box>
-                <Typography weight="bold" customStyle={{ color: common.ui98 }}>
+                <Typography weight="bold" color="ui98">
                   {content.title}
                 </Typography>
-                <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 2 }}>
+                <Typography variant="body2" color="ui60" customStyle={{ marginTop: 2 }}>
                   {content.subTitle}
                 </Typography>
               </Box>

@@ -53,8 +53,8 @@ function ChannelOrderRefundProgressMessage({
           }}
         >
           {order?.orderPayments[0].method === 0
-            ? '거래가 취소되어 결제한 방법으로 영업일 기준 7일 이내에 환불 예정입니다.'
-            : '거래가 취소되어 등록된 정산계좌로 영업일 기준 7일 이내에 환불 예정입니다.'}
+            ? '거래가 취소되어 결제한 방법으로 영업일 기준 2일 이내에 환불 예정입니다.'
+            : '거래가 취소되어 등록된 정산계좌로 영업일 기준 2일 이내에 환불 예정입니다.'}
         </Typography>
         {order?.reason ? (
           <Box

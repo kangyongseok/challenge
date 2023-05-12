@@ -826,10 +826,15 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@mrcamelhub/camel-ui@^0.1.64":
-  version "0.1.64"
-  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.64.tgz#80ef6b1288d6ff44c51d4b0a2fcd703ad646821e"
-  integrity sha512-9GNHcYhkflf9mfwaZEjJJ47eSsw6fLBEx0ZeXXLDWS1pdhd+sbv/ScPdA7t/FPcZlo6afKc7zSBLJt3GE5ENvQ==
+"@mrcamelhub/camel-ui-toast@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-toast/-/camel-ui-toast-0.0.6.tgz#df0500900ef5015ac67ff993e81d6bd8e3ae2354"
+  integrity sha512-sKd52Xj7X6l/zLsWJXibLuzJMdiVrtVcSpTGQ8ouFlzg9KvfjmmNMi5mE7nNIoZ2SLg/c2hVofj1XhnKRhz8WQ==
+
+"@mrcamelhub/camel-ui@^0.1.65":
+  version "0.1.65"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.65.tgz#c15d4b8e8a4fb5bbfb78b330ca14a686d419d24d"
+  integrity sha512-FBnGbkkovi7FIv2yzVons44iEE0bD3GZsnQ5n846WhcniBLxxMC9gmYOC6WL1OMWDo47M1KGnlrottAeuLa7iQ==
 
 "@next/env@13.2.4":
   version "13.2.4"

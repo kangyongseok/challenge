@@ -11,6 +11,7 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import type { FileMessageCreateParams, SendableMessage } from '@sendbird/chat/lib/__definition';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Chip, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -34,7 +35,6 @@ import attrKeys from '@constants/attrKeys';
 import { getProductType } from '@utils/products';
 import { getOrderStatusText } from '@utils/common';
 
-import { toastState } from '@recoil/common';
 import { channelDialogStateFamily } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
@@ -99,7 +99,8 @@ function ChannelBottomActionButtons({
     }
   } = useTheme();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
+
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
   const { mutate: mutatePutProductUpdateStatus, isLoading: isLoadingMutate } =
@@ -194,10 +195,8 @@ function ChannelBottomActionButtons({
     });
 
     if (!hasLastMessage) {
-      setToastState({
-        type: 'channel',
-        status: 'disabledMakeAppointment',
-        params: { userName: targetUserName }
+      toastStack({
+        children: `${targetUserName}님과 대화를 나눈 뒤 약속을 잡을 수 있어요.`
       });
 
       return;

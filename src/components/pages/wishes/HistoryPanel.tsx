@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { entries, groupBy, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Toast from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   Flexbox,
   Icon,
   Skeleton,
-  Toast,
   Typography,
   useTheme
 } from '@mrcamelhub/camel-ui';
@@ -134,7 +134,7 @@ function HistoryPanel() {
             margin: '20px 0 32px'
           }}
         >
-          <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
+          <Typography color="ui60">최근 100일간 활동내역입니다.</Typography>
           <Skeleton width={80.66} height={32} round={8} disableAspectRatio />
         </Flexbox>
         <Skeleton
@@ -278,7 +278,7 @@ function HistoryPanel() {
         justifyContent="space-between"
         customStyle={{ margin: '20px 0 32px' }}
       >
-        <Typography customStyle={{ color: common.ui60 }}>최근 100일간 활동내역입니다.</Typography>
+        <Typography color="ui60">최근 100일간 활동내역입니다.</Typography>
         <Button
           size="small"
           startIcon={<Icon name="DeleteOutlined" />}
@@ -311,7 +311,7 @@ function HistoryPanel() {
         }}
         customStyle={{ padding: 20, width: 300 }}
       >
-        <Typography weight="medium" customStyle={{ marginBottom: 20, textAlign: 'center' }}>
+        <Typography weight="medium" textAlign="center" customStyle={{ marginBottom: 20 }}>
           최근 활동내역을
           <br />
           모두 삭제하시겠습니까?

@@ -14,14 +14,7 @@ import {
   USER_ON_BOARDING_TRIGGER
 } from '@constants/localStorage';
 
-import type {
-  AccessUserSettingValue,
-  DialogType,
-  ShareData,
-  ThemeMode,
-  ToastStatus,
-  ToastType
-} from '@typings/common';
+import type { AccessUserSettingValue, DialogType, ShareData, ThemeMode } from '@typings/common';
 
 export const userOnBoardingTriggerDefaultState = {
   products: {
@@ -89,22 +82,6 @@ export const deviceIdState = atom<string | undefined>({
 export const showAppDownloadBannerState = atom<boolean>({
   key: 'common/showAppDownloadBannerState',
   default: false
-});
-
-export const toastState = atom<{
-  type: ToastType | undefined;
-  status: ToastStatus | undefined;
-  theme?: Exclude<ThemeMode, 'system'>;
-  params?: Record<string, string | number>;
-  hideDuration?: number;
-  customStyle?: CustomStyle;
-  action?: () => void;
-}>({
-  key: 'common/toastState',
-  default: {
-    type: undefined,
-    status: undefined
-  }
 });
 
 export const dialogState = atom<{

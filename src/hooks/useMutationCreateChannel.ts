@@ -1,7 +1,8 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 
 import type { PostChannelData } from '@dto/channel';
 
@@ -12,17 +13,18 @@ import { postChannel } from '@api/channel';
 import queryKeys from '@constants/queryKeys';
 
 import type { CreateChannelParams } from '@typings/channel';
-import { toastState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function useMutationCreateChannel() {
   const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const queryClient = useQueryClient();
 
   const state = useRecoilValue(sendbirdState);
-  const setToastState = useSetRecoilState(toastState);
 
   const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
   const initializeSendbird = useInitializeSendbird();
@@ -63,26 +65,22 @@ function useMutationCreateChannel() {
                 router.push(`/channels/${channelId}`);
               }
 
-              // if (checkAgent.isIOSApp() && !deActiveRouting) {
-              //   window.webkit?.messageHandlers?.callChannel?.postMessage?.(
-              //     `/channels/${channelId}`
-              //   );
-              // } else if (!deActiveRouting) {
-              //   router.push(`/channels/${channelId}`);
-              // }
-
               if (afterCallback && typeof afterCallback === 'function') {
                 await afterCallback(channelId);
               }
             },
             onError() {
-              setToastState({ type: 'channel', status: 'createFail' });
+              toastStack({
+                children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
+              });
             },
             ...options
           }
         );
       } else {
-        setToastState({ type: 'sendbird', status: 'createFail' });
+        toastStack({
+          children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
+        });
       }
     });
   };

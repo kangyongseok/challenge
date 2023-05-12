@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from 'react';
 
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 
 import type { ProductKeywordSourceType } from '@dto/user';
 
@@ -20,12 +21,15 @@ import type { ProductsVariant } from '@typings/products';
 import { productsKeywordAutoSaveTriggerState } from '@recoil/productsKeyword';
 import { filterOperationInfoSelector, searchParamsStateFamily } from '@recoil/productsFilter';
 import { homeSelectedTabStateFamily } from '@recoil/home';
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function useProductKeywordAutoSave(variant: ProductsVariant) {
-  const queryClient = useQueryClient();
   const router = useRouter();
+
+  const toastStack = useToastStack();
+
+  const queryClient = useQueryClient();
   const atomParam = router.asPath.split('?')[0];
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const deviceId = useRecoilValue(deviceIdState);
@@ -36,7 +40,6 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
   const [productsKeywordAutoSaveTrigger, setProductsKeywordAutoSaveTrigger] = useRecoilState(
     productsKeywordAutoSaveTriggerState
   );
-  const setToastState = useSetRecoilState(toastState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
 
   const { data: accessUser } = useQueryAccessUser();
@@ -66,7 +69,9 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
         name: 'PRODUCT_LIST',
         att: 'SAVE'
       });
-      setToastState({ type: 'productsKeyword', status: 'autoSaved' });
+      toastStack({
+        children: '홈에서 바로 볼 수 있게 검색 목록을 저장했어요!'
+      });
       setProductsKeywordAutoSaveTrigger(false);
       queryClient.invalidateQueries(queryKeys.products.searchOptions(searchOptionsParams));
       resetProductKeyword();

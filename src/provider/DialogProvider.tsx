@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import has from 'lodash-es/has';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
   Button,
@@ -28,7 +29,7 @@ import { productDetailAtt } from '@utils/products';
 import { commaNumber, copyToClipboard, noop } from '@utils/common';
 
 import type { ShareData } from '@typings/common';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 
 function DialogProvider() {
   const {
@@ -243,7 +244,8 @@ interface SNSShareDialolgContentProps {
 function SNSShareDialolgContent({ product, shareData }: SNSShareDialolgContentProps) {
   const { asPath, query, pathname } = useRouter();
 
-  const setToastState = useSetRecoilState(toastState);
+  const toastStack = useToastStack();
+
   const resetDialogState = useResetRecoilState(dialogState);
 
   const handleClickShareIcon = (platform: ShareSocialPlatform, title: string) => () => {
@@ -322,10 +324,9 @@ function SNSShareDialolgContent({ product, shareData }: SNSShareDialolgContentPr
       case 'linkCopy':
       default:
         if (copyToClipboard(`${shareTitle} ${shareUrl}`)) {
-          setToastState({
-            type: 'product',
-            status: 'successCopy',
-            hideDuration: 1500
+          toastStack({
+            children: 'URL이 복사 되었어요.',
+            autoHideDuration: 1500
           });
         }
         break;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
@@ -7,8 +7,8 @@ import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
 import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Hydrate, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toast } from '@mrcamelhub/camel-ui';
+import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ToastProvider } from '@mrcamelhub/camel-ui-toast';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
@@ -21,7 +21,6 @@ import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
-import { PortalProvider } from '@provider/PortalProvider';
 import {
   ABTestProvider,
   AuthProvider,
@@ -30,6 +29,7 @@ import {
   GoogleAnalyticsProvider,
   GoogleTagManagerProvider,
   HistoryProvider,
+  PortalProvider,
   SendbirdProvider,
   SessionProvider,
   ThemeModeProvider
@@ -44,7 +44,6 @@ import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
 
 const DialogProvider = dynamic(() => import('@provider/DialogProvider'));
-const ToastProvider = dynamic(() => import('@provider/ToastProvider'));
 const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'));
 const LegitResultSurveyTypeform = dynamic(
   () => import('@components/UI/organisms/LegitResultSurveyTypeform')
@@ -55,10 +54,6 @@ const CamelSellerSavePopup = dynamic(
 const CamelSellerAppUpdateDialog = dynamic(
   () => import('@components/UI/organisms/CamelSellerAppUpdateDialog')
 );
-// const HomeInterfereKingBottomSheet = dynamic(
-//   () => import('@components/pages/home/HomeInterfereKingBottomSheet')
-// );
-// const InterfereKingResult = dynamic(() => import('@components/UI/molecules/InterfereKingResult'));
 
 if (global.navigator) {
   Amplitude.init();
@@ -67,7 +62,6 @@ if (global.navigator) {
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  const [open, setOpen] = useState(false);
   const queryClient = useRef(
     new QueryClient({
       defaultOptions: {
@@ -77,10 +71,7 @@ function App({ Component, pageProps }: AppProps) {
           refetchOnWindowFocus: false,
           retry: 1
         }
-      },
-      queryCache: new QueryCache({
-        onError: () => setOpen(true)
-      })
+      }
     })
   );
 
@@ -240,26 +231,20 @@ function App({ Component, pageProps }: AppProps) {
                       <PortalProvider>
                         <AuthProvider>
                           <SessionProvider>
-                            <Component {...pageProps} />
+                            <ToastProvider>
+                              <DialogProvider />
+                              <Component {...pageProps} />
+                            </ToastProvider>
                           </SessionProvider>
                         </AuthProvider>
                       </PortalProvider>
                     </SendbirdProvider>
                   </ABTestProvider>
                   <SearchHelperPopup type="break" />
-                  <ToastProvider />
-                  <DialogProvider />
                   <LegitResultSurveyTypeform />
-                  <Toast open={open} bottom="74px" onClose={() => setOpen(false)}>
-                    서버에서 오류가 발생했어요
-                    <br />
-                    잠시 후 다시 시도해 주세요
-                  </Toast>
                   <CamelSellerSavePopup />
                   <CamelSellerAppUpdateDialog />
                   {router.pathname !== '/login' && <LoginBottomSheet />}
-                  {/* <HomeInterfereKingBottomSheet /> */}
-                  {/* <InterfereKingResult /> */}
                 </HistoryProvider>
               </ThemeModeProvider>
             </ErrorBoundary>

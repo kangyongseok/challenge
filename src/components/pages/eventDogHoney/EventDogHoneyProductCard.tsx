@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Avatar, Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
@@ -34,7 +35,7 @@ import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } fro
 import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
 import type { ProductGridCardVariant } from '@typings/common';
-import { deviceIdState, loginBottomSheetState, toastState } from '@recoil/common';
+import { deviceIdState, loginBottomSheetState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -82,6 +83,8 @@ function EventDogHoneyProductCard({
       palette: { secondary, common }
     }
   } = useTheme();
+
+  const toastStack = useToastStack();
 
   const {
     id,
@@ -132,7 +135,6 @@ function EventDogHoneyProductCard({
   const [isWish, setIsWish] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
-  const setToastState = useSetRecoilState(toastState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const [loadFailed, setLoadFailed] = useState(false);
 
@@ -152,15 +154,17 @@ function EventDogHoneyProductCard({
         await onWishAfterChangeCallback(product, true);
       }
 
-      setToastState({
-        type: 'product',
-        status: 'successAddWish',
-        action: () => {
-          logEvent(attrKeys.products.clickWishList, {
-            name: name || 'NONE_PRODUCT_LIST_CARD',
-            type: 'TOAST'
-          });
-          router.push('/wishes');
+      toastStack({
+        children: '찜목록에 추가했어요!',
+        action: {
+          text: '찜목록 보기',
+          onClick: () => {
+            logEvent(attrKeys.products.clickWishList, {
+              name: name || 'NONE_PRODUCT_LIST_CARD',
+              type: 'TOAST'
+            });
+            router.push('/wishes');
+          }
         }
       });
       await refetch();
@@ -177,7 +181,9 @@ function EventDogHoneyProductCard({
         await onWishAfterChangeCallback(product, false);
       }
 
-      setToastState({ type: 'product', status: 'successRemoveWish' });
+      toastStack({
+        children: '찜목록에서 삭제했어요.'
+      });
       await refetch();
     }
   });
@@ -205,9 +211,8 @@ function EventDogHoneyProductCard({
     if (Number(product.productSeller.account) === accessUser?.userId) {
       logEvent(attrKeys.products.CLICK_WISH_SELF, eventParams);
 
-      setToastState({
-        type: 'product',
-        status: 'selfCamelProduct'
+      toastStack({
+        children: '내 매물은 찜할 수 없어요.'
       });
       return;
     }

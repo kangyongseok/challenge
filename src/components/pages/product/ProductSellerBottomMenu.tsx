@@ -4,6 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -26,7 +27,7 @@ import { checkAgent, needUpdateChatIOSVersion } from '@utils/common';
 import { getUnreadMessagesCount } from '@utils/channel';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily, sendbirdState } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
@@ -39,12 +40,16 @@ function ProductSellerBottomMenu({
   product: Product | undefined;
   refresh: () => void;
 }) {
+  const router = useRouter();
+
   const {
     theme: {
       palette: { primary, secondary, common }
     }
   } = useTheme();
-  const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const queryId = router.query.id as string;
   const splitRouter = queryId?.split('-');
   const parameter = {
@@ -55,7 +60,6 @@ function ProductSellerBottomMenu({
   const { initialized } = useRecoilValue(sendbirdState);
 
   const setDialogState = useSetRecoilState(dialogState);
-  const setToastState = useSetRecoilState(toastState);
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
@@ -156,14 +160,12 @@ function ProductSellerBottomMenu({
         },
         onSuccess() {
           if (Number(dataset.statusId) === 0) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'sell'
+            toastStack({
+              children: '판매중으로 변경되었어요.'
             });
           } else if (Number(dataset.statusId) === 4) {
-            setToastState({
-              type: 'sellerProductState',
-              status: 'reserve'
+            toastStack({
+              children: '예약중으로 변경되었어요.'
             });
           }
           setOpenChangeStatus(false);
@@ -204,9 +206,9 @@ function ProductSellerBottomMenu({
 
     hoistingMutation(parameter, {
       onSuccess() {
-        setToastState({
-          type: 'sellerProductState',
-          status: 'hoisting'
+        refresh();
+        toastStack({
+          children: '끌어올리기가 완료되었어요. 👍'
         });
         setOpenChangeStatus(false);
       }

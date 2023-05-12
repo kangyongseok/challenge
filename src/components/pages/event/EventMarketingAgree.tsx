@@ -1,6 +1,7 @@
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -10,19 +11,24 @@ import { putAlarm } from '@api/user';
 
 import attrKeys from '@constants/attrKeys';
 
-import { toastState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function EventMarketingAgree() {
   const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const { data: userInfo } = useQueryUserInfo();
-  const setToastState = useSetRecoilState(toastState);
   const { mutate: switchAlarm } = useMutation(putAlarm, {
     onSuccess: () => {
-      setToastState({
-        type: 'home',
-        status: 'disAgree',
-        customStyle: { bottom: 30 }
+      toastStack({
+        children: (
+          <>
+            <p>{dayjs().format('YYYY-MM-DD')} 마케팅 수신 동의 처리 되었습니다.</p>
+            <p>(재설정: 마이 -{'>'} 해제)</p>
+          </>
+        ),
+        bottom: 30
       });
     }
   });
@@ -45,10 +51,9 @@ function EventMarketingAgree() {
     }
 
     if (userInfo?.alarm?.isAgree) {
-      setToastState({
-        type: 'home',
-        status: 'isAgree',
-        customStyle: { bottom: 30 }
+      toastStack({
+        children: '이미 동의 중 입니다.',
+        bottom: 30
       });
     } else {
       switchAlarm({

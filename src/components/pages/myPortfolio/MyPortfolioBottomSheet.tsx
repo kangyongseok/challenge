@@ -261,7 +261,7 @@ function MyPortfolioBottomSheet({
         >
           {!accessUser?.phone && (
             <Flexbox gap={8} direction="vertical">
-              <Typography weight="medium" customStyle={{ color: common.ui60 }}>
+              <Typography weight="medium" color="ui60">
                 휴대전화번호
               </Typography>
               <TextInput
@@ -288,7 +288,7 @@ function MyPortfolioBottomSheet({
             </Flexbox>
           )}
           <Flexbox gap={8} direction="vertical" customStyle={{ position: 'relative' }}>
-            <Typography weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography weight="medium" color="ui60">
               모델명 (선택)
             </Typography>
             <TextInput
@@ -323,7 +323,7 @@ function MyPortfolioBottomSheet({
             )}
           </Flexbox>
           <Flexbox direction="vertical" gap={18}>
-            <Typography weight="medium" customStyle={{ color: common.ui60 }}>
+            <Typography weight="medium" color="ui60">
               어떤 기능이 제일 기대되나요? (선택)
             </Typography>
             <MyPortfolioCheckboxLabel onChange={handleChecked} data={checkData} />

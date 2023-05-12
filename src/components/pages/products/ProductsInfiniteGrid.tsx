@@ -12,7 +12,8 @@ import { useRouter } from 'next/router';
 import throttle from 'lodash-es/throttle';
 import { isEmpty } from 'lodash-es';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Flexbox, Grid, Toast, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Toast from '@mrcamelhub/camel-ui-toast';
+import { Box, Button, Flexbox, Grid, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 

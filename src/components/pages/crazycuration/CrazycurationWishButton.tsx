@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type {
   QueryObserverResult,
@@ -8,6 +8,7 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Icon } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
@@ -15,7 +16,7 @@ import type { ProductContent } from '@dto/product';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { deviceIdState, toastState } from '@recoil/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface CrazycurationWishButtonProps {
@@ -40,24 +41,29 @@ function CrazycurationWishButton({
 }: CrazycurationWishButtonProps) {
   const router = useRouter();
 
+  const toastStack = useToastStack();
+
   const deviceId = useRecoilValue(deviceIdState);
-  const setToastState = useSetRecoilState(toastState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
     onSuccess() {
       refetch();
-      setToastState({
-        type: 'product',
-        status: 'successAddWish',
-        action: () => router.push('/wishes')
+      toastStack({
+        children: '찜목록에 추가했어요!',
+        action: {
+          text: '찜목록 보기',
+          onClick: () => router.push('/wishes')
+        }
       });
     }
   });
   const { mutate: mutatePostProductsRemove } = useMutation(postProductsRemove, {
     onSuccess() {
       refetch();
-      setToastState({ type: 'product', status: 'successRemoveWish' });
+      toastStack({
+        children: '찜목록에서 삭제했어요.'
+      });
     }
   });
 

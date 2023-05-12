@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -24,7 +25,6 @@ import { getCookies } from '@utils/cookies';
 import { getProductDetailUrl } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
-import { toastState } from '@recoil/common';
 
 function LegitIntro() {
   const router = useRouter();
@@ -34,8 +34,9 @@ function LegitIntro() {
     }
   } = useTheme();
 
+  const toastStack = useToastStack();
+
   const setLegitRequestState = useSetRecoilState(legitRequestState);
-  const setToastState = useSetRecoilState(toastState);
 
   const productId = useMemo(() => Number(router.query.productId || ''), [router.query.productId]);
 
@@ -81,9 +82,13 @@ function LegitIntro() {
       router.back();
     } else {
       router.replace(getProductDetailUrl({ product })).then(() => {
-        setToastState({
-          type: 'product',
-          status: 'saleSuccess'
+        toastStack({
+          children: (
+            <>
+              <p>내 매물이 등록되었어요! 판매시작!</p>
+              <p>(검색결과 반영까지 1분 정도 걸릴 수 있습니다)</p>
+            </>
+          )
         });
       });
     }

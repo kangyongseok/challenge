@@ -118,7 +118,7 @@ function SearchRecentList({
                 <span dangerouslySetInnerHTML={{ __html: item.keyword }} />
               </Typography>
               {(item.count as number) > 0 && (
-                <Typography variant="small2" customStyle={{ color: common.ui60 }}>
+                <Typography variant="small2" color="ui60">
                   {commaNumber(Number(item.count))}
                 </Typography>
               )}

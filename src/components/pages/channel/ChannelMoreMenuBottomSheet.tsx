@@ -8,6 +8,7 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -19,7 +20,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { dialogState, toastState } from '@recoil/common';
+import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
@@ -52,16 +53,18 @@ function ChannelMoreMenuBottomSheet({
   isCamelAdminUser,
   refetchChannel
 }: ChannelMoreMenuBottomSheetProps) {
+  const router = useRouter();
   const {
     theme: {
       palette: { secondary }
     }
   } = useTheme();
-  const router = useRouter();
+
+  const toastStack = useToastStack();
+
   const queryClient = useQueryClient();
 
   const [{ open }, setMoreBottomSheetState] = useRecoilState(channelBottomSheetStateFamily('more'));
-  const setToastState = useSetRecoilState(toastState);
   const setDialogState = useSetRecoilState(dialogState);
 
   const {
@@ -120,10 +123,8 @@ function ChannelMoreMenuBottomSheet({
         onSuccess() {
           refetchChannel();
           queryClient.invalidateQueries(queryKeys.products.product({ productId }));
-          setToastState({
-            type: 'user',
-            status: 'unBlockWithRole',
-            params: { role: isTargetUserSeller ? '판매자' : '구매자', userName: targetUserName }
+          toastStack({
+            children: `${targetUserName}님을 차단 해제했어요.`
           });
         }
       });
@@ -158,10 +159,10 @@ function ChannelMoreMenuBottomSheet({
             onSuccess() {
               refetchChannel();
               queryClient.invalidateQueries(queryKeys.products.product({ productId }));
-              setToastState({
-                type: 'user',
-                status: 'block',
-                params: { role: isTargetUserSeller ? '판매자' : '구매자', userName: targetUserName }
+              toastStack({
+                children: `${
+                  isTargetUserSeller ? '판매자' : '구매자'
+                } ${targetUserName}을 차단했어요.`
               });
             }
           });

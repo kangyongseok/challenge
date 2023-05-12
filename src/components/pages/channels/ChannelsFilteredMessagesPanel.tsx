@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
 
@@ -21,12 +21,6 @@ import ChannelsSwipeActionList from './ChannelsSwipeActionList';
 import ChannelsReceivedMessagesFilter from './ChannelsReceivedMessagesFilter';
 
 function ChannelsFilteredMessagesPanel() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
   const isChannelReceivedMessageFiltered = useRecoilValue(channelReceivedMessageFilteredState);
 
   const {
@@ -92,7 +86,9 @@ function ChannelsFilteredMessagesPanel() {
               })}
           <Typography
             variant="body1"
-            customStyle={{ padding: '52px 20px', textAlign: 'center', color: common.ui60 }}
+            textAlign="center"
+            color="ui60"
+            customStyle={{ padding: '52px 20px' }}
           >
             최근 6개월의 대화 목록만 노출됩니다.
           </Typography>
@@ -109,7 +105,7 @@ function ChannelsFilteredMessagesPanel() {
       customStyle={{ padding: '84px 20px' }}
     >
       <Box customStyle={{ fontSize: 52 }}>💬</Box>
-      <Typography variant="h3" weight="bold" customStyle={{ color: common.ui60 }}>
+      <Typography variant="h3" weight="bold" color="ui60">
         채팅 내역이 없어요
       </Typography>
     </Flexbox>

@@ -120,9 +120,7 @@ function Notices() {
                   weight={tab === '공지사항' ? 'bold' : 'regular'}
                   // TODO UI 라이브러리 수정 필요, text 가 ReactElement 인 경우 onChange 이벤트가 동작하지 않음에 따른 임시 조치
                   onClick={() => changeSelectedValue('공지사항')}
-                  customStyle={{
-                    color: tab === '공지사항' ? undefined : common.ui60
-                  }}
+                  color={tab === '공지사항' ? undefined : 'ui60'}
                 >
                   공지사항
                 </Typography>
