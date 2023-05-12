@@ -57,7 +57,7 @@ function LegitPhotoGuideCard({
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [defaultImageLoadFailed, setDefaultImageLoadFailed] = useState(false);
   const [blobImageUrl, setBlobImageUrl] = useState('');
-  const [newImageUrl, setNewImageUrl] = useState(`${staticImageUrl}?w=250&f=webp`);
+  const [newImageUrl, setNewImageUrl] = useState(`${staticImageUrl || ''}?w=250&f=webp`);
 
   // 0: optional, 1: 필수, 2: 수정, 3: 수정완료
   const status = useMemo(() => {
@@ -111,7 +111,7 @@ function LegitPhotoGuideCard({
   return (
     <StyledLegitPhotoGuideCard
       imageSample={hideSample ? '' : imageSample}
-      imageUrl={newImageUrl}
+      imageUrl={newImageUrl.replace(/\?w=250&f=webp/g, '') ? newImageUrl : imageUrl}
       status={status}
       isInvalid={isInvalid}
       hideStatusHighLite={hideStatusHighLite}
@@ -139,7 +139,7 @@ function LegitPhotoGuideCard({
           variant="solid"
           brandColor="red"
           size="xsmall"
-          text="필수"
+          text={String(newImageUrl)}
           customStyle={{
             position: 'absolute',
             top: 4,
