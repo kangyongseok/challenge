@@ -138,7 +138,6 @@ function NewProductGridCard({
   const [isAuthSeller, setIsAuthSeller] = useState(false);
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -265,12 +264,6 @@ function NewProductGridCard({
     setIsAuthProduct(legitStatus === 30 && result === 1);
   }, [productLegit]);
 
-  useEffect(() => {
-    if (loadFailed) {
-      setSrc(imageThumbnail || imageMain);
-    }
-  }, [imageMain, imageThumbnail, loadFailed]);
-
   return (
     <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
       <Box
@@ -366,7 +359,11 @@ function NewProductGridCard({
           )}
         <Image
           ratio="5:6"
-          src={src}
+          src={
+            loadFailed
+              ? imageMain || imageThumbnail
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${productTitle} 이미지`}
           round={variant === 'gridA' ? 0 : 8}
           onError={() => setLoadFailed(true)}

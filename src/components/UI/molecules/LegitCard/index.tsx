@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import dayjs from 'dayjs';
 import { Avatar, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
@@ -52,15 +52,10 @@ function LegitCard({
   const isNormalseller = siteId === 34 || productSeller?.type === 4 || productSeller?.type === 3;
 
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageMain || imageThumbnail));
 
   const {
     theme: { box }
   } = useTheme();
-
-  useEffect(() => {
-    if (loadFailed) setSrc(imageThumbnail || imageMain);
-  }, [imageMain, imageThumbnail, loadFailed]);
 
   if (variant === 'list') {
     return (
@@ -71,7 +66,15 @@ function LegitCard({
         customStyle={{ ...customStyle, maxHeight: 56, cursor: 'pointer' }}
       >
         <ImageBox>
-          <Image src={src} alt="Product Legit Img" onError={() => setLoadFailed(true)} />
+          <Image
+            src={
+              loadFailed
+                ? imageMain || imageThumbnail
+                : getProductCardImageResizePath(imageMain || imageThumbnail)
+            }
+            alt="Product Legit Img"
+            onError={() => setLoadFailed(true)}
+          />
           {!hidePlatformLogo && postType !== 2 && (
             <Avatar
               width={15}

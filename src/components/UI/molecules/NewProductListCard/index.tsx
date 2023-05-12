@@ -143,7 +143,6 @@ function NewProductListCard({
   const [isAuthProduct, setIsAuthProduct] = useState(false);
   const [authOpinionCount, setAuthOpinionCount] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const deviceId = useRecoilValue(deviceIdState);
   const setToastState = useSetRecoilState(toastState);
@@ -266,12 +265,6 @@ function NewProductListCard({
     }
   }, [productLegit]);
 
-  useEffect(() => {
-    if (loadFailed) {
-      setSrc(imageThumbnail || imageMain);
-    }
-  }, [imageMain, imageThumbnail, loadFailed]);
-
   return (
     <Flexbox
       onClick={handleClick}
@@ -353,7 +346,11 @@ function NewProductListCard({
         )}
         <Image
           ratio="5:6"
-          src={src}
+          src={
+            loadFailed
+              ? imageMain || imageThumbnail
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${productTitle} 이미지`}
           round={8}
           onError={() => setLoadFailed(true)}

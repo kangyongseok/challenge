@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
@@ -56,7 +56,6 @@ function LegitListCard({
   } = productLegit;
 
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const { authenticCount, fakeCount } = useMemo(
     () => ({
@@ -67,10 +66,6 @@ function LegitListCard({
   );
   const { result: opinionResult, description } =
     legitOpinions.find(({ roleLegit }) => roleLegit.userId === userId) || {};
-
-  useEffect(() => {
-    if (loadFailed) setSrc(imageThumbnail || imageMain);
-  }, [imageMain, imageThumbnail, loadFailed]);
 
   return (
     <Flexbox
@@ -91,7 +86,11 @@ function LegitListCard({
       >
         <Image
           ratio="5:6"
-          src={src}
+          src={
+            loadFailed
+              ? imageMain || imageThumbnail
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${productTitle} 이미지`}
           round={8}
           onError={() => setLoadFailed(true)}

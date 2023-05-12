@@ -249,7 +249,7 @@ function ProductImages({
                 !loadFailed
                   ? getImageResizePath({
                       imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                      w: 212.5
+                      w: 425
                     })
                   : product?.imageMain || ''
               }
@@ -257,7 +257,7 @@ function ProductImages({
                 !loadFailed
                   ? getImageResizePath({
                       imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                      w: 212.5
+                      w: 425
                     })
                   : product?.imageMain || ''
               }
@@ -274,7 +274,7 @@ function ProductImages({
                   !loadFailed
                     ? getImageResizePath({
                         imagePath: getImagePathStaticParser(product?.imageMain || ''),
-                        w: 212.5
+                        w: 425
                       })
                     : product?.imageMain || ''
                 }
@@ -302,7 +302,7 @@ function ProductImages({
                         !loadFailed
                           ? getImageResizePath({
                               imagePath: getImagePathStaticParser(image),
-                              w: 212.5
+                              w: 425
                             })
                           : image
                       }
@@ -325,7 +325,7 @@ function ProductImages({
                                 imagePath: getImagePathStaticParser(
                                   product?.imageMainLarge || (product?.imageMain as string) || ''
                                 ),
-                                w: 212.5
+                                w: 425
                               })
                             : product?.imageMainLarge || product?.imageMain || ''
                         }

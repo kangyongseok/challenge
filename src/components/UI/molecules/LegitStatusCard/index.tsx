@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 
 import dayjs from 'dayjs';
@@ -44,7 +44,6 @@ function LegitStatusCard({
   } = useTheme();
 
   const [loadFailed, setLoadFailed] = useState(false);
-  const [src, setSrc] = useState(getProductCardImageResizePath(imageThumbnail || imageMain));
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
@@ -155,10 +154,6 @@ function LegitStatusCard({
     return newLabelText;
   }, [useInAdmin, isMine, status, role, legitOpinions, accessUser, result]);
 
-  useEffect(() => {
-    if (loadFailed) setSrc(imageThumbnail || imageMain);
-  }, [imageMain, imageThumbnail, loadFailed]);
-
   return (
     <Flexbox {...props} gap={16} customStyle={{ cursor: 'pointer', userSelect: 'none' }}>
       <Box
@@ -172,7 +167,11 @@ function LegitStatusCard({
       >
         <Image
           ratio="5:6"
-          src={src}
+          src={
+            loadFailed
+              ? imageMain || imageThumbnail
+              : getProductCardImageResizePath(imageMain || imageThumbnail)
+          }
           alt={`${title} 이미지`}
           round={8}
           onError={() => setLoadFailed(true)}
