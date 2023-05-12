@@ -271,16 +271,15 @@ function HomePersonalGuide() {
           ...newGuides.filter((guide: PersonalNewGuide) => guide.type === 'category'),
           ...defaultStyleCategory
         ],
-        'id'
-      ).slice(0, 6);
-
+        'name'
+      ).slice(0, 5);
       const brands = uniqBy(
         [
           ...newGuides.filter((guide: PersonalNewGuide) => guide.type === 'brand'),
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 7);
+      ).slice(0, 8);
 
       setGuides([...categories, ...brands]);
     }
