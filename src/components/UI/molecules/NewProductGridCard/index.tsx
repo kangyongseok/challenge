@@ -83,7 +83,7 @@ function NewProductGridCard({
   const router = useRouter();
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -376,12 +376,7 @@ function NewProductGridCard({
         />
         {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && (
           <WishButtonA variant={variant} onClick={handleClickWish}>
-            <Icon
-              name="HeartFilled"
-              width={20}
-              height={20}
-              color={isWish ? secondary.red.light : common.ui80}
-            />
+            <Icon name="HeartFilled" width={20} height={20} color={isWish ? 'red-light' : 'ui80'} />
           </WishButtonA>
         )}
         {status > 0 && (
@@ -399,7 +394,7 @@ function NewProductGridCard({
               name={isWish ? 'HeartFilled' : 'HeartOutlined'}
               width={20}
               height={20}
-              color={isWish ? secondary.red.light : common.ui80}
+              color={isWish ? 'red-light' : 'ui80'}
             />
           </WishButtonB>
         )}
@@ -452,14 +447,7 @@ function NewProductGridCard({
               </Typography>
             )}
             {!hideSize && (
-              <Typography
-                variant="body2"
-                weight="medium"
-                noWrap
-                customStyle={{
-                  color: common.ui60
-                }}
-              >
+              <Typography variant="body2" weight="medium" noWrap color="ui60">
                 {sizeText}
               </Typography>
             )}
@@ -469,9 +457,9 @@ function NewProductGridCard({
           <Typography
             variant="small2"
             noWrap
+            color="ui60"
             customStyle={{
-              marginTop: 8,
-              color: common.ui60
+              marginTop: 8
             }}
           >
             {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
@@ -488,28 +476,16 @@ function NewProductGridCard({
           >
             {wishCount > 0 && (
               <Flexbox gap={2}>
-                <Icon name="HeartFilled" width={12} height={12} color={common.ui80} />
-                <Typography
-                  variant="small2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.ui80
-                  }}
-                >
+                <Icon name="HeartFilled" width={12} height={12} color="ui80" />
+                <Typography variant="small2" weight="medium" color="ui80">
                   {commaNumber(wishCount)}
                 </Typography>
               </Flexbox>
             )}
             {purchaseCount > 0 && (
               <Flexbox gap={2}>
-                <Icon name="MessageFilled" width={12} height={12} color={common.ui80} />
-                <Typography
-                  variant="small2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.ui80
-                  }}
-                >
+                <Icon name="MessageFilled" width={12} height={12} color="ui80" />
+                <Typography variant="small2" weight="medium" color="ui80">
                   {commaNumber(purchaseCount)}
                 </Typography>
               </Flexbox>

@@ -251,13 +251,7 @@ function SafePaymentGuideDialog({
           margin: '54px -32px 84px'
         }}
       />
-      <Typography
-        variant="h2"
-        weight="bold"
-        customStyle={{
-          textAlign: 'center'
-        }}
-      >
+      <Typography variant="h2" weight="bold" textAlign="center">
         안전결제, 이렇게 이용해요.
       </Typography>
       <Box
@@ -274,9 +268,9 @@ function SafePaymentGuideDialog({
           구매자 안전결제
         </Typography>
         <Typography
+          color="ui60"
           customStyle={{
-            marginTop: 4,
-            color: common.ui60
+            marginTop: 4
           }}
         >
           신용카드, 가상계좌를 이용하여 결제합니다.
@@ -292,19 +286,13 @@ function SafePaymentGuideDialog({
           backgroundColor: common.ui60
         }}
       >
-        <Typography
-          variant="h4"
-          weight="bold"
-          customStyle={{
-            color: common.uiWhite
-          }}
-        >
+        <Typography variant="h4" weight="bold" color="uiWhite">
           판매자 택배발송
         </Typography>
         <Typography
+          color="ui80"
           customStyle={{
-            marginTop: 4,
-            color: common.ui80
+            marginTop: 4
           }}
         >
           판매승인 후, 2일 이내로 물건을 발송해주세요.
@@ -324,6 +312,7 @@ function SafePaymentGuideDialog({
           구매자 매물 수령 후 구매확정
         </Typography>
         <Typography
+          color="ui60"
           customStyle={{
             marginTop: 4,
             color: common.ui60

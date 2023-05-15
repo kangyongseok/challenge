@@ -350,9 +350,9 @@ function CamelSellerPrice() {
                   </Typography>
                   <Typography
                     variant="body2"
+                    color="ui60"
                     customStyle={{
-                      marginTop: 4,
-                      color: common.ui60
+                      marginTop: 4
                     }}
                   >
                     거래완료까지{' '}

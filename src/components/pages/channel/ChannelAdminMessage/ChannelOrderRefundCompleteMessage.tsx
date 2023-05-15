@@ -66,12 +66,7 @@ function ChannelOrderRefundCompleteMessage({
               backgroundColor: common.bg02
             }}
           >
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" color="ui60">
               사유
             </Typography>
             <Typography
@@ -95,34 +90,19 @@ function ChannelOrderRefundCompleteMessage({
         )}
         <Flexbox direction="vertical" gap={4}>
           <Flexbox justifyContent="space-between">
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" color="ui60">
               가격
             </Typography>
             <Typography variant="body2">{commaNumber(order?.price || 0)}원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" color="ui60">
               안전결제수수료
             </Typography>
             <Typography variant="body2">0원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" color="ui60">
               환불방법
             </Typography>
             <Typography variant="body2">

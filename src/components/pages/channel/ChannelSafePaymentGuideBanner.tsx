@@ -42,13 +42,7 @@ function ChannelSafePaymentGuideBanner() {
           >
             <span>수수료 0원 안전결제</span>로 사기걱정 없이 거래하세요!
           </Typography>
-          <Typography
-            variant="body3"
-            weight="medium"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography variant="body3" weight="medium" color="ui60">
             시세보다 낮은가격으로 계좌결제 유도하는 사기 급증
           </Typography>
         </Flexbox>

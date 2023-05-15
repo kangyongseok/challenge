@@ -70,12 +70,7 @@ function ChannelOrderDeliveryProgressMessage({
               backgroundColor: common.bg02
             }}
           >
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" color="ui60">
               받는 주소
             </Typography>
             <Flexbox
@@ -85,12 +80,7 @@ function ChannelOrderDeliveryProgressMessage({
               }}
             >
               <Typography variant="body2">{order?.deliveryInfo?.name}</Typography>
-              <Typography
-                variant="body2"
-                customStyle={{
-                  color: common.ui60
-                }}
-              >
+              <Typography variant="body2" color="ui60">
                 {order?.deliveryInfo?.phone}
               </Typography>
             </Flexbox>
@@ -104,12 +94,7 @@ function ChannelOrderDeliveryProgressMessage({
             </Typography>
           </Box>
         </Box>
-        <Typography
-          variant="small2"
-          customStyle={{
-            color: common.ui60
-          }}
-        >
+        <Typography variant="small2" color="ui60">
           {dayjs(createdAt).format('A hh:mm')}
         </Typography>
       </Flexbox>
@@ -162,12 +147,7 @@ function ChannelOrderDeliveryProgressMessage({
           </Button>
         )}
       </Box>
-      <Typography
-        variant="small2"
-        customStyle={{
-          color: common.ui60
-        }}
-      >
+      <Typography variant="small2" color="ui60">
         {dayjs(createdAt).format('A hh:mm')}
       </Typography>
     </Flexbox>

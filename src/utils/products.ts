@@ -1,6 +1,6 @@
 import { ParsedUrlQuery } from 'querystring';
 
-import type { MrCamelTheme } from '@mrcamelhub/camel-ui';
+import type { CamelTheme } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@dto/product';
 
@@ -742,7 +742,7 @@ export function getMetaDescription(product?: Product) {
   return metaDescription;
 }
 
-export function getProductLabelColor(name: string, theme: MrCamelTheme) {
+export function getProductLabelColor(name: string, theme: CamelTheme) {
   const {
     palette: { primary, common }
   } = theme;

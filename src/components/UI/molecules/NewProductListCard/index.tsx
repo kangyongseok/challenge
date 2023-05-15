@@ -94,7 +94,7 @@ function NewProductListCard({
   const router = useRouter();
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -454,7 +454,7 @@ function NewProductListCard({
           >
             {wishCount > 0 && (
               <Flexbox gap={2}>
-                <Icon name="HeartFilled" width={12} height={12} color={common.ui80} />
+                <Icon name="HeartFilled" width={12} height={12} color="ui80" />
                 <Typography variant="small2" weight="medium" color="ui80">
                   {commaNumber(wishCount)}
                 </Typography>
@@ -462,7 +462,7 @@ function NewProductListCard({
             )}
             {purchaseCount > 0 && (
               <Flexbox gap={2}>
-                <Icon name="MessageFilled" width={12} height={12} color={common.ui80} />
+                <Icon name="MessageFilled" width={12} height={12} color="ui80" />
                 <Typography variant="small2" weight="medium" color="ui80">
                   {commaNumber(purchaseCount)}
                 </Typography>
@@ -493,14 +493,14 @@ function NewProductListCard({
           <WishButton onClick={handleClickWish}>
             <Icon
               name={isWish ? 'HeartFilled' : 'HeartOutlined'}
-              color={isWish ? secondary.red.light : common.ui80}
+              color={isWish ? 'red-light' : 'ui80'}
             />
           </WishButton>
         </Flexbox>
       )}
       {showShopManageButton && (
         <ShopMoreButton onClick={handleClickManageProduct}>
-          <Icon name="MoreHorizFilled" color={common.ui80} />
+          <Icon name="MoreHorizFilled" color="ui80" />
         </ShopMoreButton>
       )}
     </Flexbox>

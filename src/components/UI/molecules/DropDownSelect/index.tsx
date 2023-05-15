@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
 import { find } from 'lodash-es';
-import { Box, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -48,11 +48,6 @@ function DropDownSelect({
   onClick,
   onClickSelect
 }: DropDownSelectProps) {
-  const {
-    theme: {
-      palette: { primary, common }
-    }
-  } = useTheme();
   const wrapRef = useRef<HTMLDivElement>(null);
   const dropDownIconRef = useRef<HTMLButtonElement>(null);
 
@@ -109,20 +104,8 @@ function DropDownSelect({
           data-type={type}
           onClick={onClickSelect}
         >
-          <Typography
-            weight="medium"
-            customStyle={{
-              color: common.ui20
-            }}
-          >
-            전체보기
-          </Typography>
-          <Typography
-            variant="small2"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography weight="medium">전체보기</Typography>
+          <Typography variant="small2" color="ui60">
             {commaNumber(allCount || 0)}
           </Typography>
         </Item>
@@ -135,7 +118,8 @@ function DropDownSelect({
                 <Typography
                   weight="bold"
                   variant="body2"
-                  customStyle={{ color: common.ui60, padding: '20px 0 5px 12px' }}
+                  color="ui60"
+                  customStyle={{ padding: '20px 0 5px 12px' }}
                 >
                   {label}
                 </Typography>
@@ -158,17 +142,13 @@ function DropDownSelect({
                   >
                     <Typography
                       weight="medium"
-                      customStyle={{
-                        color: selectValue === list.id ? primary.main : common.ui20
-                      }}
+                      color={selectValue === list.id ? 'primary' : 'ui20'}
                     >
                       {list.name}
                     </Typography>
                     <Typography
                       variant="small2"
-                      customStyle={{
-                        color: selectValue === list.id ? primary.light : common.ui60
-                      }}
+                      color={selectValue === list.id ? 'primary' : 'ui60'}
                     >
                       {commaNumber(list.count || 0)}
                     </Typography>
@@ -189,20 +169,13 @@ function DropDownSelect({
               data-item={JSON.stringify(list)}
               onClick={onClickSelect}
             >
-              <Typography
-                weight="medium"
-                customStyle={{
-                  color: selectValue === list.id ? primary.main : common.ui20
-                }}
-              >
+              <Typography weight="medium" color={selectValue === list.id ? 'primary' : 'ui20'}>
                 {list.name}
               </Typography>
               {!disabledCount && (
                 <Typography
                   variant="small2"
-                  customStyle={{
-                    color: selectValue === list.id ? primary.light : common.ui60
-                  }}
+                  color={selectValue === list.id ? 'primary-light' : 'ui60'}
                 >
                   {commaNumber(list.count || 0)}
                 </Typography>

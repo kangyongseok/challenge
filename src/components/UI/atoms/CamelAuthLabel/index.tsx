@@ -17,9 +17,9 @@ function CamelAuthLabel() {
       <Typography
         variant="small2"
         weight="bold"
+        color="uiWhite"
         customStyle={{
-          padding: '3px 4px 3px 2px',
-          color: common.uiWhite
+          padding: '3px 4px 3px 2px'
         }}
       >
         인증판매자

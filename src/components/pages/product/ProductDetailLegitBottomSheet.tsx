@@ -98,11 +98,7 @@ function ProductDetailLegitBottomSheet({ product }: { product?: Product }) {
       </ImageBox>
       <Flexbox direction="vertical" gap={8} customStyle={{ margin: '32px 0', textAlign: 'center' }}>
         <Box customStyle={{ padding: '0 20px' }}>
-          <Typography
-            weight="bold"
-            variant="h3"
-            customStyle={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-          >
+          <Typography weight="bold" variant="h3" noWrap>
             {title}
           </Typography>
           <Typography weight="bold" variant="h3">

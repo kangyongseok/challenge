@@ -61,7 +61,7 @@ interface ProductsFilterProps {
 function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterProps) {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { primary }
     }
   } = useTheme();
 
@@ -890,16 +890,16 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
         open={hasBaseSearchParams && progressDone && openMyFilterTooltip}
         message={
           <Flexbox gap={8} alignment="center">
-            <Typography variant="body2" weight="medium" customStyle={{ color: common.uiWhite }}>
+            <Typography variant="body2" weight="medium" color="uiWhite">
               내 사이즈만 보기가 켜져 있어요!
             </Typography>
             <Typography
               variant="body2"
               weight="medium"
               onClick={handleClickMyFilterInActiveTooltip}
+              color="ui80"
               customStyle={{
                 textDecoration: 'underline',
-                color: common.ui80,
                 cursor: 'pointer'
               }}
             >

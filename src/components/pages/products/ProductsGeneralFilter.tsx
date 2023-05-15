@@ -339,8 +339,6 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
               selectedSearchOption.codeId === filterCodeIds.id && selectedSearchOption.id === id
           );
 
-          if (variant === 'camel' && id === 5 && selectedIdFilterOptionIndex !== -1) return;
-
           let newSelectedSearchOptions: SelectedSearchOption[];
           let newSearchParams: Partial<SearchParams>;
 
@@ -395,7 +393,6 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         },
       [
         isLoading,
-        variant,
         searchParams,
         selectedSearchOptions,
         setSearchOptionsParamsState,

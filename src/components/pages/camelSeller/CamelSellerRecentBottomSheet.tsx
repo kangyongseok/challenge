@@ -228,7 +228,7 @@ function CamelSellerRecentBottomSheet() {
           <Typography weight="bold" variant="h2">
             최근 실거래가
           </Typography>
-          <Typography customStyle={{ color: common.ui60 }}>최근 6개월 기준</Typography>
+          <Typography color="ui60">최근 6개월 기준</Typography>
         </Flexbox>
         <CamelSellerFilter
           onClick={handleClickFilterSelect}
@@ -302,25 +302,14 @@ function CamelSellerRecentBottomSheet() {
               >
                 <Flexbox gap={20} alignment="center" justifyContent="space-between">
                   <Flexbox direction="vertical" gap={4}>
-                    <Typography
-                      variant="body2"
-                      weight="medium"
-                      customStyle={{
-                        color: primary.light
-                      }}
-                    >
+                    <Typography variant="body2" weight="medium" color="primary-light">
                       최근 실거래가의 평균이에요.
                     </Typography>
                     <Flexbox gap={4} alignment="baseline">
                       <Typography variant="h3" weight="bold">
                         {getTenThousandUnitPrice(avgPrice)}만원
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        customStyle={{
-                          color: common.ui60
-                        }}
-                      >
+                      <Typography variant="body2" color="ui60">
                         예상 판매기간 {avgLatency}일
                       </Typography>
                     </Flexbox>
@@ -345,12 +334,7 @@ function CamelSellerRecentBottomSheet() {
                 />
                 <Flexbox gap={4}>
                   <Icon name="BangCircleFilled" width={16} height={16} color="ui60" />
-                  <Typography
-                    variant="body2"
-                    customStyle={{
-                      color: common.ui60
-                    }}
-                  >
+                  <Typography variant="body2" color="ui60">
                     적당한 가격을 원한다면 이 가격으로 판매해보세요.
                   </Typography>
                 </Flexbox>

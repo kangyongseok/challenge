@@ -16,20 +16,14 @@ function SettingsAccountConfirmDialog() {
         padding: '32px 20px 20px'
       }}
     >
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{
-          textAlign: 'center'
-        }}
-      >
+      <Typography variant="h3" weight="bold" textAlign="center">
         계좌 등록 실패
       </Typography>
       <Typography
         variant="h4"
+        textAlign="center"
         customStyle={{
-          marginTop: 8,
-          textAlign: 'center'
+          marginTop: 8
         }}
       >
         입력한 정보가 일치하지 않아요.

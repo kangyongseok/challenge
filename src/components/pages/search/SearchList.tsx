@@ -264,7 +264,7 @@ function SearchList({ searchValue, suggestKeywords, onClickTotalSearch }: Search
                         height={28}
                         customStyle={{ padding: 4 }}
                       />
-                      <Typography customStyle={{ flex: 1, color: primary.light }}>
+                      <Typography color="primary-light" customStyle={{ flex: 1 }}>
                         {recommFilter.keywordDeco}
                       </Typography>
                       <Icon
