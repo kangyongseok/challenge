@@ -14,13 +14,16 @@ import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
 
 import UserTraceRecord from '@library/userTraceRecord';
+import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import Amplitude, { logEvent } from '@library/amplitude';
 
+import { UTM_PARAMS } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
+import type { UtmParams } from '@typings/common';
 import {
   ABTestProvider,
   AuthProvider,
@@ -88,10 +91,14 @@ function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
+    const { utmSource, utmCampaign } = LocalStorage.get<UtmParams>(UTM_PARAMS) || {};
+
     logEvent(attrKeys.commonEvent.VIEW_ALL, {
       origin: window.location.origin,
       path: window.location.pathname,
-      params: window.location.search
+      params: window.location.search || undefined,
+      utmSource,
+      utmCampaign
     });
   }, [router]);
 

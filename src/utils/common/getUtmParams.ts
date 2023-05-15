@@ -1,6 +1,6 @@
 import qs from 'qs';
 
-import { UtmParams } from '@typings/common';
+import type { UtmParams } from '@typings/common';
 
 export function getUtmParams() {
   /* eslint-disable camelcase */
