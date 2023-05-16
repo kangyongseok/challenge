@@ -23,6 +23,7 @@ import attrKeys from '@constants/attrKeys';
 
 import type { SaveCamelSellerProductData, SubmitType } from '@typings/camelSeller';
 import { exitUserNextStepState, exitUserViewBottomSheetState } from '@recoil/common';
+import { sendbirdState } from '@recoil/channel';
 import {
   camelSellerBooleanStateFamily,
   camelSellerChangeDetectSelector,
@@ -33,7 +34,9 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useInitializeSendbird from '@hooks/useInitializeSendbird';
 import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
 function CamelSellerHeader() {
@@ -55,6 +58,7 @@ function CamelSellerHeader() {
   const tempData = useRecoilValue(camelSellerTempSaveDataState);
   const { units, stores, distances, colors } = useRecoilValue(camelSellerSurveyState);
   const hasOpenedSurveyBottomSheet = useRecoilValue(camelSellerHasOpenedSurveyBottomSheetState);
+  const state = useRecoilValue(sendbirdState);
   const [openToast, setOpenToast] = useState(false);
   const [message, setMessage] = useState('');
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
@@ -73,6 +77,9 @@ function CamelSellerHeader() {
   const clickBackRef = useRef(false);
 
   const { data: accessUser } = useQueryAccessUser();
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
+  const initializeSendbird = useInitializeSendbird();
+
   const { mutate: mutatePostRegister, isLoading } = useMutation(postProducts);
   const { mutate: mutatePutEdit, isLoading: isLoadingEditMutate } = useMutation(putProductEdit);
   const setExitUserNextStep = useSetRecoilState(exitUserNextStepState);
@@ -226,7 +233,11 @@ function CamelSellerHeader() {
     });
 
     mutatePostRegister(data as SubmitType, {
-      onSuccess({ id, isProductLegit }) {
+      async onSuccess({ id, isProductLegit }) {
+        if (!!userId && !state.initialized) {
+          await initializeSendbird(userId.toString(), userNickName, userImageProfile);
+        }
+
         LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
         SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
         window.history.replaceState(null, '', '/user/shop');

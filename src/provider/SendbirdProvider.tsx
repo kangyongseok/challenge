@@ -39,8 +39,16 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
     ) {
       initialize(userId.toString(), userNickName, userImageProfile);
     }
-    // eslint-disable-next-line
-  }, [userId, state.initialized, state.loading, userInfo?.hasChannel]);
+  }, [
+    router.pathname,
+    userId,
+    state.initialized,
+    state.loading,
+    userInfo?.hasChannel,
+    initialize,
+    userNickName,
+    userImageProfile
+  ]);
 
   useEffect(() => {
     const typingHandlerId = uuidv4();

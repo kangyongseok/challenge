@@ -19,6 +19,7 @@ import { MIN_PRICE } from '@constants/camelSeller';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { sendbirdState } from '@recoil/channel';
 import {
   camelSellerBooleanStateFamily,
   camelSellerHasOpenedSurveyBottomSheetState,
@@ -27,6 +28,8 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
+import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function CamelSellerCTAButton() {
   const router = useRouter();
@@ -53,6 +56,7 @@ function CamelSellerCTAButton() {
   const { units, stores, distances, colors } = useRecoilValue(camelSellerSurveyState);
   const isValid = useRecoilValue(camelSellerSubmitValidatorState);
   const isImageLoading = useRecoilValue(camelSellerIsImageLoadingState);
+  const { initialized } = useRecoilValue(sendbirdState);
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
   const resetValidatorPhoto = useResetRecoilState(
@@ -67,6 +71,9 @@ function CamelSellerCTAButton() {
 
   const { mutate, isLoading } = useMutation(postProducts);
   const { mutate: mutateEdit, isLoading: isLoadingEditMutate } = useMutation(putProductEdit);
+
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
+  const initializeSendbird = useInitializeSendbird();
 
   const handleClick = () => {
     if (isLoading || isLoadingEditMutate) return;
@@ -181,7 +188,11 @@ function CamelSellerCTAButton() {
       });
 
       mutate(data, {
-        onSuccess({ id, isProductLegit }) {
+        async onSuccess({ id, isProductLegit }) {
+          if (!!userId && !initialized) {
+            await initializeSendbird(userId.toString(), userNickName, userImageProfile);
+          }
+
           LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
           SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
           window.history.replaceState(null, '', '/user/shop');

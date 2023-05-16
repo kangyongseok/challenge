@@ -17,13 +17,20 @@ import {
   settingsTransferDataState,
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
+import { sendbirdState } from '@recoil/channel';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function SettingsTransferFooter() {
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
+  const initializeSendbird = useInitializeSendbird();
+
   const [open, setOpen] = useState(false);
   const [openDupToast, setOpenDupToast] = useState(false);
   const [openLimitToast, setOpenLimitToast] = useState(false);
 
+  const { initialized } = useRecoilValue(sendbirdState);
   const { siteId, url, isUrlPattern } = useRecoilValue(settingsTransferDataState);
   const platforms = useRecoilValue(settingsTransferPlatformsState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
@@ -42,6 +49,10 @@ function SettingsTransferFooter() {
 
   const { mutate } = useMutation(postTransfers, {
     onSuccess: async () => {
+      if (!!userId && !initialized) {
+        await initializeSendbird(userId.toString(), userNickName, userImageProfile);
+      }
+
       await refetch();
       resetPlatformsState();
       resetDataState();
