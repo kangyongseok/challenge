@@ -10,6 +10,8 @@ import { fetchProductOrder } from '@api/order';
 
 import queryKeys from '@constants/queryKeys';
 
+import { getTenThousandUnitPrice } from '@utils/formats';
+
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ProductOrderPaymentMethodProps {
@@ -48,10 +50,12 @@ function ProductOrderPaymentMethod({
         process.env.TOSS_PAYMENTS_CLIENT_KEY,
         String(accessUser?.userId)
       );
-
       const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
         '#payment-widget',
-        totalPrice
+        totalPrice,
+        {
+          variantKey: getTenThousandUnitPrice(totalPrice) > 3500 ? 'account' : ''
+        }
       );
 
       paymentWidgetRef.current = paymentWidget;

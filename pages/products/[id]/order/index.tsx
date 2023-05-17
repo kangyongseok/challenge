@@ -8,6 +8,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductOrderBanner,
   ProductOrderCard,
+  ProductOrderCardOverDialog,
   ProductOrderConfirm,
   ProductOrderDeliveryInfo,
   ProductOrderHeader,
@@ -97,6 +98,7 @@ function ProductOrder() {
       />
       <Gap height={8} />
       <ProductOrderConfirm paymentWidgetRef={paymentWidgetRef} />
+      <ProductOrderCardOverDialog />
     </GeneralTemplate>
   );
 }

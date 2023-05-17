@@ -1117,22 +1117,22 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@tosspayments/payment-widget-sdk@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-sdk/-/payment-widget-sdk-0.7.1.tgz#cf9f7d4e62fe2056b2736c56a9ee973452c78d4e"
-  integrity sha512-Grhpo6xCIIVgyhD6oF5ncciHksJU5Nt+6etSymz2FXCFm0sRKjING9MAz5nVm528C1YvRHaqaquo6UCGNPpA7A==
+"@tosspayments/payment-widget-sdk@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-sdk/-/payment-widget-sdk-0.7.2.tgz#66a2e79352d857d733ff6df59f883c2fd981f8bc"
+  integrity sha512-qpo+3J9v9kqdYrgFrJEaZjqT5FtfOvnVQvxDPbpgmNiMyN73TSJ+3ZRZDg77u3cXvnUAhR558V0KIC9UhRJ0/g==
   dependencies:
-    "@tosspayments/payment-widget__types" "^0.0.11"
+    "@tosspayments/payment-widget__types" "^0.0.12"
 
 "@tosspayments/payment-widget-types@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-types/-/payment-widget-types-0.0.4.tgz#e6016a81805798b61129d0b5c8e6409bc0d59905"
   integrity sha512-XYazYhks+Ky/WVfUlaEDVQIYk93ALqw2CSQ5/d/ig+MREusucEMRCU6K4Iq/0aeZn3ElpA8X2mkXUP1htykOng==
 
-"@tosspayments/payment-widget__types@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget__types/-/payment-widget__types-0.0.11.tgz#6a80aa6d61bcde0319208f865be6f40cf15adf25"
-  integrity sha512-vtan2pEsypZQFRRcTXmb9WG3npMTJ6QtJirN8sCn7ovYVG5rkl4DBxmV7VQcdKuAaIWaFiTddVbFFwmgDGOuKQ==
+"@tosspayments/payment-widget__types@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget__types/-/payment-widget__types-0.0.12.tgz#ba568637153bad6efaf7a5a5510a14677ecbb069"
+  integrity sha512-VhC8CMYbvDsqURritT5hQFXtge9n4Iw1r6KRLrmW8kAFB93KEfSSPJfTDMv2JDDrG+OFlN9ofAQ+6KOmhMtHxw==
   dependencies:
     "@tosspayments/payment-widget-types" "^0.0.4"
 
