@@ -11,7 +11,11 @@ export const Backdrop = styled.div<{
   opacity: 0;
   visibility: hidden;
   z-index: ${({ theme: { zIndex } }) => zIndex.dialog};
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.overlay60};
   mix-blend-mode: hard-light;
   transition: opacity 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms;
 

@@ -82,17 +82,27 @@ function LoginBottomSheet() {
                 <Icon name="Logo_45_45" width={36} height={31} />
                 <Icon name="LogoText_96_20" width={124} height={31} />
               </Flexbox>
-              <Typography customStyle={{ margin: '20px 0' }}>
-                꿀매물과 가격변동 알림부터
-                <br />내 주변, 내 사이즈 매물만 보기까지!
-              </Typography>
-              <Typography
-                customStyle={{
-                  marginBottom: 32
-                }}
-              >
-                로그인하고 득템하세요 🙌
-              </Typography>
+              {router.pathname === '/order/single/[id]' ? (
+                <Typography variant="h4" customStyle={{ margin: '20px 0' }}>
+                  카멜 안전결제를 처음 이용하면
+                  <br />
+                  <span style={{ fontWeight: 'bold', color: '#425BFF' }}>5,000</span>원을 드려요!
+                </Typography>
+              ) : (
+                <>
+                  <Typography customStyle={{ margin: '20px 0' }}>
+                    꿀매물과 가격변동 알림부터
+                    <br />내 주변, 내 사이즈 매물만 보기까지!
+                  </Typography>
+                  <Typography
+                    customStyle={{
+                      marginBottom: 32
+                    }}
+                  >
+                    로그인하고 득템하세요 🙌
+                  </Typography>
+                </>
+              )}
               <LoginButtonList
                 authLogin={authLogin}
                 successLogin={successLogin}

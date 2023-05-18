@@ -5,26 +5,11 @@ export interface Order {
   externalId: string;
   fee: 0;
   name: string;
-  orderDetails: {
-    data: string;
-    name: string;
-    options: string;
-    price: number;
-    quantity: number;
-    targetId: number;
-    type: number;
-  }[];
-  orderPayments: {
-    agencyCode: string;
-    agencyName: string;
-    data: string;
-    dateExpired: string;
-    externalPaymentKey: string;
-    method: number;
-    partnerId: number;
-    receiptUrl: string;
-    result: number;
-  }[];
+  orderDetails: OrderDetail[];
+  orderPayments: OrderPayments[];
+  orderFeeInfos: OrderFeeInfos[];
+  orderDelivery: OrderDelivery;
+  firstProductId: number;
   reviewFormInfo: {
     hasReview: boolean;
     isTargetUserSeller: boolean | null;
@@ -43,10 +28,46 @@ export interface Order {
   dateExpired: string;
 }
 
+export interface OrderDelivery {
+  contents: string;
+  deliveryCode: string;
+  type: 0 | 1 | 2 | 3;
+}
+
+export interface OrderFeeInfos {
+  discountFee: number;
+  fee: number;
+  name: string;
+  totalFee: number;
+  type: number;
+}
+
 export interface DeliveryInfo {
   address: string;
   name: string;
   phone: string;
+}
+
+export interface OrderPayments {
+  agencyCode: string;
+  agencyName: string;
+  data: string;
+  dateExpired: string;
+  externalPaymentKey: string;
+  method: number;
+  partnerId: number;
+  receiptUrl: string;
+  result: number;
+}
+
+export interface OrderDetail {
+  data: string;
+  name: string;
+  options: string;
+  price: number;
+  quantity: number;
+  targetId: number;
+  type: number;
 }
 
 /* ---------- Request Parameters ---------- */

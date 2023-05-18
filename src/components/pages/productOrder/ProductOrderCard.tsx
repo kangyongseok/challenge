@@ -1,27 +1,11 @@
-import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import { Avatar, Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 
-import { fetchProduct } from '@api/product';
-
-import queryKeys from '@constants/queryKeys';
+import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductOrderCard() {
-  const router = useRouter();
-  const { id } = router.query;
-  const splitId = String(id).split('-');
-  const productId = Number(splitId[splitId.length - 1] || 0);
-
-  const { data: { product, offers = [] } = {}, isLoading } = useQuery(
-    queryKeys.products.product({ productId }),
-    () => fetchProduct({ productId }),
-    {
-      refetchOnMount: true,
-      enabled: !!productId
-    }
-  );
+  const { data: { product, offers = [] } = {}, isLoading } = useQueryProduct();
 
   const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
 

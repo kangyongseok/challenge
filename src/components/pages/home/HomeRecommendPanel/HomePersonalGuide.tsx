@@ -468,7 +468,7 @@ const List = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 28px 8px;
-  padding: 22px 12px 32px;
+  padding: 32px 12px 32px;
   min-height: 80px;
   overflow-x: auto;
 `;

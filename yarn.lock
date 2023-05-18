@@ -438,7 +438,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.8.1.tgz#c1ddb040429c6d21d38cc945fe75c818cfb68e17"
   integrity sha512-W2P2c/VRW1/1tLox0mVUalvnWXxavmv/Oum2aPsRcoDJuob75FC3Y8FbpfLwUegRcxINtGUMPq0tFCvYNTBXNA==
 
-"@emotion/react@^11.10.8":
+"@emotion/react@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.11.0.tgz#408196b7ef8729d8ad08fc061b03b046d1460e02"
   integrity sha512-ZSK3ZJsNkwfjT3JpDAWJZlrGD81Z3ytNDsxw1LKq1o+xkmO5pnWfr6gmCC8gHEFf3nSSX/09YrG67jybNPxSUw==
@@ -468,7 +468,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/sheet/-/sheet-1.2.2.tgz#d58e788ee27267a14342303e1abb3d508b6d0fec"
   integrity sha512-0QBtGvaqtWi+nx6doRwDdBIzhNdZrXUppvTM4dtZZWEGTXL/XE/yJxLMGlDT1Gt+UHH5IX1n+jkXyytE/av7OA==
 
-"@emotion/styled@^11.10.8":
+"@emotion/styled@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/styled/-/styled-11.11.0.tgz#26b75e1b5a1b7a629d7c0a8b708fbf5a9cdce346"
   integrity sha512-hM5Nnvu9P3midq5aaXj4I+lnSfNi7Pmd4EWk1fOZ3pxookaQTNew6bp4JaCBYM4HVFZF9g7UjJmsUmC2JlxOng==
@@ -826,15 +826,15 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@mrcamelhub/camel-ui-toast@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-toast/-/camel-ui-toast-0.0.7.tgz#a975ccd822be28313da5f4295fe5bd04d21072af"
-  integrity sha512-/ilJd+yxJwHMpHS7x+kapjSePOBrTHWMJiQsObm6Rfic/v4J6xN6+ap7bJ3Wp84NrU0EH3ksmojuXaTlcoJIGg==
+"@mrcamelhub/camel-ui-toast@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-toast/-/camel-ui-toast-0.0.9.tgz#8bdd82375a2abd958dba41a57e1e29a85e581d29"
+  integrity sha512-Bj2mSObEBRvOVc3yM1RhxrXBxGUF8xEvfzvkXIzPmMfre/uUuu18ykDR5KUgOvYlptQDLCPulzyHJ9OTj0PdKA==
 
-"@mrcamelhub/camel-ui@^0.1.66":
-  version "0.1.66"
-  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.66.tgz#dea5b5ec6dc9bcd0106de8305ad7c3a737fe230a"
-  integrity sha512-QyiWXiNILB1UyZHybDnHor9Mm7zHtpzth0pOtLijJ3mJ5WR3fsO1PETKR38d8EWS6xZPDGhCVmg3ii063RL3FQ==
+"@mrcamelhub/camel-ui@^0.1.69":
+  version "0.1.69"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.69.tgz#b683909d2357fe491af22368f188802563df2265"
+  integrity sha512-aiSBKgF7vLlauexInwaHOY2LfryKslMVfhitG2MhZOAbro13osSQEVPNMfrLQpscQDq0NA5F8cmXWPy0pZjH3w==
 
 "@next/env@13.2.4":
   version "13.2.4"

@@ -259,6 +259,8 @@ function NewProductGridCard({
   }, [size]);
 
   useEffect(() => {
+    if (!sellerType) return;
+
     setIsAuthSeller(SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']);
   }, [sellerType]);
 

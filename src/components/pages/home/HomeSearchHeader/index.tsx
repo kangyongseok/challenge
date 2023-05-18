@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -26,7 +26,6 @@ import {
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
 import { showAppDownloadBannerState } from '@recoil/common';
-import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -44,10 +43,9 @@ function HomeSearchHeader() {
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const [open, setOpen] = useState(false);
+  const [init, setInit] = useState(false);
 
   const headerRef = useRef<HTMLDivElement>(null);
-  const menuOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setSearchHelperPopup = useSetRecoilState(searchHelperPopupStateFamily('continue'));
@@ -55,12 +53,6 @@ function HomeSearchHeader() {
   const [selectedSearchOptions, setSelectedSearchOptions] = useRecoilState(
     selectedSearchOptionsState
   );
-
-  const triggered = useScrollTrigger({
-    ref: headerRef,
-    additionalOffsetTop: showAppDownloadBanner ? 48 : 0,
-    delay: 0
-  });
 
   const { data: userHistoryManage, refetch } = useQueryUserHistoryManages();
   const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
@@ -102,101 +94,88 @@ function HomeSearchHeader() {
   };
 
   useEffect(() => {
-    if (triggered) {
-      if (menuOpenTimerRef.current) {
-        clearTimeout(menuOpenTimerRef.current);
-      }
+    const handleScroll = () => {
+      if (!headerRef.current) return;
 
-      menuOpenTimerRef.current = setTimeout(() => {
-        setOpen(true);
-      }, 200);
-    }
-  }, [triggered, open]);
+      const { offsetTop } = headerRef.current;
 
-  useEffect(() => {
-    if (!triggered && open) {
-      setOpen(false);
-    }
-  }, [triggered, open]);
-
-  useEffect(() => {
-    return () => {
-      if (menuOpenTimerRef.current) {
-        clearTimeout(menuOpenTimerRef.current);
+      if (showAppDownloadBanner && offsetTop <= APP_DOWNLOAD_BANNER_HEIGHT) {
+        setInit(true);
+      } else {
+        setInit(false);
       }
     };
-  }, []);
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [showAppDownloadBanner]);
 
   return (
-    <Wrap ref={headerRef}>
-      <StyledHomeSearchHeader
-        gap={16}
-        alignment="center"
-        triggered={triggered}
-        showAppDownloadBanner={showAppDownloadBanner}
-        isAppLayout={!!isExtendedLayoutIOSVersion()}
+    <StyledHomeSearchHeader
+      ref={headerRef}
+      gap={16}
+      alignment="center"
+      showAppDownloadBanner={showAppDownloadBanner}
+      init={init || (typeof window !== 'undefined' && !window.scrollY)}
+    >
+      <Box
+        onClick={handleClick}
+        customStyle={{
+          flexGrow: 1
+        }}
       >
-        <Box
-          onClick={handleClick}
+        <Input
+          variant="outline"
+          size="large"
+          fullWidth
+          startAdornment={<Icon name="SearchOutlined" size="medium" color="ui20" />}
+          placeholder="어떤 명품을 득템해 볼까요?"
+          disabled
           customStyle={{
-            transition: 'max-width 0.2s',
-            flexGrow: 1,
-            maxWidth: triggered ? 'calc(100% - 80px)' : '100%'
+            maxHeight: 40,
+            borderColor: common.ui20,
+            backgroundColor: 'transparent',
+            pointerEvents: 'none',
+            overflow: 'hidden',
+            '& input::placeholder': {
+              color: common.ui60
+            }
           }}
-        >
-          <Input
-            variant="solid"
-            size="large"
-            fullWidth
-            startAdornment={<Icon name="SearchOutlined" size="medium" color={common.ui20} />}
-            placeholder="어떤 명품을 득템해 볼까요?"
-            disabled
-            customStyle={{
-              pointerEvents: 'none',
-              overflow: 'hidden',
-              '& input::placeholder': {
-                color: common.ui60
-              }
-            }}
-          />
-        </Box>
-        {open && <Menu />}
-      </StyledHomeSearchHeader>
-    </Wrap>
+        />
+      </Box>
+      <Menu />
+    </StyledHomeSearchHeader>
   );
 }
 
-const Wrap = styled.div`
-  width: 100%;
-  margin-top: 6px;
-  height: 64px;
-  min-height: 64px;
-`;
-
-const StyledHomeSearchHeader = styled(Flexbox)<{
-  triggered: boolean;
-  showAppDownloadBanner: boolean;
-  isAppLayout: boolean;
-}>`
-  position: ${({ triggered }) => (triggered ? 'fixed' : 'static')};
-  top: ${({ showAppDownloadBanner }) => {
-    if (showAppDownloadBanner) {
-      return `${APP_DOWNLOAD_BANNER_HEIGHT}px`;
-    }
-
-    return 0;
-  }};
-  width: 100%;
-  padding: ${({ isAppLayout, triggered }) =>
-      isAppLayout && triggered ? IOS_SAFE_AREA_TOP : '10px'}
-    20px 10px;
+const StyledHomeSearchHeader = styled(Flexbox)<{ showAppDownloadBanner: boolean; init: boolean }>`
+  position: sticky;
+  top: 0;
+  left: 0;
+  padding: ${isExtendedLayoutIOSVersion() ? `calc(${IOS_SAFE_AREA_TOP} + 8px)` : '8px'} 16px 8px;
   background-color: ${({
     theme: {
       palette: { common }
     }
   }) => common.bg01};
-  transition: top 0.2s;
+
+  transition: transform 0.5s;
+  transform: translateY(
+    ${({ showAppDownloadBanner, init }) => {
+      let translateY = 0;
+      if (showAppDownloadBanner) {
+        translateY += APP_DOWNLOAD_BANNER_HEIGHT;
+      }
+      if (init) {
+        translateY = 0;
+      }
+      return `${translateY}px`;
+    }}
+  );
   z-index: ${({ theme: { zIndex } }) => zIndex.header};
 `;
 
-export default memo(HomeSearchHeader);
+export default HomeSearchHeader;

@@ -10,12 +10,12 @@ import { themeState } from '@recoil/common';
 
 const font = localFont({
   src: [
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '900' },
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '700' },
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '500' },
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '400' },
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '300' },
-    { path: '../styles/fonts/CamelProductSansVF.woff2', weight: '100' }
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '900' },
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '700' },
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '500' },
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '400' },
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '300' },
+    { path: '../styles/fonts/CamelProductSansVF.ttf', weight: '100' }
   ]
 });
 

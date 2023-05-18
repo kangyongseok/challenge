@@ -54,3 +54,15 @@ export async function postOrderRefuse({ id, reason }: { id: number; reason: stri
 
   return data;
 }
+
+export async function postOrderDelivery({
+  id,
+  ...request
+}: {
+  id: number;
+  contents: string;
+  deliveryCode: string;
+  type?: 0 | 1 | 2 | 3; // 0: 직접입력 1 : 택배 2: 퀵 3: 용달
+}) {
+  await Axios.getInstance().post(`${BASE_PATH}/${id}/delivery`, request);
+}

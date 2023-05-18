@@ -2,16 +2,7 @@ import { useCallback } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import {
-  Box,
-  Button,
-  Flexbox,
-  Icon,
-  Skeleton,
-  ThemeProvider,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
@@ -158,83 +149,87 @@ function UserShopLegitProfile({
               customStyle={{ flex: 1, padding: '0 20px' }}
             >
               <UserAvatar src={imageProfile} />
-              <ThemeProvider theme="dark">
-                <Flexbox direction="vertical" alignment="center" gap={4}>
-                  <Flexbox alignment="center" justifyContent="center" gap={4}>
-                    <Typography variant="h3" weight="bold">
-                      {nickName}
+              <Flexbox direction="vertical" alignment="center" gap={4}>
+                <Flexbox alignment="center" justifyContent="center" gap={4}>
+                  <Typography variant="h3" weight="bold" color="uiWhite">
+                    {nickName}
+                  </Typography>
+                  <BadgeLabel>
+                    <Icon name="LegitFilled" size="small" color="cmnW" />
+                    <Typography variant="body2" weight="medium" color="uiWhite">
+                      감정사
                     </Typography>
-                    <BadgeLabel>
-                      <Icon name="LegitFilled" size="small" color="cmnW" />
-                      <Typography variant="body2" weight="medium">
-                        감정사
+                  </BadgeLabel>
+                </Flexbox>
+                <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
+                  {getTimeForamt && (
+                    <Flexbox alignment="center">
+                      {getTimeForamt.icon === 'time' ? (
+                        <Icon
+                          name="TimeOutlined"
+                          color="uiWhite"
+                          customStyle={{
+                            marginRight: 2,
+                            height: '14px !important',
+                            width: 14
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          customStyle={{
+                            width: 5,
+                            height: 5,
+                            background: common.uiWhite,
+                            borderRadius: '50%',
+                            marginRight: 5
+                          }}
+                        />
+                      )}
+                      <Typography variant="body2" color="uiWhite">
+                        {getTimeForamt.text}
                       </Typography>
-                    </BadgeLabel>
-                  </Flexbox>
-                  <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
-                    {getTimeForamt && (
-                      <Flexbox alignment="center">
-                        {getTimeForamt.icon === 'time' ? (
-                          <Icon
-                            name="TimeOutlined"
-                            color="uiWhite"
-                            customStyle={{
-                              marginRight: 2,
-                              height: '14px !important',
-                              width: 14
-                            }}
-                          />
-                        ) : (
-                          <Box
-                            customStyle={{
-                              width: 5,
-                              height: 5,
-                              background: common.uiWhite,
-                              borderRadius: '50%',
-                              marginRight: 5
-                            }}
-                          />
-                        )}
-                        <Typography variant="body2" color="uiWhite">
-                          {getTimeForamt.text}
-                        </Typography>
-                      </Flexbox>
-                    )}
-                    {!!areaName && data?.info.value.isAreaOpen && (
-                      <Flexbox alignment="center">
-                        <Icon name="PinOutlined" width={16} height={16} />
-                        <Typography variant="body2">{areaName}</Typography>
-                      </Flexbox>
-                    )}
-                  </Flexbox>
-                  {!!curnScore && !!maxScore && (
-                    <Flexbox
-                      alignment="center"
-                      justifyContent="center"
-                      gap={1}
-                      customStyle={{ marginTop: 8 }}
-                    >
-                      {Array.from({ length: 5 }, (_, index) => {
-                        return index <
-                          (maxScore === 10
-                            ? Math.floor(Number(curnScore) / 2)
-                            : Number(curnScore)) ? (
-                          <Icon name="StarFilled" width={16} height={16} color="#FFD911" />
-                        ) : (
-                          <Icon name="StarOutlined" width={16} height={16} color="#FFD911" />
-                        );
-                      })}
+                    </Flexbox>
+                  )}
+                  {!!areaName && data?.info.value.isAreaOpen && (
+                    <Flexbox alignment="center">
+                      <Icon name="PinOutlined" width={16} height={16} />
+                      <Typography variant="body2">{areaName}</Typography>
                     </Flexbox>
                   )}
                 </Flexbox>
-                {!!shopDescription && (
-                  <Description
-                    dangerouslySetInnerHTML={{
-                      __html: `${shopDescription.replace(/\r?\n/g, '<br />')}`
-                    }}
-                  />
+                {!!curnScore && !!maxScore && (
+                  <Flexbox
+                    alignment="center"
+                    justifyContent="center"
+                    gap={1}
+                    customStyle={{ marginTop: 8 }}
+                  >
+                    {Array.from({ length: 5 }, (_, index) => {
+                      return index <
+                        (maxScore === 10
+                          ? Math.floor(Number(curnScore) / 2)
+                          : Number(curnScore)) ? (
+                        <Icon name="StarFilled" width={16} height={16} color="#FFD911" />
+                      ) : (
+                        <Icon name="StarOutlined" width={16} height={16} color="#FFD911" />
+                      );
+                    })}
+                  </Flexbox>
                 )}
-              </ThemeProvider>
+              </Flexbox>
+              {!!shopDescription && (
+                <Typography
+                  color="uiWhite"
+                  customStyle={{
+                    wordBreak: 'keep-all',
+                    overflow: 'hidden',
+                    width: '100%'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: `${shopDescription.replace(/\r?\n/g, '<br />')}`
+                  }}
+                />
+              )}
             </Flexbox>
             <Flexbox
               alignment="center"
@@ -308,14 +303,8 @@ const BadgeLabel = styled.label`
   align-items: center;
   padding: 4px 8px;
   gap: 2px;
-  background-color: ${({ theme: { palette } }) => palette.common.uiWhite};
+  background-color: ${({ theme: { palette } }) => palette.common.uiBlack};
   border-radius: 12px;
-`;
-
-const Description = styled(Typography)`
-  word-break: keep-all;
-  overflow: hidden;
-  width: 100%;
 `;
 
 export default UserShopLegitProfile;

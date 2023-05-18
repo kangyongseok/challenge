@@ -10,6 +10,7 @@ import attrKeys from '@constants/attrKeys';
 
 import HomePersonalGuideProductList from './HomePersonalGuideProductList';
 import HomePersonalGuide from './HomePersonalGuide';
+import HomePersonalCuration from './HomePersonalCuration';
 import HomeNewCamelProductGrid from './HomeNewCamelProductGrid';
 import HomeMainBanner from './HomeMainBanner';
 import HomeDogHoneyProductGrid from './HomeDogHoneyProductGrid';
@@ -42,6 +43,8 @@ function HomeRecommendPanel() {
       <HomeNewCamelProductGrid />
       <Gap height={8} />
       <HomeDogHoneyProductGrid />
+      <Gap height={8} />
+      <HomePersonalCuration />
     </>
   );
 }

@@ -11,12 +11,11 @@ import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   HomeEventBannerBottomSheet,
-  HomeFollowingPanel,
   HomeFooter,
   HomeLegitContinueDialog,
   HomeRecommendPanel,
   HomeSearchHeader,
-  HomeTabs
+  HomeWishAlertScreen
 } from '@components/pages/home';
 
 import SessionStorage from '@library/sessionStorage';
@@ -39,7 +38,6 @@ import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 function Home() {
   const router = useRouter();
-  const { tab = 'recommend' } = router.query;
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -127,10 +125,8 @@ function Home() {
         keywords="중고 명품, 빈티지 명품, 구찌, 샤넬, 루이비통, 보테가베네타, 톰브라운, 명품 중고, 중고 샤넬, 중고 루이비통, 중고 구찌, 중고 톰브라운, 중고 보테가베네타"
       />
       <GeneralTemplate footer={<BottomNavigation />} disablePadding>
-        <HomeTabs />
         <HomeSearchHeader />
-        {tab === 'recommend' && <HomeRecommendPanel />}
-        {tab === 'following' && <HomeFollowingPanel />}
+        <HomeRecommendPanel />
         {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
       </GeneralTemplate>
       <SearchHelperPopup type="continue" />
@@ -143,6 +139,7 @@ function Home() {
       />
       <HomeLegitContinueDialog />
       <HomeEventBannerBottomSheet />
+      <HomeWishAlertScreen />
     </>
   );
 }

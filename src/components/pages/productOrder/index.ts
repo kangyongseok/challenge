@@ -5,4 +5,7 @@ export { default as ProductOrderPaymentInfo } from './ProductOrderPaymentInfo';
 export { default as ProductOrderBanner } from './ProductOrderBanner';
 export { default as ProductOrderPaymentMethod } from './ProductOrderPaymentMethod';
 export { default as ProductOrderConfirm } from './ProductOrderConfirm';
+export { default as ProductOrderInfoBottomSheet } from './ProductOrderInfoBottomSheet';
+export { default as ProductOrderLabel } from './ProductOrderLabel';
+export { default as ProductOrderAddTextArea } from './ProductOrderAddTextarea';
 export { default as ProductOrderCardOverDialog } from './ProductOrderCardOverDialog';

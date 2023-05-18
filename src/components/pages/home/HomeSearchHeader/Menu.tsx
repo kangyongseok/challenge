@@ -1,5 +1,3 @@
-import { memo, useCallback } from 'react';
-
 import { useRouter } from 'next/router';
 import { Flexbox, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
@@ -20,7 +18,7 @@ function Menu() {
 
   const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     logEvent(attrKeys.home.CLICK_BEHAVIOR_LIST, {
       name: attrProperty.name.MAIN,
       title: notViewedHistoryCount > 0 ? attrProperty.title.NEW : attrProperty.title.GENERAL
@@ -32,13 +30,13 @@ function Menu() {
     }
 
     router.push('/notices');
-  }, [notViewedHistoryCount, router]);
+  };
 
-  const handleClickWish = useCallback(() => {
+  const handleClickWish = () => {
     logEvent(attrKeys.home.CLICK_TAB_WISH);
 
     router.push('/wishes');
-  }, [router]);
+  };
 
   return (
     <Flexbox gap={16} alignment="center">
@@ -76,4 +74,4 @@ const SlideDown = styled.div<{
   }
 `;
 
-export default memo(Menu);
+export default Menu;

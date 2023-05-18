@@ -28,11 +28,7 @@ import attrProperty from '@constants/attrProperty';
 
 import { convertSearchParamsByQuery } from '@utils/products';
 
-import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
-
 function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  useProductKeywordAutoSave('search');
-
   return (
     <>
       <ProductsPageHead variant="search" params={params} />

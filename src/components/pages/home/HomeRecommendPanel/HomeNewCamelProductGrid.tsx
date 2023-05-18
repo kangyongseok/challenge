@@ -61,11 +61,14 @@ function HomeNewCamelProductGrid() {
           marginBottom: 20
         }}
       >
-        <Typography variant="h3" weight="bold">
-          새로 올라왔어요! 🌈
-          <br />
-          채팅으로 거래를 시작해보세요.
-        </Typography>
+        <Flexbox direction="vertical" gap={4}>
+          <Typography variant="h3" weight="bold">
+            새로 올라왔어요! 🌈
+            <br />
+            채팅으로 거래를 시작해보세요.
+          </Typography>
+          <Typography color="ui60">지금 거래하면 안전결제 수수료 무료!</Typography>
+        </Flexbox>
         <Button
           variant="inline"
           size="small"

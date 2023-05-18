@@ -91,7 +91,7 @@ function UserAvatar({
                     }}
                   />
                 )}
-                <Typography variant="body2" customStyle={{ color: 'white' }}>
+                <Typography variant="body2" color="uiWhite">
                   {labelText.text}
                 </Typography>
               </>

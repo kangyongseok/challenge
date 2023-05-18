@@ -75,7 +75,10 @@ function Notices() {
           showRight={tab !== '활동알림'}
           rightIcon={
             tab === '활동알림' ? (
-              <Button onClick={handleClickAllRead} customStyle={{ border: 'none', fontSize: 12 }}>
+              <Button
+                onClick={handleClickAllRead}
+                customStyle={{ marginLeft: 'auto', border: 'none', fontSize: 12 }}
+              >
                 모두 읽음
               </Button>
             ) : undefined

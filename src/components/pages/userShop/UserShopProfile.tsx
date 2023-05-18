@@ -221,7 +221,12 @@ function UserShopProfile({
                 </Flexbox>
               </Flexbox>
               {!!shopDescription && (
-                <Description
+                <Typography
+                  customStyle={{
+                    wordBreak: 'keep-all',
+                    overflow: 'hidden',
+                    width: '100%'
+                  }}
                   dangerouslySetInnerHTML={{
                     __html: shopDescription.replace(/\r?\n/g, '<br />')
                   }}
@@ -288,12 +293,6 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
-`;
-
-const Description = styled(Typography)`
-  word-break: keep-all;
-  overflow: hidden;
   width: 100%;
 `;
 
