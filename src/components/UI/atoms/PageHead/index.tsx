@@ -3,7 +3,7 @@ import Head from 'next/head';
 
 import type { Product } from '@dto/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
@@ -40,7 +40,7 @@ function PageHead({
     brand: { name: brandName = '', nameEng: brandNameEng = '' } = {}
   } = product || {};
 
-  const isNormalseller = product?.sellerType === productSellerType.normal;
+  const isNormalseller = product?.sellerType === productType.normal;
 
   const imagePathParser = () => {
     if (ogImage) {

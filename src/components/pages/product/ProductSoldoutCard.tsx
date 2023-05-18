@@ -7,7 +7,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -34,7 +34,7 @@ function ProductSoldoutCard({
     });
   }, []);
 
-  const isNormalSeller = product?.sellerType === productSellerType.normal;
+  const isNormalSeller = product?.sellerType === productType.normal;
 
   return (
     <StyledWrap justifyContent="space-between" alignment="center" onClick={onClick}>

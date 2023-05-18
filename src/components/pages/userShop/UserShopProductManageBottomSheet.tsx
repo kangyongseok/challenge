@@ -209,7 +209,7 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       { productId: id, status: dataStatus },
       {
         onSettled: () => {
-          if (dataStatus === productStatusCode.sale) {
+          if (dataStatus === productStatusCode.forSale) {
             toastStack({
               children: '판매중으로 변경되었어요.'
             });

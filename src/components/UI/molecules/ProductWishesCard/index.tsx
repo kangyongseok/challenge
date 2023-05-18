@@ -26,7 +26,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PRODUCT_STATUS } from '@constants/product';
@@ -42,6 +42,7 @@ import { openDeleteToastState, removeIdState } from '@recoil/wishes';
 import { deviceIdState } from '@recoil/common';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductState from '@hooks/useProductState';
 import useProductCardState from '@hooks/useProductCardState';
 
 import { Content, PriceDownLabel, Title } from './ProductWishesCard.styles';
@@ -113,13 +114,13 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       isSafe,
       showPriceDown,
       showDuplicateUploadAlert,
-      showDuplicateWithPriceDownAlert,
       isPopular,
-      isPriceDown,
       salePrice,
       productLegitStatusText,
       discountedPrice
     } = useProductCardState(product);
+    const { isPriceDown, isReRegisterProduct } = useProductState({ product });
+
     const [loadFailed, setLoadFailed] = useState(false);
 
     const {
@@ -140,7 +141,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
       status
     } = product;
 
-    const isNormalseller = product.sellerType === productSellerType.normal;
+    const isNormalseller = product.sellerType === productType.normal;
 
     useEffect(() => {
       setIsWish(userWishIds.includes(id));
@@ -164,7 +165,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
         productType: getProductType(product.productSeller.site.id, product.productSeller.type)
       });
 
-      if (!showDuplicateUploadAlert && showDuplicateWithPriceDownAlert) {
+      if (!showDuplicateUploadAlert && isReRegisterProduct) {
         logEvent(attrKeys.products.CLICK_CLOSE, {
           name: 'MAIN',
           title: 'WISHPRICE_TOOLTIP'
@@ -394,7 +395,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
               </Flexbox>
             </Alert>
           )}
-          {!showDuplicateUploadAlert && showDuplicateWithPriceDownAlert && (
+          {!showDuplicateUploadAlert && isReRegisterProduct && (
             <Alert
               onClick={handleClickAlert}
               customStyle={{

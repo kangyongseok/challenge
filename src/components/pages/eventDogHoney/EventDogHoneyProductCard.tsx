@@ -22,7 +22,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postProductsAdd, postProductsRemove } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
@@ -129,7 +129,7 @@ function EventDogHoneyProductCard({
     productSellerId: product.productSeller.id,
     productSellerType: product.productSeller.type,
     productSellerAccount: product.productSeller.account,
-    useChat: product.sellerType !== productSellerType.collection,
+    useChat: product.sellerType !== productType.collection,
     ...attributes
   };
   const [isWish, setIsWish] = useState(false);

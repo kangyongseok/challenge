@@ -13,7 +13,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchProductsByUserId } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -81,7 +81,7 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
         productSellerId: product.productSeller.id,
         productSellerType: product.productSeller.type,
         productSellerAccount: product.productSeller.account,
-        useChat: product.sellerType !== productSellerType.collection
+        useChat: product.sellerType !== productType.collection
       });
       SessionStorage.set(sessionStorageKeys.productDetailEventProperties, {
         source: attrProperty.productSource.USER_SHOP_PRODUCT

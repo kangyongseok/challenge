@@ -1,4 +1,4 @@
-import type { productSellerType } from '@constants/user';
+import type { productType } from '@constants/user';
 
 export interface WishAtt {
   name: string;
@@ -16,7 +16,7 @@ export interface WishAtt {
   source?: string;
   att?: string;
   att2?: string;
-  sellerType?: (typeof productSellerType)[keyof typeof productSellerType];
+  sellerType?: (typeof productType)[keyof typeof productType];
 }
 
 export interface SavedLegitDataProps {
@@ -43,5 +43,5 @@ export interface SavedLegitState {
   isCompleted: boolean;
   isViewedSampleGuide: boolean;
   productId: number;
-  sellerType?: (typeof productSellerType)[keyof typeof productSellerType];
+  sellerType?: (typeof productType)[keyof typeof productType];
 }

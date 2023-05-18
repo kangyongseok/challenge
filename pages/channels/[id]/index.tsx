@@ -33,7 +33,7 @@ import SessionStorage from '@library/sessionStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
-import { channelUserType, productSellerType } from '@constants/user';
+import { channelUserType, productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -258,7 +258,7 @@ function Channel() {
         productSellerId: product?.productSeller?.id,
         productSellerType: product?.productSeller?.type,
         productSellerAccount: product?.productSeller?.account,
-        useChat: product?.sellerType !== productSellerType.collection,
+        useChat: product?.sellerType !== productType.collection,
         channel: useQueryChannel.data?.channel,
         channelTargetUser: useQueryChannel.data?.channelTargetUser?.user,
         channelUser: useQueryChannel.data?.channelUser?.user,

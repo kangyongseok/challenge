@@ -1,9 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { useCallback, useMemo } from 'react';
 
-import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import { TypographyVariant } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -16,27 +14,15 @@ import {
 // TODO 추후 공통 컴포넌트화
 import { ProductFixedSummary } from '@components/pages/product';
 
-import { fetchProduct } from '@api/product';
+import { ID_FILTER, LABELS, PRODUCT_SITE } from '@constants/product';
 
-import queryKeys from '@constants/queryKeys';
-import { ID_FILTER, LABELS, PRODUCT_SITE, PRODUCT_STATUS } from '@constants/product';
-
-import { getTenThousandUnitPrice } from '@utils/formats';
-
-import { deviceIdState } from '@recoil/common';
+import useQueryProduct from '@hooks/useQueryProduct';
+import useProductState from '@hooks/useProductState';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 function LegitStatusSummaryCard() {
-  const deviceId = useRecoilValue(deviceIdState);
   const router = useRouter();
-  const splitIds = String(router.query.id || '').split('-');
-  const productId = Number(splitIds[splitIds.length - 1] || 0);
-  const { data } = useQuery(
-    queryKeys.products.product({ productId }),
-    () => fetchProduct({ productId, deviceId }),
-    {
-      enabled: !!router.query.id && !!deviceId
-    }
-  );
+  const { data } = useQueryProduct();
   const isSafe = useMemo(() => {
     if (data) {
       return (
@@ -58,33 +44,22 @@ function LegitStatusSummaryCard() {
     return false;
   }, [data]);
 
-  const { isPriceDown, isDup, hasTarget } = useMemo(() => {
-    const _price = getTenThousandUnitPrice(data?.product?.price || 0);
-    const _targetProductPrice = getTenThousandUnitPrice(data?.product?.targetProductPrice || 0);
-    let _isPriceDown = _targetProductPrice < _price;
-    const _isDup = !data?.product.targetProductStatus;
-    const _hasTarget = !!data?.product.targetProductId;
-    const _salePrice = _isDup && _hasTarget && _isPriceDown ? _price - _targetProductPrice : 0;
-
-    if (_salePrice < 1) {
-      _isPriceDown = false;
-    }
-
-    return {
-      isPriceDown: _isPriceDown,
-      isDup: _isDup,
-      hasTarget: _hasTarget,
-      salePrice: _salePrice
-    };
-  }, [data]);
+  const { isDuplicate, isPriceDown, isTargetProduct, isForSale, isReservation } = useProductState({
+    productDetail: data,
+    product: data?.product
+  });
+  const { isViewProductModifySellerType } = useProductSellerType({
+    productSellerType: data?.product.productSeller.type,
+    site: data?.product.site
+  });
 
   const getProductImageOverlay = useCallback(
-    ({ status, variant }: { status: number; variant?: TypographyVariant }) => {
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['0']) {
+    ({ variant }: { variant?: TypographyVariant }) => {
+      if (isForSale) {
         return null;
       }
 
-      if (isDup && hasTarget) {
+      if (isDuplicate && isTargetProduct) {
         return isPriceDown ? (
           <PriceDownOverlay variant={variant} />
         ) : (
@@ -92,13 +67,13 @@ function LegitStatusSummaryCard() {
         );
       }
 
-      if (PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] === PRODUCT_STATUS['4']) {
+      if (isReservation) {
         return <ReservingOverlay variant={variant} />;
       }
 
       return <SoldOutOverlay variant={variant} />;
     },
-    [hasTarget, isDup, isPriceDown]
+    [isForSale, isDuplicate, isTargetProduct, isReservation, isPriceDown]
   );
 
   return (
@@ -110,13 +85,7 @@ function LegitStatusSummaryCard() {
           title={data.product.title}
           price={data.product?.price || 0}
           status={data.product.status}
-          isNormalSeller={
-            !!(
-              data.product.productSeller.type === 4 ||
-              data.product.site.id === 34 ||
-              data.product.productSeller.type === 3
-            )
-          }
+          isNormalSeller={isViewProductModifySellerType}
           getProductImageOverlay={getProductImageOverlay}
         />
       )}

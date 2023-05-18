@@ -11,7 +11,7 @@ import type { ProductResult } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import { VIEW_PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -83,7 +83,7 @@ function UserShopProductCard({ product }: UserShopProductCardProps) {
       productSellerId: product.productSeller.id,
       productSellerType: product.productSeller.type,
       productSellerAccount: product.productSeller.account,
-      useChat: product.sellerType !== productSellerType.collection
+      useChat: product.sellerType !== productType.collection
     });
 
     router.push(`/products/${id}`);

@@ -192,8 +192,10 @@ function UserShopLegitProfile({
                   )}
                   {!!areaName && data?.info.value.isAreaOpen && (
                     <Flexbox alignment="center">
-                      <Icon name="PinOutlined" width={16} height={16} />
-                      <Typography variant="body2">{areaName}</Typography>
+                      <Icon name="PinOutlined" width={16} height={16} color="uiWhite" />
+                      <Typography variant="body2" color="uiWhite">
+                        {areaName}
+                      </Typography>
                     </Flexbox>
                   )}
                 </Flexbox>

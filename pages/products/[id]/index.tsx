@@ -21,10 +21,9 @@ import {
 } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
+// import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
-  ProductCTAButton,
   ProductDeletedCard,
   ProductDetailBannerGroup,
   ProductDetailFooter,
@@ -51,7 +50,6 @@ import { logEvent } from '@library/amplitude';
 import { fetchProduct } from '@api/product';
 import { fetchParentCategories } from '@api/category';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import {
@@ -75,6 +73,9 @@ import { userShopSelectedProductState } from '@recoil/userShop';
 import { loginBottomSheetState } from '@recoil/common';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
+import useProductType from '@hooks/useProductType';
+import useProductState from '@hooks/useProductState';
+import useProductSellerType from '@hooks/useProductSellerType';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 function ProductDetail() {
@@ -95,18 +96,12 @@ function ProductDetail() {
   const setOsAlarm = useOsAlarm();
 
   const { data: userData, set: setUserDate } = useQueryUserData();
-  const {
-    data,
-    isLoading,
-    mutatePostProductsAdd,
-    mutatePostProductsRemove,
-    mutateMetaInfo,
-    refetch
-  } = useQueryProduct();
+  const { data, isLoading, mutatePostProductsAdd, mutatePostProductsRemove, mutateMetaInfo } =
+    useQueryProduct();
 
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
-  const [isCamelSellerProduct, setCamelSellerProduct] = useState(false);
+  const [isMySelfProduct, setMySelfProduct] = useState(false);
   const [viewDetail, setViewDetail] = useState(false);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
@@ -116,40 +111,30 @@ function ProductDetail() {
 
   const loggedBrazeRef = useRef(false);
 
-  const { isPriceDown, isDup, isPriceCrm, hasTarget, salePrice } = useMemo(() => {
-    const newPrice = getTenThousandUnitPrice(data?.product.price || 0);
-    const newTargetProductPrice = getTenThousandUnitPrice(data?.product?.targetProductPrice || 0);
-    let newIsPriceDown = newTargetProductPrice < newPrice;
-    let newIsDup = data?.product.targetProductStatus === 0;
-    let newHasTarget = !!data?.product.targetProductId;
-    let newSalePrice =
-      newIsDup && newHasTarget && newIsPriceDown ? newPrice - newTargetProductPrice : 0;
-
-    if (newSalePrice < 1) {
-      newIsPriceDown = false;
-    }
-
-    if (chainPrice) {
-      newSalePrice = Number(chainPrice) - (data?.product.price || 0);
-      newIsDup = false;
-      newHasTarget = false;
-      newIsPriceDown = false;
-    }
-
-    return {
-      isPriceDown: newIsPriceDown,
-      isPriceCrm: newSalePrice >= 1,
-      isDup: newIsDup,
-      hasTarget: newHasTarget,
-      salePrice: newSalePrice
-    };
-  }, [chainPrice, data]);
-
-  const isNormalseller = data?.product.sellerType === productSellerType.normal;
+  const {
+    isDuplicate,
+    isPriceDown,
+    isForSale,
+    isReservation,
+    isHidden,
+    isDeleted,
+    isTargetProduct,
+    discountedPrice
+  } = useProductState({ productDetail: data, product: data?.product });
+  const { isNormalProduct } = useProductType(data?.product.sellerType);
+  const { isLegitSeller } = useProductSellerType({
+    productSellerType: data?.product.productSeller.type
+  });
 
   useEffect(() => {
     scrollEnable();
   }, [data]);
+
+  // useEffect(() => {
+  //   if (toast.status === 'soldout' && isMySelfProduct) {
+  //     refetch();
+  //   }
+  // }, [refetch, isMySelfProduct, toast.status]);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -173,11 +158,10 @@ function ProductDetail() {
   }, [data]);
 
   const soldout = useMemo(
-    () => data?.product.status === productStatusCode.soldOut && !(isDup && hasTarget),
-    [data?.product.status, hasTarget, isDup]
+    () => data?.product.status === productStatusCode.soldOut && !(isDuplicate && isTargetProduct),
+    [data?.product.status, isTargetProduct, isDuplicate]
   );
   const isSoldOutMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && soldout;
-  const isDeletedProduct = productStatusCode.deleted === data?.product.status;
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading ? data?.product : undefined;
@@ -230,12 +214,7 @@ function ProductDetail() {
 
       let message = '';
 
-      if (
-        siteId === PRODUCT_SITE.CAMEL.id ||
-        (sellerType &&
-          SELLER_STATUS[sellerType as keyof typeof SELLER_STATUS] === SELLER_STATUS['3']) ||
-        isNormalseller
-      ) {
+      if (siteId === PRODUCT_SITE.CAMEL.id || (sellerType && isLegitSeller) || isNormalProduct) {
         const { protocol, host } = window.location;
         const newConversionId =
           conversionId || Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
@@ -263,16 +242,16 @@ function ProductDetail() {
         checkAgent.isAndroid() ? '?' : '&'
       }body=${message}`;
     },
-    [data, mutateMetaInfo, isNormalseller]
+    [data, mutateMetaInfo, isLegitSeller, isNormalProduct]
   );
 
   const getProductImageOverlay = useCallback(
-    ({ status, variant }: { status: number; variant?: TypographyVariant }) => {
-      if (status === productStatusCode.sale) {
+    ({ variant }: { variant?: TypographyVariant }) => {
+      if (isForSale) {
         return null;
       }
 
-      if (isDup && hasTarget) {
+      if (isDuplicate && isTargetProduct) {
         return isPriceDown ? (
           <PriceDownOverlay variant={variant} />
         ) : (
@@ -280,17 +259,17 @@ function ProductDetail() {
         );
       }
 
-      if (status === productStatusCode.reservation) {
+      if (isReservation) {
         return <ReservingOverlay variant={variant} />;
       }
 
-      if (status === productStatusCode.hidden) {
+      if (isHidden) {
         return <HideOverlay variant={variant} />;
       }
 
       return <SoldOutOverlay variant={variant} />;
     },
-    [hasTarget, isDup, isPriceDown]
+    [isForSale, isDuplicate, isTargetProduct, isReservation, isHidden, isPriceDown]
   );
 
   const handleClickViewDetail = () => {
@@ -311,7 +290,7 @@ function ProductDetail() {
 
   useEffect(() => {
     if (data?.roleSeller?.userId && accessUser?.userId) {
-      setCamelSellerProduct(data?.roleSeller?.userId === accessUser?.userId);
+      setMySelfProduct(data?.roleSeller?.userId === accessUser?.userId);
     }
     if (data && data.showReviewPrompt) {
       if (checkAgent.isAndroidApp()) {
@@ -367,8 +346,8 @@ function ProductDetail() {
       !duplicatedProductIds.some(
         (duplicatedProductId) => duplicatedProductId === Number(newProductId)
       ) &&
-      isDup &&
-      hasTarget &&
+      isDuplicate &&
+      isTargetProduct &&
       !chainPrice &&
       readyForOpenToast
     ) {
@@ -388,7 +367,7 @@ function ProductDetail() {
 
       LocalStorage.set(DUPLICATED_PRODUCT_IDS, duplicatedProductIds.concat([Number(newProductId)]));
     }
-  }, [chainPrice, hasTarget, isDup, isPriceDown, data, readyForOpenToast]);
+  }, [chainPrice, isTargetProduct, isDuplicate, isPriceDown, data, readyForOpenToast]);
 
   useEffect(() => {
     setOpenToast({
@@ -513,38 +492,17 @@ function ProductDetail() {
         }
         footer={
           <ProductDetailFooter
-            data={data}
             viewDetail={viewDetail}
             isRedirectPage={isRedirectPage}
-            isCamelSellerProduct={isCamelSellerProduct}
+            isMySelfProduct={isMySelfProduct}
             soldout={soldout}
             deleted={data?.product.status === productStatusCode.deleted}
-            refresh={refetch}
-            productButton={
-              <ProductCTAButton
-                product={data?.product}
-                channels={data?.channels}
-                roleSeller={data?.roleSeller}
-                isBlockedUser={data?.blockUser || false}
-                isAdminBlockedUser={data?.product?.productSeller?.type === 1}
-                isDup={isDup}
-                hasTarget={hasTarget}
-                hasOrder={data?.hasOrder}
-                isPriceCrm={isPriceCrm}
-                salePrice={salePrice}
-                isPriceDown={isPriceDown}
-                onClickSMS={handleClickSMS}
-                mutateMetaInfo={mutateMetaInfo}
-                refetch={refetch}
-                offers={data?.offers}
-              />
-            }
           />
         }
         hideAppDownloadBanner={isRedirectPage}
       >
         {isRedirectPage && data?.product && <ProductRedirect product={data.product} />}
-        {!isRedirectPage && isDeletedProduct && (
+        {!isRedirectPage && isDeleted && (
           <>
             <ProductDeletedCard />
             <ProductRelatedProductList
@@ -558,7 +516,7 @@ function ProductDetail() {
             />
           </>
         )}
-        {!isRedirectPage && !isDeletedProduct && (
+        {!isRedirectPage && !isDeleted && (
           <>
             {isSoldOutMoweb && !viewDetail ? (
               <ProductSoldoutCard
@@ -576,7 +534,7 @@ function ProductDetail() {
                 />
                 <ProductInfo
                   product={product}
-                  isCamelSellerProduct={isCamelSellerProduct}
+                  isMySelfProduct={isMySelfProduct}
                   sizeData={sizeParser()}
                   unitText={data?.units[0]?.description}
                   storeText={data?.stores[0]?.description}
@@ -588,7 +546,6 @@ function ProductDetail() {
                   product={product}
                   hasRoleSeller={!!data?.roleSeller?.userId}
                   onClickSMS={handleClickSMS}
-                  isCamelSellerProduct={isCamelSellerProduct}
                 />
                 <ProductDetailBannerGroup product={product} />
               </>
@@ -660,7 +617,9 @@ function ProductDetail() {
       >
         <Flexbox alignment="center" justifyContent="space-between" gap={8}>
           <PriceDownText weight="medium">
-            {`${commaNumber(salePrice)}만원 할인! 판매자가 가격을 내려서 다시 올렸어요`}
+            {`${commaNumber(
+              getTenThousandUnitPrice(discountedPrice)
+            )}만원 할인! 판매자가 가격을 내려서 다시 올렸어요`}
           </PriceDownText>
           <Typography
             weight="medium"
@@ -676,7 +635,7 @@ function ProductDetail() {
       </Toast>
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
-      <UserShopProductDeleteConfirmDialog redirect />
+      {/* <UserShopProductDeleteConfirmDialog redirect /> */}
       {/* <ProductInterfereKingBottomSheet /> */}
     </>
   );

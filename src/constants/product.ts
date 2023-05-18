@@ -166,7 +166,7 @@ export const VIEW_PRODUCT_STATUS = {
 };
 
 type ProductStatusCodeProps = {
-  sale: 0;
+  forSale: 0;
   soldOut: 1;
   duplicate: 2;
   deleted: 3;
@@ -177,7 +177,7 @@ type ProductStatusCodeProps = {
 };
 
 export const productStatusCode: ProductStatusCodeProps = {
-  sale: 0,
+  forSale: 0,
   soldOut: 1,
   duplicate: 2,
   deleted: 3,

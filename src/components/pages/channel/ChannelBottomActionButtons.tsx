@@ -26,7 +26,7 @@ import { logEvent } from '@library/amplitude';
 
 import { putProductUpdateStatus } from '@api/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
@@ -159,9 +159,9 @@ function ChannelBottomActionButtons({
     hiddenInputRef.current?.click();
   };
 
-  const isOperatorProduct = product?.sellerType === productSellerType.operatorProduct;
-  const isOperatorB2CProduct = product?.sellerType === productSellerType.operatorB2CProduct;
-  const isOperatorC2CProduct = product?.sellerType === productSellerType.operatorC2CProduct;
+  const isOperatorProduct = product?.sellerType === productType.operatorProduct;
+  const isOperatorB2CProduct = product?.sellerType === productType.operatorB2CProduct;
+  const isOperatorC2CProduct = product?.sellerType === productType.operatorC2CProduct;
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -236,7 +236,7 @@ function ChannelBottomActionButtons({
       productSellerId: product?.productSeller.id,
       productSellerType: product?.productSeller.type,
       productSellerAccount: product?.productSeller.account,
-      useChat: product?.sellerType !== productSellerType.collection
+      useChat: product?.sellerType !== productType.collection
     });
 
     if (isTargetUserSeller) {

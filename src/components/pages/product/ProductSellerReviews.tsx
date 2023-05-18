@@ -15,7 +15,7 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo } from '@api/product';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
+import { SELLER_STATUS, productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 import { ACCESS_USER } from '@constants/localStorage';
@@ -87,7 +87,7 @@ function ProductSellerReviews({
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
       pathname:
-        product?.sellerType === productSellerType.collection
+        product?.sellerType === productType.collection
           ? `/sellerInfo/${sellerId}`
           : `/userInfo/${roleSellerUserId}`,
       query: {
@@ -133,7 +133,7 @@ function ProductSellerReviews({
 
           router.push({
             pathname:
-              product?.sellerType === productSellerType.collection
+              product?.sellerType === productType.collection
                 ? `/sellerInfo/${sellerId}`
                 : `/userInfo/${roleSellerUserId}`,
             query: {

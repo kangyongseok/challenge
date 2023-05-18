@@ -23,7 +23,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchInfoByUserId } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, DEFAUT_BACKGROUND_IMAGE, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -102,8 +102,7 @@ function UserInfo() {
       userReviewCount: commaNumber(reviewCount || 0),
       scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), 0),
       isCertificationSeller:
-        !!sellerType &&
-        [productSellerType.certification, productSellerType.legit].includes(sellerType)
+        !!sellerType && [productType.certification, productType.legit].includes(sellerType)
     };
   }, [
     area?.name,

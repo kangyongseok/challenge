@@ -20,7 +20,7 @@ import type { Product } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import { IMG_CAMEL_PLATFORM_NUMBER } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -52,7 +52,7 @@ function CamelSellerProductCard({ data }: { data: Product }) {
 
   const bodyOverflowHiddenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const isNormalSeller = data?.sellerType === productSellerType.normal;
+  const isNormalSeller = data?.sellerType === productType.normal;
 
   const handleClick = () => {
     logEvent(attrKeys.camelSeller.CLICK_MARKET_PRICE, {

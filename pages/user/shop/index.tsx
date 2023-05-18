@@ -24,7 +24,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchInfoByUserId } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -149,7 +149,7 @@ function UserShop() {
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
               shopDescription={shopDescription || ''}
-              isCertificationSeller={sellerType === productSellerType.certification}
+              isCertificationSeller={sellerType === productType.certification}
               dateActivated={dateActivated}
             />
           )}

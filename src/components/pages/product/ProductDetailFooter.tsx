@@ -1,49 +1,41 @@
 import { Box } from '@mrcamelhub/camel-ui';
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-
-import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
-
-import type { ProductDetail } from '@dto/product';
 
 import { checkAgent } from '@utils/common';
 
-import ProductSellerBottomMenu from './ProductSellerBottomMenu';
+import ProductMySelfFooter from './ProductMySelfFooter';
+import ProductCTAButton from './ProductCTAButton';
 
 function ProductDetailFooter({
-  data,
-  productButton,
   isRedirectPage,
-  isCamelSellerProduct,
+  isMySelfProduct,
   viewDetail,
   soldout,
-  deleted,
-  refresh
+  deleted
 }: {
-  data?: ProductDetail;
-  productButton: ReactJSXElement;
   isRedirectPage: boolean;
-  isCamelSellerProduct: boolean;
+  isMySelfProduct: boolean;
   viewDetail: boolean;
   soldout: boolean;
   deleted: boolean;
-  refresh: () => void;
 }) {
   const isMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp());
 
-  if (isMoweb && soldout && !viewDetail) return <Box />;
+  if ((isMoweb && soldout && !viewDetail) || isRedirectPage || deleted) return <Box />;
 
-  if (isCamelSellerProduct)
-    return (
-      <>
+  if (isMySelfProduct) return <ProductMySelfFooter />;
+  return <ProductCTAButton />;
+}
+
+// eslint-disable-next-line no-lone-blocks
+{
+  /* <>
         <ProductSellerBottomMenu
           product={data?.product}
           status={data?.product.status as number}
           refresh={refresh}
         />
         {data?.product && <SelectTargetUserBottomSheet productId={data.product.id} />}
-      </>
-    );
-  return !isRedirectPage && !deleted ? productButton : <Box />;
+      </> */
 }
 
 export default ProductDetailFooter;

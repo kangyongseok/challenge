@@ -12,7 +12,7 @@ import type { ProductResult } from '@dto/product';
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -86,7 +86,7 @@ function HomeRecommendWishCard({
         productSellerId: productSeller.id,
         productSellerType: productSeller.type,
         productSellerAccount: productSeller.account,
-        useChat: sellerType !== productSellerType.collection,
+        useChat: sellerType !== productType.collection,
         source: attrProperty.source.MAIN_WISH
       }
     });

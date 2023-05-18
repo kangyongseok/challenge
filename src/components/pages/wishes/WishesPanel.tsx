@@ -18,7 +18,7 @@ import { logEvent } from '@library/amplitude';
 import { postManage } from '@api/userHistory';
 import { deleteWishSoldout, fetchCategoryWishes, postProductsAdd } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_BOTTOM } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -361,7 +361,7 @@ function WishesPanel({
                   productSellerId: wishItem.product.productSeller.id,
                   productSellerType: wishItem.product.productSeller.type,
                   productSellerAccount: wishItem.product.productSeller.account,
-                  useChat: wishItem.product.sellerType !== productSellerType.collection
+                  useChat: wishItem.product.sellerType !== productType.collection
                 }}
               />
             ))}

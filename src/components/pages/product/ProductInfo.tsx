@@ -34,7 +34,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchRelatedProducts, postSellerReport } from '@api/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import {
   INITIAL_REPORT_OPTIONS,
@@ -69,7 +69,7 @@ type ReportType =
 
 interface ProductInfoProps {
   product?: Product;
-  isCamelSellerProduct?: boolean;
+  isMySelfProduct?: boolean;
   sizeData?: string[];
   unitText?: string;
   storeText?: string;
@@ -80,7 +80,7 @@ interface ProductInfoProps {
 
 function ProductInfo({
   product,
-  isCamelSellerProduct = false,
+  isMySelfProduct = false,
   sizeData,
   unitText,
   storeText,
@@ -123,8 +123,7 @@ function ProductInfo({
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const isCertificationSeller =
-    product?.sellerType === productSellerType.certification ||
-    product?.sellerType === productSellerType.legit;
+    product?.sellerType === productType.certification || product?.sellerType === productType.legit;
   // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
   const isTransferred =
     (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
@@ -392,7 +391,7 @@ function ProductInfo({
       !LocalStorage.get(IS_DONE_WISH_ON_BOARDING) &&
       checkAgent.isMobileApp() &&
       !complete &&
-      !isCamelSellerProduct &&
+      !isMySelfProduct &&
       wishButtonRef.current &&
       isIntersecting &&
       source !== 'WISH_LIST'
@@ -553,7 +552,7 @@ function ProductInfo({
               customStyle={{ color: common.ui60 }}
             >
               <Flexbox>
-                {!isCamelSellerProduct && !isCertificationSeller && !isTransferred && (
+                {!isMySelfProduct && !isCertificationSeller && !isTransferred && (
                   <>
                     <Flexbox gap={2} alignment="center">
                       <Avatar
@@ -589,7 +588,7 @@ function ProductInfo({
               </Flexbox>
             </Flexbox>
           </Flexbox>
-          {!isCamelSellerProduct && (
+          {!isMySelfProduct && (
             <Tooltip
               open={!isDoneWishOnBoarding}
               message="찜하면 가격이 내려갔을 때 알려드려요!"
@@ -774,7 +773,7 @@ function ProductInfo({
               </Flexbox>
             )}
           </Flexbox>
-          {!isCamelSellerProduct && (
+          {!isMySelfProduct && (
             <Flexbox gap={2} alignment="center" onClick={handleClickReport}>
               <Icon name="ReportFilled" width={20} height={20} color={common.ui80} />
               <Typography

@@ -8,7 +8,7 @@ import { Gap } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import { INITIAL_REPORT_OPTIONS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
@@ -20,7 +20,6 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 interface ProductActionsProps {
   product?: Product;
   hasRoleSeller: boolean;
-  isCamelSellerProduct: boolean;
   onClickSMS: ({
     siteId,
     sellerType,
@@ -43,7 +42,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
     }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
-  const isOperatorProduct = product?.sellerType === productSellerType.operatorProduct;
+  const isOperatorProduct = product?.sellerType === productType.operatorProduct;
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const sellerPhoneNumber =
     (checkAgent.isIOSApp() || checkAgent.isAndroidApp() || !checkAgent.isMobileApp()) && product

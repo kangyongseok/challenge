@@ -15,7 +15,7 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
+import { SELLER_STATUS, productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -88,7 +88,7 @@ function ProductSellerProductList({
     reviewInfo &&
     SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
       SELLER_STATUS['3'];
-  const isNormalseller = product?.sellerType === productSellerType.normal;
+  const isNormalseller = product?.sellerType === productType.normal;
 
   const getTimeForamt = getFormattedActivatedTime(reviewInfo?.dateActivated || '');
 

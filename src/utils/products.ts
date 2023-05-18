@@ -7,7 +7,7 @@ import type { Product, ProductOrder, ProductSearchOption, SearchParams } from '@
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { SELLER_STATUS, productSellerType } from '@constants/user';
+import { SELLER_STATUS, productType } from '@constants/user';
 import { filterCodeIds, filterGenders } from '@constants/productsFilter';
 import { PRODUCT_SITE } from '@constants/product';
 import { DEVICE_ID } from '@constants/localStorage';
@@ -695,7 +695,7 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     productSellerId: product.productSeller.id,
     productSellerType: product.productSeller.type,
     productSellerAccount: product.productSeller.account,
-    useChat: product.sellerType !== productSellerType.collection
+    useChat: product.sellerType !== productType.collection
   });
 }
 

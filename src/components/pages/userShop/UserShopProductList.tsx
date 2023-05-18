@@ -31,7 +31,7 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchUserProducts } from '@api/user';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
@@ -129,7 +129,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
       productSellerId: product.productSeller.id,
       productSellerType: product.productSeller.type,
       productSellerAccount: product.productSeller.account,
-      useChat: product.sellerType !== productSellerType.collection
+      useChat: product.sellerType !== productType.collection
     };
   };
 
@@ -159,7 +159,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   const rowRenderer = useCallback(
     ({ key, index, parent, style }: ListRowProps) => {
       const shopBannerList = contents[index].labels?.filter((label) => label.codeId === 17);
-      const isSale = contents[index].status === productStatusCode.sale;
+      const isSale = contents[index].status === productStatusCode.forSale;
       // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
       // TODO 너무 헷갈린다.. 네이밍도 어렵고.. 추후 보완
       const isTransferred =

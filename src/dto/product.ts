@@ -1,7 +1,7 @@
 import type { ProductOffer } from '@dto/productOffer';
 import type { Channel } from '@dto/channel';
 
-import type { productSellerType } from '@constants/user';
+import type { productType } from '@constants/user';
 
 import type { PhotoGuideImages } from '@typings/camelSeller';
 
@@ -210,6 +210,8 @@ export type Site = {
   type: string;
 };
 
+export type ProductSellerType = 0 | 1 | 2 | 3 | 4;
+
 export type ProductSeller = {
   account: string;
   count: number;
@@ -227,7 +229,7 @@ export type ProductSeller = {
   reviewCount: number;
   site: Site;
   totalCount: number;
-  type: number;
+  type: ProductSellerType;
 };
 
 export type SiteUrl = {
@@ -344,7 +346,7 @@ export type Product = {
   weekAvgPrices: number[] | null;
   wishCount: number;
   index?: number;
-  sellerType?: (typeof productSellerType)[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  sellerType?: (typeof productType)[keyof typeof productType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
 };
 
 export type ProductResult = {
@@ -434,7 +436,7 @@ export type ProductResult = {
   quoteTitle: string;
   description: string;
   isDeleted: boolean | null;
-  sellerType?: 0 | 1 | 2 | 3;
+  sellerType?: (typeof productType)[keyof typeof productType];
   sellerUserId?: number;
   size: string | null;
 };
@@ -594,7 +596,7 @@ export interface SellerInfo {
   productCount: number;
   reviewCount: number;
   site: Site;
-  sellerType: (typeof productSellerType)[keyof typeof productSellerType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  sellerType: (typeof productType)[keyof typeof productType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
 }
 
 /* ---------- Request Parameters ---------- */

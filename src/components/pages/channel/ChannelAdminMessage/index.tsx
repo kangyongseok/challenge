@@ -26,7 +26,7 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchProductList, putProductUpdateStatus } from '@api/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { PROMOTION_ATT, productStatusCode } from '@constants/product';
@@ -223,7 +223,7 @@ function ChannelAdminMessage({
           productSellerId: productDetail[0].productSeller?.id,
           productSellerType: productDetail[0].productSeller?.type,
           productSellerAccount: productDetail[0].productSeller?.account,
-          useChat: productDetail[0].sellerType !== productSellerType.collection,
+          useChat: productDetail[0].sellerType !== productType.collection,
           status: productDetail[0].status
         }
       : {};

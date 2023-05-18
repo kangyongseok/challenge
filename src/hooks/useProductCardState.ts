@@ -4,7 +4,7 @@ import { useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
-import { productSellerType } from '@constants/user';
+import { productType } from '@constants/user';
 import { ID_FILTER, LABELS, PRODUCT_SITE, productInfoLabels } from '@constants/product';
 
 import { getProductLabelColor } from '@utils/products';
@@ -28,7 +28,7 @@ export default function useProductCardState({
   const { theme } = useTheme();
   const imageUrl = imageMain || imageThumbnail;
 
-  const isNormalseller = props.sellerType === productSellerType.normal;
+  const isNormalseller = props.sellerType === productType.normal;
 
   const productLabels = useMemo(() => {
     const { site } = productSeller || {};

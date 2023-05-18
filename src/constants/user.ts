@@ -123,7 +123,8 @@ export const PROFILE_EDIT_ERROR_MESSAGE: Record<
 };
 
 // 2301 신규로 추가 및 정리된 타입 항목
-export const productSellerType = {
+export const productType = {
+  // product.sellerType
   collection: 0,
   normal: 1,
   certification: 2,
@@ -131,4 +132,13 @@ export const productSellerType = {
   operatorProduct: 5,
   operatorB2CProduct: 6,
   operatorC2CProduct: 7
+};
+
+export const sellerType = {
+  // productSeller.type
+  none: 0, // 크롤링 + 카멜 직접등록 site.id === 34 로 구분 가능
+  blockSeller: 1,
+  certificationSeller: 2,
+  legitSeller: 3,
+  transferSeller: 4
 };
