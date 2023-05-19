@@ -90,20 +90,20 @@ function HomeErushaProductGrid() {
         {isInitialLoading &&
           Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <Grid key={`home-new-camel-product-${index}`} item xs={2}>
+            <Grid key={`home-erusha-product-${index}`} item xs={2}>
               <NewProductGridCardSkeleton variant="gridB" />
             </Grid>
           ))}
         {!isInitialLoading &&
           content.slice(0, 10).map((product) => (
-            <Grid key={`home-new-camel-product-${product.id}`} item xs={2}>
+            <Grid key={`home-erusha-product-${product.id}`} item xs={2}>
               <NewProductGridCard
                 variant="gridB"
                 product={product}
                 attributes={{
                   name: attrProperty.name.MAIN,
-                  title: attrProperty.title.CAMEL_POSTED,
-                  source: `${attrProperty.name.MAIN}_${attrProperty.title.CAMEL_POSTED}`
+                  title: attrProperty.title.ERUSHA,
+                  source: `${attrProperty.name.MAIN}_${attrProperty.title.ERUSHA}`
                 }}
               />
             </Grid>
