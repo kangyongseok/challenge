@@ -198,6 +198,29 @@ function HomePersonalGuide() {
     });
   };
 
+  const handleClickErusha = () => {
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ERUSHA,
+      att: '안전결제'
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ERUSHA,
+      type: attrProperty.type.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/categories/가방',
+      query: {
+        brandIds: [39, 11, 44],
+        minPrice: 3000000,
+        order: 'recommDesc'
+      }
+    });
+  };
+
   useEffect(() => {
     const guideRenderCount = 13;
     const themeMode = mode === 'light' ? 'white' : 'black';
@@ -279,7 +302,7 @@ function HomePersonalGuide() {
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 8);
+      ).slice(0, 7);
 
       setGuides([...categories, ...brands]);
     }
@@ -420,6 +443,44 @@ function HomePersonalGuide() {
             />
             <Typography variant="body2" weight="bold" noWrap>
               안전결제
+            </Typography>
+          </Flexbox>
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClickErusha}
+            customStyle={{ position: 'relative', minWidth: 72, maxWidth: 72 }}
+          >
+            <Label
+              brandColor="red"
+              text="명품백"
+              size="xsmall"
+              round={9}
+              customStyle={{
+                position: 'absolute',
+                top: -18,
+                left: '50%',
+                zIndex: 1,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap'
+              }}
+            />
+            <Image
+              width={48}
+              height={48}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/bag.png`,
+                w: 48
+              })}
+              alt="Personal Guide Img"
+              round={12}
+              disableSkeleton
+              disableAspectRatio
+            />
+            <Typography variant="body2" weight="bold" noWrap>
+              에•루•샤
             </Typography>
           </Flexbox>
         </>
