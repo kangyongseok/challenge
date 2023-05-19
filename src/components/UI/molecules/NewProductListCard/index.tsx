@@ -346,6 +346,7 @@ function NewProductListCard({
               (siteHasImage && siteId) || ''
             }.png`}
             alt={`${siteUrlName || 'Platform'} Logo Img`}
+            disableSkeleton
             customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
           />
         )}

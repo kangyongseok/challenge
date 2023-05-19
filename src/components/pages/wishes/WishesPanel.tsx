@@ -410,10 +410,10 @@ function WishesPanel({
           onClick: handleClickRollback
         }}
       >
-        찜 목록에서 삭제했어요.
+        찜목록에서 삭제했어요.
       </Toast>
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
-        삭제한 찜 목록을 다시 저장했어요.
+        삭제한 찜목록을 다시 저장했어요.
       </Toast>
       <TopButton
         show

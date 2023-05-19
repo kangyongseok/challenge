@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 
-import Sendbird from '@library/sendbird';
 import { logEvent } from '@library/amplitude';
 
 import { putProductHoisting } from '@api/product';
@@ -21,11 +20,9 @@ import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
-import { getUnreadMessagesCount } from '@utils/channel';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
 import { dialogState } from '@recoil/common';
-import { sendbirdState } from '@recoil/channel';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductState from '@hooks/useProductState';
 
@@ -50,9 +47,7 @@ function ProductMySelfFooter() {
 
   const [openStatusBottomSheet, setStatusBottomSheet] = useState(false);
   const [openMoreMenuBottomSheet, setMoreMenuBottomSheet] = useState(false);
-  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
-  const { initialized } = useRecoilValue(sendbirdState);
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setDialogState = useSetRecoilState(dialogState);
 
@@ -133,21 +128,9 @@ function ProductMySelfFooter() {
 
     router.push({
       pathname: '/channels',
-      query: { productId: parameter.productId }
+      query: { productId: parameter.productId, type: 1 }
     });
   };
-
-  useEffect(() => {
-    if (initialized) {
-      Sendbird.getCustomTypeChannels(String(parameter.productId)).then((channels) => {
-        if (channels) {
-          setUnreadMessageCount(
-            channels.map((channel) => channel.unreadMessageCount).reduce((a, b) => a + b, 0)
-          );
-        }
-      });
-    }
-  }, [parameter.productId, initialized]);
 
   return (
     <>
@@ -170,7 +153,7 @@ function ProductMySelfFooter() {
               {commaNumber(getTenThousandUnitPrice(data?.product.price || 0))}만원
             </Typography>
             <Typography weight="medium" onClick={handleClickChannel} color="primary-light">
-              채팅목록 {getUnreadMessagesCount(unreadMessageCount)}
+              채팅목록 {data?.channels?.length}
             </Typography>
           </Flexbox>
           <Flexbox

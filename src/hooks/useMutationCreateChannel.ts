@@ -42,47 +42,53 @@ function useMutationCreateChannel() {
       await initializeSendbird(userId.toString(), userNickName, userImageProfile);
     }
 
-    await Sendbird.createChannel(params).then(([groupChannel]) => {
-      if (groupChannel) {
-        mutatePostChannel(
-          {
-            productId: +params.productId,
-            externalId: groupChannel.url
-          },
-          {
-            async onSuccess(channelId) {
-              if (callback && typeof callback === 'function') {
-                await callback(channelId);
-              }
-
-              await groupChannel.createMetaData({ ...params, channelId: String(channelId) });
-
-              await queryClient.invalidateQueries(
-                queryKeys.products.product({ productId: +params.productId })
-              );
-
-              if (!deActiveRouting) {
-                router.push(`/channels/${channelId}`);
-              }
-
-              if (afterCallback && typeof afterCallback === 'function') {
-                await afterCallback(channelId);
-              }
+    await Sendbird.createChannel(params)
+      .then(([groupChannel]) => {
+        if (groupChannel) {
+          mutatePostChannel(
+            {
+              productId: +params.productId,
+              externalId: groupChannel.url
             },
-            onError() {
-              toastStack({
-                children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
-              });
-            },
-            ...options
-          }
-        );
-      } else {
+            {
+              async onSuccess(channelId) {
+                if (callback && typeof callback === 'function') {
+                  await callback(channelId);
+                }
+
+                await groupChannel.createMetaData({ ...params, channelId: String(channelId) });
+
+                await queryClient.invalidateQueries(
+                  queryKeys.products.product({ productId: +params.productId })
+                );
+
+                if (!deActiveRouting) {
+                  router.push(`/channels/${channelId}`);
+                }
+
+                if (afterCallback && typeof afterCallback === 'function') {
+                  await afterCallback(channelId);
+                }
+              },
+              onError() {
+                toastStack({
+                  children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
+                });
+              },
+              ...options
+            }
+          );
+        } else {
+          toastStack({
+            children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
+          });
+        }
+      })
+      .catch(() => {
         toastStack({
           children: '채팅방 생성에 실패했어요. 새로고침 후 시도해 주세요.'
         });
-      }
-    });
+      });
   };
 
   return { mutate, ...useMutationResult };

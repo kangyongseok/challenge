@@ -85,6 +85,7 @@ function LegitCard({
                   : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || siteId
               }.png`}
               alt="Platform Logo Img"
+              disableSkeleton
               customStyle={{
                 position: 'absolute',
                 top: 2,

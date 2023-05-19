@@ -328,6 +328,7 @@ function NewProductGridCard({
                     (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
                   }.png`}
                   alt={`${siteUrlName || 'Platform'} Logo Img`}
+                  disableSkeleton
                 />
               )}
               {isAuthProduct && (

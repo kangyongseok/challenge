@@ -339,6 +339,7 @@ function HomePersonalGuide() {
               })}
               alt="Personal Guide Img"
               round={12}
+              disableSkeleton
               disableAspectRatio
             />
             <Typography variant="body2" weight="bold" noWrap>
@@ -376,6 +377,7 @@ function HomePersonalGuide() {
               })}
               alt="Personal Guide Img"
               round={12}
+              disableSkeleton
               disableAspectRatio
             />
             <Typography variant="body2" weight="bold" noWrap>
@@ -413,6 +415,7 @@ function HomePersonalGuide() {
               })}
               alt="Personal Guide Img"
               round={12}
+              disableSkeleton
               disableAspectRatio
             />
             <Typography variant="body2" weight="bold" noWrap>
@@ -449,6 +452,7 @@ function HomePersonalGuide() {
                 src={getImageResizePath({ imagePath: src, w: 40 })}
                 alt="Personal Guide Img"
                 round={12}
+                disableSkeleton
                 disableAspectRatio
                 customStyle={{
                   mixBlendMode: 'darken'

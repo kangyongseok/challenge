@@ -93,6 +93,7 @@ function LegitListCard({
           }
           alt={`${productTitle} 이미지`}
           round={8}
+          disableSkeleton
           onError={() => setLoadFailed(true)}
         />
         {variant === 'listA' && (

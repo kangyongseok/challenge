@@ -274,6 +274,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
                 isNormalseller ? IMG_CAMEL_PLATFORM_NUMBER : (siteUrl || {}).id || siteId
               }.png`}
               alt="Platform Img"
+              disableSkeleton
               customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
             {PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] && (

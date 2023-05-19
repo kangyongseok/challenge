@@ -33,6 +33,8 @@ function useOsAlarm() {
             }
           }
         });
+      } else {
+        setPrevChannelAlarmPopup(false);
       }
     };
 
