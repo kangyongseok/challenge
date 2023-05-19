@@ -99,6 +99,7 @@ const products = {
     compact([...products.all, 'recommProducts', params]),
   camelProducts: (params?: CamelProductsParams) =>
     compact([...products.all, 'camelProducts', params]),
+  erushaProducts: (params?: SearchParams) => compact([...products.all, 'erushaProducts', params]),
   userInfo: () => [...products.all, 'userInfo'] as const,
   searchHistory: (params?: SearchParams | RecentSearchParams, type?: SearchHistoryHookType) =>
     params

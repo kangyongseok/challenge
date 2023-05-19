@@ -86,10 +86,14 @@ const filterOperationInfoSelector = selector({
             displayName = '내 주변';
           } else if (id === filterCodeIds.safePayment) {
             displayName = '안전결제';
-          } else if (codeId === filterCodeIds.price) {
+          } else if (codeId === filterCodeIds.price && minPrice && maxPrice) {
             displayName = `${commaNumber(getTenThousandUnitPrice(minPrice))}만원 ~ ${commaNumber(
               getTenThousandUnitPrice(maxPrice)
             )}만원`;
+          } else if (codeId === filterCodeIds.price && minPrice) {
+            displayName = `${commaNumber(getTenThousandUnitPrice(minPrice))}만원 ~`;
+          } else if (codeId === filterCodeIds.price && maxPrice) {
+            displayName = `~ ${commaNumber(getTenThousandUnitPrice(maxPrice))}만원`;
           } else {
             if (codeId === filterCodeIds.category) {
               genderId =

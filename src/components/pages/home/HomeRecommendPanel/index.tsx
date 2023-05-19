@@ -13,6 +13,7 @@ import HomePersonalGuide from './HomePersonalGuide';
 import HomePersonalCuration from './HomePersonalCuration';
 import HomeNewCamelProductGrid from './HomeNewCamelProductGrid';
 import HomeMainBanner from './HomeMainBanner';
+import HomeErushaProductGrid from './HomeErushaProductGrid';
 import HomeDogHoneyProductGrid from './HomeDogHoneyProductGrid';
 
 function HomeRecommendPanel() {
@@ -39,6 +40,8 @@ function HomeRecommendPanel() {
           height: 32
         }}
       />
+      <Gap height={8} />
+      <HomeErushaProductGrid />
       <Gap height={8} />
       <HomeNewCamelProductGrid />
       <Gap height={8} />

@@ -566,7 +566,7 @@ export function convertSelectedSearchOptions(
           }
         });
       } else if (key === 'minPrice' || key === 'maxPrice') {
-        if (minPrice && maxPrice) {
+        if (minPrice || maxPrice) {
           selectedSearchOptions = [
             ...selectedSearchOptions.filter(({ codeId }) => codeId !== filterCodeIds.price),
             {
