@@ -183,12 +183,5 @@ export const defaultNonMemberPersonalGuideList = [
     parentId: 0,
     type: 'brand',
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/thombrowne.jpg`
-  },
-  {
-    id: 44,
-    name: '샤넬',
-    parentId: 0,
-    type: 'brand',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/chanel.jpg`
   }
 ];
