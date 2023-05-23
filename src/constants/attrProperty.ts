@@ -408,7 +408,8 @@ const title = {
   ORDER: 'ORDER',
   DEVICE_ALARM: 'DEVICE_ALARM',
   FLOATING: 'FLOATING',
-  ERUSHA: 'ERUSHA'
+  ERUSHA: 'ERUSHA',
+  BUTLER: 'BUTLER'
 };
 
 const source = {
