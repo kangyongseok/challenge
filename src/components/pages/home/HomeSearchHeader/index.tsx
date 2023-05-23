@@ -13,11 +13,9 @@ import { logEvent } from '@library/amplitude';
 import { postManage } from '@api/userHistory';
 
 import { filterGenders } from '@constants/productsFilter';
-import { APP_DOWNLOAD_BANNER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
-
-import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import {
   searchHelperPopupStateFamily,
@@ -26,6 +24,7 @@ import {
   selectedSearchOptionsState
 } from '@recoil/searchHelper';
 import { showAppDownloadBannerState } from '@recoil/common';
+import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -37,6 +36,7 @@ function HomeSearchHeader() {
 
   const {
     theme: {
+      typography: { h3 },
       palette: { common }
     }
   } = useTheme();
@@ -44,8 +44,13 @@ function HomeSearchHeader() {
   const { data: accessUser } = useQueryAccessUser();
 
   const [init, setInit] = useState(false);
+  const [openMenu, setOpneMenu] = useState(false);
 
   const headerRef = useRef<HTMLDivElement>(null);
+  const searchInputHeaderRef = useRef<HTMLDivElement>(null);
+  const openMenuTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const triggered = useScrollTrigger({ ref: headerRef });
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setSearchHelperPopup = useSetRecoilState(searchHelperPopupStateFamily('continue'));
@@ -95,11 +100,17 @@ function HomeSearchHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!headerRef.current) return;
+      if (!headerRef.current || !searchInputHeaderRef.current) return;
 
       const { offsetTop } = headerRef.current;
+      const { clientHeight } = searchInputHeaderRef.current;
 
-      if (showAppDownloadBanner && offsetTop <= APP_DOWNLOAD_BANNER_HEIGHT) {
+      if (!window.scrollY) {
+        setInit(true);
+        return;
+      }
+
+      if (offsetTop + clientHeight >= window.scrollY) {
         setInit(true);
       } else {
         setInit(false);
@@ -113,49 +124,79 @@ function HomeSearchHeader() {
     };
   }, [showAppDownloadBanner]);
 
+  useEffect(() => {
+    if (openMenuTimerRef.current) {
+      clearTimeout(openMenuTimerRef.current);
+    }
+
+    if (triggered) {
+      openMenuTimerRef.current = setTimeout(() => {
+        setOpneMenu(true);
+      }, 200);
+    } else {
+      setOpneMenu(false);
+    }
+  }, [triggered]);
+
   return (
-    <StyledHomeSearchHeader
-      ref={headerRef}
-      gap={16}
-      alignment="center"
-      showAppDownloadBanner={showAppDownloadBanner}
-      init={init || (typeof window !== 'undefined' && !window.scrollY)}
-    >
-      <Box
-        onClick={handleClick}
+    <>
+      <Flexbox
+        ref={headerRef}
+        alignment="center"
+        justifyContent="space-between"
         customStyle={{
-          flexGrow: 1
+          padding: '16px 16px 12px'
         }}
       >
-        <Input
-          variant="outline"
-          size="large"
-          fullWidth
-          startAdornment={<Icon name="SearchOutlined" size="medium" color="ui20" />}
-          placeholder="어떤 명품을 득템해 볼까요?"
-          disabled
+        <Icon name="LogoText_96_20" width={93.48} height={20} />
+        {!openMenu && <Menu reverseAnimation />}
+      </Flexbox>
+      <SearchHeader
+        ref={searchInputHeaderRef}
+        gap={16}
+        alignment="center"
+        showAppDownloadBanner={showAppDownloadBanner}
+        init={init || (typeof window !== 'undefined' && !window.scrollY)}
+      >
+        <Box
+          onClick={handleClick}
           customStyle={{
-            maxHeight: 40,
-            borderColor: common.ui20,
-            backgroundColor: 'transparent',
-            pointerEvents: 'none',
-            overflow: 'hidden',
-            '& input::placeholder': {
-              color: common.ui60
-            }
+            flexGrow: 1,
+            transition: 'max-width 0.2s',
+            maxWidth: triggered ? 'calc(100% - 80px)' : '100%'
           }}
-        />
-      </Box>
-      <Menu />
-    </StyledHomeSearchHeader>
+        >
+          <Input
+            variant="outline-ghost"
+            size="large"
+            fullWidth
+            startAdornment={<Icon name="SearchOutlined" size="medium" color="ui20" />}
+            placeholder="어떤 명품을 득템해 볼까요?"
+            disabled
+            customStyle={{
+              gap: 8,
+              pointerEvents: 'none',
+              overflow: 'hidden',
+              '& input::placeholder': {
+                fontSize: h3.size,
+                letterSpacing: h3.letterSpacing,
+                lineHeight: h3.lineHeight,
+                color: common.ui60
+              }
+            }}
+          />
+        </Box>
+        {openMenu && <Menu />}
+      </SearchHeader>
+    </>
   );
 }
 
-const StyledHomeSearchHeader = styled(Flexbox)<{ showAppDownloadBanner: boolean; init: boolean }>`
+const SearchHeader = styled(Flexbox)<{ showAppDownloadBanner: boolean; init: boolean }>`
   position: sticky;
   top: 0;
   left: 0;
-  padding: ${isExtendedLayoutIOSVersion() ? `calc(${IOS_SAFE_AREA_TOP} + 8px)` : '8px'} 16px 8px;
+  padding: 6px 16px;
   background-color: ${({
     theme: {
       palette: { common }

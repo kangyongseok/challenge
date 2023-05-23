@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Icon, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { Header, SearchBar } from '@components/UI/molecules';
+import { Header } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
 
@@ -27,12 +27,16 @@ interface ProductsHeaderProps {
 }
 
 function ProductsHeader({ variant }: ProductsHeaderProps) {
+  const router = useRouter();
+
   const {
     theme: {
-      palette: { common }
+      typography: { h3 },
+      palette: { common },
+      zIndex
     }
   } = useTheme();
-  const router = useRouter();
+
   const { keyword, title }: { keyword?: string; title?: string } = router.query;
   const { parentIds = [] } = convertSearchParamsByQuery(router.query);
   const atomParam = router.asPath.split('?')[0];
@@ -99,36 +103,62 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
         customStyle={{
           minHeight: `calc(${
             isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
-          } + ${SEARCH_BAR_HEIGHT}px)`,
-          position: 'relative'
+          } + ${SEARCH_BAR_HEIGHT}px)`
         }}
       >
-        <SearchBar
-          readOnly
-          variant="innerOutlined"
-          fullWidth
-          isFixed
-          placeholder="검색어를 입력해 주세요."
-          value={(keyword || '').replace(/-/g, ' ')}
-          startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
-          endAdornment={
-            <Icon
-              name="DeleteCircleFilled"
-              width={20}
-              height={20}
-              color="ui80"
-              customStyle={{ minWidth: 20 }}
-              onClick={handleClickSearchIcon}
-            />
-          }
-          onClick={() => router.push({ pathname: '/search', query: { keyword } })}
+        <Flexbox
+          alignment="center"
+          gap={12}
           customStyle={{
-            borderBottom:
-              !triggered || (triggered && productsStatusTriggered)
-                ? `1px solid ${common.line01}`
-                : undefined
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            padding: '6px 16px',
+            backgroundColor: common.uiWhite,
+            zIndex: zIndex.header
           }}
-        />
+        >
+          <Icon name="ArrowLeftOutlined" onClick={handleClickBack} />
+          <Input
+            type="search"
+            variant="solid"
+            size="large"
+            fullWidth
+            placeholder="검색어를 입력해 주세요."
+            readOnly
+            value={(keyword || '').replace(/-/g, ' ')}
+            onClick={() => router.push({ pathname: '/search', query: { keyword } })}
+            endAdornment={
+              (keyword || '').replace(/-/g, ' ') ? (
+                <Icon
+                  name="DeleteCircleFilled"
+                  width={20}
+                  height={20}
+                  color="ui80"
+                  onClick={handleClickSearchIcon}
+                />
+              ) : undefined
+            }
+            customStyle={{
+              gap: 8,
+              borderColor: 'transparent',
+              '& input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-results-button, input[type="search"]::-webkit-search-results-decoration':
+                {
+                  display: 'none'
+                },
+              '& input': {
+                fontSize: h3.size,
+                letterSpacing: h3.letterSpacing,
+                lineHeight: h3.lineHeight,
+                fontWeight: h3.weight.medium
+              },
+              '& input::placeholder': {
+                fontWeight: h3.weight.regular,
+                color: common.ui60
+              }
+            }}
+          />
+        </Flexbox>
       </Box>
     );
   }

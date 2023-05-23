@@ -13,7 +13,11 @@ import attrKeys from '@constants/attrKeys';
 
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
-function Menu() {
+interface MenuProps {
+  reverseAnimation?: boolean;
+}
+
+function Menu({ reverseAnimation }: MenuProps) {
   const router = useRouter();
 
   const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
@@ -40,10 +44,10 @@ function Menu() {
 
   return (
     <Flexbox gap={16} alignment="center">
-      <SlideDown delay={0.7}>
+      <SlideDown delay={0.5} reverseAnimation={reverseAnimation}>
         <Icon name="HeartOutlined" onClick={handleClickWish} />
       </SlideDown>
-      <SlideDown>
+      <SlideDown reverseAnimation={reverseAnimation}>
         <Badge
           open={!!notViewedHistoryCount}
           variant="two-tone"
@@ -62,8 +66,18 @@ function Menu() {
 
 const SlideDown = styled.div<{
   delay?: number;
+  reverseAnimation?: boolean;
 }>`
-  animation: slideDown ${({ delay = 0.5 }) => delay}s forwards;
+  animation: ${({ reverseAnimation }) => (reverseAnimation ? 'slideUp' : 'slideDown')}
+    ${({ delay = 0.3 }) => delay}s forwards;
+  @keyframes slideUp {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
   @keyframes slideDown {
     0% {
       transform: translateY(-100%);

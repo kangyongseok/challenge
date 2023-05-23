@@ -6,10 +6,10 @@ import { useRouter } from 'next/router';
 import find from 'lodash-es/find';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { Box, Button, Dialog, Icon, Typography } from '@mrcamelhub/camel-ui';
+import { Box, Button, Dialog, Flexbox, Icon, Input, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
-import { SearchBar } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -48,6 +48,12 @@ import useDebounce from '@hooks/useDebounce';
 
 function Search() {
   const router = useRouter();
+
+  const {
+    typography: { h3 },
+    palette: { common }
+  } = useTheme();
+
   const [savedRecentSearchList, setSavedRecentSearchList] = useRecoilState(
     searchRecentSearchListState
   );
@@ -214,21 +220,58 @@ function Search() {
       />
       <GeneralTemplate disablePadding>
         <SearchForm action="" onSubmit={handleSubmit}>
-          <SearchBar
-            type="search"
-            autoCapitalize="none"
-            autoComplete="off"
-            spellCheck="false"
-            autoFocus
-            variant="innerOutlined"
-            fullWidth
-            isFixed
-            placeholder="어떤 명품을 득템해 볼까요?"
-            value={searchValue.replace(/-/g, ' ')}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
-            startIcon={<Icon name="ArrowLeftOutlined" onClick={handleClickBack} />}
-          />
+          <Flexbox
+            alignment="center"
+            gap={12}
+            customStyle={{
+              padding: '6px 16px',
+              backgroundColor: common.uiWhite
+            }}
+          >
+            <Icon name="ArrowLeftOutlined" onClick={handleClickBack} />
+            <Input
+              type="search"
+              autoComplete="off"
+              spellCheck="false"
+              autoFocus
+              variant="solid"
+              size="large"
+              fullWidth
+              placeholder="어떤 명품을 득템해 볼까요?"
+              value={searchValue.replace(/-/g, ' ')}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onClick={() => logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, { name: 'SEARCH' })}
+              endAdornment={
+                searchValue.replace(/-/g, ' ') ? (
+                  <Icon
+                    name="DeleteCircleFilled"
+                    width={20}
+                    height={20}
+                    color="ui80"
+                    onClick={() => setSearchValue('')}
+                  />
+                ) : undefined
+              }
+              customStyle={{
+                gap: 8,
+                borderColor: 'transparent',
+                '& input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-results-button, input[type="search"]::-webkit-search-results-decoration':
+                  {
+                    display: 'none'
+                  },
+                '& input': {
+                  fontSize: h3.size,
+                  letterSpacing: h3.letterSpacing,
+                  lineHeight: h3.lineHeight,
+                  fontWeight: h3.weight.medium
+                },
+                '& input::placeholder': {
+                  fontWeight: h3.weight.regular,
+                  color: common.ui60
+                }
+              }}
+            />
+          </Flexbox>
         </SearchForm>
         <Box customStyle={{ padding: `0 0 ${hasKeywordsSuggestData ? 0 : '64px'}` }}>
           {!hasKeywordsSuggestData ? (
@@ -292,6 +335,8 @@ export async function getStaticProps() {
 }
 
 const SearchForm = styled.form`
+  position: sticky;
+  top: 0;
   min-height: calc(
     ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${SEARCH_BAR_HEIGHT}px
   );
