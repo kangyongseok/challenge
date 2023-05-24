@@ -7,8 +7,10 @@ import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
 
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import { PAYMENTS_SUCCESS } from '@constants/localStorage';
 import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -59,11 +61,11 @@ function ChannelHeader({
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
   const handleClickClose = useCallback(() => {
-    if (window.history.length > 2) {
+    if (window.history.length > 2 && !LocalStorage.get(PAYMENTS_SUCCESS)) {
       router.back();
       return;
     }
-
+    LocalStorage.remove(PAYMENTS_SUCCESS);
     router.replace({ pathname: '/channels', query: { type: 0 } });
   }, [router]);
 

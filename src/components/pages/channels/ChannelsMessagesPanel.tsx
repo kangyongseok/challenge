@@ -71,7 +71,6 @@ function ChannelsMessagesPanel({
       </Flexbox>
     );
   }
-
   return (
     <Flexbox
       component="section"

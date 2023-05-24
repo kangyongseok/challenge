@@ -52,4 +52,5 @@ export const DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET = 'displayCountExitSurveyBot
 export const SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET = 'searchTimeForExitBottmSheet';
 export const IS_OS_ALARM_DIALOG = 'isOsAlarmDialogView';
 export const IS_FOR_ALARM_FIRST_VISIT = 'isForAlarmFirstVisit';
+export const PAYMENTS_SUCCESS = 'paymentsSuccess';
 export const RECOMM_WISH_IDS = 'recommWishIds';

@@ -21,9 +21,11 @@ import queryKeys from '@constants/queryKeys';
 
 function OrderInvoiceNumberDialog({
   open,
+  id,
   setInvoiceDialog
 }: {
   open: boolean;
+  id?: number;
   setInvoiceDialog: (value: boolean) => void;
 }) {
   const {
@@ -35,8 +37,8 @@ function OrderInvoiceNumberDialog({
   const { query } = useRouter();
   const invoiceNumberRef = useRef<HTMLInputElement | null>(null);
 
-  const [companyInfo, setCompanyInfo] = useState<{ id: number; description: string }>({
-    id: 0,
+  const [companyInfo, setCompanyInfo] = useState<{ id: string; description: string }>({
+    id: '',
     description: ''
   });
   const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -57,7 +59,7 @@ function OrderInvoiceNumberDialog({
     // eslint-disable-next-line no-console
     invoideMudate(
       {
-        id: Number(query.id),
+        id: id || Number(query.id),
         type: 1,
         contents: invoiceNumber,
         deliveryCode: String(companyInfo.id)
@@ -66,7 +68,7 @@ function OrderInvoiceNumberDialog({
         onSuccess() {
           setInvoiceDialog(false);
           setInvoiceNumber('');
-          setCompanyInfo({ id: 0, description: '' });
+          setCompanyInfo({ id: '', description: '' });
           queryClient.invalidateQueries({
             queryKey: queryKeys.orders.order(Number(query.id)),
             refetchType: 'active'
@@ -137,7 +139,7 @@ function OrderInvoiceNumberDialog({
             color={companyInfo.description === description ? 'uiWhite' : undefined}
             key={`delivery-company-${name}`}
             onClick={() => {
-              setCompanyInfo({ id: Number(name), description });
+              setCompanyInfo({ id: name, description });
               setSelectList(false);
               invoiceNumberRef.current?.querySelector('input')?.focus();
             }}

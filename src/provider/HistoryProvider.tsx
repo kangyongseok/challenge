@@ -5,9 +5,10 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import { useRouter } from 'next/router';
 
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { SAVED_LEGIT_REQUEST } from '@constants/localStorage';
+import { PAYMENTS_SUCCESS, SAVED_LEGIT_REQUEST } from '@constants/localStorage';
 
 import { getPathNameByAsPath } from '@utils/common';
 
@@ -72,6 +73,11 @@ function HistoryProvider({ children }: PropsWithChildren) {
             setExitBottomSheet(true);
           }, 500);
         }
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
       }
 
       if (url.indexOf('/products') > -1) {

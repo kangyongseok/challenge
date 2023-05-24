@@ -6,3 +6,4 @@ export { default as OrderPaymentInfo } from './OrderPaymentInfo';
 export { default as OrderRefuseDialog } from './OrderRefuseDialog';
 export { default as OrderSingleButtonGroup } from './OrderSingleButtonGroup';
 export { default as OrderSingleAcceptDialog } from './OrderSingleAcceptDialog';
+export { default as OrderEmptyInvoiceNumberDialog } from './OrderEmptyInvoiceNumberDialog';

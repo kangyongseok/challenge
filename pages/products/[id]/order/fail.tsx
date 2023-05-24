@@ -23,7 +23,7 @@ function ProductOrderFail() {
           showRight={false}
           hideTitle
           hideLine={false}
-          onClickLeft={() => router.push(`/products/${id}`)}
+          onClickLeft={() => router.replace(`/products/${id}`)}
         />
       }
       hideAppDownloadBanner
@@ -66,7 +66,7 @@ function ProductOrderFail() {
         variant="ghost"
         size="large"
         brandColor="black"
-        onClick={() => router.push(`/products/${id}`)}
+        onClick={() => router.replace(`/products/${id}`)}
         customStyle={{
           marginTop: 20
         }}

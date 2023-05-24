@@ -56,8 +56,11 @@ import ChannelOrderRefundCompleteMessage from './ChannelOrderRefundCompleteMessa
 import ChannelOrderPaymentProgressMessage from './ChannelOrderPaymentProgressMessage';
 import ChannelOrderPaymentCompleteMessage from './ChannelOrderPaymentCompleteMessage';
 import ChannelOrderPaymentCancelMessage from './ChannelOrderPaymentCancelMessage';
+import ChannelOrderDeliveryWaitMessage from './ChannelOrderDeliveryWaitMessage';
+import ChannelOrderDeliveryProgressWeekMessage from './ChannelOrderDeliveryProgressWeekMessage';
 import ChannelOrderDeliveryProgressRemindMessage from './ChannelOrderDeliveryProgressRemindMessage';
 import ChannelOrderDeliveryProgressMessage from './ChannelOrderDeliveryProgressMessage';
+import ChannelOrderDeliveryCompleteMessage from './ChannelOrderDeliveryCompleteMessage';
 import ChannelOfferRequestTipMessage from './ChannelOfferRequestTipMessage';
 import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
 import ChannelOfferApproveMessage from './ChannelOfferApproveMessage';
@@ -401,7 +404,7 @@ function ChannelAdminMessage({
     );
   }
 
-  if (message.customType === 'orderPaymentCancel') {
+  if (message.customType === 'orderPaymentCancel' || message.customType === 'orderDeliveryCancel') {
     return (
       <ChannelOrderPaymentCancelMessage
         message={message}
@@ -423,10 +426,34 @@ function ChannelAdminMessage({
     );
   }
 
+  if (message.customType === 'orderDeliveryProgressWeek') {
+    return (
+      <ChannelOrderDeliveryProgressWeekMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+      />
+    );
+  }
+
+  if (message.customType === 'orderDeliveryWait') {
+    return (
+      <ChannelOrderDeliveryWaitMessage message={message} order={currentOrder} isSeller={isSeller} />
+    );
+  }
+
   if (message.customType === 'orderRefundWaitAccount') {
     return <ChannelOrderRefundWaitAccountMessage message={message} order={currentOrder} />;
   }
-
+  if (message.customType === 'orderDeliveryComplete') {
+    return (
+      <ChannelOrderDeliveryCompleteMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+      />
+    );
+  }
   if (message.customType === 'orderRefundProgress') {
     return <ChannelOrderRefundProgressMessage message={message} order={currentOrder} />;
   }
@@ -496,7 +523,9 @@ function ChannelAdminMessage({
       />
     );
   }
-
+  if (message.customType === 'reviewReceived') {
+    return <Box />;
+  }
   if (message.customType === 'reviewSent') {
     return (
       <ChannelReviewSentMessage

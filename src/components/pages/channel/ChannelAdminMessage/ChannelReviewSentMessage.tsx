@@ -11,6 +11,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useChannel from '@hooks/useChannel';
 
 interface ChannelReviewSentMessageProps {
   message: AdminMessage;
@@ -35,15 +36,21 @@ function ChannelReviewSentMessage({
 
   const [isMyReview, setIsMyReview] = useState(false);
 
+  const {
+    useQueryChannel: { data: { product } = {} }
+  } = useChannel();
+
   const handleClick = () => {
     logEvent(attrKeys.channel.CLICK_REVIEW_DETAIL, {
       name: attrProperty.name.CHANNEL_DETAIL,
       att: 'SEND'
     });
 
-    const pathname = `/userInfo/${
-      isMyReview ? accessUser?.userId : targetUserId
-    }?tab=reviews&scrollToReviewUserId=${!isMyReview ? accessUser?.userId : targetUserId}`;
+    let pathname = `/userInfo/${targetUserId}?tab=reviews&scrollToReviewUserId=${accessUser?.userId}`;
+
+    if (isMyReview) {
+      pathname = `/user/shop?tab=2&scrollToReviewUserId=${targetUserId}`;
+    }
 
     router.push(pathname);
   };
@@ -79,7 +86,7 @@ function ChannelReviewSentMessage({
               marginTop: 8
             }}
           >
-            {targetUserName}님이 남긴 매물명 거래 후기를 확인해보세요.
+            {targetUserName}님이 남긴 {product?.quoteTitle} 거래 후기를 확인해보세요.
           </Typography>
           <Button
             variant="ghost"

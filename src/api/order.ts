@@ -60,8 +60,8 @@ export async function postOrderDelivery({
   ...request
 }: {
   id: number;
-  contents: string;
-  deliveryCode: string;
+  contents?: string;
+  deliveryCode?: string;
   type?: 0 | 1 | 2 | 3; // 0: 직접입력 1 : 택배 2: 퀵 3: 용달
 }) {
   await Axios.getInstance().post(`${BASE_PATH}/${id}/delivery`, request);

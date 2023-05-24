@@ -105,3 +105,11 @@ export function getFormattedActivatedTime(date: string | Date) {
 
   return { icon: 'time', text: `${daysDiff}일 전 접속` };
 }
+
+export const getFormatPhoneNumberDashParser = (phoneNumber: string) => {
+  const digits = phoneNumber.replace(/\D/g, '');
+
+  const formattedNumber = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+
+  return formattedNumber;
+};

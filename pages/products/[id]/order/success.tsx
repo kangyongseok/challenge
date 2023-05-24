@@ -12,6 +12,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import type { OrderPaymentsData } from '@dto/order';
 
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
@@ -20,6 +21,7 @@ import { fetchProductOrder, postOrderPayments } from '@api/order';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
+import { PAYMENTS_SUCCESS } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -63,6 +65,10 @@ function ProductOrderSuccess() {
   );
 
   const { mutate } = useMutationCreateChannel();
+
+  useEffect(() => {
+    LocalStorage.set(PAYMENTS_SUCCESS, true);
+  }, []);
 
   useEffect(() => {
     if (

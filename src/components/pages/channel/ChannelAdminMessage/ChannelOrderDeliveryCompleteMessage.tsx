@@ -12,17 +12,17 @@ import { getOrderStatusText } from '@utils/common/getOrderStatusText';
 import { channelDialogStateFamily } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
-interface ChannelOrderDeliveryProgressMessageProps {
+interface ChannelOrderDeliveryCompleteMessageProps {
   message: AdminMessage;
   order?: Order | null;
   isSeller: boolean;
 }
 
-function ChannelOrderDeliveryProgressMessage({
+function ChannelOrderDeliveryCompleteMessage({
   message: { data, createdAt },
   order,
   isSeller
-}: ChannelOrderDeliveryProgressMessageProps) {
+}: ChannelOrderDeliveryCompleteMessageProps) {
   const {
     theme: {
       palette: { common }
@@ -70,14 +70,15 @@ function ChannelOrderDeliveryProgressMessage({
           }}
         >
           <Typography variant="h4" weight="bold">
-            배송중
+            배송완료
           </Typography>
           <Typography
             customStyle={{
               marginTop: 8
             }}
           >
-            배송이 시작되었어요.
+            구매자가 구매확정하면 즉시 정산되며, {dayjs(order?.dateExpired).format('M월 D일(ddd)')}
+            까지 구매확정하지 않아도 자동으로 정산됩니다.
             {isParcel && (
               <>
                 <br />
@@ -114,7 +115,12 @@ function ChannelOrderDeliveryProgressMessage({
             </Flexbox>
           )}
         </Box>
-        <Typography variant="small2" color="ui60">
+        <Typography
+          variant="small2"
+          customStyle={{
+            color: common.ui60
+          }}
+        >
           {dayjs(createdAt).format('A hh:mm')}
         </Typography>
       </Flexbox>
@@ -139,34 +145,18 @@ function ChannelOrderDeliveryProgressMessage({
         }}
       >
         <Typography variant="h4" weight="bold">
-          배송중
+          배송완료
         </Typography>
         <Typography
           customStyle={{
             marginTop: 8
           }}
         >
-          배송이 시작되었어요!
-          <br />
-          {isParcel
-            ? '배송현황은 배송조회를 클릭하여 확인해주세요.'
-            : '매물을 받으시면 구매확정 버튼을 눌러주세요.'}
+          매물을 잘 받으셨다면 구매확정 버튼을 눌러주세요.
         </Typography>
-        {!isParcel && (
-          <Flexbox
-            customStyle={{ background: common.bg02, padding: 8, borderRadius: 8, marginTop: 20 }}
-            direction="vertical"
-            gap={8}
-          >
-            <Typography variant="body2" color="ui60">
-              배송방법
-            </Typography>
-            <Typography variant="body2">{getTypeText()}</Typography>
-          </Flexbox>
-        )}
-        {isParcel && (
+        <Flexbox gap={8} alignment="center">
           <OrderSearchDelieryForm
-            id={order.id}
+            id={order?.id}
             customButton={
               <Button
                 fullWidth
@@ -180,12 +170,10 @@ function ChannelOrderDeliveryProgressMessage({
               </Button>
             }
           />
-        )}
-        {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
-          !isParcel && (
+          {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' && (
             <Button
-              brandColor="black"
               variant="solid"
+              brandColor="black"
               fullWidth
               onClick={() =>
                 setOpenState((prevState) => ({
@@ -200,12 +188,18 @@ function ChannelOrderDeliveryProgressMessage({
               구매확정
             </Button>
           )}
+        </Flexbox>
       </Box>
-      <Typography variant="small2" color="ui60">
+      <Typography
+        variant="small2"
+        customStyle={{
+          color: common.ui60
+        }}
+      >
         {dayjs(createdAt).format('A hh:mm')}
       </Typography>
     </Flexbox>
   );
 }
 
-export default ChannelOrderDeliveryProgressMessage;
+export default ChannelOrderDeliveryCompleteMessage;
