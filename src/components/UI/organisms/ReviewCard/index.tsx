@@ -121,6 +121,7 @@ function ReviewCard({
           )}
         </>
       )}
+
       {REPORT_STATUS[reportStatus] === REPORT_STATUS[1] && (
         <Typography>신고에 의해 숨김 처리된 리뷰입니다.</Typography>
       )}

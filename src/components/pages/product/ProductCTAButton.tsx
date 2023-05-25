@@ -361,18 +361,22 @@ function ProductCTAButton() {
           {isAllOperatorProduct && <Triangle />}
           <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
             <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
-            <Typography
-              weight="medium"
-              noWrap
-              variant="body2"
-              customStyle={{
-                color: common.uiWhite
-              }}
-            >
+            <Typography weight="medium" noWrap variant="body2" color="uiWhite">
               {isAllOperatorProduct
                 ? '수수료 없이, 카멜이 대신 구매해드려요.'
                 : '카멜은 안전결제 수수료 무료!'}
             </Typography>
+            {!isAllOperatorProduct && (
+              <Typography
+                weight="medium"
+                noWrap
+                variant="body2"
+                color="ui80"
+                customStyle={{ textDecoration: 'underline', marginLeft: 'auto' }}
+              >
+                자세히보기
+              </Typography>
+            )}
           </PaymentLabelContents>
         </PaymentLabelWrap>
       )}

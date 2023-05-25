@@ -337,24 +337,3 @@ export const getChannelHandler = ({
     }
   };
 };
-
-export const getCustomTypeMessage = (type: string) => {
-  switch (type) {
-    case 'orderSettleProgress':
-      return '정산계좌로 영업일 기준 7일 이내에 판매대금이 입금예정이에요.';
-    case 'orderRefundProgress':
-      return '거래가 취소되어 등록된 정산계좌로 영업일 기준 2일 이내에 환불 예정입니다.';
-    case 'orderDeliveryProgressWeek':
-      return '구매한 매물을 받으셨나요? 매물을 잘 받으셨다면 구매확정 버튼을 눌러주세요.';
-    case 'offerTimeout':
-      return '가격제안이 시간초과로 거절되었어요';
-    case 'orderPaymentComplete':
-      return '판매자가 주문을 확인하면 거래가 진행됩니다.';
-    case 'orderPaymentCancel':
-      return '품절로 인해 가상계좌 결제가 취소되었어요.';
-    case 'orderDeliveryProgress':
-      return '배송이 시작되었어요. 배송현황을 배송조회를 클릭하여 확인해 주세요.';
-    default:
-      return type;
-  }
-};

@@ -34,7 +34,6 @@ import attrKeys from '@constants/attrKeys';
 import { getImagePathStaticParser, getImageResizePath, hasImageFile } from '@utils/common';
 import {
   getChannelTitle,
-  // getCustomTypeMessage,
   getLastMessage,
   getLastMessageCreatedAt,
   // getLastMessageCreatedAt,

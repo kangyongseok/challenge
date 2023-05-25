@@ -103,7 +103,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
                 sellerReviews: {
                   ...page.sellerReviews,
                   content: page.sellerReviews.content.map((sellerReview) =>
-                    sellerReview.productId === productId
+                    sellerReview.id === reviewId
                       ? { ...sellerReview, reportStatus: 2 }
                       : sellerReview
                   )
@@ -140,7 +140,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
   );
 
   const handleClickReport = useCallback(
-    (productId: number, creator: string) => () => {
+    (productId: number, creator: string, reviewId: number) => () => {
       if (isLoadingMutation) return;
 
       if (!accessUser) {
@@ -166,7 +166,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
                 sellerReviews: {
                   ...page.sellerReviews,
                   content: page.sellerReviews.content.map((sellerReview) =>
-                    sellerReview.productId === productId
+                    sellerReview.id === reviewId
                       ? { ...sellerReview, reportStatus: 1 }
                       : sellerReview
                   )
@@ -244,7 +244,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
               maxScore={Number(pages[0]?.maxScore || '')}
               siteId={pages[0]?.site?.id || 0}
               onClickBlock={handleClickBlock(review.productId, review.id)}
-              onClickReport={handleClickReport(review.productId, review.creator)}
+              onClickReport={handleClickReport(review.productId, review.creator, review.id)}
             />
           ))}
     </Flexbox>
