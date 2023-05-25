@@ -178,6 +178,7 @@ function useInfiniteQueryChannels({
     isInitialLoading,
     isLoading: isLoading || !sendbird.initialized || sendbird.loading,
     isFetched,
+    totalChannelCount: data?.pages[0]?.totalElements,
     ...useInfiniteQueryResult
   };
 }

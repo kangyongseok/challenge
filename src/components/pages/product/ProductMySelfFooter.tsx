@@ -25,6 +25,7 @@ import { userShopSelectedProductState } from '@recoil/userShop';
 import { dialogState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductState from '@hooks/useProductState';
+import useInfiniteQueryChannels from '@hooks/useInfiniteQueryChannels';
 
 import ProductChangeStatusBottomSheet from './ProductChangeStatusBottomSheet';
 import ProductChangeMoreMenuBottomSheet from './ProductChangeMoreMenuBottomSheet';
@@ -59,6 +60,12 @@ function ProductMySelfFooter() {
     productId:
       splitRouter.length === 1 ? Number(queryId) : Number(splitRouter[splitRouter.length - 1])
   };
+
+  const { totalChannelCount } = useInfiniteQueryChannels({
+    type: 1,
+    productId: parameter.productId,
+    size: 1
+  });
 
   const getTitle = useMemo(() => {
     if (isForSale) return attrProperty.title.SALE;
@@ -153,7 +160,7 @@ function ProductMySelfFooter() {
               {commaNumber(getTenThousandUnitPrice(data?.product.price || 0))}만원
             </Typography>
             <Typography weight="medium" onClick={handleClickChannel} color="primary-light">
-              채팅목록 {data?.channels?.length}
+              채팅목록 {totalChannelCount || 0}
             </Typography>
           </Flexbox>
           <Flexbox
