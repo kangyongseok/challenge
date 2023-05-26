@@ -87,9 +87,9 @@ function MyPortfolio() {
       windowRemoveEvent();
     } else {
       windowAddEvent();
-      timeoutRef.current = setTimeout(() => {
-        bodyStyleSet();
-      }, 1000);
+      // timeoutRef.current = setTimeout(() => {
+      //   bodyStyleSet();
+      // }, 500);
     }
     return () => clearTimeout(timeoutRef.current);
   }, [openReservation, windowRemoveEvent, windowAddEvent]);
