@@ -23,7 +23,6 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchInfoByUserId } from '@api/user';
 
-import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT, DEFAUT_BACKGROUND_IMAGE, TAB_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -35,6 +34,7 @@ import { commaNumber, hasImageFile, isExtendedLayoutIOSVersion } from '@utils/co
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 function UserInfo() {
   const {
@@ -64,7 +64,6 @@ function UserInfo() {
       image,
       imageProfile,
       imageBackground,
-      sellerType,
       name,
       area,
       shopDescription,
@@ -72,9 +71,13 @@ function UserInfo() {
       maxScore,
       productCount,
       reviewCount,
-      dateActivated
+      dateActivated,
+      type
     } = {}
   } = useQuery(queryKeys.users.infoByUserId(userId), () => fetchInfoByUserId(userId));
+  const { isCertificationSeller } = useProductSellerType({
+    productSellerType: type
+  });
   const {
     userName,
     userImageProfile,
@@ -83,8 +86,7 @@ function UserInfo() {
     userShopDescription,
     userProductCount,
     userReviewCount,
-    scoreText,
-    isCertificationSeller
+    scoreText
   } = useMemo(() => {
     const userImage =
       (hasImageFile(imageProfile) && imageProfile) || (hasImageFile(image) && image) || '';
@@ -100,9 +102,7 @@ function UserInfo() {
       userShopDescription: shopDescription || '',
       userProductCount: commaNumber(productCount || 0),
       userReviewCount: commaNumber(reviewCount || 0),
-      scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), 0),
-      isCertificationSeller:
-        !!sellerType && [productType.certification, productType.legit].includes(sellerType)
+      scoreText: getUserScoreText(Number(curnScore || ''), Number(maxScore || ''), 0)
     };
   }, [
     area?.name,
@@ -115,7 +115,6 @@ function UserInfo() {
     productCount,
     reviewCount,
     shopDescription,
-    sellerType,
     userId
   ]);
 

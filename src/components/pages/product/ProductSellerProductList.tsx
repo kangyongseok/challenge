@@ -15,7 +15,6 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo, fetchSellerProducts } from '@api/product';
 
-import { SELLER_STATUS, productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -26,6 +25,9 @@ import { getFormattedActivatedTime } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 
 import { pulse } from '@styles/transition';
+
+import useProductType from '@hooks/useProductType';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 function ProductSellerProductList({
   product,
@@ -42,7 +44,6 @@ function ProductSellerProductList({
   } = useTheme();
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const sellerId = Number(product?.productSeller.id || 0);
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
 
   const [sellerProductsParams, setSellerProductsParams] = useState({
     sellerId,
@@ -84,11 +85,11 @@ function ProductSellerProductList({
     ]
   });
 
-  const isCamelSeller =
-    reviewInfo &&
-    SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
-      SELLER_STATUS['3'];
-  const isNormalseller = product?.sellerType === productType.normal;
+  const { isCertificationSeller } = useProductSellerType({
+    productSellerType: reviewInfo?.productSeller?.type
+  });
+
+  const { isAllCrawlingProduct, isNormalProduct } = useProductType(product?.sellerType);
 
   const getTimeForamt = getFormattedActivatedTime(reviewInfo?.dateActivated || '');
 
@@ -115,7 +116,7 @@ function ProductSellerProductList({
     // 크롤링 판매자 정보 sellerInfo
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
-      pathname: isCrawlingProduct ? `/sellerInfo/${sellerId}` : `/userInfo/${roleSellerUserId}`,
+      pathname: isAllCrawlingProduct ? `/sellerInfo/${sellerId}` : `/userInfo/${roleSellerUserId}`,
       query: {
         tab: 'products'
       }
@@ -176,12 +177,12 @@ function ProductSellerProductList({
                 variant="h3"
                 weight="bold"
                 hasName={!!reviewInfo?.productSeller?.name}
-                isCamelSeller={!!isCamelSeller}
-                isNormalSeller={isNormalseller}
+                isCamelSeller={!!isCertificationSeller}
+                isNormalSeller={isNormalProduct}
               >
                 {reviewInfo?.productSeller?.name}
               </ProductSellerName>
-              {isCamelSeller && !isNormalseller && <CamelAuthLabel />}
+              {isCertificationSeller && !isNormalProduct && <CamelAuthLabel />}
             </Flexbox>
             <Flexbox alignment="center" gap={8}>
               {reviewInfo?.dateActivated && (
@@ -223,7 +224,7 @@ function ProductSellerProductList({
               </Typography>
             </Flexbox>
           </Flexbox>
-          {!isCamelSeller && (
+          {!isCertificationSeller && (
             <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
               <Typography weight="medium" variant="body2">
                 더보기
@@ -233,7 +234,7 @@ function ProductSellerProductList({
           )}
         </Flexbox>
       </Flexbox>
-      {isCamelSeller && !isNormalseller && (
+      {isCertificationSeller && !isNormalProduct && (
         <Flexbox
           alignment="flex-start"
           customStyle={{

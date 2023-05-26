@@ -533,7 +533,6 @@ function ProductDetail() {
                   isProductLegit={data?.productLegit}
                 />
                 <ProductInfo
-                  product={product}
                   isMySelfProduct={isMySelfProduct}
                   sizeData={sizeParser()}
                   unitText={data?.units[0]?.description}

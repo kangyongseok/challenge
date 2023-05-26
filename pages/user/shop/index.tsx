@@ -24,7 +24,6 @@ import { logEvent } from '@library/amplitude';
 
 import { fetchInfoByUserId } from '@api/user';
 
-import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -35,6 +34,7 @@ import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 function UserShop() {
   const router = useRouter();
@@ -48,17 +48,19 @@ function UserShop() {
       userRoleLegit,
       area,
       shopDescription,
-      sellerType,
       displayProductCount = 0,
       undisplayProductCount = 0,
       reviewCount = 0,
-      dateActivated = ''
+      dateActivated = '',
+      type
     } = {},
     data
   } = useQuery(queryKeys.users.infoByUserId(userId || 0), () => fetchInfoByUserId(userId || 0), {
     enabled: !!userId,
     refetchOnMount: true
   });
+
+  const { isCertificationSeller } = useProductSellerType({ productSellerType: type });
 
   const tabRef = useRef<HTMLDivElement>(null);
   const triggered = useScrollTrigger({
@@ -149,7 +151,7 @@ function UserShop() {
               maxScore={Number(maxScore || 0)}
               areaName={area?.name}
               shopDescription={shopDescription || ''}
-              isCertificationSeller={sellerType === productType.certification}
+              isCertificationSeller={isCertificationSeller}
               dateActivated={dateActivated}
             />
           )}

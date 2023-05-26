@@ -18,7 +18,7 @@ function useProductType(sellerType: (typeof productType)[keyof typeof productTyp
   const isOperatorC2CProduct = operatorC2CProduct === sellerType;
   const isChannelProduct = [1, 2, 3].includes(sellerType || NaN);
   const isAllOperatorProduct = [5, 6, 7].includes(sellerType || NaN);
-  // const isCrawlingProduct = [normal, certification, legit].includes(sellerType || NaN);
+  const isAllCrawlingProduct = isCrawlingProduct || isAllOperatorProduct;
 
   return {
     isNormalProduct,
@@ -28,7 +28,8 @@ function useProductType(sellerType: (typeof productType)[keyof typeof productTyp
     isAllOperatorProduct,
     isCrawlingProduct,
     isCertificationProduct,
-    isChannelProduct
+    isChannelProduct,
+    isAllCrawlingProduct
   };
 }
 

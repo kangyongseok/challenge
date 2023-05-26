@@ -27,14 +27,11 @@ import { OnBoardingSpotlight } from '@components/UI/organisms';
 import { NewProductGridCard } from '@components/UI/molecules';
 import { ProductInfoSkeleton } from '@components/pages/product';
 
-import type { Product } from '@dto/product';
-
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchRelatedProducts, postSellerReport } from '@api/product';
 
-import { productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import {
   INITIAL_REPORT_OPTIONS,
@@ -58,6 +55,9 @@ import { checkAgent, getImageResizePath, removeTagAndAddNewLine } from '@utils/c
 import type { AppBanner } from '@typings/common';
 import { userOnBoardingTriggerState } from '@recoil/common';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
+import useQueryProduct from '@hooks/useQueryProduct';
+import useProductType from '@hooks/useProductType';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 import ProductInfoColorIcon from './ProductInfoColorIcon';
 
@@ -68,7 +68,6 @@ type ReportType =
   | typeof REPORT_TYPE_PRICE;
 
 interface ProductInfoProps {
-  product?: Product;
   isMySelfProduct?: boolean;
   sizeData?: string[];
   unitText?: string;
@@ -79,7 +78,6 @@ interface ProductInfoProps {
 }
 
 function ProductInfo({
-  product,
   isMySelfProduct = false,
   sizeData,
   unitText,
@@ -101,6 +99,12 @@ function ProductInfo({
 
   const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
     useQueryUserInfo();
+  const { data: productDetail } = useQueryProduct();
+  const { isCertificationSeller, isViewProductModifySellerType } = useProductSellerType({
+    productSellerType: productDetail?.product.productSeller.type,
+    site: productDetail?.product.site
+  });
+  const { isAllCrawlingProduct } = useProductType(productDetail?.product.sellerType);
 
   const [
     {
@@ -122,21 +126,16 @@ function ProductInfo({
   const descriptionRef = useRef<HTMLDivElement>(null);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const isCertificationSeller =
-    product?.sellerType === productType.certification || product?.sellerType === productType.legit;
-  // 카멜에서 수정/삭제 등이 가능한 매물 (카멜에서 업로드한 매물 포함)
-  const isTransferred =
-    (product?.productSeller?.type === 0 && product?.site?.id === 34) ||
-    product?.productSeller?.type === 4 ||
-    product?.productSeller?.type === 3;
   const hasCheckedReportOption = Object.values(reportOptions).some(({ checked }) => checked);
   const platformId =
-    (product?.siteUrl?.hasImage && product?.siteUrl.id) ||
-    (product?.site.hasImage && product?.site?.id);
+    (productDetail?.product?.siteUrl?.hasImage && productDetail?.product?.siteUrl.id) ||
+    (productDetail?.product?.site.hasImage && productDetail?.product?.site?.id);
   const brandLogo = `https://${
     process.env.IMAGE_DOMAIN
-  }/assets/images/brands/fit/${product?.brand?.nameEng.toLowerCase().replace(/\s/g, '')}.jpg`;
-  const isCrawlingProduct = ![1, 2, 3].includes(product?.sellerType || NaN);
+  }/assets/images/brands/fit/${productDetail?.product?.brand?.nameEng
+    .toLowerCase()
+    .replace(/\s/g, '')}.jpg`;
+
   const sessionId = amplitude.getInstance().getSessionId();
   const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
     sessionId,
@@ -152,21 +151,28 @@ function ProductInfo({
 
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
-      product?.viewDescription || product?.description || ''
+      productDetail?.product?.viewDescription || productDetail?.product?.description || ''
     );
 
     // TODO 트렌비 매물 설명이 css코드로 시작되는 경우 공백 표시하도록 임시처리
-    return product?.site.id === PRODUCT_SITE.TRENBE.id && newDescription.startsWith('.box')
+    return productDetail?.product?.site.id === PRODUCT_SITE.TRENBE.id &&
+      newDescription.startsWith('.box')
       ? ''
       : newDescription;
-  }, [product?.description, product?.site.id, product?.viewDescription]);
+  }, [
+    productDetail?.product?.description,
+    productDetail?.product?.site.id,
+    productDetail?.product?.viewDescription
+  ]);
 
-  const productStatusData = product?.labels.filter((label) => label.codeId === 14)[0];
+  const productStatusData = productDetail?.product?.labels.filter(
+    (label) => label.codeId === 14
+  )[0];
 
   const { data: relatedProducts } = useQuery(
-    queryKeys.products.relatedProducts(Number(product?.id || 0)),
-    () => fetchRelatedProducts(Number(product?.id || 0)),
-    { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!product }
+    queryKeys.products.relatedProducts(Number(productDetail?.product?.id || 0)),
+    () => fetchRelatedProducts(Number(productDetail?.product?.id || 0)),
+    { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!productDetail?.product }
   );
 
   const { mutate: postSellerReportMutate } = useMutation(postSellerReport);
@@ -175,37 +181,37 @@ function ProductInfo({
     {
       label: '상태',
       value: `${productStatusData?.synonyms} ${productStatusData?.name}`,
-      isView: !!product?.labels.filter((label) => label.codeId === 14)[0].name
+      isView: !!productDetail?.product?.labels.filter((label) => label.codeId === 14)[0].name
     },
     { label: '사이즈', value: sizeData?.join(' ∙ '), isView: !!sizeData },
     {
       label: '색상',
-      value: <ProductInfoColorIcon colorData={product?.colors} />,
-      isView: !!product?.color
+      value: <ProductInfoColorIcon colorData={productDetail?.product?.colors} />,
+      isView: !!productDetail?.product?.color
     },
     { label: '구성품', value: unitText, isView: !!unitText },
     { label: '구입처', value: storeText, isView: !!storeText }
   ];
 
   const handleClickMoreInfo = () => {
-    if (product) {
+    if (productDetail?.product) {
       logEvent(attrKeys.products.CLICK_EXPAND, {
         name: attrProperty.productName.PRODUCT_DETAIL,
-        id: product.id,
-        site: product.site.name,
-        brand: product.brand.name,
-        category: product.category.name,
-        parentId: product.category.parentId,
-        parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-        line: product.line,
-        price: product.price,
-        scoreTotal: product.scoreTotal,
-        scoreStatus: product.scoreStatus,
-        scoreSeller: product.scoreSeller,
-        scorePrice: product.scorePrice,
-        scorePriceAvg: product.scorePriceAvg,
-        scorePriceCount: product.scorePriceCount,
-        scorePriceRate: product.scorePriceRate
+        id: productDetail?.product.id,
+        site: productDetail?.product.site.name,
+        brand: productDetail?.product.brand.name,
+        category: productDetail?.product.category.name,
+        parentId: productDetail?.product.category.parentId,
+        parentCategory: FIRST_CATEGORIES[productDetail?.product.category.parentId as number],
+        line: productDetail?.product.line,
+        price: productDetail?.product.price,
+        scoreTotal: productDetail?.product.scoreTotal,
+        scoreStatus: productDetail?.product.scoreStatus,
+        scoreSeller: productDetail?.product.scoreSeller,
+        scorePrice: productDetail?.product.scorePrice,
+        scorePriceAvg: productDetail?.product.scorePriceAvg,
+        scorePriceCount: productDetail?.product.scorePriceCount,
+        scorePriceRate: productDetail?.product.scorePriceRate
       });
     }
     setIsExpended(!isExpended);
@@ -213,13 +219,13 @@ function ProductInfo({
 
   const handleClickReport = () => {
     setIsOpenReportTooltip(!isOpenReportTooltip);
-    if (!isOpenReportTooltip && product) {
+    if (!isOpenReportTooltip && productDetail?.product) {
       logEvent(attrKeys.products.CLICK_REPORT, {
         name: attrProperty.productName.PRODUCT_DETAIL,
-        id: product.id,
-        brand: product.brand.name,
-        category: product.category.name,
-        line: product.line
+        id: productDetail?.product.id,
+        brand: productDetail?.product.brand.name,
+        category: productDetail?.product.category.name,
+        line: productDetail?.product.line
       });
     }
     if (isOpenReportTooltip) {
@@ -256,7 +262,7 @@ function ProductInfo({
     };
 
   const handleSubmitReport = async () => {
-    if (!hasCheckedReportOption || !product) return;
+    if (!hasCheckedReportOption || !productDetail?.product) return;
 
     const checkedReportOption = Object.entries(reportOptions).find(([_, { checked }]) => checked);
 
@@ -265,16 +271,16 @@ function ProductInfo({
 
       logEvent(attrKeys.products.CLICK_REPORTSUBMIT, {
         name: attrProperty.productName.PRODUCT_DETAIL,
-        id: product.id,
-        brand: product.brand.name,
-        category: product.category.name,
-        line: product.line,
+        id: productDetail?.product.id,
+        brand: productDetail?.product.brand.name,
+        category: productDetail?.product.category.name,
+        line: productDetail?.product.line,
         value: reportType
       });
       postSellerReportMutate(
         {
           reportType,
-          productId: product.id,
+          productId: productDetail?.product.id,
           deviceId: amplitude.getInstance().getDeviceId()
         },
         {
@@ -302,18 +308,18 @@ function ProductInfo({
     logEvent(isWish ? attrKeys.products.clickWishCancel : attrKeys.products.clickWish, {
       name: attrProperty.productName.PRODUCT_DETAIL,
       title: attrProperty.productTitle.PRODUCT_DETAIL,
-      id: product?.id,
-      brand: product?.brand.name,
-      category: product?.category.name,
-      parentId: product?.category.parentId,
-      line: product?.line,
-      site: product?.site.name,
-      price: product?.price,
-      scoreTotal: product?.scoreTotal,
-      cluster: product?.cluster,
+      id: productDetail?.product?.id,
+      brand: productDetail?.product?.brand.name,
+      category: productDetail?.product?.category.name,
+      parentId: productDetail?.product?.category.parentId,
+      line: productDetail?.product?.line,
+      site: productDetail?.product?.site.name,
+      price: productDetail?.product?.price,
+      scoreTotal: productDetail?.product?.scoreTotal,
+      cluster: productDetail?.product?.cluster,
       productType: getProductType(
-        product?.productSeller.site.id || 0,
-        product?.productSeller.type || 0
+        productDetail?.product?.productSeller.site.id || 0,
+        productDetail?.product?.productSeller.type || 0
       )
     });
 
@@ -431,7 +437,7 @@ function ProductInfo({
     return () => {
       if (observer) observer.disconnect();
     };
-  }, [product]);
+  }, [productDetail?.product]);
 
   useEffect(() => {
     return () => {
@@ -481,7 +487,7 @@ function ProductInfo({
     return null;
   };
 
-  return !product ? (
+  return !productDetail?.product ? (
     <ProductInfoSkeleton />
   ) : (
     <>
@@ -502,7 +508,7 @@ function ProductInfo({
         {brandLogo && (
           <Flexbox
             onClick={() => {
-              const brandName = product?.brand?.name.replace(/\s/g, '');
+              const brandName = productDetail?.product?.brand?.name.replace(/\s/g, '');
               router.push({
                 pathname: `/products/brands/${brandName}`,
                 query:
@@ -544,7 +550,7 @@ function ProductInfo({
                 lineHeight: '26px'
               }}
             >
-              {product?.title}
+              {productDetail?.product?.title}
             </Typography>
             <Flexbox
               justifyContent="space-between"
@@ -552,7 +558,7 @@ function ProductInfo({
               customStyle={{ color: common.ui60 }}
             >
               <Flexbox>
-                {!isMySelfProduct && !isCertificationSeller && !isTransferred && (
+                {!isMySelfProduct && !isCertificationSeller && !isViewProductModifySellerType && (
                   <>
                     <Flexbox gap={2} alignment="center">
                       <Avatar
@@ -567,7 +573,7 @@ function ProductInfo({
                           color: common.ui60
                         }}
                       >
-                        {product?.siteUrl?.name}
+                        {productDetail?.product?.siteUrl?.name}
                       </Typography>
                     </Flexbox>
                     <Typography
@@ -582,8 +588,10 @@ function ProductInfo({
                   </>
                 )}
                 <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-                  {product.datePosted > product.dateFirstPosted ? '끌올 ' : ''}
-                  {getFormattedDistanceTime(new Date(product.datePosted))}
+                  {productDetail?.product.datePosted > productDetail?.product.dateFirstPosted
+                    ? '끌올 '
+                    : ''}
+                  {getFormattedDistanceTime(new Date(productDetail?.product.datePosted))}
                 </Typography>
               </Flexbox>
             </Flexbox>
@@ -621,7 +629,7 @@ function ProductInfo({
                         color: secondary.red.light
                       }}
                     >
-                      {product?.wishCount || 0}
+                      {productDetail?.product?.wishCount || 0}
                     </Typography>
                   </>
                 ) : (
@@ -634,7 +642,7 @@ function ProductInfo({
                         textAlign: 'center'
                       }}
                     >
-                      {product?.wishCount || 0}
+                      {productDetail?.product?.wishCount || 0}
                     </Typography>
                   </>
                 )}
@@ -643,7 +651,9 @@ function ProductInfo({
           )}
         </Flexbox>
         {renderCertificationBanner()}
-        {(!!product?.area || !!distanceText || find(product.labels, { name: '33' })) && (
+        {(!!productDetail?.product?.area ||
+          !!distanceText ||
+          find(productDetail?.product.labels, { name: '33' })) && (
           <Flexbox
             alignment="center"
             gap={4}
@@ -651,7 +661,8 @@ function ProductInfo({
               margin: renderCertificationBanner() ? '20px 0' : '32px 0 20px'
             }}
           >
-            {!!product.labels.length && find(product.labels, { name: '33' }) ? (
+            {!!productDetail?.product.labels.length &&
+            find(productDetail?.product.labels, { name: '33' }) ? (
               <Label variant="ghost" brandColor="gray" text="배송비 포함" />
             ) : (
               <Label variant="ghost" brandColor="gray" text="배송비 별도" />
@@ -659,17 +670,17 @@ function ProductInfo({
             {distanceText === '직거래' && (
               <Label variant="ghost" brandColor="gray" text={distanceText} />
             )}
-            {product?.area && (
+            {productDetail?.product?.area && (
               <Label
                 variant="ghost"
                 brandColor="gray"
                 startIcon={<Icon name="PinFilled" />}
-                text={getProductArea(product.area)}
+                text={getProductArea(productDetail?.product.area)}
               />
             )}
           </Flexbox>
         )}
-        {product?.site.code === 'CAMELSELLER' && (
+        {productDetail?.product?.site.code === 'CAMELSELLER' && (
           <Flexbox direction="vertical" gap={8}>
             {templateInfoData.map((stateData) => (
               <Flexbox
@@ -727,7 +738,7 @@ function ProductInfo({
             </Flexbox>
           </MoreInfoButton>
         )}
-        {isCrawlingProduct && (
+        {isAllCrawlingProduct && (
           <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 20 }}>
             * 카멜Ai검색엔진이 수집·분석한 매물정보입니다.
           </Typography>
@@ -742,13 +753,13 @@ function ProductInfo({
           }}
         >
           <Flexbox alignment="center" gap={12}>
-            {product?.viewCount > 0 && (
+            {productDetail?.product?.viewCount > 0 && (
               <Typography customStyle={{ color: common.ui60 }}>
                 조회&nbsp;
-                {product.viewCount}
+                {productDetail?.product.viewCount}
               </Typography>
             )}
-            {product?.wishCount > 0 && (
+            {productDetail?.product?.wishCount > 0 && (
               <Flexbox gap={4} alignment="center">
                 <Icon
                   name="HeartFilled"
@@ -756,10 +767,12 @@ function ProductInfo({
                   height={16}
                   customStyle={{ color: common.ui80, marginRight: 2 }}
                 />
-                <Typography customStyle={{ color: common.ui60 }}>{product.wishCount}</Typography>
+                <Typography customStyle={{ color: common.ui60 }}>
+                  {productDetail?.product.wishCount}
+                </Typography>
               </Flexbox>
             )}
-            {product?.purchaseCount > 0 && (
+            {productDetail?.product?.purchaseCount > 0 && (
               <Flexbox gap={4} alignment="center">
                 <Icon
                   name="MessageFilled"
@@ -768,7 +781,7 @@ function ProductInfo({
                   customStyle={{ color: common.ui80 }}
                 />
                 <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
-                  {product.purchaseCount}
+                  {productDetail?.product.purchaseCount}
                 </Typography>
               </Flexbox>
             )}

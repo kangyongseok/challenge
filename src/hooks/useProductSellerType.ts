@@ -11,7 +11,8 @@ function useProductSellerType({
 }) {
   const isTransferSeller = sellerType.transferSeller === productSellerType;
   const isLegitSeller = sellerType.legitSeller === productSellerType;
-  const isCertificationSeller = sellerType.certificationSeller === productSellerType;
+  const isCertificationSeller =
+    sellerType.certificationSeller === productSellerType || isLegitSeller;
   const isBlockSeller = sellerType.blockSeller === productSellerType;
   const isCamelSeller = sellerType.none === productSellerType && site?.id === 34;
 
