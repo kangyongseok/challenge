@@ -82,13 +82,13 @@ function HomeMainBanner() {
       att: 'EXHIBITION'
     });
 
-    if (!accessUser) {
-      setLoginBottomSheet({
-        open: true,
-        returnUrl: '/'
-      });
-      return;
-    }
+    // if (!accessUser) {
+    //   setLoginBottomSheet({
+    //     open: true,
+    //     returnUrl: '/'
+    //   });
+    //   return;
+    // }
 
     // setExhibitionOpen(true);
     router.push('/butler/exhibition');
