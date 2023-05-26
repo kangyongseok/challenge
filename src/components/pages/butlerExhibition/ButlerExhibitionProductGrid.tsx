@@ -24,7 +24,7 @@ function ButlerExhibitionProductGrid() {
     >
       {content.map((product) => (
         <Grid key={`butler-exhibition-product-${product.id}`} item xs={2}>
-          <NewProductGridCard product={product} hideLabel />
+          <NewProductGridCard product={product} hideLabel butlerExhibition />
         </Grid>
       ))}
     </Grid>

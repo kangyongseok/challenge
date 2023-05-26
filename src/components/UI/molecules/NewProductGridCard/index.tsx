@@ -54,6 +54,7 @@ export interface NewProductGridCardProps extends HTMLAttributes<HTMLDivElement> 
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
   hideWishButton?: boolean;
+  butlerExhibition?: boolean;
   hideSize?: boolean;
   attributes?: {
     [key: string]: string | string[] | number | boolean | null | undefined;
@@ -78,6 +79,7 @@ function NewProductGridCard({
   onWishAfterChangeCallback,
   measure,
   customStyle,
+  butlerExhibition,
   ...props
 }: NewProductGridCardProps) {
   const router = useRouter();
@@ -371,7 +373,10 @@ function NewProductGridCard({
           src={
             loadFailed
               ? imageMain || imageThumbnail
-              : getProductCardImageResizePath(imageMain || imageThumbnail)
+              : getProductCardImageResizePath(
+                  imageMain || imageThumbnail,
+                  butlerExhibition ? 1000 : 0
+                )
           }
           alt={`${productTitle} 이미지`}
           round={variant === 'gridA' ? 0 : 8}
