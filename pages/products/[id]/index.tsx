@@ -121,7 +121,7 @@ function ProductDetail() {
     isTargetProduct,
     discountedPrice
   } = useProductState({ productDetail: data, product: data?.product });
-  const { isNormalProduct } = useProductType(data?.product.sellerType);
+  const { isNormalProduct, isCamelButlerProduct } = useProductType(data?.product.sellerType);
   const { isLegitSeller } = useProductSellerType({
     productSellerType: data?.product.productSeller.type
   });
@@ -541,27 +541,36 @@ function ProductDetail() {
                   isWish={data?.wish}
                   onClickWish={handleClickWish}
                 />
-                <ProductActions
-                  product={product}
-                  hasRoleSeller={!!data?.roleSeller?.userId}
-                  onClickSMS={handleClickSMS}
-                />
-                <ProductDetailBannerGroup product={product} />
+                {!isCamelButlerProduct && (
+                  <>
+                    <ProductActions
+                      product={product}
+                      hasRoleSeller={!!data?.roleSeller?.userId}
+                      onClickSMS={handleClickSMS}
+                    />
+                    <ProductDetailBannerGroup product={product} />
+                  </>
+                )}
               </>
             )}
-            <ProductMowebAppContents data={data} />
-            <ProductRelatedProductList
-              brandId={data?.product?.brand.id}
-              categoryId={data?.product?.category.id}
-              line={data?.product?.line}
-              prevProduct={data?.product}
-              quoteTitle={data?.product.quoteTitle}
-              price={data?.product.price}
-              productId={data?.product.id}
-            />
+            {!isCamelButlerProduct && (
+              <>
+                <ProductMowebAppContents data={data} />
+                <ProductRelatedProductList
+                  brandId={data?.product?.brand.id}
+                  categoryId={data?.product?.category.id}
+                  line={data?.product?.line}
+                  prevProduct={data?.product}
+                  quoteTitle={data?.product.quoteTitle}
+                  price={data?.product.price}
+                  productId={data?.product.id}
+                />
+              </>
+            )}
           </>
         )}
       </GeneralTemplate>
+
       <AppDownloadDialog
         variant="wish"
         open={isShowAppDownloadDialog}

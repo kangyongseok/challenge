@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
-import { Box, Button, Dialog, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { SafePaymentGuideDialog } from '@components/UI/organisms';
 
@@ -13,8 +12,6 @@ import { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
-
-import { postSurvey } from '@api/user';
 
 import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -26,7 +23,7 @@ import {
   settingsTransferDataState,
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
-import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import { loginBottomSheetState } from '@recoil/common';
 
 function HomeMainBanner() {
   const router = useRouter();
@@ -44,11 +41,6 @@ function HomeMainBanner() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  const [exhibition, setExhibitionOpen] = useState(false);
-
-  const { mutate } = useMutation(postSurvey);
-
-  const deviceId = useRecoilValue(deviceIdState);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -98,23 +90,8 @@ function HomeMainBanner() {
       return;
     }
 
-    setExhibitionOpen(true);
-  };
-
-  const handleClickOpenAlarm = () => {
-    mutate(
-      {
-        deviceId,
-        surveyId: 7,
-        answer: 0,
-        options: ''
-      },
-      {
-        onSuccess() {
-          setExhibitionOpen(false);
-        }
-      }
-    );
+    // setExhibitionOpen(true);
+    router.push('/butler/exhibition');
   };
 
   return (
@@ -137,10 +114,10 @@ function HomeMainBanner() {
             <Image
               height={104}
               src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/exhibition_banner.png`,
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/exhibition_open_banner.png`,
                 h: 104
               })}
-              alt="구하기 힘든 샤넬 백팩 최상급 기획전 오픈 예정 배너"
+              alt="구하기 힘든 샤넬 백팩 최상급 기획전"
               disableAspectRatio
             />
           </Box>
@@ -216,34 +193,6 @@ function HomeMainBanner() {
         onClose={() => setOpen(false)}
         ctaType="viewSafePaymentProducts"
       />
-      <Dialog
-        open={exhibition}
-        onClose={() => setExhibitionOpen(false)}
-        customStyle={{ width: 311, padding: '32px 20px 20px', textAlign: 'center' }}
-      >
-        <Image
-          height={114}
-          src={getImageResizePath({
-            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/chanel_exhibitions.png`,
-            h: 114
-          })}
-          alt="기획전 오픈알림 샤넬 커밍순"
-          disableAspectRatio
-        />
-        <Typography weight="bold" variant="h3" customStyle={{ marginTop: 8 }}>
-          기획전이 오픈되면 알려드릴까요?
-        </Typography>
-        <Button
-          fullWidth
-          size="xlarge"
-          variant="solid"
-          brandColor="primary"
-          customStyle={{ marginTop: 32 }}
-          onClick={handleClickOpenAlarm}
-        >
-          오픈 알림받기
-        </Button>
-      </Dialog>
     </>
   );
 }

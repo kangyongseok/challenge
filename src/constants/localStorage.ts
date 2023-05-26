@@ -54,3 +54,4 @@ export const IS_OS_ALARM_DIALOG = 'isOsAlarmDialogView';
 export const IS_FOR_ALARM_FIRST_VISIT = 'isForAlarmFirstVisit';
 export const PAYMENTS_SUCCESS = 'paymentsSuccess';
 export const RECOMM_WISH_IDS = 'recommWishIds';
+export const IS_CAMEL_BUTLER_RESERVATION = 'isCamelButlerReservation';

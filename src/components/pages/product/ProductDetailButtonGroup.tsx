@@ -1,25 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
+import { useMutation } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Avatar, Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import { Avatar, Button, Dialog, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import { postSurvey } from '@api/user';
+
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { PRODUCT_SITE } from '@constants/product';
-import { APP_BANNER } from '@constants/localStorage';
+import { APP_BANNER, IS_CAMEL_BUTLER_RESERVATION } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
 import {
   checkAgent,
+  getImageResizePath,
   getProductDetailUrl,
   getRandomNumber,
   needUpdateChatIOSVersion,
@@ -27,7 +31,12 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import { dialogState, loginBottomSheetState, prevChannelAlarmPopup } from '@recoil/common';
+import {
+  deviceIdState,
+  dialogState,
+  loginBottomSheetState,
+  prevChannelAlarmPopup
+} from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductType from '@hooks/useProductType';
@@ -41,15 +50,16 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     query: { id }
   } = useRouter();
 
+  const deviceId = useRecoilValue(deviceIdState);
+
   const [openAlreadyDialog, setOpenAlreadyDialog] = useState(false);
   const [pendingCreateChannel, setPendingCreateChannel] = useState(false);
 
   const { data: productDetail, mutateMetaInfo } = useQueryProduct();
   const { data: accessUser } = useQueryAccessUser();
   const setOsAlarm = useOsAlarm();
-  const { isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } = useProductType(
-    productDetail?.product.sellerType
-  );
+  const { isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct, isCamelButlerProduct } =
+    useProductType(productDetail?.product.sellerType);
   const {
     isHidden,
     isSoldOut,
@@ -64,12 +74,17 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   } = useProductState({ productDetail, product: productDetail?.product });
   const toastStack = useToastStack();
 
+  const [exhibitionOpen, setExhibitionOpen] = useState(false);
+  const [isReservationDisabled, setReservation] = useState(false);
+
   const setDialogState = useSetRecoilState(dialogState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
 
   const { mutate: mutateCreateChannel, isLoading: isLoadingMutateCreateChannel } =
     useMutationCreateChannel();
+
+  const { mutate } = useMutation(postSurvey);
 
   const platformId =
     (productDetail?.product?.siteUrl?.hasImage && productDetail?.product?.siteUrl?.id) ||
@@ -294,6 +309,34 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       push(getProductDetailUrl({ type: 'targetProduct', product: productDetail.product }));
   };
 
+  const handleClickOpenReservation = () => {
+    setExhibitionOpen(true);
+  };
+
+  const handleClickOpenAlarm = () => {
+    mutate(
+      {
+        deviceId,
+        surveyId: 7,
+        answer: 0,
+        options: ''
+      },
+      {
+        onSuccess() {
+          setExhibitionOpen(false);
+          LocalStorage.set(IS_CAMEL_BUTLER_RESERVATION, true);
+          setReservation(true);
+        }
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (LocalStorage.get(IS_CAMEL_BUTLER_RESERVATION)) {
+      setReservation(true);
+    }
+  }, []);
+
   if (isDisabledState) {
     return (
       <Button disabled size="xlarge" fullWidth variant="solid">
@@ -332,6 +375,53 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       >
         예약중
       </Button>
+    );
+  }
+
+  if (isCamelButlerProduct) {
+    return (
+      <>
+        <Button
+          fullWidth
+          size="xlarge"
+          variant="solid"
+          brandColor="black"
+          onClick={handleClickOpenReservation}
+          disabled={isReservationDisabled}
+        >
+          {isReservationDisabled ? '알림 신청완료' : '오픈 알림받기'}
+        </Button>
+        {isCamelButlerProduct && (
+          <Dialog
+            open={exhibitionOpen}
+            onClose={() => setExhibitionOpen(false)}
+            customStyle={{ width: 311, padding: '32px 20px 20px', textAlign: 'center' }}
+          >
+            <Image
+              height={114}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/chanel_exhibitions.png`,
+                h: 114
+              })}
+              alt="기획전 오픈알림 샤넬 커밍순"
+              disableAspectRatio
+            />
+            <Typography weight="bold" variant="h3" customStyle={{ marginTop: 8 }}>
+              기획전이 오픈되면 알려드릴까요?
+            </Typography>
+            <Button
+              fullWidth
+              size="xlarge"
+              variant="solid"
+              brandColor="primary"
+              customStyle={{ marginTop: 32 }}
+              onClick={handleClickOpenAlarm}
+            >
+              오픈 알림받기
+            </Button>
+          </Dialog>
+        )}
+      </>
     );
   }
 

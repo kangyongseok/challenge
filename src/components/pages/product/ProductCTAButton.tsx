@@ -47,7 +47,7 @@ function ProductCTAButton() {
 
   const {
     theme: {
-      palette: { primary, common }
+      palette: { common }
     }
   } = useTheme();
 
@@ -69,8 +69,14 @@ function ProductCTAButton() {
   const { data: accessUser } = useQueryAccessUser();
   const { data: productDetail, refetch } = useQueryProduct(); // mutateMetaInfo
 
-  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } =
-    useProductType(productDetail?.product.sellerType);
+  const {
+    isOperatorProduct,
+    isAllOperatorProduct,
+    isChannelProduct,
+    isOperatorC2CProduct,
+    isCamelButlerProduct
+  } = useProductType(productDetail?.product.sellerType);
+
   const {
     isDuplicate,
     isBlockedUser,
@@ -349,37 +355,31 @@ function ProductCTAButton() {
 
   return (
     <>
-      {open && isSafePayment && !isDisabledState && !isDuplicate && !isTargetProduct && (
-        <PaymentLabelWrap
-          alignment="center"
-          justifyContent="space-between"
-          gap={4}
-          onClick={handleClickSafePaymentFreeBanner}
-          isAllOperatorProduct={isAllOperatorProduct}
-          openPriceOfferOnBoarding={openPriceOfferOnBoarding}
-        >
-          {isAllOperatorProduct && <Triangle />}
-          <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
-            <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
-            <Typography weight="medium" noWrap variant="body2" color="uiWhite">
-              {isAllOperatorProduct
-                ? '수수료 없이, 카멜이 대신 구매해드려요.'
-                : '카멜은 안전결제 수수료 무료!'}
-            </Typography>
-            {!isAllOperatorProduct && (
-              <Typography
-                weight="medium"
-                noWrap
-                variant="body2"
-                color="ui80"
-                customStyle={{ textDecoration: 'underline', marginLeft: 'auto' }}
-              >
-                자세히보기
+      {open &&
+        isSafePayment &&
+        !isDisabledState &&
+        !isDuplicate &&
+        !isTargetProduct &&
+        !isCamelButlerProduct && (
+          <PaymentLabelWrap
+            alignment="center"
+            justifyContent="space-between"
+            gap={4}
+            onClick={handleClickSafePaymentFreeBanner}
+            isAllOperatorProduct={isAllOperatorProduct}
+            openPriceOfferOnBoarding={openPriceOfferOnBoarding}
+          >
+            {isAllOperatorProduct && <Triangle />}
+            <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
+              <Icon name="WonCircleFilled" width={20} height={20} color={common.uiWhite} />
+              <Typography weight="medium" noWrap variant="body2" color="uiWhite">
+                {isAllOperatorProduct
+                  ? '수수료 없이, 카멜이 대신 구매해드려요.'
+                  : '카멜은 안전결제 수수료 무료!'}
               </Typography>
-            )}
-          </PaymentLabelContents>
-        </PaymentLabelWrap>
-      )}
+            </PaymentLabelContents>
+          </PaymentLabelWrap>
+        )}
       <Box
         customStyle={{
           minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
@@ -421,10 +421,10 @@ function ProductCTAButton() {
               <Typography
                 variant="h3"
                 weight="bold"
+                color="primary-light"
                 customStyle={{
                   fontSize: 20,
-                  lineHeight: '26px',
-                  color: primary.light
+                  lineHeight: '26px'
                 }}
               >
                 {commaNumber(getTenThousandUnitPrice(currentOffer?.price || 0))}만원
@@ -445,14 +445,15 @@ function ProductCTAButton() {
               !isDisabledState &&
               !isDuplicate &&
               !isTargetProduct &&
-              isChannelProduct && (
+              isChannelProduct &&
+              !isCamelButlerProduct && (
                 <>
                   {!hasOffer && !currentOffer && (
                     <Typography
                       weight="medium"
                       onClick={handleClickPriceOffer}
+                      color="primary-light"
                       customStyle={{
-                        color: primary.light,
                         textDecorationLine: 'underline',
                         cursor: 'pointer'
                       }}
@@ -463,8 +464,8 @@ function ProductCTAButton() {
                   {hasOffer && !currentOffer && (
                     <Typography
                       weight="medium"
+                      color="ui60"
                       customStyle={{
-                        color: common.ui60,
                         textDecorationLine: 'underline'
                       }}
                     >
@@ -474,8 +475,8 @@ function ProductCTAButton() {
                   {!hasOffer && currentOffer && (
                     <Typography
                       weight="medium"
+                      color="ui60"
                       customStyle={{
-                        color: common.ui60,
                         textDecorationLine: 'line-through'
                       }}
                     >
@@ -489,8 +490,8 @@ function ProductCTAButton() {
                 <Typography
                   weight="medium"
                   onClick={() => pageMovePlatform()}
+                  color="primary-light"
                   customStyle={{
-                    color: primary.light,
                     textDecorationLine: 'underline',
                     cursor: 'pointer'
                   }}
