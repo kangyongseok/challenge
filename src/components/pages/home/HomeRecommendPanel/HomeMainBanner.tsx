@@ -5,6 +5,7 @@ import type { Swiper as SwiperClass } from 'swiper';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Dialog, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { SafePaymentGuideDialog } from '@components/UI/organisms';
@@ -16,7 +17,7 @@ import { logEvent } from '@library/amplitude';
 
 import { postSurvey } from '@api/user';
 
-import { ACCESS_USER } from '@constants/localStorage';
+import { ACCESS_USER, IS_CAMEL_BUTLER_EXHIBITION_ALARM } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -30,6 +31,7 @@ import { deviceIdState, loginBottomSheetState } from '@recoil/common';
 
 function HomeMainBanner() {
   const router = useRouter();
+  const toastStack = useToastStack();
 
   const {
     theme: {
@@ -103,6 +105,13 @@ function HomeMainBanner() {
   };
 
   const handleClickOpenAlarm = () => {
+    if (LocalStorage.get(IS_CAMEL_BUTLER_EXHIBITION_ALARM)) {
+      toastStack({
+        children: '이미 신청 되었습니다.'
+      });
+      setExhibitionOpen(false);
+      return;
+    }
     mutate(
       {
         deviceId,
@@ -112,6 +121,10 @@ function HomeMainBanner() {
       },
       {
         onSuccess() {
+          toastStack({
+            children: '오픈 알림 신청이 완료되었습니다.'
+          });
+          LocalStorage.set(IS_CAMEL_BUTLER_EXHIBITION_ALARM, true);
           setExhibitionOpen(false);
         }
       }
