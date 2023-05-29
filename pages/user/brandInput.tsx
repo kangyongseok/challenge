@@ -6,7 +6,8 @@ import type { GetServerSidePropsContext } from 'next';
 import { debounce, find, isEmpty } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Header, SearchBar } from '@components/UI/molecules';
@@ -27,11 +28,6 @@ import type { SelectedHotBrand } from '@typings/brands';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function BrandInput() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -181,14 +177,15 @@ function BrandInput() {
               variant="h3"
               brandColor="black"
               weight="bold"
-              customStyle={{ textAlign: 'center', marginBottom: 6 }}
+              textAlign="center"
+              customStyle={{ marginBottom: 6 }}
             >
               어떤 브랜드 좋아하세요?
             </Typography>
-            <Typography variant="body1" customStyle={{ color: common.ui20, textAlign: 'center' }}>
+            <Typography variant="body1" textAlign="center">
               선택한 브랜드는 홈에서 모아볼 수 있어요.
             </Typography>
-            <Typography variant="body2" customStyle={{ color: common.ui60, textAlign: 'center' }}>
+            <Typography variant="body2" textAlign="center" color="ui60">
               최대 20개 선택할 수 있어요.
             </Typography>
           </Box>
@@ -220,11 +217,7 @@ function BrandInput() {
       <Toast onClose={() => setToast(false)} open={toast}>
         최대 20개만 선택할 수 있어요
       </Toast>
-      <Dialog
-        open={isEmptyBack}
-        onClose={() => setIsEmptyBack(false)}
-        customStyle={{ width: '100%', textAlign: 'center' }}
-      >
+      <Dialog open={isEmptyBack} onClose={() => setIsEmptyBack(false)}>
         <Typography>
           <strong>&apos;선택완료&apos;</strong>를 눌러야
         </Typography>

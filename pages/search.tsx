@@ -6,7 +6,8 @@ import { useRouter } from 'next/router';
 import find from 'lodash-es/find';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { Box, Button, Dialog, Flexbox, Icon, Input, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Input, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 
@@ -300,11 +301,7 @@ function Search() {
           )}
         </Box>
       </GeneralTemplate>
-      <Dialog
-        open={isSearchEmpty}
-        onClose={() => setIsSearchEmpty(false)}
-        customStyle={{ textAlign: 'center' }}
-      >
+      <Dialog open={isSearchEmpty} onClose={() => setIsSearchEmpty(false)}>
         <Typography weight="medium">
           <strong>앗!</strong> <br /> 검색 키워드를 입력해주세요 😭
         </Typography>

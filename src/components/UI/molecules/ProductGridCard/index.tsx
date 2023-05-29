@@ -8,6 +8,7 @@ import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Avatar, Box, Flexbox, Icon, Image, Label, Typography } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { ProductLabel } from '@components/UI/organisms';
 import {
   HideOverlay,
@@ -162,7 +163,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const setOpenState = useSetRecoilState(userShopOpenStateFamily('manage'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
@@ -178,7 +179,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
         await onWishAfterChangeCallback(product, isWish);
       }
 
-      setOsAlarm();
+      checkOsAlarm();
 
       toastStack({
         children: '찜목록에 추가했어요!',
@@ -300,191 +301,196 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   };
 
   return (
-    <Flexbox
-      ref={ref}
-      direction="vertical"
-      gap={gap || (compact ? 12 : 17)}
-      onClick={handleClick}
-      customStyle={cardCustomStyle}
-      {...props}
-    >
-      <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
-        <Image
-          src={src}
-          alt={`${product.title} 이미지`}
-          round={isRound ? 8 : 0}
-          onError={() => setLoadFailed(true)}
-        />
-        {!hideProductLabel && productLabels.length > 0 && (
-          <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
-            {productLabels.map(({ description }, index) => (
-              <ProductLabel
-                key={`product-label-${description}`}
-                showDivider={index !== 0}
-                text={description}
-                isSingle={productLabels.length === 1}
-              />
-            ))}
-          </Flexbox>
-        )}
-        {showTodayWishViewLabel && (todayWishCount >= 2 || todayViewCount >= 10) && (
-          <TodayWishViewLabel
-            size="xsmall"
-            variant="ghost"
-            brandColor="black"
-            text={
-              (todayWishCount >= 2 && `오늘 ${todayWishCount}명이 찜했어요!`) ||
-              (todayViewCount >= 10 && `오늘 ${todayViewCount}명이 봤어요!`) ||
-              ''
-            }
-            compact={compact}
-            customStyle={todayWishViewLabelCustomStyle}
+    <>
+      <Flexbox
+        ref={ref}
+        direction="vertical"
+        gap={gap || (compact ? 12 : 17)}
+        onClick={handleClick}
+        customStyle={cardCustomStyle}
+        {...props}
+      >
+        <Box ref={imageBoxRef} customStyle={{ position: 'relative' }}>
+          <Image
+            src={src}
+            alt={`${product.title} 이미지`}
+            round={isRound ? 8 : 0}
+            onError={() => setLoadFailed(true)}
           />
-        )}
-        {showShopManageButton && (
-          <ShopMoreButton onClick={handleClickManageProduct}>
-            <Icon name="MoreHorizFilled" color="uiWhite" />
-          </ShopMoreButton>
-        )}
-        {!hideWishButton && (
-          <WishButton onClick={handleClickWish}>
-            {isWish ? (
-              <Icon name="HeartFilled" color="red" />
-            ) : (
-              <Icon name="HeartOutlined" color="uiWhite" />
-            )}
-          </WishButton>
-        )}
-        {!hidePlatformLogo && (
-          <Avatar
-            width={20}
-            height={20}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              product.productSeller.type === 4 || siteId === 34 || product.productSeller.type === 3
-                ? IMG_CAMEL_PLATFORM_NUMBER
-                : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
-            }.png`}
-            alt={`${siteUrlName || 'Platform'} Logo Img`}
-            customStyle={{ position: 'absolute', top: 10, left: 10 }}
-          />
-        )}
-        {!hideOverlay && showMyShopHideOverlay && status === 8 && (
-          <MyShopHideOverlay variant="h4" isRound={isRound} />
-        )}
-        {!hideOverlay && showHideOverlay && status === 8 && (
-          <HideOverlay variant="h4" isRound={isRound} />
-        )}
-        {!hideOverlay &&
-          PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-          status === 4 && <ReservingOverlay variant="h4" isRound={isRound} />}
-        {!hideOverlay &&
-          PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
-          status === 1 && <SoldOutOverlay variant="h4" isRound={isRound} />}
-      </Box>
-      <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
-        <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
-          {!isNormalseller && isSafe && !hideSafePayment && <span>안전결제 </span>}
-          {title}
-        </Title>
-        <Flexbox
-          alignment="center"
-          gap={6}
-          customStyle={{
-            marginBottom: 4,
-            flexWrap: 'wrap',
-            display: !hidePrice ? 'flex' : 'none',
-            overflowY: 'hidden'
-          }}
-        >
-          {!hidePrice && (
-            <Typography variant="h4" weight="bold" customStyle={titlePriceStyle}>
-              {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-            </Typography>
+          {!hideProductLabel && productLabels.length > 0 && (
+            <Flexbox customStyle={{ position: 'absolute', left: compact ? 0 : 12, bottom: -3 }}>
+              {productLabels.map(({ description }, index) => (
+                <ProductLabel
+                  key={`product-label-${description}`}
+                  showDivider={index !== 0}
+                  text={description}
+                  isSingle={productLabels.length === 1}
+                />
+              ))}
+            </Flexbox>
           )}
-          {!hideLegitStatusLabel && productLegitStatusText && (
-            <Label
-              variant="outline"
+          {showTodayWishViewLabel && (todayWishCount >= 2 || todayViewCount >= 10) && (
+            <TodayWishViewLabel
               size="xsmall"
-              brandColor="black"
-              text={productLegitStatusText}
-            />
-          )}
-          {showCountLabel && (priceDownCount >= 1 || updatedCount >= 3) && (
-            <Label
-              variant="solid"
-              size="xsmall"
+              variant="ghost"
               brandColor="black"
               text={
-                (priceDownCount >= 1 && `가격 ${priceDownCount}번 내림`) ||
-                (updatedCount >= 3 && `끌올 ${updatedCount}회`) ||
+                (todayWishCount >= 2 && `오늘 ${todayWishCount}명이 찜했어요!`) ||
+                (todayViewCount >= 10 && `오늘 ${todayViewCount}명이 봤어요!`) ||
                 ''
               }
-              customStyle={{ color: '#ACFF25' }}
+              compact={compact}
+              customStyle={todayWishViewLabelCustomStyle}
             />
           )}
-          {showNewLabel && (
-            <Typography variant="small2" weight="medium" brandColor="red">
-              NEW
-            </Typography>
+          {showShopManageButton && (
+            <ShopMoreButton onClick={handleClickManageProduct}>
+              <Icon name="MoreHorizFilled" color="uiWhite" />
+            </ShopMoreButton>
           )}
-          {!hideUpdatedCountLabel && updatedCount > 0 && (
-            <Label
-              variant="ghost"
-              brandColor="blue"
-              size="xsmall"
-              text={`끌올 ${commaNumber(updatedCount || 0)}회`}
+          {!hideWishButton && (
+            <WishButton onClick={handleClickWish}>
+              {isWish ? (
+                <Icon name="HeartFilled" color="red" />
+              ) : (
+                <Icon name="HeartOutlined" color="uiWhite" />
+              )}
+            </WishButton>
+          )}
+          {!hidePlatformLogo && (
+            <Avatar
+              width={20}
+              height={20}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                product.productSeller.type === 4 ||
+                siteId === 34 ||
+                product.productSeller.type === 3
+                  ? IMG_CAMEL_PLATFORM_NUMBER
+                  : (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+              }.png`}
+              alt={`${siteUrlName || 'Platform'} Logo Img`}
+              customStyle={{ position: 'absolute', top: 10, left: 10 }}
             />
           )}
-          {!hidePriceDownCountLabel && priceDownCount > 0 && (
-            <Label
-              variant="ghost"
-              brandColor="blue"
-              size="xsmall"
-              text={`가격 ${commaNumber(priceDownCount || 0)}번 내림`}
-            />
+          {!hideOverlay && showMyShopHideOverlay && status === 8 && (
+            <MyShopHideOverlay variant="h4" isRound={isRound} />
           )}
-        </Flexbox>
-        {!hideAreaWithDateInfo && (
-          <Area variant="small2" weight="medium">
-            <Box component="span" customStyle={areaWithDateInfoCustomStyle}>
-              {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
-                new Date(datePosted)
-              )}${area ? ` · ${getProductArea(area)}` : ''}`}
-            </Box>
-          </Area>
-        )}
+          {!hideOverlay && showHideOverlay && status === 8 && (
+            <HideOverlay variant="h4" isRound={isRound} />
+          )}
+          {!hideOverlay &&
+            PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+            status === 4 && <ReservingOverlay variant="h4" isRound={isRound} />}
+          {!hideOverlay &&
+            PRODUCT_STATUS[status as keyof typeof PRODUCT_STATUS] !== PRODUCT_STATUS['0'] &&
+            status === 1 && <SoldOutOverlay variant="h4" isRound={isRound} />}
+        </Box>
+        <Flexbox direction="vertical" gap={4} customStyle={{ padding: compact ? 0 : '0 12px' }}>
+          <Title variant="body2" weight="medium" customStyle={titlePriceStyle}>
+            {!isNormalseller && isSafe && !hideSafePayment && <span>안전결제 </span>}
+            {title}
+          </Title>
+          <Flexbox
+            alignment="center"
+            gap={6}
+            customStyle={{
+              marginBottom: 4,
+              flexWrap: 'wrap',
+              display: !hidePrice ? 'flex' : 'none',
+              overflowY: 'hidden'
+            }}
+          >
+            {!hidePrice && (
+              <Typography variant="h4" weight="bold" customStyle={titlePriceStyle}>
+                {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+              </Typography>
+            )}
+            {!hideLegitStatusLabel && productLegitStatusText && (
+              <Label
+                variant="outline"
+                size="xsmall"
+                brandColor="black"
+                text={productLegitStatusText}
+              />
+            )}
+            {showCountLabel && (priceDownCount >= 1 || updatedCount >= 3) && (
+              <Label
+                variant="solid"
+                size="xsmall"
+                brandColor="black"
+                text={
+                  (priceDownCount >= 1 && `가격 ${priceDownCount}번 내림`) ||
+                  (updatedCount >= 3 && `끌올 ${updatedCount}회`) ||
+                  ''
+                }
+                customStyle={{ color: '#ACFF25' }}
+              />
+            )}
+            {showNewLabel && (
+              <Typography variant="small2" weight="medium" brandColor="red">
+                NEW
+              </Typography>
+            )}
+            {!hideUpdatedCountLabel && updatedCount > 0 && (
+              <Label
+                variant="ghost"
+                brandColor="blue"
+                size="xsmall"
+                text={`끌올 ${commaNumber(updatedCount || 0)}회`}
+              />
+            )}
+            {!hidePriceDownCountLabel && priceDownCount > 0 && (
+              <Label
+                variant="ghost"
+                brandColor="blue"
+                size="xsmall"
+                text={`가격 ${commaNumber(priceDownCount || 0)}번 내림`}
+              />
+            )}
+          </Flexbox>
+          {!hideAreaWithDateInfo && (
+            <Area variant="small2" weight="medium">
+              <Box component="span" customStyle={areaWithDateInfoCustomStyle}>
+                {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
+                  new Date(datePosted)
+                )}${area ? ` · ${getProductArea(area)}` : ''}`}
+              </Box>
+            </Area>
+          )}
 
-        {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0 || viewCount > 0) && (
-          <MetaSocial>
-            {viewCount > 0 && (
-              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="ViewOutlined" width={14} height={14} color="ui60" />
-                <Typography variant="small2" weight="medium" color="ui60">
-                  {viewCount}
-                </Typography>
-              </Flexbox>
-            )}
-            {wishCount > 0 && (
-              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="HeartOutlined" width={14} height={14} color="ui60" />
-                <Typography variant="small2" weight="medium" color="ui60">
-                  {wishCount}
-                </Typography>
-              </Flexbox>
-            )}
-            {purchaseCount > 0 && (
-              <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
-                <Icon name="MessageOutlined" width={14} height={14} color="ui60" />
-                <Typography variant="small2" weight="medium" color="ui60">
-                  {purchaseCount}
-                </Typography>
-              </Flexbox>
-            )}
-          </MetaSocial>
-        )}
-        {customLabel}
+          {!hideMetaCamelInfo && (wishCount > 0 || purchaseCount > 0 || viewCount > 0) && (
+            <MetaSocial>
+              {viewCount > 0 && (
+                <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
+                  <Icon name="ViewOutlined" width={14} height={14} color="ui60" />
+                  <Typography variant="small2" weight="medium" color="ui60">
+                    {viewCount}
+                  </Typography>
+                </Flexbox>
+              )}
+              {wishCount > 0 && (
+                <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
+                  <Icon name="HeartOutlined" width={14} height={14} color="ui60" />
+                  <Typography variant="small2" weight="medium" color="ui60">
+                    {wishCount}
+                  </Typography>
+                </Flexbox>
+              )}
+              {purchaseCount > 0 && (
+                <Flexbox alignment="center" gap={2} customStyle={metaCamelInfoCustomStyle}>
+                  <Icon name="MessageOutlined" width={14} height={14} color="ui60" />
+                  <Typography variant="small2" weight="medium" color="ui60">
+                    {purchaseCount}
+                  </Typography>
+                </Flexbox>
+              )}
+            </MetaSocial>
+          )}
+          {customLabel}
+        </Flexbox>
       </Flexbox>
-    </Flexbox>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+    </>
   );
 });
 

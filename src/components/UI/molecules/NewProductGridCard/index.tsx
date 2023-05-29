@@ -17,6 +17,8 @@ import {
 } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+
 import type { Product, ProductResult } from '@dto/product';
 
 import UserTraceRecord from '@library/userTraceRecord';
@@ -145,7 +147,7 @@ function NewProductGridCard({
   const [loadFailed, setLoadFailed] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
@@ -164,7 +166,7 @@ function NewProductGridCard({
         await onWishAfterChangeCallback(product, true);
       }
 
-      setOsAlarm();
+      checkOsAlarm();
 
       toastStack({
         children: '찜목록에 추가했어요!',
@@ -275,42 +277,84 @@ function NewProductGridCard({
   }, [productLegit]);
 
   return (
-    <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
-      <Box
-        customStyle={{
-          position: 'relative'
-        }}
-      >
-        {!hideLabel && !isAuthProduct && isAuthSeller && (
-          <Flexbox
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1,
-              borderRadius: 4,
-              backgroundColor: common.ui20
-            }}
-          >
-            <CamelLogoIcon />
-            <Typography
-              variant="small2"
-              weight="bold"
-              color="uiWhite"
+    <>
+      <Flexbox onClick={handleClick} {...props} direction="vertical" customStyle={customStyle}>
+        <Box
+          customStyle={{
+            position: 'relative'
+          }}
+        >
+          {!hideLabel && !isAuthProduct && isAuthSeller && (
+            <Flexbox
               customStyle={{
-                padding: '3px 4px 3px 2px'
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1,
+                borderRadius: 4,
+                backgroundColor: common.ui20
               }}
             >
-              인증판매자
-            </Typography>
-          </Flexbox>
-        )}
-        {!hideLabel &&
-          (!isAuthSeller || isAuthProduct) &&
-          product.productSeller.type !== 4 &&
-          siteId !== 34 && (
-            <Flexbox gap={4} customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
-              {isAuthSeller ? (
+              <CamelLogoIcon />
+              <Typography
+                variant="small2"
+                weight="bold"
+                color="uiWhite"
+                customStyle={{
+                  padding: '3px 4px 3px 2px'
+                }}
+              >
+                인증판매자
+              </Typography>
+            </Flexbox>
+          )}
+          {!hideLabel &&
+            (!isAuthSeller || isAuthProduct) &&
+            product.productSeller.type !== 4 &&
+            siteId !== 34 && (
+              <Flexbox gap={4} customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
+                {isAuthSeller ? (
+                  <Flexbox
+                    alignment="center"
+                    justifyContent="center"
+                    customStyle={{
+                      height: 18,
+                      borderRadius: 4,
+                      backgroundColor: common.ui20
+                    }}
+                  >
+                    <CamelLogoIcon />
+                  </Flexbox>
+                ) : (
+                  <Avatar
+                    width={18}
+                    height={18}
+                    src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                      (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
+                    }.png`}
+                    alt={`${siteUrlName || 'Platform'} Logo Img`}
+                    disableSkeleton
+                  />
+                )}
+                {isAuthProduct && (
+                  <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
+                )}
+              </Flexbox>
+            )}
+          {!hideLabel &&
+            (!isAuthSeller || isAuthProduct) &&
+            (product.productSeller.type === 4 ||
+              siteId === 34 ||
+              product.productSeller.type === 3) && (
+              <Flexbox
+                gap={4}
+                customStyle={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8,
+                  zIndex: 1
+                }}
+              >
                 <Flexbox
                   alignment="center"
                   justifyContent="center"
@@ -322,196 +366,162 @@ function NewProductGridCard({
                 >
                   <CamelLogoIcon />
                 </Flexbox>
-              ) : (
-                <Avatar
-                  width={18}
-                  height={18}
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-                    (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
-                  }.png`}
-                  alt={`${siteUrlName || 'Platform'} Logo Img`}
-                  disableSkeleton
-                />
-              )}
-              {isAuthProduct && (
-                <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
-              )}
-            </Flexbox>
-          )}
-        {!hideLabel &&
-          (!isAuthSeller || isAuthProduct) &&
-          (product.productSeller.type === 4 ||
-            siteId === 34 ||
-            product.productSeller.type === 3) && (
-            <Flexbox
-              gap={4}
-              customStyle={{
-                position: 'absolute',
-                top: 8,
-                left: 8,
-                zIndex: 1
-              }}
-            >
-              <Flexbox
-                alignment="center"
-                justifyContent="center"
-                customStyle={{
-                  height: 18,
-                  borderRadius: 4,
-                  backgroundColor: common.ui20
-                }}
-              >
-                <CamelLogoIcon />
+                {isAuthProduct && (
+                  <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
+                )}
               </Flexbox>
-              {isAuthProduct && (
-                <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
-              )}
-            </Flexbox>
+            )}
+          <Image
+            ratio="5:6"
+            src={
+              loadFailed
+                ? imageMain || imageThumbnail
+                : getProductCardImageResizePath(
+                    imageMain || imageThumbnail,
+                    butlerExhibition ? 1000 : 0
+                  )
+            }
+            alt={`${productTitle} 이미지`}
+            round={variant === 'gridA' ? 0 : 8}
+            onError={() => setLoadFailed(true)}
+          />
+          {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && (
+            <WishButtonA variant={variant} onClick={handleClickWish}>
+              <Icon
+                name="HeartFilled"
+                width={20}
+                height={20}
+                color={isWish ? 'red-light' : 'ui80'}
+              />
+            </WishButtonA>
           )}
-        <Image
-          ratio="5:6"
-          src={
-            loadFailed
-              ? imageMain || imageThumbnail
-              : getProductCardImageResizePath(
-                  imageMain || imageThumbnail,
-                  butlerExhibition ? 1000 : 0
+          {status > 0 && (
+            <Overlay isRound={variant !== 'gridA'}>
+              <Typography variant="h4" weight="bold" color="cmnW">
+                {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
+              </Typography>
+            </Overlay>
+          )}
+        </Box>
+        <Content variant={variant}>
+          {!hideWishButton && !hideMetaInfo && ['gridC', 'swipeX'].includes(variant) && (
+            <WishButtonB variant={variant} onClick={handleClickWish}>
+              <Icon
+                name={isWish ? 'HeartFilled' : 'HeartOutlined'}
+                width={20}
+                height={20}
+                color={isWish ? 'red-light' : 'ui80'}
+              />
+            </WishButtonB>
+          )}
+          <Flexbox>
+            <Typography variant="body2" weight="bold" noWrap>
+              {nameEng
+                .split(' ')
+                .map(
+                  (splitNameEng) =>
+                    `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                      1,
+                      splitNameEng.length
+                    )}`
                 )
-          }
-          alt={`${productTitle} 이미지`}
-          round={variant === 'gridA' ? 0 : 8}
-          onError={() => setLoadFailed(true)}
-        />
-        {!hideWishButton && !['gridC', 'swipeX'].includes(variant) && (
-          <WishButtonA variant={variant} onClick={handleClickWish}>
-            <Icon name="HeartFilled" width={20} height={20} color={isWish ? 'red-light' : 'ui80'} />
-          </WishButtonA>
-        )}
-        {status > 0 && (
-          <Overlay isRound={variant !== 'gridA'}>
-            <Typography variant="h4" weight="bold" color="cmnW">
-              {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
+                .join(' ')}
             </Typography>
-          </Overlay>
-        )}
-      </Box>
-      <Content variant={variant}>
-        {!hideWishButton && !hideMetaInfo && ['gridC', 'swipeX'].includes(variant) && (
-          <WishButtonB variant={variant} onClick={handleClickWish}>
-            <Icon
-              name={isWish ? 'HeartFilled' : 'HeartOutlined'}
-              width={20}
-              height={20}
-              color={isWish ? 'red-light' : 'ui80'}
-            />
-          </WishButtonB>
-        )}
-        <Flexbox>
-          <Typography variant="body2" weight="bold" noWrap>
-            {nameEng
-              .split(' ')
-              .map(
-                (splitNameEng) =>
-                  `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
-                    1,
-                    splitNameEng.length
-                  )}`
-              )
-              .join(' ')}
-          </Typography>
-          <Box customStyle={{ minWidth: 36, height: 'fit-content' }} />
-        </Flexbox>
-        <Typography
-          variant="body2"
-          noWrap
-          lineClamp={2}
-          color="ui60"
-          customStyle={{
-            marginTop: 2
-          }}
-        >
-          {productTitle}
-        </Typography>
-        {!hidePrice && (
-          <Flexbox
-            gap={4}
-            alignment="baseline"
-            customStyle={{
-              marginTop: 4
-            }}
-          >
-            <Typography
-              variant="h3"
-              weight="bold"
-              customStyle={{
-                minWidth: 'fit-content'
-              }}
-            >
-              {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-            </Typography>
-            {hideSize && subText && (
-              <Typography variant="body2" weight="medium" noWrap color="red-light">
-                {subText}
-              </Typography>
-            )}
-            {!hideSize && (
-              <Typography variant="body2" weight="medium" noWrap color="ui60">
-                {sizeText}
-              </Typography>
-            )}
+            <Box customStyle={{ minWidth: 36, height: 'fit-content' }} />
           </Flexbox>
-        )}
-        {!hideAreaInfo && (
           <Typography
-            variant="small2"
+            variant="body2"
             noWrap
+            lineClamp={2}
             color="ui60"
             customStyle={{
-              marginTop: 8
+              marginTop: 2
             }}
           >
-            {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
-              new Date(datePosted)
-            )}${area ? ` · ${getProductArea(area)}` : ''}`}
+            {productTitle}
           </Typography>
-        )}
-        {!hideMetaInfo && (wishCount > 0 || purchaseCount > 0) && (
-          <Flexbox
-            gap={12}
-            customStyle={{
-              marginTop: 6
-            }}
-          >
-            {wishCount > 0 && (
-              <Flexbox gap={2}>
-                <Icon name="HeartFilled" width={12} height={12} color="ui80" />
-                <Typography variant="small2" weight="medium" color="ui80">
-                  {commaNumber(wishCount)}
+          {!hidePrice && (
+            <Flexbox
+              gap={4}
+              alignment="baseline"
+              customStyle={{
+                marginTop: 4
+              }}
+            >
+              <Typography
+                variant="h3"
+                weight="bold"
+                customStyle={{
+                  minWidth: 'fit-content'
+                }}
+              >
+                {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+              </Typography>
+              {hideSize && subText && (
+                <Typography variant="body2" weight="medium" noWrap color="red-light">
+                  {subText}
                 </Typography>
-              </Flexbox>
-            )}
-            {purchaseCount > 0 && (
-              <Flexbox gap={2}>
-                <Icon name="MessageFilled" width={12} height={12} color="ui80" />
-                <Typography variant="small2" weight="medium" color="ui80">
-                  {commaNumber(purchaseCount)}
+              )}
+              {!hideSize && (
+                <Typography variant="body2" weight="medium" noWrap color="ui60">
+                  {sizeText}
                 </Typography>
-              </Flexbox>
-            )}
-          </Flexbox>
-        )}
-        {bottomLabel && (
-          <Flexbox
-            gap={2}
-            customStyle={{
-              marginTop: 12
-            }}
-          >
-            {bottomLabel}
-          </Flexbox>
-        )}
-      </Content>
-    </Flexbox>
+              )}
+            </Flexbox>
+          )}
+          {!hideAreaInfo && (
+            <Typography
+              variant="small2"
+              noWrap
+              color="ui60"
+              customStyle={{
+                marginTop: 8
+              }}
+            >
+              {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
+                new Date(datePosted)
+              )}${area ? ` · ${getProductArea(area)}` : ''}`}
+            </Typography>
+          )}
+          {!hideMetaInfo && (wishCount > 0 || purchaseCount > 0) && (
+            <Flexbox
+              gap={12}
+              customStyle={{
+                marginTop: 6
+              }}
+            >
+              {wishCount > 0 && (
+                <Flexbox gap={2}>
+                  <Icon name="HeartFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
+                    {commaNumber(wishCount)}
+                  </Typography>
+                </Flexbox>
+              )}
+              {purchaseCount > 0 && (
+                <Flexbox gap={2}>
+                  <Icon name="MessageFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
+                    {commaNumber(purchaseCount)}
+                  </Typography>
+                </Flexbox>
+              )}
+            </Flexbox>
+          )}
+          {bottomLabel && (
+            <Flexbox
+              gap={2}
+              customStyle={{
+                marginTop: 12
+              }}
+            >
+              {bottomLabel}
+            </Flexbox>
+          )}
+        </Content>
+      </Flexbox>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+    </>
   );
 }
 

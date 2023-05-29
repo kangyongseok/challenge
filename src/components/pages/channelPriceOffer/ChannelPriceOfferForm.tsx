@@ -15,6 +15,8 @@ import {
   useTheme
 } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+
 import { logEvent } from '@library/amplitude';
 
 import { postProductOffer } from '@api/productOffer';
@@ -46,8 +48,10 @@ function ChannelPriceOfferForm() {
   const [value, setValue] = useState<string | number>('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [open, setOpen] = useState(false);
-  const setOsAlarm = useOsAlarm();
+
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
+
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const { data: { product } = {}, isLoading } = useQuery(
     queryKeys.channels.channel(Number(id)),
@@ -96,7 +100,8 @@ function ChannelPriceOfferForm() {
   const handleClick = () => {
     if (!product) return;
 
-    setOsAlarm();
+    checkOsAlarm();
+
     if (prevChannelAlarm && checkAgent.isIOSApp()) return;
 
     logEvent(attrKeys.channel.SUBMIT_PRODUCT_OFFER, {
@@ -287,6 +292,7 @@ function ChannelPriceOfferForm() {
       <Toast open={open} onClose={() => setOpen(false)}>
         너무 낮은 금액으로는 제안할 수 없어요.
       </Toast>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
     </>
   );
 }

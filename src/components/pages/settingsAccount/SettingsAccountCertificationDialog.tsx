@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -52,15 +53,7 @@ function SettingsAccountCertificationDialog() {
   }, [data, isLoading]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => router.back()}
-      fullWidth
-      customStyle={{
-        maxWidth: 311,
-        padding: '32px 20px 20px'
-      }}
-    >
+    <Dialog open={open} onClose={() => router.back()}>
       <Typography
         variant="h3"
         weight="bold"

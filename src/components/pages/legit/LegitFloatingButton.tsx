@@ -6,6 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+import { AppUpdateNoticeDialog, LegitRequestOnlyInAppDialog } from '@components/UI/organisms';
+
 import { logEvent } from '@library/amplitude';
 
 import { fetchUserLegitTargets } from '@api/user';
@@ -18,7 +21,6 @@ import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
-  handleClickAppDownload,
   isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
@@ -26,7 +28,7 @@ import {
 
 import { legitRequestState } from '@recoil/legitRequest';
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
-import { dialogState, loginBottomSheetState } from '@recoil/common';
+import { loginBottomSheetState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -45,11 +47,10 @@ function LegitFloatingButton() {
   );
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const { isSuccess } = useQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets, {
     enabled: !!accessUser,
@@ -57,6 +58,9 @@ function LegitFloatingButton() {
   });
 
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
   const openTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const triggered = useReverseScrollTrigger();
@@ -68,46 +72,17 @@ function LegitFloatingButton() {
     });
 
     if (!checkAgent.isMobileApp()) {
-      setDialogState({
-        type: 'legitRequestOnlyInApp',
-        customStyleTitle: { minWidth: 270 },
-        secondButtonAction() {
-          handleClickAppDownload({});
-        }
-      });
-
+      setOpenDialog(true);
       return;
     }
 
     if (isNeedUpdateImageUploadIOSVersion()) {
-      setDialogState({
-        type: 'appUpdateNotice',
-        customStyleTitle: { minWidth: 269 },
-        secondButtonAction: () => {
-          if (
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.callExecuteApp
-          )
-            window.webkit.messageHandlers.callExecuteApp.postMessage(
-              'itms-apps://itunes.apple.com/app/id1541101835'
-            );
-        }
-      });
-
+      setOpenIOSNoticeDialog(true);
       return;
     }
 
     if (isNeedUpdateImageUploadAOSVersion()) {
-      setDialogState({
-        type: 'appUpdateNotice',
-        customStyleTitle: { minWidth: 269 },
-        secondButtonAction: () => {
-          if (window.webview && window.webview.callExecuteApp)
-            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-        }
-      });
-
+      setOpenAOSNoticeDialog(true);
       return;
     }
 
@@ -119,18 +94,17 @@ function LegitFloatingButton() {
       return;
     }
 
-    setOsAlarm();
+    checkOsAlarm();
     resetLegitRequestState();
 
     router.push({ pathname: '/legit/request/selectCategory' });
   }, [
     userData,
     removeUserDate,
-    setOsAlarm,
+    checkOsAlarm,
     resetLegitRequestState,
     accessUser,
     router,
-    setDialogState,
     setLoginBottomSheet
   ]);
 
@@ -216,6 +190,30 @@ function LegitFloatingButton() {
           </LegitButton>
         </Tooltip>
       </Wrapper>
+      <LegitRequestOnlyInAppDialog open={openDialog} onClose={() => setOpenDialog(false)} />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
     </>
   );
 }

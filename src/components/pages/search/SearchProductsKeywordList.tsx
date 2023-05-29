@@ -4,16 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import {
-  Box,
-  Button,
-  Flexbox,
-  Icon,
-  Label,
-  Skeleton,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Icon, Label, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { ProductKeywordsContent } from '@dto/user';
@@ -247,23 +238,19 @@ function SearchProductsKeywordList({ handleClickSaveTime }: { handleClickSaveTim
           </CardList>
         </Box>
       </Flexbox>
-      <Toast open={deleteToast} onClose={() => setDeleteToast(false)} autoHideDuration={4000}>
-        <Flexbox justifyContent="space-between" alignment="center" gap={8}>
-          <Typography
-            weight="medium"
-            customStyle={{ flexGrow: 1, color: palette.common.uiWhite, textAlign: 'left' }}
-          >
-            저장한 매물목록이 삭제되었습니다.
-          </Typography>
-          <RollbackButton variant="solid" onClick={handleClickRollback}>
-            되돌리기
-          </RollbackButton>
-        </Flexbox>
+      <Toast
+        open={deleteToast}
+        onClose={() => setDeleteToast(false)}
+        autoHideDuration={4000}
+        action={{
+          text: '되돌리기',
+          onClick: handleClickRollback
+        }}
+      >
+        저장한 매물목록이 삭제되었습니다.
       </Toast>
       <Toast open={rollbackToast} onClose={() => setRollbackToast(false)}>
-        <Typography weight="medium" customStyle={{ color: palette.common.uiWhite }}>
-          삭제한 매물목록을 다시 저장했어요.
-        </Typography>
+        삭제한 매물목록을 다시 저장했어요.
       </Toast>
     </>
   ) : null;
@@ -325,18 +312,6 @@ const Text = styled(Typography)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-`;
-
-const RollbackButton = styled(Button)`
-  background: none;
-  padding: 0;
-  height: auto;
-  text-decoration: underline;
-  color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
 `;
 
 export default SearchProductsKeywordList;

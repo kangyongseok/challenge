@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Typography } from '@mrcamelhub/camel-ui';
 
 import { settingsAccountConfirmDialogOpenState } from '@recoil/settingsAccount';
 
@@ -7,15 +8,7 @@ function SettingsAccountConfirmDialog() {
   const [open, setOpenState] = useRecoilState(settingsAccountConfirmDialogOpenState);
 
   return (
-    <Dialog
-      open={open}
-      onChange={() => setOpenState(false)}
-      fullWidth
-      customStyle={{
-        maxWidth: 311,
-        padding: '32px 20px 20px'
-      }}
-    >
+    <Dialog open={open} onChange={() => setOpenState(false)}>
       <Typography variant="h3" weight="bold" textAlign="center">
         계좌 등록 실패
       </Typography>

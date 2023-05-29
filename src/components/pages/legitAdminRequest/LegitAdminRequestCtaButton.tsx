@@ -5,6 +5,7 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import {
   BottomSheet,
   Box,
@@ -32,7 +33,6 @@ import {
   legitAdminOpinionDataState,
   legitAdminOpinionEditableState
 } from '@recoil/legitAdminOpinion/atom';
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitAdminRequestCtaButton() {
@@ -50,7 +50,6 @@ function LegitAdminRequestCtaButton() {
   const { result, description } = useRecoilValue(legitAdminOpinionDataState);
   const editable = useRecoilValue(legitAdminOpinionEditableState);
   const setLegitAdminOpinionEditableState = useSetRecoilState(legitAdminOpinionEditableState);
-  const setDialogState = useSetRecoilState(dialogState);
   const resetLegitAdminOpinionDataState = useResetRecoilState(legitAdminOpinionDataState);
 
   const { data: accessUser } = useQueryAccessUser();
@@ -60,6 +59,7 @@ function LegitAdminRequestCtaButton() {
   const [focused, setFocused] = useState(false);
   const [preConfirmDescription, setPreConfirmDescription] = useState('');
   const [selectedPhotoGuideDetailIds, setSelectedPhotoGuideDetailIds] = useState<number[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const {
     data: {
@@ -161,9 +161,10 @@ function LegitAdminRequestCtaButton() {
         opinionId: myLegitOpinion.id
       },
       {
-        onSuccess: () => {
-          refetch();
+        onSuccess: async () => {
+          await refetch();
           resetLegitAdminOpinionDataState();
+          setOpenDialog(false);
         }
       }
     );
@@ -236,36 +237,69 @@ function LegitAdminRequestCtaButton() {
 
   if (!isLegitHead && myLegitOpinion) {
     return (
-      <Box customStyle={{ minHeight: 92 }}>
-        <CtaButtonWrapper gap={8}>
-          <Button
-            fullWidth
-            variant="solid"
-            brandColor="primary"
-            size="xlarge"
-            onClick={() => setLegitAdminOpinionEditableState(true)}
+      <>
+        <Box customStyle={{ minHeight: 92 }}>
+          <CtaButtonWrapper gap={8}>
+            <Button
+              fullWidth
+              variant="solid"
+              brandColor="primary"
+              size="xlarge"
+              onClick={() => setLegitAdminOpinionEditableState(true)}
+            >
+              수정하기
+            </Button>
+            <Button
+              fullWidth
+              variant="outline-ghost"
+              brandColor="gray"
+              size="xlarge"
+              onClick={() => setOpenDialog(true)}
+              disabled={isLoadingDeleteMutate}
+            >
+              삭제하기
+            </Button>
+          </CtaButtonWrapper>
+        </Box>
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <Typography variant="h3" weight="bold">
+            감정의견을 삭제하시겠습니까?
+          </Typography>
+          <Typography
+            variant="h4"
+            customStyle={{
+              marginTop: 8
+            }}
           >
-            수정하기
-          </Button>
-          <Button
-            fullWidth
-            variant="outline-ghost"
-            brandColor="gray"
-            size="xlarge"
-            onClick={() =>
-              setDialogState({
-                type: 'deleteLegitAdminOpinion',
-                content: <Typography variant="h4">삭제되면 복구할 수 없습니다.</Typography>,
-                secondButtonAction: handleClickDeleteConfirm,
-                customStyleTitle: { minWidth: 269, paddingTop: 12 }
-              })
-            }
-            disabled={isLoadingDeleteMutate}
+            삭제되면 복구할 수 없습니다.
+          </Typography>
+          <Flexbox
+            gap={8}
+            customStyle={{
+              marginTop: 20
+            }}
           >
-            삭제하기
-          </Button>
-        </CtaButtonWrapper>
-      </Box>
+            <Button
+              fullWidth
+              variant="solid"
+              brandColor="primary"
+              size="large"
+              onClick={() => setOpenDialog(false)}
+            >
+              취소
+            </Button>
+            <Button
+              fullWidth
+              variant="ghost"
+              brandColor="black"
+              size="large"
+              onClick={handleClickDeleteConfirm}
+            >
+              확인
+            </Button>
+          </Flexbox>
+        </Dialog>
+      </>
     );
   }
 

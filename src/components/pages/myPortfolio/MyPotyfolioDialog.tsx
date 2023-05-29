@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -30,7 +31,6 @@ function MyPotyfolioDialog() {
       onClose={() => {
         //
       }}
-      customStyle={{ width: 303 }}
     >
       <Flexbox direction="vertical" alignment="center" justifyContent="center">
         <Icon name="LogoText_96_20" height={10} customStyle={{ marginBottom: 10 }} />

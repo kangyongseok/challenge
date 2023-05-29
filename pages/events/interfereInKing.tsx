@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, MouseEvent } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
@@ -20,6 +20,7 @@ import {
 import styled from '@emotion/styled';
 import type { CSSObject } from '@emotion/react';
 
+import { SNSShareDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -32,7 +33,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { executedShareURl } from '@utils/common';
 
-import { deviceIdState, dialogState } from '@recoil/common';
+import type { ShareData } from '@typings/common';
+import { deviceIdState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function EventInterfereInKing() {
@@ -47,10 +49,11 @@ function EventInterfereInKing() {
   const { data: accessUser } = useQueryAccessUser();
 
   const deviceId = useRecoilValue(deviceIdState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const [open, setOpen] = useState(false);
   const [openToast, setOpenToast] = useState(false);
+  const [openShareDialog, setOpenShareDialog] = useState(false);
+  const [shareData, setShareData] = useState<ShareData>();
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [content, setContent] = useState('');
@@ -119,7 +122,7 @@ function EventInterfereInKing() {
   };
 
   const handleClickShare = () => {
-    const shareData = {
+    const newShareData = {
       title: '카멜 참견왕 이벤트',
       description: '카멜에 마음껏 참여하고, 네이버페이 받아가세요!',
       image: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-interfere-in-king-main.png`,
@@ -128,12 +131,13 @@ function EventInterfereInKing() {
 
     if (
       !executedShareURl({
-        url: shareData.url,
-        title: shareData.title,
-        text: shareData.description
+        url: newShareData.url,
+        title: newShareData.title,
+        text: newShareData.description
       })
     ) {
-      setDialogState({ type: 'SNSShare', shareData });
+      setOpenShareDialog(true);
+      setShareData(newShareData);
     }
   };
 
@@ -403,6 +407,11 @@ function EventInterfereInKing() {
       <Toast open={openToast} onClose={() => setOpenToast(false)}>
         이벤트 참여가 완료되었습니다!
       </Toast>
+      <SNSShareDialog
+        open={openShareDialog}
+        onClose={() => setOpenShareDialog(false)}
+        shareData={shareData}
+      />
     </>
   );
 }

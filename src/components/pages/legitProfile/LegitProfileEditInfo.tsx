@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -17,6 +16,7 @@ import {
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { AppUpdateNoticeDialog, FeatureIsMobileAppDownDialog } from '@components/UI/organisms';
 import { TextInput } from '@components/UI/molecules';
 
 import type { PutUserLegitProfileData } from '@dto/user';
@@ -29,13 +29,10 @@ import { HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import {
   checkAgent,
-  handleClickAppDownload,
   isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
-
-import { dialogState } from '@recoil/common';
 
 interface LegitProfileEditInfoProps extends PutUserLegitProfileData {
   legitsBrands: LegitsBrand[];
@@ -54,7 +51,9 @@ function LegitProfileEditInfo({
     }
   } = useTheme();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
   const { mutate: mutatePutLegitProfile, isLoading: isLoadingMutate } = useMutation(
     putLegitProfile,
@@ -81,52 +80,22 @@ function LegitProfileEditInfo({
     mutatePutLegitProfile(putLegitProfileParams);
   }, [isLoadingMutate, mutatePutLegitProfile, putLegitProfileParams]);
 
-  const appDownLoadDialog = useCallback(() => {
-    setDialogState({
-      type: 'featureIsMobileAppDown',
-      customStyleTitle: { minWidth: 311 },
-      secondButtonAction() {
-        handleClickAppDownload({});
-      }
-    });
-  }, [setDialogState]);
-
   const handleChangeImage = useCallback(
     (isBackground: boolean) => () => {
       if (isLoadingMutate || isLoadingGetPhoto) return;
 
       if (!checkAgent.isMobileApp()) {
-        appDownLoadDialog();
+        setOpen(true);
+        return;
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callExecuteApp
-            )
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                'itms-apps://itunes.apple.com/app/id1541101835'
-              );
-          }
-        });
-
+        setOpenIOSNoticeDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadAOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (window.webview && window.webview.callExecuteApp)
-              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-          }
-        });
+        setOpenAOSNoticeDialog(true);
         return;
       }
 
@@ -162,7 +131,7 @@ function LegitProfileEditInfo({
         );
       }
     },
-    [appDownLoadDialog, isLoadingGetPhoto, isLoadingMutate, setDialogState]
+    [isLoadingGetPhoto, isLoadingMutate]
   );
 
   useEffect(() => {
@@ -388,6 +357,29 @@ function LegitProfileEditInfo({
           </Button>
         </ButtonBox>
       </ButtonWrapper>
+      <FeatureIsMobileAppDownDialog open={open} onClose={() => setOpen(false)} />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
     </>
   );
 }

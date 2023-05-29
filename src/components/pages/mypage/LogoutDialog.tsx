@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';

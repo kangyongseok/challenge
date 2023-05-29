@@ -8,6 +8,8 @@ import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { AppUpdateForChatDialog } from '@components/UI/organisms';
+
 import type { Product } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
@@ -27,7 +29,6 @@ import { checkAgent, needUpdateChatIOSVersion } from '@utils/common';
 import { getUnreadMessagesCount } from '@utils/channel';
 
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily, sendbirdState } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 
@@ -59,7 +60,6 @@ function ProductSellerBottomMenu({
 
   const { initialized } = useRecoilValue(sendbirdState);
 
-  const setDialogState = useSetRecoilState(dialogState);
   const setOpenDelete = useSetRecoilState(userShopOpenStateFamily('deleteConfirm'));
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
@@ -74,6 +74,7 @@ function ProductSellerBottomMenu({
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
   const [openMore, setOpenMore] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const isDeletedProduct = productStatusCode.deleted === status;
   const isTransferred =
@@ -222,17 +223,7 @@ function ProductSellerBottomMenu({
     });
 
     if (needUpdateChatIOSVersion()) {
-      setDialogState({
-        type: 'requiredAppUpdateForChat',
-        customStyleTitle: { minWidth: 270 },
-        disabledOnClose: true,
-        secondButtonAction: () => {
-          window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-            'itms-apps://itunes.apple.com/app/id1541101835'
-          );
-        }
-      });
-
+      setOpen(true);
       return;
     }
 
@@ -419,6 +410,7 @@ function ProductSellerBottomMenu({
           </Button>
         </Flexbox>
       </BottomSheet>
+      <AppUpdateForChatDialog open={open} />
     </StyledWrap>
   );
 }

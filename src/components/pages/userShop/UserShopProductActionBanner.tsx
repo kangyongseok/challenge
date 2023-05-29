@@ -158,7 +158,6 @@ const ActionBannerWrap = styled(Flexbox)<{ bg: string }>`
   background: ${({ bg }) => bg};
   margin-top: 12px;
   padding: 0 12px;
-  margin-bottom: 32px;
 `;
 
 export default UserShopProductActionBanner;

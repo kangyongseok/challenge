@@ -20,11 +20,7 @@ import {
 } from '@utils/common';
 
 import type { SaveCamelSellerProductData } from '@typings/camelSeller';
-import {
-  camelSellerAppUpdateDialogOpenState,
-  dialogState,
-  loginBottomSheetState
-} from '@recoil/common';
+import { camelSellerAppUpdateDialogOpenState, loginBottomSheetState } from '@recoil/common';
 import {
   camelSellerDialogStateFamily,
   camelSellerHasOpenedSurveyBottomSheetState,
@@ -52,7 +48,6 @@ export default function useMoveCamelSeller({
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
   const setOpenAppUpdateDialogState = useSetRecoilState(camelSellerAppUpdateDialogOpenState);
   const setOpenLoginBottomSheetState = useSetRecoilState(loginBottomSheetState);
-  const setDialogState = useSetRecoilState(dialogState);
   const setContinueDialog = useSetRecoilState(camelSellerDialogStateFamily('continue'));
   const resetTempData = useResetRecoilState(camelSellerTempSaveDataState);
   const resetHasOpenedSurveyBottomSheetState = useResetRecoilState(
@@ -61,9 +56,9 @@ export default function useMoveCamelSeller({
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
 
   const { data: accessUser } = useQueryAccessUser();
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
-  const handleClick = () => {
+  const handleMoveCamelSeller = () => {
     LocalStorage.set(SOURCE, source);
 
     logEvent(attrKeys.camelSeller.CLICK_NEWPRODUCT, {
@@ -105,24 +100,7 @@ export default function useMoveCamelSeller({
     if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
       window.getAuthCamera = (result: boolean) => {
         if (!result) {
-          setDialogState({
-            type: 'appAuthCheck',
-            customStyleTitle: { minWidth: 269, marginTop: 12 },
-            firstButtonAction: () => {
-              if (
-                checkAgent.isIOSApp() &&
-                window.webkit &&
-                window.webkit.messageHandlers &&
-                window.webkit.messageHandlers.callMoveToSetting &&
-                window.webkit.messageHandlers.callMoveToSetting.postMessage
-              ) {
-                window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
-              }
-              if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
-                window.webview.moveToSetting();
-              }
-            }
-          });
+          //
         }
       };
     }
@@ -147,7 +125,7 @@ export default function useMoveCamelSeller({
 
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
-    setOsAlarm();
+    checkOsAlarm();
 
     if (checkedProductPhotoUploadGuide) {
       if (router.query.banner) {
@@ -160,5 +138,5 @@ export default function useMoveCamelSeller({
     }
   };
 
-  return handleClick;
+  return { handleMoveCamelSeller, openOsAlarmDialog, handleCloseOsAlarmDialog };
 }

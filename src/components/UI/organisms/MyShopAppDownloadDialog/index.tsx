@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { handleClickAppDownload } from '@utils/common';
 
@@ -23,15 +24,14 @@ function MyShopAppDownloadDialog() {
           open: false
         }))
       }
-      customStyle={{ width: '100%' }}
     >
-      <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
+      <Typography textAlign="center" weight="bold" variant="h3">
         판매하려면
       </Typography>
-      <Typography customStyle={{ textAlign: 'center' }} weight="bold" variant="h3">
+      <Typography textAlign="center" weight="bold" variant="h3">
         카멜 앱이 필요해요
       </Typography>
-      <Typography customStyle={{ textAlign: 'center', marginTop: 8 }} variant="h4">
+      <Typography textAlign="center" customStyle={{ marginTop: 8 }} variant="h4">
         지금 바로 앱을 다운받아볼까요?
       </Typography>
       <Flexbox customStyle={{ marginTop: 32 }} gap={8} direction="vertical">

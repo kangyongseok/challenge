@@ -5,7 +5,8 @@ import type {
   RefetchOptions,
   RefetchQueryFilters
 } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import type { ProductResult } from '@dto/product';
 import type { Order } from '@dto/order';
@@ -70,29 +71,15 @@ function ChannelPurchaseConfirmDialog({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      customStyle={{
-        maxWidth: 311,
-        padding: '32px 20px 20px'
-      }}
-    >
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{
-          textAlign: 'center'
-        }}
-      >
+    <Dialog open={open} onClose={handleClose}>
+      <Typography variant="h3" weight="bold" textAlign="center">
         구매한 매물을 구매확정할까요?
       </Typography>
       <Typography
         variant="h4"
+        textAlign="center"
         customStyle={{
-          marginTop: 8,
-          textAlign: 'center'
+          marginTop: 8
         }}
       >
         매물상태를 확인하고 구매확정해주세요.

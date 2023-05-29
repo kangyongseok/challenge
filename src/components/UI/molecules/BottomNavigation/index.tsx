@@ -11,7 +11,11 @@ import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
+import {
+  AppDownloadDialog,
+  AppUpdateForChatDialog,
+  MyShopAppDownloadDialog
+} from '@components/UI/organisms';
 import { Badge } from '@components/UI/atoms';
 
 import Sendbird from '@library/sendbird';
@@ -33,7 +37,6 @@ import {
   homePopularCamelProductListPrevPageState,
   homeSelectedTabStateFamily
 } from '@recoil/home';
-import { dialogState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
 import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -114,8 +117,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
 
   const [{ initialized, unreadMessagesCount }, setSendbirdState] = useRecoilState(sendbirdState);
 
-  const setDialogState = useSetRecoilState(dialogState);
-
   const resetCategory = useResetRecoilState(categoryState);
   const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
   const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
@@ -146,6 +147,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const [openTooltip, setOpenTooltip] = useState(false);
   const [openLegitNotProcessedTooltip, setOpenLegitNotProcessedTooltip] = useState(false);
   const [triangleLeft, setTriangleLeft] = useState(0);
+  const [open, setOpen] = useState(false);
 
   const legitNavRef = useRef<HTMLLIElement | null>(null);
 
@@ -170,16 +172,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       if (title === '채팅') {
         if (needUpdateChatIOSVersion()) {
           e.preventDefault();
-          setDialogState({
-            type: 'requiredAppUpdateForChat',
-            customStyleTitle: { minWidth: 270 },
-            disabledOnClose: true,
-            secondButtonAction: () => {
-              window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-                'itms-apps://itunes.apple.com/app/id1541101835'
-              );
-            }
-          });
+          setOpen(true);
           return;
         }
 
@@ -475,6 +468,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         onClick={handleClickTooltip}
       />
       <MyShopAppDownloadDialog />
+      <AppUpdateForChatDialog open={open} />
     </>
   );
 }

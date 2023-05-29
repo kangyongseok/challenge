@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from '@mrcamelhub/camel-ui-toast';
+import { DialogProvider } from '@mrcamelhub/camel-ui-dialog';
 
 import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
@@ -46,7 +47,6 @@ import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
 
-const DialogProvider = dynamic(() => import('@provider/DialogProvider'));
 const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'));
 const LegitResultSurveyTypeform = dynamic(
   () => import('@components/UI/organisms/LegitResultSurveyTypeform')
@@ -239,8 +239,9 @@ function App({ Component, pageProps }: AppProps) {
                         <AuthProvider>
                           <SessionProvider>
                             <ToastProvider>
-                              <DialogProvider />
-                              <Component {...pageProps} />
+                              <DialogProvider>
+                                <Component {...pageProps} />
+                              </DialogProvider>
                             </ToastProvider>
                           </SessionProvider>
                         </AuthProvider>

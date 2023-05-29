@@ -1,12 +1,11 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
-import { useRouter } from 'next/router';
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
 import { useQuery } from '@tanstack/react-query';
 
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  CamelSellerAuthPushDialog,
   CamelSellerCTAButton,
   CamelSellerCategoryBrand,
   CamelSellerCondition,
@@ -14,6 +13,7 @@ import {
   CamelSellerDescription,
   CamelSellerHeader,
   CamelSellerInfo,
+  CamelSellerNotiChannelDialog,
   CamelSellerPrice,
   CamelSellerProductImage,
   CamelSellerRecentBottomSheet,
@@ -41,13 +41,14 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent } from '@utils/common';
 
 import type { SaveCamelSellerProductData } from '@typings/camelSeller';
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function RegisterConfirm() {
-  const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
-  const setDialogState = useSetRecoilState(dialogState);
+
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const { data: alarmsInfo, isLoading } = useQuery(queryKeys.users.alarms(), fetchAlarm, {
     refetchOnMount: true
   });
@@ -59,18 +60,7 @@ function RegisterConfirm() {
         title: 'ALARM'
       });
 
-      setDialogState({
-        type: 'notiChannelFalse',
-        disabledOnClose: true,
-        secondButtonAction: () => {
-          logEvent(attrKeys.camelSeller.CLICK_ALARM, {
-            name: attrProperty.name.ALARM_POPUP,
-            title: 'ALARM'
-          });
-
-          router.push('/mypage/settings/alarm?setting=true');
-        }
-      });
+      setOpen(true);
       return;
     }
 
@@ -95,33 +85,10 @@ function RegisterConfirm() {
           title: 'DEVICE_ALARM'
         });
 
-        setDialogState({
-          type: 'notiDeviceFalse',
-          disabledOnClose: true,
-          secondButtonAction: () => {
-            logEvent(attrKeys.camelSeller.CLICK_ALARM, {
-              name: attrProperty.name.ALARM_POPUP,
-              title: 'DEVICE_ALARM'
-            });
-
-            if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
-              window.webview.moveToSetting();
-            }
-
-            if (
-              checkAgent.isIOSApp() &&
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callMoveToSetting &&
-              window.webkit.messageHandlers.callMoveToSetting.postMessage
-            ) {
-              window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
-            }
-          }
-        });
+        setOpenDialog(true);
       }
     };
-  }, [alarmsInfo, router, setDialogState]);
+  }, [alarmsInfo]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -174,6 +141,8 @@ function RegisterConfirm() {
       <CamelSellerSizeBottomSheet />
       <CamelSellerRecentBottomSheet />
       <CamelSellerSurveyBottomSheet />
+      <CamelSellerNotiChannelDialog open={open} />
+      <CamelSellerAuthPushDialog open={openDialog} onClose={() => setOpenDialog(false)} />
     </GeneralTemplate>
   );
 }

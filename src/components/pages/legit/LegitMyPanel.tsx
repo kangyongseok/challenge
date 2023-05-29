@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Flexbox, Image, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
+import { AppUpdateNoticeDialog } from '@components/UI/organisms';
 import { LegitStatusCard, LegitStatusCardSkeleton } from '@components/UI/molecules';
 
 import type { ProductResult } from '@dto/product';
@@ -28,7 +29,6 @@ import {
 } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitMyPanel() {
@@ -36,7 +36,8 @@ function LegitMyPanel() {
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
   const {
     data: { content: productLegits = [], totalElements = 0 } = {},
@@ -91,34 +92,12 @@ function LegitMyPanel() {
         );
       } else if (status === 12 && isRequestLegit) {
         if (isNeedUpdateImageUploadIOSVersion()) {
-          setDialogState({
-            type: 'appUpdateNotice',
-            customStyleTitle: { minWidth: 269 },
-            secondButtonAction: () => {
-              if (
-                window.webkit &&
-                window.webkit.messageHandlers &&
-                window.webkit.messageHandlers.callExecuteApp
-              )
-                window.webkit.messageHandlers.callExecuteApp.postMessage(
-                  'itms-apps://itunes.apple.com/app/id1541101835'
-                );
-            }
-          });
-
+          setOpenIOSNoticeDialog(true);
           return;
         }
 
         if (isNeedUpdateImageUploadAOSVersion()) {
-          setDialogState({
-            type: 'appUpdateNotice',
-            customStyleTitle: { minWidth: 269 },
-            secondButtonAction: () => {
-              if (window.webview && window.webview.callExecuteApp)
-                window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-            }
-          });
-
+          setOpenAOSNoticeDialog(true);
           return;
         }
 
@@ -126,34 +105,12 @@ function LegitMyPanel() {
         router.push({ pathname: '/legit/request/edit', query: { productId: product.id } });
       } else if ((status === 10 || status === 13) && postType[product.postType] === postType[2]) {
         if (isNeedUpdateImageUploadIOSVersion()) {
-          setDialogState({
-            type: 'appUpdateNotice',
-            customStyleTitle: { minWidth: 269 },
-            secondButtonAction: () => {
-              if (
-                window.webkit &&
-                window.webkit.messageHandlers &&
-                window.webkit.messageHandlers.callExecuteApp
-              )
-                window.webkit.messageHandlers.callExecuteApp.postMessage(
-                  'itms-apps://itunes.apple.com/app/id1541101835'
-                );
-            }
-          });
-
+          setOpenIOSNoticeDialog(true);
           return;
         }
 
         if (isNeedUpdateImageUploadAOSVersion()) {
-          setDialogState({
-            type: 'appUpdateNotice',
-            customStyleTitle: { minWidth: 269 },
-            secondButtonAction: () => {
-              if (window.webview && window.webview.callExecuteApp)
-                window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-            }
-          });
-
+          setOpenAOSNoticeDialog(true);
           return;
         }
 
@@ -233,32 +190,56 @@ function LegitMyPanel() {
   }
 
   return (
-    <Box component="section" customStyle={{ padding: '0 20px', marginTop: 21 }}>
-      {isLoading ? (
-        <Skeleton width={70} height={16} round={8} disableAspectRatio />
-      ) : (
-        <Typography variant="body2" weight="bold">
-          전체 {commaNumber(totalElements)}개
-        </Typography>
-      )}
-      <Flexbox direction="vertical" gap={20} customStyle={{ margin: '20px 0 20px' }}>
-        {isLoading
-          ? Array.from({ length: 10 }).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <LegitStatusCardSkeleton key={`my-legit-${index}`} />
-            ))
-          : productLegits.map((productLegit) => (
-              <LegitStatusCard
-                key={`my-product-legit-${productLegit.productId}`}
-                productLegit={productLegit}
-                onClick={handleClick({
-                  product: productLegit.productResult,
-                  status: productLegit.status
-                })}
-              />
-            ))}
-      </Flexbox>
-    </Box>
+    <>
+      <Box component="section" customStyle={{ padding: '0 20px', marginTop: 21 }}>
+        {isLoading ? (
+          <Skeleton width={70} height={16} round={8} disableAspectRatio />
+        ) : (
+          <Typography variant="body2" weight="bold">
+            전체 {commaNumber(totalElements)}개
+          </Typography>
+        )}
+        <Flexbox direction="vertical" gap={20} customStyle={{ margin: '20px 0 20px' }}>
+          {isLoading
+            ? Array.from({ length: 10 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <LegitStatusCardSkeleton key={`my-legit-${index}`} />
+              ))
+            : productLegits.map((productLegit) => (
+                <LegitStatusCard
+                  key={`my-product-legit-${productLegit.productId}`}
+                  productLegit={productLegit}
+                  onClick={handleClick({
+                    product: productLegit.productResult,
+                    status: productLegit.status
+                  })}
+                />
+              ))}
+        </Flexbox>
+      </Box>
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
+    </>
   );
 }
 

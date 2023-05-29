@@ -1,16 +1,8 @@
 import { useState } from 'react';
 
 import { useRouter } from 'next/router';
-import {
-  Box,
-  Button,
-  Dialog,
-  Flexbox,
-  Tab,
-  TabGroup,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Tab, TabGroup, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -139,7 +131,7 @@ function WishesTabs() {
         </TabGroup>
       </Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
+        <Typography weight="medium" textAlign="center">
           실시간 사진감정을 중단하고
           <br />
           최근 본 매물로 이동하시겠어요?

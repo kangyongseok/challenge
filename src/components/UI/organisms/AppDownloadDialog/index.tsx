@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { Box, Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -27,12 +28,6 @@ function AppDownloadDialog({
   att,
   name
 }: AppDownloadDialogProps) {
-  const {
-    theme: {
-      palette: { primary, common }
-    }
-  } = useTheme();
-
   useEffect(() => {
     if (open) {
       logEvent('VIEW_APPDOWNLOAD', {
@@ -89,29 +84,25 @@ function AppDownloadDialog({
         <Typography
           variant="body1"
           weight="medium"
-          customStyle={{ marginBottom: 20, textAlign: 'center' }}
+          textAlign="center"
+          customStyle={{ marginBottom: 20 }}
         >
           앱에서 찜하고 <br />
           가격 내려갔을 때 알림 받아보세요!
         </Typography>
         <Flexbox gap={7}>
-          <Button
-            variant="ghost"
-            brandColor="primary"
-            customStyle={{ width: 128 }}
-            onClick={onClose}
-          >
-            <Typography variant="body1" weight="bold" customStyle={{ color: primary.main }}>
+          <Button fullWidth variant="ghost" brandColor="primary" onClick={onClose}>
+            <Typography variant="body1" weight="bold" color="primary">
               웹으로 볼게요
             </Typography>
           </Button>
           <Button
+            fullWidth
             variant="solid"
             brandColor="primary"
-            customStyle={{ width: 128 }}
             onClick={() => handleClickAppDownload({ name: PRODUCT_NAME.PRODUCT_DETAIL, productId })}
           >
-            <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
+            <Typography variant="body1" weight="bold" color="cmnW">
               앱 다운로드
             </Typography>
           </Button>
@@ -128,25 +119,25 @@ function AppDownloadDialog({
       <FeatureBox>
         <Flexbox gap={6} alignment="center">
           <TargetIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" weight="regular" color="ui60">
             꿀매알림
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <HeartIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" weight="regular" color="ui60">
             찜 리스트
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <UserIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" weight="regular" color="ui60">
             취향추천
           </Typography>
         </Flexbox>
         <Flexbox gap={6} alignment="center">
           <TimerIcon />
-          <Typography variant="body2" weight="regular" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" weight="regular" color="ui60">
             매물거래
           </Typography>
         </Flexbox>

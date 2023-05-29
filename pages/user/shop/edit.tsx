@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
@@ -19,7 +19,13 @@ import {
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { UserAvatar } from '@components/UI/organisms';
+import {
+  AppUpdateNoticeDialog,
+  FeatureIsMobileAppDownDialog,
+  LeaveEditProfileDialog,
+  UserAvatar,
+  UserWithdrawalDialog
+} from '@components/UI/organisms';
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -44,7 +50,6 @@ import {
   checkAgent,
   getImagePathStaticParser,
   getImageResizePath,
-  handleClickAppDownload,
   hasImageFile,
   isExtendedLayoutIOSVersion,
   isNeedUpdateImageUploadAOSVersion,
@@ -54,7 +59,6 @@ import {
 import { shake } from '@styles/transition';
 
 import { userShopUpdatedProfileDataState } from '@recoil/userShop';
-import { dialogState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -63,6 +67,7 @@ import useGetImage from '@hooks/useGetImage';
 
 function UserShopEdit() {
   const router = useRouter();
+
   const {
     theme: {
       palette: { common }
@@ -73,7 +78,6 @@ function UserShopEdit() {
 
   const queryClient = useQueryClient();
 
-  const setDialogState = useSetRecoilState(dialogState);
   const [userShopUpdatedProfileData, setUserShopUpdatedProfileDataState] = useRecoilState(
     userShopUpdatedProfileDataState
   );
@@ -129,6 +133,11 @@ function UserShopEdit() {
   });
   const [open, setOpen] = useState(false);
   const [openNicknameToast, setOpenNicknameToast] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openFeatureInAppDialog, setOpenFeatureInAppDialog] = useState(false);
+  const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
   const nickNameRef = useRef<null | HTMLInputElement>(null);
   const descriptionRef = useRef<null | HTMLTextAreaElement>(null);
@@ -213,16 +222,6 @@ function UserShopEdit() {
     (userImageProfile.length > 0 && userImageProfile) ||
     DEFAUT_BACKGROUND_IMAGE;
 
-  const appDownLoadDialog = useCallback(() => {
-    setDialogState({
-      type: 'featureIsMobileAppDown',
-      customStyleTitle: { minWidth: 311 },
-      secondButtonAction() {
-        handleClickAppDownload({});
-      }
-    });
-  }, [setDialogState]);
-
   const handleChangeImage = useCallback(
     (isBackground: boolean) => () => {
       if (isLoadingMutateBanWord || isLoadingMutateProfile || isLoadingGetPhoto) return;
@@ -235,31 +234,17 @@ function UserShopEdit() {
       );
 
       if (!checkAgent.isMobileApp()) {
-        appDownLoadDialog();
+        setOpenFeatureInAppDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-              'itms-apps://itunes.apple.com/app/id1541101835'
-            );
-          }
-        });
+        setOpenIOSNoticeDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadAOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            window.webview?.callExecuteApp?.('market://details?id=kr.co.mrcamel.android');
-          }
-        });
+        setOpenAOSNoticeDialog(true);
         return;
       }
 
@@ -293,14 +278,7 @@ function UserShopEdit() {
         );
       }
     },
-    [
-      appDownLoadDialog,
-      isLoadingGetPhoto,
-      isLoadingMutateBanWord,
-      isLoadingMutateProfile,
-      setDialogState,
-      setGetPhotoState
-    ]
+    [isLoadingGetPhoto, isLoadingMutateBanWord, isLoadingMutateProfile, setGetPhotoState]
   );
 
   const handleChangeNickName = useCallback(
@@ -427,34 +405,7 @@ function UserShopEdit() {
     toastStack
   ]);
 
-  const handleClickDeleteAccount = useCallback(() => {
-    setDialogState({
-      type: 'deleteAccount',
-      content: (
-        <Typography
-          weight="medium"
-          customStyle={{ textAlign: 'center', padding: '12px 0', minWidth: 270 }}
-        >
-          지금까지 쌓아놓은 검색 이력과 찜 리스트,
-          <br />
-          맞춤 추천을 위한 정보가 모두 삭제됩니다.
-          <br />
-          그래도 회원탈퇴 하시겠어요?
-        </Typography>
-      ),
-      firstButtonAction() {
-        logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
-          att: 'YES'
-        });
-        mutateWitdhdraw();
-      },
-      secondButtonAction() {
-        logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
-          att: 'NO'
-        });
-      }
-    });
-  }, [mutateWitdhdraw, setDialogState]);
+  const handleClickDeleteAccount = useCallback(() => setOpenDialog(true), []);
 
   useEffect(() => {
     logEvent(attrKeys.userShop.VIEW_PROFILE_EDIT, {
@@ -474,6 +425,16 @@ function UserShopEdit() {
   useEffect(() => {
     setUserShopUpdatedProfileDataState(isUpdatedProfileData);
   }, [isUpdatedProfileData, setUserShopUpdatedProfileDataState]);
+
+  useEffect(() => {
+    router.beforePopState(() => {
+      if (userShopUpdatedProfileData) {
+        setOpenLeaveDialog(true);
+        return false;
+      }
+      return true;
+    });
+  }, [router, userShopUpdatedProfileData]);
 
   const handleClickBack = () => {
     logEvent(attrKeys.header.CLICK_BACK, {
@@ -682,6 +643,55 @@ function UserShopEdit() {
       <Toast open={openNicknameToast} onClose={() => setOpenNicknameToast(false)}>
         16글자만 입력할 수 있어요.
       </Toast>
+      <LeaveEditProfileDialog
+        open={openLeaveDialog}
+        onClose={() => setOpenLeaveDialog(false)}
+        onClick={() => {
+          setUserShopUpdatedProfileDataState(false);
+          router.back();
+        }}
+      />
+      <UserWithdrawalDialog
+        open={openDialog}
+        onClose={() => {
+          logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
+            att: 'NO'
+          });
+          setOpenDialog(false);
+        }}
+        onClick={() => {
+          logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
+            att: 'YES'
+          });
+          mutateWitdhdraw();
+        }}
+      />
+      <FeatureIsMobileAppDownDialog
+        open={openFeatureInAppDialog}
+        onClose={() => setOpenFeatureInAppDialog(false)}
+      />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
     </>
   );
 }

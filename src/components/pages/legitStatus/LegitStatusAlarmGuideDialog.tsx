@@ -2,16 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import {
-  Box,
-  Button,
-  Dialog,
-  Flexbox,
-  Icon,
-  Switch,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Switch, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { Badge } from '@components/UI/atoms';
@@ -145,7 +137,7 @@ function LegitStatusAlarmGuideDialog() {
   }, []);
 
   return (
-    <Dialog open={open} onClose={handleClose} customStyle={{ width: '100%', maxWidth: 303 }}>
+    <Dialog open={open} onClose={handleClose}>
       <Typography weight="medium" customStyle={{ textAlign: 'center' }}>
         {userNickName}님, 알림이 꺼져있어요!
         <br />

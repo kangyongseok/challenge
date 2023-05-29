@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchProductOrder } from '@api/order';
 
@@ -37,7 +38,7 @@ function ProductOrderCardOverDialog() {
   }, [price]);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} customStyle={{ textAlign: 'center' }}>
+    <Dialog open={open} onClose={() => setOpen(false)}>
       <Typography weight="bold" variant="h3">
         가상계좌로만 결제할 수 있어요.
       </Typography>

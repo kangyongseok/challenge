@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
   Type as ListType,
   SwipeAction,
@@ -13,7 +13,8 @@ import { useRouter } from 'next/router';
 import { QueryClient, useMutation } from '@tanstack/react-query';
 // import { BaseMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
-import { Button, Icon, Label, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Icon, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ListItem } from '@components/UI/atoms';
@@ -40,7 +41,6 @@ import {
   getUnreadMessagesCount
 } from '@utils/channel';
 
-import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
@@ -58,17 +58,21 @@ function ChannelsSwipeActionList({
   const router = useRouter();
   const {
     theme: {
-      palette: { common, secondary },
+      palette: {
+        common,
+        secondary: { red }
+      },
       typography
     }
   } = useTheme();
 
-  const setDialogState = useSetRecoilState(dialogState);
   const [{ location }, setSelectTargetUserBottomSheetState] = useRecoilState(
     channelBottomSheetStateFamily('selectTargetUser')
   );
 
   const { data: accessUser } = useQueryAccessUser();
+
+  const [open, setOpen] = useState(false);
 
   const {
     notiOn: { mutate: mutateNotiOn, isLoading: isLoadingMutateNotiOn },
@@ -134,26 +138,8 @@ function ChannelsSwipeActionList({
       name: attrProperty.name.CHANNEL
     });
 
-    setDialogState({
-      type: 'leaveChannel',
-      customStyle: { minWidth: 310, 'button + button': { backgroundColor: secondary.red.main } },
-      async secondButtonAction() {
-        logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
-          name: attrProperty.name.CHANNEL_DETAIL,
-          title: attrProperty.title.LEAVE,
-          att: 'YES'
-        });
-
-        if (camelChannel.channel) await mutateLeaveChannel(camelChannel.channel.id);
-      }
-    });
-  }, [
-    camelChannel.channel,
-    isLoadingMutateLeaveChannel,
-    mutateLeaveChannel,
-    secondary.red.main,
-    setDialogState
-  ]);
+    setOpen(true);
+  }, [camelChannel.channel, isLoadingMutateLeaveChannel]);
 
   const handleClickChannel = useCallback(() => {
     if (!camelChannel.channel) return;
@@ -294,93 +280,150 @@ function ChannelsSwipeActionList({
       customStyle={{ cursor: 'default' }}
     />
   ) : (
-    <SwipeableList fullSwipe={false} type={ListType.IOS}>
-      <SwipeableListItem
-        onSwipeStart={() => logEvent(attrKeys.channel.SWIPE_X_CHANNEL_LIST)}
-        trailingActions={
-          <TrailingActions>
-            <SwipeAction onClick={handleClickNoti}>
-              <ActionContent disabled={isLoadingMutateNotiOn || isLoadingMutateNotiOff}>
-                <Icon
-                  name={notiStatus ? 'NotiOffOutlined' : 'NotiOutlined'}
-                  customStyle={{ color: common.ui60 }}
-                />
-              </ActionContent>
-            </SwipeAction>
-            <SwipeAction onClick={handleClickLeave}>
-              <ActionContent isRed disabled={isLoadingMutateLeaveChannel}>
-                <Icon name="OutRightOutlined" customStyle={{ color: common.uiWhite }} />
-              </ActionContent>
-            </SwipeAction>
-          </TrailingActions>
-        }
-      >
-        <ListItem
-          avatarUrl={getImageResizePath({
-            imagePath: getImagePathStaticParser(
-              !camelChannel.channelTargetUser?.user?.isDeleted
-                ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
-                    camelChannel?.channelTargetUser?.user?.imageProfile) ||
-                    (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
-                      camelChannel?.channelTargetUser?.user?.image) ||
-                    ''
-                : ''
-            ),
-            w: 52
-          })}
-          title={getChannelTitle({
-            targetUser: camelChannel.channelTargetUser,
-            groupChannel: sendbirdChannel,
-            isTargetUserBlocked,
-            isAdminBlockUser,
-            currentUserId: String(accessUser?.userId || '')
-          })}
-          description={
-            camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
-              ? camelChannel.lastMessageManage.content
-              : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
+    <>
+      <SwipeableList fullSwipe={false} type={ListType.IOS}>
+        <SwipeableListItem
+          onSwipeStart={() => logEvent(attrKeys.channel.SWIPE_X_CHANNEL_LIST)}
+          trailingActions={
+            <TrailingActions>
+              <SwipeAction onClick={handleClickNoti}>
+                <ActionContent disabled={isLoadingMutateNotiOn || isLoadingMutateNotiOff}>
+                  <Icon
+                    name={notiStatus ? 'NotiOffOutlined' : 'NotiOutlined'}
+                    customStyle={{ color: common.ui60 }}
+                  />
+                </ActionContent>
+              </SwipeAction>
+              <SwipeAction onClick={handleClickLeave}>
+                <ActionContent isRed disabled={isLoadingMutateLeaveChannel}>
+                  <Icon name="OutRightOutlined" customStyle={{ color: common.uiWhite }} />
+                </ActionContent>
+              </SwipeAction>
+            </TrailingActions>
           }
-          isAdminBlockUser={isAdminBlockUser}
-          descriptionCustomStyle={{
-            fontSize: typography.h4.size,
-            lineHeight: typography.h4.lineHeight,
-            letterSpacing: typography.h4.letterSpacing
+        >
+          <ListItem
+            avatarUrl={getImageResizePath({
+              imagePath: getImagePathStaticParser(
+                !camelChannel.channelTargetUser?.user?.isDeleted
+                  ? (hasImageFile(camelChannel?.channelTargetUser?.user?.imageProfile) &&
+                      camelChannel?.channelTargetUser?.user?.imageProfile) ||
+                      (hasImageFile(camelChannel?.channelTargetUser?.user?.image) &&
+                        camelChannel?.channelTargetUser?.user?.image) ||
+                      ''
+                  : ''
+              ),
+              w: 52
+            })}
+            title={getChannelTitle({
+              targetUser: camelChannel.channelTargetUser,
+              groupChannel: sendbirdChannel,
+              isTargetUserBlocked,
+              isAdminBlockUser,
+              currentUserId: String(accessUser?.userId || '')
+            })}
+            description={
+              camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
+                ? camelChannel.lastMessageManage.content
+                : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
+            }
+            isAdminBlockUser={isAdminBlockUser}
+            descriptionCustomStyle={{
+              fontSize: typography.h4.size,
+              lineHeight: typography.h4.lineHeight,
+              letterSpacing: typography.h4.letterSpacing
+            }}
+            time={getLastMessageCreatedAt(camelChannel.lastMessageManage, sendbirdChannel)}
+            // time={lastMessageTime}
+            showNotificationOffIcon={!notiStatus}
+            onClick={handleClickChannel}
+            action={
+              <>
+                {!!sendbirdChannel?.unreadMessageCount && (
+                  <Badge
+                    variant="solid"
+                    brandColor="red"
+                    text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
+                  />
+                )}
+                <ProductImage
+                  url={getImageResizePath({
+                    imagePath: getImagePathStaticParser(
+                      camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain || ''
+                    ),
+                    w: 44
+                  })}
+                />
+              </>
+            }
+            disabled={
+              camelChannel.channelTargetUser?.user?.isDeleted ||
+              camelChannel.userBlocks?.some(
+                (blockedUser) =>
+                  blockedUser.userId === accessUser?.userId &&
+                  blockedUser.targetUser.id === camelChannel.channelTargetUser?.user?.id
+              ) ||
+              isAdminBlockUser
+            }
+          />
+        </SwipeableListItem>
+      </SwipeableList>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Typography variant="h3" weight="bold">
+          채팅방 나가기
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8
           }}
-          time={getLastMessageCreatedAt(camelChannel.lastMessageManage, sendbirdChannel)}
-          // time={lastMessageTime}
-          showNotificationOffIcon={!notiStatus}
-          onClick={handleClickChannel}
-          action={
-            <>
-              {!!sendbirdChannel?.unreadMessageCount && (
-                <Badge
-                  variant="solid"
-                  brandColor="red"
-                  text={getUnreadMessagesCount(sendbirdChannel.unreadMessageCount)}
-                />
-              )}
-              <ProductImage
-                url={getImageResizePath({
-                  imagePath: getImagePathStaticParser(
-                    camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain || ''
-                  ),
-                  w: 44
-                })}
-              />
-            </>
-          }
-          disabled={
-            camelChannel.channelTargetUser?.user?.isDeleted ||
-            camelChannel.userBlocks?.some(
-              (blockedUser) =>
-                blockedUser.userId === accessUser?.userId &&
-                blockedUser.targetUser.id === camelChannel.channelTargetUser?.user?.id
-            ) ||
-            isAdminBlockUser
-          }
-        />
-      </SwipeableListItem>
-    </SwipeableList>
+        >
+          채팅방을 나가도 상대방이 말을 걸면
+          <br />
+          다시 열릴 수 있어요.
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => setOpen(false)}
+          >
+            취소
+          </Button>
+          <Button
+            fullWidth
+            variant="solid"
+            size="large"
+            customStyle={{
+              backgroundColor: red.main
+            }}
+            onClick={async () => {
+              logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
+                name: attrProperty.name.CHANNEL_DETAIL,
+                title: attrProperty.title.LEAVE,
+                att: 'YES'
+              });
+
+              if (camelChannel.channel)
+                await mutateLeaveChannel(camelChannel.channel.id, {
+                  onSuccess() {
+                    setOpen(false);
+                  }
+                });
+            }}
+          >
+            나가기
+          </Button>
+        </Flexbox>
+      </Dialog>
+    </>
   );
 }
 

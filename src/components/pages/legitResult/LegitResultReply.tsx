@@ -1,10 +1,10 @@
 import type { HTMLAttributes, MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -23,7 +23,6 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitResultReplyProps extends HTMLAttributes<HTMLDivElement> {
@@ -64,8 +63,7 @@ function LegitResultReply({
 
   const [editable, setEditable] = useState(false);
   const [value, setValue] = useState('');
-
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
 
   const { mutate } = useMutation(putProductLegitComment);
   const { mutate: deleteMutate } = useMutation(deleteProductLegitComment);
@@ -86,8 +84,8 @@ function LegitResultReply({
         description: value
       },
       {
-        onSuccess: () => {
-          refetch();
+        onSuccess: async () => {
+          await refetch();
           setEditable(false);
         }
       }
@@ -101,7 +99,10 @@ function LegitResultReply({
         commentId: replyId
       },
       {
-        onSuccess: () => refetch()
+        onSuccess: async () => {
+          await refetch();
+          setOpen(false);
+        }
       }
     );
   };
@@ -111,6 +112,7 @@ function LegitResultReply({
       name: attrProperty.legitName.LEGIT_COMMENT,
       att: '취소'
     });
+    setOpen(false);
   };
 
   const handleClickDelete = () => {
@@ -119,13 +121,7 @@ function LegitResultReply({
       type: 'recomment'
     });
 
-    setDialogState({
-      type: 'deleteLegitResultReply',
-      content: <Typography variant="h4">삭제되면 복구할 수 없습니다.</Typography>,
-      firstButtonAction: handleClickCancelConfirm,
-      secondButtonAction: handleClickDeleteConfirm,
-      customStyleTitle: { minWidth: 269, paddingTop: 12 }
-    });
+    setOpen(true);
   };
 
   useEffect(() => {
@@ -168,45 +164,85 @@ function LegitResultReply({
   }
 
   return (
-    <div {...props}>
-      <Flexbox direction="vertical" justifyContent="center" customStyle={{ flexGrow: 1 }}>
-        <Flexbox alignment="center" justifyContent="space-between" customStyle={{ height: 24 }}>
-          <Flexbox alignment="center" gap={4}>
-            <Marker />
-            <Typography weight="medium">UserID {userId}</Typography>
-            <Typography variant="small2" customStyle={{ color: common.ui80 }}>
-              {dayjs(dateCreated).add(-1, 'seconds').fromNow()}
-            </Typography>
+    <>
+      <div {...props}>
+        <Flexbox direction="vertical" justifyContent="center" customStyle={{ flexGrow: 1 }}>
+          <Flexbox alignment="center" justifyContent="space-between" customStyle={{ height: 24 }}>
+            <Flexbox alignment="center" gap={4}>
+              <Marker />
+              <Typography weight="medium">UserID {userId}</Typography>
+              <Typography variant="small2" customStyle={{ color: common.ui80 }}>
+                {dayjs(dateCreated).add(-1, 'seconds').fromNow()}
+              </Typography>
+            </Flexbox>
+            <Flexbox alignment="center" gap={12}>
+              {(accessUser || {}).userId === userId && (
+                <>
+                  <Typography
+                    variant="small2"
+                    onClick={() => setEditable(true)}
+                    customStyle={{ color: common.ui80, cursor: 'pointer' }}
+                  >
+                    수정
+                  </Typography>
+                  <Typography
+                    variant="small2"
+                    onClick={handleClickDelete}
+                    customStyle={{ color: common.ui80, cursor: 'pointer' }}
+                  >
+                    삭제
+                  </Typography>
+                </>
+              )}
+            </Flexbox>
           </Flexbox>
-          <Flexbox alignment="center" gap={12}>
-            {(accessUser || {}).userId === userId && (
-              <>
-                <Typography
-                  variant="small2"
-                  onClick={() => setEditable(true)}
-                  customStyle={{ color: common.ui80, cursor: 'pointer' }}
-                >
-                  수정
-                </Typography>
-                <Typography
-                  variant="small2"
-                  onClick={handleClickDelete}
-                  customStyle={{ color: common.ui80, cursor: 'pointer' }}
-                >
-                  삭제
-                </Typography>
-              </>
-            )}
-          </Flexbox>
+          <Typography
+            dangerouslySetInnerHTML={{
+              __html: `${(description || '').replace(/\r?\n/g, '<br />')}`
+            }}
+            customStyle={{ margin: '10px 0 0 16px', color: common.ui60 }}
+          />
         </Flexbox>
+      </div>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Typography variant="h3" weight="bold">
+          답글을 삭제하시겠습니까?
+        </Typography>
         <Typography
-          dangerouslySetInnerHTML={{
-            __html: `${(description || '').replace(/\r?\n/g, '<br />')}`
+          variant="h4"
+          customStyle={{
+            marginTop: 8
           }}
-          customStyle={{ margin: '10px 0 0 16px', color: common.ui60 }}
-        />
-      </Flexbox>
-    </div>
+        >
+          삭제되면 복구할 수 없습니다.
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={handleClickCancelConfirm}
+          >
+            취소
+          </Button>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={handleClickDeleteConfirm}
+          >
+            확인
+          </Button>
+        </Flexbox>
+      </Dialog>
+    </>
   );
 }
 

@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -190,15 +191,7 @@ function ProductsKeywordAlertFab() {
           </Typography>
         </Flexbox>
       </StyledProductsKeywordAlertFab>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        customStyle={{
-          maxWidth: 311,
-          paddingTop: 32
-        }}
-      >
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <Typography variant="h3" weight="bold" textAlign="center">
           알림을 받으려면
           <br />
@@ -239,15 +232,7 @@ function ProductsKeywordAlertFab() {
           </Button>
         </Flexbox>
       </Dialog>
-      <Dialog
-        open={openAlarmDialog}
-        onClose={() => setOpenAlarmDialog(false)}
-        fullWidth
-        customStyle={{
-          paddingTop: 32,
-          maxWidth: 311
-        }}
-      >
+      <Dialog open={openAlarmDialog} onClose={() => setOpenAlarmDialog(false)}>
         <Flexbox
           alignment="center"
           justifyContent="center"

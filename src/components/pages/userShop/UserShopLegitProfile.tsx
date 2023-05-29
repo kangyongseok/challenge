@@ -1,11 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import UserAvatar from '@components/UI/organisms/UserAvatar';
+import { SNSShareDialog, UserAvatar } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -21,7 +20,7 @@ import {
   isExtendedLayoutIOSVersion
 } from '@utils/common';
 
-import { dialogState } from '@recoil/common';
+import type { ShareData } from '@typings/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -55,8 +54,6 @@ function UserShopLegitProfile({
 
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
 
-  const setDialogState = useSetRecoilState(dialogState);
-
   const { data: accessUser } = useQueryAccessUser();
 
   const {
@@ -67,13 +64,23 @@ function UserShopLegitProfile({
     data
   } = useQueryMyUserInfo();
 
+  const [open, setOpen] = useState(false);
+  const [shareData, setShareData] = useState<ShareData>({
+    title,
+    description,
+    image: imageProfile,
+    url: `${
+      typeof window !== 'undefined' ? window.location.origin : 'https://mrcamel.co.kr'
+    }/userInfo/${userId}`
+  });
+
   const handleClickShare = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_SHARE, {
       name: attrProperty.name.MY_STORE,
       att: 'LEGIT_SELLER'
     });
 
-    const shareData = {
+    const newShareData = {
       title,
       description,
       image: imageProfile,
@@ -84,14 +91,15 @@ function UserShopLegitProfile({
 
     if (
       !executedShareURl({
-        url: shareData.url,
-        title: shareData.title,
-        text: shareData.description
+        url: newShareData.url,
+        title: newShareData.title,
+        text: newShareData.description
       })
     ) {
-      setDialogState({ type: 'SNSShare', shareData });
+      setOpen(true);
+      setShareData(newShareData);
     }
-  }, [description, imageProfile, setDialogState, title, userId]);
+  }, [description, imageProfile, title, userId]);
 
   const handleClickEdit = useCallback(() => {
     logEvent(attrKeys.userShop.CLICK_PROFILE_EDIT, {
@@ -111,148 +119,151 @@ function UserShopLegitProfile({
     : `https://${process.env.IMAGE_DOMAIN}/assets/images/user/shop/profile-background-legit.png`;
 
   return (
-    <Wrapper>
-      <BackgroundImage
-        src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
-      >
-        <Blur />
-      </BackgroundImage>
-      <Info>
-        {isLoading ? (
-          <>
-            <Flexbox
-              direction="vertical"
-              alignment="center"
-              gap={12}
-              customStyle={{ flex: 1, padding: '0 20px' }}
-            >
-              <Skeleton width={96} height={96} round={16} disableAspectRatio />
-              <Flexbox direction="vertical" alignment="center" gap={4}>
-                <Flexbox gap={4}>
-                  <Skeleton width={50} height={24} round={8} disableAspectRatio />
-                  <Skeleton width={50} height={24} round={12} disableAspectRatio />
-                </Flexbox>
-                <Skeleton width={84} height={16} round={8} disableAspectRatio />
-              </Flexbox>
-            </Flexbox>
-            <Flexbox alignment="center" gap={8} customStyle={{ padding: '32px 20px 12px' }}>
-              <Skeleton minWidth="44px" width={44} height={44} disableAspectRatio round={8} />
-              <Skeleton width="100%" height={44} disableAspectRatio round={8} />
-            </Flexbox>
-          </>
-        ) : (
-          <>
-            <Flexbox
-              direction="vertical"
-              alignment="center"
-              gap={12}
-              customStyle={{ flex: 1, padding: '0 20px' }}
-            >
-              <UserAvatar src={imageProfile} />
-              <Flexbox direction="vertical" alignment="center" gap={4}>
-                <Flexbox alignment="center" justifyContent="center" gap={4}>
-                  <Typography variant="h3" weight="bold" color="uiWhite">
-                    {nickName}
-                  </Typography>
-                  <BadgeLabel>
-                    <Icon name="LegitFilled" size="small" color="cmnW" />
-                    <Typography variant="body2" weight="medium" color="uiWhite">
-                      감정사
-                    </Typography>
-                  </BadgeLabel>
-                </Flexbox>
-                <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
-                  {getTimeForamt && (
-                    <Flexbox alignment="center">
-                      {getTimeForamt.icon === 'time' ? (
-                        <Icon
-                          name="TimeOutlined"
-                          color="uiWhite"
-                          customStyle={{
-                            marginRight: 2,
-                            height: '14px !important',
-                            width: 14
-                          }}
-                        />
-                      ) : (
-                        <Box
-                          customStyle={{
-                            width: 5,
-                            height: 5,
-                            background: common.uiWhite,
-                            borderRadius: '50%',
-                            marginRight: 5
-                          }}
-                        />
-                      )}
-                      <Typography variant="body2" color="uiWhite">
-                        {getTimeForamt.text}
-                      </Typography>
-                    </Flexbox>
-                  )}
-                  {!!areaName && data?.info.value.isAreaOpen && (
-                    <Flexbox alignment="center">
-                      <Icon name="PinOutlined" width={16} height={16} color="uiWhite" />
-                      <Typography variant="body2" color="uiWhite">
-                        {areaName}
-                      </Typography>
-                    </Flexbox>
-                  )}
-                </Flexbox>
-                {!!curnScore && !!maxScore && (
-                  <Flexbox
-                    alignment="center"
-                    justifyContent="center"
-                    gap={1}
-                    customStyle={{ marginTop: 8 }}
-                  >
-                    {Array.from({ length: 5 }, (_, index) => {
-                      return index <
-                        (maxScore === 10
-                          ? Math.floor(Number(curnScore) / 2)
-                          : Number(curnScore)) ? (
-                        <Icon name="StarFilled" width={16} height={16} color="#FFD911" />
-                      ) : (
-                        <Icon name="StarOutlined" width={16} height={16} color="#FFD911" />
-                      );
-                    })}
+    <>
+      <Wrapper>
+        <BackgroundImage
+          src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
+        >
+          <Blur />
+        </BackgroundImage>
+        <Info>
+          {isLoading ? (
+            <>
+              <Flexbox
+                direction="vertical"
+                alignment="center"
+                gap={12}
+                customStyle={{ flex: 1, padding: '0 20px' }}
+              >
+                <Skeleton width={96} height={96} round={16} disableAspectRatio />
+                <Flexbox direction="vertical" alignment="center" gap={4}>
+                  <Flexbox gap={4}>
+                    <Skeleton width={50} height={24} round={8} disableAspectRatio />
+                    <Skeleton width={50} height={24} round={12} disableAspectRatio />
                   </Flexbox>
+                  <Skeleton width={84} height={16} round={8} disableAspectRatio />
+                </Flexbox>
+              </Flexbox>
+              <Flexbox alignment="center" gap={8} customStyle={{ padding: '32px 20px 12px' }}>
+                <Skeleton minWidth="44px" width={44} height={44} disableAspectRatio round={8} />
+                <Skeleton width="100%" height={44} disableAspectRatio round={8} />
+              </Flexbox>
+            </>
+          ) : (
+            <>
+              <Flexbox
+                direction="vertical"
+                alignment="center"
+                gap={12}
+                customStyle={{ flex: 1, padding: '0 20px' }}
+              >
+                <UserAvatar src={imageProfile} />
+                <Flexbox direction="vertical" alignment="center" gap={4}>
+                  <Flexbox alignment="center" justifyContent="center" gap={4}>
+                    <Typography variant="h3" weight="bold" color="uiWhite">
+                      {nickName}
+                    </Typography>
+                    <BadgeLabel>
+                      <Icon name="LegitFilled" size="small" color="cmnW" />
+                      <Typography variant="body2" weight="medium" color="uiWhite">
+                        감정사
+                      </Typography>
+                    </BadgeLabel>
+                  </Flexbox>
+                  <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
+                    {getTimeForamt && (
+                      <Flexbox alignment="center">
+                        {getTimeForamt.icon === 'time' ? (
+                          <Icon
+                            name="TimeOutlined"
+                            color="uiWhite"
+                            customStyle={{
+                              marginRight: 2,
+                              height: '14px !important',
+                              width: 14
+                            }}
+                          />
+                        ) : (
+                          <Box
+                            customStyle={{
+                              width: 5,
+                              height: 5,
+                              background: common.uiWhite,
+                              borderRadius: '50%',
+                              marginRight: 5
+                            }}
+                          />
+                        )}
+                        <Typography variant="body2" color="uiWhite">
+                          {getTimeForamt.text}
+                        </Typography>
+                      </Flexbox>
+                    )}
+                    {!!areaName && data?.info.value.isAreaOpen && (
+                      <Flexbox alignment="center">
+                        <Icon name="PinOutlined" width={16} height={16} color="uiWhite" />
+                        <Typography variant="body2" color="uiWhite">
+                          {areaName}
+                        </Typography>
+                      </Flexbox>
+                    )}
+                  </Flexbox>
+                  {!!curnScore && !!maxScore && (
+                    <Flexbox
+                      alignment="center"
+                      justifyContent="center"
+                      gap={1}
+                      customStyle={{ marginTop: 8 }}
+                    >
+                      {Array.from({ length: 5 }, (_, index) => {
+                        return index <
+                          (maxScore === 10
+                            ? Math.floor(Number(curnScore) / 2)
+                            : Number(curnScore)) ? (
+                          <Icon name="StarFilled" width={16} height={16} color="#FFD911" />
+                        ) : (
+                          <Icon name="StarOutlined" width={16} height={16} color="#FFD911" />
+                        );
+                      })}
+                    </Flexbox>
+                  )}
+                </Flexbox>
+                {!!shopDescription && (
+                  <Typography
+                    color="uiWhite"
+                    customStyle={{
+                      wordBreak: 'keep-all',
+                      overflow: 'hidden',
+                      width: '100%'
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: `${shopDescription.replace(/\r?\n/g, '<br />')}`
+                    }}
+                  />
                 )}
               </Flexbox>
-              {!!shopDescription && (
-                <Typography
-                  color="uiWhite"
-                  customStyle={{
-                    wordBreak: 'keep-all',
-                    overflow: 'hidden',
-                    width: '100%'
-                  }}
-                  dangerouslySetInnerHTML={{
-                    __html: `${shopDescription.replace(/\r?\n/g, '<br />')}`
-                  }}
-                />
-              )}
-            </Flexbox>
-            <Flexbox
-              alignment="center"
-              gap={8}
-              customStyle={{
-                marginBottom: -1,
-                padding: '32px 20px 20px',
-                background: common.gradation180
-              }}
-            >
-              <Button size="large" customStyle={{ width: 44 }} onClick={handleClickShare}>
-                <Icon name="ShareOutlined" />
-              </Button>
-              <Button size="large" fullWidth onClick={handleClickEdit}>
-                수정하기
-              </Button>
-            </Flexbox>
-          </>
-        )}
-      </Info>
-    </Wrapper>
+              <Flexbox
+                alignment="center"
+                gap={8}
+                customStyle={{
+                  marginBottom: -1,
+                  padding: '32px 20px 20px',
+                  background: common.gradation180
+                }}
+              >
+                <Button size="large" customStyle={{ width: 44 }} onClick={handleClickShare}>
+                  <Icon name="ShareOutlined" />
+                </Button>
+                <Button size="large" fullWidth onClick={handleClickEdit}>
+                  수정하기
+                </Button>
+              </Flexbox>
+            </>
+          )}
+        </Info>
+      </Wrapper>
+      <SNSShareDialog open={open} onClose={() => setOpen(false)} shareData={shareData} />
+    </>
   );
 }
 

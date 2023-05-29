@@ -1,8 +1,10 @@
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Input, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Input, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
 
 import { postOrderDelivery } from '@api/order';
 

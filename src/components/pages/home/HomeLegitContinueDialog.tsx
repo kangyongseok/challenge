@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -56,14 +57,7 @@ function HomeLegitContinueDialog() {
   }, [accessUser, userData]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      customStyle={{
-        width: '100%',
-        maxWidth: 311
-      }}
-    >
+    <Dialog open={open} onClose={handleClose}>
       <Box
         customStyle={{
           marginTop: 12,

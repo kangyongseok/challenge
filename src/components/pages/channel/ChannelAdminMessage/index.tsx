@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -39,10 +39,10 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber } from '@utils/common';
 import { getOutgoingMessageState } from '@utils/channel';
 
-import { dialogState } from '@recoil/common';
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
+import ChannelAdminMessageDialog from '../ChannelAdminMessageDialog';
 import ChannelReviewSentMessage from './ChannelReviewSentMessage';
 import ChannelReserveMessage from './ChannelReserveMessage';
 import ChannelOrderSettleWaitMessage from './ChannelOrderSettleWaitMessage';
@@ -115,7 +115,9 @@ function ChannelAdminMessage({
   const router = useRouter();
   const messageInfos = message.message.split('|');
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+  const [dialogVariant, setDialogVariant] = useState('');
+
   const resetCamelSellerMoveScroll = useResetRecoilState(camelSellerIsMovedScrollState);
 
   const messageProductId = useMemo(() => Number(messageInfos[1] || 0), [messageInfos]);
@@ -242,27 +244,23 @@ function ChannelAdminMessage({
       const productStatus = productDetail?.map((detail) => detail.status)[0];
 
       if (productStatus === productStatusCode.soldOut) {
-        setDialogState({
-          type: 'productSoldout'
-        });
+        setOpen(true);
+        setDialogVariant('productSoldout');
         return;
       }
       if (productStatus === productStatusCode.deleted) {
-        setDialogState({
-          type: 'productDelete'
-        });
+        setOpen(true);
+        setDialogVariant('productDelete');
         return;
       }
       if (productStatus === productStatusCode.hidden) {
-        setDialogState({
-          type: 'productHidden'
-        });
+        setOpen(true);
+        setDialogVariant('productHidden');
         return;
       }
       if (productStatus === productStatusCode.reservation) {
-        setDialogState({
-          type: 'productReservation'
-        });
+        setOpen(true);
+        setDialogVariant('productReservation');
         return;
       }
     }
@@ -286,54 +284,64 @@ function ChannelAdminMessage({
 
   if (isAdminMessageType) {
     return (
-      <Box customStyle={{ marginBottom: 12 }}>
-        <CamelAdminMessage>
-          <Image
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/channel/${message.customType}.png`}
-            alt={`custom-type-image-${message.messageId}`}
-            disableAspectRatio
-            customStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
-            style={{ minHeight: 161 }}
-          />
-          <CamelAdminMessageDetail dangerouslySetInnerHTML={{ __html: messageInfos[0] }} />
-          {productDetail &&
-            !!productDetail.length &&
-            productDetail.map((detail) => (
-              <Flexbox
-                key={detail.id}
-                alignment="center"
-                customStyle={{ padding: '0 20px' }}
-                gap={12}
-              >
-                <Box customStyle={{ width: 50, height: 60, borderRadius: 8, overflow: 'hidden' }}>
-                  <Image
-                    alt={`product-image-id${detail.id}`}
-                    src={detail.imageMain}
-                    disableAspectRatio
-                  />
-                </Box>
-                <Box>
-                  <Typography variant="body2">{detail.title}</Typography>
-                  <Typography weight="bold" customStyle={{ marginTop: 4 }}>
-                    {commaNumber(getTenThousandUnitPrice(detail.price))}만원
-                  </Typography>
-                </Box>
-              </Flexbox>
-            ))}
-          <Button
-            fullWidth
-            size="large"
-            variant="ghost"
-            brandColor="primary"
-            customStyle={{ margin: '0 20px 20px', width: 'calc(100% - 40px)' }}
-            startIcon={buttonData?.icon}
-            onClick={handleClickAction}
-          >
-            {buttonData?.text}
-          </Button>
-        </CamelAdminMessage>
-        <CreatedAt variant="small2">{dayjs(message.createdAt).format('A hh:mm')}</CreatedAt>
-      </Box>
+      <>
+        <Box customStyle={{ marginBottom: 12 }}>
+          <CamelAdminMessage>
+            <Image
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/channel/${message.customType}.png`}
+              alt={`custom-type-image-${message.messageId}`}
+              disableAspectRatio
+              customStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+              style={{ minHeight: 161 }}
+            />
+            <CamelAdminMessageDetail dangerouslySetInnerHTML={{ __html: messageInfos[0] }} />
+            {productDetail &&
+              !!productDetail.length &&
+              productDetail.map((detail) => (
+                <Flexbox
+                  key={detail.id}
+                  alignment="center"
+                  customStyle={{ padding: '0 20px' }}
+                  gap={12}
+                >
+                  <Box customStyle={{ width: 50, height: 60, borderRadius: 8, overflow: 'hidden' }}>
+                    <Image
+                      alt={`product-image-id${detail.id}`}
+                      src={detail.imageMain}
+                      disableAspectRatio
+                    />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2">{detail.title}</Typography>
+                    <Typography weight="bold" customStyle={{ marginTop: 4 }}>
+                      {commaNumber(getTenThousandUnitPrice(detail.price))}만원
+                    </Typography>
+                  </Box>
+                </Flexbox>
+              ))}
+            <Button
+              fullWidth
+              size="large"
+              variant="ghost"
+              brandColor="primary"
+              customStyle={{ margin: '0 20px 20px', width: 'calc(100% - 40px)' }}
+              startIcon={buttonData?.icon}
+              onClick={handleClickAction}
+            >
+              {buttonData?.text}
+            </Button>
+          </CamelAdminMessage>
+          <CreatedAt variant="small2">{dayjs(message.createdAt).format('A hh:mm')}</CreatedAt>
+        </Box>
+        <ChannelAdminMessageDialog
+          variant={dialogVariant}
+          open={open && !!dialogVariant}
+          onClose={() => {
+            setOpen(false);
+            setDialogVariant('');
+          }}
+        />
+      </>
     );
   }
 

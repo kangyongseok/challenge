@@ -1,7 +1,10 @@
-import { useSetRecoilState } from 'recoil';
+import { useState } from 'react';
+
 import { useRouter } from 'next/router';
 import { Box, Button, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
+
+import { AppUpdateNoticeDialog, LegitRequestOnlyInAppDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -10,12 +13,10 @@ import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
-  handleClickAppDownload,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitGuideCtaButton() {
@@ -31,7 +32,9 @@ function LegitGuideCtaButton() {
     }
   } = useTheme();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
   const { data: accessUser } = useQueryAccessUser();
 
@@ -42,45 +45,18 @@ function LegitGuideCtaButton() {
       });
 
       if (!checkAgent.isMobileApp()) {
-        setDialogState({
-          type: 'legitRequestOnlyInApp',
-          customStyleTitle: { minWidth: 270 },
-          secondButtonAction() {
-            handleClickAppDownload({});
-          }
-        });
+        setOpen(true);
 
         return;
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callExecuteApp
-            )
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                'itms-apps://itunes.apple.com/app/id1541101835'
-              );
-          }
-        });
-
+        setOpenIOSNoticeDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadAOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (window.webview && window.webview.callExecuteApp)
-              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-          }
-        });
+        setOpenAOSNoticeDialog(true);
         return;
       }
 
@@ -108,50 +84,78 @@ function LegitGuideCtaButton() {
 
   if (tab === 'upload') {
     return (
-      <Box customStyle={{ height: 92 }}>
-        <StyledLegitGuideCtaButton onClick={handleClick}>
-          <TooltipWrapper>
-            <Tooltip
-              open
-              message={
-                <Typography
-                  variant="body2"
-                  weight="medium"
-                  customStyle={{
-                    color: common.cmnB,
-                    '& > strong': {
-                      color: red.light
-                    }
-                  }}
-                >
-                  😎 <strong>무료진행</strong>중입니다!
-                </Typography>
-              }
-              placement="top"
-              customStyle={{
-                top: 10,
-                height: 'fit-content',
-                zIndex: 0
-              }}
-            >
-              <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
-                {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
-              </Button>
-            </Tooltip>
-          </TooltipWrapper>
-        </StyledLegitGuideCtaButton>
-      </Box>
+      <>
+        <Box customStyle={{ height: 92 }}>
+          <StyledLegitGuideCtaButton onClick={handleClick}>
+            <TooltipWrapper>
+              <Tooltip
+                open
+                message={
+                  <Typography
+                    variant="body2"
+                    weight="medium"
+                    customStyle={{
+                      color: common.cmnB,
+                      '& > strong': {
+                        color: red.light
+                      }
+                    }}
+                  >
+                    😎 <strong>무료진행</strong>중입니다!
+                  </Typography>
+                }
+                placement="top"
+                customStyle={{
+                  top: 10,
+                  height: 'fit-content',
+                  zIndex: 0
+                }}
+              >
+                <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
+                  {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
+                </Button>
+              </Tooltip>
+            </TooltipWrapper>
+          </StyledLegitGuideCtaButton>
+        </Box>
+        <LegitRequestOnlyInAppDialog open={open} onClose={() => setOpen(false)} />
+      </>
     );
   }
 
   return (
-    <Box customStyle={{ height: 92 }}>
-      <StyledLegitGuideCtaButton onClick={handleClick}>
-        <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
-          {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
-        </Button>
-      </StyledLegitGuideCtaButton>
-    </Box>
+    <>
+      <Box customStyle={{ height: 92 }}>
+        <StyledLegitGuideCtaButton onClick={handleClick}>
+          <Button variant="solid" brandColor="primary" size="xlarge" fullWidth>
+            {tab === 'upload' ? '사진 올려서 감정신청해보기' : '구찌지갑 감정신청해보기'}
+          </Button>
+        </StyledLegitGuideCtaButton>
+      </Box>
+      <LegitRequestOnlyInAppDialog open={open} onClose={() => setOpen(false)} />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
+    </>
   );
 }
 

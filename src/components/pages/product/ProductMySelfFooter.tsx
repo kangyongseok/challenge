@@ -8,6 +8,7 @@ import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
+import { AppUpdateForChatDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -22,7 +23,6 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
-import { dialogState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductState from '@hooks/useProductState';
 import useInfiniteQueryChannels from '@hooks/useInfiniteQueryChannels';
@@ -48,9 +48,9 @@ function ProductMySelfFooter() {
 
   const [openStatusBottomSheet, setStatusBottomSheet] = useState(false);
   const [openMoreMenuBottomSheet, setMoreMenuBottomSheet] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const { mutate: hoistingMutation } = useMutation(putProductHoisting);
 
@@ -119,17 +119,7 @@ function ProductMySelfFooter() {
     });
 
     if (needUpdateChatIOSVersion()) {
-      setDialogState({
-        type: 'requiredAppUpdateForChat',
-        customStyleTitle: { minWidth: 270 },
-        disabledOnClose: true,
-        secondButtonAction: () => {
-          window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-            'itms-apps://itunes.apple.com/app/id1541101835'
-          );
-        }
-      });
-
+      setOpen(true);
       return;
     }
 
@@ -228,6 +218,7 @@ function ProductMySelfFooter() {
         setMoreMenuBottomSheet={setMoreMenuBottomSheet}
       />
       {data?.product && <SelectTargetUserBottomSheet productId={data.product.id} />}
+      <AppUpdateForChatDialog open={open} />
     </>
   );
 }

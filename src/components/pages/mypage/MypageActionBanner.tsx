@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { Box, Flexbox, Icon, Image, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
+
+import { AppAuthCheckDialog, AppUpdateNoticeDialog } from '@components/UI/organisms';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -32,7 +34,6 @@ import {
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
 import { legitRequestState } from '@recoil/legitRequest';
-import { dialogState } from '@recoil/common';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -47,9 +48,13 @@ function MypageActionBanner() {
   const router = useRouter();
   const { data: accessUser } = useQueryAccessUser();
   const { data: { notProcessedLegitCount = 0, roles = [] } = {} } = useQueryMyUserInfo();
+
+  const [open, setOpen] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
+
   const [tempData, setTempData] = useRecoilState(camelSellerTempSaveDataState);
   const setOpenAppDown = useSetRecoilState(camelSellerDialogStateFamily('nonMemberAppdown'));
-  const setDialogState = useSetRecoilState(dialogState);
   const setLegitRequestState = useSetRecoilState(legitRequestState);
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
@@ -100,57 +105,19 @@ function MypageActionBanner() {
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callExecuteApp
-            )
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                'itms-apps://itunes.apple.com/app/id1541101835'
-              );
-          }
-        });
-
+        setOpenIOSNoticeDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadAOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (window.webview && window.webview.callExecuteApp)
-              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-          }
-        });
+        setOpenAOSNoticeDialog(true);
         return;
       }
 
       if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
         window.getAuthCamera = (result: boolean) => {
           if (!result) {
-            setDialogState({
-              type: 'appAuthCheck',
-              customStyleTitle: { minWidth: 269, marginTop: 12 },
-              firstButtonAction: () => {
-                if (
-                  checkAgent.isIOSApp() &&
-                  window.webkit &&
-                  window.webkit.messageHandlers &&
-                  window.webkit.messageHandlers.callMoveToSetting &&
-                  window.webkit.messageHandlers.callMoveToSetting.postMessage
-                ) {
-                  window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
-                }
-                if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
-                  window.webview.moveToSetting();
-                }
-              }
-            });
+            setOpen(true);
           }
         };
       }
@@ -275,24 +242,49 @@ function MypageActionBanner() {
     );
 
   return (
-    <Flexbox
-      justifyContent="space-between"
-      alignment="center"
-      customStyle={{ background: firstViewData.bgColor, height: 53, padding: '0 20px' }}
-      key={firstViewData.type}
-      onClick={() => {
-        logEvent(attrKeys.mypage.CLICK_BANNER, {
-          name: attrProperty.name.MY,
-          att: firstViewData.att
-        });
-        firstViewData?.onClick?.();
-      }}
-    >
-      <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
-        {firstViewData.text}
-      </Typography>
-      <Icon name="CaretRightOutlined" customStyle={{ color: common.uiWhite }} />
-    </Flexbox>
+    <>
+      <Flexbox
+        justifyContent="space-between"
+        alignment="center"
+        customStyle={{ background: firstViewData.bgColor, height: 53, padding: '0 20px' }}
+        key={firstViewData.type}
+        onClick={() => {
+          logEvent(attrKeys.mypage.CLICK_BANNER, {
+            name: attrProperty.name.MY,
+            att: firstViewData.att
+          });
+          firstViewData?.onClick?.();
+        }}
+      >
+        <Typography weight="medium" customStyle={{ color: common.uiWhite }}>
+          {firstViewData.text}
+        </Typography>
+        <Icon name="CaretRightOutlined" customStyle={{ color: common.uiWhite }} />
+      </Flexbox>
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
+      <AppAuthCheckDialog open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 

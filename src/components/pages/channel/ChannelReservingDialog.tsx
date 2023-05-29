@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Typography } from '@mrcamelhub/camel-ui';
 
 import { channelDialogStateFamily } from '@recoil/channel';
 
@@ -15,9 +16,6 @@ function ChannelReservingDialog() {
           open: false
         }))
       }
-      customStyle={{
-        padding: '32px 20px 20px'
-      }}
     >
       <Typography variant="h3" weight="bold" textAlign="center">
         예약중인 매물은 결제할 수 없어요.

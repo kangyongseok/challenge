@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTheme } from '@mrcamelhub/camel-ui';
@@ -9,6 +9,11 @@ import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
+import {
+  LegitRequestLeaveDialog,
+  LegitRequestPermissionCheckDialog,
+  LegitRequestSampleGuideDialog
+} from '@components/pages/legitRequest/index';
 
 import type { PhotoGuideImage, PostProductLegitData } from '@dto/productLegit';
 import type { PhotoGuideParams } from '@dto/common';
@@ -29,7 +34,6 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
-import { dialogState } from '@recoil/common';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -53,11 +57,11 @@ function LegitRequestForm() {
 
   const [legitRequest, setLegitRequestState] = useRecoilState(legitRequestState);
   const [productLegitParams, setProductLegitParamsState] = useRecoilState(productLegitParamsState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const [isLoadingGetPhoto, setIsLoadingGetPhoto] = useState(false);
   const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
   const [hasCameraAuth, setHasCameraAuth] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const {
     categoryName,
@@ -110,31 +114,7 @@ function LegitRequestForm() {
       });
 
       if (!checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
-        setDialogState({
-          type: 'legitPermissionCheck',
-          theme: 'dark',
-          customStyleTitle: { minWidth: 270 },
-          onClose() {
-            setLegitRequestState((prevState) => ({
-              ...prevState,
-              isViewedSampleGuide: true
-            }));
-          },
-          secondButtonAction: () => {
-            if (accessUser?.userId)
-              setUserData({
-                [SAVED_LEGIT_REQUEST_STATE]: {
-                  state: legitRequest,
-                  params: productLegitParams
-                }
-              });
-
-            if (checkAgent.isIOSApp())
-              window.webkit?.messageHandlers?.callMoveToSetting?.postMessage(0);
-
-            if (checkAgent.isAndroidApp()) window.webview?.moveToSetting?.();
-          }
-        });
+        setOpen(true);
         return;
       }
 
@@ -162,18 +142,7 @@ function LegitRequestForm() {
           })
         );
     },
-    [
-      hasPhotoLibraryAuth,
-      hasCameraAuth,
-      setDialogState,
-      setLegitRequestState,
-      accessUser?.userId,
-      setUserData,
-      legitRequest,
-      productLegitParams,
-      groupId,
-      photoGuideImages
-    ]
+    [groupId, hasCameraAuth, hasPhotoLibraryAuth, legitRequest.productId, photoGuideImages]
   );
 
   const handleClickAdditionalInfo = useCallback(
@@ -225,44 +194,6 @@ function LegitRequestForm() {
   }, [isCompleted, isLoadingGetPhoto, isLoadingMutate, mutatePostProductLegit, productLegitParams]);
 
   useEffect(() => {
-    if (isViewedSampleGuide || !photoGuideDetails.filter(({ imageSample }) => imageSample).length)
-      return;
-
-    setDialogState({
-      type: 'legitSampleGuid',
-      theme: 'dark',
-      customStyleTitle: { minWidth: 270 },
-      onClose() {
-        setLegitRequestState((prevState) => ({
-          ...prevState,
-          isViewedSampleGuide: true
-        }));
-      },
-      secondButtonAction: () => {
-        logEvent(attrKeys.legit.CLICK_UPLOAD_GUIDE, {
-          name: attrProperty.name.LEGIT_UPLOAD,
-          title: attrProperty.title.POPUP
-        });
-        setLegitRequestState((prevState) => ({
-          ...prevState,
-          isViewedSampleGuide: true
-        }));
-        router.push({
-          pathname: '/legit/guide/sample',
-          query: { ...photoGuideParams }
-        });
-      }
-    });
-  }, [
-    setLegitRequestState,
-    setDialogState,
-    router,
-    photoGuideParams,
-    isViewedSampleGuide,
-    photoGuideDetails
-  ]);
-
-  useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, {
       name: attrProperty.legitName.LEGIT_PROCESS
     });
@@ -310,68 +241,97 @@ function LegitRequestForm() {
   }, []);
 
   return (
-    <GeneralTemplate
-      header={
-        <Header
-          showRight={false}
-          hideTitle
-          isFixed={false}
-          customStyle={{ backgroundColor: common.bg03 }}
-        />
-      }
-      disablePadding
-      customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg03 }}
-    >
-      {productLegitParams.modelId ? (
-        <LegitRequestTitleWithModelImage
-          brandLogo={brandLogo}
-          brandName={brandName}
-          categoryName={categoryName.replace(/\(P\)/g, '')}
-          title={title}
-          modelImage={modelImage}
-        />
-      ) : (
-        <LegitRequestTitle
-          brandLogo={brandLogo}
-          brandName={brandName}
-          categoryName={categoryName.replace(/\(P\)/g, '')}
-          title={title}
-        />
-      )}
-      <Contents>
-        <LegitUploadPhoto
-          isLoading={isLoadingGetPhoto}
-          showBanner={isRegisteredProduct}
-          showPhotoGuide={!isRegisteredProduct}
-          photoGuideDetails={photoGuideDetails.filter(
-            ({ isRequired }) => (!!legitRequest.productId && isRequired) || !legitRequest.productId
-          )}
-          photoGuideImages={photoGuideImages}
-          onClick={handleClickPhotoGuide}
-        />
-        {!isRegisteredProduct && (
-          <LegitSelectAdditionalInfo
-            additionalIds={additionalIds}
-            description={description}
-            onclickAdditionalInfo={handleClickAdditionalInfo}
-            onChangeDescription={handleChangeDescription}
+    <>
+      <GeneralTemplate
+        header={
+          <Header
+            showRight={false}
+            hideTitle
+            isFixed={false}
+            customStyle={{ backgroundColor: common.bg03 }}
+          />
+        }
+        disablePadding
+        customStyle={{ height: 'auto', minHeight: '100%', backgroundColor: common.bg03 }}
+      >
+        {productLegitParams.modelId ? (
+          <LegitRequestTitleWithModelImage
+            brandLogo={brandLogo}
+            brandName={brandName}
+            categoryName={categoryName.replace(/\(P\)/g, '')}
+            title={title}
+            modelImage={modelImage}
+          />
+        ) : (
+          <LegitRequestTitle
+            brandLogo={brandLogo}
+            brandName={brandName}
+            categoryName={categoryName.replace(/\(P\)/g, '')}
+            title={title}
           />
         )}
-      </Contents>
-      <LegitRequestBottomButton
-        onClick={handleSubmit}
-        disabled={
-          isCompleted ||
-          isLoadingGetPhoto ||
-          isLoadingMutate ||
-          !isAllUploadRequiredPhoto ||
-          !photoGuideImages.length
-        }
-        text="감정 신청하기"
-        showTooltip={photoGuideImages.length > 0 && !isAllUploadRequiredPhoto}
-        tooltipMessage="필수입력 사진을 올려주세요!"
+        <Contents>
+          <LegitUploadPhoto
+            isLoading={isLoadingGetPhoto}
+            showBanner={isRegisteredProduct}
+            showPhotoGuide={!isRegisteredProduct}
+            photoGuideDetails={photoGuideDetails.filter(
+              ({ isRequired }) =>
+                (!!legitRequest.productId && isRequired) || !legitRequest.productId
+            )}
+            photoGuideImages={photoGuideImages}
+            onClick={handleClickPhotoGuide}
+          />
+          {!isRegisteredProduct && (
+            <LegitSelectAdditionalInfo
+              additionalIds={additionalIds}
+              description={description}
+              onclickAdditionalInfo={handleClickAdditionalInfo}
+              onChangeDescription={handleChangeDescription}
+            />
+          )}
+        </Contents>
+        <LegitRequestBottomButton
+          onClick={handleSubmit}
+          disabled={
+            isCompleted ||
+            isLoadingGetPhoto ||
+            isLoadingMutate ||
+            !isAllUploadRequiredPhoto ||
+            !photoGuideImages.length
+          }
+          text="감정 신청하기"
+          showTooltip={photoGuideImages.length > 0 && !isAllUploadRequiredPhoto}
+          tooltipMessage="필수입력 사진을 올려주세요!"
+        />
+      </GeneralTemplate>
+      <LegitRequestLeaveDialog />
+      <LegitRequestSampleGuideDialog />
+      <LegitRequestPermissionCheckDialog
+        open={open}
+        onClose={() => {
+          setLegitRequestState((prevState) => ({
+            ...prevState,
+            isViewedSampleGuide: true
+          }));
+          setOpen(false);
+        }}
+        onClick={() => {
+          if (accessUser?.userId)
+            setUserData({
+              [SAVED_LEGIT_REQUEST_STATE]: {
+                state: legitRequest,
+                params: productLegitParams
+              }
+            });
+
+          if (checkAgent.isIOSApp())
+            window.webkit?.messageHandlers?.callMoveToSetting?.postMessage(0);
+
+          if (checkAgent.isAndroidApp()) window.webview?.moveToSetting?.();
+        }}
       />
-    </GeneralTemplate>
+    </>
   );
 }
 

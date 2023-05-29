@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { AppAuthCheckDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 import type { PhotoGuideImage, PostProductLegitData, PutProductLegitData } from '@dto/productLegit';
-import { PhotoGuideParams } from '@dto/common';
+import type { PhotoGuideParams } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
@@ -25,7 +26,6 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
-import { dialogState } from '@recoil/common';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitRequestTitleWithModelImage from './LegitRequestTitleWithModelImage';
@@ -35,6 +35,7 @@ import LegitRequestBottomButton from './LegitRequestBottomButton';
 
 function LegitRequestEdit() {
   const router = useRouter();
+
   const {
     theme: {
       palette: { common }
@@ -43,10 +44,11 @@ function LegitRequestEdit() {
 
   const toastStack = useToastStack();
 
+  const [open, setOpen] = useState(false);
+
   const [productLegitEditParams, setProductLegitEditParamsState] = useRecoilState(
     productLegitEditParamsState
   );
-  const setDialogState = useSetRecoilState(dialogState);
   const resetProductLegitEditParamsState = useResetRecoilState(productLegitEditParamsState);
 
   const productId = useMemo(() => Number(router.query?.productId || 0), [router.query?.productId]);
@@ -165,26 +167,7 @@ function LegitRequestEdit() {
         logEvent(attrKeys.legit.CLICK_LEGIT_UPLOAD, { name: attrProperty.name.PRE_CONFIRM_EDIT });
 
         if (!checkAgent.isAndroidApp() && (!hasPhotoLibraryAuth || !hasCameraAuth)) {
-          setDialogState({
-            type: 'appAuthCheck',
-            theme: 'dark',
-            customStyleTitle: { minWidth: 269, marginTop: 12 },
-            firstButtonAction: () => {
-              if (
-                checkAgent.isIOSApp() &&
-                window.webkit &&
-                window.webkit.messageHandlers &&
-                window.webkit.messageHandlers.callMoveToSetting &&
-                window.webkit.messageHandlers.callMoveToSetting.postMessage
-              ) {
-                window.webkit.messageHandlers.callMoveToSetting.postMessage(0);
-              }
-
-              if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
-                window.webview.moveToSetting();
-              }
-            }
-          });
+          setOpen(true);
           return;
         }
 
@@ -262,15 +245,7 @@ function LegitRequestEdit() {
           );
         }
       },
-    [
-      hasPhotoLibraryAuth,
-      hasCameraAuth,
-      photoGuideDetails,
-      setDialogState,
-      sellerType,
-      status,
-      photoGuideImages
-    ]
+    [hasPhotoLibraryAuth, hasCameraAuth, photoGuideDetails, sellerType, status, photoGuideImages]
   );
 
   const handleSubmit = useCallback(() => {
@@ -346,89 +321,92 @@ function LegitRequestEdit() {
   }, []);
 
   return (
-    <GeneralTemplate
-      header={
-        <Header
-          showRight={false}
-          hideTitle
-          isFixed={false}
-          customStyle={{ backgroundColor: common.bg03 }}
-        />
-      }
-      disablePadding
-      customStyle={{
-        height: 'auto',
-        minHeight: '100%',
-        backgroundColor: common.bg03
-      }}
-    >
-      {imageModel ? (
-        <LegitRequestTitleWithModelImage
-          brandLogo={`https://${
-            process.env.IMAGE_DOMAIN
-          }/assets/images/brands/transparent/${brandNameEng
-            .toLocaleLowerCase()
-            .split(' ')
-            .join('')}.png`}
-          brandName={brandName}
-          categoryName={categoryName.replace(/\(P\)/g, '')}
-          title={title}
-          modelImage={imageModel}
-          isEditMode
-        />
-      ) : (
-        <LegitRequestTitle
-          brandLogo={`https://${
-            process.env.IMAGE_DOMAIN
-          }/assets/images/brands/transparent/${brandNameEng
-            .toLocaleLowerCase()
-            .split(' ')
-            .join('')}.png`}
-          brandName={brandName}
-          categoryName={categoryName.replace(/\(P\)/g, '')}
-          title={title}
-          isEditMode
-        />
-      )}
-      <Contents>
-        <LegitRequestOpinion
-          isLoading={isLoadingSamplePhotoGuideDetails}
-          description={legitOpinions[0]?.description || ''}
-          samplePhotoGuideDetails={samplePhotoGuideDetails.filter(({ isRequired }) => isRequired)}
-          onClickSamplePhotoGuide={handleClickSamplePhotoGuide}
-        />
-        <LegitUploadPhoto
-          isLoading={isLoadingGetPhoto}
-          mode="edit"
-          showPhotoGuide={false}
-          photoGuideDetails={photoGuideDetails.map(
-            ({ commonPhotoGuideDetail, imageUrl, isEdit }) => ({
-              ...commonPhotoGuideDetail,
-              isEdit,
-              savedImageUrl: imageUrl
-            })
-          )}
-          photoGuideImages={photoGuideImages}
-          onClick={handleClickPhotoGuide}
-        />
-      </Contents>
-      <LegitRequestBottomButton
-        onClick={handleSubmit}
-        disabled={
-          isLoadingProductLegit ||
-          isLoadingGetPhoto ||
-          isLoadingMutate ||
-          !isAllUploadRequiredPhoto ||
-          !isAllUploadRequestedEditPhoto
+    <>
+      <GeneralTemplate
+        header={
+          <Header
+            showRight={false}
+            hideTitle
+            isFixed={false}
+            customStyle={{ backgroundColor: common.bg03 }}
+          />
         }
-        text="사진 보완 완료"
-        showTooltip={
-          photoGuideImages.length > 0 &&
-          (!isAllUploadRequiredPhoto || !isAllUploadRequestedEditPhoto)
-        }
-        tooltipMessage="감정사의 요청사진을 다시한번 업로드해주세요!"
-      />
-    </GeneralTemplate>
+        disablePadding
+        customStyle={{
+          height: 'auto',
+          minHeight: '100%',
+          backgroundColor: common.bg03
+        }}
+      >
+        {imageModel ? (
+          <LegitRequestTitleWithModelImage
+            brandLogo={`https://${
+              process.env.IMAGE_DOMAIN
+            }/assets/images/brands/transparent/${brandNameEng
+              .toLocaleLowerCase()
+              .split(' ')
+              .join('')}.png`}
+            brandName={brandName}
+            categoryName={categoryName.replace(/\(P\)/g, '')}
+            title={title}
+            modelImage={imageModel}
+            isEditMode
+          />
+        ) : (
+          <LegitRequestTitle
+            brandLogo={`https://${
+              process.env.IMAGE_DOMAIN
+            }/assets/images/brands/transparent/${brandNameEng
+              .toLocaleLowerCase()
+              .split(' ')
+              .join('')}.png`}
+            brandName={brandName}
+            categoryName={categoryName.replace(/\(P\)/g, '')}
+            title={title}
+            isEditMode
+          />
+        )}
+        <Contents>
+          <LegitRequestOpinion
+            isLoading={isLoadingSamplePhotoGuideDetails}
+            description={legitOpinions[0]?.description || ''}
+            samplePhotoGuideDetails={samplePhotoGuideDetails.filter(({ isRequired }) => isRequired)}
+            onClickSamplePhotoGuide={handleClickSamplePhotoGuide}
+          />
+          <LegitUploadPhoto
+            isLoading={isLoadingGetPhoto}
+            mode="edit"
+            showPhotoGuide={false}
+            photoGuideDetails={photoGuideDetails.map(
+              ({ commonPhotoGuideDetail, imageUrl, isEdit }) => ({
+                ...commonPhotoGuideDetail,
+                isEdit,
+                savedImageUrl: imageUrl
+              })
+            )}
+            photoGuideImages={photoGuideImages}
+            onClick={handleClickPhotoGuide}
+          />
+        </Contents>
+        <LegitRequestBottomButton
+          onClick={handleSubmit}
+          disabled={
+            isLoadingProductLegit ||
+            isLoadingGetPhoto ||
+            isLoadingMutate ||
+            !isAllUploadRequiredPhoto ||
+            !isAllUploadRequestedEditPhoto
+          }
+          text="사진 보완 완료"
+          showTooltip={
+            photoGuideImages.length > 0 &&
+            (!isAllUploadRequiredPhoto || !isAllUploadRequestedEditPhoto)
+          }
+          tooltipMessage="감정사의 요청사진을 다시한번 업로드해주세요!"
+        />
+      </GeneralTemplate>
+      <AppAuthCheckDialog open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 

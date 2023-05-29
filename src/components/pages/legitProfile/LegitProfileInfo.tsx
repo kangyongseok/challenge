@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -18,6 +17,7 @@ import {
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
+import { SNSShareDialog } from '@components/UI/organisms';
 
 import type { UserRoleLegit } from '@dto/user';
 import type { LegitsBrand } from '@dto/model';
@@ -41,7 +41,7 @@ import {
   isExtendedLayoutIOSVersion
 } from '@utils/common';
 
-import { dialogState } from '@recoil/common';
+import type { ShareData } from '@typings/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitProfileInfoProps {
@@ -58,6 +58,8 @@ function LegitProfileInfo({
   legitsBrands = [],
   cntOpinion
 }: LegitProfileInfoProps) {
+  const router = useRouter();
+
   const {
     userId,
     name = '',
@@ -68,13 +70,16 @@ function LegitProfileInfo({
     cntFake = 0
     // urlShop
   } = profile || {};
+
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
-  const router = useRouter();
-  const setDialogState = useSetRecoilState(dialogState);
+
+  const [open, setOpen] = useState(false);
+  const [shareData, setShareData] = useState<ShareData>();
+
   const { data: accessUser } = useQueryAccessUser();
   const { data: profileInfo } = useQuery(
     queryKeys.users.legitProfile(Number(router.query.id)),
@@ -101,7 +106,7 @@ function LegitProfileInfo({
     DEFAUT_BACKGROUND_IMAGE;
 
   const handleClickShare = useCallback(() => {
-    const shareData = {
+    const newShareData = {
       title:
         cntOpinion > 0
           ? `${cntOpinion}개 중고명품 감정한 감정사 | 카멜`
@@ -122,14 +127,15 @@ function LegitProfileInfo({
 
     if (
       !executedShareURl({
-        url: shareData.url,
-        title: shareData.title,
-        text: shareData.description
+        url: newShareData.url,
+        title: newShareData.title,
+        text: newShareData.description
       })
     ) {
-      setDialogState({ type: 'SNSShare', shareData });
+      setOpen(true);
+      setShareData(newShareData);
     }
-  }, [cntOpinion, userImageBackground, router.asPath, setDialogState]);
+  }, [cntOpinion, userImageBackground, router.asPath]);
 
   const handleClickMoveToShop = () => {
     logEvent(attrKeys.legit.CLICK_SELLER_PRODUCT, {
@@ -144,229 +150,224 @@ function LegitProfileInfo({
     });
   };
 
-  // const handleClickMoveUrlShop = () => {
-  //   logEvent(attrKeys.legit.CLICK_PROFILE_LINK, {
-  //     name: attrProperty.legitName.LEGIT_PROFILE
-  //   });
-  //
-  //   window.open(urlShop as string, '_blank');
-  // };
-
   const handleClickEdit = () => {
     router.push(`/legit/profile/${userId}/edit?targetTab=legit`);
   };
 
   return (
-    <Wrapper>
-      <BackgroundImage
-        src={getImageResizePath({
-          imagePath: getImagePathStaticParser(userImageBackground),
-          h: 300
-        })}
-      >
-        <Blur />
-      </BackgroundImage>
-      <Flexbox
-        direction="vertical"
-        customStyle={{
-          flex: 1,
-          paddingTop: `calc(${HEADER_HEIGHT}px + 20px + ${
-            isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
-          })`,
-          position: 'relative'
-        }}
-      >
-        {isLoading ? (
-          <>
-            <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
-              <Flexbox gap={8}>
-                <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
-                  <Skeleton width={100} height={32} disableAspectRatio round={8} />
-                  <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
-                    <Flexbox gap={4} alignment="center">
-                      <Skeleton width={58} height={18} round={8} disableAspectRatio />
-                      <Skeleton width={32} height={16} round={8} disableAspectRatio />
+    <>
+      <Wrapper>
+        <BackgroundImage
+          src={getImageResizePath({
+            imagePath: getImagePathStaticParser(userImageBackground),
+            h: 300
+          })}
+        >
+          <Blur />
+        </BackgroundImage>
+        <Flexbox
+          direction="vertical"
+          customStyle={{
+            flex: 1,
+            paddingTop: `calc(${HEADER_HEIGHT}px + 20px + ${
+              isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
+            })`,
+            position: 'relative'
+          }}
+        >
+          {isLoading ? (
+            <>
+              <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
+                <Flexbox gap={8}>
+                  <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
+                    <Skeleton width={100} height={32} disableAspectRatio round={8} />
+                    <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
+                      <Flexbox gap={4} alignment="center">
+                        <Skeleton width={58} height={18} round={8} disableAspectRatio />
+                        <Skeleton width={32} height={16} round={8} disableAspectRatio />
+                      </Flexbox>
+                      <Flexbox gap={4} alignment="center">
+                        <Skeleton width={58} height={18} round={8} disableAspectRatio />
+                        <Skeleton width={32} height={16} round={8} disableAspectRatio />
+                      </Flexbox>
                     </Flexbox>
-                    <Flexbox gap={4} alignment="center">
-                      <Skeleton width={58} height={18} round={8} disableAspectRatio />
-                      <Skeleton width={32} height={16} round={8} disableAspectRatio />
-                    </Flexbox>
+                    <Skeleton width="100%" height="40px" disableAspectRatio round={8} />
                   </Flexbox>
-                  <Skeleton width="100%" height="40px" disableAspectRatio round={8} />
-                </Flexbox>
-                <Skeleton
-                  width={80}
-                  height={80}
-                  disableAspectRatio
-                  customStyle={{ borderRadius: '50%' }}
-                />
-              </Flexbox>
-              <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
-                {Array.from({ length: 10 }, (_, index) => (
                   <Skeleton
-                    key={`target-brand-${index}`}
-                    width={Math.min(Math.max(45, getRandomNumber(2)), 110)}
-                    height={24}
+                    width={80}
+                    height={80}
                     disableAspectRatio
-                    round={8}
-                  />
-                ))}
-              </Flexbox>
-            </Flexbox>
-            <Flexbox
-              direction="vertical"
-              gap={8}
-              customStyle={{
-                padding: '32px 20px 20px',
-                background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%)'
-              }}
-            >
-              <Flexbox alignment="center" gap={8}>
-                <Skeleton width={128} height={44} round={8} disableAspectRatio />
-                <Skeleton width={44} height={44} round={8} disableAspectRatio />
-                <Skeleton width={44} height={44} round={8} disableAspectRatio />
-              </Flexbox>
-            </Flexbox>
-          </>
-        ) : (
-          <>
-            <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
-              <Flexbox gap={8}>
-                <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
-                  <Typography variant="h2" weight="bold" customStyle={{ color: common.cmnW }}>
-                    {name}
-                  </Typography>
-                  <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
-                    <Flexbox alignment="center" gap={4}>
-                      <Label
-                        variant="darked"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        text={
-                          <Flexbox alignment="center" gap={2}>
-                            <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
-                            <Typography
-                              variant="small2"
-                              weight="medium"
-                              customStyle={{ color: common.cmnW }}
-                            >
-                              정품의견
-                            </Typography>
-                          </Flexbox>
-                        }
-                        size="xsmall"
-                      />
-                      <Typography
-                        variant="body2"
-                        weight="bold"
-                        customStyle={{ color: dark.palette.primary.light }}
-                      >
-                        {commaNumber(cntReal)}건
-                      </Typography>
-                    </Flexbox>
-                    <Flexbox alignment="center" gap={4}>
-                      <Label
-                        variant="darked"
-                        brandColor="red"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        text={
-                          <Flexbox alignment="center" gap={2}>
-                            <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
-                            <Typography
-                              variant="small2"
-                              weight="medium"
-                              customStyle={{ color: common.cmnW }}
-                            >
-                              가품의심
-                            </Typography>
-                          </Flexbox>
-                        }
-                        size="xsmall"
-                      />
-                      <Typography
-                        variant="body2"
-                        weight="bold"
-                        customStyle={{ color: dark.palette.secondary.red.light }}
-                      >
-                        {commaNumber(cntFake)}건
-                      </Typography>
-                    </Flexbox>
-                  </Flexbox>
-                  <Typography
-                    variant="body1"
-                    customStyle={{ color: common.cmnW }}
-                    dangerouslySetInnerHTML={{
-                      __html: title
-                        .replace(/\r?\n/g, '<br />')
-                        .split('<br />')
-                        .map((text) => text.replace(/^-|^- /, ''))
-                        .join('<br />')
-                    }}
+                    customStyle={{ borderRadius: '50%' }}
                   />
                 </Flexbox>
-                <UserAvatar
-                  src={userImageProfile}
-                  dateActivated={dateActivated}
-                  width={80}
-                  height={80}
-                  iconCustomStyle={{ width: 40, height: 40 }}
-                  isRound
-                  showBorder={!dateActivated}
-                  customStyle={{ height: 'inherit' }}
-                />
+                <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
+                  {Array.from({ length: 10 }, (_, index) => (
+                    <Skeleton
+                      key={`target-brand-${index}`}
+                      width={Math.min(Math.max(45, getRandomNumber(2)), 110)}
+                      height={24}
+                      disableAspectRatio
+                      round={8}
+                    />
+                  ))}
+                </Flexbox>
               </Flexbox>
-              <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
-                {targetBrandData.map(({ id, name: brandName }) => (
-                  <Chip
-                    key={`target-brand-${id}`}
-                    size="xsmall"
-                    variant="solid"
-                    brandColor="black"
-                    customStyle={{ backgroundColor: common.overlay40, whiteSpace: 'nowrap' }}
-                  >
-                    #{brandName}
-                  </Chip>
-                ))}
-              </Flexbox>
-            </Flexbox>
-            <Box customStyle={{ background: common.gradation180 }}>
               <Flexbox
-                alignment="center"
+                direction="vertical"
                 gap={8}
                 customStyle={{
-                  marginBottom: -1,
-                  padding: '32px 20px 20px'
+                  padding: '32px 20px 20px',
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%)'
                 }}
               >
-                {userId && ![56881, 70679].includes(userId) && (
-                  <Button
-                    size="large"
-                    variant="solid"
-                    brandColor="black"
-                    customStyle={{ minWidth: 128 }}
-                    startIcon={<Icon name="ShopOutlined" customStyle={{ color: common.cmnW }} />}
-                    onClick={handleClickMoveToShop}
-                  >
-                    SHOP
-                  </Button>
-                )}
-                <Button size="large" onClick={handleClickShare}>
-                  <Icon name="ShareOutlined" />
-                </Button>
-              </Flexbox>
-              {accessUser?.userId === userId && (
-                <Flexbox customStyle={{ padding: '0 20px' }}>
-                  <EditButton variant="solid" fullWidth size="xlarge" onClick={handleClickEdit}>
-                    수정하기
-                  </EditButton>
+                <Flexbox alignment="center" gap={8}>
+                  <Skeleton width={128} height={44} round={8} disableAspectRatio />
+                  <Skeleton width={44} height={44} round={8} disableAspectRatio />
+                  <Skeleton width={44} height={44} round={8} disableAspectRatio />
                 </Flexbox>
-              )}
-            </Box>
-          </>
-        )}
-      </Flexbox>
-    </Wrapper>
+              </Flexbox>
+            </>
+          ) : (
+            <>
+              <Flexbox direction="vertical" gap={12} customStyle={{ flex: 1, padding: '0 20px' }}>
+                <Flexbox gap={8}>
+                  <Flexbox direction="vertical" gap={8} customStyle={{ flex: 1 }}>
+                    <Typography variant="h2" weight="bold" customStyle={{ color: common.cmnW }}>
+                      {name}
+                    </Typography>
+                    <Flexbox gap={12} alignment="center" customStyle={{ marginBottom: 12 }}>
+                      <Flexbox alignment="center" gap={4}>
+                        <Label
+                          variant="darked"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          text={
+                            <Flexbox alignment="center" gap={2}>
+                              <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
+                              <Typography
+                                variant="small2"
+                                weight="medium"
+                                customStyle={{ color: common.cmnW }}
+                              >
+                                정품의견
+                              </Typography>
+                            </Flexbox>
+                          }
+                          size="xsmall"
+                        />
+                        <Typography
+                          variant="body2"
+                          weight="bold"
+                          customStyle={{ color: dark.palette.primary.light }}
+                        >
+                          {commaNumber(cntReal)}건
+                        </Typography>
+                      </Flexbox>
+                      <Flexbox alignment="center" gap={4}>
+                        <Label
+                          variant="darked"
+                          brandColor="red"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          text={
+                            <Flexbox alignment="center" gap={2}>
+                              <Icon name="OpinionAuthenticOutlined" width={12} height={12} />
+                              <Typography
+                                variant="small2"
+                                weight="medium"
+                                customStyle={{ color: common.cmnW }}
+                              >
+                                가품의심
+                              </Typography>
+                            </Flexbox>
+                          }
+                          size="xsmall"
+                        />
+                        <Typography
+                          variant="body2"
+                          weight="bold"
+                          customStyle={{ color: dark.palette.secondary.red.light }}
+                        >
+                          {commaNumber(cntFake)}건
+                        </Typography>
+                      </Flexbox>
+                    </Flexbox>
+                    <Typography
+                      variant="body1"
+                      customStyle={{ color: common.cmnW }}
+                      dangerouslySetInnerHTML={{
+                        __html: title
+                          .replace(/\r?\n/g, '<br />')
+                          .split('<br />')
+                          .map((text) => text.replace(/^-|^- /, ''))
+                          .join('<br />')
+                      }}
+                    />
+                  </Flexbox>
+                  <UserAvatar
+                    src={userImageProfile}
+                    dateActivated={dateActivated}
+                    width={80}
+                    height={80}
+                    iconCustomStyle={{ width: 40, height: 40 }}
+                    isRound
+                    showBorder={!dateActivated}
+                    customStyle={{ height: 'inherit' }}
+                  />
+                </Flexbox>
+                <Flexbox gap={4} customStyle={{ flexWrap: 'wrap' }}>
+                  {targetBrandData.map(({ id, name: brandName }) => (
+                    <Chip
+                      key={`target-brand-${id}`}
+                      size="xsmall"
+                      variant="solid"
+                      brandColor="black"
+                      customStyle={{ backgroundColor: common.overlay40, whiteSpace: 'nowrap' }}
+                    >
+                      #{brandName}
+                    </Chip>
+                  ))}
+                </Flexbox>
+              </Flexbox>
+              <Box customStyle={{ background: common.gradation180 }}>
+                <Flexbox
+                  alignment="center"
+                  gap={8}
+                  customStyle={{
+                    marginBottom: -1,
+                    padding: '32px 20px 20px'
+                  }}
+                >
+                  {userId && ![56881, 70679].includes(userId) && (
+                    <Button
+                      size="large"
+                      variant="solid"
+                      brandColor="black"
+                      customStyle={{ minWidth: 128 }}
+                      startIcon={<Icon name="ShopOutlined" customStyle={{ color: common.cmnW }} />}
+                      onClick={handleClickMoveToShop}
+                    >
+                      SHOP
+                    </Button>
+                  )}
+                  <Button size="large" onClick={handleClickShare}>
+                    <Icon name="ShareOutlined" />
+                  </Button>
+                </Flexbox>
+                {accessUser?.userId === userId && (
+                  <Flexbox customStyle={{ padding: '0 20px' }}>
+                    <EditButton variant="solid" fullWidth size="xlarge" onClick={handleClickEdit}>
+                      수정하기
+                    </EditButton>
+                  </Flexbox>
+                )}
+              </Box>
+            </>
+          )}
+        </Flexbox>
+      </Wrapper>
+      <SNSShareDialog open={open} onClose={() => setOpen(false)} shareData={shareData} />
+    </>
   );
 }
 

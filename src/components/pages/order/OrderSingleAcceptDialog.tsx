@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { postOrderApprove } from '@api/order';
 
@@ -33,10 +34,10 @@ function OrderSingleAcceptDialog({
 
   return (
     <Dialog open={open}>
-      <Typography weight="bold" variant="h3" customStyle={{ textAlign: 'center' }}>
+      <Typography weight="bold" variant="h3" textAlign="center">
         안전결제 요청을 수락할까요?
       </Typography>
-      <Typography variant="h4" customStyle={{ textAlign: 'center', marginTop: 8 }}>
+      <Typography variant="h4" textAlign="center" customStyle={{ marginTop: 8 }}>
         상품을 보내주시면
         <br />
         카멜이 확인 후 정산해드려요.

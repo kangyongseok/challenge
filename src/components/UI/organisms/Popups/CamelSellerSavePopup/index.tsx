@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
@@ -135,7 +136,6 @@ function CamelSellerSavePopup() {
   return (
     <Dialog
       open={continueRegister.open}
-      customStyle={{ width: '100%', textAlign: 'center' }}
       onClose={() => setContinueRegisterDialog(({ type }) => ({ type, open: false }))}
     >
       <Typography

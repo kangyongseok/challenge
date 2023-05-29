@@ -6,7 +6,8 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Dialog, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { SafePaymentGuideDialog } from '@components/UI/organisms';
 
@@ -230,11 +231,7 @@ function HomeMainBanner() {
         onClose={() => setOpen(false)}
         ctaType="viewSafePaymentProducts"
       />
-      <Dialog
-        open={exhibition}
-        onClose={() => setExhibitionOpen(false)}
-        customStyle={{ width: 311, padding: '32px 20px 20px', textAlign: 'center' }}
-      >
+      <Dialog open={exhibition} onClose={() => setExhibitionOpen(false)}>
         <Image
           height={114}
           src={getImageResizePath({

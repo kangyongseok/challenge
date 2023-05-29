@@ -5,16 +5,8 @@ import { entries, groupBy, isEmpty } from 'lodash-es';
 import dayjs from 'dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import {
-  Box,
-  Button,
-  Dialog,
-  Flexbox,
-  Icon,
-  Skeleton,
-  Typography,
-  useTheme
-} from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
@@ -309,7 +301,6 @@ function HistoryPanel() {
         onClose={() => {
           setOpenDeleteDialog(false);
         }}
-        customStyle={{ padding: 20, width: 300 }}
       >
         <Typography weight="medium" textAlign="center" customStyle={{ marginBottom: 20 }}>
           최근 활동내역을

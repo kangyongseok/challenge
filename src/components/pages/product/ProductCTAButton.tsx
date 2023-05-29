@@ -5,10 +5,15 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Box, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { OnBoardingSpotlight, SafePaymentGuideDialog } from '@components/UI/organisms';
+import {
+  AppUpdateForChatDialog,
+  OnBoardingSpotlight,
+  SafePaymentGuideDialog
+} from '@components/UI/organisms';
 
 import type { ProductOffer } from '@dto/productOffer';
 
@@ -32,7 +37,7 @@ import {
   needUpdateChatIOSVersion
 } from '@utils/common';
 
-import { dialogState, loginBottomSheetState, userOnBoardingTriggerState } from '@recoil/common';
+import { loginBottomSheetState, userOnBoardingTriggerState } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductType from '@hooks/useProductType';
@@ -54,8 +59,8 @@ function ProductCTAButton() {
   const toastStack = useToastStack();
 
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
-  const setDialogState = useSetRecoilState(dialogState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const [
@@ -92,9 +97,6 @@ function ProductCTAButton() {
   } = useMutationUserBlock();
   const { mutate: mutateCreateChannel } = useMutationCreateChannel(); // isLoadingMutateCreateChannel
 
-  // const [{ isOpenBunJangTooltip }, setOpenTooltip] = useState({
-  //   isOpenBunJangTooltip: false
-  // });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setPendingCreateChannel] = useState(false); // pendingCreateChannel
   const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
@@ -103,20 +105,9 @@ function ProductCTAButton() {
   const [hasOffer, setHasOffer] = useState(false);
   const [currentOffer, setCurrentOffer] = useState<ProductOffer | null | undefined>(null);
   const [openPriceOfferOnBoarding, setOpenPriceOfferOnBoarding] = useState(false);
+  const [openChatRequiredUpdateDialog, setOpenChatRequiredUpdateDialog] = useState(false);
 
   const priceOfferAreaRef = useRef<HTMLDivElement>(null);
-
-  // const attParser = () => {
-  //   if (isChannelSellerType) return 'CHANNEL';
-  //   if (
-  //     product?.sellerType === productSellerType.collection ||
-  //     isOperatorC2CProduct ||
-  //     isOperatorProduct
-  //   )
-  //     return 'REDIRECT';
-  //   if (isCertificationProduct) return 'SMS';
-  //   return '';
-  // };
 
   const pageMovePlatform = () => {
     if (!productDetail?.product) return;
@@ -143,44 +134,6 @@ function ProductCTAButton() {
         '_blank'
       );
   };
-
-  const blockUserDialog = () => {
-    setDialogState({
-      type: 'unblockBlockedUser',
-      content: (
-        <Typography
-          variant="h3"
-          weight="bold"
-          customStyle={{ minWidth: 270, padding: '12px 0', textAlign: 'center' }}
-        >
-          회원님이 차단한 사용자에요.
-          <br />
-          차단을 해제할까요?
-        </Typography>
-      ),
-      async firstButtonAction() {
-        if (isLoadingMutateUnblock) return;
-
-        if (productDetail?.roleSeller?.userId && !!productDetail?.product) {
-          await mutateUnblock(productDetail?.roleSeller.userId, {
-            onSuccess() {
-              refetch();
-              toastStack({
-                children: `${productDetail.product.productSeller.name}님을 차단 해제했어요.`
-              });
-            }
-          });
-        }
-      }
-    });
-  };
-
-  // const handleClickTodayHide = (e: MouseEvent<HTMLDivElement>) => {
-  //   e.stopPropagation();
-
-  //   LocalStorage.set(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
-  //   setOpen(false);
-  // };
 
   const handleClickSafePaymentFreeBanner = () => {
     if (isAllOperatorProduct) return;
@@ -210,7 +163,7 @@ function ProductCTAButton() {
     });
 
     if (isBlockedUser) {
-      blockUserDialog();
+      setOpenDialog(true);
       return;
     }
 
@@ -238,17 +191,7 @@ function ProductCTAButton() {
       }
 
       if (needUpdateChatIOSVersion()) {
-        setDialogState({
-          type: 'requiredAppUpdateForChat',
-          customStyleTitle: { minWidth: 270 },
-          disabledOnClose: true,
-          secondButtonAction: () => {
-            window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-              'itms-apps://itunes.apple.com/app/id1541101835'
-            );
-          }
-        });
-
+        setOpenChatRequiredUpdateDialog(true);
         return;
       }
 
@@ -503,13 +446,54 @@ function ProductCTAButton() {
             )}
           </Flexbox>
         </Tooltip>
-        <ProductDetailButtonGroup blockUserDialog={blockUserDialog} />
+        <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />
       </Wrapper>
-
       <SafePaymentGuideDialog
         open={openSafePaymentGuideDialog}
         onClose={() => setOpenSafePaymentGuideDialog(false)}
       />
+      <AppUpdateForChatDialog open={openChatRequiredUpdateDialog} />
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <Typography variant="h3" weight="bold">
+          회원님이 차단한 사용자에요.
+          <br />
+          차단을 해제할까요?
+        </Typography>
+        <Flexbox
+          direction="vertical"
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={async () => {
+              if (isLoadingMutateUnblock) return;
+
+              if (productDetail?.roleSeller?.userId && !!productDetail?.product) {
+                await mutateUnblock(productDetail?.roleSeller.userId, {
+                  async onSuccess() {
+                    await refetch();
+                    toastStack({
+                      children: `${productDetail.product.productSeller.name}님을 차단 해제했어요.`
+                    });
+                    setOpenDialog(false);
+                  }
+                });
+              }
+            }}
+          >
+            차단 해제하기
+          </Button>
+          <Button fullWidth variant="ghost" brandColor="black" size="large">
+            취소
+          </Button>
+        </Flexbox>
+      </Dialog>
     </>
   );
 }

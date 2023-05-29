@@ -4,7 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -85,7 +86,6 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
           open: false
         }))
       }
-      customStyle={{ minWidth: 311, padding: '32px 20px 20px' }}
     >
       <Flexbox direction="vertical" gap={32}>
         <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>

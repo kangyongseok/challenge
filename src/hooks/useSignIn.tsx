@@ -6,7 +6,7 @@ import omitBy from 'lodash-es/omitBy';
 import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
 import { useMutation } from '@tanstack/react-query';
-import { Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { useTheme } from '@mrcamelhub/camel-ui';
 
 import type {
   AccessUser,
@@ -18,7 +18,6 @@ import type {
 
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
-import ChannelTalk from '@library/channelTalk';
 import Axios from '@library/axios';
 import { logEvent } from '@library/amplitude';
 
@@ -43,7 +42,7 @@ import { checkAgent } from '@utils/common';
 
 import { FindLocation } from '@typings/common';
 import { searchParamsState } from '@recoil/searchHelper';
-import { dialogState, prevChannelAlarmPopup } from '@recoil/common';
+import { prevChannelAlarmPopup } from '@recoil/common';
 import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 export const LOGIN_TYPE = {
@@ -84,13 +83,14 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
     materialIds
   } = useRecoilValue(searchParamsState);
   const resetSearchParams = useResetRecoilState(searchParamsState);
-  const setDialogState = useSetRecoilState(dialogState);
   const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
 
   const { mutate: mutatePostAlarm } = useMutationPostAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
 
   const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [errorProvider, setErrorProvider] = useState('');
 
   const { code, state } = useMemo(
     () => ({
@@ -249,14 +249,7 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
         if (authLoginCallback) authLoginCallback();
       } catch (error) {
         setLoading(false);
-        setDialogState({
-          type: 'loginError',
-          theme: 'dark',
-          customStyle: { h4: { minWidth: 270 } },
-          secondButtonAction() {
-            ChannelTalk.showMessenger();
-          }
-        });
+        setHasError(true);
         logEvent(attrKeys.login.LOAD_LOGIN_SNS, {
           title: provider.toUpperCase(),
           att: 'FAIL',
@@ -264,7 +257,7 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
         });
       }
     },
-    [bottomSheet, successLogin, authLoginCallback, setPrevChannelAlarmPopup, setDialogState]
+    [bottomSheet, successLogin, authLoginCallback, setPrevChannelAlarmPopup]
   );
 
   useEffect(() => {
@@ -322,22 +315,8 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
           att: 'FAIL'
         });
         setLoading(false);
-        setDialogState({
-          type: 'loginProviderError',
-          theme: 'dark',
-          content: (
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ minWidth: 270, textAlign: 'center' }}
-            >
-              {`${LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]} 로그인 오류가 발생했어요😰`}
-              <br />
-              다른 방법을 시도해 보세요.
-            </Typography>
-          ),
-          customStyle: { button: { backgroundColor: common.cmn80 } }
-        });
+        setHasError(true);
+        setErrorProvider(provider);
       }
     };
 
@@ -362,22 +341,8 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
           att: 'FAIL'
         });
         setLoading(false);
-        setDialogState({
-          type: 'loginProviderError',
-          theme: 'dark',
-          content: (
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ minWidth: 270, textAlign: 'center' }}
-            >
-              {`${LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]} 로그인 오류가 발생했어요😰`}
-              <br />
-              다른 방법을 시도해 보세요.
-            </Typography>
-          ),
-          customStyle: { button: { backgroundColor: common.cmn80 } }
-        });
+        setHasError(true);
+        setErrorProvider(provider);
       }
     };
 
@@ -402,22 +367,8 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
           att: 'FAIL'
         });
         setLoading(false);
-        setDialogState({
-          type: 'loginProviderError',
-          theme: 'dark',
-          content: (
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ minWidth: 270, textAlign: 'center' }}
-            >
-              {`${LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]} 로그인 오류가 발생했어요😰`}
-              <br />
-              다른 방법을 시도해 보세요.
-            </Typography>
-          ),
-          customStyle: { button: { backgroundColor: common.cmn80 } }
-        });
+        setHasError(true);
+        setErrorProvider(provider);
       }
     };
 
@@ -447,23 +398,21 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
         router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
       }
     };
-  }, [
-    authLogin,
-    common.cmn80,
-    mutatePostAlarm,
-    mutatePostArea,
-    returnUrl,
-    router,
-    setDialogState,
-    state
-  ]);
+  }, [authLogin, common.cmn80, mutatePostAlarm, mutatePostArea, returnUrl, router, state]);
+
+  useEffect(() => {
+    if (!hasError && errorProvider) setErrorProvider('');
+  }, [hasError, errorProvider]);
 
   return {
     code,
     loading,
     setLoading,
     authLogin,
-    successLogin
+    successLogin,
+    hasError,
+    setHasError,
+    errorProvider
   };
 }
 

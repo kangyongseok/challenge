@@ -2,7 +2,8 @@ import { useCallback, useEffect } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -172,7 +173,8 @@ function SearchHelperPopup({ type = 'continue' }: SearchHelperPopupProps) {
       <Typography
         variant="body1"
         weight="medium"
-        customStyle={{ marginBottom: 20, textAlign: 'center' }}
+        textAlign="center"
+        customStyle={{ marginBottom: 20 }}
         dangerouslySetInnerHTML={{ __html: TITLE[type] }}
       />
       <Flexbox gap={7}>

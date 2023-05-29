@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -17,6 +16,7 @@ import {
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { LoginErrorDialog } from '@components/UI/organisms';
 import { TextInput } from '@components/UI/molecules';
 
 import type { FacebookAccount, FacebookLoginResponse, UserSnsLoginResult } from '@dto/userAuth';
@@ -35,9 +35,6 @@ import attrKeys from '@constants/attrKeys';
 
 import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
 import { checkAgent, isProduction } from '@utils/common';
-
-import { dialogState } from '@recoil/common';
-import { LOGIN_TYPE } from '@hooks/useSignIn';
 
 interface LoginButtonListProps {
   authLogin: (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => Promise<void>;
@@ -69,9 +66,9 @@ function LoginButtonList({
     }
   } = useTheme();
 
-  const setDialogState = useSetRecoilState(dialogState);
-
   const [lastLoginType, setLastLoginType] = useState('');
+  const [error, setError] = useState(false);
+  const [errorProvider, setErrorProvider] = useState('');
 
   const kakaoLoginButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -148,22 +145,8 @@ function LoginButtonList({
       } else {
         logEvent(attrKeys.login.LOAD_LOGIN_SNS, { title: provider.toUpperCase(), att: 'FAIL' });
         setLoading(false);
-        setDialogState({
-          type: 'loginProviderError',
-          theme: 'dark',
-          content: (
-            <Typography
-              variant="body1"
-              weight="medium"
-              customStyle={{ minWidth: 270, textAlign: 'center' }}
-            >
-              {`${LOGIN_TYPE[provider as keyof typeof LOGIN_TYPE]} 로그인 오류가 발생했어요😰`}
-              <br />
-              다른 방법을 시도해 보세요.
-            </Typography>
-          ),
-          customStyle: { button: { backgroundColor: common.cmn80 } }
-        });
+        setError(true);
+        setErrorProvider('facebook');
       }
     };
 
@@ -238,45 +221,64 @@ function LoginButtonList({
   }, [openLogin]);
 
   return (
-    <Flexbox component="section" direction="vertical" gap={8} customStyle={{ textAlign: 'center' }}>
-      {!isProduction && (
-        <ThemeProvider theme="light">
-          <Typography
-            variant="h3"
-            onClick={() => LocalStorage.clear()}
-            customStyle={{ marginBottom: 30 }}
-          >
-            로컬스토리지 All Clear
-          </Typography>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleCLickTestUserLogin();
-            }}
-          >
-            <TextInput
-              id="signIn"
-              variant="solid"
-              placeholder="테스트 아이디 입력해주세요"
-              endAdornment={
-                <Icon
-                  name="DownloadFilled"
-                  customStyle={{ cursor: 'pointer', transform: 'rotate(-90deg)' }}
-                  onClick={handleCLickTestUserLogin}
-                />
-              }
-              inputStyle={{ flex: 1 }}
-            />
-          </form>
-        </ThemeProvider>
-      )}
-      <TooltipWrapper>
-        {lastLoginType === 'kakao' ? (
-          <Tooltip
-            open
-            message="최근 로그인"
-            customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
-          >
+    <>
+      <Flexbox
+        component="section"
+        direction="vertical"
+        gap={8}
+        customStyle={{ textAlign: 'center' }}
+      >
+        {!isProduction && (
+          <ThemeProvider theme="light">
+            <Typography
+              variant="h3"
+              onClick={() => LocalStorage.clear()}
+              customStyle={{ marginBottom: 30 }}
+            >
+              로컬스토리지 All Clear
+            </Typography>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCLickTestUserLogin();
+              }}
+            >
+              <TextInput
+                id="signIn"
+                variant="solid"
+                placeholder="테스트 아이디 입력해주세요"
+                endAdornment={
+                  <Icon
+                    name="DownloadFilled"
+                    customStyle={{ cursor: 'pointer', transform: 'rotate(-90deg)' }}
+                    onClick={handleCLickTestUserLogin}
+                  />
+                }
+                inputStyle={{ flex: 1 }}
+              />
+            </form>
+          </ThemeProvider>
+        )}
+        <TooltipWrapper>
+          {lastLoginType === 'kakao' ? (
+            <Tooltip
+              open
+              message="최근 로그인"
+              customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+            >
+              <Button
+                ref={kakaoLoginButtonRef}
+                fullWidth
+                startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
+                size="xlarge"
+                onClick={handleClickKakaoLogin}
+                customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+              >
+                카카오톡으로 계속하기
+              </Button>
+            </Tooltip>
+          ) : (
+            // <QuickLoginTooltip open message="⚡가장빨리 카멜을 만나는 법!">
             <Button
               ref={kakaoLoginButtonRef}
               fullWidth
@@ -287,79 +289,68 @@ function LoginButtonList({
             >
               카카오톡으로 계속하기
             </Button>
-          </Tooltip>
-        ) : (
-          // <QuickLoginTooltip open message="⚡가장빨리 카멜을 만나는 법!">
-          <Button
-            ref={kakaoLoginButtonRef}
-            fullWidth
-            startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
-            size="xlarge"
-            onClick={handleClickKakaoLogin}
-            customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
-          >
-            카카오톡으로 계속하기
-          </Button>
-          // </QuickLoginTooltip>
-        )}
-      </TooltipWrapper>
-      <TooltipWrapper>
-        <Tooltip
-          open={lastLoginType === 'facebook'}
-          message="최근 로그인"
-          customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
-        >
-          <Button
-            fullWidth
-            startIcon={
-              <Image
-                width={24}
-                height={24}
-                disableAspectRatio
-                src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-facebook-icon.png`}
-                alt="Facebook Logo Img"
-              />
-            }
-            size="xlarge"
-            onClick={handleClickFacebookLogin}
-            customStyle={{ backgroundColor: '#5890ff', color: common.cmnW }}
-          >
-            페이스북으로 계속하기
-          </Button>
-        </Tooltip>
-      </TooltipWrapper>
-      {checkAgent.isIOSApp() && (
+            // </QuickLoginTooltip>
+          )}
+        </TooltipWrapper>
         <TooltipWrapper>
           <Tooltip
-            open={lastLoginType === 'apple'}
+            open={lastLoginType === 'facebook'}
             message="최근 로그인"
             customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
           >
             <Button
               fullWidth
-              variant="solid"
+              startIcon={
+                <Image
+                  width={24}
+                  height={24}
+                  disableAspectRatio
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/img/login-facebook-icon.png`}
+                  alt="Facebook Logo Img"
+                />
+              }
               size="xlarge"
-              startIcon={<Icon name="BrandAppleFilled" color="uiWhite" />}
-              onClick={handleClickAppleLogin}
-              customStyle={{
-                backgroundColor: common.uiBlack,
-                color: common.uiWhite
-              }}
+              onClick={handleClickFacebookLogin}
+              customStyle={{ backgroundColor: '#5890ff', color: common.cmnW }}
             >
-              Apple로 계속하기
+              페이스북으로 계속하기
             </Button>
           </Tooltip>
         </TooltipWrapper>
-      )}
-      <Box
-        customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
-        onClick={handleClickCancel}
-      >
-        <Typography weight="medium" customStyle={{ color: common.ui80 }}>
-          로그인하지 않고 둘러보기
-        </Typography>
-      </Box>
-    </Flexbox>
+        {checkAgent.isIOSApp() && (
+          <TooltipWrapper>
+            <Tooltip
+              open={lastLoginType === 'apple'}
+              message="최근 로그인"
+              customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+            >
+              <Button
+                fullWidth
+                variant="solid"
+                size="xlarge"
+                startIcon={<Icon name="BrandAppleFilled" color="uiWhite" />}
+                onClick={handleClickAppleLogin}
+                customStyle={{
+                  backgroundColor: common.uiBlack,
+                  color: common.uiWhite
+                }}
+              >
+                Apple로 계속하기
+              </Button>
+            </Tooltip>
+          </TooltipWrapper>
+        )}
+        <Box
+          customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
+          onClick={handleClickCancel}
+        >
+          <Typography weight="medium" customStyle={{ color: common.ui80 }}>
+            로그인하지 않고 둘러보기
+          </Typography>
+        </Box>
+      </Flexbox>
+      <LoginErrorDialog provider={errorProvider} open={error} onClose={() => setError(false)} />
+    </>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useRecoilState } from 'recoil';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -77,15 +78,7 @@ function MypageOrdersPurchaseConfirmDialog() {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      customStyle={{
-        maxWidth: 311,
-        padding: '32px 20px 20px'
-      }}
-    >
+    <Dialog open={open} onClose={handleClose}>
       <Typography
         variant="h3"
         weight="bold"

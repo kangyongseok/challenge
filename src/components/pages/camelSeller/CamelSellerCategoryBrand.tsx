@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductLegit } from '@dto/productLegit';
 
@@ -92,14 +93,7 @@ function CamelSellerCategoryBrand() {
           />
         )}
       </Flexbox>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        customStyle={{
-          padding: '32px 20px 20px',
-          textAlign: 'center'
-        }}
-      >
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <Typography variant="h3" weight="bold">
           카테고리/브랜드를 다시 선택할까요?
         </Typography>

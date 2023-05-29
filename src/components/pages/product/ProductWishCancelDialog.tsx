@@ -1,4 +1,5 @@
-import { Box, Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 interface ProductWishCancelDialogProps {
   open: boolean;

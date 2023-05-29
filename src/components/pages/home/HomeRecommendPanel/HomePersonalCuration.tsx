@@ -6,6 +6,7 @@ import { debounce, findIndex } from 'lodash-es';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Box, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import SessionStorage from '@library/sessionStorage';
@@ -45,13 +46,15 @@ function HomePersonalCuration() {
   const [bannerGroup, setBannerGroup] = useState<HomeSeasonBannerData[]>([]);
   const prevIndexRef = useRef<number>();
 
-  const handleClick = useMoveCamelSeller({
-    attributes: {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.FOLLOWING,
-      source: 'MAIN'
+  const { handleMoveCamelSeller, openOsAlarmDialog, handleCloseOsAlarmDialog } = useMoveCamelSeller(
+    {
+      attributes: {
+        name: attrProperty.name.MAIN,
+        title: attrProperty.title.FOLLOWING,
+        source: 'MAIN'
+      }
     }
-  });
+  );
 
   const {
     data: { pages = [] } = {},
@@ -80,7 +83,7 @@ function HomePersonalCuration() {
 
   const handleClickBanner = (pathname: string) => () => {
     if (pathname === '/camelSeller/registerConfirm') {
-      handleClick();
+      handleMoveCamelSeller();
       return;
     }
 
@@ -207,63 +210,66 @@ function HomePersonalCuration() {
   }, [accessUser?.gender]);
 
   return (
-    <Box customStyle={{ padding: '32px 0', overflowX: 'hidden' }}>
-      <Typography variant="h3" weight="bold" customStyle={{ margin: '0 16px 20px' }}>
-        {!accessUser
-          ? '많은 사람들이 보고 있어요'
-          : `${userNickName}님이 찾고 있는 매물을 모았어요`}
-      </Typography>
-      <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
-        {isLoading &&
-          Array.from({ length: 24 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
-              <Grid item xs={2}>
-                <NewProductGridCardSkeleton variant="gridB" />
-              </Grid>
-              {(index + 1) % 8 === 0 && (
-                <Grid item xs={1}>
-                  <Box
-                    customStyle={{
-                      margin: '0 -20px'
-                    }}
-                  >
-                    <Skeleton height={104} disableAspectRatio />
-                  </Box>
-                </Grid>
-              )}
-            </Fragment>
-          ))}
-        {!isLoading &&
-          products.map((product, index) => {
-            return (
-              <Fragment key={`home-personal-curation-product-${product.id}`}>
+    <>
+      <Box customStyle={{ padding: '32px 0', overflowX: 'hidden' }}>
+        <Typography variant="h3" weight="bold" customStyle={{ margin: '0 16px 20px' }}>
+          {!accessUser
+            ? '많은 사람들이 보고 있어요'
+            : `${userNickName}님이 찾고 있는 매물을 모았어요`}
+        </Typography>
+        <Grid container columnGap={12} rowGap={20} customStyle={{ padding: '0 16px' }}>
+          {isLoading &&
+            Array.from({ length: 24 }).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Fragment key={`home-personal-curation-product-skeleton-${index}`}>
                 <Grid item xs={2}>
-                  <NewProductGridCard
-                    variant="gridB"
-                    product={product}
-                    attributes={{
-                      name: attrProperty.name.MAIN,
-                      title: attrProperty.title.PERSONAL,
-                      source: attrProperty.source.MAIN_PERSONAL
-                    }}
-                  />
+                  <NewProductGridCardSkeleton variant="gridB" />
                 </Grid>
-                {(index + 1) % 16 === 0 && (
+                {(index + 1) % 8 === 0 && (
                   <Grid item xs={1}>
-                    <HomeBannerCard
-                      src={banners[index]?.src}
-                      pathname={banners[index]?.pathname}
-                      backgroundColor={banners[index]?.backgroundColor}
-                      onClick={handleClickBanner(banners[index]?.pathname)}
-                    />
+                    <Box
+                      customStyle={{
+                        margin: '0 -20px'
+                      }}
+                    >
+                      <Skeleton height={104} disableAspectRatio />
+                    </Box>
                   </Grid>
                 )}
               </Fragment>
-            );
-          })}
-      </Grid>
-    </Box>
+            ))}
+          {!isLoading &&
+            products.map((product, index) => {
+              return (
+                <Fragment key={`home-personal-curation-product-${product.id}`}>
+                  <Grid item xs={2}>
+                    <NewProductGridCard
+                      variant="gridB"
+                      product={product}
+                      attributes={{
+                        name: attrProperty.name.MAIN,
+                        title: attrProperty.title.PERSONAL,
+                        source: attrProperty.source.MAIN_PERSONAL
+                      }}
+                    />
+                  </Grid>
+                  {(index + 1) % 16 === 0 && (
+                    <Grid item xs={1}>
+                      <HomeBannerCard
+                        src={banners[index]?.src}
+                        pathname={banners[index]?.pathname}
+                        backgroundColor={banners[index]?.backgroundColor}
+                        onClick={handleClickBanner(banners[index]?.pathname)}
+                      />
+                    </Grid>
+                  )}
+                </Fragment>
+              );
+            })}
+        </Grid>
+      </Box>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+    </>
   );
 }
 

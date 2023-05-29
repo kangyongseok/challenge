@@ -6,11 +6,11 @@ import { useRouter } from 'next/router';
 import type { AxiosError } from 'axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import {
   BottomSheet,
   Box,
   Button,
-  Dialog,
   Flexbox,
   Icon,
   Input,
@@ -334,15 +334,7 @@ function KeywordAlertManageBottomSheet({ name, title }: KeywordAlertManageBottom
           </Button>
         </Box>
       </BottomSheet>
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        fullWidth
-        customStyle={{
-          paddingTop: 32,
-          maxWidth: 311
-        }}
-      >
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <Typography variant="h3" weight="bold" textAlign="center">
           키워드는 최대 50개까지 등록 가능해요
         </Typography>
@@ -370,31 +362,16 @@ function KeywordAlertManageBottomSheet({ name, title }: KeywordAlertManageBottom
       <Toast
         open={openToast}
         onClose={() => setOpenToast(false)}
-        customStyle={{
-          padding: router.pathname !== '/mypage/settings/keywordAlert' ? 12 : undefined
-        }}
+        action={
+          router.pathname !== '/mypage/settings/keywordAlert'
+            ? {
+                text: '자세히보기',
+                onClick: () => router.push('/mypage/settings/keywordAlert')
+              }
+            : undefined
+        }
       >
-        <Flexbox
-          justifyContent={
-            router.pathname !== '/mypage/settings/keywordAlert' ? 'space-between' : 'center'
-          }
-        >
-          <Typography weight="medium" color="uiWhite">
-            키워드 알림이 등록되었어요.
-          </Typography>
-          {router.pathname !== '/mypage/settings/keywordAlert' && (
-            <Typography
-              weight="medium"
-              color="ui80"
-              onClick={() => router.push('/mypage/settings/keywordAlert')}
-              customStyle={{
-                textDecoration: 'underline'
-              }}
-            >
-              자세히보기
-            </Typography>
-          )}
-        </Flexbox>
+        키워드 알림이 등록되었어요.
       </Toast>
       <Toast open={openPutToast} onClose={() => setOpenPutToast(false)}>
         키워드 알림이 수정되었어요.

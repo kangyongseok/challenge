@@ -17,6 +17,8 @@ import {
 } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+
 import type { ProductOffer } from '@dto/productOffer';
 import type { Product, ProductResult } from '@dto/product';
 
@@ -148,7 +150,7 @@ function NewProductListCard({
   const [loadFailed, setLoadFailed] = useState(false);
 
   const deviceId = useRecoilValue(deviceIdState);
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
   const queryClient = useQueryClient();
@@ -163,7 +165,7 @@ function NewProductListCard({
         exact: true
       });
 
-      setOsAlarm();
+      checkOsAlarm();
 
       toastStack({
         children: '찜목록에 추가했어요!',
@@ -271,240 +273,243 @@ function NewProductListCard({
   }, [productLegit]);
 
   return (
-    <Flexbox
-      onClick={handleClick}
-      {...props}
-      gap={16}
-      alignment={variant === 'listB' ? 'center' : undefined}
-      css={customStyle}
-    >
-      <Box
-        customStyle={{
-          position: 'relative',
-          minWidth: variant === 'listB' ? 60 : 120,
-          maxWidth: variant === 'listB' ? 60 : 120
-        }}
+    <>
+      <Flexbox
+        onClick={handleClick}
+        {...props}
+        gap={16}
+        alignment={variant === 'listB' ? 'center' : undefined}
+        css={customStyle}
       >
-        {!hideLabel && !isAuthProduct && isAuthSeller && !camelAuthLabelType && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            size="xsmall"
-            startIcon={<Icon name="ShieldFilled" />}
-            text="인증판매자"
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1
-            }}
-          />
-        )}
-        {!hideLabel && !isAuthProduct && isAuthSeller && camelAuthLabelType === 'B' && (
-          <Flexbox
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1,
-              borderRadius: 4,
-              backgroundColor: common.ui20
-            }}
-          >
-            <CamelLogoIcon />
-            <Typography
-              variant="small2"
-              weight="bold"
-              color="uiWhite"
+        <Box
+          customStyle={{
+            position: 'relative',
+            minWidth: variant === 'listB' ? 60 : 120,
+            maxWidth: variant === 'listB' ? 60 : 120
+          }}
+        >
+          {!hideLabel && !isAuthProduct && isAuthSeller && !camelAuthLabelType && (
+            <Label
+              variant="solid"
+              brandColor="black"
+              size="xsmall"
+              startIcon={<Icon name="ShieldFilled" />}
+              text="인증판매자"
               customStyle={{
-                padding: '3px 4px 3px 2px'
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1
+              }}
+            />
+          )}
+          {!hideLabel && !isAuthProduct && isAuthSeller && camelAuthLabelType === 'B' && (
+            <Flexbox
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1,
+                borderRadius: 4,
+                backgroundColor: common.ui20
               }}
             >
-              인증판매자
-            </Typography>
-          </Flexbox>
-        )}
-        {!hideLabel && isAuthProduct && (
-          <Label
-            variant="solid"
-            brandColor="black"
-            size="xsmall"
-            text={`정품의견 ${authOpinionCount}개`}
-            customStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              zIndex: 1
-            }}
+              <CamelLogoIcon />
+              <Typography
+                variant="small2"
+                weight="bold"
+                color="uiWhite"
+                customStyle={{
+                  padding: '3px 4px 3px 2px'
+                }}
+              >
+                인증판매자
+              </Typography>
+            </Flexbox>
+          )}
+          {!hideLabel && isAuthProduct && (
+            <Label
+              variant="solid"
+              brandColor="black"
+              size="xsmall"
+              text={`정품의견 ${authOpinionCount}개`}
+              customStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 8,
+                zIndex: 1
+              }}
+            />
+          )}
+          {!hidePlatformLogo && (
+            <Avatar
+              width={18}
+              height={18}
+              src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
+                (siteHasImage && siteId) || ''
+              }.png`}
+              alt={`${siteUrlName || 'Platform'} Logo Img`}
+              disableSkeleton
+              customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
+            />
+          )}
+          <Image
+            ratio="5:6"
+            src={
+              loadFailed
+                ? imageMain || imageThumbnail
+                : getProductCardImageResizePath(imageMain || imageThumbnail)
+            }
+            alt={`${productTitle} 이미지`}
+            round={8}
+            onError={() => setLoadFailed(true)}
           />
-        )}
-        {!hidePlatformLogo && (
-          <Avatar
-            width={18}
-            height={18}
-            src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
-              (siteHasImage && siteId) || ''
-            }.png`}
-            alt={`${siteUrlName || 'Platform'} Logo Img`}
-            disableSkeleton
-            customStyle={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}
-          />
-        )}
-        <Image
-          ratio="5:6"
-          src={
-            loadFailed
-              ? imageMain || imageThumbnail
-              : getProductCardImageResizePath(imageMain || imageThumbnail)
-          }
-          alt={`${productTitle} 이미지`}
-          round={8}
-          onError={() => setLoadFailed(true)}
-        />
-        {variant === 'listA' && status !== 0 && (
-          <Overlay>
-            <Typography variant="h4" weight="bold" color="cmnW">
-              {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
-            </Typography>
-          </Overlay>
-        )}
-      </Box>
-      <Box
-        customStyle={{
-          position: 'relative',
-          flexGrow: 1
-        }}
-      >
-        <Typography variant="body2" weight="bold">
-          {nameEng
-            .split(' ')
-            .map(
-              (splitNameEng) =>
-                `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
-                  1,
-                  splitNameEng.length
-                )}`
-            )
-            .join(' ')}
-        </Typography>
-        <Typography
-          variant="body2"
-          noWrap
-          lineClamp={variant === 'listB' ? 1 : 2}
-          color="ui60"
+          {variant === 'listA' && status !== 0 && (
+            <Overlay>
+              <Typography variant="h4" weight="bold" color="cmnW">
+                {VIEW_PRODUCT_STATUS[status as keyof typeof VIEW_PRODUCT_STATUS]}
+              </Typography>
+            </Overlay>
+          )}
+        </Box>
+        <Box
           customStyle={{
-            marginTop: 2
+            position: 'relative',
+            flexGrow: 1
           }}
         >
-          {productTitle}
-        </Typography>
-        {!hidePrice && (
-          <Flexbox
-            gap={4}
-            alignment="baseline"
-            customStyle={{
-              marginTop: 4
-            }}
-          >
-            {offer?.status === 1 ? (
-              <Flexbox gap={4} alignment="baseline">
-                <Typography variant="h3" weight="bold" color="primary-light">
-                  {`${commaNumber(getTenThousandUnitPrice(offer?.price))}만원`}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="ui80"
-                  customStyle={{
-                    textDecoration: 'line-through'
-                  }}
-                >
-                  {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-                </Typography>
-              </Flexbox>
-            ) : (
-              <Typography variant="h3" weight="bold">
-                {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
-              </Typography>
-            )}
-            {subText && (
-              <Typography variant="body2" weight="medium" color="red-light">
-                {subText}
-              </Typography>
-            )}
-          </Flexbox>
-        )}
-        {!hideAreaInfo && (
+          <Typography variant="body2" weight="bold">
+            {nameEng
+              .split(' ')
+              .map(
+                (splitNameEng) =>
+                  `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(
+                    1,
+                    splitNameEng.length
+                  )}`
+              )
+              .join(' ')}
+          </Typography>
           <Typography
-            variant="small2"
+            variant="body2"
+            noWrap
+            lineClamp={variant === 'listB' ? 1 : 2}
             color="ui60"
             customStyle={{
-              marginTop: 8
+              marginTop: 2
             }}
           >
-            {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
-              new Date(datePosted)
-            )}${area ? ` · ${getProductArea(area)}` : ''}`}
+            {productTitle}
           </Typography>
-        )}
-        {!hideMetaInfo && (wishCount > 0 || purchaseCount > 0) && (
+          {!hidePrice && (
+            <Flexbox
+              gap={4}
+              alignment="baseline"
+              customStyle={{
+                marginTop: 4
+              }}
+            >
+              {offer?.status === 1 ? (
+                <Flexbox gap={4} alignment="baseline">
+                  <Typography variant="h3" weight="bold" color="primary-light">
+                    {`${commaNumber(getTenThousandUnitPrice(offer?.price))}만원`}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="ui80"
+                    customStyle={{
+                      textDecoration: 'line-through'
+                    }}
+                  >
+                    {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+                  </Typography>
+                </Flexbox>
+              ) : (
+                <Typography variant="h3" weight="bold">
+                  {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+                </Typography>
+              )}
+              {subText && (
+                <Typography variant="body2" weight="medium" color="red-light">
+                  {subText}
+                </Typography>
+              )}
+            </Flexbox>
+          )}
+          {!hideAreaInfo && (
+            <Typography
+              variant="small2"
+              color="ui60"
+              customStyle={{
+                marginTop: 8
+              }}
+            >
+              {`${datePosted > dateFirstPosted ? '끌올 ' : ''}${getFormattedDistanceTime(
+                new Date(datePosted)
+              )}${area ? ` · ${getProductArea(area)}` : ''}`}
+            </Typography>
+          )}
+          {!hideMetaInfo && (wishCount > 0 || purchaseCount > 0) && (
+            <Flexbox
+              gap={12}
+              customStyle={{
+                marginTop: 6
+              }}
+            >
+              {wishCount > 0 && (
+                <Flexbox gap={2}>
+                  <Icon name="HeartFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
+                    {commaNumber(wishCount)}
+                  </Typography>
+                </Flexbox>
+              )}
+              {purchaseCount > 0 && (
+                <Flexbox gap={2}>
+                  <Icon name="MessageFilled" width={12} height={12} color="ui80" />
+                  <Typography variant="small2" weight="medium" color="ui80">
+                    {commaNumber(purchaseCount)}
+                  </Typography>
+                </Flexbox>
+              )}
+            </Flexbox>
+          )}
+          {bottomLabel && (
+            <Flexbox
+              gap={2}
+              customStyle={{
+                marginTop: 12
+              }}
+            >
+              {bottomLabel}
+            </Flexbox>
+          )}
+        </Box>
+        {!hideWishButton && (
           <Flexbox
-            gap={12}
+            direction="vertical"
+            justifyContent={variant === 'listB' ? 'center' : undefined}
             customStyle={{
-              marginTop: 6
+              width: 24,
+              height: '100%'
             }}
           >
-            {wishCount > 0 && (
-              <Flexbox gap={2}>
-                <Icon name="HeartFilled" width={12} height={12} color="ui80" />
-                <Typography variant="small2" weight="medium" color="ui80">
-                  {commaNumber(wishCount)}
-                </Typography>
-              </Flexbox>
-            )}
-            {purchaseCount > 0 && (
-              <Flexbox gap={2}>
-                <Icon name="MessageFilled" width={12} height={12} color="ui80" />
-                <Typography variant="small2" weight="medium" color="ui80">
-                  {commaNumber(purchaseCount)}
-                </Typography>
-              </Flexbox>
-            )}
+            <WishButton onClick={handleClickWish}>
+              <Icon
+                name={isWish ? 'HeartFilled' : 'HeartOutlined'}
+                color={isWish ? 'red-light' : 'ui80'}
+              />
+            </WishButton>
           </Flexbox>
         )}
-        {bottomLabel && (
-          <Flexbox
-            gap={2}
-            customStyle={{
-              marginTop: 12
-            }}
-          >
-            {bottomLabel}
-          </Flexbox>
+        {showShopManageButton && (
+          <ShopMoreButton onClick={handleClickManageProduct}>
+            <Icon name="MoreHorizFilled" color="ui80" />
+          </ShopMoreButton>
         )}
-      </Box>
-      {!hideWishButton && (
-        <Flexbox
-          direction="vertical"
-          justifyContent={variant === 'listB' ? 'center' : undefined}
-          customStyle={{
-            width: 24,
-            height: '100%'
-          }}
-        >
-          <WishButton onClick={handleClickWish}>
-            <Icon
-              name={isWish ? 'HeartFilled' : 'HeartOutlined'}
-              color={isWish ? 'red-light' : 'ui80'}
-            />
-          </WishButton>
-        </Flexbox>
-      )}
-      {showShopManageButton && (
-        <ShopMoreButton onClick={handleClickManageProduct}>
-          <Icon name="MoreHorizFilled" color="ui80" />
-        </ShopMoreButton>
-      )}
-    </Flexbox>
+      </Flexbox>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+    </>
   );
 }
 

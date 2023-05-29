@@ -1,9 +1,4 @@
-import type { ReactElement } from 'react';
-
 import { atom } from 'recoil';
-import type { CustomStyle } from '@mrcamelhub/camel-ui';
-
-import type { Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 
@@ -14,7 +9,7 @@ import {
   USER_ON_BOARDING_TRIGGER
 } from '@constants/localStorage';
 
-import type { AccessUserSettingValue, DialogType, ShareData, ThemeMode } from '@typings/common';
+import type { AccessUserSettingValue, ThemeMode } from '@typings/common';
 
 export const userOnBoardingTriggerDefaultState = {
   products: {
@@ -82,25 +77,6 @@ export const deviceIdState = atom<string | undefined>({
 export const showAppDownloadBannerState = atom<boolean>({
   key: 'common/showAppDownloadBannerState',
   default: false
-});
-
-export const dialogState = atom<{
-  type: DialogType | undefined;
-  theme?: Exclude<ThemeMode, 'system'>;
-  firstButtonAction?: () => void;
-  secondButtonAction?: () => void;
-  onClose?: () => void;
-  content?: string | number | ReactElement;
-  product?: Product | undefined;
-  shareData?: ShareData;
-  customStyle?: CustomStyle;
-  customStyleTitle?: CustomStyle;
-  disabledOnClose?: boolean;
-}>({
-  key: 'common/dialogState',
-  default: {
-    type: undefined
-  }
 });
 
 export const themeState = atom<ThemeMode>({

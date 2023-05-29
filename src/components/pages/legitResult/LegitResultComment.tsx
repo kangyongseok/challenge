@@ -5,6 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -27,7 +28,7 @@ import {
   legitResultCommentDataState,
   legitResultCommentEditableState
 } from '@recoil/legitResultComment/atom';
-import { dialogState, showAppDownloadBannerState } from '@recoil/common';
+import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import LegitResultReply from './LegitResultReply';
@@ -51,7 +52,6 @@ function LegitResultComment({
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setLegitResultCommentDataState = useSetRecoilState(legitResultCommentDataState);
   const setLegitResultCommentEditableState = useSetRecoilState(legitResultCommentEditableState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const {
     theme: {
@@ -61,6 +61,7 @@ function LegitResultComment({
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
 
   const commentRef = useRef<HTMLDivElement>(null);
 
@@ -132,7 +133,10 @@ function LegitResultComment({
         commentId
       },
       {
-        onSuccess: () => refetch()
+        onSuccess: async () => {
+          await refetch();
+          setOpenDialog(false);
+        }
       }
     );
   };
@@ -142,6 +146,7 @@ function LegitResultComment({
       name: attrProperty.legitName.LEGIT_COMMENT,
       att: '취소'
     });
+    setOpenDialog(false);
   };
 
   const handleClickDelete = () => {
@@ -152,13 +157,7 @@ function LegitResultComment({
 
     if (isLoadingDeleteMutate) return;
 
-    setDialogState({
-      type: 'deleteLegitResultComment',
-      content: <Typography variant="h4">삭제되면 복구할 수 없습니다.</Typography>,
-      firstButtonAction: handleClickCancelConfirm,
-      secondButtonAction: handleClickDeleteConfirm,
-      customStyleTitle: { minWidth: 269, paddingTop: 12 }
-    });
+    setOpenDialog(true);
   };
 
   const handleClickPost = () => {
@@ -187,93 +186,133 @@ function LegitResultComment({
   };
 
   return (
-    <Flexbox ref={commentRef} gap={8} {...props}>
-      <LegitAvatar result={result}>
-        {result === 1 && <Icon name="OpinionAuthenticOutlined" width={18} height={18} />}
-        {result === 2 && <Icon name="OpinionFakeOutlined" width={18} height={18} />}
-        {result === 3 && <Icon name="OpinionImpossibleOutlined" width={18} height={18} />}
-      </LegitAvatar>
-      <Flexbox direction="vertical" justifyContent="center" customStyle={{ flexGrow: 1 }}>
-        <Flexbox alignment="center" justifyContent="space-between" customStyle={{ height: 24 }}>
-          <Flexbox alignment="center" gap={4}>
-            <Typography weight="medium">UserID {userId}</Typography>
-            <Typography variant="small2" customStyle={{ color: common.ui80 }}>
-              {dayjs(dateCreated).add(-1, 'seconds').fromNow()}
-            </Typography>
-          </Flexbox>
-          <Flexbox alignment="center" gap={12}>
-            {(accessUser || {}).userId === userId && (
-              <>
-                <Typography
-                  variant="small2"
-                  data-id={commentId}
-                  onClick={handleClickEdit}
-                  customStyle={{ color: common.ui80, cursor: 'pointer' }}
-                >
-                  수정
-                </Typography>
-                <Typography
-                  variant="small2"
-                  onClick={handleClickDelete}
-                  customStyle={{ color: common.ui80, cursor: 'pointer' }}
-                >
-                  삭제
-                </Typography>
-              </>
-            )}
-            <Typography
-              variant="small2"
-              onClick={handleClick}
-              customStyle={{ color: common.ui80, cursor: 'pointer' }}
-            >
-              답글
-            </Typography>
-          </Flexbox>
-        </Flexbox>
-        <Typography
-          dangerouslySetInnerHTML={{
-            __html: `${(description || '').replace(/\r?\n/g, '<br />')}`
-          }}
-          customStyle={{ marginTop: 10, color: common.ui60 }}
-        />
-        {open && (
-          // TODO 추후 컴포넌트화
-          <ReplyWriter>
-            <Typography weight="bold" customStyle={{ color: common.ui80 }}>
-              User ID {(accessUser || {}).userId}
-            </Typography>
-            <TextArea
-              onChange={(e) => setValue(e.currentTarget.value)}
-              value={value}
-              maxLength={300}
-              placeholder="답글을 남겨보세요."
-            />
-            <Flexbox alignment="center" justifyContent="space-between">
-              <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
-                {value.length} / 300자
+    <>
+      <Flexbox ref={commentRef} gap={8} {...props}>
+        <LegitAvatar result={result}>
+          {result === 1 && <Icon name="OpinionAuthenticOutlined" width={18} height={18} />}
+          {result === 2 && <Icon name="OpinionFakeOutlined" width={18} height={18} />}
+          {result === 3 && <Icon name="OpinionImpossibleOutlined" width={18} height={18} />}
+        </LegitAvatar>
+        <Flexbox direction="vertical" justifyContent="center" customStyle={{ flexGrow: 1 }}>
+          <Flexbox alignment="center" justifyContent="space-between" customStyle={{ height: 24 }}>
+            <Flexbox alignment="center" gap={4}>
+              <Typography weight="medium">UserID {userId}</Typography>
+              <Typography variant="small2" customStyle={{ color: common.ui80 }}>
+                {dayjs(dateCreated).add(-1, 'seconds').fromNow()}
               </Typography>
-              <Button
-                variant="solid"
-                brandColor="primary"
-                size="small"
-                onClick={handleClickPost}
-                disabled={!accessUser || !value || isLoading}
-                customStyle={{ whiteSpace: 'nowrap' }}
-              >
-                등록
-              </Button>
             </Flexbox>
-          </ReplyWriter>
-        )}
-        {replies.length > 0 && (
-          <Flexbox direction="vertical" gap={20} customStyle={{ marginTop: 22 }}>
-            {replies.map((reply) => (
-              <LegitResultReply key={`legit-reply-${reply.id}`} reply={reply} />
-            ))}
+            <Flexbox alignment="center" gap={12}>
+              {(accessUser || {}).userId === userId && (
+                <>
+                  <Typography
+                    variant="small2"
+                    data-id={commentId}
+                    onClick={handleClickEdit}
+                    customStyle={{ color: common.ui80, cursor: 'pointer' }}
+                  >
+                    수정
+                  </Typography>
+                  <Typography
+                    variant="small2"
+                    onClick={handleClickDelete}
+                    customStyle={{ color: common.ui80, cursor: 'pointer' }}
+                  >
+                    삭제
+                  </Typography>
+                </>
+              )}
+              <Typography
+                variant="small2"
+                onClick={handleClick}
+                customStyle={{ color: common.ui80, cursor: 'pointer' }}
+              >
+                답글
+              </Typography>
+            </Flexbox>
           </Flexbox>
-        )}
+          <Typography
+            dangerouslySetInnerHTML={{
+              __html: `${(description || '').replace(/\r?\n/g, '<br />')}`
+            }}
+            customStyle={{ marginTop: 10, color: common.ui60 }}
+          />
+          {open && (
+            // TODO 추후 컴포넌트화
+            <ReplyWriter>
+              <Typography weight="bold" customStyle={{ color: common.ui80 }}>
+                User ID {(accessUser || {}).userId}
+              </Typography>
+              <TextArea
+                onChange={(e) => setValue(e.currentTarget.value)}
+                value={value}
+                maxLength={300}
+                placeholder="답글을 남겨보세요."
+              />
+              <Flexbox alignment="center" justifyContent="space-between">
+                <Typography variant="small2" weight="medium" customStyle={{ color: common.ui80 }}>
+                  {value.length} / 300자
+                </Typography>
+                <Button
+                  variant="solid"
+                  brandColor="primary"
+                  size="small"
+                  onClick={handleClickPost}
+                  disabled={!accessUser || !value || isLoading}
+                  customStyle={{ whiteSpace: 'nowrap' }}
+                >
+                  등록
+                </Button>
+              </Flexbox>
+            </ReplyWriter>
+          )}
+          {replies.length > 0 && (
+            <Flexbox direction="vertical" gap={20} customStyle={{ marginTop: 22 }}>
+              {replies.map((reply) => (
+                <LegitResultReply key={`legit-reply-${reply.id}`} reply={reply} />
+              ))}
+            </Flexbox>
+          )}
+        </Flexbox>
       </Flexbox>
-    </Flexbox>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <Typography variant="h3" weight="bold">
+          댓글을 삭제하시겠습니까?
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          삭제되면 복구할 수 없습니다.
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={handleClickCancelConfirm}
+          >
+            취소
+          </Button>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={handleClickDeleteConfirm}
+          >
+            확인
+          </Button>
+        </Flexbox>
+      </Dialog>
+    </>
   );
 }
 

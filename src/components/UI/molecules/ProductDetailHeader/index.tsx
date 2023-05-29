@@ -1,6 +1,6 @@
-import { MouseEvent, useState } from 'react';
+import { useState } from 'react';
+import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { debounce } from 'lodash-es';
 import amplitude from 'amplitude-js';
@@ -9,6 +9,7 @@ import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { SNSShareDialog } from '@components/UI/organisms';
 import { Header, NewProductGridCard } from '@components/UI/molecules';
 
 import type { ProductDetail } from '@dto/product';
@@ -28,8 +29,7 @@ import { getProductType, productDetailAtt } from '@utils/products';
 import { commaNumber } from '@utils/formats';
 import { checkAgent, executedShareURl } from '@utils/common';
 
-import type { AppBanner } from '@typings/common';
-import { dialogState } from '@recoil/common';
+import type { AppBanner, ShareData } from '@typings/common';
 
 import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 
@@ -53,10 +53,10 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
 
   const toastStack = useToastStack();
 
-  const setDialogState = useSetRecoilState(dialogState);
-
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
     useState(false);
+  const [open, setOpen] = useState(false);
+  const [shareData, setShareData] = useState<ShareData>();
 
   const { data: relatedProducts } = useQuery(
     queryKeys.products.relatedProducts(Number(data?.product?.id || 0)),
@@ -97,19 +97,27 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
         viewPrice = 0;
       }
 
+      const newShareData = {
+        title: data.product.title,
+        description: `${data.product.site.name} ${commaNumber(
+          viewPrice - Math.floor(viewPrice) > 0
+            ? Number(viewPrice.toFixed(1))
+            : Math.floor(viewPrice)
+        )}만원\r\nAi추천지수 ${data.product.scoreTotal}/10`,
+        url: window.location.href,
+        product: data.product
+      };
+
       if (
         !executedShareURl({
-          title: data.product.title,
-          text: `${data.product.site.name} ${commaNumber(
-            viewPrice - Math.floor(viewPrice) > 0
-              ? Number(viewPrice.toFixed(1))
-              : Math.floor(viewPrice)
-          )}만원\r\nAi추천지수 ${data.product.scoreTotal}/10`,
-          url: window.location.href,
-          product: data.product
+          url: newShareData.url,
+          title: newShareData.title,
+          text: newShareData.description,
+          product: newShareData.product
         })
       ) {
-        setDialogState({ type: 'SNSShare', product: data.product });
+        setOpen(true);
+        setShareData(newShareData);
       }
     }
   };
@@ -251,6 +259,12 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
             </ProductCardList>
           </Box>
         </BottomSheet>
+        <SNSShareDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          shareData={shareData}
+          product={data?.product}
+        />
       </>
     );
   }
@@ -305,6 +319,12 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
           </ProductCardList>
         </Box>
       </BottomSheet>
+      <SNSShareDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        shareData={shareData}
+        product={data?.product}
+      />
     </>
   );
 }

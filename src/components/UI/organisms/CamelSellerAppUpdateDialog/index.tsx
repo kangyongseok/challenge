@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { checkAgent } from '@utils/common';
 
@@ -28,14 +29,7 @@ function CamelSellerAppUpdateDialog() {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      fullWidth
-      customStyle={{
-        maxWidth: 311
-      }}
-    >
+    <Dialog open={open} onClose={() => setOpen(false)}>
       <Typography
         variant="h3"
         weight="bold"

@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQueryClient } from '@tanstack/react-query';
 import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import UserAvatar from '@components/UI/organisms/UserAvatar';
+import {
+  AppUpdateNoticeDialog,
+  FeatureIsMobileAppDownDialog,
+  UserAvatar
+} from '@components/UI/organisms';
 import TextInput from '@components/UI/molecules/TextInput';
 
 import { PhotoGuideImage } from '@dto/productLegit';
@@ -19,7 +23,6 @@ import attrKeys from '@constants/attrKeys';
 
 import {
   checkAgent,
-  handleClickAppDownload,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
@@ -27,7 +30,6 @@ import {
 import { shake } from '@styles/transition';
 
 import { legitProfileEditState } from '@recoil/legitProfile';
-import { dialogState } from '@recoil/common';
 
 function LegitProfileEditInfo() {
   const {
@@ -41,10 +43,12 @@ function LegitProfileEditInfo() {
   const queryClient = useQueryClient();
   const nickNameRef = useRef<null | HTMLInputElement>(null);
 
-  const setDialogState = useSetRecoilState(dialogState);
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
   const [isBanWord, setIsBanWord] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
   const [{ imageType, isLoadingGetPhoto }, setGetPhotoState] = useState<{
     imageType: 'profile' | 'background';
@@ -53,44 +57,6 @@ function LegitProfileEditInfo() {
     imageType: 'profile',
     isLoadingGetPhoto: false
   });
-
-  const appUpdateDialogIOS = useCallback(() => {
-    setDialogState({
-      type: 'appUpdateNotice',
-      customStyleTitle: { minWidth: 269 },
-      secondButtonAction: () => {
-        if (
-          window.webkit &&
-          window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.callExecuteApp
-        )
-          window.webkit.messageHandlers.callExecuteApp.postMessage(
-            'itms-apps://itunes.apple.com/app/id1541101835'
-          );
-      }
-    });
-  }, [setDialogState]);
-
-  const appUpdateDialogAndroid = useCallback(() => {
-    setDialogState({
-      type: 'appUpdateNotice',
-      customStyleTitle: { minWidth: 269 },
-      secondButtonAction: () => {
-        if (window.webview && window.webview.callExecuteApp)
-          window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-      }
-    });
-  }, [setDialogState]);
-
-  const appDownLoadDialog = useCallback(() => {
-    setDialogState({
-      type: 'featureIsMobileAppDown',
-      customStyleTitle: { minWidth: 311 },
-      secondButtonAction() {
-        handleClickAppDownload({});
-      }
-    });
-  }, [setDialogState]);
 
   const handleChangeImage = useCallback(
     ({ isBackground }: { isBackground: boolean }) =>
@@ -116,17 +82,17 @@ function LegitProfileEditInfo() {
         );
 
         if (!checkAgent.isMobileApp()) {
-          appDownLoadDialog();
+          setOpenDialog(true);
           return;
         }
 
         if (isNeedUpdateImageUploadIOSVersion()) {
-          appUpdateDialogIOS();
+          setOpenIOSNoticeDialog(true);
           return;
         }
 
         if (isNeedUpdateImageUploadAOSVersion()) {
-          appUpdateDialogAndroid();
+          setOpenAOSNoticeDialog(true);
           return;
         }
 
@@ -160,7 +126,7 @@ function LegitProfileEditInfo() {
           );
         }
       },
-    [appDownLoadDialog, appUpdateDialogAndroid, appUpdateDialogIOS, isLoadingGetPhoto]
+    [isLoadingGetPhoto]
   );
 
   useEffect(() => {
@@ -306,6 +272,29 @@ function LegitProfileEditInfo() {
       <Toast open={open} onClose={() => setOpen(false)}>
         16글자만 입력할 수 있어요.
       </Toast>
+      <FeatureIsMobileAppDownDialog open={openDialog} onClose={() => setOpenDialog(false)} />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
     </>
   );
 }

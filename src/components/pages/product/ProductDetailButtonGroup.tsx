@@ -6,7 +6,11 @@ import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
 import { useMutation } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Avatar, Button, Dialog, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Avatar, Button, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
+
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+import { AppUpdateForChatDialog, AppUpdateForSafePayment } from '@components/UI/organisms';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
@@ -31,12 +35,7 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
-import {
-  deviceIdState,
-  dialogState,
-  loginBottomSheetState,
-  prevChannelAlarmPopup
-} from '@recoil/common';
+import { deviceIdState, loginBottomSheetState, prevChannelAlarmPopup } from '@recoil/common';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductType from '@hooks/useProductType';
@@ -57,7 +56,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   const { data: productDetail, mutateMetaInfo } = useQueryProduct();
   const { data: accessUser } = useQueryAccessUser();
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
   const { isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct, isCamelButlerProduct } =
     useProductType(productDetail?.product.sellerType);
   const {
@@ -72,12 +71,14 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     isDuplicate,
     isPriceDown
   } = useProductState({ productDetail, product: productDetail?.product });
+
   const toastStack = useToastStack();
 
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [exhibitionOpen, setExhibitionOpen] = useState(false);
   const [isReservationDisabled, setReservation] = useState(false);
 
-  const setDialogState = useSetRecoilState(dialogState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
 
@@ -115,6 +116,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
     const conversionId =
       att === 'CHANNEL' ? Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`) : 0;
+
     const { source: productDetailSource } =
       SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
       {};
@@ -205,30 +207,21 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     }
 
     if (needUpdateChatIOSVersion()) {
-      setDialogState({
-        type: 'requiredAppUpdateForChat',
-        customStyleTitle: { minWidth: 270 },
-        disabledOnClose: true,
-        secondButtonAction: () => {
-          window.webkit?.messageHandlers?.callExecuteApp?.postMessage?.(
-            'itms-apps://itunes.apple.com/app/id1541101835'
-          );
-        }
-      });
-
+      setOpen(true);
       return;
     }
-    setOsAlarm();
+
+    checkOsAlarm();
 
     if (prevChannelAlarm && checkAgent.isIOSApp()) return;
 
     if (channelId) {
       push(`/channels/${channelId}`);
-
       return;
     }
 
     setPendingCreateChannel(true);
+
     mutateCreateChannel(
       { userId: String(accessUser.userId || 0), ...createChannelParams },
       {
@@ -261,21 +254,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     }
 
     if (needUpdateSafePaymentIOSVersion()) {
-      setDialogState({
-        type: 'requiredAppUpdateForSafePayment',
-        customStyleTitle: { minWidth: 269 },
-        secondButtonAction: () => {
-          if (
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.callExecuteApp
-          )
-            window.webkit.messageHandlers.callExecuteApp.postMessage(
-              'itms-apps://itunes.apple.com/app/id1541101835'
-            );
-        }
-      });
-
+      setOpenDialog(true);
       return;
     }
 
@@ -365,16 +344,19 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   if (isReservation) {
     return (
-      <Button
-        fullWidth
-        size="xlarge"
-        variant="solid"
-        brandColor="black"
-        onClick={handleClickChannel}
-        disabled={isDisabledState}
-      >
-        예약중
-      </Button>
+      <>
+        <Button
+          fullWidth
+          size="xlarge"
+          variant="solid"
+          brandColor="black"
+          onClick={handleClickChannel}
+          disabled={isDisabledState}
+        >
+          예약중
+        </Button>
+        <AppUpdateForChatDialog open={open} />
+      </>
     );
   }
 
@@ -392,11 +374,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
           {isReservationDisabled ? '알림 신청완료' : '오픈 알림받기'}
         </Button>
         {isCamelButlerProduct && (
-          <Dialog
-            open={exhibitionOpen}
-            onClose={() => setExhibitionOpen(false)}
-            customStyle={{ width: 311, padding: '32px 20px 20px', textAlign: 'center' }}
-          >
+          <Dialog open={exhibitionOpen} onClose={() => setExhibitionOpen(false)}>
             <Image
               height={114}
               src={getImageResizePath({
@@ -427,61 +405,69 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   if (isAllOperatorProduct) {
     return (
-      <Flexbox alignment="center" gap={8} customStyle={{ width: '100%' }}>
-        {!isOperatorC2CProduct && (
+      <>
+        <Flexbox alignment="center" gap={8} customStyle={{ width: '100%' }}>
+          {!isOperatorC2CProduct && (
+            <Button
+              fullWidth
+              size="xlarge"
+              variant="outline"
+              brandColor="black"
+              // onClick={handleClickPlatformProduct}
+              onClick={handleClickChannel}
+              disabled={isDisabledState}
+              customStyle={{ padding: 12, minWidth: 90 }}
+            >
+              구매문의
+            </Button>
+          )}
           <Button
             fullWidth
             size="xlarge"
-            variant="outline"
+            variant="solid"
             brandColor="black"
-            // onClick={handleClickPlatformProduct}
-            onClick={handleClickChannel}
+            onClick={handleClickSafePayment}
             disabled={isDisabledState}
-            customStyle={{ padding: 12, minWidth: 90 }}
+            customStyle={{ minWidth: 'fit-content', padding: 12 }}
           >
-            구매문의
+            구매대행 요청
           </Button>
-        )}
-        <Button
-          fullWidth
-          size="xlarge"
-          variant="solid"
-          brandColor="black"
-          onClick={handleClickSafePayment}
-          disabled={isDisabledState}
-          customStyle={{ minWidth: 'fit-content', padding: 12 }}
-        >
-          구매대행 요청
-        </Button>
-      </Flexbox>
+        </Flexbox>
+        <AppUpdateForChatDialog open={open} />
+        <AppUpdateForSafePayment open={openDialog} />
+      </>
     );
   }
 
   if (isChannelProduct) {
     return (
-      <Flexbox alignment="center" gap={8} customStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}>
-        <Button
-          fullWidth
-          size="xlarge"
-          variant="outline"
-          brandColor="black"
-          onClick={handleClickChannel}
-          disabled={isDisabledState}
-          customStyle={{ maxWidth: 64 }}
-        >
-          채팅
-        </Button>
-        <Button
-          fullWidth
-          size="xlarge"
-          variant="solid"
-          brandColor="black"
-          onClick={handleClickSafePayment}
-          disabled={isDisabledState}
-        >
-          안전결제
-        </Button>
-      </Flexbox>
+      <>
+        <Flexbox alignment="center" gap={8} justifyContent="flex-end" customStyle={{ flexGrow: 1 }}>
+          <Button
+            fullWidth
+            size="xlarge"
+            variant="outline"
+            brandColor="black"
+            onClick={handleClickChannel}
+            disabled={isDisabledState}
+            customStyle={{ maxWidth: 64 }}
+          >
+            채팅
+          </Button>
+          <Button
+            fullWidth
+            size="xlarge"
+            variant="solid"
+            brandColor="black"
+            onClick={handleClickSafePayment}
+            disabled={isDisabledState}
+          >
+            안전결제
+          </Button>
+        </Flexbox>
+        <AppUpdateForChatDialog open={open} />
+        <AppUpdateForSafePayment open={openDialog} />
+      </>
     );
   }
 
@@ -507,29 +493,15 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
         </Flexbox>
       </Button>
       {isAlreadyOrder && (
-        <Dialog
-          open={openAlreadyDialog}
-          onClose={() => setOpenAlreadyDialog(false)}
-          fullWidth
-          customStyle={{
-            maxWidth: 311,
-            padding: '32px 20px 20px'
-          }}
-        >
-          <Typography
-            variant="h3"
-            weight="bold"
-            customStyle={{
-              textAlign: 'center'
-            }}
-          >
+        <Dialog open={openAlreadyDialog} onClose={() => setOpenAlreadyDialog(false)}>
+          <Typography variant="h3" weight="bold" textAlign="center">
             이미 거래 중인 매물이에요.
           </Typography>
           <Typography
             variant="h4"
+            textAlign="center"
             customStyle={{
-              marginTop: 8,
-              textAlign: 'center'
+              marginTop: 8
             }}
           >
             채팅방에서 거래내역을 확인해주세요.
@@ -562,6 +534,8 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
           </Flexbox>
         </Dialog>
       )}
+      <AppUpdateForChatDialog open={open} />
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
     </>
   );
 }

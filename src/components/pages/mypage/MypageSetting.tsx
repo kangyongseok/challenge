@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Badge, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
+import { FeatureIsMobileAppDownDialog } from '@components/UI/organisms';
 import { Menu, MenuItem } from '@components/UI/molecules';
 
 import { logEvent } from '@library/amplitude';
@@ -15,20 +16,20 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { checkAgent, handleClickAppDownload } from '@utils/common';
+import { checkAgent } from '@utils/common';
 
 import {
   settingsTransferDataState,
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
 import { settingsAccountData } from '@recoil/settingsAccount';
-import { dialogState } from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageSetting() {
   const router = useRouter();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
@@ -45,13 +46,7 @@ function MypageSetting() {
 
   const handleClickAlarmSetting = useCallback(() => {
     if (!checkAgent.isMobileApp()) {
-      setDialogState({
-        type: 'featureIsMobileAppDown',
-        customStyleTitle: { minWidth: 311 },
-        secondButtonAction() {
-          handleClickAppDownload({});
-        }
-      });
+      setOpen(true);
       return;
     }
 
@@ -72,7 +67,7 @@ function MypageSetting() {
     window.getAuthPush = (result: string) => {
       router.push(`/mypage/settings/alarm?setting=${result}`);
     };
-  }, [router, setDialogState]);
+  }, [router]);
 
   const handleClickKeywordAlert = useCallback(
     () => router.push('/mypage/settings/keywordAlert'),
@@ -123,42 +118,45 @@ function MypageSetting() {
   );
 
   return (
-    <Menu id="mypage-setting" title="설정">
-      {settingMenu.map(({ label, isNew, onClick }) => (
-        <MenuItem
-          key={`info-menu-${label}`}
-          action={
-            <Flexbox gap={4} alignment="center">
-              {label === '정산계좌' && (
-                <Typography color="blue">{userAccounts[0]?.bankName}</Typography>
-              )}
-              <Icon name="Arrow2RightOutlined" size="small" />
+    <>
+      <Menu id="mypage-setting" title="설정">
+        {settingMenu.map(({ label, isNew, onClick }) => (
+          <MenuItem
+            key={`info-menu-${label}`}
+            action={
+              <Flexbox gap={4} alignment="center">
+                {label === '정산계좌' && (
+                  <Typography color="blue">{userAccounts[0]?.bankName}</Typography>
+                )}
+                <Icon name="Arrow2RightOutlined" size="small" />
+              </Flexbox>
+            }
+            onClick={onClick}
+          >
+            <Flexbox alignment="center" gap={2}>
+              {label}
+              <Badge
+                variant="solid"
+                open={isNew}
+                brandColor="red"
+                text="N"
+                size="xsmall"
+                disablePositionAbsolute
+                customStyle={{
+                  // TODO UI 라이브러리 개선
+                  width: 16,
+                  height: 16,
+                  fontWeight: 700,
+                  padding: '2px 0',
+                  justifyContent: 'center'
+                }}
+              />
             </Flexbox>
-          }
-          onClick={onClick}
-        >
-          <Flexbox alignment="center" gap={2}>
-            {label}
-            <Badge
-              variant="solid"
-              open={isNew}
-              brandColor="red"
-              text="N"
-              size="xsmall"
-              disablePositionAbsolute
-              customStyle={{
-                // TODO UI 라이브러리 개선
-                width: 16,
-                height: 16,
-                fontWeight: 700,
-                padding: '2px 0',
-                justifyContent: 'center'
-              }}
-            />
-          </Flexbox>
-        </MenuItem>
-      ))}
-    </Menu>
+          </MenuItem>
+        ))}
+      </Menu>
+      <FeatureIsMobileAppDownDialog open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 

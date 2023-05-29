@@ -1,6 +1,7 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { fetchAlarm, putAlarm } from '@api/user';
 
@@ -41,15 +42,7 @@ function KeywordAlertOffDialog() {
     );
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => setOpenState(false)}
-      fullWidth
-      customStyle={{
-        paddingTop: 32,
-        maxWidth: 311
-      }}
-    >
+    <Dialog open={open} onClose={() => setOpenState(false)}>
       <Flexbox
         alignment="center"
         justifyContent="center"

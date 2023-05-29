@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type {
   QueryObserverResult,
@@ -9,6 +9,7 @@ import type {
 } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -20,7 +21,6 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily } from '@recoil/channel/atom';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
@@ -65,7 +65,9 @@ function ChannelMoreMenuBottomSheet({
   const queryClient = useQueryClient();
 
   const [{ open }, setMoreBottomSheetState] = useRecoilState(channelBottomSheetStateFamily('more'));
-  const setDialogState = useSetRecoilState(dialogState);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openBlockUserDialog, setOpenBlockUserDialog] = useState(false);
 
   const {
     notiOn: { mutate: mutateNotiOn, isLoading: isLaodingNoitOn },
@@ -130,44 +132,7 @@ function ChannelMoreMenuBottomSheet({
       });
     } else {
       logEvent(attrKeys.channel.VIEW_CHANNEL_POPUP, { title: attrProperty.title.BLOCK });
-      setDialogState({
-        type: 'blockUser',
-        customStyle: { minWidth: 311, 'button + button': { backgroundColor: secondary.red.main } },
-        content: (
-          <Flexbox direction="vertical" gap={8} customStyle={{ margin: '12px 0' }}>
-            <Typography variant="h3" weight="bold" textAlign="center">
-              {`${isTargetUserSeller ? '판매자' : '구매자'} ${targetUserName}님을`}
-              <br />
-              차단할까요?
-            </Typography>
-            <Typography variant="h4" textAlign="center">
-              차단하면 서로의 글을 볼 수 없고
-              <br />
-              채팅을 할 수 없어요.
-            </Typography>
-          </Flexbox>
-        ),
-        firstButtonAction() {
-          setMoreBottomSheetState({ open: true, isChannel: true });
-        },
-        async secondButtonAction() {
-          logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
-            title: attrProperty.title.BLOCK,
-            att: 'YES'
-          });
-          await mutateBlock(targetUserId, {
-            onSuccess() {
-              refetchChannel();
-              queryClient.invalidateQueries(queryKeys.products.product({ productId }));
-              toastStack({
-                children: `${
-                  isTargetUserSeller ? '판매자' : '구매자'
-                } ${targetUserName}을 차단했어요.`
-              });
-            }
-          });
-        }
-      });
+      setOpenBlockUserDialog(true);
     }
   };
 
@@ -178,21 +143,7 @@ function ChannelMoreMenuBottomSheet({
     logEvent(attrKeys.channel.VIEW_CHANNEL_POPUP, { title: attrProperty.title.LEAVE });
 
     setMoreBottomSheetState({ open: false, isChannel: true });
-    setDialogState({
-      type: 'leaveChannel',
-      customStyle: { minWidth: 310, 'button + button': { backgroundColor: secondary.red.main } },
-      firstButtonAction() {
-        setMoreBottomSheetState({ open: true, isChannel: true });
-      },
-      async secondButtonAction() {
-        logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
-          name: attrProperty.name.CHANNEL_DETAIL,
-          title: attrProperty.title.LEAVE,
-          att: 'YES'
-        });
-        await mutateLeaveChannel(channelId);
-      }
-    });
+    setOpenDialog(true);
   };
 
   useEffect(() => {
@@ -204,35 +155,154 @@ function ChannelMoreMenuBottomSheet({
   }, [open]);
 
   return (
-    <BottomSheet disableSwipeable open={open} onClose={handleClose}>
-      <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
-        <Flexbox direction="vertical">
-          {!isDeletedTargetUser && (
-            <>
-              <Menu variant="h3" weight="medium" onClick={handleClickNoti}>
-                {isNotiOn ? '알림 끄기' : '알림 켜기'}
-              </Menu>
-              {!isCamelAdminUser && (
-                <>
-                  <Menu variant="h3" weight="medium" onClick={handleClickReport}>
-                    신고하기
-                  </Menu>
-                  <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
-                    {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
-                  </Menu>
-                </>
-              )}
-            </>
-          )}
-          <RedMenu variant="h3" weight="medium" onClick={handleClickLeave}>
-            채팅방 나가기
-          </RedMenu>
+    <>
+      <BottomSheet disableSwipeable open={open} onClose={handleClose}>
+        <Flexbox direction="vertical" gap={20} customStyle={{ padding: 20 }}>
+          <Flexbox direction="vertical">
+            {!isDeletedTargetUser && (
+              <>
+                <Menu variant="h3" weight="medium" onClick={handleClickNoti}>
+                  {isNotiOn ? '알림 끄기' : '알림 켜기'}
+                </Menu>
+                {!isCamelAdminUser && (
+                  <>
+                    <Menu variant="h3" weight="medium" onClick={handleClickReport}>
+                      신고하기
+                    </Menu>
+                    <Menu variant="h3" weight="medium" onClick={handleClickBlock}>
+                      {isTargetUserBlocked ? '차단 해제하기' : '차단하기'}
+                    </Menu>
+                  </>
+                )}
+              </>
+            )}
+            <RedMenu variant="h3" weight="medium" onClick={handleClickLeave}>
+              채팅방 나가기
+            </RedMenu>
+          </Flexbox>
+          <Button size="xlarge" variant="ghost" brandColor="black" fullWidth onClick={handleClose}>
+            취소
+          </Button>
         </Flexbox>
-        <Button size="xlarge" variant="ghost" brandColor="black" fullWidth onClick={handleClose}>
-          취소
-        </Button>
-      </Flexbox>
-    </BottomSheet>
+      </BottomSheet>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <Typography variant="h3" weight="bold">
+          채팅방 나가기
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          채팅방을 나가도 상대방이 말을 걸면
+          <br />
+          다시 열릴 수 있어요.
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => {
+              setMoreBottomSheetState({ open: true, isChannel: true });
+              setOpenDialog(false);
+            }}
+          >
+            취소
+          </Button>
+          <Button
+            fullWidth
+            variant="solid"
+            size="large"
+            customStyle={{
+              backgroundColor: secondary.red.main
+            }}
+            onClick={async () => {
+              logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
+                name: attrProperty.name.CHANNEL_DETAIL,
+                title: attrProperty.title.LEAVE,
+                att: 'YES'
+              });
+              await mutateLeaveChannel(channelId, {
+                onSuccess() {
+                  setOpenDialog(false);
+                }
+              });
+            }}
+          >
+            나가기
+          </Button>
+        </Flexbox>
+      </Dialog>
+      <Dialog open={openBlockUserDialog} onClose={() => setOpenBlockUserDialog(false)}>
+        <Flexbox direction="vertical" gap={8}>
+          <Typography variant="h3" weight="bold" textAlign="center">
+            {`${isTargetUserSeller ? '판매자' : '구매자'} ${targetUserName}님을`}
+            <br />
+            차단할까요?
+          </Typography>
+          <Typography variant="h4" textAlign="center">
+            차단하면 서로의 글을 볼 수 없고
+            <br />
+            채팅을 할 수 없어요.
+          </Typography>
+        </Flexbox>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => {
+              setMoreBottomSheetState({ open: true, isChannel: true });
+              setOpenBlockUserDialog(false);
+            }}
+          >
+            취소
+          </Button>
+          <Button
+            fullWidth
+            variant="solid"
+            size="large"
+            customStyle={{
+              backgroundColor: secondary.red.main
+            }}
+            onClick={async () => {
+              logEvent(attrKeys.channel.CLICK_CHANNEL_POPUP, {
+                title: attrProperty.title.BLOCK,
+                att: 'YES'
+              });
+              await mutateBlock(targetUserId, {
+                async onSuccess() {
+                  await refetchChannel();
+                  await queryClient.invalidateQueries(queryKeys.products.product({ productId }));
+                  setOpenBlockUserDialog(false);
+                  toastStack({
+                    children: `${
+                      isTargetUserSeller ? '판매자' : '구매자'
+                    } ${targetUserName}을 차단했어요.`
+                  });
+                }
+              });
+            }}
+          >
+            차단하기
+          </Button>
+        </Flexbox>
+      </Dialog>
+    </>
   );
 }
 

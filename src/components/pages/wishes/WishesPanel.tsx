@@ -6,7 +6,8 @@ import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash-es';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Dialog, Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ProductWishesCard, ProductWishesCardSkeleton, TopButton } from '@components/UI/molecules';
 
@@ -373,9 +374,8 @@ function WishesPanel({
         onClose={() => {
           setOpenSoldout(false);
         }}
-        customStyle={{ padding: 20, width: 300 }}
       >
-        <Typography weight="medium" customStyle={{ marginBottom: 20, textAlign: 'center' }}>
+        <Typography weight="medium" textAlign="center" customStyle={{ marginBottom: 20 }}>
           판매가 완료된 매물을
           <br />
           삭제하시겠습니까?

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
@@ -9,7 +8,11 @@ import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-u
 
 import { Header, TextInput } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { AppointmentSelectNotiTimeBottomSheet } from '@components/pages/appointment';
+import {
+  AppointmentCancelDialog,
+  AppointmentMakeSuccessDialog,
+  AppointmentSelectNotiTimeBottomSheet
+} from '@components/pages/appointment';
 
 import type { PostAppointmentData } from '@dto/channel';
 
@@ -32,8 +35,6 @@ import {
   getNotiTimeText
 } from '@utils/channel';
 
-import { dialogState } from '@recoil/common';
-
 function Appointment() {
   const {
     theme: {
@@ -46,7 +47,8 @@ function Appointment() {
 
   const queryClient = new QueryClient();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const channelId = useMemo(() => Number(router.query.id || ''), [router.query.id]);
 
@@ -126,36 +128,7 @@ function Appointment() {
             logEvent(attrKeys.channel.VIEW_APPOINTMENT_POPUP, {
               title: attrProperty.title.RESERVED
             });
-            setDialogState({
-              type: 'successMakeAppointment',
-              customStyleTitle: { minWidth: 270 },
-              firstButtonAction() {
-                if (isLoadingUpdateProductStatus || !channel?.productId) return;
-
-                logEvent(attrKeys.channel.CLICK_APPOINTMENT_POPUP, {
-                  title: attrProperty.title.RESERVED,
-                  att: 'YES'
-                });
-
-                mutateUpdateProductStatus(
-                  { productId: channel.productId, status: 4, channelId: channel.id },
-                  {
-                    async onSuccess() {
-                      await queryClient.invalidateQueries(
-                        queryKeys.products.product({ productId: channel.productId })
-                      );
-                      await queryClient.invalidateQueries(queryKeys.channels.channel(channelId));
-                    },
-                    onSettled() {
-                      router.back();
-                    }
-                  }
-                );
-              },
-              secondButtonAction() {
-                router.back();
-              }
-            });
+            setOpen(true);
           } else {
             router.back();
           }
@@ -172,27 +145,44 @@ function Appointment() {
       title: attrProperty.title.APPOINTMENT_CANCEL
     });
 
-    setDialogState({
-      type: 'cancelAppointment',
-      customStyleTitle: { minWidth: 270 },
-      customStyle: {
-        '* > button:first-of-type': {
-          backgroundColor: common.ui20
+    setOpenDialog(true);
+  };
+
+  const handleClick = () => {
+    if (isLoadingUpdateProductStatus || !channel?.productId) return;
+
+    logEvent(attrKeys.channel.CLICK_APPOINTMENT_POPUP, {
+      title: attrProperty.title.RESERVED,
+      att: 'YES'
+    });
+
+    mutateUpdateProductStatus(
+      { productId: channel.productId, status: 4, channelId: channel.id },
+      {
+        async onSuccess() {
+          await queryClient.invalidateQueries(
+            queryKeys.products.product({ productId: channel.productId })
+          );
+          await queryClient.invalidateQueries(queryKeys.channels.channel(channelId));
+        },
+        onSettled() {
+          router.back();
         }
+      }
+    );
+  };
+
+  const handleCLickCancel = () => {
+    logEvent(attrKeys.channel.CLICK_APPOINTMENT_POPUP, {
+      title: attrProperty.title.APPOINTMENT_CANCEL,
+      att: 'YES'
+    });
+    mutateDeleteAppointment(channelId, {
+      onSuccess() {
+        queryClient.invalidateQueries(queryKeys.channels.channel(channelId));
       },
-      firstButtonAction() {
-        logEvent(attrKeys.channel.CLICK_APPOINTMENT_POPUP, {
-          title: attrProperty.title.APPOINTMENT_CANCEL,
-          att: 'YES'
-        });
-        mutateDeleteAppointment(channelId, {
-          onSuccess() {
-            queryClient.invalidateQueries(queryKeys.channels.channel(channelId));
-          },
-          onSettled() {
-            router.back();
-          }
-        });
+      onSettled() {
+        router.back();
       }
     });
   };
@@ -400,6 +390,16 @@ function Appointment() {
           </Button>
         </Flexbox>
       </GeneralTemplate>
+      <AppointmentMakeSuccessDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onClick={handleClick}
+      />
+      <AppointmentCancelDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onClick={handleCLickCancel}
+      />
       <AppointmentSelectNotiTimeBottomSheet
         open={openAppointmentSelectNotiTimeBottomSheet}
         onClose={() => setOpenAppointmentSelectNotiTimeBottomSheet(false)}

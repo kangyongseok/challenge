@@ -2,6 +2,8 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, Typography } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
+
 import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
@@ -23,7 +25,9 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
   const router = useRouter();
 
   const triggered = useReverseScrollTrigger();
-  const handleClick = useMoveCamelSeller({ attributes });
+  const { handleMoveCamelSeller, openOsAlarmDialog, handleCloseOsAlarmDialog } = useMoveCamelSeller(
+    { attributes }
+  );
 
   const { data: { notProcessedLegitCount = 0 } = {} } = useQuery(
     queryKeys.users.userInfo(),
@@ -33,7 +37,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
   return (
     <>
       <Wrapper
-        onClick={handleClick} // handleClick
+        onClick={handleMoveCamelSeller} // handleClick
         isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
         isUserShop={router.pathname === '/user/shop'}
       >
@@ -45,7 +49,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
         </FloatingButton>
       </Wrapper>
       <Wrapper
-        onClick={handleClick} // handleClick
+        onClick={handleMoveCamelSeller} // handleClick
         isLegitTooltip={!!notProcessedLegitCount && router.pathname === '/'}
         isUserShop={router.pathname === '/user/shop'}
       >
@@ -53,6 +57,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
           <Icon name="PlusOutlined" size="medium" color="uiWhite" />
         </FloatingButton>
       </Wrapper>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import {
@@ -23,6 +23,7 @@ import {
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { LeaveEditProfileDialog, UserWithdrawalDialog } from '@components/UI/organisms';
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
@@ -57,7 +58,7 @@ import {
 } from '@utils/common';
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
-import { dialogState, showAppDownloadBannerState } from '@recoil/common';
+import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -74,12 +75,14 @@ function LegitProfileEdit() {
 
   const toastStack = useToastStack();
 
+  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
     legitProfileUpdatedProfileDataState
   );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { backgroundImage } = useMyProfileInfo();
@@ -210,34 +213,7 @@ function LegitProfileEdit() {
     }
   };
 
-  const handleClickWithdrawal = useCallback(() => {
-    setDialogState({
-      type: 'deleteAccount',
-      content: (
-        <Typography
-          weight="medium"
-          customStyle={{ textAlign: 'center', padding: '12px 0', minWidth: 270 }}
-        >
-          지금까지 쌓아놓은 검색 이력과 찜 리스트,
-          <br />
-          맞춤 추천을 위한 정보가 모두 삭제됩니다.
-          <br />
-          그래도 회원탈퇴 하시겠어요?
-        </Typography>
-      ),
-      firstButtonAction() {
-        logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
-          att: 'YES'
-        });
-        mutateWitdhdraw();
-      },
-      secondButtonAction() {
-        logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
-          att: 'NO'
-        });
-      }
-    });
-  }, [mutateWitdhdraw, setDialogState]);
+  const handleClickWithdrawal = useCallback(() => setOpen(true), []);
 
   useEffect(() => {
     logEvent(attrKeys.legitProfile.VIEW_PROFILE_EDIT, {
@@ -281,6 +257,16 @@ function LegitProfileEdit() {
     setLegitProfileUpdatedProfileDataState(isUpdatedProfileData);
   }, [isUpdatedProfileData, setLegitProfileUpdatedProfileDataState]);
 
+  useEffect(() => {
+    router.beforePopState(() => {
+      if (legitProfileUpdatedProfileData) {
+        setOpenDialog(true);
+        return false;
+      }
+      return true;
+    });
+  }, [router, legitProfileUpdatedProfileData]);
+
   const handleClickBack = () => {
     logEvent(attrKeys.header.CLICK_BACK, {
       name: attrProperty.name.LEGIT_PROFILE_EDIT
@@ -294,56 +280,81 @@ function LegitProfileEdit() {
   const bgImage = sellerEditInfo.imageBackground || backgroundImage || DEFAUT_BACKGROUND_IMAGE;
 
   return (
-    <GeneralTemplate
-      header={
-        <ThemeProvider theme={triggered ? 'light' : 'dark'}>
-          <Header
-            isTransparent={!triggered}
-            isFixed
-            showRight={false}
-            rightIcon={<Box customStyle={{ width: 56 }} />}
-            onClickLeft={handleClickBack}
-          >
-            <Typography variant="h3" weight="bold">
-              프로필수정
-            </Typography>
-          </Header>
-        </ThemeProvider>
-      }
-      footer={
-        <SaveBtnWrap justifyContent="center" alignment="center">
-          <Button
-            variant="solid"
-            fullWidth
-            size="xlarge"
-            brandColor="primary"
-            onClick={handleClickSave}
-          >
-            저장
-          </Button>
-        </SaveBtnWrap>
-      }
-    >
-      <BackgroundImage
-        src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
-        showAppDownloadBanner={showAppDownloadBanner}
+    <>
+      <GeneralTemplate
+        header={
+          <ThemeProvider theme={triggered ? 'light' : 'dark'}>
+            <Header
+              isTransparent={!triggered}
+              isFixed
+              showRight={false}
+              rightIcon={<Box customStyle={{ width: 56 }} />}
+              onClickLeft={handleClickBack}
+            >
+              <Typography variant="h3" weight="bold">
+                프로필수정
+              </Typography>
+            </Header>
+          </ThemeProvider>
+        }
+        footer={
+          <SaveBtnWrap justifyContent="center" alignment="center">
+            <Button
+              variant="solid"
+              fullWidth
+              size="xlarge"
+              brandColor="primary"
+              onClick={handleClickSave}
+            >
+              저장
+            </Button>
+          </SaveBtnWrap>
+        }
       >
-        <Blur />
-      </BackgroundImage>
-      <LegitProfileEditInfo />
-      <ContetnsWrap ref={elementRef}>
-        <TabGroup fullWidth value={tab} onChange={handleChangeValue}>
-          <Tab text="판매자 프로필" value="판매자" />
-          <Tab text="감정사 프로필" value="감정사" />
-        </TabGroup>
-        {tab === '판매자' && <SellerProfileContents />}
-        {tab === '감정사' && <LegitProfileContents />}
-        <WithdrawalButton variant="body2" onClick={handleClickWithdrawal}>
-          회원탈퇴
-        </WithdrawalButton>
-        <Box customStyle={{ paddingBottom: 120 }} />
-      </ContetnsWrap>
-    </GeneralTemplate>
+        <BackgroundImage
+          src={getImageResizePath({ imagePath: getImagePathStaticParser(bgImage), h: 387 })}
+          showAppDownloadBanner={showAppDownloadBanner}
+        >
+          <Blur />
+        </BackgroundImage>
+        <LegitProfileEditInfo />
+        <ContetnsWrap ref={elementRef}>
+          <TabGroup fullWidth value={tab} onChange={handleChangeValue}>
+            <Tab text="판매자 프로필" value="판매자" />
+            <Tab text="감정사 프로필" value="감정사" />
+          </TabGroup>
+          {tab === '판매자' && <SellerProfileContents />}
+          {tab === '감정사' && <LegitProfileContents />}
+          <WithdrawalButton variant="body2" onClick={handleClickWithdrawal}>
+            회원탈퇴
+          </WithdrawalButton>
+          <Box customStyle={{ paddingBottom: 120 }} />
+        </ContetnsWrap>
+      </GeneralTemplate>
+      <LeaveEditProfileDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onClick={() => {
+          setLegitProfileUpdatedProfileDataState(false);
+          router.back();
+        }}
+      />
+      <UserWithdrawalDialog
+        open={open}
+        onClose={() => {
+          logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
+            att: 'NO'
+          });
+          setOpen(false);
+        }}
+        onClick={() => {
+          logEvent(attrKeys.mypage.SELECT_WITHDRAW, {
+            att: 'YES'
+          });
+          mutateWitdhdraw();
+        }}
+      />
+    </>
   );
 }
 

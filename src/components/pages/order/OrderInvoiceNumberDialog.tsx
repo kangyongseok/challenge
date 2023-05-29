@@ -2,10 +2,10 @@ import { useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
 import {
   BottomSheet,
   Button,
-  Dialog,
   Flexbox,
   Icon,
   Input,
@@ -80,7 +80,7 @@ function OrderInvoiceNumberDialog({
 
   return (
     <>
-      <Dialog open={open} customStyle={{ width: 311 }}>
+      <Dialog open={open}>
         <Flexbox gap={8} direction="vertical" customStyle={{ textAlign: 'center' }}>
           <Typography weight="bold" variant="h3">
             송장번호를 입력해주세요.

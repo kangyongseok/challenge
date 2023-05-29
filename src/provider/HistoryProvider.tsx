@@ -1,30 +1,25 @@
 import { useEffect } from 'react';
 import type { PropsWithChildren, ReactElement } from 'react';
 
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { PAYMENTS_SUCCESS, SAVED_LEGIT_REQUEST } from '@constants/localStorage';
+import { PAYMENTS_SUCCESS } from '@constants/localStorage';
 
 import { getPathNameByAsPath } from '@utils/common';
 
-import { userShopUpdatedProfileDataState } from '@recoil/userShop';
 import { productsFilterProgressDoneState } from '@recoil/productsFilter';
-import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
-import { legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { eventContentDogHoneyFilterState } from '@recoil/eventFilter';
 import {
-  dialogState,
   exitUserNextStepState,
   exitUserViewBottomSheetState,
   historyState,
   isGoBackState
 } from '@recoil/common';
-import useQueryUserData from '@hooks/useQueryUserData';
 import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
 const serverSideRenderPages = [
@@ -40,21 +35,11 @@ function HistoryProvider({ children }: PropsWithChildren) {
     useExitSurveyBottomSheet();
   const [history, setHistoryState] = useRecoilState(historyState);
   const [isGoBack, setIsGoBack] = useRecoilState(isGoBackState);
-  const [legitProfileUpdatedProfileData, setLegitProfileUpdatedProfileDataState] = useRecoilState(
-    legitProfileUpdatedProfileDataState
-  );
-  const [userShopUpdatedProfileData, setUserShopUpdatedProfileDataState] = useRecoilState(
-    userShopUpdatedProfileDataState
-  );
-  const legitRequest = useRecoilValue(legitRequestState);
+
   const setExitBottomSheet = useSetRecoilState(exitUserViewBottomSheetState);
   const setExitUserNextStep = useSetRecoilState(exitUserNextStepState);
-  const productLegitParams = useRecoilValue(productLegitParamsState);
   const setProductsFilterProgressDoneState = useSetRecoilState(productsFilterProgressDoneState);
-  const setDialogState = useSetRecoilState(dialogState);
   const resetEventContentDogHoneyFilterState = useResetRecoilState(eventContentDogHoneyFilterState);
-
-  const { set: setUserDate } = useQueryUserData();
 
   useEffect(() => {
     router.beforePopState(({ url }) => {
@@ -98,57 +83,8 @@ function HistoryProvider({ children }: PropsWithChildren) {
         document.cookie = 'isGoBack=true;path=/';
       }
 
-      if (router.pathname === '/user/shop/edit' && userShopUpdatedProfileData) {
-        setDialogState({
-          type: 'leaveEditProfile',
-          secondButtonAction() {
-            setUserShopUpdatedProfileDataState(false);
-            router.back();
-          },
-          customStyleTitle: { minWidth: 270 }
-        });
-
-        return false;
-      }
-
-      if (router.pathname === '/legit/profile/[id]/edit' && legitProfileUpdatedProfileData) {
-        setDialogState({
-          type: 'leaveEditProfile',
-          secondButtonAction() {
-            setLegitProfileUpdatedProfileDataState(false);
-            router.back();
-          },
-          customStyleTitle: { minWidth: 270 }
-        });
-
-        return false;
-      }
-
       if (router.pathname === '/events/dogHoney') {
         resetEventContentDogHoneyFilterState();
-      }
-
-      if (router.query.step === 'form' && !!legitRequest.productId) {
-        setDialogState({
-          type: 'leaveLegitRequest',
-          theme: 'dark',
-          secondButtonAction() {
-            router
-              .push(`/product/${legitRequest.productId}`, undefined, { shallow: true })
-              .then(() => {
-                setUserDate({
-                  [SAVED_LEGIT_REQUEST]: {
-                    state: legitRequest,
-                    params: productLegitParams,
-                    showToast: !router.query.already
-                  }
-                });
-              });
-          },
-          customStyleTitle: { minWidth: 270 }
-        });
-
-        return false;
       }
 
       return true;
@@ -158,22 +94,14 @@ function HistoryProvider({ children }: PropsWithChildren) {
     history.pathNames,
     isSearchExitPattern,
     isUserViewPerDay,
-    legitProfileUpdatedProfileData,
-    legitRequest,
     productDetailOverViewLeave,
-    productLegitParams,
     resetEventContentDogHoneyFilterState,
     router,
     searchProductLeave,
-    setDialogState,
     setExitBottomSheet,
     setExitUserNextStep,
     setIsGoBack,
-    setLegitProfileUpdatedProfileDataState,
-    setProductsFilterProgressDoneState,
-    setUserDate,
-    setUserShopUpdatedProfileDataState,
-    userShopUpdatedProfileData
+    setProductsFilterProgressDoneState
   ]);
 
   useEffect(() => {

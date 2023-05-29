@@ -1,12 +1,14 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
-import { CustomStyle, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { SNSShareDialog } from '@components/UI/organisms';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import CrazycurationMultiList from '@components/pages/crazycuration/CrazycurationMultiList';
@@ -38,7 +40,7 @@ import { getProductType } from '@utils/products';
 import { getCookies } from '@utils/cookies';
 import { checkAgent, executedShareURl } from '@utils/common';
 
-import { dialogState } from '@recoil/common';
+import type { ShareData } from '@typings/common';
 import useContentsProducts from '@hooks/useContentsProducts';
 
 const colorData = {
@@ -465,7 +467,11 @@ function Crazycuration({
   const isMobileWeb = isMobile && !checkAgent.isMobileApp();
   const router = useRouter();
 
-  const setDialogState = useSetRecoilState(dialogState);
+  const [open, setOpen] = useState(false);
+  const [shareData, setShareData] = useState<ShareData>();
+  const [openNextCrazyCurationDialog, setOpenNextCrazyCurationDialog] = useState(false);
+  const [openClosedCrazyCurationDialog, setOpenClosedCrazyCurationDialog] = useState(false);
+  const [openEndCrazyCurationDialog, setOpenEndCrazyCurationDialog] = useState(false);
 
   const {
     data: {
@@ -479,7 +485,7 @@ function Crazycuration({
   } = useContentsProducts(currentCuration?.contentsId || 0);
 
   const handleClickShare = useCallback(() => {
-    const shareData = {
+    const newShareData = {
       title: ogTitle ? `${ogTitle} | 카멜 최저가 가격비교` : '카멜 최저가 가격비교',
       description: ogDescription || '',
       image: (ogImage || '').replace('thumbnail', 'weekOn'),
@@ -490,14 +496,15 @@ function Crazycuration({
 
     if (
       !executedShareURl({
-        url: shareData.url,
-        title: shareData.title,
-        text: shareData.description
+        url: newShareData.url,
+        title: newShareData.title,
+        text: newShareData.description
       })
     ) {
-      setDialogState({ type: 'SNSShare', shareData });
+      setOpen(true);
+      setShareData(newShareData);
     }
-  }, [ogDescription, ogImage, ogTitle, ogUrl, setDialogState]);
+  }, [ogDescription, ogImage, ogTitle, ogUrl]);
 
   const handleClickWishButtonEvent = useCallback(
     (
@@ -630,86 +637,15 @@ function Crazycuration({
       logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, {
         title: currentCuration?.logEventTitle
       });
-      setDialogState({
-        type: 'closedCrazyCuration',
-        customStyleTitle: { marginTop: 12 },
-        content: (
-          <Typography variant="h4" customStyle={{ marginBottom: 12, textAlign: 'center' }}>
-            오늘은 &lsquo;{nextEventTitle}&rsquo;이
-            <br />
-            준비되어 있는데 구경해보실래요?
-          </Typography>
-        ),
-        firstButtonAction() {
-          logEvent(attrKeys.crazycuration.clickClose, {
-            name: attrProperty.name.crazyWeek,
-            title: attrProperty.title.popup
-          });
-
-          if (window.history.length > 2) {
-            router.back();
-          } else {
-            router.push('/');
-          }
-        },
-        secondButtonAction() {
-          logEvent(attrKeys.crazycuration.clickCrazyWeek, {
-            name: attrProperty.name.crazyWeekPopup,
-            title: currentCuration?.logEventTitle
-          });
-          router.push(nextEventUrl);
-        },
-        disabledOnClose: true
-      });
+      setOpenClosedCrazyCurationDialog(true);
       // 진입한 이벤트 마감, 진행중 이벤트 없음, 다음 이벤트 대기중
     } else if (hasNextEvent) {
       logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, { title: attrProperty.title.none });
-      setDialogState({
-        type: 'readyNextCrazyCuration',
-        customStyleTitle: { marginTop: 12 },
-        firstButtonAction() {
-          logEvent(attrKeys.crazycuration.clickMain, {
-            name: attrProperty.name.crazyWeekPopup,
-            title: attrProperty.title.none
-          });
-          router.push('/');
-        },
-        secondButtonAction() {
-          logEvent(attrKeys.crazycuration.clickSearchModal, {
-            name: attrProperty.name.crazyWeekPopup,
-            title: attrProperty.title.none
-          });
-          router.push('/search');
-        },
-        disabledOnClose: true
-      });
+      setOpenNextCrazyCurationDialog(true);
       // 모든 이벤트 종료
     } else {
       logEvent(attrKeys.crazycuration.viewCrazyWeekPopup, { title: attrProperty.title.end });
-      setDialogState({
-        type: 'endCrazyCuration',
-        customStyleTitle: { marginTop: 12 },
-        firstButtonAction() {
-          logEvent(attrKeys.crazycuration.clickMain, {
-            name: attrProperty.name.crazyWeekPopup,
-            title: attrProperty.title.end
-          });
-
-          if (window.history.length > 2) {
-            router.back();
-          } else {
-            router.push('/');
-          }
-        },
-        secondButtonAction() {
-          logEvent(attrKeys.crazycuration.clickSearchModal, {
-            name: attrProperty.name.crazyWeekPopup,
-            title: attrProperty.title.end
-          });
-          router.push('/search');
-        },
-        disabledOnClose: true
-      });
+      setOpenEndCrazyCurationDialog(true);
     }
   }, [
     currentCuration?.logEventTitle,
@@ -717,8 +653,7 @@ function Crazycuration({
     isClosedEvent,
     nextEventTitle,
     nextEventUrl,
-    router,
-    setDialogState
+    router
   ]);
 
   return currentCuration ? (
@@ -809,6 +744,171 @@ function Crazycuration({
         contentsId={currentCuration.contentsId}
         buttonStyle={currentCuration.floatingButtonStyle}
       />
+      <SNSShareDialog open={open} onClose={() => setOpen(false)} shareData={shareData} />
+      <Dialog
+        open={openNextCrazyCurationDialog}
+        onClose={() => setOpenNextCrazyCurationDialog(false)}
+      >
+        <Typography variant="h3" weight="bold">
+          다음주 월요일을 기대해주세요!
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          벌써 이번주는 다 마감됐어요.
+          <br />
+          월요일에 다시 급처 매물 모아올게요!
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickMain, {
+                name: attrProperty.name.crazyWeekPopup,
+                title: attrProperty.title.none
+              });
+              router.push('/');
+            }}
+          >
+            홈으로 가기
+          </Button>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickSearchModal, {
+                name: attrProperty.name.crazyWeekPopup,
+                title: attrProperty.title.none
+              });
+              router.push('/search');
+            }}
+          >
+            검색하기
+          </Button>
+        </Flexbox>
+      </Dialog>
+      <Dialog
+        open={openClosedCrazyCurationDialog}
+        onClose={() => setOpenClosedCrazyCurationDialog(false)}
+      >
+        <Typography variant="h3" weight="bold">
+          앗! 이미 마감된 테마에요.
+        </Typography>
+        <Typography variant="h4" customStyle={{ marginTop: 8 }}>
+          오늘은 &lsquo;{nextEventTitle}&rsquo;이
+          <br />
+          준비되어 있는데 구경해보실래요?
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickClose, {
+                name: attrProperty.name.crazyWeek,
+                title: attrProperty.title.popup
+              });
+
+              if (window.history.length > 2) {
+                router.back();
+              } else {
+                router.push('/');
+              }
+            }}
+          >
+            아니오
+          </Button>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickCrazyWeek, {
+                name: attrProperty.name.crazyWeekPopup,
+                title: currentCuration?.logEventTitle
+              });
+              router.push(nextEventUrl);
+            }}
+          >
+            찾아볼래요
+          </Button>
+        </Flexbox>
+      </Dialog>
+      <Dialog
+        open={openEndCrazyCurationDialog}
+        onClose={() => setOpenEndCrazyCurationDialog(false)}
+      >
+        <Typography variant="h3" weight="bold">
+          앗! 이미 마감된 테마에요.
+        </Typography>
+        <Typography variant="h4" customStyle={{ marginTop: 8 }}>
+          다른 중고 명품 전국에서 찾아볼까요?
+        </Typography>
+        <Flexbox
+          gap={8}
+          customStyle={{
+            marginTop: 20
+          }}
+        >
+          <Button
+            fullWidth
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickMain, {
+                name: attrProperty.name.crazyWeekPopup,
+                title: attrProperty.title.end
+              });
+
+              if (window.history.length > 2) {
+                router.back();
+              } else {
+                router.push('/');
+              }
+            }}
+          >
+            아니오
+          </Button>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            onClick={() => {
+              logEvent(attrKeys.crazycuration.clickSearchModal, {
+                name: attrProperty.name.crazyWeekPopup,
+                title: attrProperty.title.end
+              });
+              router.push('/search');
+            }}
+          >
+            검색할래요
+          </Button>
+        </Flexbox>
+      </Dialog>
+      )
     </>
   ) : null;
 }

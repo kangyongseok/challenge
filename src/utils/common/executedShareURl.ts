@@ -1,4 +1,4 @@
-import { Product } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 import { checkAgent } from '@utils/common';
 
@@ -11,7 +11,7 @@ export function executedShareURl({
   title: string;
   text: string;
   url: string;
-  product?: Product;
+  product?: Product | ProductResult;
 }) {
   if (navigator.share) {
     navigator.share({ title, text, url });

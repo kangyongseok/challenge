@@ -43,7 +43,6 @@ import { getCookies } from '@utils/cookies';
 import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
-import { dialogState } from '@recoil/common';
 import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useChannel from '@hooks/useChannel';
@@ -61,7 +60,6 @@ function Channel() {
     channelThumbnailMessageImageState
   );
   const [detailImages, setDetailImages] = useState<string[]>([]);
-  const resetDialogState = useResetRecoilState(dialogState);
   const resetMoreBottomSheetState = useResetRecoilState(channelBottomSheetStateFamily('more'));
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
@@ -224,12 +222,10 @@ function Channel() {
   useEffect(() => {
     return () => {
       setChannelThumbnailMessageImage('');
-      resetDialogState();
       resetProductStatusBottomSheetState();
       resetMoreBottomSheetState();
     };
   }, [
-    resetDialogState,
     resetMoreBottomSheetState,
     resetProductStatusBottomSheetState,
     setChannelThumbnailMessageImage

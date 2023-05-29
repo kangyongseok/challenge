@@ -2,14 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Flexbox, Typography, TypographyVariant, useTheme } from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
+import type { TypographyVariant } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
 import {
   DuplicatedOverlay,
@@ -81,19 +80,15 @@ import useOsAlarm from '@hooks/useOsAlarm';
 function ProductDetail() {
   const {
     query: { id: productId, redirect, chainPrice },
-    asPath
+    asPath,
+    push
   } = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const toastStack = useToastStack();
 
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
-  const setOsAlarm = useOsAlarm();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const { data: userData, set: setUserDate } = useQueryUserData();
   const { data, isLoading, mutatePostProductsAdd, mutatePostProductsRemove, mutateMetaInfo } =
@@ -179,7 +174,7 @@ function ProductDetail() {
         mutatePostProductsRemove();
       } else {
         mutatePostProductsAdd();
-        setOsAlarm();
+        checkOsAlarm();
       }
 
       return true;
@@ -190,7 +185,7 @@ function ProductDetail() {
       mutatePostProductsAdd,
       mutatePostProductsRemove,
       setLoginBottomSheet,
-      setOsAlarm
+      checkOsAlarm
     ]
   );
 
@@ -570,7 +565,6 @@ function ProductDetail() {
           </>
         )}
       </GeneralTemplate>
-
       <AppDownloadDialog
         variant="wish"
         open={isShowAppDownloadDialog}
@@ -580,69 +574,42 @@ function ProductDetail() {
       <Toast
         open={isOpenDuplicatedToast}
         autoHideDuration={6000}
+        action={{
+          text: '확인하기',
+          onClick: () => {
+            logEvent(attrKeys.products.clickProductDetail, {
+              name: attrProperty.name.productDetail,
+              att: isPriceDown ? 'TOASTPRICELOW' : 'TOASTSAME',
+              productType: getProductType(
+                data?.product.productSeller.site.id || 0,
+                data?.product.productSeller.type || 0
+              )
+            });
+            push(targetProductUrl);
+          }
+        }}
         onClose={() =>
           setOpenToast((prevState) => ({ ...prevState, isOpenDuplicatedToast: false }))
         }
       >
-        <Flexbox alignment="center" justifyContent="space-between" gap={8}>
-          <Typography
-            weight="medium"
-            customStyle={{
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              color: common.uiWhite
-            }}
-          >
-            판매자가 같은 매물을 다시 올렸어요
-          </Typography>
-          <Typography
-            weight="medium"
-            color="ui80"
-            customStyle={{
-              textDecoration: 'underline',
-              whiteSpace: 'nowrap'
-            }}
-            onClick={() => {
-              logEvent(attrKeys.products.clickProductDetail, {
-                name: attrProperty.name.productDetail,
-                att: isPriceDown ? 'TOASTPRICELOW' : 'TOASTSAME',
-                productType: getProductType(
-                  data?.product.productSeller.site.id || 0,
-                  data?.product.productSeller.type || 0
-                )
-              });
-            }}
-          >
-            <Link href={targetProductUrl}>확인하기</Link>
-          </Typography>
-        </Flexbox>
+        판매자가 같은 매물을 다시 올렸어요
       </Toast>
       <Toast
         open={isOpenPriceDownToast}
         autoHideDuration={6000}
+        action={{
+          text: '확인하기',
+          onClick: () => push(targetProductUrl)
+        }}
         onClose={() => setOpenToast((prevState) => ({ ...prevState, isOpenPriceDownToast: false }))}
       >
-        <Flexbox alignment="center" justifyContent="space-between" gap={8}>
-          <PriceDownText weight="medium">
-            {`${commaNumber(
-              getTenThousandUnitPrice(discountedPrice)
-            )}만원 할인! 판매자가 가격을 내려서 다시 올렸어요`}
-          </PriceDownText>
-          <Typography
-            weight="medium"
-            customStyle={{
-              textDecoration: 'underline',
-              whiteSpace: 'nowrap',
-              color: common.ui80
-            }}
-          >
-            <Link href={targetProductUrl}>확인하기</Link>
-          </Typography>
-        </Flexbox>
+        {`${commaNumber(
+          getTenThousandUnitPrice(discountedPrice)
+        )}만원 할인! 판매자가 가격을 내려서 다시 올렸어요`}
       </Toast>
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
       {/* <UserShopProductDeleteConfirmDialog redirect /> */}
       {/* <ProductInterfereKingBottomSheet /> */}
     </>
@@ -723,16 +690,5 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     };
   }
 }
-
-const PriceDownText = styled(Typography)`
-  color: ${({
-    theme: {
-      palette: { common }
-    }
-  }) => common.uiWhite};
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
 
 export default ProductDetail;

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Avatar, Flexbox, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
+
+import { AppUpdateNoticeDialog, LegitRequestOnlyInAppDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -20,13 +22,11 @@ import attrKeys from '@constants/attrKeys';
 import {
   checkAgent,
   getImageResizePath,
-  handleClickAppDownload,
   isNeedUpdateImageUploadAOSVersion,
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
-import { dialogState } from '@recoil/common';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
@@ -38,8 +38,11 @@ function LegitTargetBrandList() {
     }
   } = useTheme();
 
+  const [open, setOpen] = useState(false);
+  const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
+  const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
+
   const setLegitRequestState = useSetRecoilState(legitRequestState);
-  const setDialogState = useSetRecoilState(dialogState);
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
@@ -69,46 +72,17 @@ function LegitTargetBrandList() {
       });
 
       if (!checkAgent.isMobileApp()) {
-        setDialogState({
-          type: 'legitRequestOnlyInApp',
-          customStyleTitle: { minWidth: 270 },
-          secondButtonAction() {
-            handleClickAppDownload({});
-          }
-        });
-
+        setOpen(true);
         return;
       }
 
       if (isNeedUpdateImageUploadIOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.callExecuteApp
-            )
-              window.webkit.messageHandlers.callExecuteApp.postMessage(
-                'itms-apps://itunes.apple.com/app/id1541101835'
-              );
-          }
-        });
-
+        setOpenIOSNoticeDialog(true);
         return;
       }
 
       if (isNeedUpdateImageUploadAOSVersion()) {
-        setDialogState({
-          type: 'appUpdateNotice',
-          customStyleTitle: { minWidth: 269 },
-          secondButtonAction: () => {
-            if (window.webview && window.webview.callExecuteApp)
-              window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
-          }
-        });
-
+        setOpenAOSNoticeDialog(true);
         return;
       }
 
@@ -131,7 +105,7 @@ function LegitTargetBrandList() {
       }));
       router.push('/legit/request/selectCategory');
     },
-    [accessUser, removeUserDate, router, setDialogState, setLegitRequestState, userData]
+    [accessUser, removeUserDate, router, setLegitRequestState, userData]
   );
 
   const handleSwiperBrand = () => {
@@ -141,78 +115,103 @@ function LegitTargetBrandList() {
   };
 
   return (
-    <Flexbox component="section" direction="vertical" gap={32}>
-      <Flexbox direction="vertical" alignment="center" gap={4}>
-        <Typography variant="h3" weight="bold">
-          Select a Brand
-        </Typography>
-        <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-          브랜드를 선택하여 사진감정 시작하세요
-        </Typography>
-      </Flexbox>
-      <Wrapper>
-        <Swiper
-          spaceBetween={20}
-          pagination={{ clickable: true }}
-          modules={[Pagination]}
-          style={{ padding: '0 12px' }}
-          onSlideChange={handleSwiperBrand}
-        >
-          {isLoading ? (
-            <SwiperSlide>
-              <BrandList>
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <BrandItem
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`target-brand-skeleton-${index}`}
-                  >
-                    <Skeleton width={64} height={64} round="50%" />
-                    <Skeleton width={64} height={18} round={8} disableAspectRatio />
-                  </BrandItem>
-                ))}
-              </BrandList>
-            </SwiperSlide>
-          ) : (
-            groupedBrands.map((groupedBrand, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <SwiperSlide key={`grouped-target-brand-${index}`}>
+    <>
+      <Flexbox component="section" direction="vertical" gap={32}>
+        <Flexbox direction="vertical" alignment="center" gap={4}>
+          <Typography variant="h3" weight="bold">
+            Select a Brand
+          </Typography>
+          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+            브랜드를 선택하여 사진감정 시작하세요
+          </Typography>
+        </Flexbox>
+        <Wrapper>
+          <Swiper
+            spaceBetween={20}
+            pagination={{ clickable: true }}
+            modules={[Pagination]}
+            style={{ padding: '0 12px' }}
+            onSlideChange={handleSwiperBrand}
+          >
+            {isLoading ? (
+              <SwiperSlide>
                 <BrandList>
-                  {groupedBrand.map(({ id, name, nameEng }) => (
+                  {Array.from({ length: 8 }).map((_, index) => (
                     <BrandItem
-                      key={`target-brand-${id}`}
-                      css={{
-                        gridAutoColumns: 'minmax(87.5px, 1fr)'
-                      }}
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`target-brand-skeleton-${index}`}
                     >
-                      <Avatar
-                        width={64}
-                        height={64}
-                        src={getImageResizePath({
-                          imagePath: `https://${
-                            process.env.IMAGE_DOMAIN
-                          }/assets/images/brands/white/${nameEng
-                            .toLocaleLowerCase()
-                            .split(' ')
-                            .join('')}.jpg`,
-                          w: 64
-                        })}
-                        alt="Brand Logo Img"
-                        round="50%"
-                        onClick={handleClick(id, name, nameEng)}
-                        customStyle={{ margin: 'auto' }}
-                      />
-                      <Typography variant="body1" customStyle={{ textAlign: 'center' }}>
-                        {name}
-                      </Typography>
+                      <Skeleton width={64} height={64} round="50%" />
+                      <Skeleton width={64} height={18} round={8} disableAspectRatio />
                     </BrandItem>
                   ))}
                 </BrandList>
               </SwiperSlide>
-            ))
-          )}
-        </Swiper>
-      </Wrapper>
-    </Flexbox>
+            ) : (
+              groupedBrands.map((groupedBrand, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <SwiperSlide key={`grouped-target-brand-${index}`}>
+                  <BrandList>
+                    {groupedBrand.map(({ id, name, nameEng }) => (
+                      <BrandItem
+                        key={`target-brand-${id}`}
+                        css={{
+                          gridAutoColumns: 'minmax(87.5px, 1fr)'
+                        }}
+                      >
+                        <Avatar
+                          width={64}
+                          height={64}
+                          src={getImageResizePath({
+                            imagePath: `https://${
+                              process.env.IMAGE_DOMAIN
+                            }/assets/images/brands/white/${nameEng
+                              .toLocaleLowerCase()
+                              .split(' ')
+                              .join('')}.jpg`,
+                            w: 64
+                          })}
+                          alt="Brand Logo Img"
+                          round="50%"
+                          onClick={handleClick(id, name, nameEng)}
+                          customStyle={{ margin: 'auto' }}
+                        />
+                        <Typography variant="body1" customStyle={{ textAlign: 'center' }}>
+                          {name}
+                        </Typography>
+                      </BrandItem>
+                    ))}
+                  </BrandList>
+                </SwiperSlide>
+              ))
+            )}
+          </Swiper>
+        </Wrapper>
+      </Flexbox>
+      <LegitRequestOnlyInAppDialog open={open} onClose={() => setOpen(false)} />
+      <AppUpdateNoticeDialog
+        open={openIOSNoticeDialog}
+        onClose={() => setOpenIOSNoticeDialog(false)}
+        onClick={() => {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.callExecuteApp
+          )
+            window.webkit.messageHandlers.callExecuteApp.postMessage(
+              'itms-apps://itunes.apple.com/app/id1541101835'
+            );
+        }}
+      />
+      <AppUpdateNoticeDialog
+        open={openAOSNoticeDialog}
+        onClose={() => setOpenAOSNoticeDialog(false)}
+        onClick={() => {
+          if (window.webview && window.webview.callExecuteApp)
+            window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
+        }}
+      />
+    </>
   );
 }
 

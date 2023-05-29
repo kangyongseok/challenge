@@ -9,3 +9,4 @@ export { default as ProductOrderInfoBottomSheet } from './ProductOrderInfoBottom
 export { default as ProductOrderLabel } from './ProductOrderLabel';
 export { default as ProductOrderAddTextArea } from './ProductOrderAddTextarea';
 export { default as ProductOrderCardOverDialog } from './ProductOrderCardOverDialog';
+export { default as ProductOrderAppUpdateDialog } from './ProductOrderAppUpdateDialog';

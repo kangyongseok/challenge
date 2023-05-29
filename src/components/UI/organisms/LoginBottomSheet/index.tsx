@@ -17,6 +17,8 @@ import attrKeys from '@constants/attrKeys';
 import { loginBottomSheetState } from '@recoil/common';
 import useSignIn from '@hooks/useSignIn';
 
+import LoginErrorDialog from '../LoginErrorDialog';
+
 function LoginBottomSheet() {
   const router = useRouter();
 
@@ -24,7 +26,16 @@ function LoginBottomSheet() {
 
   const [{ open, returnUrl }, setLoginBottomSheetState] = useRecoilState(loginBottomSheetState);
 
-  const { code, loading, setLoading, authLogin, successLogin } = useSignIn({
+  const {
+    code,
+    loading,
+    setLoading,
+    authLogin,
+    successLogin,
+    hasError,
+    setHasError,
+    errorProvider
+  } = useSignIn({
     returnUrl: returnUrl || router.asPath,
     bottomSheet: true,
     authLoginCallback() {
@@ -67,61 +78,69 @@ function LoginBottomSheet() {
   }, [open, returnUrl, router]);
 
   return (
-    <BottomSheet
-      open={open}
-      onClose={() => setLoginBottomSheetState({ open: false, returnUrl: '' })}
-      disableSwipeable
-      customStyle={{ padding: '52px 20px 32px 20px', textAlign: 'center' }}
-    >
-      {(code || loading) && <PuffLoader />}
-      {transitions(
-        (styles, item) =>
-          item && (
-            <animated.div style={styles}>
-              <Flexbox gap={10} alignment="center" justifyContent="center">
-                <Icon name="Logo_45_45" width={36} height={31} />
-                <Icon name="LogoText_96_20" width={124} height={31} />
-              </Flexbox>
-              {router.pathname === '/order/single/[id]' ? (
-                <Typography variant="h4" customStyle={{ margin: '20px 0' }}>
-                  카멜 안전결제를 처음 이용하면
-                  <br />
-                  <span style={{ fontWeight: 'bold', color: '#425BFF' }}>5,000</span>원을 드려요!
-                </Typography>
-              ) : (
-                <>
-                  <Typography customStyle={{ margin: '20px 0' }}>
-                    꿀매물과 가격변동 알림부터
-                    <br />내 주변, 내 사이즈 매물만 보기까지!
+    <>
+      <BottomSheet
+        open={open}
+        onClose={() => setLoginBottomSheetState({ open: false, returnUrl: '' })}
+        disableSwipeable
+        customStyle={{ padding: '52px 20px 32px 20px', textAlign: 'center' }}
+      >
+        {(code || loading) && <PuffLoader />}
+        {transitions(
+          (styles, item) =>
+            item && (
+              <animated.div style={styles}>
+                <Flexbox gap={10} alignment="center" justifyContent="center">
+                  <Icon name="Logo_45_45" width={36} height={31} />
+                  <Icon name="LogoText_96_20" width={124} height={31} />
+                </Flexbox>
+                {router.pathname === '/order/single/[id]' ? (
+                  <Typography variant="h4" customStyle={{ margin: '20px 0' }}>
+                    카멜 안전결제를 처음 이용하면
+                    <br />
+                    <span style={{ fontWeight: 'bold', color: '#425BFF' }}>5,000</span>원을 드려요!
                   </Typography>
-                  <Typography
-                    customStyle={{
-                      marginBottom: 32
-                    }}
-                  >
-                    로그인하고 득템하세요 🙌
-                  </Typography>
-                </>
-              )}
-              <LoginButtonList
-                authLogin={authLogin}
-                successLogin={successLogin}
-                returnUrl={(returnUrl as string) || router.asPath}
-                setShow={setShow}
-                setLoading={setLoading}
-                onClickNotLoginShow={() =>
-                  setLoginBottomSheetState({
-                    open: false,
-                    returnUrl: ''
-                  })
-                }
-                attName="MODAL"
-                disabledRecentLogin
-              />
-            </animated.div>
-          )
-      )}
-    </BottomSheet>
+                ) : (
+                  <>
+                    <Typography customStyle={{ margin: '20px 0' }}>
+                      꿀매물과 가격변동 알림부터
+                      <br />내 주변, 내 사이즈 매물만 보기까지!
+                    </Typography>
+                    <Typography
+                      customStyle={{
+                        marginBottom: 32
+                      }}
+                    >
+                      로그인하고 득템하세요 🙌
+                    </Typography>
+                  </>
+                )}
+                <LoginButtonList
+                  authLogin={authLogin}
+                  successLogin={successLogin}
+                  returnUrl={(returnUrl as string) || router.asPath}
+                  setShow={setShow}
+                  setLoading={setLoading}
+                  onClickNotLoginShow={() =>
+                    setLoginBottomSheetState({
+                      open: false,
+                      returnUrl: ''
+                    })
+                  }
+                  attName="MODAL"
+                  disabledRecentLogin
+                />
+              </animated.div>
+            )
+        )}
+      </BottomSheet>
+      <LoginErrorDialog
+        variant={errorProvider ? 'provider' : 'common'}
+        provider={errorProvider}
+        open={hasError}
+        onClose={() => setHasError(false)}
+      />
+    </>
   );
 }
 

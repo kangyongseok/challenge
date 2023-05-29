@@ -8,7 +8,8 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Dialog, Flexbox, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Button, Flexbox, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ChannelUser } from '@dto/user';
@@ -81,29 +82,15 @@ function ChannelSaleRequestRefuseDialog({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      customStyle={{
-        maxWidth: 311,
-        padding: '32px 20px 20px'
-      }}
-    >
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{
-          textAlign: 'center'
-        }}
-      >
+    <Dialog open={open} onClose={handleClose}>
+      <Typography variant="h3" weight="bold" textAlign="center">
         주문을 취소할까요?
       </Typography>
       <Typography
         variant="h4"
+        textAlign="center"
         customStyle={{
-          marginTop: 8,
-          textAlign: 'center'
+          marginTop: 8
         }}
       >
         {channelTargetUser?.user?.nickName}님의 주문이 취소됩니다.

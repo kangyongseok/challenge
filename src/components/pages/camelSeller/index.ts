@@ -18,3 +18,5 @@ export { default as CamelSellerSelectBrandHeader } from './CamelSellerSelectBran
 export { default as CamelSellerSelectBrandList } from './CamelSellerSelectBrandList';
 export { default as CamelSellerSizeBottomSheet } from './CamelSellerSizeBottomSheet';
 export { default as CamelSellerSurveyBottomSheet } from './CamelSellerSurveyBottomSheet';
+export { default as CamelSellerNotiChannelDialog } from './CamelSellerNotiChannelDialog';
+export { default as CamelSellerAuthPushDialog } from './CamelSellerAuthPushDialog';

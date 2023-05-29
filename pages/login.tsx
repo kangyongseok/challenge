@@ -5,6 +5,7 @@ import { animated, useTransition } from '@react-spring/web';
 import { ThemeProvider } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { LoginErrorDialog } from '@components/UI/organisms';
 import PuffLoader from '@components/UI/atoms/PuffLoader';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LoginButtonList, LoginMainContent, LoginUserAgreement } from '@components/pages/login';
@@ -20,7 +21,18 @@ function Login() {
 
   const returnUrl = String(router.query.returnUrl || '/');
 
-  const { code, loading, setLoading, authLogin, successLogin } = useSignIn({ returnUrl });
+  const {
+    code,
+    loading,
+    setLoading,
+    authLogin,
+    successLogin,
+    hasError,
+    setHasError,
+    errorProvider
+  } = useSignIn({
+    returnUrl
+  });
 
   const [show, setShow] = useState(true);
 
@@ -57,6 +69,12 @@ function Login() {
                     setLoading={setLoading}
                   />
                   <LoginUserAgreement />
+                  <LoginErrorDialog
+                    variant={errorProvider ? 'provider' : 'common'}
+                    provider={errorProvider}
+                    open={hasError}
+                    onClose={() => setHasError(false)}
+                  />
                 </GeneralTemplate>
               </Wrapper>
             </animated.div>

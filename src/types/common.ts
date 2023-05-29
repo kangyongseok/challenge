@@ -83,46 +83,6 @@ export type ABTestTask = {
 
 export type ABTestBelong = 'A' | 'B' | null;
 
-export type DialogType =
-  | 'SNSShare'
-  | 'readyNextCrazyCuration'
-  | 'closedCrazyCuration'
-  | 'endCrazyCuration'
-  | 'deleteLegitAdminOpinion'
-  | 'deleteLegitResultComment'
-  | 'deleteLegitResultReply'
-  | 'legitRequestOnlyInApp'
-  | 'legitRequestOnlyInIOS'
-  | 'legitServiceNotice'
-  | 'appUpdateNotice'
-  | 'appAuthCheck'
-  | 'legitPhotoGuide'
-  | 'unblockBlockedUser'
-  | 'leaveChannel'
-  | 'blockUser'
-  | 'confirmDeal'
-  | 'successMakeAppointment'
-  | 'cancelAppointment'
-  | 'requiredAppUpdateForChat'
-  | 'loginError'
-  | 'loginProviderError'
-  | 'deleteAccount'
-  | 'featureIsMobileAppDown'
-  | 'leaveEditProfile'
-  | 'legitSampleGuid'
-  | 'legitPermissionCheck'
-  | 'leaveLegitRequest'
-  | 'productSoldout'
-  | 'productDelete'
-  | 'productHidden'
-  | 'productReservation'
-  | 'locationInfo'
-  | 'endEvent'
-  | 'notiChannelFalse'
-  | 'notiDeviceFalse'
-  | 'requiredAppUpdateForSafePayment'
-  | 'osAlarm';
-
 export type ShareData = {
   title: string;
   description: string;

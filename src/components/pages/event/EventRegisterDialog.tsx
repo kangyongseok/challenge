@@ -5,7 +5,8 @@ import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Dialog, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Box, Button, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchSurvey, postSurvey } from '@api/user';
 
@@ -75,17 +76,17 @@ function EventRegisterDialog({ open, close }: { open: boolean; close: () => void
 
   return (
     <Dialog open={open}>
-      <Typography variant="h3" weight="bold" customStyle={{ textAlign: 'center' }}>
+      <Typography variant="h3" weight="bold" textAlign="center">
         판매하기 이벤트 참여
       </Typography>
-      <Typography variant="h4" customStyle={{ marginTop: 8, textAlign: 'center' }}>
+      <Typography variant="h4" textAlign="center" customStyle={{ marginTop: 8 }}>
         내 명품을 판매등록하면 추첨을 통해
       </Typography>
-      <Typography variant="h4" customStyle={{ textAlign: 'center' }}>
+      <Typography variant="h4" textAlign="center">
         선물을 드려요!
       </Typography>
       <form style={{ marginTop: 32 }} onSubmit={handleSubmit}>
-        <Typography weight="medium" customStyle={{ color: common.ui60 }}>
+        <Typography weight="medium" color="ui60">
           경품 받을 핸드폰번호
         </Typography>
         <Input
@@ -99,7 +100,7 @@ function EventRegisterDialog({ open, close }: { open: boolean; close: () => void
           value={phoneNumber}
         />
         <Box customStyle={{ background: common.bg02, borderRadius: 8, padding: 12, marginTop: 8 }}>
-          <Typography customStyle={{ color: common.ui60, fontSize: 12 }}>
+          <Typography color="ui60" customStyle={{ fontSize: 12 }}>
             수집된 연락처는 경품 지급 용도로 사용되며, 경품 발송 후 파기 됩니다.
           </Typography>
         </Box>
