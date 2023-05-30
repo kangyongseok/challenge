@@ -71,15 +71,19 @@ function MyPortfolio() {
   }, []);
 
   const bodyStyleSet = () => {
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    setInnerHeight(document.body.clientHeight);
+    setTimeout(() => {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      setInnerHeight(document.body.clientHeight);
+    }, 500);
   };
 
   const bodyStyleInit = () => {
-    document.body.style.overflow = 'initial';
-    document.body.style.position = 'initial';
-    setInnerHeight(document.body.clientHeight);
+    setTimeout(() => {
+      document.body.style.overflow = 'initial';
+      document.body.style.position = 'initial';
+      setInnerHeight(document.body.clientHeight);
+    }, 500);
   };
 
   const toggleEvent = useCallback(() => {

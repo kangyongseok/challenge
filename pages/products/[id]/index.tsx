@@ -23,6 +23,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 // import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
+  ProductButlerContents,
   ProductDeletedCard,
   ProductDetailBannerGroup,
   ProductDetailFooter,
@@ -536,6 +537,7 @@ function ProductDetail() {
                   isWish={data?.wish}
                   onClickWish={handleClickWish}
                 />
+                {isCamelButlerProduct && <ProductButlerContents />}
                 {!isCamelButlerProduct && (
                   <>
                     <ProductActions

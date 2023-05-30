@@ -2,12 +2,9 @@ import { useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
-import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import Dialog from '@mrcamelhub/camel-ui-dialog';
-import { Box, Button, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { SafePaymentGuideDialog } from '@components/UI/organisms';
 
@@ -16,9 +13,7 @@ import { AccessUser } from '@dto/userAuth';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { postSurvey } from '@api/user';
-
-import { ACCESS_USER, IS_CAMEL_BUTLER_EXHIBITION_ALARM } from '@constants/localStorage';
+import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -28,11 +23,11 @@ import {
   settingsTransferDataState,
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
-import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import { loginBottomSheetState } from '@recoil/common';
 
 function HomeMainBanner() {
   const router = useRouter();
-  const toastStack = useToastStack();
+  // const toastStack = useToastStack();
 
   const {
     theme: {
@@ -47,11 +42,11 @@ function HomeMainBanner() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  const [exhibition, setExhibitionOpen] = useState(false);
+  // const [exhibition, setExhibitionOpen] = useState(false);
 
-  const { mutate } = useMutation(postSurvey);
+  // const { mutate } = useMutation(postSurvey);
 
-  const deviceId = useRecoilValue(deviceIdState);
+  // const deviceId = useRecoilValue(deviceIdState);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -93,44 +88,44 @@ function HomeMainBanner() {
       att: 'EXHIBITION'
     });
 
-    if (!accessUser) {
-      setLoginBottomSheet({
-        open: true,
-        returnUrl: '/'
-      });
-      return;
-    }
+    // if (!accessUser) {
+    //   setLoginBottomSheet({
+    //     open: true,
+    //     returnUrl: '/'
+    //   });
+    //   return;
+    // }
 
-    setExhibitionOpen(true);
-    // router.push('/butler/exhibition');
+    // setExhibitionOpen(true);
+    router.push('/butler/exhibition');
   };
 
-  const handleClickOpenAlarm = () => {
-    if (LocalStorage.get(IS_CAMEL_BUTLER_EXHIBITION_ALARM)) {
-      toastStack({
-        children: '이미 신청 되었습니다.'
-      });
-      setExhibitionOpen(false);
-      return;
-    }
-    mutate(
-      {
-        deviceId,
-        surveyId: 7,
-        answer: 0,
-        options: ''
-      },
-      {
-        onSuccess() {
-          toastStack({
-            children: '오픈 알림 신청이 완료되었습니다.'
-          });
-          LocalStorage.set(IS_CAMEL_BUTLER_EXHIBITION_ALARM, true);
-          setExhibitionOpen(false);
-        }
-      }
-    );
-  };
+  // const handleClickOpenAlarm = () => {
+  //   if (LocalStorage.get(IS_CAMEL_BUTLER_EXHIBITION_ALARM)) {
+  //     toastStack({
+  //       children: '이미 신청 되었습니다.'
+  //     });
+  //     setExhibitionOpen(false);
+  //     return;
+  //   }
+  //   mutate(
+  //     {
+  //       deviceId,
+  //       surveyId: 7,
+  //       answer: 0,
+  //       options: ''
+  //     },
+  //     {
+  //       onSuccess() {
+  //         toastStack({
+  //           children: '오픈 알림 신청이 완료되었습니다.'
+  //         });
+  //         LocalStorage.set(IS_CAMEL_BUTLER_EXHIBITION_ALARM, true);
+  //         setExhibitionOpen(false);
+  //       }
+  //     }
+  //   );
+  // };
 
   return (
     <>
@@ -152,7 +147,7 @@ function HomeMainBanner() {
             <Image
               height={104}
               src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/exhibition_banner.png`,
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/exhibition_open_banner.png`,
                 h: 104
               })}
               alt="구하기 힘든 샤넬 백팩 최상급 기획전"
@@ -231,7 +226,7 @@ function HomeMainBanner() {
         onClose={() => setOpen(false)}
         ctaType="viewSafePaymentProducts"
       />
-      <Dialog open={exhibition} onClose={() => setExhibitionOpen(false)}>
+      {/* <Dialog open={exhibition} onClose={() => setExhibitionOpen(false)}>
         <Image
           height={114}
           src={getImageResizePath({
@@ -254,7 +249,7 @@ function HomeMainBanner() {
         >
           오픈 알림받기
         </Button>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

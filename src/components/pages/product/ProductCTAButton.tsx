@@ -286,13 +286,20 @@ function ProductCTAButton() {
       productWishComplete &&
       !complete &&
       isPossibleOffer &&
-      isChannelProduct
+      isChannelProduct &&
+      !isCamelButlerProduct
     ) {
       setOpenPriceOfferOnBoarding(true);
-    } else if (!checkAgent.isMobileApp() && !complete && isPossibleOffer && isChannelProduct) {
+    } else if (
+      !checkAgent.isMobileApp() &&
+      !complete &&
+      isPossibleOffer &&
+      isChannelProduct &&
+      !isCamelButlerProduct
+    ) {
       setOpenPriceOfferOnBoarding(true);
     }
-  }, [complete, productWishComplete, isPossibleOffer, isChannelProduct]);
+  }, [complete, productWishComplete, isPossibleOffer, isChannelProduct, isCamelButlerProduct]);
 
   if (!!accessUser && productDetail?.roleSeller?.userId === accessUser.userId) return null;
 

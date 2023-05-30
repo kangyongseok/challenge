@@ -67,28 +67,20 @@ function Demo() {
   }, []);
 
   const bodyStyleSet = () => {
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    setInnerHeight(document.body.clientHeight);
+    setTimeout(() => {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      setInnerHeight(document.body.clientHeight);
+    }, 500);
   };
 
   const bodyStyleInit = () => {
-    document.body.style.overflow = 'initial';
-    document.body.style.position = 'initial';
-    setInnerHeight(document.body.clientHeight);
+    setTimeout(() => {
+      document.body.style.overflow = 'initial';
+      document.body.style.position = 'initial';
+      setInnerHeight(document.body.clientHeight);
+    }, 500);
   };
-
-  // const toggleEvent = useCallback(() => {
-  //   if (openReservation) {
-  //     windowRemoveEvent();
-  //   } else {
-  //     windowAddEvent();
-  //     timeoutRef.current = setTimeout(() => {
-  //       bodyStyleSet();
-  //     }, 1000);
-  //   }
-  //   return () => clearTimeout(timeoutRef.current);
-  // }, [openReservation, windowRemoveEvent, windowAddEvent]);
 
   useEffect(() => {
     return () => {
@@ -104,10 +96,6 @@ function Demo() {
       title: `STEP0${currentSection + 1}`
     });
   }, [currentSection]);
-
-  // useEffect(() => {
-  //   toggleEvent();
-  // }, [openReservation, toggleEvent]);
 
   useEffect(() => {
     bodyStyleSet();
@@ -163,38 +151,6 @@ function Demo() {
       }, 1000);
     }
   };
-
-  // const handleClickReservation = () => {
-  //   if (currentSection !== 0 && currentSection !== 6) {
-  //     logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
-  //       name: attrProperty.productName.MYPORTFOLIO,
-  //       title: attrProperty.productTitle.HEADER
-  //     });
-  //   } else {
-  //     logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
-  //       name: attrProperty.productName.MYPORTFOLIO,
-  //       title: `STEP0${currentSection + 1}`
-  //     });
-  //   }
-
-  //   if (!accessUser || (accessUser && !accessUser.phone)) {
-  //     setOpenReservation(true);
-  //     return;
-  //   }
-  //   if (accessUser && accessUser.phone) {
-  //     mutatePostManage(
-  //       { phone: accessUser.phone },
-  //       {
-  //         onSuccess() {
-  //           logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO_MODAL, {
-  //             name: attrProperty.productName.MYPORTFOLIO
-  //           });
-  //           successDialog(true);
-  //         }
-  //       }
-  //     );
-  //   }
-  // };
 
   const getBackgroundColor = () => {
     switch (currentSection) {
@@ -383,6 +339,7 @@ const StyledWrap = styled.div<{ innerHeight: number; bgColor: string }>`
   transform: translate3d(0px, -${({ innerHeight }) => innerHeight && innerHeight}px, 0);
   transition: all 700ms ease 0s;
   width: 100vw;
+  min-height: 100%;
   background: ${({ bgColor }) => bgColor};
 `;
 
