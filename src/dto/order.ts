@@ -54,7 +54,7 @@ export interface OrderPayments {
   data: string;
   dateExpired: string;
   externalPaymentKey: string;
-  method: number;
+  method: number; // 1: 가상계좌, 0: 카드
   partnerId: number;
   receiptUrl: string;
   result: number;

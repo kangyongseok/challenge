@@ -162,7 +162,10 @@ function ChannelOrderPaymentCompleteMessage({
             marginTop: 8
           }}
         >
-          판매자가 주문을 확인하면 거래가 진행됩니다.
+          결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.
+          <br />
+          <br />
+          판매자 승인 후 거래가 진행됩니다.
         </Typography>
         <Box
           customStyle={{
