@@ -240,6 +240,9 @@ function App({ Component, pageProps }: AppProps) {
                           <SessionProvider>
                             <ToastProvider>
                               <DialogProvider>
+                                <SearchHelperPopup type="break" />
+                                <CamelSellerSavePopup />
+                                <CamelSellerAppUpdateDialog />
                                 <Component {...pageProps} />
                               </DialogProvider>
                             </ToastProvider>
@@ -248,10 +251,7 @@ function App({ Component, pageProps }: AppProps) {
                       </PortalProvider>
                     </SendbirdProvider>
                   </ABTestProvider>
-                  <SearchHelperPopup type="break" />
                   <LegitResultSurveyTypeform />
-                  <CamelSellerSavePopup />
-                  <CamelSellerAppUpdateDialog />
                   {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
               </ThemeModeProvider>

@@ -125,16 +125,14 @@ export default function useMoveCamelSeller({
 
     SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
-    checkOsAlarm();
-
     if (checkedProductPhotoUploadGuide) {
       if (router.query.banner) {
-        router.replace('/camelSeller/registerConfirm');
+        router.replace('/camelSeller/registerConfirm').then(() => checkOsAlarm());
       } else {
-        router.push('/camelSeller/registerConfirm');
+        router.push('/camelSeller/registerConfirm').then(() => checkOsAlarm());
       }
     } else {
-      router.push('/camelSeller/guide');
+      router.push('/camelSeller/guide').then(() => checkOsAlarm());
     }
   };
 
