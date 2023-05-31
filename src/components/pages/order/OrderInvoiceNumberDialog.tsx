@@ -87,7 +87,7 @@ function OrderInvoiceNumberDialog({
           </Typography>
           <Typography variant="h4">입력하면 배송중으로 변경됩니다.</Typography>
         </Flexbox>
-        <Flexbox customStyle={{ marginTop: 32 }} direction="vertical">
+        <Flexbox customStyle={{ marginTop: 32, textAlign: 'left' }} direction="vertical">
           <Typography weight="medium" color="ui60">
             송장번호
           </Typography>
@@ -103,7 +103,7 @@ function OrderInvoiceNumberDialog({
             fullWidth
             size="xlarge"
             customStyle={{ height: 44, marginTop: 8, fontSize: 15 }}
-            type="number"
+            type="text"
             onChange={(e) => setInvoiceNumber(e.target.value)}
           />
         </Flexbox>

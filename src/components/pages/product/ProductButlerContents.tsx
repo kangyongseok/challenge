@@ -223,7 +223,6 @@ function ProductButlerContents() {
                     <NewProductGridCard
                       variant="gridB"
                       product={product}
-                      hideLabel
                       butlerExhibition
                       attributes={{
                         name: attrProperty.name.PRODUCT_DETAIL,
