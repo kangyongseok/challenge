@@ -26,6 +26,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import { getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 
@@ -100,11 +101,15 @@ function BlockedUsers() {
   const rowRenderer = useCallback(
     ({ key, index, style }: ListRowProps) => {
       const blockedUser = blockUsers[index];
-
       return blockedUser ? (
         <div key={key} style={style}>
           <ListItem
-            avatarUrl={blockedUser.targetUser.image}
+            avatarUrl={getImageResizePath({
+              imagePath: getImagePathStaticParser(
+                blockedUser.targetUser.image || blockedUser.targetUser.imageProfile
+              ),
+              w: 100
+            })}
             title={blockedUser.targetUser.name}
             description={dayjs(blockedUser.dateCreated).format('MM월 DD일 차단됨')}
             action={
