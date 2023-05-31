@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { ThemeProvider } from '@mrcamelhub/camel-ui';
 
+import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import {
   LegitRequestEdit,
   LegitRequestForm,
@@ -24,6 +25,7 @@ import { getCookies } from '@utils/cookies';
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useOsAlarm from '@hooks/useOsAlarm';
 
 function LegitRequest() {
   const router = useRouter();
@@ -35,6 +37,9 @@ function LegitRequest() {
 
   const { data: accessUser, isSuccess } = useQueryAccessUser();
   const { remove: removeUserData } = useQueryUserData();
+  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
+
+  const checkOsAlarmTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const step = String(router.query?.step || '');
 
@@ -42,6 +47,19 @@ function LegitRequest() {
     removeUserData(SAVED_LEGIT_REQUEST_STATE);
     logEvent(attrKeys.legit.VIEW_LEGIT_PROCESS);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    checkOsAlarmTimerRef.current = setTimeout(() => checkOsAlarm(), 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (checkOsAlarmTimerRef.current) {
+        clearTimeout(checkOsAlarmTimerRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -140,13 +158,16 @@ function LegitRequest() {
   }, []);
 
   return (
-    <ThemeProvider theme="dark">
-      {step === 'selectCategory' && <LegitRequestSelectCategory />}
-      {step === 'selectBrand' && <LegitRequestSelectBrand />}
-      {step === 'selectModel' && <LegitRequestSelectModel />}
-      {step === 'form' && <LegitRequestForm />}
-      {step === 'edit' && <LegitRequestEdit />}
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme="dark">
+        {step === 'selectCategory' && <LegitRequestSelectCategory />}
+        {step === 'selectBrand' && <LegitRequestSelectBrand />}
+        {step === 'selectModel' && <LegitRequestSelectModel />}
+        {step === 'form' && <LegitRequestForm />}
+        {step === 'edit' && <LegitRequestEdit />}
+      </ThemeProvider>
+      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+    </>
   );
 }
 

@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { AppUpdateNoticeDialog, LegitRequestOnlyInAppDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
@@ -32,7 +31,6 @@ import { loginBottomSheetState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
-import useOsAlarm from '@hooks/useOsAlarm';
 
 function LegitFloatingButton() {
   const {
@@ -50,7 +48,6 @@ function LegitFloatingButton() {
 
   const { data: accessUser } = useQueryAccessUser();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
-  const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const { isSuccess } = useQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets, {
     enabled: !!accessUser,
@@ -94,19 +91,10 @@ function LegitFloatingButton() {
       return;
     }
 
-    checkOsAlarm();
     resetLegitRequestState();
 
     router.push({ pathname: '/legit/request/selectCategory' });
-  }, [
-    userData,
-    removeUserDate,
-    checkOsAlarm,
-    resetLegitRequestState,
-    accessUser,
-    router,
-    setLoginBottomSheet
-  ]);
+  }, [userData, removeUserDate, resetLegitRequestState, accessUser, router, setLoginBottomSheet]);
 
   useEffect(() => {
     if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {
@@ -213,7 +201,6 @@ function LegitFloatingButton() {
             window.webview.callExecuteApp('market://details?id=kr.co.mrcamel.android');
         }}
       />
-      <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
     </>
   );
 }
