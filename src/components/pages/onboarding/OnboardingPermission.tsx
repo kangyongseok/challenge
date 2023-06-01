@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import omitBy from 'lodash-es/omitBy';
-import isUndefined from 'lodash-es/isUndefined';
 import { useMutation } from '@tanstack/react-query';
 import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
@@ -18,7 +16,6 @@ import {
   MODEL_CATEGORY_IDS,
   ONBOARDING_SKIP_USERIDS,
   SELECTED_MODEL_CARD,
-  SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
 } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
@@ -27,7 +24,6 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import type { FindLocation } from '@typings/common';
-import { searchParamsState } from '@recoil/searchHelper';
 import { modelParentCategoryIdsState, selectedModelCardState } from '@recoil/onboarding';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationPutAlarm from '@hooks/useMutationPutAlarm';
@@ -61,22 +57,6 @@ function OnboardingPermission() {
 
   const router = useRouter();
 
-  const {
-    keyword,
-    brandIds,
-    parentIds,
-    subParentIds,
-    categorySizeIds,
-    lineIds,
-    minPrice,
-    maxPrice,
-    idFilterIds,
-    siteUrlIds,
-    colorIds,
-    seasonIds,
-    materialIds
-  } = useRecoilValue(searchParamsState);
-  const resetSearchParams = useResetRecoilState(searchParamsState);
   const { mutate: mutatePutAlarm } = useMutationPutAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
   const { data: acessUser } = useQueryAccessUser();
@@ -91,51 +71,8 @@ function OnboardingPermission() {
   }, []);
 
   const redirectPage = useCallback(() => {
-    // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
-    if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
-      LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
-      router.replace({
-        pathname: `/products/search/${keyword}`,
-        query: omitBy(
-          {
-            brandIds,
-            parentIds,
-            subParentIds,
-            categorySizeIds,
-            lineIds,
-            minPrice,
-            maxPrice,
-            idFilterIds,
-            siteUrlIds,
-            colorIds,
-            seasonIds,
-            materialIds
-          },
-          isUndefined
-        )
-      });
-      resetSearchParams();
-      return;
-    }
-
     router.replace('/');
-  }, [
-    brandIds,
-    categorySizeIds,
-    colorIds,
-    idFilterIds,
-    keyword,
-    lineIds,
-    materialIds,
-    maxPrice,
-    minPrice,
-    parentIds,
-    resetSearchParams,
-    router,
-    seasonIds,
-    siteUrlIds,
-    subParentIds
-  ]);
+  }, [router]);
 
   const onboardingSkipUserManage = useCallback(() => {
     const userIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];

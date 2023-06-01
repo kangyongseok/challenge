@@ -16,7 +16,6 @@ export const USER_ON_BOARDING_TRIGGER = 'userOnBoardingTrigger';
 export const SAVED_SEARCH_HELPER_SEARCH_OPTIONS = 'savedSearchHelperSearchOptions';
 export const SIGN_UP_STEP = 'signUpStep';
 export const IS_DONE_SIGN_IN_PERMISSION = 'isDoneSignInPermission';
-export const SHOW_PRODUCTS_KEYWORD_POPUP = 'showProductsKeywordPopup';
 export const LAST_LOGIN_TYPE = 'lastLoginType';
 export const IS_NOT_FIRST_VISIT = 'isFirstVisit';
 export const SAVE_SEARCH_BOOSTING_DONE_USERS = 'saveSearchBoostingDoneUsers';

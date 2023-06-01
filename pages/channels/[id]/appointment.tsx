@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import type { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';

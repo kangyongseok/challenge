@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
@@ -14,13 +13,10 @@ import { logEvent } from '@library/amplitude';
 import { fetchAnnounceBase } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import { filterGenders } from '@constants/productsFilter';
 import { NOTI, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { selectedSearchOptionsDefault, selectedSearchOptionsState } from '@recoil/searchHelper';
-import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function NoticeNotificationPanel() {
@@ -34,8 +30,6 @@ function NoticeNotificationPanel() {
   const [targetIndex, setTargetIndex] = useState(0);
   const { data } = useQuery(queryKeys.commons.announces(), fetchAnnounceBase);
   const { userNickName } = useQueryMyUserInfo();
-  const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
 
   useEffect(() => {
     if (data && !openNoticeId) {
@@ -81,21 +75,6 @@ function NoticeNotificationPanel() {
 
     LocalStorage.set(SOURCE, NOTI);
     if (pathname) {
-      if (pathname.includes('/searchHelper')) {
-        const genderName = gender === 'F' ? 'female' : 'male';
-
-        setSelectedSearchOptions((currVal) => ({
-          ...currVal,
-          pathname: router.asPath,
-          gender: gender
-            ? {
-                id: filterGenders[genderName].id,
-                name: genderName
-              }
-            : selectedSearchOptionsDefault.gender
-        }));
-      }
-
       router.push(pathname);
     }
   };

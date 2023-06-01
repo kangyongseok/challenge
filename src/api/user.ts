@@ -168,6 +168,12 @@ export async function deleteProductKeyword(id: number) {
   return data;
 }
 
+export async function deleteProductKeywords() {
+  const { data } = await Axios.getInstance().delete(`${BASE_PATH}/productKeyword`);
+
+  return data;
+}
+
 export async function putProductKeyword(id: number) {
   const { data } = await Axios.getInstance().put(`${BASE_PATH}/productKeyword/${id}/restore`);
 

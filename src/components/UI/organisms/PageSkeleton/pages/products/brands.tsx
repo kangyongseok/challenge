@@ -1,7 +1,7 @@
 import { Box, Flexbox, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { Header, LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';
+import { LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
@@ -10,9 +10,30 @@ function BrandProducts() {
     <GeneralTemplate
       header={
         <div>
-          <Header>
+          <Flexbox
+            gap={8}
+            justifyContent="space-between"
+            alignment="center"
+            customStyle={{
+              minHeight: 56,
+              padding: '0 16px'
+            }}
+          >
+            <Skeleton
+              width={24}
+              height={24}
+              round={8}
+              disableAspectRatio
+              customStyle={{
+                marginRight: 40
+              }}
+            />
             <Skeleton width={45} height={24} round={8} disableAspectRatio />
-          </Header>
+            <Flexbox gap={16} alignment="center">
+              <Skeleton width={24} height={24} round={8} disableAspectRatio />
+              <Skeleton width={24} height={24} round={8} disableAspectRatio />
+            </Flexbox>
+          </Flexbox>
           <Box component="section" customStyle={{ position: 'relative' }}>
             <Wrapper>
               <List

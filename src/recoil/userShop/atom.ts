@@ -40,3 +40,8 @@ export const userShopUpdatedProfileDataState = atom({
   key: 'userShop/updatedProfileDataState',
   default: false
 });
+
+export const userShopListPrevScrollTopState = atom({
+  key: 'userShop/listPrevScrollTopState',
+  default: 0
+});

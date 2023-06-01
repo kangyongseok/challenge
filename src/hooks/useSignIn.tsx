@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import omitBy from 'lodash-es/omitBy';
-import isUndefined from 'lodash-es/isUndefined';
 import amplitude from 'amplitude-js';
 import { useMutation } from '@tanstack/react-query';
 import { useTheme } from '@mrcamelhub/camel-ui';
@@ -32,7 +30,6 @@ import {
   IS_FOR_ALARM_FIRST_VISIT,
   LAST_LOGIN_TYPE,
   ONBOARDING_SKIP_USERIDS,
-  SHOW_PRODUCTS_KEYWORD_POPUP,
   SIGN_UP_STEP
 } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
@@ -41,7 +38,6 @@ import { ConvertUserSnsLoginInfoProps, convertUserSnsLoginInfo } from '@utils/lo
 import { checkAgent } from '@utils/common';
 
 import { FindLocation } from '@typings/common';
-import { searchParamsState } from '@recoil/searchHelper';
 import { prevChannelAlarmPopup } from '@recoil/common';
 import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
@@ -67,22 +63,6 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
     }
   } = useTheme();
 
-  const {
-    keyword,
-    brandIds,
-    parentIds,
-    subParentIds,
-    categorySizeIds,
-    lineIds,
-    minPrice,
-    maxPrice,
-    idFilterIds,
-    siteUrlIds,
-    colorIds,
-    seasonIds,
-    materialIds
-  } = useRecoilValue(searchParamsState);
-  const resetSearchParams = useResetRecoilState(searchParamsState);
   const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
 
   const { mutate: mutatePostAlarm } = useMutationPostAlarm();
@@ -171,58 +151,11 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
           }
         }
 
-        // 검색집사 완료 후 매물목록 저장 유도 팝업을 통해 로그인 한 경우
-        if (LocalStorage.get(SHOW_PRODUCTS_KEYWORD_POPUP)) {
-          LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
-          router.replace({
-            pathname: `/products/search/${keyword}`,
-            query: omitBy(
-              {
-                brandIds,
-                parentIds,
-                subParentIds,
-                categorySizeIds,
-                lineIds,
-                minPrice,
-                maxPrice,
-                idFilterIds,
-                siteUrlIds,
-                colorIds,
-                seasonIds,
-                materialIds
-              },
-              isUndefined
-            )
-          });
-          resetSearchParams();
-          return;
-        }
-
         router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
       });
       setLoading(false);
     },
-    [
-      brandIds,
-      categorySizeIds,
-      colorIds,
-      idFilterIds,
-      keyword,
-      lineIds,
-      materialIds,
-      maxPrice,
-      minPrice,
-      parentIds,
-      resetSearchParams,
-      returnUrl,
-      router,
-      seasonIds,
-      siteUrlIds,
-      state,
-      subParentIds,
-      updateUserArea,
-      bottomSheet
-    ]
+    [bottomSheet, returnUrl, router, state, updateUserArea]
   );
 
   const authLogin = useCallback(

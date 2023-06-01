@@ -1,33 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import omitBy from 'lodash-es/omitBy';
-import isEmpty from 'lodash-es/isEmpty';
-import { useMutation } from '@tanstack/react-query';
 import { Box, Flexbox, Icon, Input, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { postManage } from '@api/userHistory';
-
-import { filterGenders } from '@constants/productsFilter';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import {
-  searchHelperPopupStateFamily,
-  searchParamsState,
-  selectedSearchOptionsDefault,
-  selectedSearchOptionsState
-} from '@recoil/searchHelper';
+import { searchAutoFocusState, searchCategoryState, searchValueState } from '@recoil/search';
 import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
-import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryUserHistoryManages from '@hooks/useQueryUserHistoryManages';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import Menu from './Menu';
 
@@ -41,8 +27,6 @@ function HomeSearchHeader() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
-
   const [init, setInit] = useState(false);
   const [openMenu, setOpneMenu] = useState(false);
 
@@ -53,47 +37,18 @@ function HomeSearchHeader() {
   const triggered = useScrollTrigger({ ref: headerRef });
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const setSearchHelperPopup = useSetRecoilState(searchHelperPopupStateFamily('continue'));
-  const setSearchParams = useSetRecoilState(searchParamsState);
-  const [selectedSearchOptions, setSelectedSearchOptions] = useRecoilState(
-    selectedSearchOptionsState
-  );
-
-  const { data: userHistoryManage, refetch } = useQueryUserHistoryManages();
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
-
-  const { mutate: mutatePostManage } = useMutation(postManage, {
-    onSettled() {
-      refetch().finally(() => router.push('/searchHelper/onboarding'));
-    }
-  });
-
-  const genderName = gender === 'F' ? 'female' : 'male';
-  const genderId = filterGenders[genderName].id;
+  const resetSearchValueState = useResetRecoilState(searchValueState);
+  const resetSearchCategoryState = useResetRecoilState(searchCategoryState);
+  const resetSearchAutoFocusState = useResetRecoilState(searchAutoFocusState);
 
   const handleClick = () => {
     logEvent(attrKeys.home.CLICK_SEARCHMODAL, {
       name: attrProperty.name.MAIN
     });
 
-    if (accessUser && userHistoryManage?.VIEW_SEARCH_HELPER) {
-      mutatePostManage({ event: 'VIEW_SEARCH_HELPER', userId: accessUser.userId });
-
-      setSelectedSearchOptions({
-        ...selectedSearchOptionsDefault,
-        pathname: router.pathname,
-        gender: gender ? { id: genderId, name: genderName } : selectedSearchOptionsDefault.gender
-      });
-      setSearchParams(
-        omitBy({ genderIds: genderId ? [genderId, filterGenders.common.id] : [] }, isEmpty)
-      );
-      return;
-    }
-
-    if (selectedSearchOptions.brand.id > 0 || selectedSearchOptions.parentCategory.id > 0) {
-      setSearchHelperPopup(true);
-      return;
-    }
+    resetSearchValueState();
+    resetSearchCategoryState();
+    resetSearchAutoFocusState();
 
     router.push('/search');
   };
@@ -148,7 +103,14 @@ function HomeSearchHeader() {
           padding: '16px 16px 12px'
         }}
       >
-        <Icon name="LogoText_96_20" width={93.48} height={20} />
+        <Icon
+          name="LogoText_96_20"
+          width={93.48}
+          height={20}
+          customStyle={{
+            marginLeft: 4
+          }}
+        />
         {!openMenu && <Menu reverseAnimation />}
       </Flexbox>
       <SearchHeader

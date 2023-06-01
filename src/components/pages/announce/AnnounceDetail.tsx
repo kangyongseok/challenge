@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -14,11 +13,8 @@ import { logEvent } from '@library/amplitude';
 import { fetchAnnounce } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
-import { filterGenders } from '@constants/productsFilter';
 import attrKeys from '@constants/attrKeys';
 
-import { selectedSearchOptionsDefault, selectedSearchOptionsState } from '@recoil/searchHelper';
-import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 let callLog = false;
@@ -30,10 +26,7 @@ function AnnounceDetail() {
   const router = useRouter();
   const { id } = router.query;
 
-  const setSelectedSearchOptions = useSetRecoilState(selectedSearchOptionsState);
-
   const { userNickName } = useQueryMyUserInfo();
-  const { data: { info: { value: { gender = '' } = {} } = {} } = {} } = useQueryUserInfo();
 
   const { data: announce } = useQuery(
     queryKeys.commons.announce(Number(id)),
@@ -64,21 +57,6 @@ function AnnounceDetail() {
     const pathname = event.currentTarget.getAttribute('data-pathname');
 
     if (pathname) {
-      if (pathname.includes('/searchHelper')) {
-        const genderName = gender === 'F' ? 'female' : 'male';
-
-        setSelectedSearchOptions((currVal) => ({
-          ...currVal,
-          pathname: router.asPath,
-          gender: gender
-            ? {
-                id: filterGenders[genderName].id,
-                name: genderName
-              }
-            : selectedSearchOptionsDefault.gender
-        }));
-      }
-
       router.push(pathname);
     }
   };
@@ -97,6 +75,8 @@ function AnnounceDetail() {
       </Box>
       <Flexbox gap={32} direction="vertical">
         {announce.announceDetails.map((announceDetail) => {
+          if (announceDetail.type === 1 && announceDetail.content.indexOf('검색집사') !== -1)
+            return null;
           if (announceDetail.type === 1) {
             return (
               <FixedButtonWrap key={`announce-detail-${announceDetail.id}`}>

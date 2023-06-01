@@ -7,12 +7,12 @@ import LocalStorage from '@library/localStorage';
 import { ACCESS_USER, SAVE_SEARCH_BOOSTING_DONE_USERS } from '@constants/localStorage';
 
 export const productsKeywordState = atom({
-  key: 'productsKeywordState',
+  key: 'products/productsKeywordState',
   default: false
 });
 
 export const productsKeywordAutoSaveTriggerState = atom({
-  key: 'productsKeywordAutoSaveTriggerState',
+  key: 'products/productsKeywordAutoSaveTriggerState',
   default: true,
   effects: [
     ({ setSelf, onSet }) => {

@@ -20,7 +20,6 @@ import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/m
 import type { Product } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
-import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchSearch, fetchSearchOptions } from '@api/product';
@@ -28,7 +27,6 @@ import { fetchSearch, fetchSearchOptions } from '@api/product';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds } from '@constants/productsFilter';
-import { SHOW_PRODUCTS_KEYWORD_POPUP } from '@constants/localStorage';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -383,10 +381,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     }
     return keyword;
   }, [keyword]);
-
-  useEffect(() => {
-    return () => LocalStorage.remove(SHOW_PRODUCTS_KEYWORD_POPUP);
-  }, []);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);

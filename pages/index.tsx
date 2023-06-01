@@ -5,7 +5,6 @@ import type { GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 
-import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -129,7 +128,6 @@ function Home() {
         <HomeRecommendPanel />
         {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
       </GeneralTemplate>
-      <SearchHelperPopup type="continue" />
       <CamelSellerFloatingButton
         attributes={{
           name: attrProperty.name.MAIN,

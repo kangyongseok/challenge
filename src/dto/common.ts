@@ -216,6 +216,11 @@ export interface GetAnnounces {
   totalPages: number;
 }
 
+export interface PopularSearchKeyword {
+  divide: string;
+  keywords: string[];
+}
+
 /* ---------- Request Parameters ---------- */
 export interface PhotoGuideParams {
   type: 0 | 1 | 2; // 0: 매물등록, 1: 감정등록, 2: 프로필등록

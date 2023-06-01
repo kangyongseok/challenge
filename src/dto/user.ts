@@ -453,6 +453,8 @@ export interface ProductKeywordsContent {
   keyword: string;
   keywordFilterJson: string;
   sourceType: number;
+  brand?: Brand;
+  category?: Category;
 }
 
 export interface Pageable {

@@ -1,42 +1,33 @@
 import { atom } from 'recoil';
 
-import LocalStorage from '@library/localStorage';
+import { GENDER } from '@constants/user';
 
-import { RECENT_SEARCH_LIST } from '@constants/localStorage';
+export const searchTabPanelsSwiperThresholdState = atom({
+  key: 'search/tabPanelsSwiperThresholdState',
+  default: 5
+});
 
-import { calculateExpectCountPerHour } from '@utils/formats';
+export const searchValueState = atom({
+  key: 'search/valueState',
+  default: ''
+});
 
-import { RecentItems } from '@typings/search';
+export const searchCategoryState = atom<{
+  parentId: number;
+  subParentId: number;
+  gender: keyof typeof GENDER;
+  selectedAll: boolean;
+}>({
+  key: 'search/categoryState',
+  default: {
+    parentId: 0,
+    subParentId: 0,
+    gender: 'male',
+    selectedAll: false
+  }
+});
 
-export const searchRecentSearchListState = atom<RecentItems[]>({
-  key: 'search/recentSearchListState',
-  default: [],
-  effects: [
-    ({ onSet, setSelf }) => {
-      const recentSearchList = LocalStorage.get<RecentItems[]>(RECENT_SEARCH_LIST);
-
-      if (recentSearchList) {
-        if (recentSearchList.some((product) => !product.expectCount || product.expectCount === 0)) {
-          const updatedList = recentSearchList.map((product) =>
-            product.expectCount
-              ? product
-              : { ...product, expectCount: calculateExpectCountPerHour(product.count || 0) }
-          );
-
-          LocalStorage.set(RECENT_SEARCH_LIST, updatedList);
-          setSelf(updatedList);
-        } else {
-          setSelf(recentSearchList);
-        }
-      }
-
-      onSet((newValue, _, isReset) => {
-        if (isReset) {
-          LocalStorage.remove(RECENT_SEARCH_LIST);
-        } else {
-          LocalStorage.set(RECENT_SEARCH_LIST, newValue);
-        }
-      });
-    }
-  ]
+export const searchAutoFocusState = atom({
+  key: 'search/autoFocusState',
+  default: true
 });

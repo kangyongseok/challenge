@@ -836,10 +836,10 @@
   resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-toast/-/camel-ui-toast-0.0.9.tgz#8bdd82375a2abd958dba41a57e1e29a85e581d29"
   integrity sha512-Bj2mSObEBRvOVc3yM1RhxrXBxGUF8xEvfzvkXIzPmMfre/uUuu18ykDR5KUgOvYlptQDLCPulzyHJ9OTj0PdKA==
 
-"@mrcamelhub/camel-ui@^0.1.70":
-  version "0.1.70"
-  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.70.tgz#a8d5b15f60d77a9a8e55aa190da1f92bd0300ce2"
-  integrity sha512-rH9Jc9cD8rBcwVNlcaWej4fPnKgTRTKLtwKa7PRUR9mQD2gePHA55IcmP+PFsIPq6mEE2iRuAUaLymkjO/B+eA==
+"@mrcamelhub/camel-ui@^0.1.71":
+  version "0.1.71"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui/-/camel-ui-0.1.71.tgz#a801ad21a39935fe571f2091d61c0c07c8fa3295"
+  integrity sha512-KEKYvfVSKg0gAO3roZ7ZecbYa7NErkPe3ziq7v6H2g3V7jA2sU6qmnDiVjwgQkw8O8XWE4xtfnkBpDUnpJgPnQ==
 
 "@next/env@13.2.4":
   version "13.2.4"

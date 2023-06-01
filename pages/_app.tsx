@@ -11,7 +11,6 @@ import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query
 import { ToastProvider } from '@mrcamelhub/camel-ui-toast';
 import { DialogProvider } from '@mrcamelhub/camel-ui-dialog';
 
-import { SearchHelperPopup } from '@components/UI/organisms/Popups';
 import { ErrorBoundary, PageSkeleton } from '@components/UI/organisms';
 
 import UserTraceRecord from '@library/userTraceRecord';
@@ -86,8 +85,6 @@ function App({ Component, pageProps }: AppProps) {
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
     Initializer.initRum();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -226,10 +223,10 @@ function App({ Component, pageProps }: AppProps) {
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
       <GoogleTagManagerProvider />
-      <QueryClientProvider client={queryClient.current}>
-        <Hydrate state={pageProps.dehydratedState}>
-          <RecoilRoot>
-            <ErrorBoundary>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient.current}>
+          <Hydrate state={pageProps.dehydratedState}>
+            <RecoilRoot>
               <ThemeModeProvider>
                 <HistoryProvider>
                   <PageSkeleton />
@@ -240,7 +237,6 @@ function App({ Component, pageProps }: AppProps) {
                           <SessionProvider>
                             <ToastProvider>
                               <DialogProvider>
-                                <SearchHelperPopup type="break" />
                                 <CamelSellerSavePopup />
                                 <CamelSellerAppUpdateDialog />
                                 <Component {...pageProps} />
@@ -255,11 +251,11 @@ function App({ Component, pageProps }: AppProps) {
                   {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
               </ThemeModeProvider>
-            </ErrorBoundary>
-          </RecoilRoot>
-        </Hydrate>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+            </RecoilRoot>
+          </Hydrate>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </ErrorBoundary>
     </>
   );
 }

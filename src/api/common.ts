@@ -9,6 +9,7 @@ import type {
   PhotoGuideParams,
   Styles
 } from '@dto/common';
+import { PopularSearchKeyword } from '@dto/common';
 
 import Axios from '@library/axios';
 
@@ -70,6 +71,14 @@ export async function fetchContentProducts({ id, ...params }: ContentProductsPar
 
 export async function fetchStyles() {
   const { data } = await Axios.getInstance().get<Styles>(`${BASE_PATH}/styles`);
+
+  return data;
+}
+
+export async function fetchPopularSearchKeywords() {
+  const { data } = await Axios.getInstance().get<PopularSearchKeyword>(
+    `${BASE_PATH}/popularSearchKeywords`
+  );
 
   return data;
 }

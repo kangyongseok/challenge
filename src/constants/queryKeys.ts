@@ -194,7 +194,8 @@ const commons = {
     [...commons.all, 'contentsProducts', contentsId] as const,
   announce: (id: number) => [...commons.all, 'announce', id] as const,
   announces: () => [...commons.all, 'announces'] as const,
-  styles: () => [...commons.all, 'styles'] as const
+  styles: () => [...commons.all, 'styles'] as const,
+  popularSearchKeywords: () => [...commons.all, 'popularSearchKeywords']
 };
 
 const userHistory = {

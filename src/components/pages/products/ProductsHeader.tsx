@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Icon, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
@@ -16,6 +16,7 @@ import { convertSearchParamsByQuery } from '@utils/products';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
+import { searchValueState } from '@recoil/search';
 import {
   productsStatusTriggeredStateFamily,
   searchOptionsStateFamily
@@ -40,12 +41,14 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
   const { keyword, title }: { keyword?: string; title?: string } = router.query;
   const { parentIds = [] } = convertSearchParamsByQuery(router.query);
   const atomParam = router.asPath.split('?')[0];
+
   const {
     searchOptions: { parentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
   const { triggered: productsStatusTriggered } = useRecoilValue(
     productsStatusTriggeredStateFamily(atomParam)
   );
+  const resetSearchValueState = useResetRecoilState(searchValueState);
 
   const [newTitle, setNewTitle] = useState('');
 
@@ -55,19 +58,18 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     logEvent(attrKeys.products.clickBack, {
       name: attrProperty.name.productList
     });
+    resetSearchValueState();
     router.back();
-  }, [router]);
+  }, [router, resetSearchValueState]);
 
   const handleClickSearchIcon = useCallback(() => {
     logEvent(attrKeys.products.CLICK_SEARCHMODAL, {
       name: attrProperty.productName.PRODUCT_LIST,
       att: 'HEADER'
     });
-    router.push({
-      pathname: '/search',
-      query: { keyword }
-    });
-  }, [keyword, router]);
+    resetSearchValueState();
+    router.push('/search');
+  }, [router, resetSearchValueState]);
 
   useEffect(() => {
     const newKeyword = (keyword || '').split('-').join(' X ');

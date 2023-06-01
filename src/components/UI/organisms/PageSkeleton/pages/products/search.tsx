@@ -4,14 +4,22 @@ import styled from '@emotion/styled';
 import { LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-import { ProductsHeader } from '@components/pages/products';
 
 function SearchProducts() {
   return (
     <GeneralTemplate
       header={
         <div>
-          <ProductsHeader variant="search" />
+          <Flexbox
+            gap={12}
+            alignment="center"
+            customStyle={{
+              padding: '6px 16px'
+            }}
+          >
+            <Skeleton width={24} height={24} round={8} disableAspectRatio />
+            <Skeleton width="100%" height={44} round={8} disableAspectRatio />
+          </Flexbox>
           <Box component="section" customStyle={{ position: 'relative' }}>
             <Gap height={8} />
           </Box>

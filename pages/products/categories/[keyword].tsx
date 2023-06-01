@@ -25,7 +25,11 @@ import queryKeys from '@constants/queryKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
 
+import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
+
 function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  useProductKeywordAutoSave('categories');
+
   return (
     <>
       <ProductsPageHead variant="categories" params={params} />

@@ -29,16 +29,11 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, needUpdateChatIOSVersion } from '@utils/common';
 import { getUnreadMessagesCount } from '@utils/channel';
 
+import { searchAutoFocusState, searchCategoryState, searchValueState } from '@recoil/search';
 import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState } from '@recoil/legit';
-import {
-  homeLegitResultTooltipCloseState,
-  homePersonalCurationBannersState,
-  homePopularCamelProductListPrevPageState,
-  homeSelectedTabStateFamily
-} from '@recoil/home';
+import { homeLegitResultTooltipCloseState, homePersonalCurationBannersState } from '@recoil/home';
 import { sendbirdState } from '@recoil/channel';
-import categoryState from '@recoil/category';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -74,11 +69,11 @@ const data: {
     logName: 'LEGIT'
   },
   {
-    title: '카테고리',
-    defaultIcon: 'NewCategoryOutlined',
-    activeIcon: 'NewCategoryFilled',
-    href: '/category',
-    logName: 'CATEGORY'
+    title: '검색',
+    defaultIcon: 'BnSearchOutlined',
+    activeIcon: 'BnSearchFilled',
+    href: '/search',
+    logName: 'SEARCH_MODAL'
   },
   {
     title: '채팅',
@@ -117,17 +112,15 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
 
   const [{ initialized, unreadMessagesCount }, setSendbirdState] = useRecoilState(sendbirdState);
 
-  const resetCategory = useResetRecoilState(categoryState);
-  const resetProductKeyword = useResetRecoilState(homeSelectedTabStateFamily('productKeyword'));
-  const resetRecentSearch = useResetRecoilState(homeSelectedTabStateFamily('recentSearch'));
   const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
   );
-  const resetPopularCamelProductListPrevPageState = useResetRecoilState(
-    homePopularCamelProductListPrevPageState
-  );
+  const resetSearchCategoryState = useResetRecoilState(searchCategoryState);
+  const resetSearchAutoFocusState = useResetRecoilState(searchAutoFocusState);
+
+  const resetSearchValueState = useResetRecoilState(searchValueState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const {
     data: {
@@ -184,18 +177,13 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         await queryClient.invalidateQueries(queryKeys.channels.channels({ type: 0, size: 20 }));
       }
 
-      if (title === '홈') {
-        // homeTabChange();
-        resetProductKeyword();
-        resetRecentSearch();
-      }
-
-      if (title === '카테고리' && router.pathname !== '/category') {
-        resetCategory();
+      if (href === '/search') {
+        resetSearchCategoryState();
+        resetSearchValueState();
+        resetSearchAutoFocusState();
       }
 
       if (href === '/') {
-        resetPopularCamelProductListPrevPageState();
         resetHomePersonalCurationBannersState();
         queryClient
           .getQueryCache()
@@ -379,6 +367,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
             const name = href.replace(/\//g, '');
             let isActive = router.pathname.includes(name);
 
+            if (router.pathname.includes('/products') && href === '/search') {
+              isActive = true;
+            }
+
             if (router.pathname !== '/' && !name && isActive) {
               isActive = false;
             }
@@ -398,7 +390,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                     <Box customStyle={{ position: 'relative' }}>
                       <Icon
                         name={isActive ? activeIcon : defaultIcon}
-                        color={isActive ? common.ui20 : common.ui80}
+                        color={isActive ? 'ui20' : 'ui80'}
                       />
                       <CustomBadge
                         open={

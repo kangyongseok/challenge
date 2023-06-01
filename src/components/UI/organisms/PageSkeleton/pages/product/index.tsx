@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { Divider, ProductDetailHeader } from '@components/UI/molecules';
+import { Divider } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function ProductDetail() {
@@ -19,7 +19,7 @@ function ProductDetail() {
 
   return (
     <GeneralTemplate
-      header={<ProductDetailHeader />}
+      header={<Skeleton width="100%" height={56} minHeight={56} disableAspectRatio />}
       footer={
         <CtaButtonWrapper>
           <Skeleton width="100%" height={52} round={8} disableAspectRatio />
