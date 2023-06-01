@@ -46,7 +46,7 @@ function ChannelAppointmentBanner({ dateAppointment }: ChannelAppointmentBannerP
       >
         <Icon name="TimeFilled" width={16} height={16} color="primary-light" />
         <Typography variant="body2" weight="medium">
-          {dayjs(dateAppointment).format('MM월 DD일 A HH:mm에 직거래 약속이 있어요!')}
+          {dayjs(dateAppointment).format('MM월 DD일 A h시 m분에 직거래 약속이 있어요!')}
         </Typography>
       </Flexbox>
       <Typography

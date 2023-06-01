@@ -241,6 +241,7 @@ function Appointment() {
                 variant="outline"
                 startAdornment={<Icon name="DateOutlined" size="medium" />}
                 customStyle={{ height: 44, padding: 12, columnGap: 12 }}
+                min={dayjs().format('YYYY-MM-DD')}
                 inputStyle={{
                   width: '100%',
                   minHeight: 22,

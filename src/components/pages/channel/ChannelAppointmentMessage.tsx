@@ -73,7 +73,7 @@ function ChannelAppointmentMessage({
       {type === 'CREATE' && (
         <>
           <AppointmentMessage variant="body2" weight="medium">
-            {dayjs(dateAppointment).format('MM월 DD일(dd) A HH:mm에 직거래 약속이 생성되었어요.')}
+            {dayjs(dateAppointment).format('MM월 DD일(dd) A h시 m분에 직거래 약속이 생성되었어요.')}
             {!!notiTime && (
               <>
                 <br />
