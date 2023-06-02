@@ -70,7 +70,7 @@ function SearchList() {
     }) =>
     () => {
       logEvent(attrKeys.search.CLICK_AUTO, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         type: 'KEYWORD',
         index,
         keyword,
@@ -82,7 +82,7 @@ function SearchList() {
       }
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.AUTO,
         type: attrProperty.type.INPUT,
         keyword,
@@ -94,7 +94,7 @@ function SearchList() {
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.AUTO,
         type: attrProperty.type.INPUT
       });
@@ -114,7 +114,7 @@ function SearchList() {
     }) =>
     () => {
       logEvent(attrKeys.search.CLICK_AUTO, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         type: 'CATEGORY',
         index,
         keyword: keyword?.replace(/\(P\)/, ''),
@@ -122,7 +122,7 @@ function SearchList() {
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.BANNERC,
         type: attrProperty.type.INPUT
       });
@@ -140,14 +140,14 @@ function SearchList() {
   const handleClickBrandKeyword =
     ({ keywordBrand, brandId, categoryId, brandName, categoryName, line }: SuggestKeyword) =>
     () => {
-      logEvent(attrKeys.search.CLICK_BANNERB, { name: attrProperty.name.SEARCH_MODAL });
+      logEvent(attrKeys.search.CLICK_BANNERB, { name: attrProperty.name.SEARCH });
 
       if (accessUser) {
         updateAccessUserOnBraze({ ...accessUser, lastKeyword: keywordBrand });
       }
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.BANNERB,
         type: 'INPUT',
         keyword: keywordBrand,
@@ -176,12 +176,12 @@ function SearchList() {
     }: KeywordItemSub) =>
     () => {
       logEvent(attrKeys.search.CLICK_RECOMMFILTER, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         att: keyword
       });
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.RECOMMFILTER,
         type: attrProperty.type.INPUT,
         keyword: value,
@@ -197,7 +197,7 @@ function SearchList() {
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.RECOMMFILTER,
         type: attrProperty.type.INPUT,
         keyword

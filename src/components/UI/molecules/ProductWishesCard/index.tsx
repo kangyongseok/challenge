@@ -111,7 +111,6 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     });
     const {
       imageUrl,
-      isSafe,
       showPriceDown,
       showDuplicateUploadAlert,
       isPopular,
@@ -296,7 +295,6 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
           >
             <Box>
               <Title variant="body2" weight="medium" customStyle={{ marginBottom: 4 }}>
-                {!isNormalseller && isSafe && <span>안전결제 </span>}
                 {title}
               </Title>
               <Flexbox

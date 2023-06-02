@@ -1,6 +1,7 @@
 import type { MouseEvent, PropsWithChildren, ReactElement } from 'react';
 import { useCallback } from 'react';
 
+import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
@@ -10,6 +11,8 @@ import { logEvent } from '@library/amplitude';
 import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { searchAutoFocusState } from '@recoil/search';
 
 import { IconBox, StyledHeader, Title, Wrapper } from './Header.styles';
 
@@ -65,6 +68,8 @@ function Header({
       palette: { common }
     }
   } = useTheme();
+
+  const resetSearchAutoFocusState = useResetRecoilState(searchAutoFocusState);
 
   const handleLogEvent = useCallback(
     (eventName: string) => {
@@ -185,6 +190,8 @@ function Header({
   };
 
   const handleClickSearch = () => {
+    resetSearchAutoFocusState();
+
     if (router.pathname.split('/')[1] === 'wishes') {
       logEvent(attrKeys.header.CLICK_SEARCHMODAL, {
         name: attrProperty.productName.WISH_LIST,

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useRecoilState } from 'recoil';
 import { Button, Flexbox } from '@mrcamelhub/camel-ui';
 import { useTheme } from '@emotion/react';
@@ -8,6 +10,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { searchCategoryState } from '@recoil/search';
+import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function GenderButtonGroup() {
   const {
@@ -16,9 +19,12 @@ function GenderButtonGroup() {
 
   const [{ gender }, setSearchCategoryState] = useRecoilState(searchCategoryState);
 
+  const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {}, isFetching } =
+    useQueryMyUserInfo();
+
   const handleClick = (newGender: 'male' | 'female') => () => {
     logEvent(attrKeys.category.CLICK_CATEGORY_GENDER, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       gender: newGender === 'male' ? 'M' : 'F'
     });
 
@@ -30,6 +36,20 @@ function GenderButtonGroup() {
       selectedAll: false
     }));
   };
+
+  useEffect(() => {
+    if (userGender && !gender && !isFetching) {
+      setSearchCategoryState((prevState) => ({
+        ...prevState,
+        gender: userGender === 'M' ? 'male' : 'female'
+      }));
+    } else if (!userGender && !gender && !isFetching) {
+      setSearchCategoryState((prevState) => ({
+        ...prevState,
+        gender: 'male'
+      }));
+    }
+  }, [setSearchCategoryState, userGender, gender, isFetching]);
 
   return (
     <Flexbox

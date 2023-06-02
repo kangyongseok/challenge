@@ -27,13 +27,14 @@ function SearchTabPanels() {
   const [swiper, setSwiper] = useState<SwiperClass>();
 
   const threshold = useRecoilValue(searchTabPanelsSwiperThresholdState);
-  const value = useRecoilValue(searchValueState);
   const category = useRecoilValue(searchCategoryState);
+  const value = useRecoilValue(searchValueState);
   const resetSearchTabPanelsSwiperThresholdState = useResetRecoilState(
     searchTabPanelsSwiperThresholdState
   );
 
   const updateAutoHeightTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const startXRef = useRef(0);
 
   const { data = [] } = useQuery(
     queryKeys.products.keywordsSuggest(value),
@@ -48,7 +49,7 @@ function SearchTabPanels() {
   const handleSlideChange = ({ activeIndex }: SwiperClass) => {
     if (!router.isReady || !router.query.tab) return;
 
-    let queryTab = router.query.tab;
+    let queryTab = String(router.query.tab);
 
     if (activeIndex === 0) {
       queryTab = 'brand';
@@ -64,6 +65,22 @@ function SearchTabPanels() {
         }
       })
       .then(() => resetSearchTabPanelsSwiperThresholdState());
+  };
+
+  const handleSlideChangeTransitionEnd = ({ activeIndex, slides, touches }: SwiperClass) => {
+    const newTab = slides[activeIndex].getAttribute('data-value');
+
+    if (router.query.tab !== newTab && touches.startX !== startXRef.current) {
+      startXRef.current = touches.startX;
+      router
+        .replace({
+          pathname: '/search',
+          query: {
+            tab: newTab
+          }
+        })
+        .then(() => resetSearchTabPanelsSwiperThresholdState());
+    }
   };
 
   useEffect(() => {
@@ -93,7 +110,7 @@ function SearchTabPanels() {
 
     updateAutoHeightTimerRef.current = setTimeout(() => {
       if (swiper) swiper?.updateAutoHeight();
-    });
+    }, 100);
   }, [category, swiper]);
 
   useEffect(() => {
@@ -111,6 +128,7 @@ function SearchTabPanels() {
       tag="section"
       onInit={handleInitSwiper}
       onSlideChange={handleSlideChange}
+      onSlideChangeTransitionEnd={handleSlideChangeTransitionEnd}
       threshold={threshold}
       autoHeight
       initialSlide={1}
@@ -118,13 +136,13 @@ function SearchTabPanels() {
         width: '100%'
       }}
     >
-      <SwiperSlide>
+      <SwiperSlide data-value="brand">
         <BrandTabPanel />
       </SwiperSlide>
-      <SwiperSlide>
+      <SwiperSlide data-value="keyword">
         <KeywordTabPanel />
       </SwiperSlide>
-      <SwiperSlide>
+      <SwiperSlide data-value="category">
         <CategoryTabPanel />
       </SwiperSlide>
     </Swiper>

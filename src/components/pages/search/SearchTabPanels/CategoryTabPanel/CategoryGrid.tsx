@@ -73,7 +73,7 @@ function CategoryGrid() {
     }));
 
     logEvent(attrKeys.category.CLICK_CATEGORY, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.PARENT,
       type: attrProperty.type.GUIDED,
       parentCategory: name,
@@ -82,7 +82,7 @@ function CategoryGrid() {
     });
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.PARENT,
       type: attrProperty.type.GUIDED
     });
@@ -107,7 +107,7 @@ function CategoryGrid() {
       } = findParentCategories;
 
       logEvent(attrKeys.category.CLICK_CATEGORY, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.SUBPARENT,
         type: attrProperty.type.GUIDED,
         parentCategory: parentCategoryName,
@@ -117,7 +117,7 @@ function CategoryGrid() {
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.SUBPARENT,
         type: attrProperty.type.GUIDED
       });
@@ -139,6 +139,8 @@ function CategoryGrid() {
     };
 
   useEffect(() => {
+    if (isLoading) return;
+
     const filteredParentCategories = parentCategories.filter(
       ({ parentCategory: { name, nameEng } }) => {
         return gender === 'male' ? name !== '원피스(P)' && nameEng : nameEng;
@@ -155,7 +157,7 @@ function CategoryGrid() {
     }
 
     setGroupedParentCategories(newGroupedParentCategories);
-  }, [gender, parentCategories]);
+  }, [gender, parentCategories, isLoading]);
 
   useEffect(() => {
     setFilteredSubParentCategories(
@@ -235,19 +237,21 @@ function CategoryGrid() {
                       backgroundColor: id === parentId ? common.bg02 : undefined
                     }}
                   >
-                    <Image
-                      width={48}
-                      height={48}
-                      src={getImageResizePath({
-                        imagePath: `https://${
-                          process.env.IMAGE_DOMAIN
-                        }/assets/images/category/ico_cate_${nameEng}_${gender.charAt(0)}.png`,
-                        w: 48
-                      })}
-                      alt={name}
-                      round={8}
-                      disableAspectRatio
-                    />
+                    {/* TODO UI 라이브러리 Image 컴포넌트 간헐적 렌더링 오동작 현상 손보는게 필요 */}
+                    {gender && (
+                      <Image
+                        width={48}
+                        height={48}
+                        src={getImageResizePath({
+                          imagePath: `https://${
+                            process.env.IMAGE_DOMAIN
+                          }/assets/images/category/ico_cate_${nameEng}_${gender.charAt(0)}.png`,
+                          w: 48
+                        })}
+                        alt={name}
+                        disableAspectRatio
+                      />
+                    )}
                   </Box>
                   <Typography textAlign="center">{name.replace(/\(P\)/g, '')}</Typography>
                 </Grid>

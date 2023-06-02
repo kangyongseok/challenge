@@ -37,7 +37,7 @@ function RecentProductList() {
 
   const handleClick = () => {
     logEvent(attrKeys.search.CLICK_RECENT_LIST, {
-      name: attrProperty.name.SEARCH_MODAL
+      name: attrProperty.name.SEARCH
     });
 
     router.push({
@@ -96,14 +96,15 @@ function RecentProductList() {
               />
             ))}
         {!isInitialLoading &&
-          content.map(({ product }) => (
+          content.slice(0, 10).map(({ product }) => (
             <NewProductGridCard
               key={`search-recent-product-${product.id}`}
               variant="swipeX"
               product={product}
               attributes={{
-                name: attrProperty.name.SEARCH_MODAL,
-                title: attrProperty.title.RECENT
+                name: attrProperty.name.SEARCH,
+                title: attrProperty.title.RECENT,
+                source: `${attrProperty.name.SEARCH}_${attrProperty.title.RECENT}`
               }}
             />
           ))}

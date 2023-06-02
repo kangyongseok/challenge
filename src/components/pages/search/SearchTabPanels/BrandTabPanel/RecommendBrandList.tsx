@@ -33,13 +33,13 @@ function RecommendBrandList() {
 
   const handleClick = (name: string) => () => {
     logEvent(attrKeys.category.CLICK_BRAND_NAME, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.RECOMMEND,
       att: name
     });
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.RECOMMEND,
       type: attrProperty.type.GUIDED
     });

@@ -68,6 +68,7 @@ const SlideDown = styled.div<{
   delay?: number;
   reverseAnimation?: boolean;
 }>`
+  display: flex;
   animation: ${({ reverseAnimation }) => (reverseAnimation ? 'slideUp' : 'slideDown')}
     ${({ delay = 0.3 }) => delay}s forwards;
   @keyframes slideUp {

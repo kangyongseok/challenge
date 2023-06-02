@@ -46,11 +46,7 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
     }
   );
 
-  const {
-    data: { userProductKeyword } = {},
-    isLoading: isLoadingSearchOptions,
-    isFetched: isFetchedSearchOptions
-  } = useQuery(
+  const { isLoading: isLoadingSearchOptions, isFetched: isFetchedSearchOptions } = useQuery(
     queryKeys.products.searchOptions(searchOptionsParams),
     () => fetchSearchOptions(searchOptionsParams),
     {
@@ -76,7 +72,6 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
         !!accessUser &&
         !isLoadingSearchOptions &&
         isFetchedSearchOptions &&
-        !userProductKeyword &&
         productsKeywordAutoSaveTrigger &&
         url.indexOf('/products') === -1
       ) {
@@ -126,7 +121,6 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       productsKeywordAutoSaveTrigger,
       searchParams,
       setProductsKeywordAutoSaveTrigger,
-      userProductKeyword,
       variant
     ]
   );

@@ -15,12 +15,15 @@ function PopularKeywordRank() {
 
   const { data: { divide, keywords = [] } = {}, isLoading } = useQuery(
     queryKeys.commons.popularSearchKeywords(),
-    fetchPopularSearchKeywords
+    fetchPopularSearchKeywords,
+    {
+      refetchOnMount: true
+    }
   );
 
   const handleClick = (keyword: string) => () => {
     logEvent(attrKeys.search.CLICK_POPULAR, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       keyword
     });
 

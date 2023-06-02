@@ -57,14 +57,14 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
     enabled: !!value,
     onSuccess: (response) => {
       logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         keyword: value,
         count: response.length
       });
 
       if (response.some(({ recommFilters }) => recommFilters && recommFilters.length > 0)) {
         logEvent(attrKeys.search.VIEW_RECOMMFILTER, {
-          name: attrProperty.name.SEARCH_MODAL,
+          name: attrProperty.name.SEARCH,
           keyword: value
         });
       }
@@ -73,7 +73,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
 
   const handleClick = () => {
     logEvent(attrKeys.search.CLICK_BACK, {
-      name: attrProperty.name.SEARCH_MODAL
+      name: attrProperty.name.SEARCH
     });
     router.back();
   };
@@ -82,9 +82,9 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
     e.preventDefault();
 
     if (e.key === 'Enter') {
-      logEvent(attrKeys.search.CLICK_SCOPE, { name: attrProperty.name.SEARCH_MODAL });
+      logEvent(attrKeys.search.CLICK_SCOPE, { name: attrProperty.name.SEARCH });
 
-      if (!value) {
+      if (!value || !value.trim()) {
         logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
         setOpen(true);
         return;
@@ -97,14 +97,14 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
       }
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.SCOPE,
         type: attrProperty.type.INPUT,
         keyword: value
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.SCOPE,
         type: attrProperty.type.INPUT
       });
@@ -180,7 +180,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
             onKeyUp={handleChange}
             onClick={() =>
               logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, {
-                name: attrProperty.name.SEARCH_MODAL
+                name: attrProperty.name.SEARCH
               })
             }
             value={searchValue}

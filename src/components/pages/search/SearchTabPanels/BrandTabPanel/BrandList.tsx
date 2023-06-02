@@ -101,13 +101,13 @@ function BrandList() {
 
   const handleClickBrand = (name: string) => () => {
     logEvent(attrKeys.brand.CLICK_BRAND_NAME, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.BRAND_LIST,
       att: name
     });
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.BRAND_LIST,
       type: attrProperty.type.INPUT
     });
@@ -122,6 +122,10 @@ function BrandList() {
           : {}
     });
   };
+
+  useEffect(() => {
+    if (tab !== 'brand') setPosition('static');
+  }, [tab]);
 
   useEffect(() => {
     const handleScroll = () => {

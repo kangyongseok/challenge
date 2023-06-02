@@ -79,14 +79,14 @@ function RecentKeywordList() {
       };
 
       logEvent(attrKeys.search.CLICK_RECENT, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: title(),
         index,
         keyword
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.RECENT,
         type: attrProperty.type.INPUT
       });
@@ -94,7 +94,7 @@ function RecentKeywordList() {
       LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH_MODAL,
+        name: attrProperty.name.SEARCH,
         title: attrProperty.title.RECENT,
         type: attrProperty.type.INPUT,
         keyword
@@ -109,7 +109,6 @@ function RecentKeywordList() {
         productKeyword = query.categories;
 
         delete query.categories;
-        delete query.categoryIds;
       } else if (sourceType === 1 || sourceType === 2) {
         viewType = 'brands';
         productKeyword = query.requiredBrands;
@@ -119,7 +118,6 @@ function RecentKeywordList() {
           productKeyword = keyword.replace(/,전체/g, '').replace(/X/g, '-');
         }
 
-        delete query.requiredBrandIds;
         delete query.requiredBrands;
       } else {
         delete query.keyword;
@@ -133,12 +131,12 @@ function RecentKeywordList() {
 
   const handleClickRecommendKeyword = (keyword: string) => () => {
     logEvent(attrKeys.search.CLICK_RECOMMTAG, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       keyword
     });
 
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       title: attrProperty.title.RECOMMTAG,
       type: attrProperty.type.GUIDED
     });
@@ -150,7 +148,7 @@ function RecentKeywordList() {
 
   const handleClickAllDelete = () => {
     logEvent(attrKeys.search.CLICK_RECENT_DELETE, {
-      name: attrProperty.name.SEARCH_MODAL,
+      name: attrProperty.name.SEARCH,
       att: 'ALL'
     });
 
@@ -239,56 +237,75 @@ function RecentKeywordList() {
               />
             ))}
         {!isInitialLoading &&
-          content.map(({ keyword, imageThumbnail, sourceType, brand, ...props }, index) => (
-            <Chip
-              // eslint-disable-next-line react/no-array-index-key
-              key={`search-recent-keyword-${keyword}-${index}`}
-              startIcon={
-                <>
-                  {sourceType > 1 && imageThumbnail && (
-                    <Avatar
-                      width={24}
-                      height={24}
-                      src={imageThumbnail}
-                      alt={keyword}
-                      round="50%"
-                      customStyle={{
-                        padding: '2px',
-                        backgroundColor: common.bg02
-                      }}
-                    />
-                  )}
-                  {sourceType === 1 && brand && (
-                    <Typography
-                      variant="h4"
-                      weight="bold"
-                      customStyle={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 24,
-                        height: 24,
-                        borderRadius: '50%',
-                        backgroundColor: common.bg02
-                      }}
-                    >
-                      {brand?.nameEng.charAt(0).toUpperCase()}
-                    </Typography>
-                  )}
-                </>
-              }
-              onClick={handleClick({ keyword, imageThumbnail, sourceType, brand, index, ...props })}
-              customStyle={{
-                gap: 6,
-                padding:
-                  (sourceType > 1 && imageThumbnail) || (sourceType === 1 && brand)
-                    ? '4px 12px 4px 4px'
-                    : '6px 12px'
-              }}
-            >
-              {keyword.replace(/,전체/g, '').replace(/-/g, ' ').replace(/\(P\)/g, '')}
-            </Chip>
-          ))}
+          content
+            .slice(0, 10)
+            .map(
+              (
+                { keyword, keywordFilterJson, imageThumbnail, sourceType, brand, ...props },
+                index
+              ) => (
+                <Chip
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`search-recent-keyword-${keyword}-${index}`}
+                  startIcon={
+                    <>
+                      {sourceType > 1 && imageThumbnail && (
+                        <Avatar
+                          width={24}
+                          height={24}
+                          src={imageThumbnail}
+                          alt={keyword}
+                          round="50%"
+                          customStyle={{
+                            padding: '2px',
+                            backgroundColor: common.bg02
+                          }}
+                        />
+                      )}
+                      {sourceType === 1 && brand && (
+                        <Typography
+                          variant="h4"
+                          weight="bold"
+                          customStyle={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            backgroundColor: common.bg02
+                          }}
+                        >
+                          {brand?.nameEng.charAt(0).toUpperCase()}
+                        </Typography>
+                      )}
+                    </>
+                  }
+                  onClick={handleClick({
+                    keyword,
+                    keywordFilterJson,
+                    imageThumbnail,
+                    sourceType,
+                    brand,
+                    index,
+                    ...props
+                  })}
+                  customStyle={{
+                    gap: 6,
+                    padding:
+                      (sourceType > 1 && imageThumbnail) || (sourceType === 1 && brand)
+                        ? '4px 12px 4px 4px'
+                        : '6px 12px'
+                  }}
+                >
+                  {sourceType === 3 &&
+                    JSON.parse(keywordFilterJson)?.genders &&
+                    JSON.parse(keywordFilterJson)?.genders[0] &&
+                    (JSON.parse(keywordFilterJson)?.genders[0] === 'male' ? '남성 ' : '여성 ')}
+                  {keyword.replace(/,전체/g, '').replace(/-/g, ' ').replace(/\(P\)/g, '')}
+                </Chip>
+              )
+            )}
       </List>
     </Box>
   );

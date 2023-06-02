@@ -247,7 +247,7 @@ const name = {
   KEYWORD_ALERT: 'KEYWORD_ALERT',
   LEGIT_POPUP: 'LEGIT_POPUP',
   BUTLER: 'BUTLER',
-  SEARCH_MODAL: 'SEARCH_MODAL'
+  SEARCH: 'SEARCH'
 };
 
 const title = {

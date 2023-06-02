@@ -15,14 +15,14 @@ export const searchValueState = atom({
 export const searchCategoryState = atom<{
   parentId: number;
   subParentId: number;
-  gender: keyof typeof GENDER;
+  gender: keyof typeof GENDER | '';
   selectedAll: boolean;
 }>({
   key: 'search/categoryState',
   default: {
     parentId: 0,
     subParentId: 0,
-    gender: 'male',
+    gender: '',
     selectedAll: false
   }
 });
