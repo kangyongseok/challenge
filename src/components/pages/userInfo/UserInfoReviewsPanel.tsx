@@ -186,7 +186,8 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     };
   }, []);
 
-  return !isLoading && userReviews.length === 0 ? (
+  return !isLoading &&
+    (userReviews.length === 0 || (pages && typeof pages[0] === 'string' && pages.length === 0)) ? (
     <Flexbox
       direction="vertical"
       alignment="center"

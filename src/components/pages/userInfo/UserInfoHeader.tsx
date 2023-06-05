@@ -121,7 +121,7 @@ function UserInfoHeader({
             isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'
           } + ${HEADER_HEIGHT}px)`,
           width: '100%',
-          zIndex: zIndex.header
+          zIndex: zIndex.header - 1
         }}
       />
     </>
