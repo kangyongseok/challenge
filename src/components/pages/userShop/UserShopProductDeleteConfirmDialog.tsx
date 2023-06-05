@@ -28,7 +28,7 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
   const params = useMemo(
     () => ({
       page: 0,
-      status: tab === '0' ? [Number(tab || 0), 4, 8, 20, 21] : [1]
+      status: tab === '0' || !tab ? [Number(tab || 0), 4, 8, 20, 21] : [1]
     }),
     [tab]
   );
@@ -61,7 +61,10 @@ function UserShopProductDeleteConfirmDialog({ redirect }: { redirect?: boolean }
           if (redirect) {
             router.replace('/user/shop');
           } else {
-            queryClient.invalidateQueries(queryKeys.users.products(params));
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.users.products(params),
+              refetchType: 'active'
+            });
           }
         }
       }

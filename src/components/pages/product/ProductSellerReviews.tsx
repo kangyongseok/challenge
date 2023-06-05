@@ -15,7 +15,6 @@ import LocalStorage from '@library/localStorage';
 
 import { fetchReviewInfo } from '@api/product';
 
-import { SELLER_STATUS, productType } from '@constants/user';
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 import { ACCESS_USER } from '@constants/localStorage';
@@ -27,6 +26,8 @@ import { productDetailAtt } from '@utils/products';
 import { pulse } from '@styles/transition';
 
 import { reviewBlockState } from '@recoil/productReview';
+import useProductType from '@hooks/useProductType';
+import useProductSellerType from '@hooks/useProductSellerType';
 
 function ProductSellerReviews({
   product,
@@ -58,10 +59,12 @@ function ProductSellerReviews({
     }
   );
 
-  const isCamelSeller =
-    reviewInfo &&
-    SELLER_STATUS[reviewInfo?.productSeller?.type as keyof typeof SELLER_STATUS] ===
-      SELLER_STATUS['3'];
+  const { isAllCrawlingProduct } = useProductType(reviewInfo?.sellerType);
+  const { isCertificationSeller } = useProductSellerType({
+    productSellerType: reviewInfo?.productSeller?.type
+  });
+
+  const isCamelSeller = reviewInfo && isCertificationSeller;
 
   const handleClickMoreList = () => {
     if (product)
@@ -86,10 +89,7 @@ function ProductSellerReviews({
     // 크롤링 판매자 정보 sellerInfo
     // 일반 or 인증 사용자 정보 userInfo
     router.push({
-      pathname:
-        product?.sellerType === productType.collection
-          ? `/sellerInfo/${sellerId}`
-          : `/userInfo/${roleSellerUserId}`,
+      pathname: isAllCrawlingProduct ? `/sellerInfo/${sellerId}` : `/userInfo/${roleSellerUserId}`,
       query: {
         tab: 'products'
       }
@@ -132,10 +132,9 @@ function ProductSellerReviews({
             });
 
           router.push({
-            pathname:
-              product?.sellerType === productType.collection
-                ? `/sellerInfo/${sellerId}`
-                : `/userInfo/${roleSellerUserId}`,
+            pathname: isAllCrawlingProduct
+              ? `/sellerInfo/${sellerId}`
+              : `/userInfo/${roleSellerUserId}`,
             query: {
               tab: 'reviews'
             }
