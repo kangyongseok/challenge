@@ -43,12 +43,14 @@ function useQueryProduct(): UseQueryProductResult {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  // useQuery(queryKeys.products.productLogging(params), () => fetchProduct(params), {
-  //   enabled: !!params.deviceId
-  // });
-
   const queryResult = useQuery(
-    queryKeys.products.product({ productId }),
+    queryKeys.products.product({
+      productId,
+      source: source || PRODUCT_SOURCE.DIRECT,
+      redirect: Boolean(redirect),
+      isLogging: true,
+      deviceId
+    }),
     async () => {
       const resultProduct = await fetchProduct({
         productId,
