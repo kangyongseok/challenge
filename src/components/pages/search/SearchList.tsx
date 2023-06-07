@@ -270,7 +270,11 @@ function SearchList() {
               src={getImageResizePath({
                 imagePath: `https://${
                   process.env.IMAGE_DOMAIN
-                }/assets/images/category/ico_cate_${parentId}_${userGender.toLowerCase()}.png`,
+                }/assets/images/category/ico_cate_${parentId}_${(userGender ||
+                (keyword || '').split('>')[0] === '남성'
+                  ? 'm'
+                  : 'f'
+                ).toLowerCase()}.png`,
                 w: 48
               })}
               alt={keyword}
