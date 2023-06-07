@@ -25,7 +25,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
   const [state, setState] = useRecoilState(sendbirdState);
 
   const { data: userInfo } = useQueryUserInfo();
-  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
+  const { userId, userNickName, userImageProfile, isLoading } = useQueryMyUserInfo();
   const initialize = useInitializeSendbird();
 
   const sdk = Sendbird.getInstance();
@@ -35,7 +35,8 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
       !!userId &&
       (!!userInfo?.hasChannel || router.pathname.indexOf('channels') !== -1) &&
       !state.loading &&
-      !state.initialized
+      !state.initialized &&
+      !isLoading
     ) {
       initialize(userId.toString(), userNickName, userImageProfile);
     }
@@ -47,7 +48,8 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
     userInfo?.hasChannel,
     initialize,
     userNickName,
-    userImageProfile
+    userImageProfile,
+    isLoading
   ]);
 
   useEffect(() => {

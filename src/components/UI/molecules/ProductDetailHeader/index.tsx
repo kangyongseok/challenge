@@ -274,7 +274,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
       <Header
         customHeader={
           <CustomHeader justifyContent="space-between" alignment="center">
-            <Icon name="LogoText_96_20" onClick={handleClickLogo} />
+            <Icon name="LogoText_96_20" width={93.28} height={20} onClick={handleClickLogo} />
             <Flexbox alignment="center">
               <IconBox show disablePadding="right" onClick={handleClickWish}>
                 <Icon

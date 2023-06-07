@@ -107,9 +107,10 @@ function HomeRecommendWishCard({
         : productResult.purchaseCount >= 6
         ? 'HOT'
         : 'WISHALARM',
-      index
+      index,
+      productId: productResult.id
     });
-  }, [index, productResult.priceBefore, productResult.purchaseCount]);
+  }, [index, productResult.id, productResult.priceBefore, productResult.purchaseCount]);
 
   return (
     <StyledHomeRecommendWishCard ref={cardRef} gap={16} onClick={handleClick} css={customStyle}>

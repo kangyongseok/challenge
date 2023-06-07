@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
-
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutateFunction, UseQueryResult } from '@tanstack/react-query';
 
-import type { ProductDetail, ProductParams } from '@dto/product';
+import type { ProductDetail } from '@dto/product';
 
 import UserTraceRecord from '@library/userTraceRecord';
 import SessionStorage from '@library/sessionStorage';
@@ -44,21 +42,21 @@ function useQueryProduct(): UseQueryProductResult {
   const deviceId = useRecoilValue(deviceIdState);
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
-  const [params, setParams] = useState<ProductParams>({
-    productId,
-    deviceId,
-    isLogging: true,
-    source: source || PRODUCT_SOURCE.DIRECT
-  });
 
   // useQuery(queryKeys.products.productLogging(params), () => fetchProduct(params), {
   //   enabled: !!params.deviceId
   // });
 
   const queryResult = useQuery(
-    queryKeys.products.product({ productId: params.productId }),
+    queryKeys.products.product({ productId }),
     async () => {
-      const resultProduct = await fetchProduct(params);
+      const resultProduct = await fetchProduct({
+        productId,
+        source: source || PRODUCT_SOURCE.DIRECT,
+        redirect: Boolean(redirect),
+        isLogging: true,
+        deviceId
+      });
 
       resultProduct.product.viewCount += 1;
 
@@ -67,7 +65,7 @@ function useQueryProduct(): UseQueryProductResult {
     {
       refetchOnMount: true,
       retry: 2,
-      enabled: !!params.deviceId
+      enabled: !!productId
     }
   );
 
@@ -104,15 +102,12 @@ function useQueryProduct(): UseQueryProductResult {
     },
     {
       onSuccess: (result) => {
-        queryClient.setQueryData(
-          queryKeys.products.product({ productId: params.productId }),
-          result
-        );
+        queryClient.setQueryData(queryKeys.products.product({ productId }), result);
       },
       onSettled: (_, __, { isAddWish, isRemoveWish }) => {
         if (isAddWish || isRemoveWish) {
           queryClient.invalidateQueries({
-            queryKey: queryKeys.users.categoryWishes({ deviceId: params.deviceId }),
+            queryKey: queryKeys.users.categoryWishes({ deviceId }),
             refetchType: 'active'
           });
         }
@@ -131,41 +126,18 @@ function useQueryProduct(): UseQueryProductResult {
     }
   });
 
-  useEffect(() => {
-    const newParams = { ...params };
-
-    if (params.productId !== productId) {
-      newParams.productId = productId;
-    }
-
-    if (typeof redirect !== 'undefined' && params.redirect !== Boolean(redirect)) {
-      newParams.redirect = Boolean(redirect);
-    }
-
-    if (typeof source !== 'undefined' && params.source !== source) {
-      newParams.source = source as string;
-    }
-
-    if (deviceId !== params.deviceId) {
-      newParams.deviceId = deviceId;
-    }
-
-    setParams(newParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId, redirect, source, deviceId]);
-
   return {
     ...queryResult,
     mutatePostProductsAdd: () => {
       mutatePostProductsAdd({
         productId,
-        deviceId: params.deviceId
+        deviceId
       });
     },
     mutatePostProductsRemove: () => {
       mutatePostProductsRemove({
         productId,
-        deviceId: params.deviceId
+        deviceId
       });
     },
     mutateMetaInfo
