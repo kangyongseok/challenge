@@ -65,7 +65,7 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
   );
 
   const {
-    data: { pages = [] } = {},
+    data: { pages = [], pageParams = [] } = {},
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -181,7 +181,11 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
           })
         )}
       </Flexbox>
-      <UserShopProductManageBottomSheet refetchData={handleUpdateProductStatus} />
+      <UserShopProductManageBottomSheet
+        refetchData={handleUpdateProductStatus}
+        oldData={pageParams}
+        pages={pages}
+      />
       {!!productId && <SelectTargetUserBottomSheet productId={productId} />}
       <UserShopProductSoldOutConfirmBottomSheet />
     </>

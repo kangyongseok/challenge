@@ -3,12 +3,13 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { BottomSheet, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import type { Product } from '@dto/product';
+import type { PageProductResult, Product } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -31,9 +32,15 @@ import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface UserShopProductManageBottomSheetProps {
   refetchData: () => Promise<void>;
+  oldData: unknown[];
+  pages: PageProductResult[];
 }
 
-function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManageBottomSheetProps) {
+function UserShopProductManageBottomSheet({
+  refetchData,
+  oldData,
+  pages
+}: UserShopProductManageBottomSheetProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: accessUser } = useQueryAccessUser();
@@ -91,6 +98,17 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       [status, productSeller]
     );
 
+  const userProductsParams = useMemo(
+    () => ({
+      page: 0,
+      status:
+        router.query.tab === '0' || !router.query.tab
+          ? [Number(router.query.tab || 0), 4, 8, 20, 21]
+          : [1]
+    }),
+    [router.query.tab]
+  );
+
   const getAttProperty = {
     id,
     brand: brand?.name,
@@ -147,7 +165,6 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
       { productId: id },
       {
         onSuccess() {
-          refetchData();
           toastStack({
             children: '끌어올리기가 완료되었어요. 👍'
           });
@@ -155,6 +172,24 @@ function UserShopProductManageBottomSheet({ refetchData }: UserShopProductManage
             type,
             open: false
           }));
+          queryClient.setQueryData(queryKeys.users.products(userProductsParams), {
+            oldData,
+            pages: pages.map((page) => {
+              // const findIndex = page.content.findIndex(({ id: oldId }) => oldId === id);
+              return {
+                ...page,
+                content: page.content.map((productList) => {
+                  if (productList.id === id) {
+                    return {
+                      ...productList,
+                      datePosted: dayjs().valueOf()
+                    };
+                  }
+                  return productList;
+                })
+              };
+            })
+          });
         }
       }
     );

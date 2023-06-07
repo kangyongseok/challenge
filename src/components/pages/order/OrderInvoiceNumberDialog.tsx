@@ -61,7 +61,7 @@ function OrderInvoiceNumberDialog({
       {
         id: id || Number(query.id),
         type: 1,
-        contents: invoiceNumber,
+        contents: invoiceNumber.split('-').join(''),
         deliveryCode: String(companyInfo.id)
       },
       {
