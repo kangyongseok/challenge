@@ -43,13 +43,22 @@ function useQueryProduct(): UseQueryProductResult {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
+  const logingParams = {
+    productId,
+    source: source || PRODUCT_SOURCE.DIRECT,
+    redirect: Boolean(redirect),
+    isLogging: true,
+    deviceId
+  };
+
+  // 로깅용 호출
+  useQuery(queryKeys.products.productLogging(logingParams), () => fetchProduct(logingParams), {
+    enabled: !!logingParams.deviceId
+  });
+
   const queryResult = useQuery(
     queryKeys.products.product({
       productId
-      // source: source || PRODUCT_SOURCE.DIRECT,
-      // redirect: Boolean(redirect),
-      // isLogging: true,
-      // deviceId
     }),
     async () => {
       const resultProduct = await fetchProduct({
