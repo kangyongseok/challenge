@@ -45,11 +45,11 @@ function useQueryProduct(): UseQueryProductResult {
 
   const queryResult = useQuery(
     queryKeys.products.product({
-      productId,
-      source: source || PRODUCT_SOURCE.DIRECT,
-      redirect: Boolean(redirect),
-      isLogging: true,
-      deviceId
+      productId
+      // source: source || PRODUCT_SOURCE.DIRECT,
+      // redirect: Boolean(redirect),
+      // isLogging: true,
+      // deviceId
     }),
     async () => {
       const resultProduct = await fetchProduct({
