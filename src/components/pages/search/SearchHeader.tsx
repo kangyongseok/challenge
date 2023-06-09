@@ -43,15 +43,17 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
 
   const [init, setInit] = useState(true);
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
 
   const [value, setSearchValueState] = useRecoilState(searchValueState);
+
+  const [searchValue, setSearchValue] = useState(value);
+
   const [autoFocus, setSearchAutoFocusState] = useRecoilState(searchAutoFocusState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const { data: accessUser } = useQueryAccessUser();
 
-  const debouncedSearchValue = useDebounce<string>(searchValue.replace(/-/g, ' '), 200);
+  const debouncedSearchValue = useDebounce<string>(searchValue.replace(/-/g, ' '), 300);
 
   useQuery(queryKeys.products.keywordsSuggest(value), () => fetchKeywordsSuggest(value), {
     enabled: !!value,

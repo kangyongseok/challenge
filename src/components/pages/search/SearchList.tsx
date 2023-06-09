@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -68,7 +69,9 @@ function SearchList() {
     }: SuggestKeyword & {
       index: number;
     }) =>
-    () => {
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+
       logEvent(attrKeys.search.CLICK_AUTO, {
         name: attrProperty.name.SEARCH,
         type: 'KEYWORD',
@@ -112,7 +115,9 @@ function SearchList() {
     }: SuggestKeyword & {
       index: number;
     }) =>
-    () => {
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+
       logEvent(attrKeys.search.CLICK_AUTO, {
         name: attrProperty.name.SEARCH,
         type: 'CATEGORY',
@@ -139,7 +144,9 @@ function SearchList() {
 
   const handleClickBrandKeyword =
     ({ keywordBrand, brandId, categoryId, brandName, categoryName, line }: SuggestKeyword) =>
-    () => {
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+
       logEvent(attrKeys.search.CLICK_BANNERB, { name: attrProperty.name.SEARCH });
 
       if (accessUser) {
@@ -174,7 +181,9 @@ function SearchList() {
       lineIds = [],
       maxPrice
     }: KeywordItemSub) =>
-    () => {
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+
       logEvent(attrKeys.search.CLICK_RECOMMFILTER, {
         name: attrProperty.name.SEARCH,
         att: keyword

@@ -6,9 +6,13 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchKeywordsSuggest } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
 import {
   searchCategoryState,
@@ -86,12 +90,19 @@ function SearchTabPanels() {
   useEffect(() => {
     if (!router.isReady || !swiper || !tab) return;
 
-    if (tab === 'brand') {
-      swiper?.slideTo(0);
-    } else if (tab === 'category') {
-      swiper?.slideTo(2);
-    } else {
-      swiper?.slideTo(1);
+    try {
+      if (tab === 'brand') {
+        swiper?.slideTo(0);
+      } else if (tab === 'category') {
+        swiper?.slideTo(2);
+      } else {
+        swiper?.slideTo(1);
+      }
+    } catch {
+      logEvent(attrKeys.commonEvent.MINOR_SCRIPT_ERROR, {
+        name: attrProperty.name.SEARCH,
+        att: 'SLIDE_TO'
+      });
     }
   }, [tab, router.isReady, swiper]);
 
@@ -109,7 +120,14 @@ function SearchTabPanels() {
     }
 
     updateAutoHeightTimerRef.current = setTimeout(() => {
-      if (swiper) swiper?.updateAutoHeight();
+      try {
+        if (swiper) swiper?.updateAutoHeight();
+      } catch {
+        logEvent(attrKeys.commonEvent.MINOR_SCRIPT_ERROR, {
+          name: attrProperty.name.SEARCH,
+          type: 'UPDATE_AUTO_HEIGHT'
+        });
+      }
     }, 100);
   }, [category, swiper]);
 
