@@ -165,6 +165,12 @@ function SearchList() {
         line
       });
 
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.name.SEARCH,
+        title: attrProperty.title.BANNERB,
+        type: attrProperty.type.INPUT
+      });
+
       router.push(`/products/brands/${keywordBrand}`);
     };
 
