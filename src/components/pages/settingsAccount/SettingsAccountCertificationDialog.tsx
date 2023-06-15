@@ -54,13 +54,7 @@ function SettingsAccountCertificationDialog() {
 
   return (
     <Dialog open={open} onClose={() => router.back()}>
-      <Typography
-        variant="h3"
-        weight="bold"
-        customStyle={{
-          textAlign: 'center'
-        }}
-      >
+      <Typography variant="h3" weight="bold" textAlign="center">
         정산계좌를 입력하려면
         <br />
         본인인증이 필요해요.

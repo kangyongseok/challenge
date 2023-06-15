@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
 import { Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -153,7 +152,9 @@ function MypageMyInfo() {
               alignment="center"
               customStyle={{ width: 'calc(100% - 142px)', justifyContent: 'flex-end' }}
             >
-              <ElipsisText>{data}</ElipsisText>
+              <Typography color="blue" textAlign="right" noWrap>
+                {data}
+              </Typography>
               <Icon
                 name="Arrow2RightOutlined"
                 size="small"
@@ -169,17 +170,5 @@ function MypageMyInfo() {
     </Menu>
   );
 }
-
-const ElipsisText = styled(Typography)`
-  color: ${({
-    theme: {
-      palette: { secondary }
-    }
-  }) => secondary.blue.main};
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 export default MypageMyInfo;

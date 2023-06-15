@@ -139,7 +139,8 @@ function ChannelSaleRequestRefuseDialog({
         />
       </Flexbox>
       {value === '직접입력' && (
-        <TextArea onChange={handleChangeTextArea} value={reason} placeholder="취소사유 입력" />
+        // TODO 한글 composition 오동작 임시 처리, Dialog 컴포넌트 내 수정 필요
+        <TextArea onChange={handleChangeTextArea} placeholder="취소사유 입력" />
       )}
       <Flexbox
         direction="vertical"

@@ -28,7 +28,7 @@
     "@datadog/browser-rum": "^4.24.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "@mrcamelhub/camel-ui": "^0.1.71",
+    "@mrcamelhub/camel-ui": "^0.1.72",
     "@mrcamelhub/camel-ui-dialog": "^0.0.3",
     "@mrcamelhub/camel-ui-toast": "^0.0.9",
     "@react-spring/web": "^9.4.5",
