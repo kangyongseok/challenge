@@ -160,7 +160,7 @@ function BrandTabPanel() {
         <FilterSorter
           options={[
             {
-              name: '인기순',
+              name: '매물순',
               value: 'default'
             },
             {

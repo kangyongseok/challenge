@@ -88,7 +88,7 @@ function ColorTabPanel() {
       <FilterSorter
         options={[
           {
-            name: '매물 많은 순',
+            name: '매물순',
             value: 'default'
           },
           {

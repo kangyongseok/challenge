@@ -43,6 +43,7 @@ const brandFilterOptionsSelector = selector({
         newBrands = newBrands.sort((a, b) => a.name.localeCompare(b.name));
         break;
       default:
+        newBrands = newBrands.sort((a, b) => b.count - a.count);
         break;
     }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState } from 'recoil';
@@ -80,6 +80,12 @@ function ChannelSaleRequestRefuseDialog({
       }
     );
   };
+
+  useEffect(() => {
+    if (!open) {
+      setValue('');
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
