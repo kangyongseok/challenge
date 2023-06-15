@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "start": "next build && next start -p ${PORT}",
-    "build": "NODE_OPTIONS=--max-old-space-size=3500 next build",
+    "start": "next build && NODE_OPTIONS=--max-old-space-size=3072 next start -p ${PORT}",
+    "build": "next build",
     "build:types": "tsc --noEmit --incremental false --pretty",
     "lint": "next lint",
     "prettier": "prettier --write --config ./.prettierrc \"**/*.{js,ts,tsx}\"",
