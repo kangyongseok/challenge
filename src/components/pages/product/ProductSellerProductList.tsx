@@ -213,20 +213,22 @@ function ProductSellerProductList({
               )}
               <Flexbox alignment="center" gap={4}>
                 {reviewInfo?.curnScore && (
-                  <Flexbox alignment="center" gap={2}>
-                    <Icon name="StarFilled" color="#FFD911" size="small" />
+                  <>
+                    <Flexbox alignment="center" gap={2}>
+                      <Icon name="StarFilled" color="#FFD911" size="small" />
+                      <Typography variant="body2" weight="medium" color="ui60">
+                        {`${
+                          reviewInfo.curnScore.length > 1
+                            ? reviewInfo?.curnScore
+                            : `${reviewInfo?.curnScore}.0` || 0
+                        }`}{' '}
+                      </Typography>
+                    </Flexbox>
                     <Typography variant="body2" weight="medium" color="ui60">
-                      {`${
-                        reviewInfo.curnScore.length > 1
-                          ? reviewInfo?.curnScore
-                          : `${reviewInfo?.curnScore}.0` || 0
-                      }`}{' '}
+                      •
                     </Typography>
-                  </Flexbox>
+                  </>
                 )}
-                <Typography variant="body2" weight="medium" color="ui60">
-                  •
-                </Typography>
                 <Typography variant="body2" color="ui60">
                   {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
                 </Typography>
