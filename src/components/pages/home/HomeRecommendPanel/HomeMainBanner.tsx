@@ -27,7 +27,6 @@ import { loginBottomSheetState } from '@recoil/common';
 
 function HomeMainBanner() {
   const router = useRouter();
-  // const toastStack = useToastStack();
 
   const {
     theme: {
@@ -42,11 +41,6 @@ function HomeMainBanner() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  // const [exhibition, setExhibitionOpen] = useState(false);
-
-  // const { mutate } = useMutation(postSurvey);
-
-  // const deviceId = useRecoilValue(deviceIdState);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -81,52 +75,6 @@ function HomeMainBanner() {
     setOpen(true);
   };
 
-  const handleClickExhibition = () => {
-    logEvent(attrKeys.home.CLICK_BANNER, {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.BUTLER,
-      att: 'EXHIBITION'
-    });
-
-    // if (!accessUser) {
-    //   setLoginBottomSheet({
-    //     open: true,
-    //     returnUrl: '/'
-    //   });
-    //   return;
-    // }
-
-    // setExhibitionOpen(true);
-    router.push('/butler/exhibition');
-  };
-
-  // const handleClickOpenAlarm = () => {
-  //   if (LocalStorage.get(IS_CAMEL_BUTLER_EXHIBITION_ALARM)) {
-  //     toastStack({
-  //       children: '이미 신청 되었습니다.'
-  //     });
-  //     setExhibitionOpen(false);
-  //     return;
-  //   }
-  //   mutate(
-  //     {
-  //       deviceId,
-  //       surveyId: 7,
-  //       answer: 0,
-  //       options: ''
-  //     },
-  //     {
-  //       onSuccess() {
-  //         toastStack({
-  //           children: '오픈 알림 신청이 완료되었습니다.'
-  //         });
-  //         LocalStorage.set(IS_CAMEL_BUTLER_EXHIBITION_ALARM, true);
-  //         setExhibitionOpen(false);
-  //       }
-  //     }
-  //   );
-  // };
-
   return (
     <>
       <Swiper
@@ -136,25 +84,6 @@ function HomeMainBanner() {
           width: '100%'
         }}
       >
-        <SwiperSlide>
-          <Box
-            onClick={handleClickExhibition}
-            customStyle={{
-              height: 104,
-              backgroundColor: '#EEECE8'
-            }}
-          >
-            <Image
-              height={104}
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/exhibition_open_banner.png`,
-                h: 104
-              })}
-              alt="구하기 힘든 샤넬 백팩 최상급 기획전"
-              disableAspectRatio
-            />
-          </Box>
-        </SwiperSlide>
         <SwiperSlide>
           <Box
             onClick={handleClick}
@@ -217,7 +146,7 @@ function HomeMainBanner() {
             }}
           >
             {currentIndex + 1}
-            <span>/3</span>
+            <span>/2</span>
           </Typography>
         </Flexbox>
       </Swiper>
@@ -226,30 +155,6 @@ function HomeMainBanner() {
         onClose={() => setOpen(false)}
         ctaType="viewSafePaymentProducts"
       />
-      {/* <Dialog open={exhibition} onClose={() => setExhibitionOpen(false)}>
-        <Image
-          height={114}
-          src={getImageResizePath({
-            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/chanel_exhibitions.png`,
-            h: 114
-          })}
-          alt="기획전 오픈알림 샤넬 커밍순"
-          disableAspectRatio
-        />
-        <Typography weight="bold" variant="h3" customStyle={{ marginTop: 8 }}>
-          기획전이 오픈되면 알려드릴까요?
-        </Typography>
-        <Button
-          fullWidth
-          size="xlarge"
-          variant="solid"
-          brandColor="primary"
-          customStyle={{ marginTop: 32 }}
-          onClick={handleClickOpenAlarm}
-        >
-          오픈 알림받기
-        </Button>
-      </Dialog> */}
     </>
   );
 }
