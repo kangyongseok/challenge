@@ -22,9 +22,9 @@ import { convertSearchParams } from '@utils/products';
 import type { ProductsVariant } from '@typings/products';
 import {
   activeTabCodeIdState,
-  filterKeywordStateFamily,
   filterOperationInfoSelector,
   productsFilterStateFamily,
+  searchAgainKeywordStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
@@ -54,7 +54,9 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
     productsFilterStateFamily(`general-${atomParam}`)
   );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
-  const resetFilterKeywordStateFamily = useResetRecoilState(filterKeywordStateFamily(atomParam));
+  const resetSearchAgainKeywordStateFamily = useResetRecoilState(
+    searchAgainKeywordStateFamily(atomParam)
+  );
 
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXFilterHistory, {
@@ -213,7 +215,7 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
 
       if (selectedSearchOption) {
         if (selectedSearchOption.codeId === filterCodeIds.title) {
-          resetFilterKeywordStateFamily();
+          resetSearchAgainKeywordStateFamily();
         }
         const newSelectedSearchOptions = selectedSearchOptions.filter(
           ({

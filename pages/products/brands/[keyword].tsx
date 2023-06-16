@@ -45,7 +45,7 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
         <ProductsSafePaymentBanner />
         <ProductsFilter variant="brands" />
         <ProductsFilterHistory variant="brands" />
-        <ProductsStatus />
+        <ProductsStatus variant="brands" />
         <ProductsInfiniteGrid variant="brands" />
         <ProductsRelated />
       </GeneralTemplate>

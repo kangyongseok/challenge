@@ -78,6 +78,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   const [{ searchParams: baseSearchParams }, setBaseSearchParamsState] = useRecoilState(
     searchParamsStateFamily(`base-${atomParam}`)
   );
+  const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const [activeMyFilter, setActiveMyFilter] = useRecoilState(activeMyFilterState);
   const [dynamicOptions, setDynamicOptionsState] = useRecoilState(
@@ -850,6 +851,14 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       }
     }
   }, [accessUser, productsOnBoardingTrigger]);
+
+  useEffect(() => {
+    if (isFetched)
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+  }, [searchParams, isFetched]);
 
   return (
     <>

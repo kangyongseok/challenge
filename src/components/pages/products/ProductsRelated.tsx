@@ -16,8 +16,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import {
-  filterKeywordStateFamily,
   productsFilterProgressDoneState,
+  searchAgainKeywordStateFamily,
   searchParamsStateFamily
 } from '@recoil/productsFilter';
 import useDebounce from '@hooks/useDebounce';
@@ -28,8 +28,8 @@ function ProductsRelated() {
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
-  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
-  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
+  const { searchAgainKeyword } = useRecoilValue(searchAgainKeywordStateFamily(atomParam));
+  const debouncedSearchAgainKeyword = useDebounce(searchAgainKeyword, 300);
 
   const [params] = useState({
     size: 10,
@@ -67,11 +67,15 @@ function ProductsRelated() {
     () => fetchSearchRelatedProducts(params),
     {
       keepPreviousData: true,
-      enabled: isFetched && !hasProducts && progressDone && !debouncedFilterKeyword
+      enabled: isFetched && !hasProducts && progressDone && !debouncedSearchAgainKeyword
     }
   );
 
-  if (!progressDone || debouncedFilterKeyword || (!isLoading && !hasProducts && !content.length))
+  if (
+    !progressDone ||
+    debouncedSearchAgainKeyword ||
+    (!isLoading && !hasProducts && !content.length)
+  )
     return null;
 
   if (isLoading && !hasProducts) {

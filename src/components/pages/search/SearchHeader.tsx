@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { KeyboardEvent, RefObject } from 'react';
+import type { FormEvent, RefObject } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -83,39 +83,37 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
     router.back();
   };
 
-  const handleChange = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (e.key === 'Enter') {
-      logEvent(attrKeys.search.CLICK_SCOPE, { name: attrProperty.name.SEARCH });
+    logEvent(attrKeys.search.CLICK_SCOPE, { name: attrProperty.name.SEARCH });
 
-      if (!searchValue || !searchValue.trim()) {
-        logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
-        setOpen(true);
-        return;
-      }
-
-      LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
-
-      if (accessUser) {
-        updateAccessUserOnBraze({ ...accessUser, lastKeyword: searchValue });
-      }
-
-      logEvent(attrKeys.search.SUBMIT_SEARCH, {
-        name: attrProperty.name.SEARCH,
-        title: attrProperty.title.SCOPE,
-        type: attrProperty.type.INPUT,
-        keyword: searchValue
-      });
-
-      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-        name: attrProperty.name.SEARCH,
-        title: attrProperty.title.SCOPE,
-        type: attrProperty.type.INPUT
-      });
-
-      router.push(`/products/search/${searchValue}`);
+    if (!searchValue || !searchValue.trim()) {
+      logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
+      setOpen(true);
+      return;
     }
+
+    LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
+
+    if (accessUser) {
+      updateAccessUserOnBraze({ ...accessUser, lastKeyword: searchValue });
+    }
+
+    logEvent(attrKeys.search.SUBMIT_SEARCH, {
+      name: attrProperty.name.SEARCH,
+      title: attrProperty.title.SCOPE,
+      type: attrProperty.type.INPUT,
+      keyword: searchValue
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.SEARCH,
+      title: attrProperty.title.SCOPE,
+      type: attrProperty.type.INPUT
+    });
+
+    router.push(`/products/search/${searchValue}`);
   };
 
   const handleClickClear = () => {
@@ -174,51 +172,52 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
           }}
         >
           <Icon name="Arrow1BackOutlined" onClick={handleClick} />
-          <Input
-            type="search"
-            fullWidth
-            variant="solid"
-            size="large"
-            placeholder="어떤 명품을 득템해 볼까요?"
-            autoFocus={autoFocus}
-            onChange={(e) => setSearchValue(e.currentTarget.value)}
-            onKeyUp={handleChange}
-            onClick={() =>
-              logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, {
-                name: attrProperty.name.SEARCH
-              })
-            }
-            value={searchValue}
-            endAdornment={
-              searchValue ? (
-                <Icon
-                  name="DeleteCircleFilled"
-                  width={20}
-                  height={20}
-                  color="ui80"
-                  onClick={handleClickClear}
-                />
-              ) : undefined
-            }
-            customStyle={{
-              gap: 8,
-              borderColor: 'transparent',
-              '& input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-results-button, input[type="search"]::-webkit-search-results-decoration':
-                {
-                  display: 'none'
-                },
-              '& input': {
-                fontSize: h3.size,
-                letterSpacing: h3.letterSpacing,
-                lineHeight: h3.lineHeight,
-                fontWeight: h3.weight.medium
-              },
-              '& input::placeholder': {
-                fontWeight: h3.weight.regular,
-                color: common.ui60
+          <Form action="" onSubmit={handleSubmit}>
+            <Input
+              type="search"
+              fullWidth
+              variant="solid"
+              size="large"
+              placeholder="어떤 명품을 득템해 볼까요?"
+              autoFocus={autoFocus}
+              onChange={(e) => setSearchValue(e.currentTarget.value)}
+              onClick={() =>
+                logEvent(attrKeys.search.CLICK_KEYWORD_INPUT, {
+                  name: attrProperty.name.SEARCH
+                })
               }
-            }}
-          />
+              value={searchValue}
+              endAdornment={
+                searchValue ? (
+                  <Icon
+                    name="DeleteCircleFilled"
+                    width={20}
+                    height={20}
+                    color="ui80"
+                    onClick={handleClickClear}
+                  />
+                ) : undefined
+              }
+              customStyle={{
+                gap: 8,
+                borderColor: 'transparent',
+                '& input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-results-button, input[type="search"]::-webkit-search-results-decoration':
+                  {
+                    display: 'none'
+                  },
+                '& input': {
+                  fontSize: h3.size,
+                  letterSpacing: h3.letterSpacing,
+                  lineHeight: h3.lineHeight,
+                  fontWeight: h3.weight.medium
+                },
+                '& input::placeholder': {
+                  fontWeight: h3.weight.regular,
+                  color: common.ui60
+                }
+              }}
+            />
+          </Form>
         </Flexbox>
       </StyledNewSearchHeader>
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -269,6 +268,10 @@ const StyledNewSearchHeader = styled.header<{ showAppDownloadBanner: boolean; in
       }
     }) => common.uiWhite};
   }
+`;
+
+const Form = styled.form`
+  flex-grow: 1;
 `;
 
 export default SearchHeader;

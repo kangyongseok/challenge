@@ -188,17 +188,45 @@ export const closeSafePaymentBannerState = atom({
   ]
 });
 
-export const filterKeywordStateFamily = atomFamily<
+export const filterHistoryOpenStateFamily = atomFamily<
   {
     type: string;
-    filterKeyword: string;
+    open: boolean;
   },
   string
 >({
-  key: 'productsFilter/filterKeywordStateFamily',
+  key: 'productsFilter/filterHistoryOpenStateFamily',
   default: (type) => ({
     type,
-    filterKeyword: ''
+    open: false
+  })
+});
+
+export const searchAgainKeywordStateFamily = atomFamily<
+  {
+    type: string;
+    searchAgainKeyword: string;
+  },
+  string
+>({
+  key: 'productsFilter/searchAgainKeywordStateFamily',
+  default: (type) => ({
+    type,
+    searchAgainKeyword: ''
+  })
+});
+
+export const searchAgainInputOpenStateFamily = atomFamily<
+  {
+    type: string;
+    open: boolean;
+  },
+  string
+>({
+  key: 'productsFilter/searchAgainInputOpenStateFamily',
+  default: (type) => ({
+    type,
+    open: false
   })
 });
 

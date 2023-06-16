@@ -48,7 +48,7 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
         <ProductsSafePaymentBanner />
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
-        <ProductsStatus />
+        <ProductsStatus variant="search" />
         <ProductsInfiniteGrid variant="search" />
         <ProductsRelated />
       </GeneralTemplate>

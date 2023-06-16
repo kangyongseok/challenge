@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Avatar, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
+import { Avatar, Chip, Icon } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -38,38 +39,34 @@ import type {
 } from '@typings/products';
 import {
   activeMyFilterState,
-  filterKeywordStateFamily,
+  filterHistoryOpenStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
   productsFilterProgressDoneState,
   productsStatusTriggeredStateFamily,
+  searchAgainInputOpenStateFamily,
+  searchAgainKeywordStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 import { showAppDownloadBannerState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
-import useDebounce from '@hooks/useDebounce';
 
 interface ProductsFilterHistoryProps {
   variant: ProductsVariant;
 }
 
 function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
   const triggered = useReverseScrollTrigger();
 
+  const [{ open: openFilterHistory }, setFilterHistoryOpenStateFamily] = useRecoilState(
+    filterHistoryOpenStateFamily(atomParam)
+  );
   const [activeMyFilter, setActiveMyFilterState] = useRecoilState(activeMyFilterState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
-
-  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
 
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
@@ -87,7 +84,15 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
-  const resetFilterKeywordStateFamily = useResetRecoilState(filterKeywordStateFamily(atomParam));
+  const setSearchAgainInputOpenStateFamily = useSetRecoilState(
+    searchAgainInputOpenStateFamily(atomParam)
+  );
+  const setSearchAgainKeywordtateFamily = useSetRecoilState(
+    searchAgainKeywordStateFamily(atomParam)
+  );
+  const resetSearchAgainKeywordStateFamily = useResetRecoilState(
+    searchAgainKeywordStateFamily(atomParam)
+  );
 
   const [open, setOpen] = useState(false);
   const [filteredSelectedSearchOptionsHistory, setFilteredSelectedSearchOptionsHistory] = useState<
@@ -114,7 +119,9 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
       count: selectedCount,
       displayName: selectedDisplayName
     }: SelectedSearchOptionHistory) =>
-    () => {
+    (e: MouseEvent<HTMLOrSVGElement>) => {
+      e.stopPropagation();
+
       logEvent(attrKeys.products.clickFilterDelete, {
         name: attrProperty.name.productList,
         title: productFilterEventPropertyTitle[selectedCodeId],
@@ -155,7 +162,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
         );
       } else {
         if (selectedCodeId === filterCodeIds.title) {
-          resetFilterKeywordStateFamily();
+          resetSearchAgainKeywordStateFamily();
         }
         newSelectedSearchOptions = selectedSearchOptions.filter(
           ({
@@ -220,9 +227,19 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
       type,
       searchParams: newSearchParams
     }));
-    resetFilterKeywordStateFamily();
+    resetSearchAgainKeywordStateFamily();
   };
 
+  const handleClickSearchAgainFilter = (searchAgainKeyword: string) => () => {
+    setSearchAgainKeywordtateFamily(({ type }) => ({
+      type,
+      searchAgainKeyword
+    }));
+    setSearchAgainInputOpenStateFamily(({ type }) => ({
+      type,
+      open: true
+    }));
+  };
   useEffect(() => {
     const hasUnSelectedMyFilterOption = myFilterIntersectionCategorySizes.some(
       ({ categorySizeId, parentCategoryId, viewSize }) =>
@@ -256,26 +273,26 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
   ]);
 
   useEffect(() => {
-    setFilteredSelectedSearchOptionsHistory(
-      selectedSearchOptionsHistory.filter(
-        ({ id, codeId }) => !(variant === 'camel' && codeId === filterCodeIds.id && id === 5)
-      )
+    const newFilteredSelectedSearchOptionsHistory = selectedSearchOptionsHistory.filter(
+      ({ id, codeId }) => !(variant === 'camel' && codeId === filterCodeIds.id && id === 5)
     );
-  }, [variant, selectedSearchOptionsHistory]);
+    setFilteredSelectedSearchOptionsHistory(newFilteredSelectedSearchOptionsHistory);
+    setFilterHistoryOpenStateFamily(({ type }) => ({
+      type,
+      open: newFilteredSelectedSearchOptionsHistory.length > 0
+    }));
+  }, [setFilterHistoryOpenStateFamily, variant, selectedSearchOptionsHistory]);
 
   return progressDone ? (
     <>
       <Wrapper
-        show={filteredSelectedSearchOptionsHistory.length > 0 || !!debouncedFilterKeyword}
+        open={openFilterHistory}
         variant={variant}
         triggered={triggered}
         showAppDownloadBanner={showAppDownloadBanner}
         productsStatusTriggered={productsStatusTriggered}
       >
-        <List
-          show={filteredSelectedSearchOptionsHistory.length > 0 || !!debouncedFilterKeyword}
-          onScroll={handleScroll}
-        >
+        <List onScroll={handleScroll}>
           {filteredSelectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
             <FilterChip
               key={`selected-filter-options-history-${selectedSearchOptionHistory.index || 0}-${
@@ -296,8 +313,18 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
                   />
                 ) : undefined
               }
-              endIcon={<Icon name="CloseOutlined" color="ui60" />}
-              onClick={handleClickRemove(selectedSearchOptionHistory)}
+              endIcon={
+                <Icon
+                  name="CloseOutlined"
+                  color="ui60"
+                  onClick={handleClickRemove(selectedSearchOptionHistory)}
+                />
+              }
+              onClick={
+                selectedSearchOptionHistory.codeId === filterCodeIds.title
+                  ? handleClickSearchAgainFilter(selectedSearchOptionHistory.displayName)
+                  : handleClickRemove(selectedSearchOptionHistory)
+              }
             >
               {selectedSearchOptionHistory.codeId === filterCodeIds.color ? (
                 <>
@@ -331,7 +358,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
           ))}
         </List>
         <ResetButton>
-          <Icon name="RotateOutlined" color={common.ui60} onClick={handleClickReset} />
+          <Icon name="RotateOutlined" color="ui60" onClick={handleClickReset} />
         </ResetButton>
       </Wrapper>
       <Toast open={open} onClose={() => setOpen(false)}>
@@ -342,7 +369,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
 }
 
 const Wrapper = styled.section<{
-  show: boolean;
+  open: boolean;
   variant: ProductsVariant;
   showAppDownloadBanner: boolean;
   triggered: boolean;
@@ -350,8 +377,8 @@ const Wrapper = styled.section<{
 }>`
   position: sticky;
 
-  ${({ show, productsStatusTriggered }): CSSObject =>
-    !show || productsStatusTriggered
+  ${({ open, productsStatusTriggered }): CSSObject =>
+    !open || productsStatusTriggered
       ? {
           opacity: 0
         }
@@ -377,15 +404,15 @@ const Wrapper = styled.section<{
     }px)`;
   }};
 
-  ${({ show, triggered, productsStatusTriggered }): CSSObject => {
-    if (show && !triggered && productsStatusTriggered) {
+  ${({ open, triggered, productsStatusTriggered }): CSSObject => {
+    if (open && !triggered && productsStatusTriggered) {
       return {
         transform: 'translateY(-30px)',
         opacity: 0,
         pointerEvents: 'none'
       };
     }
-    if (show && triggered && productsStatusTriggered) {
+    if (open && triggered && productsStatusTriggered) {
       return {
         opacity: 1
       };
@@ -404,14 +431,14 @@ const Wrapper = styled.section<{
       palette: { common }
     }
   }) => common.bg03};
-  max-height: ${({ show }) => !show && 0};
-  padding: ${({ show }) => (show ? '12px 0' : 0)};
+  max-height: ${({ open }) => !open && 0};
+  padding: ${({ open }) => (open ? '12px 0' : 0)};
   z-index: ${({ theme }) => theme.zIndex.header - 1};
   transition: max-height 0.2s, padding-top 0.2s, padding-bottom 0.2s, opacity 0.2s, transform 0.2s,
     top 0.5s;
 `;
 
-const List = styled.div<{ show: boolean }>`
+const List = styled.div`
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;

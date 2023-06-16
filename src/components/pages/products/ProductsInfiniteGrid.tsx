@@ -42,10 +42,10 @@ import { getUtmParams } from '@utils/common';
 import type { ProductsEventProperties, ProductsVariant } from '@typings/products';
 import type { UtmParams } from '@typings/common';
 import {
-  filterKeywordStateFamily,
   prevScrollTopStateFamily,
   productsFilterProgressDoneState,
   productsFilterTotalCountStateFamily,
+  searchAgainKeywordStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
@@ -66,9 +66,9 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
+  const { searchAgainKeyword } = useRecoilValue(searchAgainKeywordStateFamily(atomParam));
 
-  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
+  const debouncedSearchAgainKeyword = useDebounce(searchAgainKeyword, 300);
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const { searchParams: searchOptionsParams } = useRecoilValue(
@@ -578,20 +578,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   }, [setPrevScrollTopState, progressDone, prevScrollTop]);
 
   useEffect(() => {
-    if (debouncedFilterKeyword) {
-      setTotalCountState(({ type }) => ({
-        type,
-        count: products.flat().length
-      }));
-    } else {
-      setTotalCountState(({ type }) => ({
-        type,
-        count: lastPage?.productTotal
-      }));
-    }
-  }, [setTotalCountState, debouncedFilterKeyword, products, lastPage?.productTotal]);
-
-  useEffect(() => {
     return () => {
       SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     };
@@ -621,7 +607,7 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     return (
       <>
         <Flexbox gap={4} direction="vertical" customStyle={{ margin: '0 20px 24px 20px' }}>
-          {variant === 'search' && keyword && !filterKeyword && (
+          {variant === 'search' && keyword && !debouncedSearchAgainKeyword && (
             <Typography weight="medium">{getViewKeyword}</Typography>
           )}
           <Typography variant="body2" color="ui60">

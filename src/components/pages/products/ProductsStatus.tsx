@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Box, Button, Flexbox, Icon, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import styled, { CSSObject } from '@emotion/styled';
 
 import LinearProgress from '@components/UI/molecules/LinearProgress';
 
@@ -13,26 +14,44 @@ import { fetchSearch } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
 import { filterCodeIds, orderFilterOptions } from '@constants/productsFilter';
-import { CATEGORY_TAGS_HEIGHT, HEADER_HEIGHT } from '@constants/common';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  CATEGORY_TAGS_HEIGHT,
+  FILTER_HISTORY_HEIGHT,
+  GENERAL_FILTER_HEIGHT,
+  HEADER_HEIGHT,
+  ID_FILTER_HEIGHT,
+  IOS_SAFE_AREA_TOP
+} from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
+import { isExtendedLayoutIOSVersion } from '@utils/common';
+
+import type { ProductsVariant } from '@typings/products';
 import {
-  filterKeywordStateFamily,
+  filterHistoryOpenStateFamily,
   productsFilterProgressDoneState,
   productsFilterStateFamily,
   productsFilterTotalCountStateFamily,
   productsStatusTriggeredStateFamily,
+  searchAgainInputOpenStateFamily,
+  searchAgainKeywordStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import { showAppDownloadBannerState } from '@recoil/common';
 import useScrollTrigger from '@hooks/useScrollTrigger';
-import useDebounce from '@hooks/useDebounce';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 function getRandomCount(minCount: number, maxCount: number) {
   return Math.floor(Math.random() * (Math.ceil(minCount) - Math.floor(maxCount)) + minCount);
 }
 
-function ProductsStatus() {
+interface ProductsStatusProps {
+  variant: ProductsVariant;
+}
+
+function ProductsStatus({ variant }: ProductsStatusProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
@@ -42,6 +61,9 @@ function ProductsStatus() {
     }
   } = useTheme();
 
+  const reverseTriggered = useReverseScrollTrigger();
+
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const { count } = useRecoilValue(productsFilterTotalCountStateFamily(`search-${atomParam}`));
   const [progressDone, setProductsFilterProgressDoneState] = useRecoilState(
@@ -51,27 +73,29 @@ function ProductsStatus() {
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
 
-  const [{ filterKeyword }, setFilterKeywordStateFamily] = useRecoilState(
-    filterKeywordStateFamily(atomParam)
+  const [{ searchAgainKeyword }, setSearchAgainKeywordStateFamily] = useRecoilState(
+    searchAgainKeywordStateFamily(atomParam)
   );
-  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
-
+  const [{ open }, setSearchAgainInputOpenStateFamily] = useRecoilState(
+    searchAgainInputOpenStateFamily(atomParam)
+  );
+  const { open: openFilterHistory } = useRecoilValue(filterHistoryOpenStateFamily(atomParam));
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
   const setSearchOptionsParamsState = useSetRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
-
-  const resetFilterKeywordStateFamily = useResetRecoilState(filterKeywordStateFamily(atomParam));
-
-  const [open, setOpen] = useState(!!filterKeyword);
-  const [isFocus, setIsFocus] = useState(false);
+  const resetSearchAgainKeywordStateFamily = useResetRecoilState(
+    searchAgainKeywordStateFamily(atomParam)
+  );
 
   const setProductsOrderFilterState = useSetRecoilState(
     productsFilterStateFamily(`order-${atomParam}`)
   );
-  const setProductsStatusTriggeredState = useSetRecoilState(
+  const [{ triggered: productsStatusTriggered }, setProductsStatusTriggeredState] = useRecoilState(
     productsStatusTriggeredStateFamily(atomParam)
   );
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const {
     data: { pages: newPages = [[0, 0, 0, 0]] } = {},
@@ -112,6 +136,7 @@ function ProductsStatus() {
   const [fetchValue, setFetchValue] = useState(0);
   const [value, setValue] = useState(0);
   const [progressCount, setProgressCount] = useState(0);
+  const [isFocus, setIsFocus] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
@@ -129,16 +154,60 @@ function ProductsStatus() {
   });
 
   const handleClickCancel = () => {
-    setOpen(false);
-    resetFilterKeywordStateFamily();
+    setSearchAgainInputOpenStateFamily(({ type }) => ({
+      type,
+      open: false
+    }));
+    resetSearchAgainKeywordStateFamily();
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    setSearchParamsState(({ type, searchParams: prevSearchParams }) => ({
+      type,
+      searchParams: { ...prevSearchParams, title: searchAgainKeyword || undefined }
+    }));
+    setSearchOptionsParamsState(({ type, searchParams: prevSearchParams }) => ({
+      type,
+      searchParams: { ...prevSearchParams, title: searchAgainKeyword || undefined }
+    }));
+
+    if (searchAgainKeyword) {
+      setSelectedSearchOptionsState(({ type, selectedSearchOptions }) => ({
+        type,
+        selectedSearchOptions: selectedSearchOptions
+          .filter(({ codeId }) => codeId !== filterCodeIds.title)
+          .concat({
+            codeId: filterCodeIds.title,
+            title: searchAgainKeyword,
+            name: searchAgainKeyword
+          })
+      }));
+    } else {
+      setSelectedSearchOptionsState(({ type, selectedSearchOptions }) => ({
+        type,
+        selectedSearchOptions: selectedSearchOptions.filter(
+          ({ codeId }) => codeId !== filterCodeIds.title
+        )
+      }));
+    }
+    if (inputRef.current) {
+      inputRef.current.blur();
+      setIsFocus(false);
+    }
+    setSearchAgainInputOpenStateFamily(({ type }) => ({
+      type,
+      open: false
+    }));
   };
 
   useEffect(() => {
     setProductsStatusTriggeredState(({ type }) => ({
       type,
-      triggered
+      triggered: isFocus ? false : triggered
     }));
-  }, [setProductsStatusTriggeredState, triggered]);
+  }, [setProductsStatusTriggeredState, isFocus, triggered]);
 
   useEffect(() => {
     if (!progressDone && isLoading) {
@@ -205,52 +274,14 @@ function ProductsStatus() {
   }, [isFetchedAfterMount, newPages]);
 
   useEffect(() => {
-    setOpen((prevState) => (!count && !debouncedFilterKeyword ? false : prevState));
-  }, [debouncedFilterKeyword, count]);
-
-  useEffect(() => {
-    setSearchParamsState(({ type, searchParams: prevSearchParams }) => ({
-      type,
-      searchParams: { ...prevSearchParams, title: debouncedFilterKeyword || undefined }
-    }));
-    setSearchOptionsParamsState(({ type, searchParams: prevSearchParams }) => ({
-      type,
-      searchParams: { ...prevSearchParams, title: debouncedFilterKeyword || undefined }
-    }));
-
-    if (debouncedFilterKeyword) {
-      setSelectedSearchOptionsState(({ type, selectedSearchOptions }) => ({
+    if (!isFocus) {
+      setSearchAgainInputOpenStateFamily(({ type }) => ({
         type,
-        selectedSearchOptions: selectedSearchOptions
-          .filter(({ codeId }) => codeId !== filterCodeIds.title)
-          .concat({
-            codeId: filterCodeIds.title,
-            title: debouncedFilterKeyword,
-            name: debouncedFilterKeyword
-          })
+        open: false
       }));
-    } else {
-      setSelectedSearchOptionsState(({ type, selectedSearchOptions }) => ({
-        type,
-        selectedSearchOptions: selectedSearchOptions.filter(
-          ({ codeId }) => codeId !== filterCodeIds.title
-        )
-      }));
+      resetSearchAgainKeywordStateFamily();
     }
-  }, [
-    setSearchParamsState,
-    setSearchOptionsParamsState,
-    setSelectedSearchOptionsState,
-    debouncedFilterKeyword
-  ]);
-
-  useEffect(() => {
-    if (isFetched && !isFocus)
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-  }, [searchParams, isFetched, isFocus]);
+  }, [setSearchAgainInputOpenStateFamily, resetSearchAgainKeywordStateFamily, isFocus]);
 
   useEffect(() => {
     return () => {
@@ -259,16 +290,19 @@ function ProductsStatus() {
   }, [setProductsFilterProgressDoneState]);
 
   return (
-    <Flexbox
-      ref={ref}
-      direction="vertical"
-      gap={4}
-      customStyle={{
-        position: 'relative',
-        padding: '12px 20px'
-      }}
-    >
-      <Flexbox alignment="center" justifyContent="space-between">
+    <>
+      <Flexbox
+        ref={ref}
+        component="section"
+        alignment="center"
+        justifyContent="space-between"
+        customStyle={{
+          position: 'relative',
+          padding: open ? 0 : '12px 20px',
+          height: open ? 0 : 'auto',
+          overflow: 'hidden'
+        }}
+      >
         {!progressDone && (
           <LinearProgress
             value={value || fetchValue}
@@ -302,13 +336,18 @@ function ProductsStatus() {
         )}
         {progressDone && (
           <Flexbox gap={12} alignment="center">
-            {(count > 0 || !!debouncedFilterKeyword) && (
+            {(count > 0 || !!searchAgainKeyword) && (
               <>
                 <Button
                   variant="inline"
                   size="small"
                   startIcon={<Icon name="SearchOutlined" />}
-                  onClick={() => setOpen(!open)}
+                  onClick={() =>
+                    setSearchAgainInputOpenStateFamily(({ type }) => ({
+                      type,
+                      open: true
+                    }))
+                  }
                   customStyle={{
                     paddingLeft: 0,
                     paddingRight: 0,
@@ -344,28 +383,33 @@ function ProductsStatus() {
         )}
       </Flexbox>
       {progressDone && open && (
-        <Flexbox
-          gap={12}
-          alignment="center"
-          customStyle={{
-            padding: '8px 0'
-          }}
+        <ReSearchInputBox
+          variant={variant}
+          showAppDownloadBanner={showAppDownloadBanner}
+          triggered={reverseTriggered}
+          productsStatusTriggered={productsStatusTriggered}
+          openFilterHistory={openFilterHistory}
         >
-          <Input
-            variant="solid"
-            fullWidth
-            startAdornment={<Icon name="SearchOutlined" />}
-            placeholder="결과 내 재검색"
-            onChange={(e) =>
-              setFilterKeywordStateFamily({
-                type: atomParam,
-                filterKeyword: e.currentTarget.value
-              })
-            }
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            value={filterKeyword}
-          />
+          <Form action="search" onSubmit={handleSubmit}>
+            <Input
+              ref={inputRef}
+              type="search"
+              autoFocus
+              variant="solid"
+              fullWidth
+              startAdornment={<Icon name="SearchOutlined" />}
+              placeholder="결과 내 재검색"
+              onChange={(e) =>
+                setSearchAgainKeywordStateFamily({
+                  type: atomParam,
+                  searchAgainKeyword: e.currentTarget.value
+                })
+              }
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              value={searchAgainKeyword}
+            />
+          </Form>
           <Typography
             onClick={handleClickCancel}
             customStyle={{
@@ -374,10 +418,108 @@ function ProductsStatus() {
           >
             취소
           </Typography>
-        </Flexbox>
+        </ReSearchInputBox>
       )}
-    </Flexbox>
+    </>
   );
 }
+
+const ReSearchInputBox = styled.section<{
+  variant?: ProductsVariant;
+  showAppDownloadBanner: boolean;
+  triggered: boolean;
+  productsStatusTriggered: boolean;
+  openFilterHistory: boolean;
+}>`
+  position: sticky;
+  ${({ productsStatusTriggered }): CSSObject =>
+    productsStatusTriggered
+      ? {
+          opacity: 0
+        }
+      : {}};
+
+  top: ${({ variant, showAppDownloadBanner, openFilterHistory }) => {
+    if (variant === 'search' && !openFilterHistory) {
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner
+          ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+          : HEADER_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+      }px)`;
+    }
+
+    if (variant === 'search' && openFilterHistory) {
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner
+          ? HEADER_HEIGHT +
+            APP_DOWNLOAD_BANNER_HEIGHT +
+            ID_FILTER_HEIGHT +
+            GENERAL_FILTER_HEIGHT +
+            FILTER_HISTORY_HEIGHT
+          : HEADER_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT + FILTER_HISTORY_HEIGHT
+      }px)`;
+    }
+
+    if (openFilterHistory) {
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner
+          ? APP_DOWNLOAD_BANNER_HEIGHT +
+            HEADER_HEIGHT +
+            CATEGORY_TAGS_HEIGHT +
+            ID_FILTER_HEIGHT +
+            GENERAL_FILTER_HEIGHT +
+            FILTER_HISTORY_HEIGHT
+          : HEADER_HEIGHT +
+            CATEGORY_TAGS_HEIGHT +
+            ID_FILTER_HEIGHT +
+            GENERAL_FILTER_HEIGHT +
+            FILTER_HISTORY_HEIGHT
+      }px)`;
+    }
+
+    return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+      showAppDownloadBanner
+        ? APP_DOWNLOAD_BANNER_HEIGHT +
+          HEADER_HEIGHT +
+          CATEGORY_TAGS_HEIGHT +
+          ID_FILTER_HEIGHT +
+          GENERAL_FILTER_HEIGHT
+        : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+    }px)`;
+  }};
+
+  ${({ triggered, productsStatusTriggered }): CSSObject => {
+    if (!triggered && productsStatusTriggered) {
+      return {
+        transform: 'translateY(-30px)',
+        opacity: 0,
+        pointerEvents: 'none'
+      };
+    }
+    if (triggered && productsStatusTriggered) {
+      return {
+        opacity: 1
+      };
+    }
+    return {};
+  }};
+
+  display: flex;
+  align-items: center;
+  padding: 8px 20px 12px;
+  gap: 12px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
+
+  z-index: ${({ theme: { zIndex } }) => zIndex.header - 1};
+  transition: top 0.5s, opacity 0.2s, transform 0.2s;
+`;
+
+const Form = styled.form`
+  flex-grow: 1;
+`;
 
 export default ProductsStatus;

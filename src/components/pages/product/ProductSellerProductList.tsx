@@ -212,7 +212,7 @@ function ProductSellerProductList({
                 </Flexbox>
               )}
               <Flexbox alignment="center" gap={4}>
-                {reviewInfo?.curnScore && (
+                {reviewInfo?.curnScore && reviewInfo?.curnScore !== '0' && (
                   <>
                     <Flexbox alignment="center" gap={2}>
                       <Icon name="StarFilled" color="#FFD911" size="small" />
@@ -221,7 +221,7 @@ function ProductSellerProductList({
                           reviewInfo.curnScore.length > 1
                             ? reviewInfo?.curnScore
                             : `${reviewInfo?.curnScore}.0` || 0
-                        }`}{' '}
+                        }`}
                       </Typography>
                     </Flexbox>
                     <Typography variant="body2" weight="medium" color="ui60">

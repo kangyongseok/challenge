@@ -33,7 +33,7 @@ function CamelProducts() {
         <ProductsSafePaymentBanner />
         <ProductsFilter variant="camel" />
         <ProductsFilterHistory variant="camel" />
-        <ProductsStatus />
+        <ProductsStatus variant="camel" />
         <ProductsInfiniteGrid variant="camel" />
         <Gap height={8} />
         <ProductsRelated />

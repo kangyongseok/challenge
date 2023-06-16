@@ -6,6 +6,7 @@ export const SEARCH_BAR_HEIGHT = 56;
 export const BOTTOM_NAVIGATION_HEIGHT = 60;
 export const ID_FILTER_HEIGHT = 60;
 export const GENERAL_FILTER_HEIGHT = 48;
+export const FILTER_HISTORY_HEIGHT = 57;
 export const CATEGORY_TAGS_HEIGHT = 39;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
 export const TAB_HEIGHT_XLARGE = 45;

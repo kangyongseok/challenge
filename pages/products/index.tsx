@@ -50,7 +50,7 @@ function Products() {
         <ProductsSafePaymentBanner />
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
-        <ProductsStatus />
+        <ProductsStatus variant="search" />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
         <ProductsRelated />

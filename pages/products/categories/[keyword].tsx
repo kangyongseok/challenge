@@ -46,7 +46,7 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
         <ProductsSafePaymentBanner />
         <ProductsFilter variant="categories" />
         <ProductsFilterHistory variant="categories" />
-        <ProductsStatus />
+        <ProductsStatus variant="categories" />
         <ProductsInfiniteGrid variant="categories" />
         <Gap height={8} />
         <ProductsRelated />
