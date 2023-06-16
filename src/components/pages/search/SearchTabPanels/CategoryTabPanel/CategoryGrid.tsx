@@ -248,6 +248,7 @@ function CategoryGrid() {
                           }/assets/images/category/ico_cate_${nameEng}_${gender.charAt(0)}.png`,
                           w: 48
                         })}
+                        round={8}
                         alt={name}
                         disableAspectRatio
                       />

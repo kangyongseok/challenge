@@ -4,6 +4,7 @@ import type {
   PageProductResult,
   Product,
   ProductDetail,
+  ProductDetailKeyword,
   ProductParams,
   ProductResult,
   RecentSearchParams,
@@ -181,7 +182,10 @@ export async function postProducts(parameter: SubmitType) {
 }
 
 export async function fetchRelatedKeywords(params: SearchRelatedKeywordsParams) {
-  const { data } = await Axios.getInstance().get(`${BASE_PATH}/searchRelatedKeywords`, { params });
+  const { data } = await Axios.getInstance().get<ProductDetailKeyword>(
+    `${BASE_PATH}/searchRelatedKeywords`,
+    { params }
+  );
 
   return data;
 }

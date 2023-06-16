@@ -2,18 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { sortBy, uniqBy } from 'lodash-es';
+import { debounce, sortBy, uniqBy } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
-import { Flexbox, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Tooltip } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
-import { Gap } from '@components/UI/atoms';
-import {
-  ProductsDynamicFilter,
-  ProductsFilterHistory,
-  ProductsGeneralFilter
-} from '@components/pages/products';
+import { ProductsGeneralFilter } from '@components/pages/products';
 
 import { logEvent } from '@library/amplitude';
 
@@ -42,7 +37,6 @@ import {
   dynamicOptionsStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
-  productFilterScrollToggleState,
   productsFilterAtomParamState,
   productsFilterProgressDoneState,
   productsFilterTotalCountStateFamily,
@@ -50,25 +44,23 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import { deviceIdState, userOnBoardingTriggerState } from '@recoil/common';
+import {
+  deviceIdState,
+  showAppDownloadBannerState,
+  userOnBoardingTriggerState
+} from '@recoil/common';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ProductsFilterProps {
   variant: ProductsVariant;
-  showDynamicFilter?: boolean;
 }
 
-function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterProps) {
-  const {
-    theme: {
-      palette: { primary }
-    }
-  } = useTheme();
-
+function ProductsFilter({ variant }: ProductsFilterProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
   const setAtomParamState = useSetRecoilState(productsFilterAtomParamState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const deviceId = useRecoilValue(deviceIdState);
   const [{ products: productsOnBoardingTrigger }, setUserOnBoardingTriggerState] = useRecoilState(
@@ -76,10 +68,6 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   );
   const [{ searchOptions: baseSearchOptions }, setBaseSearchOptionsState] = useRecoilState(
     searchOptionsStateFamily(`base-${atomParam}`)
-  );
-  const setFilterScrollToggleState = useSetRecoilState(productFilterScrollToggleState);
-  const [{ searchParams }, setSearchParamsState] = useRecoilState(
-    searchParamsStateFamily(`search-${atomParam}`)
   );
   const [{ searchParams: searchOptionsParams }, setSearchOptionsParamsState] = useRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
@@ -95,6 +83,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   const [dynamicOptions, setDynamicOptionsState] = useRecoilState(
     dynamicOptionsStateFamily(atomParam)
   );
+  const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
   const setMyFilterIntersectionCategorySizesState = useSetRecoilState(
     myFilterIntersectionCategorySizesState
   );
@@ -129,18 +118,17 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
     complete: true,
     step: -1
   });
-  const [myFilterTooltipCustomStyle, setMyFilterTooltipCustomStyle] = useState<CustomStyle>({});
   const [step1TooltipCustomStyle, setStep1TooltipCustomStyle] = useState<CustomStyle>({});
   const [step2TooltipCustomStyle, setStep2TooltipCustomStyle] = useState<CustomStyle>({});
   const [step3TooltipCustomStyle, setStep3TooltipCustomStyle] = useState<CustomStyle>({});
+  const [openOnBoarding, setOpenOnBoarding] = useState(false);
 
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
   const isUpdatedAdditionalSelectedSearchOptionsRef = useRef(false);
-  const mapFilterButtonRef = useRef<HTMLButtonElement>(null);
-  const channelFilterButtonRef = useRef<HTMLButtonElement>(null);
-  const legitFilterButtonRef = useRef<HTMLDivElement>(null);
-  const generalFilterRef = useRef<HTMLDivElement>(null);
+  const aiFilterGroupRef = useRef<HTMLDivElement>(null);
+  const camelAuthFilterRef = useRef<HTMLButtonElement>(null);
+  const mySizeFilterRef = useRef<HTMLDivElement>(null);
 
   const {
     data: {
@@ -296,7 +284,7 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
     [baseSearchParams]
   );
 
-  const handleClickMyFilterInActiveTooltip = () => {
+  const handleClickMyFilterTooltip = () => {
     logEvent(attrKeys.products.clickMyFilter, {
       name: attrProperty.name.productList,
       title: attrProperty.title.auto,
@@ -657,16 +645,16 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
 
   // TODO 추후 로직 개선
   useEffect(() => {
-    const handleClickMyFilterTooltip = () => setOpenMyFilterTooltip(false);
+    const handleClickMyFilterTooltipExclude = () => setOpenMyFilterTooltip(false);
 
     if (openMyFilterTooltip) {
-      window.addEventListener('click', handleClickMyFilterTooltip);
+      window.addEventListener('click', handleClickMyFilterTooltipExclude);
     } else {
-      window.removeEventListener('click', handleClickMyFilterTooltip);
+      window.removeEventListener('click', handleClickMyFilterTooltipExclude);
     }
 
     return () => {
-      window.removeEventListener('click', handleClickMyFilterTooltip);
+      window.removeEventListener('click', handleClickMyFilterTooltipExclude);
     };
   }, [openMyFilterTooltip]);
 
@@ -678,62 +666,175 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
   }, [setTotalCount, productTotal]);
 
   useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setOpenOnBoarding(false);
+      } else {
+        setOpenOnBoarding(true);
+      }
+
+      if (mySizeFilterRef.current) {
+        const { clientHeight } = mySizeFilterRef.current;
+        const { top } = mySizeFilterRef.current.getBoundingClientRect();
+
+        setStep1TooltipCustomStyle({
+          position: 'fixed',
+          top: top + clientHeight + 10,
+          left: 15,
+          transform: 'none',
+          height: 'fit-content'
+        });
+      }
+
+      if (aiFilterGroupRef.current) {
+        setStep2TooltipCustomStyle({
+          position: 'fixed',
+          top:
+            aiFilterGroupRef.current.getBoundingClientRect().top +
+            aiFilterGroupRef.current.clientHeight +
+            10,
+          left: aiFilterGroupRef.current.offsetLeft / 2,
+          transform: 'none',
+          height: 'fit-content',
+          '& > svg': { left: aiFilterGroupRef.current.offsetLeft + 20 }
+        });
+      }
+
+      if (camelAuthFilterRef.current) {
+        setStep3TooltipCustomStyle({
+          position: 'fixed',
+          top:
+            camelAuthFilterRef.current.getBoundingClientRect().top +
+            camelAuthFilterRef.current.clientHeight +
+            10,
+          left: 20,
+          transform: 'none',
+          height: 'fit-content'
+        });
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [accessUser, productsOnBoardingTrigger, showAppDownloadBanner]);
+
+  useEffect(() => {
+    const handleScrollAndResize = debounce(() => {
+      if (productsOnBoardingTrigger.complete) return;
+
+      if (mySizeFilterRef.current) {
+        const { clientHeight } = mySizeFilterRef.current;
+        const { top } = mySizeFilterRef.current.getBoundingClientRect();
+
+        setStep1TooltipCustomStyle({
+          position: 'fixed',
+          top: top + clientHeight + 10,
+          left: 15,
+          transform: 'none',
+          height: 'fit-content'
+        });
+      }
+
+      if (aiFilterGroupRef.current) {
+        setStep2TooltipCustomStyle({
+          position: 'fixed',
+          top:
+            aiFilterGroupRef.current.getBoundingClientRect().top +
+            aiFilterGroupRef.current.clientHeight +
+            10,
+          left: aiFilterGroupRef.current.offsetLeft / 2,
+          transform: 'none',
+          height: 'fit-content',
+          '& > svg': { left: aiFilterGroupRef.current.offsetLeft + 20 }
+        });
+      }
+
+      if (camelAuthFilterRef.current) {
+        setStep3TooltipCustomStyle({
+          position: 'fixed',
+          top:
+            camelAuthFilterRef.current.getBoundingClientRect().top +
+            camelAuthFilterRef.current.clientHeight +
+            10,
+          left: 20,
+          transform: 'none',
+          height: 'fit-content'
+        });
+      }
+
+      if (accessUser) {
+        setProductsOnBoardingTrigger(productsOnBoardingTrigger);
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }, 500);
+
+    window.addEventListener('scroll', handleScrollAndResize);
+    window.addEventListener('resize', handleScrollAndResize);
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollAndResize);
+      window.removeEventListener('resize', handleScrollAndResize);
+    };
+  }, [accessUser, productsOnBoardingTrigger, showAppDownloadBanner]);
+
+  useEffect(() => {
     if (!hasBaseSearchParams || !progressDone) return;
-    if (generalFilterRef.current) {
-      const { clientHeight } = generalFilterRef.current;
-      const { top } = generalFilterRef.current.getBoundingClientRect();
+
+    if (!window.scrollY) {
+      setOpenOnBoarding(true);
+    }
+
+    if (!productsOnBoardingTrigger.complete) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    if (mySizeFilterRef.current) {
+      const { clientHeight } = mySizeFilterRef.current;
+      const { top } = mySizeFilterRef.current.getBoundingClientRect();
 
       setStep1TooltipCustomStyle({
         position: 'fixed',
         top: top + clientHeight + 10,
-        left: 20,
+        left: 15,
         transform: 'none',
         height: 'fit-content'
       });
-
-      const myFilterButton = generalFilterRef.current.querySelector(
-        `button[data-code-id="${filterCodeIds.my}"]`
-      );
-
-      if (myFilterButton) {
-        const { clientWidth } = myFilterButton;
-        const { left } = myFilterButton.getBoundingClientRect();
-        setMyFilterTooltipCustomStyle({
-          position: 'fixed',
-          top: top + clientHeight,
-          left: left - 225 + clientWidth,
-          transform: 'none',
-          height: 'fit-content',
-          '& > svg': { left: 'auto', right: 20 }
-        });
-      }
     }
 
-    if (mapFilterButtonRef.current) {
+    if (aiFilterGroupRef.current) {
       setStep2TooltipCustomStyle({
         position: 'fixed',
         top:
-          mapFilterButtonRef.current.getBoundingClientRect().top +
-          mapFilterButtonRef.current.clientHeight +
+          aiFilterGroupRef.current.getBoundingClientRect().top +
+          aiFilterGroupRef.current.clientHeight +
           10,
-        left: 16,
+        left: aiFilterGroupRef.current.offsetLeft / 2,
         transform: 'none',
         height: 'fit-content',
-        '& > svg': { left: mapFilterButtonRef.current.offsetLeft + 10 }
+        '& > svg': { left: aiFilterGroupRef.current.offsetLeft + 20 }
       });
     }
 
-    if (channelFilterButtonRef.current) {
+    if (camelAuthFilterRef.current) {
       setStep3TooltipCustomStyle({
         position: 'fixed',
         top:
-          channelFilterButtonRef.current.getBoundingClientRect().top +
-          channelFilterButtonRef.current.clientHeight +
+          camelAuthFilterRef.current.getBoundingClientRect().top +
+          camelAuthFilterRef.current.clientHeight +
           10,
-        left: 60,
+        left: 20,
         transform: 'none',
-        height: 'fit-content',
-        '& > svg': { left: channelFilterButtonRef.current.offsetLeft - 30 }
+        height: 'fit-content'
       });
     }
 
@@ -750,167 +851,89 @@ function ProductsFilter({ variant, showDynamicFilter = false }: ProductsFilterPr
     }
   }, [accessUser, productsOnBoardingTrigger]);
 
-  useEffect(() => {
-    if (isFetched)
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-  }, [searchParams, isFetched]);
-
-  useEffect(() => {
-    if (document.querySelector('body') && accessUser) {
-      if (hasBaseSearchParams && progressDone && step > -1) {
-        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'initial';
-        // window.scrollTo({
-        //   top: 0,
-        //   behavior: 'smooth'
-        // });
-      } else {
-        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'hidden';
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      }
-    }
-    return () => {
-      if (document.querySelector('body')) {
-        (document.querySelector('body') as HTMLBodyElement).style.overflow = 'initial';
-      }
-    };
-  }, [accessUser, hasBaseSearchParams, progressDone, step]);
-
-  useEffect(() => {
-    setFilterScrollToggleState(
-      !!(hasBaseSearchParams && progressDone && (accessUser ? step > -1 : true))
-    );
-  }, [accessUser, setFilterScrollToggleState, hasBaseSearchParams, progressDone, step]);
-
   return (
     <>
-      <Gap height={8} />
       <ProductsGeneralFilter
-        ref={generalFilterRef}
-        mapFilterButtonRef={mapFilterButtonRef}
-        channelFilterButtonRef={channelFilterButtonRef}
-        legitFilterButtonRef={legitFilterButtonRef}
+        ref={mySizeFilterRef}
+        aiFilterGroupRef={aiFilterGroupRef}
+        camelAuthFilterRef={camelAuthFilterRef}
         isLoading={!hasBaseSearchParams || !progressDone}
         variant={variant}
+        openMyFilterTooltip={hasBaseSearchParams && progressDone && openMyFilterTooltip && complete}
+        onClickMyFilterTooltip={handleClickMyFilterTooltip}
       />
-      {showDynamicFilter && dynamicOptions.length > 0 && hasBaseSearchParams && progressDone && (
-        <ProductsDynamicFilter />
-      )}
-      <ProductsFilterHistory variant={variant} />
       <OnBoardingSpotlight
-        open={hasBaseSearchParams && progressDone && !complete && step === 0}
+        open={hasBaseSearchParams && progressDone && !complete && step === 0 && openOnBoarding}
         onClose={() =>
           setUserOnBoardingTriggerState((prevState) => ({
             ...prevState,
             products: { complete: false, step: 1 }
           }))
         }
-        targetRef={generalFilterRef}
-        customStyle={{ height: 100 }}
+        targetRef={mySizeFilterRef}
+        customSpotlightPosition={{
+          width: 12
+        }}
+        customStyle={{
+          borderRadius: 8
+        }}
       >
         <Tooltip
-          open={hasBaseSearchParams && progressDone && !complete && step === 0}
+          open={hasBaseSearchParams && progressDone && !complete && step === 0 && openOnBoarding}
           variant="ghost"
           brandColor="primary"
-          message={
-            <Typography
-              variant="body2"
-              weight="medium"
-              customStyle={{
-                '& > span': { position: 'relative', color: primary.main }
-              }}
-            >
-              새로워진 필터로 <span>찾으시는 조건</span>의 매물만 보세요 👀
-            </Typography>
-          }
+          message="내 사이즈만 보고싶다면 클릭!"
           triangleLeft={16}
           placement="bottom"
           customStyle={step1TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
       <OnBoardingSpotlight
-        open={hasBaseSearchParams && progressDone && !complete && step === 1}
+        open={hasBaseSearchParams && progressDone && !complete && step === 1 && openOnBoarding}
         onClose={() =>
           setUserOnBoardingTriggerState((prevState) => ({
             ...prevState,
-            products: { complete: true, step: 2 }
+            products: { complete: false, step: 2 }
           }))
         }
-        targetRef={mapFilterButtonRef}
-        customSpotlightPosition={{ top: 1, left: 1 }}
+        targetRef={aiFilterGroupRef}
+        customSpotlightPosition={{ width: 6, left: 1 }}
         customStyle={{ borderRadius: 8 }}
       >
         <Tooltip
-          open={hasBaseSearchParams && progressDone && !complete && step === 1}
+          open={hasBaseSearchParams && progressDone && !complete && step === 1 && openOnBoarding}
           variant="ghost"
           brandColor="primary"
-          message={
-            <Typography variant="body2" weight="medium" brandColor="primary">
-              당근마켓 매물도 보고, 직거래 위주로 거래하신다면 클릭!
-            </Typography>
-          }
+          message="카멜의 AI로 좋은 상태와 가격만 모아서 보여드려요!"
           triangleLeft={16}
           placement="bottom"
           customStyle={step2TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
       <OnBoardingSpotlight
-        open={hasBaseSearchParams && progressDone && !complete && step === 2}
+        open={hasBaseSearchParams && progressDone && !complete && step === 2 && openOnBoarding}
         onClose={() =>
           setUserOnBoardingTriggerState((prevState) => ({
             ...prevState,
             products: { complete: true, step: 3 }
           }))
         }
-        targetRef={channelFilterButtonRef}
-        customSpotlightPosition={{ top: 1, left: 1 }}
-        customStyle={{ borderRadius: 8, width: 68 }}
+        targetRef={camelAuthFilterRef}
+        customSpotlightPosition={{
+          left: 1
+        }}
+        customStyle={{ borderRadius: 8 }}
       >
         <Tooltip
-          open={hasBaseSearchParams && progressDone && !complete && step === 2}
+          open={hasBaseSearchParams && progressDone && !complete && step === 2 && openOnBoarding}
           variant="ghost"
           brandColor="primary"
-          message={
-            <Typography variant="body2" weight="medium" brandColor="primary">
-              안전결제할 수 있는 매물만 보고싶다면 클릭!
-            </Typography>
-          }
+          message="카멜이 인증한 판매자와 안전하게 거래해보세요."
           triangleLeft={16}
           placement="bottom"
           customStyle={step3TooltipCustomStyle}
         />
       </OnBoardingSpotlight>
-      <Tooltip
-        className="products-filter-tooltip"
-        open={hasBaseSearchParams && progressDone && openMyFilterTooltip}
-        message={
-          <Flexbox gap={8} alignment="center">
-            <Typography variant="body2" weight="medium" color="uiWhite">
-              내 사이즈만 보기가 켜져 있어요!
-            </Typography>
-            <Typography
-              variant="body2"
-              weight="medium"
-              onClick={handleClickMyFilterInActiveTooltip}
-              color="ui80"
-              customStyle={{
-                textDecoration: 'underline',
-                cursor: 'pointer'
-              }}
-            >
-              필터끄기
-            </Typography>
-          </Flexbox>
-        }
-        brandColor="black"
-        placement="bottom"
-        customStyle={myFilterTooltipCustomStyle}
-      />
     </>
   );
 }

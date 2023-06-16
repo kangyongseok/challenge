@@ -35,7 +35,7 @@ function GeneralTemplate({
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
 
-  const isAppdownBannerState = useRecoilValue(showAppDownloadBannerState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [activeViewportTrick, setActiveViewportTrickState] =
     useRecoilState(activeViewportTrickState);
 
@@ -47,7 +47,7 @@ function GeneralTemplate({
   );
 
   const paddingTopParser = () => {
-    if (!checkAgent.isMobileApp() && triggered && !hideAppDownloadBanner && isAppdownBannerState) {
+    if (!checkAgent.isMobileApp() && triggered && !hideAppDownloadBanner && showAppDownloadBanner) {
       return APP_DOWNLOAD_BANNER_HEIGHT;
     }
 

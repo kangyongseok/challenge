@@ -22,6 +22,7 @@ import {
   keywordAlertManageBottomSheetState,
   keywordAlertOffDialogOpenState
 } from '@recoil/keywordAlert';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 function ProductsKeywordAlertFab() {
   const router = useRouter();
@@ -34,6 +35,8 @@ function ProductsKeywordAlertFab() {
 
   const [open, setOpen] = useState(false);
   const [openAlarmDialog, setOpenAlarmDialog] = useState(false);
+
+  const triggered = useReverseScrollTrigger();
 
   const { data = [], isLoading } = useQuery(
     queryKeys.users.userKeywords(),
@@ -150,7 +153,7 @@ function ProductsKeywordAlertFab() {
 
   return (
     <>
-      <StyledProductsKeywordAlertFab onClick={handleClick}>
+      <StyledProductsKeywordAlertFab triggered={triggered} onClick={handleClick}>
         <Flexbox
           alignment="center"
           justifyContent="center"
@@ -283,7 +286,9 @@ function ProductsKeywordAlertFab() {
   );
 }
 
-const StyledProductsKeywordAlertFab = styled.div`
+const StyledProductsKeywordAlertFab = styled.div<{
+  triggered?: boolean;
+}>`
   position: fixed;
   left: 50%;
   bottom: ${BOTTOM_NAVIGATION_HEIGHT + 20}px;
@@ -298,7 +303,8 @@ const StyledProductsKeywordAlertFab = styled.div`
       palette: { common }
     }
   }) => common.ui20};
-  transform: translateX(-50%);
+  transform: ${({ triggered }) => (triggered ? 'translate(-50%, 0)' : 'translate(-50%, 60px)')};
+  transition: transform 0.5s;
 `;
 
 export default ProductsKeywordAlertFab;

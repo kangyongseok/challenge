@@ -17,11 +17,7 @@ import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
 import { searchValueState } from '@recoil/search';
-import {
-  productsStatusTriggeredStateFamily,
-  searchOptionsStateFamily
-} from '@recoil/productsFilter';
-import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import { searchOptionsStateFamily } from '@recoil/productsFilter';
 
 interface ProductsHeaderProps {
   variant: ProductsVariant;
@@ -45,14 +41,10 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
   const {
     searchOptions: { parentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
-  const { triggered: productsStatusTriggered } = useRecoilValue(
-    productsStatusTriggeredStateFamily(atomParam)
-  );
+
   const resetSearchValueState = useResetRecoilState(searchValueState);
 
   const [newTitle, setNewTitle] = useState('');
-
-  const triggered = useReverseScrollTrigger();
 
   const handleClickBack = useCallback(() => {
     logEvent(attrKeys.products.clickBack, {
@@ -129,7 +121,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
             placeholder="검색어를 입력해 주세요."
             readOnly
             value={(keyword || '').replace(/-/g, ' ')}
-            onClick={() => router.push({ pathname: '/search', query: { keyword } })}
+            onClick={() => router.push('/search')}
             endAdornment={
               (keyword || '').replace(/-/g, ' ') ? (
                 <Icon
@@ -172,7 +164,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
         position: 'relative'
       }}
     >
-      <Header isFixed hideLine={triggered || !productsStatusTriggered}>
+      <Header isFixed>
         <Flexbox gap={6} alignment="center">
           {variant === 'camel' && !title && <Icon name="ShieldFilled" width={20} height={20} />}
           <Typography

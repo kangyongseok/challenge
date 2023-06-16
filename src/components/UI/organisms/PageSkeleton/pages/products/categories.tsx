@@ -55,34 +55,45 @@ function CategoryProducts() {
                 ))}
               </List>
             </Wrapper>
-            <Gap height={8} />
           </Box>
-          <Box
-            customStyle={{
-              padding: '8px 0 12px'
-            }}
-          >
-            <List
-              css={{
-                paddingTop: 0,
-                minHeight: 36,
-                gap: 12
+          <Gap height={8} />
+          <Box>
+            <Flexbox
+              justifyContent="space-between"
+              customStyle={{
+                padding: '12px 20px'
               }}
             >
-              <Skeleton width={86.2} height={20} disableAspectRatio />
-              <Skeleton width={73.77} height={20} disableAspectRatio />
-              <Skeleton width={89.86} height={20} disableAspectRatio />
-            </List>
+              <Flexbox
+                gap={8}
+                customStyle={{
+                  minHeight: 36
+                }}
+              >
+                <Flexbox alignment="center" gap={4}>
+                  <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                  <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                </Flexbox>
+                <Flexbox alignment="center" gap={4}>
+                  <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                  <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                </Flexbox>
+                <Flexbox alignment="center" gap={4}>
+                  <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                  <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                </Flexbox>
+              </Flexbox>
+              <Skeleton width={59} height={32} round={8} disableAspectRatio />
+            </Flexbox>
             <List>
               {Array.from({ length: 12 }).map((_, index) => (
                 <Skeleton
                   // eslint-disable-next-line react/no-array-index-key
                   key={`products-filter-skeleton-${index}`}
-                  width={68}
+                  width={60}
                   height={36}
                   round={8}
                   disableAspectRatio
-                  customStyle={{ marginRight: index === 0 ? 4 : undefined }}
                 />
               ))}
             </List>
@@ -91,7 +102,6 @@ function CategoryProducts() {
       }
       disablePadding
     >
-      <Gap height={8} />
       <Flexbox
         justifyContent="space-between"
         customStyle={{
@@ -112,7 +122,6 @@ function CategoryProducts() {
           </Grid>
         ))}
       </Grid>
-      <Gap height={8} />
     </GeneralTemplate>
   );
 }
@@ -130,7 +139,7 @@ const Wrapper = styled.div`
 
 const List = styled.div`
   height: 100%;
-  padding: 8px 16px 0;
+  padding: 0 20px 12px;
   display: flex;
   align-items: center;
   column-gap: 8px;

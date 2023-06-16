@@ -45,33 +45,36 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
   const [open, setOpen] = useState(false);
 
   const [value, setSearchValueState] = useRecoilState(searchValueState);
-
-  const [searchValue, setSearchValue] = useState(value);
-
   const [autoFocus, setSearchAutoFocusState] = useRecoilState(searchAutoFocusState);
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+
+  const [searchValue, setSearchValue] = useState(value);
 
   const { data: accessUser } = useQueryAccessUser();
 
   const debouncedSearchValue = useDebounce<string>(searchValue.replace(/-/g, ' '), 300);
 
-  useQuery(queryKeys.products.keywordsSuggest(value), () => fetchKeywordsSuggest(value), {
-    enabled: !!value,
-    onSuccess: (response) => {
-      logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
-        name: attrProperty.name.SEARCH,
-        keyword: value,
-        count: response.length
-      });
-
-      if (response.some(({ recommFilters }) => recommFilters && recommFilters.length > 0)) {
-        logEvent(attrKeys.search.VIEW_RECOMMFILTER, {
+  useQuery(
+    queryKeys.products.keywordsSuggest(debouncedSearchValue),
+    () => fetchKeywordsSuggest(debouncedSearchValue),
+    {
+      enabled: !!debouncedSearchValue,
+      onSuccess: (response) => {
+        logEvent(attrKeys.search.LOAD_KEYWORD_AUTO, {
           name: attrProperty.name.SEARCH,
-          keyword: value
+          keyword: debouncedSearchValue,
+          count: response.length
         });
+
+        if (response.some(({ recommFilters }) => recommFilters && recommFilters.length > 0)) {
+          logEvent(attrKeys.search.VIEW_RECOMMFILTER, {
+            name: attrProperty.name.SEARCH,
+            keyword: debouncedSearchValue
+          });
+        }
       }
     }
-  });
+  );
 
   const handleClick = () => {
     logEvent(attrKeys.search.CLICK_BACK, {
@@ -86,7 +89,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
     if (e.key === 'Enter') {
       logEvent(attrKeys.search.CLICK_SCOPE, { name: attrProperty.name.SEARCH });
 
-      if (!value || !value.trim()) {
+      if (!searchValue || !searchValue.trim()) {
         logEvent(attrKeys.search.NOT_KEYWORD, { att: 'NO' });
         setOpen(true);
         return;
@@ -95,14 +98,14 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
       LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
 
       if (accessUser) {
-        updateAccessUserOnBraze({ ...accessUser, lastKeyword: value });
+        updateAccessUserOnBraze({ ...accessUser, lastKeyword: searchValue });
       }
 
       logEvent(attrKeys.search.SUBMIT_SEARCH, {
         name: attrProperty.name.SEARCH,
         title: attrProperty.title.SCOPE,
         type: attrProperty.type.INPUT,
-        keyword: value
+        keyword: searchValue
       });
 
       SessionStorage.set(sessionStorageKeys.productsEventProperties, {
@@ -111,7 +114,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
         type: attrProperty.type.INPUT
       });
 
-      router.push(`/products/search/${value}`);
+      router.push(`/products/search/${searchValue}`);
     }
   };
 

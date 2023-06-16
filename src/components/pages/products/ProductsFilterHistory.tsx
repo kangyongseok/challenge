@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import isEmpty from 'lodash-es/isEmpty';
 import { debounce } from 'lodash-es';
 import Toast from '@mrcamelhub/camel-ui-toast';
 import { Avatar, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
@@ -17,10 +17,19 @@ import {
   filterImageColorNames,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
+import {
+  APP_DOWNLOAD_BANNER_HEIGHT,
+  CATEGORY_TAGS_HEIGHT,
+  GENERAL_FILTER_HEIGHT,
+  HEADER_HEIGHT,
+  ID_FILTER_HEIGHT,
+  IOS_SAFE_AREA_TOP
+} from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
+import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type {
   ProductsVariant,
@@ -29,12 +38,17 @@ import type {
 } from '@typings/products';
 import {
   activeMyFilterState,
+  filterKeywordStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
   productsFilterProgressDoneState,
+  productsStatusTriggeredStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import { showAppDownloadBannerState } from '@recoil/common';
+import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import useDebounce from '@hooks/useDebounce';
 
 interface ProductsFilterHistoryProps {
   variant: ProductsVariant;
@@ -49,12 +63,23 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
+  const triggered = useReverseScrollTrigger();
+
   const [activeMyFilter, setActiveMyFilterState] = useRecoilState(activeMyFilterState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
+  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
+
+  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
+
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
   );
+  const { triggered: productsStatusTriggered } = useRecoilValue(
+    productsStatusTriggeredStateFamily(atomParam)
+  );
+  const myFilterIntersectionCategorySizes = useRecoilValue(myFilterIntersectionCategorySizesState);
   const setSearchOptionsParamsState = useSetRecoilState(
     searchParamsStateFamily(`searchOptions-${atomParam}`)
   );
@@ -62,7 +87,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
-  const myFilterIntersectionCategorySizes = useRecoilValue(myFilterIntersectionCategorySizesState);
+  const resetFilterKeywordStateFamily = useResetRecoilState(filterKeywordStateFamily(atomParam));
 
   const [open, setOpen] = useState(false);
   const [filteredSelectedSearchOptionsHistory, setFilteredSelectedSearchOptionsHistory] = useState<
@@ -129,6 +154,9 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
           ({ codeId }) => codeId !== selectedCodeId
         );
       } else {
+        if (selectedCodeId === filterCodeIds.title) {
+          resetFilterKeywordStateFamily();
+        }
         newSelectedSearchOptions = selectedSearchOptions.filter(
           ({
             id = 0,
@@ -192,6 +220,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
       type,
       searchParams: newSearchParams
     }));
+    resetFilterKeywordStateFamily();
   };
 
   useEffect(() => {
@@ -236,16 +265,38 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
 
   return progressDone ? (
     <>
-      <Wrapper show={filteredSelectedSearchOptionsHistory.length > 0}>
-        <List show={filteredSelectedSearchOptionsHistory.length > 0} onScroll={handleScroll}>
+      <Wrapper
+        show={filteredSelectedSearchOptionsHistory.length > 0 || !!debouncedFilterKeyword}
+        variant={variant}
+        triggered={triggered}
+        showAppDownloadBanner={showAppDownloadBanner}
+        productsStatusTriggered={productsStatusTriggered}
+      >
+        <List
+          show={filteredSelectedSearchOptionsHistory.length > 0 || !!debouncedFilterKeyword}
+          onScroll={handleScroll}
+        >
           {filteredSelectedSearchOptionsHistory.map((selectedSearchOptionHistory) => (
             <FilterChip
               key={`selected-filter-options-history-${selectedSearchOptionHistory.index || 0}-${
                 selectedSearchOptionHistory.displayName
               }`}
               weight="regular"
-              endIcon={<Icon name="CloseOutlined" />}
-              isRound={false}
+              startIcon={
+                selectedSearchOptionHistory.codeId === filterCodeIds.title ? (
+                  <Icon
+                    name="SearchOutlined"
+                    width={20}
+                    height={20}
+                    color="ui60"
+                    customStyle={{
+                      width: '20px !important',
+                      height: '20px !important'
+                    }}
+                  />
+                ) : undefined
+              }
+              endIcon={<Icon name="CloseOutlined" color="ui60" />}
               onClick={handleClickRemove(selectedSearchOptionHistory)}
             >
               {selectedSearchOptionHistory.codeId === filterCodeIds.color ? (
@@ -290,34 +341,86 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
   ) : null;
 }
 
-const Wrapper = styled.section<{ show: boolean }>`
-  position: relative;
-  border-top: ${({
+const Wrapper = styled.section<{
+  show: boolean;
+  variant: ProductsVariant;
+  showAppDownloadBanner: boolean;
+  triggered: boolean;
+  productsStatusTriggered: boolean;
+}>`
+  position: sticky;
+
+  ${({ show, productsStatusTriggered }): CSSObject =>
+    !show || productsStatusTriggered
+      ? {
+          opacity: 0
+        }
+      : {}};
+
+  top: ${({ variant, showAppDownloadBanner }) => {
+    if (variant === 'search') {
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner
+          ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+          : HEADER_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+      }px)`;
+    }
+
+    return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+      showAppDownloadBanner
+        ? APP_DOWNLOAD_BANNER_HEIGHT +
+          HEADER_HEIGHT +
+          CATEGORY_TAGS_HEIGHT +
+          ID_FILTER_HEIGHT +
+          GENERAL_FILTER_HEIGHT
+        : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT + ID_FILTER_HEIGHT + GENERAL_FILTER_HEIGHT
+    }px)`;
+  }};
+
+  ${({ show, triggered, productsStatusTriggered }): CSSObject => {
+    if (show && !triggered && productsStatusTriggered) {
+      return {
+        transform: 'translateY(-30px)',
+        opacity: 0,
+        pointerEvents: 'none'
+      };
+    }
+    if (show && triggered && productsStatusTriggered) {
+      return {
+        opacity: 1
+      };
+    }
+    return {};
+  }};
+
+  border-top: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.line01};
+  background-color: ${({
     theme: {
       palette: { common }
-    },
-    show
-  }) => show && `2px solid ${common.ui95}`};
-  background-color: #f5f6f7;
-  opacity: ${({ show }) => Number(show)};
+    }
+  }) => common.bg03};
   max-height: ${({ show }) => !show && 0};
-  padding: ${({ show }) => (show ? '8px 0' : 0)};
-  transition-property: max-height, padding-top, padding-bottom;
-  transition-duration: 0.2s;
+  padding: ${({ show }) => (show ? '12px 0' : 0)};
+  z-index: ${({ theme }) => theme.zIndex.header - 1};
+  transition: max-height 0.2s, padding-top 0.2s, padding-bottom 0.2s, opacity 0.2s, transform 0.2s,
+    top 0.5s;
 `;
 
 const List = styled.div<{ show: boolean }>`
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  padding: 0 62px 0 16px;
+  padding: 0 62px 0 20px;
   column-gap: 6px;
   overflow-x: auto;
 `;
 
 const FilterChip = styled(Chip)`
-  border-color: ${({ theme }) => theme.palette.common.ui90};
-  gap: 2px;
   white-space: nowrap;
 
   & > svg {

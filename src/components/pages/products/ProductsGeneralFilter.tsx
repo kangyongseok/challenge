@@ -1,12 +1,22 @@
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import type { MouseEvent, MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import sortBy from 'lodash-es/sortBy';
 import { useQuery } from '@tanstack/react-query';
 import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import {
+  Box,
+  Button,
+  CheckboxGroup,
+  Flexbox,
+  Icon,
+  Skeleton,
+  Tooltip,
+  Typography,
+  useTheme
+} from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { SearchParams } from '@dto/product';
@@ -17,22 +27,19 @@ import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import {
-  defaultIdFilterOptionIds,
   filterCodeIds,
   filterCodes,
   filterGenders,
   generalFilterOptions,
   idFilterIds,
-  idFilterOptions,
   legitIdFilterOptionIds,
-  productDynamicOptionCodeType,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
 import {
   APP_DOWNLOAD_BANNER_HEIGHT,
   CATEGORY_TAGS_HEIGHT,
-  GENERAL_FILTER_HEIGHT,
   HEADER_HEIGHT,
+  ID_FILTER_HEIGHT,
   IOS_SAFE_AREA_TOP
 } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
@@ -45,10 +52,8 @@ import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 import {
   activeMyFilterState,
   activeTabCodeIdState,
-  dynamicOptionsStateFamily,
   filterOperationInfoSelector,
   myFilterIntersectionCategorySizesState,
-  productFilterScrollToggleState,
   productsFilterProgressDoneState,
   productsFilterStateFamily,
   productsStatusTriggeredStateFamily,
@@ -56,24 +61,33 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
-import { showAppDownloadBannerState } from '@recoil/common';
+import { showAppDownloadBannerState, userOnBoardingTriggerState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ProductsGeneralFilterProps {
-  mapFilterButtonRef: MutableRefObject<HTMLButtonElement | null>;
-  legitFilterButtonRef: MutableRefObject<HTMLDivElement | null>;
-  channelFilterButtonRef: MutableRefObject<HTMLButtonElement | null>;
+  aiFilterGroupRef: MutableRefObject<HTMLDivElement | null>;
+  camelAuthFilterRef: MutableRefObject<HTMLButtonElement | null>;
   isLoading?: boolean;
   variant: ProductsVariant;
+  openMyFilterTooltip: boolean;
+  onClickMyFilterTooltip: () => void;
 }
 
 const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterProps>(
   function ProductsGeneralFilter(
-    { channelFilterButtonRef, mapFilterButtonRef, legitFilterButtonRef, isLoading = true, variant },
+    {
+      camelAuthFilterRef,
+      aiFilterGroupRef,
+      isLoading = true,
+      variant,
+      openMyFilterTooltip,
+      onClickMyFilterTooltip
+    },
     ref
   ) {
     const router = useRouter();
+    const { keyword, parentIds, subParentIds } = router.query;
 
     const {
       theme: {
@@ -93,7 +107,9 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     const setSearchOptionsParamsState = useSetRecoilState(
       searchParamsStateFamily(`searchOptions-${atomParam}`)
     );
-    const filterScrollToggleState = useRecoilValue(productFilterScrollToggleState);
+    const {
+      products: { complete, step }
+    } = useRecoilValue(userOnBoardingTriggerState);
     const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
       selectedSearchOptionsStateFamily(`active-${atomParam}`)
     );
@@ -117,10 +133,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     const setProductsFilterState = useSetRecoilState(
       productsFilterStateFamily(`general-${atomParam}`)
     );
-    const dynamicOptions = useRecoilValue(dynamicOptionsStateFamily(atomParam));
-    const setProductsLegitFilterState = useSetRecoilState(
-      productsFilterStateFamily(`legit-${atomParam}`)
-    );
+
     const setActiveTabCodeIdState = useSetRecoilState(activeTabCodeIdState);
 
     const { data: accessUser } = useQueryAccessUser();
@@ -134,28 +147,17 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       enabled: !!accessUser
     });
 
-    const triggered = useReverseScrollTrigger(filterScrollToggleState);
+    const triggered = useReverseScrollTrigger();
 
     const [open, setOpen] = useState(false);
     const [activeToastOpen, setActiveToastOpen] = useState(false);
     const [inactiveToastOpen, setInActiveToastOpen] = useState(false);
+    const [showMySizeFilter, setShowMySizeFilter] = useState(false);
     const [selectedSearchOptionsHistoryCount, setSelectedSearchOptionsHistoryCount] = useState(0);
 
     const extendsGeneralFilterOptions = useMemo(
       () =>
         generalFilterOptions[variant]
-          // 다이나믹 필터에 가격필터가 없을 경우에만 시세이하 필터 노출
-          .filter(
-            (option) =>
-              !(
-                option.codeId === filterCodeIds.id &&
-                option.id === idFilterIds.lowPrice &&
-                dynamicOptions.length > 0 &&
-                dynamicOptions.some(
-                  (dynamicOption) => dynamicOption.codeType === productDynamicOptionCodeType.price
-                )
-              )
-          )
           .filter(({ codeId }) => {
             if (codeId === filterCodeIds.my) {
               return accessUser && (tops.length || bottoms.length || shoes.length);
@@ -188,18 +190,26 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                   ).length
             };
           }),
-      [
-        variant,
-        dynamicOptions,
-        accessUser,
-        tops.length,
-        bottoms.length,
-        shoes.length,
-        selectedSearchOptions
-      ]
+      [variant, accessUser, tops.length, bottoms.length, shoes.length, selectedSearchOptions]
     );
 
     const handleClickMyFilter = useCallback(() => {
+      if (!accessUser) {
+        toastStack({
+          children: '로그인이 필요해요',
+          action: {
+            text: '로그인하기',
+            onClick: () => {
+              logEvent(attrKeys.products.clickLogin, {
+                name: attrProperty.name.filterMapToast
+              });
+              router.push({ pathname: '/login' });
+            }
+          }
+        });
+        return;
+      }
+
       if (!activeMyFilter && !myFilterIntersectionCategorySizes.length) {
         setOpen(true);
         return;
@@ -303,16 +313,19 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       }));
       setActiveMyFilterState(!activeMyFilter);
     }, [
+      accessUser,
       activeMyFilter,
       baseSearchOptions,
       baseSearchParams,
       gender,
       myFilterIntersectionCategorySizes,
+      router,
       selectedSearchOptions,
       setActiveMyFilterState,
       setSearchOptionsParamsState,
       setSearchParamsState,
       setSelectedSearchOptionsState,
+      toastStack,
       variant
     ]);
 
@@ -399,17 +412,6 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         setSearchParamsState,
         setSelectedSearchOptionsState
       ]
-    );
-
-    const handleClickLegitFilter = useCallback(
-      (e: MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-
-        if (isLoading) return;
-
-        setProductsLegitFilterState(({ type }) => ({ type, open: true }));
-      },
-      [isLoading, setProductsLegitFilterState]
     );
 
     const handleClickFilterOption = useCallback(
@@ -546,184 +548,268 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       );
     }, [selectedSearchOptionsHistory]);
 
+    useEffect(() => {
+      let newShowMySizeFilter = false;
+
+      if (variant === 'categories') {
+        newShowMySizeFilter = ['아우터', '상의', '하의', '원피스', '기타의류', '신발'].includes(
+          String(keyword)
+        );
+      } else if (variant === 'brands' || variant === 'camel') {
+        newShowMySizeFilter =
+          (!parentIds && !subParentIds) || [119, 97, 104, 282, 283, 14].includes(Number(parentIds));
+      } else if (variant === 'search') {
+        newShowMySizeFilter =
+          baseSearchOptions?.parentCategories?.some(({ id }) =>
+            [119, 97, 104, 282, 283, 14].includes(id)
+          ) || false;
+      }
+
+      if (!newShowMySizeFilter) {
+        newShowMySizeFilter = !complete && !step;
+      }
+
+      setShowMySizeFilter(newShowMySizeFilter);
+    }, [variant, keyword, parentIds, subParentIds, baseSearchOptions, complete, step]);
+
     return (
       <>
-        <StyledGeneralFilter
+        <StyledGeneralFilter variant={variant} showAppDownloadBanner={showAppDownloadBanner}>
+          <Box
+            customStyle={{
+              position: 'relative'
+            }}
+          >
+            <Wrapper>
+              <Flexbox
+                gap={8}
+                customStyle={{
+                  minHeight: 36
+                }}
+              >
+                {isLoading && (
+                  <>
+                    <Flexbox alignment="center" gap={4}>
+                      <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                      <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                    </Flexbox>
+                    <Flexbox alignment="center" gap={4}>
+                      <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                      <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                    </Flexbox>
+                    <Flexbox alignment="center" gap={4}>
+                      <Skeleton width={20} height={20} round="50%" disableAspectRatio />
+                      <Skeleton width={50} height={20} round={8} disableAspectRatio />
+                    </Flexbox>
+                  </>
+                )}
+                {!isLoading && (
+                  <>
+                    {showMySizeFilter && (
+                      <Box
+                        customStyle={{
+                          '& > div': {
+                            display: 'flex',
+                            height: '100%'
+                          }
+                        }}
+                      >
+                        <Tooltip
+                          open={openMyFilterTooltip}
+                          message={
+                            <Flexbox gap={8} alignment="center">
+                              <Typography variant="body2" weight="medium" color="uiWhite">
+                                내 사이즈만 보기가 켜져 있어요!
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                weight="medium"
+                                onClick={onClickMyFilterTooltip}
+                                color="ui80"
+                                customStyle={{
+                                  textDecoration: 'underline',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                필터끄기
+                              </Typography>
+                            </Flexbox>
+                          }
+                          triangleLeft={20}
+                          customStyle={{
+                            top: 20,
+                            left: 110,
+                            height: 'fit-content'
+                          }}
+                        >
+                          <CheckboxGroup
+                            ref={ref}
+                            isRound={false}
+                            value={filterCodeIds.my}
+                            text="내 사이즈"
+                            checked={activeMyFilter || (!complete && !step)}
+                            onChange={handleClickMyFilter}
+                            customStyle={{
+                              fontFamily: 'NanumSquareNeo',
+                              fontSize: 13,
+                              fontWeight: 700
+                            }}
+                          />
+                        </Tooltip>
+                      </Box>
+                    )}
+                    <Flexbox ref={aiFilterGroupRef} gap={8}>
+                      <CheckboxGroup
+                        isRound={false}
+                        text="새상품급"
+                        value={idFilterIds.new}
+                        checked={
+                          (searchParams.idFilterIds || []).includes(idFilterIds.new) ||
+                          (!complete && step === 1)
+                        }
+                        onChange={handleClickIdFilterOption(idFilterIds.new, '새상품급')}
+                        customStyle={{
+                          fontFamily: 'NanumSquareNeo',
+                          fontSize: 13,
+                          fontWeight: 700
+                        }}
+                      />
+                      <CheckboxGroup
+                        isRound={false}
+                        text="시세이하"
+                        value={idFilterIds.lowPrice}
+                        checked={
+                          (searchParams.idFilterIds || []).includes(idFilterIds.lowPrice) ||
+                          (!complete && step === 1)
+                        }
+                        onChange={handleClickIdFilterOption(idFilterIds.lowPrice, '새상품급')}
+                        customStyle={{
+                          fontFamily: 'NanumSquareNeo',
+                          fontSize: 13,
+                          fontWeight: 700
+                        }}
+                      />
+                    </Flexbox>
+                  </>
+                )}
+              </Flexbox>
+              <Box
+                onClick={handleClickOpenFilter}
+                customStyle={{
+                  position: 'relative'
+                }}
+              >
+                {isLoading ? (
+                  <Skeleton width={59} height={32} round={8} disableAspectRatio />
+                ) : (
+                  <Button
+                    variant="solid"
+                    brandColor="black"
+                    startIcon={<Icon name="FilterFilled" />}
+                    size="small"
+                    customStyle={{
+                      minWidth: 36
+                    }}
+                  >
+                    필터
+                  </Button>
+                )}
+                {!isLoading && selectedSearchOptionsHistoryCount > 0 && (
+                  <Badge variant="small2" weight="medium">
+                    {selectedSearchOptionsHistoryCount}
+                  </Badge>
+                )}
+              </Box>
+            </Wrapper>
+          </Box>
+        </StyledGeneralFilter>
+        <GeneralFilterList
           variant={variant}
           showAppDownloadBanner={showAppDownloadBanner}
           triggered={triggered}
           productsStatusTriggered={productsStatusTriggered}
         >
-          <Box
-            customStyle={{
-              minHeight: GENERAL_FILTER_HEIGHT,
-              position: 'relative'
-            }}
+          <FilterButton
+            ref={camelAuthFilterRef}
+            variant="ghost"
+            brandColor="gray"
+            isLoading={isLoading}
+            disabled={isLoading}
+            onClick={handleClickIdFilterOption(idFilterIds.auth, '카멜인증')}
+            active={
+              (progressDone && (searchParams.idFilterIds || []).includes(idFilterIds.auth)) ||
+              (!complete && step === 2)
+            }
           >
-            <Wrapper ref={ref}>
-              <Flexbox
-                gap={12}
-                alignment="center"
-                customStyle={{ padding: '0 16px', minHeight: 36, overflowX: 'auto' }}
+            <Typography
+              variant="body1"
+              weight="medium"
+              customStyle={{
+                visibility: isLoading ? 'hidden' : 'visible',
+                color: 'inherit'
+              }}
+            >
+              카멜인증
+            </Typography>
+          </FilterButton>
+          {extendsGeneralFilterOptions.map(({ codeId, name, count }) => {
+            const active =
+              (filterCodeIds.map === codeId &&
+                selectedSearchOptions.some(
+                  (selectedSearchOption) =>
+                    selectedSearchOption.codeId === codeId && !!selectedSearchOption.distance
+                )) ||
+              (filterCodeIds.my === codeId && activeMyFilter) ||
+              (filterCodeIds.gender === codeId &&
+                selectedSearchOptions.some(
+                  (selectedSearchOption) => selectedSearchOption.codeId === filterCodeIds.gender
+                )) ||
+              (filterCodeIds.safePayment === codeId &&
+                selectedSearchOptions.some((option) => option.id === idFilterIds.safePayment)) ||
+              count > 0;
+
+            return (
+              <FilterButton
+                key={`filter-option-button-${codeId}`}
+                variant="ghost"
+                brandColor="gray"
+                isLoading={isLoading}
+                disabled={isLoading}
+                onClick={handleClickFilterOption(codeId, undefined, name)}
+                active={progressDone && active}
+                data-code-id={codeId}
+                endIcon={
+                  ![
+                    filterCodeIds.map,
+                    filterCodeIds.id,
+                    filterCodeIds.my,
+                    filterCodeIds.safePayment
+                  ].includes(codeId) ? (
+                    <Icon
+                      name="DropdownFilled"
+                      viewBox="0 0 12 24"
+                      width="10px"
+                      height="20px"
+                      visibility={isLoading ? 'hidden' : 'visible'}
+                      color={active ? primary.light : common.ui60}
+                    />
+                  ) : undefined
+                }
               >
-                {idFilterOptions
-                  .filter(({ id }) => defaultIdFilterOptionIds.includes(id))
-                  .map(({ id, name }, index) => (
-                    <IdFilterButton
-                      key={`id-filter-option-button-${id}`}
-                      ref={id === idFilterIds.legitAll ? legitFilterButtonRef : undefined}
-                      isLoading={isLoading}
-                      onClick={handleClickIdFilterOption(id, name)}
-                    >
-                      <Icon
-                        name={`CheckboxChecked${
-                          (searchParams.idFilterIds || []).includes(id) ? 'Filled' : 'Outlined'
-                        }`}
-                        width={20}
-                        height={20}
-                        visibility={isLoading ? 'hidden' : 'visible'}
-                        color={
-                          (searchParams.idFilterIds || []).includes(id)
-                            ? primary.light
-                            : common.ui80
-                        }
-                      />
-                      <Flexbox
-                        alignment="center"
-                        gap={4}
-                        onClick={
-                          legitIdFilterOptionIds.includes(id) ? handleClickLegitFilter : undefined
-                        }
-                      >
-                        <Typography
-                          variant="body1"
-                          weight={index === 0 ? 'bold' : 'regular'}
-                          customStyle={{
-                            visibility: isLoading ? 'hidden' : 'visible',
-                            color: 'inherit'
-                          }}
-                        >
-                          {!(searchParams.idFilterIds || []).includes(id) &&
-                          legitIdFilterOptionIds.includes(id)
-                            ? '사진감정'
-                            : name}
-                        </Typography>
-                        {legitIdFilterOptionIds.includes(id) && (
-                          <Icon
-                            name="DropdownFilled"
-                            viewBox="0 0 12 24"
-                            width="10px"
-                            height="20px"
-                            visibility={isLoading ? 'hidden' : 'visible'}
-                            color={common.ui60}
-                          />
-                        )}
-                      </Flexbox>
-                    </IdFilterButton>
-                  ))}
-              </Flexbox>
-              <GeneralFilterList>
-                <Box
-                  onClick={handleClickOpenFilter}
+                <Typography
+                  variant="body1"
+                  weight="medium"
                   customStyle={{
-                    position: 'relative',
-                    marginRight: 4
+                    visibility: isLoading ? 'hidden' : 'visible',
+                    color: 'inherit'
                   }}
                 >
-                  {isLoading ? (
-                    <Skeleton width={68} height={36} round={8} disableAspectRatio />
-                  ) : (
-                    <Button
-                      brandColor={selectedSearchOptionsHistoryCount > 0 ? 'primary' : 'black'}
-                      size="medium"
-                      startIcon={<Icon name="FilterFilled" />}
-                      customStyle={{
-                        minWidth: 36
-                      }}
-                    />
-                  )}
-                  {!isLoading && selectedSearchOptionsHistoryCount > 0 && (
-                    <Badge variant="small2" weight="medium">
-                      {selectedSearchOptionsHistoryCount}
-                    </Badge>
-                  )}
-                </Box>
-                {extendsGeneralFilterOptions.map(({ codeId, id, name, count }) => {
-                  const active =
-                    (filterCodeIds.map === codeId &&
-                      selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === codeId && !!selectedSearchOption.distance
-                      )) ||
-                    (filterCodeIds.my === codeId && activeMyFilter) ||
-                    (filterCodeIds.id === codeId &&
-                      selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === codeId && selectedSearchOption.id === id
-                      )) ||
-                    (filterCodeIds.gender === codeId &&
-                      selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === filterCodeIds.gender
-                      )) ||
-                    (filterCodeIds.safePayment === codeId &&
-                      selectedSearchOptions.some(
-                        (option) => option.id === idFilterIds.safePayment
-                      )) ||
-                    count > 0;
-
-                  const getRef = () => {
-                    if (filterCodeIds.map === codeId) return mapFilterButtonRef;
-                    if (filterCodeIds.safePayment === codeId) return channelFilterButtonRef;
-                    return undefined;
-                  };
-
-                  return (
-                    <FilterButton
-                      key={`filter-option-button-${codeId}`}
-                      ref={getRef() || undefined}
-                      variant="ghost"
-                      brandColor="black"
-                      isLoading={isLoading}
-                      disabled={isLoading}
-                      onClick={handleClickFilterOption(codeId, id, name)}
-                      active={progressDone && active}
-                      data-code-id={codeId}
-                      endIcon={
-                        ![
-                          filterCodeIds.map,
-                          filterCodeIds.id,
-                          filterCodeIds.my,
-                          filterCodeIds.safePayment
-                        ].includes(codeId) ? (
-                          <Icon
-                            name="DropdownFilled"
-                            viewBox="0 0 12 24"
-                            width="10px"
-                            height="20px"
-                            visibility={isLoading ? 'hidden' : 'visible'}
-                            color={active ? primary.light : common.ui60}
-                          />
-                        ) : undefined
-                      }
-                    >
-                      <Typography
-                        variant="body1"
-                        weight="medium"
-                        customStyle={{
-                          visibility: isLoading ? 'hidden' : 'visible',
-                          color: 'inherit'
-                        }}
-                      >
-                        {`${name}${count > 0 ? ` ${count}` : ''}`}
-                      </Typography>
-                    </FilterButton>
-                  );
-                })}
-              </GeneralFilterList>
-            </Wrapper>
-          </Box>
-        </StyledGeneralFilter>
+                  {`${name}${count > 0 ? ` ${count}` : ''}`}
+                </Typography>
+              </FilterButton>
+            );
+          })}
+        </GeneralFilterList>
         <Toast open={open} onClose={() => setOpen(false)}>
           필터 설정에 일치하는 중고매물이 없습니다😭
         </Toast>
@@ -741,16 +827,8 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
 const StyledGeneralFilter = styled.section<{
   variant?: ProductsVariant;
   showAppDownloadBanner: boolean;
-  triggered?: boolean;
-  productsStatusTriggered?: boolean;
 }>`
   position: sticky;
-  ${({ productsStatusTriggered }): CSSObject =>
-    productsStatusTriggered
-      ? {
-          opacity: 0
-        }
-      : {}};
 
   top: ${({ variant, showAppDownloadBanner }) => {
     if (variant === 'search') {
@@ -763,6 +841,67 @@ const StyledGeneralFilter = styled.section<{
       showAppDownloadBanner
         ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT
         : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT
+    }px)`;
+  }};
+
+  z-index: ${({ theme: { zIndex } }) => zIndex.header - 1};
+  transition: top 0.5s, opacity 0.2s, transform 0.2s;
+`;
+
+const Wrapper = styled(Flexbox)`
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
+  z-index: ${({ theme }) => theme.zIndex.header - 1};
+  width: 100%;
+`;
+
+const GeneralFilterList = styled.div<{
+  variant?: ProductsVariant;
+  showAppDownloadBanner: boolean;
+  triggered?: boolean;
+  productsStatusTriggered?: boolean;
+}>`
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  column-gap: 8px;
+  padding: 0 20px 12px;
+  min-height: 26px;
+  overflow-x: auto;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
+
+  position: sticky;
+  ${({ productsStatusTriggered }): CSSObject =>
+    productsStatusTriggered
+      ? {
+          opacity: 0
+        }
+      : {}};
+
+  top: ${({ variant, showAppDownloadBanner }) => {
+    if (variant === 'search') {
+      return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+        showAppDownloadBanner
+          ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT + ID_FILTER_HEIGHT
+          : HEADER_HEIGHT + ID_FILTER_HEIGHT
+      }px)`;
+    }
+
+    return `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
+      showAppDownloadBanner
+        ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT + ID_FILTER_HEIGHT
+        : HEADER_HEIGHT + CATEGORY_TAGS_HEIGHT + ID_FILTER_HEIGHT
     }px)`;
   }};
 
@@ -782,72 +921,8 @@ const StyledGeneralFilter = styled.section<{
     return {};
   }};
 
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        palette: { common }
-      }
-    }) => common.ui95};
   z-index: ${({ theme: { zIndex } }) => zIndex.header - 1};
   transition: top 0.5s, opacity 0.2s, transform 0.2s;
-`;
-
-const Wrapper = styled.div`
-  padding: 8px 0 12px;
-  background-color: ${({ theme }) => theme.palette.common.uiWhite};
-  z-index: ${({ theme }) => theme.zIndex.header - 1};
-  width: 100%;
-`;
-
-const IdFilterButton = styled.div<{ isLoading?: boolean }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 8px 0;
-  column-gap: 4px;
-  background-color: ${({ isLoading, theme: { palette } }) =>
-    isLoading ? palette.common.ui90 : 'inherit'};
-  white-space: nowrap;
-  cursor: pointer;
-
-  ${({
-    theme: {
-      palette: { common }
-    },
-    isLoading
-  }) =>
-    isLoading && {
-      '&:after': {
-        content: '""',
-        top: 0,
-        left: 0,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        background: `linear-gradient(
-      -45deg,
-      ${common.ui95} 30%,
-      transparent 50%,
-      ${common.ui95} 70%
-    )`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '350% 350%',
-        animation: 'wave 1.2s ease-in-out infinite',
-        animationDelay: '-0.2s',
-        opacity: 0.6
-      }
-    }};
-`;
-
-const GeneralFilterList = styled.div`
-  display: grid;
-  align-items: center;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  column-gap: 8px;
-  padding: 8px 16px 0;
-  min-height: 26px;
-  overflow-x: auto;
 `;
 
 const FilterButton = styled(Button)<{ active?: boolean; isLoading?: boolean }>`
@@ -856,8 +931,20 @@ const FilterButton = styled(Button)<{ active?: boolean; isLoading?: boolean }>`
   align-items: center;
   row-gap: 2px;
   white-space: nowrap;
-  color: ${({ active, theme: { palette } }) => active && palette.primary.light};
-  background-color: ${({ active, theme: { palette } }) => active && palette.primary.highlight};
+  ${({
+    theme: {
+      palette: { primary }
+    },
+    active
+  }): CSSObject =>
+    active
+      ? {
+          color: primary.light,
+          '& *': {
+            fontWeight: 700
+          }
+        }
+      : {}};
   overflow: hidden;
 
   ${({
@@ -912,16 +999,22 @@ const Badge = styled(Typography)`
   width: 16px;
   height: 16px;
   border-radius: 50%;
+  border: 1px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.uiBlack};
   color: ${({
     theme: {
       palette: { common }
     }
-  }) => common.uiWhite};
+  }) => common.uiBlack};
   background-color: ${({
     theme: {
-      palette: { primary }
+      palette: { common }
     }
-  }) => primary.light};
+  }) => common.uiWhite};
 
   display: flex;
   justify-content: center;

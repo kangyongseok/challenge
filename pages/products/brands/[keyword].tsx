@@ -2,12 +2,13 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'nex
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
-import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
+  ProductsDynamicFilter,
   ProductsFilter,
   ProductsFilterBottomSheet,
+  ProductsFilterHistory,
   ProductsHeader,
   ProductsInfiniteGrid,
   ProductsOrderFilterBottomSheet,
@@ -40,12 +41,12 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
         disablePadding
       >
         <ProductsCategoryTags variant="brands" />
-        <ProductsFilter variant="brands" showDynamicFilter />
-        <Gap height={8} />
+        <ProductsDynamicFilter />
         <ProductsSafePaymentBanner />
+        <ProductsFilter variant="brands" />
+        <ProductsFilterHistory variant="brands" />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="brands" />
-        <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />

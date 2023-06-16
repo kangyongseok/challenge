@@ -39,6 +39,7 @@ import {
 } from '@provider';
 
 import '@styles/base.css';
+import '@styles/subFont.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -130,6 +131,10 @@ function App({ Component, pageProps }: AppProps) {
         <meta
           name="description"
           content="여러분은 카멜에서 검색만 하세요. 전국 중고명품 매물은 카멜이 다 모아서 비교하고 분석해드릴게요!"
+        />
+        <meta
+          property="og:image"
+          content={`https://${process.env.IMAGE_DOMAIN}/assets/images/seo/main.webp`}
         />
         <meta name="application-name" content="카멜" />
         <meta name="mobile-web-app-capable" content="yes" />

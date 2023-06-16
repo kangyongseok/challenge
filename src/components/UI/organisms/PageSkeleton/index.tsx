@@ -14,6 +14,7 @@ const serverSideRenderPages = [
   '/products/categories/[keyword]',
   '/products/brands/[keyword]',
   '/products/search/[keyword]',
+  '/products/camel',
   '/products/[id]'
 ];
 
@@ -83,6 +84,7 @@ function PageSkeleton() {
   return (
     <StyledPageSkeleton isLoading={isLoading}>
       {pathname === '/products/categories/[keyword]' && <CategoryProducts />}
+      {pathname === '/products/camel' && <CategoryProducts />}
       {pathname === '/products/brands/[keyword]' && <BrandProducts />}
       {pathname === '/products/search/[keyword]' && <SearchProducts />}
       {pathname === '/products/[id]' && <ProductDetail />}

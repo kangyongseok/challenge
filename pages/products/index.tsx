@@ -7,6 +7,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsFilter,
   ProductsFilterBottomSheet,
+  ProductsFilterHistory,
   ProductsInfiniteGrid,
   ProductsLandingInfo,
   ProductsOrderFilterBottomSheet,
@@ -46,9 +47,9 @@ function Products() {
         footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        <ProductsFilter variant="search" showDynamicFilter />
-        <Gap height={8} />
         <ProductsSafePaymentBanner />
+        <ProductsFilter variant="search" />
+        <ProductsFilterHistory variant="search" />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />

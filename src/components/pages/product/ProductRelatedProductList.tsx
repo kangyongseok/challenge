@@ -80,7 +80,12 @@ function ProductRelatedProductList({
           ? '이런 매물은 어때요?'
           : '보고 있는 매물과 비슷해요'}
       </Typography>
-      <Grid container rowGap={32} columnGap={12}>
+      <Grid
+        container
+        rowGap={32}
+        columnGap={12}
+        customStyle={{ marginLeft: -20, width: 'calc(100% + 40px)', padding: '0 10px' }}
+      >
         {isLoading
           ? Array.from({ length: 4 }, (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>

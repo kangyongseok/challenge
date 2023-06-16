@@ -6,8 +6,10 @@ import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
+  ProductsDynamicFilter,
   ProductsFilter,
   ProductsFilterBottomSheet,
+  ProductsFilterHistory,
   ProductsHeader,
   ProductsInfiniteGrid,
   ProductsOrderFilterBottomSheet,
@@ -40,9 +42,10 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
         disablePadding
       >
         <ProductsCategoryTags variant="categories" />
-        <ProductsFilter variant="categories" showDynamicFilter />
-        <Gap height={8} />
+        <ProductsDynamicFilter />
         <ProductsSafePaymentBanner />
+        <ProductsFilter variant="categories" />
+        <ProductsFilterHistory variant="categories" />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="categories" />
         <Gap height={8} />

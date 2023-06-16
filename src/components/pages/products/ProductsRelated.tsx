@@ -15,13 +15,21 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import { searchParamsStateFamily } from '@recoil/productsFilter';
+import {
+  filterKeywordStateFamily,
+  productsFilterProgressDoneState,
+  searchParamsStateFamily
+} from '@recoil/productsFilter';
+import useDebounce from '@hooks/useDebounce';
 
 function ProductsRelated() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
+  const progressDone = useRecoilValue(productsFilterProgressDoneState);
+  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
+  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
 
   const [params] = useState({
     size: 10,
@@ -54,23 +62,19 @@ function ProductsRelated() {
 
   const hasProducts = useMemo(() => !!newPages.filter((newPage) => newPage).length, [newPages]);
 
-  const {
-    data: { page: { content = [] } = {} } = {},
-    isLoading,
-    isFetched: isSearchRelatedProductsFetched
-  } = useQuery(
+  const { data: { page: { content = [] } = {} } = {}, isLoading } = useQuery(
     queryKeys.products.searchRelatedProducts(params),
     () => fetchSearchRelatedProducts(params),
     {
       keepPreviousData: true,
-      enabled: isFetched && !hasProducts
+      enabled: isFetched && !hasProducts && progressDone && !debouncedFilterKeyword
     }
   );
 
-  if (
-    (isLoading && !hasProducts) ||
-    (isSearchRelatedProductsFetched && !hasProducts && !content.length)
-  ) {
+  if (!progressDone || debouncedFilterKeyword || (!isLoading && !hasProducts && !content.length))
+    return null;
+
+  if (isLoading && !hasProducts) {
     return (
       <Box customStyle={{ padding: '24px 20px 0 20px' }}>
         <Typography variant="h4" weight="bold" customStyle={{ marginBottom: 16 }}>

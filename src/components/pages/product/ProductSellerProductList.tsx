@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { useQueries } from '@tanstack/react-query';
-import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { NewProductGridCard } from '@components/UI/molecules';
@@ -147,12 +147,7 @@ function ProductSellerProductList({
         paddingTop: 32
       }}
     >
-      <Flexbox
-        alignment="center"
-        justifyContent="space-between"
-        customStyle={{ marginBottom: 20 }}
-        onClick={handleClickMoreList}
-      >
+      <Flexbox alignment="center" justifyContent="space-between" onClick={handleClickMoreList}>
         <Flexbox alignment="flex-start" customStyle={{ width: '100%' }}>
           {!loadFail && reviewInfo?.productSeller?.image ? (
             <UserAvatar>
@@ -190,11 +185,11 @@ function ProductSellerProductList({
                   {getTimeForamt.icon === 'time' ? (
                     <Icon
                       name="TimeOutlined"
+                      color={getTimeForamt.icon === 'time' ? 'ui60' : 'primary-light'}
                       customStyle={{
                         marginRight: 2,
                         height: '14px !important',
-                        width: 14,
-                        color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
+                        width: 14
                       }}
                     />
                   ) : (
@@ -210,74 +205,98 @@ function ProductSellerProductList({
                   )}
                   <Typography
                     variant="body2"
-                    customStyle={{
-                      color: getTimeForamt.icon === 'time' ? common.ui60 : primary.light
-                    }}
+                    color={getTimeForamt.icon === 'time' ? 'ui60' : 'primary-light'}
                   >
                     {getTimeForamt.text}
                   </Typography>
                 </Flexbox>
               )}
-              <Typography variant="body2" customStyle={{ color: common.ui60 }}>
-                {/* {!isNormalseller && isCamelSeller ? '카멜인증판매자 ∙ ' : ''} */}
-                {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
-              </Typography>
+              <Flexbox alignment="center" gap={4}>
+                {reviewInfo?.curnScore && (
+                  <Flexbox alignment="center" gap={2}>
+                    <Icon name="StarFilled" color="#FFD911" size="small" />
+                    <Typography variant="body2" weight="medium" color="ui60">
+                      {`${
+                        reviewInfo.curnScore.length > 1
+                          ? reviewInfo?.curnScore
+                          : `${reviewInfo?.curnScore}.0` || 0
+                      }`}{' '}
+                    </Typography>
+                  </Flexbox>
+                )}
+                <Typography variant="body2" weight="medium" color="ui60">
+                  •
+                </Typography>
+                <Typography variant="body2" color="ui60">
+                  {commaNumber(sellerProducts?.totalElements || 0)}개 판매 중
+                </Typography>
+              </Flexbox>
             </Flexbox>
           </Flexbox>
-          {!isCertificationSeller && (
-            <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
-              <Typography weight="medium" variant="body2">
-                더보기
-              </Typography>
-              <Icon name="CaretRightOutlined" size="small" />
-            </Flexbox>
-          )}
+          <Flexbox customStyle={{ marginLeft: 'auto', marginTop: 5, cursor: 'pointer' }}>
+            <Typography weight="medium" variant="body2">
+              더보기
+            </Typography>
+            <Icon name="CaretRightOutlined" size="small" />
+          </Flexbox>
         </Flexbox>
       </Flexbox>
       {isCertificationSeller && !isNormalProduct && (
-        <Flexbox
-          alignment="flex-start"
+        <Box
           customStyle={{
             background: secondary.blue.bgLight,
             borderRadius: 8,
             padding: 12,
-            marginBottom: 20
+            marginTop: 20
           }}
-          gap={6}
         >
-          <Icon
-            name="ShieldFilled"
-            size="medium"
-            customStyle={{ color: primary.light, marginTop: -2 }}
-          />
-          <Typography weight="medium" variant="body2">
-            카멜인증판매자입니다. 문제 시
-            <span style={{ color: secondary.blue.main }}> 200% 환불</span>
-            해드립니다
+          <Flexbox alignment="flex-start" gap={6}>
+            <Icon name="ShieldFilled" size="medium" customStyle={{ marginTop: -2 }} />
+            <Typography weight="medium" variant="body2">
+              카멜이 직접 인증한 판매자예요. 편하게 문의해보세요.
+            </Typography>
+          </Flexbox>
+          <Typography variant="body2" color="ui60" customStyle={{ paddingLeft: 25 }}>
+            가품시, 100% 환불
           </Typography>
-        </Flexbox>
+        </Box>
       )}
-      <ProductList>
-        {!sellerProducts?.content
-          ? Array.from({ length: 5 }, (_, index) => (
-              <ImageSkeleton key={`seller-product-${index}`} />
-            ))
-          : sellerProducts.content?.map((sellerProduct, index) => (
-              <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
-                <NewProductGridCard
-                  variant="swipeX"
-                  product={sellerProduct}
-                  hideWishButton
-                  hideMetaInfo
-                  hideAreaInfo
-                  attributes={{
-                    index: index + 1,
-                    source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO
-                  }}
-                />
-              </Box>
-            ))}
-      </ProductList>
+      {!!sellerProducts?.totalElements && (
+        <>
+          <Typography variant="h3" weight="bold" customStyle={{ margin: '52px 0 20px' }}>
+            판매자 매물 {commaNumber(sellerProducts?.totalElements || 0)}
+          </Typography>
+          <ProductList>
+            {!sellerProducts?.content
+              ? Array.from({ length: 5 }, (_, index) => (
+                  <ImageSkeleton key={`seller-product-${index}`} />
+                ))
+              : sellerProducts.content?.map((sellerProduct, index) => (
+                  <Box customStyle={{ flex: 1 }} key={`related-product-${sellerProduct.id}`}>
+                    <NewProductGridCard
+                      variant="swipeX"
+                      product={sellerProduct}
+                      hideAreaInfo
+                      attributes={{
+                        index: index + 1,
+                        source: attrProperty.source.PRODUCT_DETAIL_SELLER_INFO
+                      }}
+                    />
+                  </Box>
+                ))}
+          </ProductList>
+          <Button
+            fullWidth
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            customStyle={{ marginTop: 20 }}
+            onClick={handleClickMoreList}
+          >
+            매물 더보기
+          </Button>
+        </>
+      )}
     </Box>
   ) : null;
 }

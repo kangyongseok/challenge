@@ -4,21 +4,18 @@ export const FACEBOOK_SHARE_URL = 'https://www.facebook.com/sharer/sharer.php';
 export const TWITTER_SHARE_URL = 'https://twitter.com/share';
 export const SEARCH_BAR_HEIGHT = 56;
 export const BOTTOM_NAVIGATION_HEIGHT = 60;
-export const GENERAL_FILTER_HEIGHT = 100;
+export const ID_FILTER_HEIGHT = 60;
+export const GENERAL_FILTER_HEIGHT = 48;
 export const CATEGORY_TAGS_HEIGHT = 39;
-export const RELATED_KEYWORDS_HEIGHT = 52;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
 export const TAB_HEIGHT_XLARGE = 45;
 export const TAB_HEIGHT = 41;
-export const PRODUCTS_LANDING_INFO_HEIGHT = 78;
-export const PRODUCTS_KEYWORD_LANDING_INFO_HEIGHT = 102;
 export const CMR_LANDING_INFO_HEIGHT = 72;
 export const IMG_CAMEL_PLATFORM_NUMBER = 161;
 export const PRODUCT_INFORMATION_HEIGHT = 65;
 export const MESSAGE_INPUT_HEIGHT = 44;
 export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
 export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
-export const MESSAGE_SAFE_PAYMENT_GUIDE_BANNER_HEIGHT = 56;
 export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
 export const LEGIT_FAKE_BANNER_HEIGHT = 40;
 export const extractTagRegx = /(<([^>]+)>)/gi;
@@ -28,17 +25,6 @@ export const DEFAUT_BACKGROUND_IMAGE = `https://${process.env.IMAGE_DOMAIN}/asse
 export const EVENT_NEW_YEAR_FILTER_INFO_HEIGHT = 80;
 export const IOS_SAFE_AREA_TOP = 'env(safe-area-inset-top)';
 export const IOS_SAFE_AREA_BOTTOM = 'env(safe-area-inset-bottom)';
-
-export const locales = {
-  ko: {
-    lng: 'ko',
-    name: '한국어'
-  },
-  en: {
-    lng: 'en',
-    name: 'English'
-  }
-};
 
 export const purchaseType = [
   {

@@ -149,7 +149,7 @@ function LegitDashboardBanner() {
           ? Array.from({ length: 3 }, (_, index) => (
               <SwiperSlide key={`dashboard-banner-skeleton-${index}`}>
                 <Card isLoading>
-                  <Skeleton width="100%" height="100%" round={8} disableAspectRatio />
+                  <Skeleton width="100%" height="100%" disableAspectRatio />
                 </Card>
               </SwiperSlide>
             ))

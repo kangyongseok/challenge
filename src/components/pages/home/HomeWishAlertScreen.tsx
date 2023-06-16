@@ -154,6 +154,9 @@ function HomeWishAlertScreen() {
             size="large"
             startIcon={<Icon name="HeartFilled" color="red-light" />}
             onClick={handleClickWishChip}
+            customStyle={{
+              backgroundColor: common.uiWhite
+            }}
           >
             찜한 매물
           </Chip>
@@ -173,7 +176,8 @@ function HomeWishAlertScreen() {
             onClick={handleClose}
             customStyle={{
               maxWidth: 36,
-              borderRadius: 50
+              borderRadius: 50,
+              backgroundColor: common.uiWhite
             }}
           />
         </Flexbox>

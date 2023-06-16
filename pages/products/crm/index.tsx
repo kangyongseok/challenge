@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { BottomNavigation, Header } from '@components/UI/molecules';
@@ -9,6 +9,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsFilter,
   ProductsFilterBottomSheet,
+  ProductsFilterHistory,
   ProductsInfiniteGrid,
   ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
@@ -18,12 +19,7 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
-import {
-  APP_DOWNLOAD_BANNER_HEIGHT,
-  CMR_LANDING_INFO_HEIGHT,
-  HEADER_HEIGHT,
-  IOS_SAFE_AREA_TOP
-} from '@constants/common';
+import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT, IOS_SAFE_AREA_TOP } from '@constants/common';
 
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
@@ -31,9 +27,6 @@ import { showAppDownloadBannerState } from '@recoil/common';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
 function CrmProducts() {
-  const {
-    theme: { zIndex }
-  } = useTheme();
   const {
     query: { notice }
   } = useRouter();
@@ -48,36 +41,23 @@ function CrmProducts() {
           <Box customStyle={{ paddingTop: isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : 0 }}>
             <Header />
             {notice && (
-              <Box customStyle={{ minHeight: CMR_LANDING_INFO_HEIGHT, position: 'relative' }}>
-                <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
-                  <Typography variant="h4" weight="bold">
-                    {userNickName}님
-                  </Typography>
-                  <Typography variant="h4" weight="bold" brandColor="primary">
-                    {notice}
-                  </Typography>
-                </NoticeWrapper>
-                <Gap
-                  height={8}
-                  customStyle={{
-                    position: 'fixed',
-                    marginTop: 64,
-                    zIndex: zIndex.header,
-                    top: showAppDownloadBanner
-                      ? APP_DOWNLOAD_BANNER_HEIGHT + HEADER_HEIGHT
-                      : HEADER_HEIGHT
-                  }}
-                />
-              </Box>
+              <NoticeWrapper showAppDownloadBanner={showAppDownloadBanner}>
+                <Typography variant="h4" weight="bold">
+                  {userNickName}님
+                </Typography>
+                <Typography variant="h4" weight="bold" brandColor="primary">
+                  {notice}
+                </Typography>
+              </NoticeWrapper>
             )}
-            <ProductsFilter variant="search" showDynamicFilter />
           </Box>
         }
         footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        <Gap height={8} />
         <ProductsSafePaymentBanner />
+        <ProductsFilter variant="search" />
+        <ProductsFilterHistory variant="search" />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
         <Gap height={8} />
@@ -94,7 +74,6 @@ function CrmProducts() {
 const NoticeWrapper = styled.div<{ showAppDownloadBanner: boolean }>`
   display: flex;
   flex-direction: column;
-  position: fixed;
   padding: 8px 20px 16px 20px;
   width: 100%;
   z-index: ${({ theme }) => theme.zIndex.header};

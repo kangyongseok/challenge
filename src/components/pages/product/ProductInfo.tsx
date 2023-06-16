@@ -13,6 +13,7 @@ import {
   BottomSheet,
   Box,
   Button,
+  Chip,
   Flexbox,
   Icon,
   Image,
@@ -27,11 +28,13 @@ import { OnBoardingSpotlight } from '@components/UI/organisms';
 import { NewProductGridCard } from '@components/UI/molecules';
 import { ProductInfoSkeleton } from '@components/pages/product';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchRelatedProducts, postSellerReport } from '@api/product';
+import { fetchRelatedKeywords, fetchRelatedProducts, postSellerReport } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import {
   INITIAL_REPORT_OPTIONS,
@@ -49,8 +52,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { scrollDisable, scrollEnable } from '@utils/scroll';
 import { getProductType } from '@utils/products';
-import { getFormattedDistanceTime, getProductArea } from '@utils/formats';
-import { checkAgent, getImageResizePath, removeTagAndAddNewLine } from '@utils/common';
+import { getFormattedDistanceTime, getProductArea, getTenThousandUnitPrice } from '@utils/formats';
+import { checkAgent, commaNumber, getImageResizePath, removeTagAndAddNewLine } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
 import { userOnBoardingTriggerState } from '@recoil/common';
@@ -77,6 +80,13 @@ interface ProductInfoProps {
   onClickWish: (isWish: boolean) => boolean;
 }
 
+interface KeywordList {
+  keyword: string;
+  symbol?: string;
+  icon?: string;
+  name?: string;
+}
+
 function ProductInfo({
   isMySelfProduct = false,
   sizeData,
@@ -100,6 +110,18 @@ function ProductInfo({
   const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
     useQueryUserInfo();
   const { data: productDetail } = useQueryProduct();
+  const relatedKeywordParams = {
+    quoteTitle: productDetail?.product.quoteTitle || '',
+    brandIds: productDetail?.product.brand.id ? [productDetail.product.brand.id] : [],
+    categoryIds: productDetail?.product.category.id ? [productDetail.product.category.id] : []
+  };
+  const { data: fetchKeywordsData } = useQuery(
+    queryKeys.products.searchRelatedKeyword(relatedKeywordParams),
+    () => fetchRelatedKeywords(relatedKeywordParams),
+    {
+      enabled: !!relatedKeywordParams.quoteTitle
+    }
+  );
   const { isCertificationSeller, isViewProductModifySellerType } = useProductSellerType({
     productSellerType: productDetail?.product.productSeller.type,
     site: productDetail?.product.site
@@ -116,6 +138,7 @@ function ProductInfo({
   const [isClamped, setIsClamped] = useState(false);
   const [isExpended, setIsExpended] = useState(false);
   const [isOpenReportTooltip, setIsOpenReportTooltip] = useState(false);
+  const [keywordList, setKeywordList] = useState<KeywordList[]>([]);
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const [isOpenRelatedProductListBottomSheet, setIsOpenRelatedProductListBottomSheet] =
     useState(false);
@@ -169,7 +192,7 @@ function ProductInfo({
     (label) => label.codeId === 14
   )[0];
 
-  const { data: relatedProducts } = useQuery(
+  const { data: relatedProducts, isLoading: relatedLoading } = useQuery(
     queryKeys.products.relatedProducts(Number(productDetail?.product?.id || 0)),
     () => fetchRelatedProducts(Number(productDetail?.product?.id || 0)),
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!productDetail?.product }
@@ -379,6 +402,39 @@ function ProductInfo({
     scrollEnable();
   };
 
+  const handleClickChip = (item: KeywordList) => {
+    let viewType = 'search';
+    const productKeyword = item.name?.replace('(P)', '') || item.keyword;
+
+    if (item.symbol) {
+      viewType = 'brands';
+    }
+    if (item.icon) {
+      viewType = 'categories';
+    }
+
+    if (viewType === 'brands') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.name.PRODUCT_DETAIL,
+        title: attrProperty.title.BRAND
+      });
+    } else if (viewType === 'categories') {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.name.PRODUCT_DETAIL,
+        title: attrProperty.title.CATEGORY
+      });
+    } else {
+      SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+        name: attrProperty.name.PRODUCT_DETAIL,
+        title: attrProperty.title.RECOMMKEYWORD
+      });
+    }
+
+    router.push({
+      pathname: `/products/${viewType}/${encodeURIComponent(String(productKeyword))}`
+    });
+  };
+
   // 기존 온보딩 완료 유저 대응
   useEffect(() => {
     if (LocalStorage.get(IS_DONE_WISH_ON_BOARDING)) {
@@ -446,6 +502,25 @@ function ProductInfo({
       }
     };
   }, []);
+
+  useEffect(() => {
+    const result = [
+      {
+        ...fetchKeywordsData?.brand,
+        keyword: fetchKeywordsData?.brand?.nameEng.toUpperCase() || '',
+        symbol: fetchKeywordsData?.brand?.nameEng[0].toUpperCase() || ''
+      },
+      {
+        ...fetchKeywordsData?.category,
+        keyword: fetchKeywordsData?.category?.name.replace('(P)', '') || '',
+        icon: fetchKeywordsData?.categoryThumbnail || ''
+      },
+      ...(fetchKeywordsData?.relatedKeywords?.map((keyword) => ({ keyword })) || [])
+    ];
+    if (!relatedLoading && fetchKeywordsData) {
+      setKeywordList(result);
+    }
+  }, [fetchKeywordsData, relatedLoading]);
 
   const renderCertificationBanner = () => {
     if (isCertificationSeller) {
@@ -541,21 +616,23 @@ function ProductInfo({
           </Flexbox>
         )}
         <Flexbox alignment="flex-start" justifyContent="space-between" gap={20}>
-          <Flexbox direction="vertical" gap={8}>
+          <Flexbox direction="vertical">
             <Typography
-              variant="h1"
-              weight="bold"
+              variant="h3"
+              weight="medium"
               customStyle={{
-                fontSize: 20,
-                lineHeight: '26px'
+                lineHeight: '24px'
               }}
             >
               {productDetail?.product?.title}
             </Typography>
+            <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
+              {commaNumber(getTenThousandUnitPrice(productDetail.product.price))}만원
+            </Typography>
             <Flexbox
               justifyContent="space-between"
               alignment="center"
-              customStyle={{ color: common.ui60 }}
+              customStyle={{ color: common.ui60, marginTop: 12 }}
             >
               <Flexbox>
                 {!isMySelfProduct && !isCertificationSeller && !isViewProductModifySellerType && (
@@ -661,6 +738,9 @@ function ProductInfo({
               margin: renderCertificationBanner() ? '20px 0' : '32px 0 20px'
             }}
           >
+            {isCertificationSeller && (
+              <Label variant="solid" brandColor="black" text="인증판매자" />
+            )}
             {!!productDetail?.product.labels.length &&
             find(productDetail?.product.labels, { name: '33' }) ? (
               <Label variant="ghost" brandColor="gray" text="배송비 포함" />
@@ -743,6 +823,44 @@ function ProductInfo({
             * 카멜Ai검색엔진이 수집·분석한 매물정보입니다.
           </Typography>
         )}
+        <Flexbox
+          alignment="center"
+          customStyle={{ flexWrap: 'wrap', marginTop: 32, gap: '8px 6px' }}
+        >
+          {keywordList
+            .filter((list) => !!list.keyword)
+            .map((item) => (
+              <Chip
+                key={`keyword-list-${item.keyword}`}
+                size="medium"
+                onClick={() => handleClickChip(item)}
+                customStyle={{
+                  padding: item.icon || item.symbol ? '4px 12px 4px 4px' : '6px 12px'
+                }}
+              >
+                {item.icon && (
+                  <CircleBg>
+                    <Image
+                      src={item.icon}
+                      disableAspectRatio
+                      alt={item.keyword}
+                      width={18}
+                      height={18}
+                    />
+                  </CircleBg>
+                )}
+                {item.symbol && (
+                  <CircleBg>
+                    <Typography weight="bold" variant="h4">
+                      {item.symbol}
+                    </Typography>
+                  </CircleBg>
+                )}
+                {item && !item.icon && !item.symbol && '#'}
+                {item.keyword}
+              </Chip>
+            ))}
+        </Flexbox>
         <Flexbox
           justifyContent="space-between"
           gap={8}
@@ -1001,6 +1119,21 @@ const ProductCardList = styled.div`
 
   grid-auto-columns: 120px;
   column-gap: 8px;
+`;
+
+const CircleBg = styled.div`
+  width: 24px;
+  height: 24px;
+  background: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.bg02};
+  border-radius: 50%;
+  margin-right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 function CheckedIcon() {

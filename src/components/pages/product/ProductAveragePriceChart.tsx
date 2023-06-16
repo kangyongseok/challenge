@@ -17,8 +17,10 @@ import styled from '@emotion/styled';
 
 import type { Product } from '@dto/product';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -30,46 +32,46 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip)
  * 라운드가 들어간 사각형을 그려주는 로직
  * https://codepen.io/simon-wu/pen/ExgLEXQ
  */
-const createRoundRect = ({
-  ctx,
-  x,
-  y,
-  width,
-  height,
-  radius,
-  isIntAndLess10,
-  fillStyle
-}: {
-  ctx: CanvasRenderingContext2D;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  radius: number;
-  isIntAndLess10: boolean;
-  fillStyle: string;
-}) => {
-  let $radius = radius;
+// const createRoundRect = ({
+//   ctx,
+//   x,
+//   y,
+//   width,
+//   height,
+//   radius,
+//   isIntAndLess10,
+//   fillStyle
+// }: {
+//   ctx: CanvasRenderingContext2D;
+//   x: number;
+//   y: number;
+//   width: number;
+//   height: number;
+//   radius: number;
+//   isIntAndLess10: boolean;
+//   fillStyle: string;
+// }) => {
+//   let $radius = radius;
 
-  if (width < 2 * radius) $radius = width / 2;
+//   if (width < 2 * radius) $radius = width / 2;
 
-  if (height < 2 * radius) $radius = height / 2;
+//   if (height < 2 * radius) $radius = height / 2;
 
-  ctx.beginPath();
+//   ctx.beginPath();
 
-  if (isIntAndLess10) {
-    ctx.arc(x + $radius, y + 11, width, 0, 2 * Math.PI);
-  } else {
-    ctx.moveTo(x + $radius, y);
-    ctx.arcTo(x + width, y, x + width, y + height, $radius);
-    ctx.arcTo(x + width, y + height, x, y + height, $radius);
-    ctx.arcTo(x, y + height, x, y, $radius);
-    ctx.arcTo(x, y, x + width, y, $radius);
-  }
-  ctx.closePath();
-  ctx.fillStyle = fillStyle;
-  ctx.fill();
-};
+//   if (isIntAndLess10) {
+//     ctx.arc(x + $radius, y + 11, width, 0, 2 * Math.PI);
+//   } else {
+//     ctx.moveTo(x + $radius, y);
+//     ctx.arcTo(x + width, y, x + width, y + height, $radius);
+//     ctx.arcTo(x + width, y + height, x, y + height, $radius);
+//     ctx.arcTo(x, y + height, x, y, $radius);
+//     ctx.arcTo(x, y, x + width, y, $radius);
+//   }
+//   ctx.closePath();
+//   ctx.fillStyle = fillStyle;
+//   ctx.fill();
+// };
 
 interface ProductAveragePriceChartProps {
   product?: Product;
@@ -124,6 +126,11 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
       title: '시세이하'
     });
 
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: '시세이하'
+    });
+
     push({
       pathname: `/products/search/${product?.quoteTitle}`,
       query: {
@@ -152,15 +159,15 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         datasets: [
           {
             data: slicedValues,
-            pointRadius: [4, 4, 4, 4, 4, 7],
-            borderColor: common.bg02,
+            pointRadius: [0, 0, 0, 0, 0, 7],
+            borderColor: common.uiBlack,
             pointBackgroundColor: [
-              common.ui80,
-              common.ui80,
-              common.ui80,
-              common.ui80,
-              common.ui80,
-              primary.light
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              common.uiBlack
             ],
             pointBorderWidth: [0, 0, 0, 0, 0, 0]
           }
@@ -172,7 +179,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         layout: {
           padding: {
             top: 24,
-            left: 20,
+            // left: 20,
             right: 25
           }
         },
@@ -190,7 +197,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
                 // @ts-ignore
                 weight: ['400', '400', '400', '400', '400', '700']
               },
-              color: [common.ui60, common.ui60, common.ui60, common.ui60, common.ui60, common.ui20]
+              color: [undefined, undefined, undefined, undefined, undefined, common.uiBlack]
             },
             grid: {
               display: false
@@ -202,11 +209,17 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             suggestedMax,
             suggestedMin,
             ticks: {
-              autoSkip: false,
-              maxRotation: 0,
-              display: false,
+              callback(tickValue) {
+                return `${tickValue}만원`;
+              },
               stepSize
             },
+            // ticks: {
+            //   autoSkip: false,
+            //   maxRotation: 0,
+            //   display: false,
+            //   stepSize
+            // },
             grid: {
               lineWidth: 1,
               color: common.line02,
@@ -221,30 +234,30 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
           axis: 'y'
         },
         animation: {
-          onComplete({ chart, chart: { ctx } }) {
-            chart.getDatasetMeta(0).data.forEach((chartElement, index) => {
-              createRoundRect({
-                ctx,
-                x: chartElement.x - String(slicedValues[index]).length * 4,
-                y: chartElement.y - 34,
-                width: String(slicedValues[index]).length * 8,
-                height: 20,
-                radius: 20,
-                isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
-                fillStyle: common.uiWhite
-              });
-              // eslint-disable-next-line quotes
-              ctx.font = "500 12px 'Camel Product Sans', 'Helvetica', 'Arial', sans-serif";
-              ctx.fillStyle = common.ui60;
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'bottom';
-              ctx.fillText(
-                slicedValues[index] ? `${String(slicedValues[index])}` : '',
-                chartElement.x,
-                chartElement.y - 18
-              );
-            });
-          }
+          // onComplete({ chart, chart: { ctx } }) {
+          //   chart.getDatasetMeta(0).data.forEach((chartElement, index) => {
+          //     createRoundRect({
+          //       ctx,
+          //       x: chartElement.x - String(slicedValues[index]).length * 4,
+          //       y: chartElement.y - 34,
+          //       width: String(slicedValues[index]).length * 8,
+          //       height: 20,
+          //       radius: 20,
+          //       isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
+          //       fillStyle: common.uiWhite
+          //     });
+          //     // eslint-disable-next-line quotes
+          //     ctx.font = "500 12px 'Camel Product Sans', 'Helvetica', 'Arial', sans-serif";
+          //     ctx.fillStyle = common.ui60;
+          //     ctx.textAlign = 'center';
+          //     ctx.textBaseline = 'bottom';
+          //     ctx.fillText(
+          //       slicedValues[index] ? `${String(slicedValues[index])}` : '',
+          //       chartElement.x,
+          //       chartElement.y - 18
+          //     );
+          //   });
+          // }
         },
         plugins: {
           tooltip: {
@@ -279,7 +292,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
 
   return (
     <>
-      <Box customStyle={{ paddingTop: 20 }} />
+      <Box customStyle={{ paddingTop: 32 }} />
       <>
         <Typography
           variant="body2"

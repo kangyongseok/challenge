@@ -2,10 +2,12 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Flexbox, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchPopularSearchKeywords } from '@api/common';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -25,6 +27,11 @@ function PopularKeywordRank() {
     logEvent(attrKeys.search.CLICK_POPULAR, {
       name: attrProperty.name.SEARCH,
       keyword
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.SEARCH,
+      title: attrProperty.title.RANK
     });
 
     router.push(`/products/search/${keyword}`);

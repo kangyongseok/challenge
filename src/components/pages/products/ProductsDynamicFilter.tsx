@@ -9,7 +9,6 @@ import {
   Avatar,
   Box,
   Button,
-  Checkbox,
   Flexbox,
   Icon,
   Input,
@@ -44,6 +43,7 @@ import {
   brandFilterOptionsSelector,
   categoryFilterOptionsSelector,
   dynamicOptionsStateFamily,
+  productsFilterProgressDoneState,
   searchOptionsStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
@@ -80,6 +80,7 @@ function ProductsDynamicFilter() {
   const dynamicOptions = useRecoilValue(dynamicOptionsStateFamily(atomParam));
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const categories = useRecoilValue(categoryFilterOptionsSelector);
+  const progressDone = useRecoilValue(productsFilterProgressDoneState);
 
   const [value, setValue] = useState<string | number>('');
 
@@ -98,72 +99,6 @@ function ProductsDynamicFilter() {
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXDynamicFilter);
   }, 300);
-
-  const handleClickLowPriceFilter = useCallback(
-    (active: boolean) => () => {
-      if (!active) {
-        logEvent(attrKeys.products.selectIdFilter, {
-          name: attrProperty.name.productList,
-          att: '시세이하'
-        });
-      }
-
-      setSelectedSearchOptionsState(
-        ({ type, selectedSearchOptions: prevSelectedSearchOptions }) => ({
-          type,
-          selectedSearchOptions: prevSelectedSearchOptions.some(
-            ({ codeId, id }) => codeId === filterCodeIds.id && id === idFilterIds.lowPrice
-          )
-            ? prevSelectedSearchOptions.filter(
-                ({ codeId, id }) => !(codeId === filterCodeIds.id && id === idFilterIds.lowPrice)
-              )
-            : prevSelectedSearchOptions
-                .filter(
-                  (prevSelectedSearchOption) =>
-                    prevSelectedSearchOption.codeId !== filterCodeIds.price
-                )
-                .concat([{ codeId: filterCodeIds.id, id: idFilterIds.lowPrice }])
-        })
-      );
-      setSearchParamsState(
-        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => {
-          const newSearchParams = {
-            ...prevSearchParams,
-            idFilterIds: prevIdFilterIds.includes(idFilterIds.lowPrice)
-              ? prevIdFilterIds.filter((idFilterId) => idFilterId !== idFilterIds.lowPrice)
-              : prevIdFilterIds?.concat([idFilterIds.lowPrice])
-          };
-
-          delete newSearchParams.maxPrice;
-          delete newSearchParams.minPrice;
-
-          return {
-            type,
-            searchParams: newSearchParams
-          };
-        }
-      );
-      setSearchOptionsParamsState(
-        ({ type, searchParams: { idFilterIds: prevIdFilterIds = [], ...prevSearchParams } }) => {
-          const newSearchParams = {
-            ...prevSearchParams,
-            idFilterIds: prevIdFilterIds.includes(idFilterIds.lowPrice)
-              ? prevIdFilterIds.filter((idFilterId) => idFilterId !== idFilterIds.lowPrice)
-              : prevIdFilterIds?.concat([idFilterIds.lowPrice])
-          };
-
-          delete newSearchParams.maxPrice;
-          delete newSearchParams.minPrice;
-
-          return {
-            type,
-            searchParams: newSearchParams
-          };
-        }
-      );
-    },
-    [setSearchOptionsParamsState, setSearchParamsState, setSelectedSearchOptionsState]
-  );
 
   const handleClickDynamicFilter = useCallback(
     ({
@@ -372,6 +307,7 @@ function ProductsDynamicFilter() {
       setSelectedSearchOptionsState
     ]
   );
+
   const handleClickApplyLowerPriceFilter = useCallback(() => {
     if (!value) return;
 
@@ -475,6 +411,8 @@ function ProductsDynamicFilter() {
     }
   }, [searchParams.maxPrice]);
 
+  if (!dynamicOptions.length || !Object.keys(baseSearchParams).length || !progressDone) return null;
+
   return (
     <Flexbox
       component="section"
@@ -484,8 +422,9 @@ function ProductsDynamicFilter() {
         backgroundColor: common.ui95,
         marginTop:
           isExtendedLayoutIOSVersion() && !router.pathname.split('/').includes('search')
-            ? IOS_SAFE_AREA_TOP
-            : 0
+            ? IOS_SAFE_AREA_TOP + 4
+            : 4,
+        marginBottom: 4
       }}
     >
       {dynamicOptions
@@ -496,15 +435,18 @@ function ProductsDynamicFilter() {
             alignment="center"
             customStyle={{ backgroundColor: common.uiWhite }}
           >
-            <Title variant="body1" weight="bold">
+            <Title variant="body1" weight="medium">
               {title}
             </Title>
             {codeType === productDynamicOptionCodeType.color && (
-              <Box customStyle={{ minHeight: 52, width: '100%', overflowX: 'auto' }}>
+              <Flexbox
+                alignment="center"
+                customStyle={{ minHeight: 45, maxHeight: 45, width: '100%', overflowX: 'auto' }}
+              >
                 <Flexbox
                   alignment="center"
                   gap={8}
-                  customStyle={{ padding: '12px 20px 12px 0', width: 'fit-content' }}
+                  customStyle={{ paddingRight: 20, width: 'fit-content' }}
                   onScroll={handleScroll}
                 >
                   {codeDetails.map((codeDetail) => {
@@ -562,22 +504,25 @@ function ProductsDynamicFilter() {
                     );
                   })}
                 </Flexbox>
-              </Box>
+              </Flexbox>
             )}
             {!specifyProductDynamicOptionCodeTypes.includes(codeType) && (
-              <Box customStyle={{ minHeight: 44, width: '100%', overflowX: 'auto' }}>
+              <Flexbox
+                alignment="center"
+                customStyle={{ minHeight: 45, maxHeight: 45, width: '100%', overflowX: 'auto' }}
+              >
                 <Flexbox
                   gap={4}
                   alignment="center"
-                  customStyle={{ padding: '4px 20px 4px 0', width: 'fit-content' }}
+                  customStyle={{ paddingRight: 20, width: 'fit-content' }}
                   onScroll={handleScroll}
                 >
                   {codeDetails.map((codeDetail) => {
-                    let active = false;
+                    let isActive = false;
 
                     switch (codeType) {
                       case productDynamicOptionCodeType.line: {
-                        active = selectedSearchOptions.some(
+                        isActive = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.codeId === filterCodeIds.line &&
                             selectedSearchOption.id === codeDetail.id
@@ -588,7 +533,7 @@ function ProductsDynamicFilter() {
                       case productDynamicOptionCodeType.size: {
                         const { id, categorySizeId } = codeDetail as SizeCode;
 
-                        active = selectedSearchOptions.some(
+                        isActive = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.codeId === filterCodeIds.size &&
                             selectedSearchOption.id === id &&
@@ -600,7 +545,7 @@ function ProductsDynamicFilter() {
                       case productDynamicOptionCodeType.price: {
                         const { minPrice, maxPrice } = codeDetail as PriceCode;
 
-                        active = selectedSearchOptions.some(
+                        isActive = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.minPrice === minPrice &&
                             selectedSearchOption.maxPrice === maxPrice
@@ -609,7 +554,7 @@ function ProductsDynamicFilter() {
                         break;
                       }
                       case productDynamicOptionCodeType.brand: {
-                        active = selectedSearchOptions.some(
+                        isActive = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.codeId === filterCodeIds.brand &&
                             selectedSearchOption.id === codeDetail.id
@@ -620,7 +565,7 @@ function ProductsDynamicFilter() {
                       case productDynamicOptionCodeType.category: {
                         const { parentId, subParentId, genderId } = codeDetail as CategoryCode;
 
-                        active = selectedSearchOptions.some(
+                        isActive = selectedSearchOptions.some(
                           (selectedSearchOption) =>
                             selectedSearchOption.codeId === filterCodeIds.category &&
                             selectedSearchOption.parentId === parentId &&
@@ -636,35 +581,55 @@ function ProductsDynamicFilter() {
                     }
 
                     return (
-                      <FilterItem
+                      <Button
                         key={`dynamic-filter-${
                           (codeDetail as SizeCode)?.categorySizeId ||
                           `${codeDetail.codeId}-${codeDetail.id}`
                         }-${codeDetail.name}`}
-                        active={active}
+                        variant="inline"
+                        brandColor={isActive ? 'blue' : 'gray'}
                         onClick={handleClickDynamicFilter({
                           codeType,
                           codeDetail,
                           filterName: codeDetail.name,
-                          active
+                          active: isActive
                         })}
+                        endIcon={
+                          isActive ? (
+                            <Icon
+                              name="CloseOutlined"
+                              width={16}
+                              height={16}
+                              color="ui80"
+                              customStyle={{
+                                width: '16px !important',
+                                height: '16px !important'
+                              }}
+                            />
+                          ) : undefined
+                        }
+                        customStyle={{
+                          gap: 4,
+                          fontWeight: isActive ? 700 : undefined,
+                          whiteSpace: 'nowrap'
+                        }}
                       >
                         {codeDetail.name}
-                      </FilterItem>
+                      </Button>
                     );
                   })}
                 </Flexbox>
-              </Box>
+              </Flexbox>
             )}
             {codeType === productDynamicOptionCodeType.price && (
               <Flexbox
                 alignment="center"
                 gap={8}
                 customStyle={{
-                  minHeight: 52,
+                  minHeight: 61,
                   width: '100%',
                   overflowX: 'auto',
-                  paddingRight: 16
+                  paddingRight: 20
                 }}
               >
                 <Input
@@ -692,35 +657,6 @@ function ProductsDynamicFilter() {
                 >
                   적용
                 </Button>
-                {/* TODO 추후 UI 라이브러리 CheckboxGroup 컴포넌트로 교체 */}
-                <Flexbox gap={4} alignment="center">
-                  <Checkbox
-                    onChange={handleClickLowPriceFilter(
-                      selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === filterCodeIds.id &&
-                          selectedSearchOption.id === idFilterIds.lowPrice
-                      )
-                    )}
-                    checked={selectedSearchOptions.some(
-                      (selectedSearchOption) =>
-                        selectedSearchOption.codeId === filterCodeIds.id &&
-                        selectedSearchOption.id === idFilterIds.lowPrice
-                    )}
-                  />
-                  <Typography
-                    onClick={handleClickLowPriceFilter(
-                      selectedSearchOptions.some(
-                        (selectedSearchOption) =>
-                          selectedSearchOption.codeId === filterCodeIds.id &&
-                          selectedSearchOption.id === idFilterIds.lowPrice
-                      )
-                    )}
-                    customStyle={{ whiteSpace: 'nowrap' }}
-                  >
-                    시세이하
-                  </Typography>
-                </Flexbox>
               </Flexbox>
             )}
           </Flexbox>
@@ -730,18 +666,9 @@ function ProductsDynamicFilter() {
 }
 
 const Title = styled(Typography)`
-  padding: 12px 0 12px 16px;
+  padding-left: 20px;
   white-space: nowrap;
   min-width: 80px;
-`;
-
-const FilterItem = styled(Typography)<{ active?: boolean }>`
-  padding: 8px;
-  white-space: nowrap;
-  color: ${({ active, theme: { palette } }) =>
-    active ? palette.primary.light : palette.common.ui60};
-  font-weight: ${({ active, theme: { typography } }) => active && typography.body1.weight.medium};
-  cursor: pointer;
 `;
 
 const ColorSample = styled.div<{

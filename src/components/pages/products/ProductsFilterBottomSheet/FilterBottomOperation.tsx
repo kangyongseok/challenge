@@ -1,7 +1,7 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import debounce from 'lodash-es/debounce';
-import { Avatar, Button, Chip, Icon, useTheme } from '@mrcamelhub/camel-ui';
+import { Avatar, Button, Chip, Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
@@ -22,6 +22,7 @@ import { convertSearchParams } from '@utils/products';
 import type { ProductsVariant } from '@typings/products';
 import {
   activeTabCodeIdState,
+  filterKeywordStateFamily,
   filterOperationInfoSelector,
   productsFilterStateFamily,
   searchParamsStateFamily,
@@ -35,12 +36,6 @@ interface FilterBottomOperationProps {
 function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
-
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
 
   const { selectedSearchOptionsHistory, selectedTotalCount } = useRecoilValue(
     filterOperationInfoSelector
@@ -59,6 +54,7 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
     productsFilterStateFamily(`general-${atomParam}`)
   );
   const setSearchParamsState = useSetRecoilState(searchParamsStateFamily(`search-${atomParam}`));
+  const resetFilterKeywordStateFamily = useResetRecoilState(filterKeywordStateFamily(atomParam));
 
   const handleScroll = debounce(() => {
     logEvent(attrKeys.products.swipeXFilterHistory, {
@@ -201,6 +197,9 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
           if (codeId === filterCodeIds.gender) {
             return newGenderId === id || gender === newGender;
           }
+          if (codeId === filterCodeIds.title) {
+            return codeId === newCodeId;
+          }
 
           return id === newId && codeId === newCodeId && parentCategoryId === newParentCategoryId;
         }
@@ -213,6 +212,9 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
       }
 
       if (selectedSearchOption) {
+        if (selectedSearchOption.codeId === filterCodeIds.title) {
+          resetFilterKeywordStateFamily();
+        }
         const newSelectedSearchOptions = selectedSearchOptions.filter(
           ({
             id = 0,
@@ -315,9 +317,14 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
               }) => (
                 <Chip
                   key={`selected-filter-options-history-${index || 0}-${displayName}`}
-                  endIcon={<Icon name="CloseOutlined" width={14} height={14} color={common.ui80} />}
                   weight="regular"
                   isRound={false}
+                  startIcon={
+                    codeId === filterCodeIds.title ? (
+                      <Icon name="SearchOutlined" width={16} height={16} color="ui80" />
+                    ) : undefined
+                  }
+                  endIcon={<Icon name="CloseOutlined" color="ui80" />}
                   onClick={handleClickRemove({
                     newHistoryIndex: index,
                     newId: id,

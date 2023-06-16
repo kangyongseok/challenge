@@ -612,8 +612,6 @@ function ProductDetail() {
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
-      {/* <UserShopProductDeleteConfirmDialog redirect /> */}
-      {/* <ProductInterfereKingBottomSheet /> */}
     </>
   );
 }

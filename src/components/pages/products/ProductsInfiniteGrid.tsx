@@ -42,12 +42,14 @@ import { getUtmParams } from '@utils/common';
 import type { ProductsEventProperties, ProductsVariant } from '@typings/products';
 import type { UtmParams } from '@typings/common';
 import {
+  filterKeywordStateFamily,
   prevScrollTopStateFamily,
   productsFilterProgressDoneState,
   productsFilterTotalCountStateFamily,
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import useDebounce from '@hooks/useDebounce';
 
 import { ProductsMiddleFilter } from '.';
 
@@ -63,6 +65,10 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   const router = useRouter();
   const { keyword, parentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
+
+  const { filterKeyword } = useRecoilValue(filterKeywordStateFamily(atomParam));
+
+  const debouncedFilterKeyword = useDebounce(filterKeyword, 300);
 
   const { searchParams } = useRecoilValue(searchParamsStateFamily(`search-${atomParam}`));
   const { searchParams: searchOptionsParams } = useRecoilValue(
@@ -427,9 +433,29 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
       let eventProperties: ProductsEventProperties & UtmParams =
         SessionStorage.get<ProductsEventProperties>(sessionStorageKeys.productsEventProperties) || {
           name: 'NONE',
-          title: 'NONE',
-          type: 'ETC'
+          title: 'NONE'
         };
+
+      const getType = () => {
+        if (router.pathname === '/products/brands/[keyword]') {
+          return 'BRAND';
+        }
+        if (router.pathname === '/products/categories/[keyword]') {
+          return 'CATEGORY';
+        }
+        if (router.pathname === '/products/search/[keyword]') {
+          return 'INPUT';
+        }
+        if (router.pathname.indexOf('/products/crm') !== -1) {
+          return 'CRM';
+        }
+        if (router.pathname.indexOf('/products/camel') !== -1) {
+          return 'CAMEL';
+        }
+        return 'ETC';
+      };
+
+      eventProperties.type = getType();
 
       if (eventProperties.title === 'MYLIST' && userProductKeyword) {
         const { keyword: userKeyword, keywordFilterJson } = userProductKeyword;
@@ -439,8 +465,7 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
         eventProperties = {
           ...eventProperties,
           name: attrProperty.productName.DIRECT,
-          title: attrProperty.productTitle.DEFAULT,
-          type: attrProperty.productType.CRM
+          title: attrProperty.productTitle.DEFAULT
         };
       } else {
         eventProperties = {
@@ -483,16 +508,29 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
       loggedLoadProductListLogEventRef.current = true;
 
       const { productTotal, sellerTotal } = lastPage || {};
-      const {
-        name: nameProperty,
-        type,
-        title
-      }: ProductsEventProperties = SessionStorage.get<ProductsEventProperties>(
-        sessionStorageKeys.productsEventProperties
-      ) || {
-        name: 'NONE',
-        title: 'NONE',
-        type: 'ETC'
+      const { name: nameProperty, title }: ProductsEventProperties =
+        SessionStorage.get<ProductsEventProperties>(sessionStorageKeys.productsEventProperties) || {
+          name: 'NONE',
+          title: 'NONE'
+        };
+
+      const getType = () => {
+        if (router.pathname === '/products/brands/[keyword]') {
+          return 'BRAND';
+        }
+        if (router.pathname === '/products/categories/[keyword]') {
+          return 'CATEGORY';
+        }
+        if (router.pathname === '/products/search/[keyword]') {
+          return 'INPUT';
+        }
+        if (router.pathname.indexOf('/products/crm') !== -1) {
+          return 'CRM';
+        }
+        if (router.pathname.indexOf('/products/camel') !== -1) {
+          return 'CAMEL';
+        }
+        return 'ETC';
       };
 
       logEvent(attrKeys.products.loadProductList, {
@@ -500,15 +538,19 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
           variant
         }),
         name: nameProperty,
-        type,
+        type: getType(),
         title,
         productTotal,
         sellerTotal
       });
+    }
+  }, [router.query, router.pathname, variant, progressDone, isFetched, lastPage]);
 
+  useEffect(() => {
+    if (loggedViewProductListLogEventRef.current && loggedLoadProductListLogEventRef.current) {
       SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     }
-  }, [router.query, variant, progressDone, isFetched, lastPage]);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (lastPage) {
@@ -536,6 +578,20 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   }, [setPrevScrollTopState, progressDone, prevScrollTop]);
 
   useEffect(() => {
+    if (debouncedFilterKeyword) {
+      setTotalCountState(({ type }) => ({
+        type,
+        count: products.flat().length
+      }));
+    } else {
+      setTotalCountState(({ type }) => ({
+        type,
+        count: lastPage?.productTotal
+      }));
+    }
+  }, [setTotalCountState, debouncedFilterKeyword, products, lastPage?.productTotal]);
+
+  useEffect(() => {
     return () => {
       SessionStorage.remove(sessionStorageKeys.productsEventProperties);
     };
@@ -560,19 +616,20 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
         ))}
       </Grid>
     );
+
   if (progressDone && isFetched && !products.length) {
     return (
       <>
         <Flexbox gap={4} direction="vertical" customStyle={{ margin: '0 20px 24px 20px' }}>
-          {variant === 'search' && keyword && (
-            <Typography weight="medium">{`'${getViewKeyword}'`}</Typography>
+          {variant === 'search' && keyword && !filterKeyword && (
+            <Typography weight="medium">{getViewKeyword}</Typography>
           )}
-          <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" color="ui60">
             {!hasSelectedSearchOptions && !isNotUsedBrand
               ? '아직 서비스 대상 브랜드가 아니에요.'
               : '조건을 만족하는 매물이 없어요.'}
           </Typography>
-          <Typography variant="small2" customStyle={{ color: common.ui60 }}>
+          <Typography variant="small2" color="ui60">
             {hasSelectedSearchOptions
               ? '필터를 다시 조합해 보세요!'
               : '검색 키워드를 변경하거나, 다른 모델을 검색해 보세요!'}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { Box, Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import styled from '@emotion/styled';
 
 import { ErrorBoundary } from '@components/UI/organisms';
 
@@ -13,7 +14,6 @@ import { checkAgent } from '@utils/common';
 import ProductSellerReviews from './ProductSellerReviews';
 import ProductSellerProductList from './ProductSellerProductList';
 import ProductLastLowerPrice from './ProductLastLowerPrice';
-import ProductKeywordList from './ProductKeywordList';
 import ProductAveragePriceChart from './ProductAveragePriceChart';
 
 function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) {
@@ -26,13 +26,6 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
     }
   } = useTheme();
   const [isApp, setIsApp] = useState(false);
-
-  const relatedKeywordParams = {
-    quoteTitle: data?.product.quoteTitle || '',
-    brandIds: data?.product.brand.id ? [data.product.brand.id] : [],
-    categoryIds: data?.product.category.id ? [data.product.category.id] : []
-  };
-
   useEffect(() => {
     if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
       setIsApp(true);
@@ -59,23 +52,12 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
             </Typography>
           </Button>
         )}
-        {!isCrm && (
-          <ProductKeywordList productId={data?.product.id} params={relatedKeywordParams} />
-        )}
+        <Divider />
       </>
     );
   }
   return (
     <>
-      <ProductLastLowerPrice />
-      {isCrm && (
-        <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
-          <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
-            지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
-          </Typography>
-        </Button>
-      )}
-      {!isCrm && <ProductKeywordList productId={data?.product.id} params={relatedKeywordParams} />}
       <ErrorBoundary disableFallback>
         <ProductAveragePriceChart product={data?.product} />
       </ErrorBoundary>
@@ -84,8 +66,24 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         roleSellerUserId={data?.roleSeller?.userId}
       />
       <ProductSellerReviews product={data?.product} roleSellerUserId={data?.roleSeller?.userId} />
+      <ProductLastLowerPrice />
+      {isCrm && (
+        <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
+          <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
+            지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
+          </Typography>
+        </Button>
+      )}
+      <Divider />
     </>
   );
 }
+
+const Divider = styled.div`
+  margin-top: 32px;
+  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.bg02};
+  margin-left: -20px;
+  width: calc(100% + 40px);
+`;
 
 export default ProductMowebAppContents;

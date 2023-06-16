@@ -7,6 +7,11 @@ import { useTheme } from '@emotion/react';
 
 import HomeFooter from '@components/pages/home/HomeFooter';
 
+import SessionStorage from '@library/sessionStorage';
+
+import sessionStorageKeys from '@constants/sessionStorageKeys';
+import attrProperty from '@constants/attrProperty';
+
 import { handleClickAppDownload } from '@utils/common';
 
 import { EllipsisText, FooterWrap } from './MowebFooter.styles';
@@ -51,17 +56,19 @@ function getPageNameByPathName(pathname: string) {
   if (pathname === '/') {
     pageName = 'MAIN';
   } else if (pathname === '/search') {
-    pageName = 'SEARCHMODAL';
+    pageName = 'SEARCH';
   } else if (pathname === '/category') {
     pageName = 'CATEGORY';
-  } else if (pathname === '/ranking') {
-    pageName = 'HOT';
-  } else if (pathname === '/productList') {
+  } else if (pathname === '/products') {
     pageName = 'PRODUCT_LIST';
-  } else if (pathname.indexOf('/product/') >= 0) {
+  } else if (pathname.indexOf('/products/') >= 0) {
     pageName = 'PRODUCT_DETAIL';
   } else if (pathname === '/brands') {
     pageName = 'BRAND';
+  } else if (pathname === '/wishes') {
+    pageName = 'WISH_LIST';
+  } else if (pathname === '/mypage') {
+    pageName = 'MY';
   }
 
   return pageName;
@@ -70,8 +77,15 @@ function getPageNameByPathName(pathname: string) {
 function MowebFooter() {
   const { push, pathname } = useRouter();
   const {
-    palette: { primary, common }
+    palette: { common }
   } = useTheme();
+
+  const seasonChange = useMemo(() => {
+    if (Number(dayjs().format('M')) >= 3 && Number(dayjs().format('M')) <= 8) {
+      return springAndSummer;
+    }
+    return autumnAndWinter;
+  }, []);
 
   const handleClickDownload = () =>
     handleClickAppDownload({
@@ -81,12 +95,14 @@ function MowebFooter() {
       }
     });
 
-  const seasonChange = useMemo(() => {
-    if (Number(dayjs().format('M')) >= 3 && Number(dayjs().format('M')) <= 8) {
-      return springAndSummer;
-    }
-    return autumnAndWinter;
-  }, []);
+  const handleClick = (model: string) => () => {
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: getPageNameByPathName(pathname),
+      title: attrProperty.title.FOOTER_RANK
+    });
+
+    push(`/products/search/${model}`);
+  };
 
   return (
     <FooterWrap bottomPadding={pathname === '/products/[id]' ? 100 : 0}>
@@ -108,11 +124,8 @@ function MowebFooter() {
         <Flexbox alignment="center" customStyle={{ width: '100%' }}>
           <Flexbox gap={8} direction="vertical" customStyle={{ width: '50%' }}>
             {seasonChange[0].map((model, i) => (
-              <Flexbox
-                key={`model-name-${model}`}
-                onClick={() => push(`/products/search/${model}`)}
-              >
-                <Typography weight="bold" customStyle={{ color: primary.light, marginRight: 8 }}>
+              <Flexbox key={`model-name-${model}`} onClick={handleClick(model)}>
+                <Typography weight="bold" color="primary-light" customStyle={{ marginRight: 8 }}>
                   {i + 1}
                 </Typography>
                 <EllipsisText>{model}</EllipsisText>
@@ -121,11 +134,8 @@ function MowebFooter() {
           </Flexbox>
           <Flexbox gap={8} direction="vertical" customStyle={{ width: '50%' }}>
             {seasonChange[1].map((model, i) => (
-              <Flexbox
-                key={`model-name-${model}`}
-                onClick={() => push(`/products/search/${model}`)}
-              >
-                <Typography weight="bold" customStyle={{ color: primary.light, marginRight: 8 }}>
+              <Flexbox key={`model-name-${model}`} onClick={handleClick(model)}>
+                <Typography weight="bold" color="primary-light" customStyle={{ marginRight: 8 }}>
                   {i + 6}
                 </Typography>
                 <EllipsisText>{model}</EllipsisText>

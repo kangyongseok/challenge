@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { Box, Flexbox, Image, Typography, dark, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Image, Typography, dark } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
@@ -41,26 +41,11 @@ function getPageNameByPathName(pathname: string) {
 }
 
 function AppDownloadBanner() {
-  const [isAppdownBannerState, setShowAppDownloadBannerState] = useRecoilState(
+  const [showAppDownloadBanner, setShowAppDownloadBannerState] = useRecoilState(
     showAppDownloadBannerState
   );
 
-  const scrollTriggerd = useReverseScrollTrigger(true);
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
-  useEffect(() => {
-    logEvent(attrKeys.commonEvent.VIEW_APPDOWNLOAD, {
-      type: 'BANNER'
-    });
-  }, []);
-
-  useEffect(() => {
-    setShowAppDownloadBannerState(scrollTriggerd);
-  }, [setShowAppDownloadBannerState, scrollTriggerd]);
+  const scrollTriggered = useReverseScrollTrigger(true);
 
   const handleClickDownload = () => {
     logEvent(attrKeys.commonEvent.CLICK_APPDOWNLOAD, {
@@ -76,8 +61,18 @@ function AppDownloadBanner() {
     });
   };
 
+  useEffect(() => {
+    logEvent(attrKeys.commonEvent.VIEW_APPDOWNLOAD, {
+      type: 'BANNER'
+    });
+  }, []);
+
+  useEffect(() => {
+    setShowAppDownloadBannerState(scrollTriggered);
+  }, [setShowAppDownloadBannerState, scrollTriggered]);
+
   return (
-    <StyledAppDownloadBanner scrollTriggered={scrollTriggerd && isAppdownBannerState}>
+    <StyledAppDownloadBanner scrollTriggered={scrollTriggered && showAppDownloadBanner}>
       <Flexbox alignment="center" customStyle={{ height: '100%' }} gap={6}>
         <CamelIconBox>
           <Image
@@ -95,28 +90,15 @@ function AppDownloadBanner() {
             whiteSpace: 'nowrap'
           }}
         >
-          <Typography
-            weight="bold"
-            variant="body2"
-            customStyle={{ color: dark.palette.common.uiBlack }}
-          >
+          <Typography weight="bold" variant="body2" color={dark.palette.common.uiBlack}>
             카멜 - 세상 모든 중고명품
           </Typography>
-          <Typography
-            weight="medium"
-            variant="body2"
-            customStyle={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              color: dark.palette.common.uiBlack
-            }}
-          >
+          <Typography weight="medium" variant="body2" noWrap color={dark.palette.common.uiBlack}>
             앱으로 대한민국 중고명품 모두 보기!
           </Typography>
         </Box>
         <DownloadButtonBox variant="solid" onClick={handleClickDownload}>
-          <Typography customStyle={{ color: common.cmn80 }}>다운로드</Typography>
+          <Typography color="cmn80">다운로드</Typography>
         </DownloadButtonBox>
       </Flexbox>
     </StyledAppDownloadBanner>

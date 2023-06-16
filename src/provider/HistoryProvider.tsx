@@ -26,6 +26,7 @@ const serverSideRenderPages = [
   '/products/categories/[keyword]',
   '/products/brands/[keyword]',
   '/products/search/[keyword]',
+  '/products/camel',
   '/products/[id]'
 ];
 
@@ -58,6 +59,26 @@ function HistoryProvider({ children }: PropsWithChildren) {
             setExitBottomSheet(true);
           }, 500);
         }
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
       }
 
       if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {

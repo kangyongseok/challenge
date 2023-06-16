@@ -21,13 +21,8 @@ import { convertSearchParamsByQuery } from '@utils/products';
 import { convertStringToArray, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
-import {
-  productFilterScrollToggleState,
-  productsStatusTriggeredStateFamily,
-  searchOptionsStateFamily
-} from '@recoil/productsFilter';
+import { searchOptionsStateFamily } from '@recoil/productsFilter';
 import { showAppDownloadBannerState } from '@recoil/common';
-import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 
 interface ProductsCategoryTagListProps {
   variant: ProductsVariant;
@@ -38,14 +33,8 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const { keyword = '', title, parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
-  const filterScrollToggleState = useRecoilValue(productFilterScrollToggleState);
-
-  const triggered = useReverseScrollTrigger(filterScrollToggleState);
-
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
-  const { triggered: productsStatusTriggered } = useRecoilValue(
-    productsStatusTriggeredStateFamily(atomParam)
-  );
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const parentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
   const subParentCategoryTagRefs = useRef<HTMLDivElement[]>([]);
@@ -218,11 +207,7 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   }, [subParentIds, subParentCategories]);
 
   return (
-    <StyledCategoryTags
-      showAppDownloadBanner={showAppDownloadBanner}
-      triggered={triggered}
-      productsStatusTriggered={productsStatusTriggered}
-    >
+    <StyledCategoryTags showAppDownloadBanner={showAppDownloadBanner}>
       <Box
         component="section"
         customStyle={{ minHeight: CATEGORY_TAGS_HEIGHT, position: 'relative' }}
@@ -309,35 +294,13 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
 
 const StyledCategoryTags = styled.div<{
   showAppDownloadBanner: boolean;
-  triggered?: boolean;
-  productsStatusTriggered?: boolean;
 }>`
   position: sticky;
-  ${({ productsStatusTriggered }): CSSObject =>
-    productsStatusTriggered
-      ? {
-          opacity: 0
-        }
-      : {}};
+
   top: ${({ showAppDownloadBanner }) =>
     `calc(${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_TOP : '0px'} + ${
       showAppDownloadBanner ? HEADER_HEIGHT + APP_DOWNLOAD_BANNER_HEIGHT : HEADER_HEIGHT
     }px)`};
-  ${({ triggered, productsStatusTriggered }): CSSObject => {
-    if (!triggered && productsStatusTriggered) {
-      return {
-        transform: 'translateY(-30px)',
-        opacity: 0,
-        pointerEvents: 'none'
-      };
-    }
-    if (triggered && productsStatusTriggered) {
-      return {
-        opacity: 1
-      };
-    }
-    return {};
-  }};
 
   z-index: ${({ theme: { zIndex } }) => zIndex.header - 1};
   transition: top 0.5s, opacity 0.2s, transform 0.2s;

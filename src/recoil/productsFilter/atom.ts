@@ -1,12 +1,13 @@
 import { atom, atomFamily } from 'recoil';
 
+import { AccessUser } from '@dto/userAuth';
 import type { ProductSearchOption, SearchParams } from '@dto/product';
 import { ProductDynamicOption } from '@dto/product';
 import type { SizeCode } from '@dto/common';
 
 import LocalStorage from '@library/localStorage';
 
-import { ACTIVE_MY_FILTER } from '@constants/localStorage';
+import { ACCESS_USER, ACTIVE_MY_FILTER, CLOSE_SAFE_PAYMENT_BANNER } from '@constants/localStorage';
 
 import type { SelectedSearchOption } from '@typings/products';
 
@@ -17,7 +18,7 @@ export const productsFilterStateFamily = atomFamily<
   },
   `general-${string}` | `order-${string}` | `legit-${string}`
 >({
-  key: 'productsFilterStateFamily',
+  key: 'productsFilter/stateFamily',
   default: (type) => ({
     type,
     open: false
@@ -25,7 +26,7 @@ export const productsFilterStateFamily = atomFamily<
 });
 
 export const productsFilterAtomParamState = atom({
-  key: 'productsFilterAtomParamState',
+  key: 'productsFilter/atomParamState',
   default: ''
 });
 
@@ -37,7 +38,7 @@ export const productsFilterActionStateFamily = atomFamily<
   },
   `brand-${string}` | `line-${string}` | `platform-${string}` | `color-${string}`
 >({
-  key: 'productsFilterActionStateFamily',
+  key: 'productsFilter/actionStateFamily',
   default: (type) => ({
     type,
     filterValue: '',
@@ -46,7 +47,7 @@ export const productsFilterActionStateFamily = atomFamily<
 });
 
 export const productsFilterProgressDoneState = atom({
-  key: 'productsFilterProgressDoneState',
+  key: 'productsFilter/progressDoneState',
   default: false
 });
 
@@ -57,7 +58,7 @@ export const productsFilterTotalCountStateFamily = atomFamily<
   },
   `search-${string}` | `searchOption-${string}`
 >({
-  key: 'productsFilterTotalCountStateFamily',
+  key: 'productsFilter/totalCountStateFamily',
   default: (type) => ({
     type,
     count: 0
@@ -119,14 +120,14 @@ export const activeMyFilterState = atom({
   effects: [
     ({ onSet, setSelf }) => {
       const activeMyFilter = LocalStorage.get<boolean>(ACTIVE_MY_FILTER);
-      if (activeMyFilter) {
+      const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
+
+      if (activeMyFilter && accessUser) {
         setSelf(activeMyFilter);
       }
 
       onSet((newValue, _, isReset) => {
-        if (isReset) {
-          LocalStorage.remove(ACTIVE_MY_FILTER);
-        } else {
+        if (!isReset) {
           LocalStorage.set(ACTIVE_MY_FILTER, newValue);
         }
       });
@@ -167,9 +168,38 @@ export const productsStatusTriggeredStateFamily = atomFamily<
   })
 });
 
-export const productFilterScrollToggleState = atom({
-  key: 'productsFilter/productFilterScrollToggleState',
-  default: true
+export const closeSafePaymentBannerState = atom({
+  key: 'productsFilter/closeSafePaymentBannerState',
+  default: false,
+  effects: [
+    ({ onSet, setSelf }) => {
+      const closeSafePaymentBanner = LocalStorage.get<boolean>(CLOSE_SAFE_PAYMENT_BANNER) || false;
+
+      setSelf(closeSafePaymentBanner);
+
+      onSet((newValue, _, isReset) => {
+        if (isReset) {
+          LocalStorage.remove(CLOSE_SAFE_PAYMENT_BANNER);
+        } else {
+          LocalStorage.set(CLOSE_SAFE_PAYMENT_BANNER, newValue);
+        }
+      });
+    }
+  ]
+});
+
+export const filterKeywordStateFamily = atomFamily<
+  {
+    type: string;
+    filterKeyword: string;
+  },
+  string
+>({
+  key: 'productsFilter/filterKeywordStateFamily',
+  default: (type) => ({
+    type,
+    filterKeyword: ''
+  })
 });
 
 export default productsFilterStateFamily;

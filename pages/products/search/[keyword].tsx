@@ -3,11 +3,12 @@ import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import { KeywordAlertManageBottomSheet, KeywordAlertOffDialog } from '@components/UI/organisms';
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
-import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  ProductsDynamicFilter,
   ProductsFilter,
   ProductsFilterBottomSheet,
+  ProductsFilterHistory,
   ProductsHeader,
   ProductsInfiniteGrid,
   ProductsKeywordAlertFab,
@@ -43,12 +44,12 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
         disablePadding
       >
         <ProductsRelatedKeywords />
-        <ProductsFilter variant="search" showDynamicFilter />
-        <Gap height={8} />
+        <ProductsDynamicFilter />
         <ProductsSafePaymentBanner />
+        <ProductsFilter variant="search" />
+        <ProductsFilterHistory variant="search" />
         <ProductsStatus />
         <ProductsInfiniteGrid variant="search" />
-        <Gap height={8} />
         <ProductsRelated />
       </GeneralTemplate>
       <ProductsTopButton />

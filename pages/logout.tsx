@@ -17,6 +17,7 @@ import { ACCESS_TOKEN, ACCESS_USER } from '@constants/localStorage';
 
 import { checkAgent } from '@utils/common';
 
+import { activeMyFilterState } from '@recoil/productsFilter';
 import { deviceIdState } from '@recoil/common';
 import { channelReceivedMessageFilteredState, sendbirdState } from '@recoil/channel';
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
@@ -31,6 +32,7 @@ function Logout() {
   const resetChannelReceivedMessageFilteredState = useResetRecoilState(
     channelReceivedMessageFilteredState
   );
+  const resetActiveMyFilterState = useResetRecoilState(activeMyFilterState);
 
   useEffect(() => {
     amplitude.getInstance().setUserId(null);
@@ -55,6 +57,7 @@ function Logout() {
       queryClient.clear();
       resetSendbirdState();
       resetChannelReceivedMessageFilteredState();
+      resetActiveMyFilterState();
       Sendbird.finalize();
       router.replace('/login');
     });
@@ -65,6 +68,7 @@ function Logout() {
     deviceId,
     resetSendbirdState,
     resetChannelReceivedMessageFilteredState,
+    resetActiveMyFilterState,
     accessUser?.userId
   ]);
 

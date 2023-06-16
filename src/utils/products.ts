@@ -44,7 +44,8 @@ export function convertSearchParams(
       minPrice,
       maxPrice,
       distance,
-      productOrder
+      productOrder,
+      title
     }) => {
       const {
         brandIds = [],
@@ -100,6 +101,8 @@ export function convertSearchParams(
         if (id) {
           searchParams.genderIds = Array.from(new Set([...genderIds, id, filterGenders.common.id]));
         }
+      } else if (codeId === filterCodeIds.title) {
+        searchParams.title = title;
       }
     }
   );

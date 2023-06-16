@@ -18,7 +18,8 @@ export const filterCodeIds = {
   brand: 100,
   category: 101,
   detailOption: 102,
-  my: 103
+  my: 103,
+  title: 104
 };
 
 export const filterGenders = {
@@ -193,56 +194,44 @@ export const myFilterRelatedParentCategoryIds = {
 export const generalFilterOptions = {
   brands: [
     { codeId: filterCodeIds.map, name: '내 주변' },
-    { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '안전결제' },
-    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
-    { codeId: filterCodeIds.gender, name: '성별' },
     { codeId: filterCodeIds.size, name: '사이즈' },
+    { codeId: filterCodeIds.gender, name: '성별' },
     { codeId: filterCodeIds.price, name: '가격' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.line, name: '라인' },
     { codeId: filterCodeIds.color, name: '색상' },
-    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.detailOption, name: '상세옵션' }
   ],
   categories: [
     { codeId: filterCodeIds.map, name: '내 주변' },
-    { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '안전결제' },
-    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
     { codeId: filterCodeIds.brand, name: '브랜드' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.line, name: '라인' },
     { codeId: filterCodeIds.color, name: '색상' },
-    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.detailOption, name: '상세옵션' }
   ],
   search: [
     { codeId: filterCodeIds.map, name: '내 주변' },
-    { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '안전결제' },
-    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
     { codeId: filterCodeIds.brand, name: '브랜드' },
     { codeId: filterCodeIds.category, name: '카테고리' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.line, name: '라인' },
     { codeId: filterCodeIds.color, name: '색상' },
-    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.detailOption, name: '상세옵션' }
   ],
   camel: [
     { codeId: filterCodeIds.map, name: '내 주변' },
-    { codeId: filterCodeIds.my, name: '내 사이즈' },
-    { codeId: filterCodeIds.safePayment, name: '안전결제' },
-    { codeId: filterCodeIds.id, id: idFilterIds.lowPrice, name: '시세이하' },
     { codeId: filterCodeIds.size, name: '사이즈' },
     { codeId: filterCodeIds.price, name: '가격' },
     { codeId: filterCodeIds.brand, name: '브랜드' },
     { codeId: filterCodeIds.category, name: '카테고리' },
+    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.line, name: '라인' },
     { codeId: filterCodeIds.color, name: '색상' },
-    { codeId: filterCodeIds.platform, name: '플랫폼' },
     { codeId: filterCodeIds.detailOption, name: '상세옵션' }
   ]
 };

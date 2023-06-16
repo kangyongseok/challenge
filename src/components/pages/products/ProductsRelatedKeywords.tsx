@@ -13,7 +13,6 @@ import { logEvent } from '@library/amplitude';
 import { fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { RELATED_KEYWORDS_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -96,22 +95,23 @@ function ProductsRelatedKeywords() {
                 <Skeleton
                   // eslint-disable-next-line react/no-array-index-key
                   key={`related-keyword-skeleton-${index}`}
-                  height={36}
+                  height={32}
                   minWidth={(index % 2) * 47 + 82}
                   round={18}
                   disableAspectRatio
                 />
               ))
             : relatedKeywords.map((relatedKeyword, index) => (
-                <KeywordChip
+                <Chip
                   // eslint-disable-next-line react/no-array-index-key
                   key={`related-keyword-${relatedKeyword.keyword}-${index}`}
-                  size="large"
-                  variant="solid"
                   onClick={handleClick(relatedKeyword)}
+                  customStyle={{
+                    minWidth: 'fit-content'
+                  }}
                 >
-                  {relatedKeyword.keyword}
-                </KeywordChip>
+                  {String(keyword || '').replace(/-/g, ' ')} {relatedKeyword.keyword}
+                </Chip>
               ))}
         </KeywordList>
       </KeywordWrapper>
@@ -121,30 +121,28 @@ function ProductsRelatedKeywords() {
 
 const Wrapper = styled.section<{ show: boolean }>`
   position: relative;
-  height: ${({ show }) => (show ? RELATED_KEYWORDS_HEIGHT : 0)}px;
+  height: ${({ show }) => (show ? 40 : 0)}px;
   opacity: ${({ show }) => Number(show)};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
   transition: all 0.1s ease-in-out 0s;
 `;
 
 const KeywordWrapper = styled.div`
-  background-color: ${({ theme }) => theme.palette.common.uiWhite};
   width: 100%;
-  overflow-x: auto;
+  background-color: ${({
+    theme: {
+      palette: { common }
+    }
+  }) => common.uiWhite};
 `;
 
 const KeywordList = styled.div`
-  padding: 4px 16px 12px;
   display: flex;
   align-items: center;
+  width: 100%;
   column-gap: 6px;
-  width: fit-content;
-`;
-
-const KeywordChip = styled(Chip)`
-  background-color: ${({ theme: { palette } }) => palette.primary.light};
-  white-space: nowrap;
-  font-weight: ${({ theme: { typography } }) => typography.h4.weight.regular};
+  padding: 4px 16px 4px;
+  overflow-x: auto;
 `;
 
 export default ProductsRelatedKeywords;

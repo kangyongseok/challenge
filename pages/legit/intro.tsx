@@ -113,7 +113,7 @@ function LegitIntro() {
             <br />
             <span>무료감정</span>이 가능해요!
           </Title>
-          <Typography variant="h4" customStyle={{ textAlign: 'center', color: common.ui60 }}>
+          <Typography variant="h4" color="ui60" textAlign="center">
             사진 몇장 추가하고 2배 빨리 판매하세요
           </Typography>
         </Flexbox>

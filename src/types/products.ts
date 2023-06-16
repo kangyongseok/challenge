@@ -23,6 +23,7 @@ export type SelectedSearchOption = SelectedSearchOptionState<
         distance: number;
         productOrder: ProductOrder;
         gender: string;
+        title: string;
       }
   >
 >;

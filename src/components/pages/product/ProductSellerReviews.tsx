@@ -3,10 +3,8 @@ import { memo, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Flexbox, Icon, Rating, Typography } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Rating, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
-
-import { Divider } from '@components/UI/molecules';
 
 import type { AccessUser } from '@dto/userAuth';
 import type { Product } from '@dto/product';
@@ -27,7 +25,6 @@ import { pulse } from '@styles/transition';
 
 import { reviewBlockState } from '@recoil/productReview';
 import useProductType from '@hooks/useProductType';
-import useProductSellerType from '@hooks/useProductSellerType';
 
 function ProductSellerReviews({
   product,
@@ -60,11 +57,6 @@ function ProductSellerReviews({
   );
 
   const { isAllCrawlingProduct } = useProductType(reviewInfo?.sellerType);
-  const { isCertificationSeller } = useProductSellerType({
-    productSellerType: reviewInfo?.productSeller?.type
-  });
-
-  const isCamelSeller = reviewInfo && isCertificationSeller;
 
   const handleClickMoreList = () => {
     if (product)
@@ -91,7 +83,7 @@ function ProductSellerReviews({
     router.push({
       pathname: isAllCrawlingProduct ? `/sellerInfo/${sellerId}` : `/userInfo/${roleSellerUserId}`,
       query: {
-        tab: 'products'
+        tab: 'reviews'
       }
     });
   };
@@ -119,7 +111,7 @@ function ProductSellerReviews({
     <Box>
       <Flexbox
         alignment="center"
-        customStyle={{ margin: '32px 0 20px' }}
+        customStyle={{ margin: '52px 0 20px' }}
         onClick={() => {
           if (product)
             productDetailAtt({
@@ -143,35 +135,15 @@ function ProductSellerReviews({
       >
         <Flexbox alignment="center" customStyle={{ marginRight: 'auto' }}>
           <Typography variant="h3" weight="bold">
-            판매자 후기
+            판매자 후기 {reviewInfo.sellerReviews?.content.length}
           </Typography>
-          {/* <Typography
-            variant="body2"
-            weight="medium"
-            customStyle={{ marginLeft: 4, color: common.ui80 }}
-          >
-            ({commaNumber(reviewInfo.totalCount || reviewInfo?.sellerReviews.totalElements || 0)}
-            개)
-          </Typography> */}
         </Flexbox>
-        {reviewInfo?.curnScore && (
-          <Flexbox alignment="center" gap={2}>
-            <Icon name="StarFilled" color="#FFD911" size="medium" />
-            <Typography variant="h4" weight="bold">
-              {`${
-                reviewInfo.curnScore.length > 1
-                  ? reviewInfo?.curnScore
-                  : `${reviewInfo?.curnScore}.0` || 0
-              }${reviewInfo?.maxScore ? `/${reviewInfo?.maxScore}` : ''}`}
-            </Typography>
-          </Flexbox>
-        )}
-        <Icon
+        {/* <Icon
           name="CaretRightOutlined"
           size="medium"
           color="ui60"
           customStyle={{ marginLeft: 5 }}
-        />
+        /> */}
       </Flexbox>
       {!reviewInfo?.sellerReviews
         ? Array.from({ length: 2 }, (_, index) => (
@@ -210,19 +182,16 @@ function ProductSellerReviews({
                 )}
               </ReviewCard>
             ))}
-      {isCamelSeller && (
-        <Button
-          fullWidth
-          size="large"
-          variant="outline"
-          brandColor="blue"
-          customStyle={{ marginTop: 20 }}
-          onClick={handleClickMoreList}
-        >
-          인증판매자 상점 방문하기
-        </Button>
-      )}
-      <Divider />
+      <Button
+        fullWidth
+        size="large"
+        variant="ghost"
+        brandColor="black"
+        customStyle={{ marginTop: 20 }}
+        onClick={handleClickMoreList}
+      >
+        후기 더보기
+      </Button>
     </Box>
   ) : null;
 }

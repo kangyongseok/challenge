@@ -588,6 +588,13 @@ export interface ProductContent {
   contents: Contents;
 }
 
+export interface ProductDetailKeyword {
+  brand: Brand;
+  category: Category;
+  categoryThumbnail: string;
+  relatedKeywords: string[];
+}
+
 export interface SellerInfo {
   curnScore: string | null;
   maxScore: string | null;
@@ -664,6 +671,7 @@ export interface SearchParams {
   unit?: number;
   conditionIds?: number[];
   searchType?: 'camel';
+  title?: string;
 }
 
 export interface SearchAiProductParams {

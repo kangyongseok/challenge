@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import sortBy from 'lodash-es/sortBy';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Flexbox, Switch, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Switch, Typography } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 
@@ -33,11 +33,6 @@ interface MyFilterInfoProps {
 
 function MyFilterInfo({ variant }: MyFilterInfoProps) {
   const router = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const atomParam = router.asPath.split('?')[0];
 
   const [activeMyFilter, setActiveMyFilterState] = useRecoilState(activeMyFilterState);
@@ -243,15 +238,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
             <Typography variant="h4" weight="bold">
               내 사이즈만 보기
             </Typography>
-            <Typography
-              variant="body2"
-              customStyle={{
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                color: common.ui60
-              }}
-            >
+            <Typography variant="body2" noWrap color="ui60">
               {info}
             </Typography>
           </Flexbox>

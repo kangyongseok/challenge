@@ -108,14 +108,14 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
       initialSlide={activeSlide}
       style={{ height: '100%' }}
     >
+      <SwiperSlide data-code-id={size}>
+        <SizeTabPanel variant={variant} />
+      </SwiperSlide>
       {variant === 'brands' && (
         <SwiperSlide data-code-id={gender}>
           <GenderTabPanel />
         </SwiperSlide>
       )}
-      <SwiperSlide data-code-id={size}>
-        <SizeTabPanel variant={variant} />
-      </SwiperSlide>
       <SwiperSlide data-code-id={price}>
         <PriceTabPanel />
       </SwiperSlide>
@@ -129,14 +129,14 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
           <CategoryTabPanel />
         </SwiperSlide>
       )}
+      <SwiperSlide data-code-id={platform}>
+        <PlatformTabPanel />
+      </SwiperSlide>
       <SwiperSlide data-code-id={line}>
         <LineTabPanel />
       </SwiperSlide>
       <SwiperSlide data-code-id={color}>
         <ColorTabPanel />
-      </SwiperSlide>
-      <SwiperSlide data-code-id={platform}>
-        <PlatformTabPanel />
       </SwiperSlide>
       <SwiperSlide data-code-id={detailOption}>
         <DetailOptionTabPanel />

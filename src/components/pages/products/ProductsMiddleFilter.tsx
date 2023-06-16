@@ -7,7 +7,6 @@ import {
   Avatar,
   Box,
   Button,
-  Checkbox,
   Chip,
   Flexbox,
   Icon,
@@ -16,8 +15,6 @@ import {
   useTheme
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
-
-import { Gap } from '@components/UI/atoms';
 
 import type { ProductDynamicOptionCodeDetail, ProductDynamicOptionCodeType } from '@dto/product';
 import type { CategoryCode, SizeCode } from '@dto/common';
@@ -96,7 +93,6 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
     SelectedSearchOption[]
   >([]);
   const [value, setValue] = useState<string | number>('');
-  const [checked, setChecked] = useState(false);
 
   const isInitRef = useRef(false);
 
@@ -242,25 +238,10 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
     }
   };
 
-  const handleClickLowerPrice = () => {
-    if (!checked) {
-      logEvent(attrKeys.products.SELECT_ID_FILTER, {
-        name: attrProperty.name.MIDDLE_FILTER,
-        att: '시세이하'
-      });
-    }
-    setChecked(!checked);
-  };
-
   const handleClickApply = () => {
     let newMiddleFilterSelectedSearchOptions = [...middleFilterSelectedSearchOptions];
 
-    if (checked) {
-      newMiddleFilterSelectedSearchOptions = newMiddleFilterSelectedSearchOptions.concat({
-        id: idFilterIds.lowPrice,
-        codeId: filterCodeIds.id
-      });
-    } else if (value) {
+    if (value) {
       let newValue = Number(value);
 
       if (newValue < 3) {
@@ -337,76 +318,59 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
   return (
     <Box
       customStyle={{
-        padding: '32px 20px',
+        padding: '8px 0',
         backgroundColor: common.bg02
       }}
     >
       <Box
         customStyle={{
-          padding: 20,
-          borderRadius: 8,
+          padding: '32px 20px',
           backgroundColor: common.bg01
         }}
       >
         <Typography variant="h3" weight="bold">
-          원하는 매물 빨리 찾기
+          원하는 매물 빨리 찾기 🔍
         </Typography>
         <Typography
+          color="ui60"
           customStyle={{
-            color: common.ui60
+            margin: '4px 0 20px'
           }}
         >
           필터를 써서 맘에 드는 매물만 골라보세요.
         </Typography>
-        <Gap
-          height={1}
-          customStyle={{
-            margin: '20px 0',
-            backgroundColor: common.line02
-          }}
-        />
         {dynamicOptions
           .filter(({ codeDetails }) => codeDetails.length > 0)
           .slice(0, 4)
-          .map(({ name, codeType, codeDetails }, index) => {
+          .map(({ name, codeType, codeDetails }) => {
             if (codeType === productDynamicOptionCodeType.price) {
               return (
                 <Flexbox
                   key={`products-middle-filter-${name}`}
                   alignment="center"
-                  customStyle={{ position: 'relative', marginTop: index !== 0 ? 12 : undefined }}
+                  customStyle={{
+                    position: 'relative',
+                    minHeight: 60,
+                    borderTop: `1px solid ${common.line02}`
+                  }}
                 >
-                  <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                  <Typography weight="medium" color="ui60" customStyle={{ minWidth: 72 }}>
                     {name}
                   </Typography>
                   <Flexbox gap={8} customStyle={{ flex: 1 }}>
                     <Input
                       type="number"
-                      size="large"
                       unit="만원 이하"
                       pattern="[0-9]*"
                       inputMode="numeric"
                       fullWidth
                       onChange={handleChange}
                       value={value}
-                      disabled={checked}
                       customStyle={{ whiteSpace: 'nowrap' }}
                       inputCustomStyle={{
                         width: '100%'
                       }}
                     />
-                    <Flexbox gap={4} alignment="center">
-                      {/* TODO 추후 UI 라이브러리 CheckboxGroup 컴포넌트로 교체 */}
-                      <Checkbox checked={checked} onChange={handleClickLowerPrice} />
-                      <Typography
-                        onClick={handleClickLowerPrice}
-                        customStyle={{
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        시세이하
-                      </Typography>
-                    </Flexbox>
                   </Flexbox>
                 </Flexbox>
               );
@@ -419,11 +383,12 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                   alignment="center"
                   customStyle={{
                     position: 'relative',
-                    marginTop: index !== 0 ? 12 : undefined,
+                    minHeight: 44,
+                    borderTop: `1px solid ${common.line02}`,
                     overflowY: 'hidden'
                   }}
                 >
-                  <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                  <Typography weight="medium" color="ui60" customStyle={{ minWidth: 72 }}>
                     {name}
                   </Typography>
                   <List
@@ -483,9 +448,13 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                 <Flexbox
                   key={`products-middle-filter-${name}`}
                   alignment="center"
-                  customStyle={{ position: 'relative', marginTop: index !== 0 ? 12 : undefined }}
+                  customStyle={{
+                    position: 'relative',
+                    minHeight: 44,
+                    borderTop: `1px solid ${common.line02}`
+                  }}
                 >
-                  <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                  <Typography weight="medium" color="ui60" customStyle={{ minWidth: 72 }}>
                     {name}
                   </Typography>
                   <List>
@@ -530,9 +499,13 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                 <Flexbox
                   key={`products-middle-filter-${name}`}
                   alignment="center"
-                  customStyle={{ position: 'relative', marginTop: index !== 0 ? 12 : undefined }}
+                  customStyle={{
+                    position: 'relative',
+                    minHeight: 44,
+                    borderTop: `1px solid ${common.line02}`
+                  }}
                 >
-                  <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                  <Typography weight="medium" color="ui60" customStyle={{ minWidth: 72 }}>
                     {name}
                   </Typography>
                   <List>
@@ -541,29 +514,43 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
                         categorySizeId: codeDetailCategorySizeId,
                         parentCategoryId: codeDetailParentCategoryId
                       } = codeDetail as SizeCode;
+                      const isActive = middleFilterSelectedSearchOptions.some(
+                        ({ codeId, categorySizeId, parentCategoryId }) =>
+                          codeId === filterCodeIds.size &&
+                          categorySizeId === codeDetailCategorySizeId &&
+                          parentCategoryId === codeDetailParentCategoryId
+                      );
 
                       return (
-                        <Chip
+                        <Button
                           key={`products-middle-filter-code-detail-${name}-${codeDetailCategorySizeId}`}
-                          variant="ghost"
-                          brandColor={
-                            middleFilterSelectedSearchOptions.some(
-                              ({ codeId, categorySizeId, parentCategoryId }) =>
-                                codeId === filterCodeIds.size &&
-                                categorySizeId === codeDetailCategorySizeId &&
-                                parentCategoryId === codeDetailParentCategoryId
-                            )
-                              ? 'blue'
-                              : 'black'
-                          }
-                          size="large"
+                          variant="inline"
+                          brandColor={isActive ? 'blue' : 'gray'}
                           onClick={handleClick({
                             codeType,
                             codeDetail
                           })}
+                          endIcon={
+                            isActive ? (
+                              <Icon
+                                name="CloseOutlined"
+                                width={16}
+                                height={16}
+                                color="ui80"
+                                customStyle={{
+                                  width: '16px !important',
+                                  height: '16px !important'
+                                }}
+                              />
+                            ) : undefined
+                          }
+                          customStyle={{
+                            gap: 4,
+                            fontWeight: isActive ? 700 : undefined
+                          }}
                         >
                           {codeDetail.name}
-                        </Chip>
+                        </Button>
                       );
                     })}
                   </List>
@@ -575,33 +562,51 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
               <Flexbox
                 key={`products-middle-filter-${name}`}
                 alignment="center"
-                customStyle={{ position: 'relative', marginTop: index !== 0 ? 12 : undefined }}
+                customStyle={{
+                  position: 'relative',
+                  minHeight: 44,
+                  borderTop: `1px solid ${common.line02}`
+                }}
               >
-                <Typography weight="medium" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                <Typography weight="medium" color="ui60" customStyle={{ minWidth: 72 }}>
                   {name}
                 </Typography>
                 <List>
                   {codeDetails.map((codeDetail) => {
+                    const isActive = middleFilterSelectedSearchOptions.some(
+                      ({ codeId, id }) =>
+                        codeId === getCodeIdByCodeType(codeType) && id === codeDetail.id
+                    );
                     return (
-                      <Chip
+                      <Button
                         key={`products-middle-filter-code-detail-${name}-${codeDetail.id}`}
-                        variant="ghost"
-                        brandColor={
-                          middleFilterSelectedSearchOptions.some(
-                            ({ codeId, id }) =>
-                              codeId === getCodeIdByCodeType(codeType) && id === codeDetail.id
-                          )
-                            ? 'blue'
-                            : 'black'
-                        }
-                        size="large"
+                        variant="inline"
+                        brandColor={isActive ? 'blue' : 'gray'}
                         onClick={handleClick({
                           codeType,
                           codeDetail
                         })}
+                        endIcon={
+                          isActive ? (
+                            <Icon
+                              name="CloseOutlined"
+                              width={16}
+                              height={16}
+                              color="ui80"
+                              customStyle={{
+                                width: '16px !important',
+                                height: '16px !important'
+                              }}
+                            />
+                          ) : undefined
+                        }
+                        customStyle={{
+                          gap: 4,
+                          fontWeight: isActive ? 700 : undefined
+                        }}
                       >
                         {codeDetail.name}
-                      </Chip>
+                      </Button>
                     );
                   })}
                 </List>
@@ -610,13 +615,13 @@ function ProductsMiddleFilter({ isFetched, measure }: ProductsMiddleFilterProps)
           })}
         <Button
           variant="solid"
-          brandColor="primary"
+          brandColor="black"
           size="large"
           fullWidth
           onClick={handleClickApply}
-          disabled={!isFetched || (!middleFilterSelectedSearchOptions.length && !value && !checked)}
+          disabled={!isFetched || (!middleFilterSelectedSearchOptions.length && !value)}
           customStyle={{
-            marginTop: 32
+            marginTop: 20
           }}
         >
           필터 적용하기
@@ -631,7 +636,7 @@ const List = styled.section`
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  column-gap: 6px;
+  column-gap: 4px;
   overflow-x: auto;
 
   &:after {
