@@ -106,7 +106,7 @@ function CategoryProducts() {
         justifyContent="space-between"
         customStyle={{
           position: 'relative',
-          padding: '16px 20px'
+          padding: '12px 20px'
         }}
       >
         <LinearProgress value={0} customStyle={{ position: 'absolute', top: 0, left: 0 }} />

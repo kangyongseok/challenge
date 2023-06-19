@@ -861,7 +861,7 @@ const Wrapper = styled(Flexbox)`
   width: 100%;
 `;
 
-const GeneralFilterList = styled.div<{
+const GeneralFilterList = styled.section<{
   variant?: ProductsVariant;
   showAppDownloadBanner: boolean;
   triggered?: boolean;
