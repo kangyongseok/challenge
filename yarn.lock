@@ -826,10 +826,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@mrcamelhub/camel-ui-dialog@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-dialog/-/camel-ui-dialog-0.0.4.tgz#aa33fea9f301b2311db490a4bed73eb99515a4e4"
-  integrity sha512-pqlPGiYh3xr7ZO1pMkav5gtBC5y5LEXx0xrzRjDgyvJ067nCkFq92w/pkioC+b8nIK0qs0NCaIzTPMByGCNHVQ==
+"@mrcamelhub/camel-ui-dialog@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@mrcamelhub/camel-ui-dialog/-/camel-ui-dialog-0.0.5.tgz#8bd7eab95abddf0e38e7194d11062c7bb90c10f7"
+  integrity sha512-QDUaM3padmXFBIxodwrxknupJk7CcDoFhqv0enkEDaC50C2aFpHBLeQNt2bT1ef71LFCPeC7YVbZDts7IFYecw==
 
 "@mrcamelhub/camel-ui-toast@^0.0.9":
   version "0.0.9"

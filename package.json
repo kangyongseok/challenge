@@ -29,7 +29,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mrcamelhub/camel-ui": "^0.1.72",
-    "@mrcamelhub/camel-ui-dialog": "^0.0.4",
+    "@mrcamelhub/camel-ui-dialog": "^0.0.5",
     "@mrcamelhub/camel-ui-toast": "^0.0.9",
     "@react-spring/web": "^9.4.5",
     "@sendbird/chat": "^4.1.1",
