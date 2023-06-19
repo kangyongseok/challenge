@@ -139,7 +139,7 @@ function LegitPhotoGuideCard({
           variant="solid"
           brandColor="red"
           size="xsmall"
-          text={String(newImageUrl)}
+          text="필수"
           customStyle={{
             position: 'absolute',
             top: 4,
