@@ -159,19 +159,6 @@ function ProductInfo({
     .toLowerCase()
     .replace(/\s/g, '')}.jpg`;
 
-  const sessionId = amplitude.getInstance().getSessionId();
-  const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
-    sessionId,
-    counts: {},
-    isInit: !!sessionId,
-    lastAction: '',
-    isClosed: false,
-    mainCloseTime: '',
-    mainType: 0,
-    isTooltipView: false,
-    viewProductList: []
-  };
-
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
       productDetail?.product?.viewDescription || productDetail?.product?.description || ''
@@ -352,6 +339,19 @@ function ProductInfo({
           children: '찜목록에서 삭제했어요.'
         });
       } else {
+        const sessionId = amplitude.getInstance().getSessionId();
+        const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
+          sessionId,
+          counts: {},
+          isInit: !!sessionId,
+          lastAction: '',
+          isClosed: false,
+          mainCloseTime: '',
+          mainType: 0,
+          isTooltipView: false,
+          viewProductList: []
+        };
+
         appBanner.counts.WISH = (appBanner.counts.WISH || 0) + 1;
         LocalStorage.set(APP_BANNER, appBanner);
 

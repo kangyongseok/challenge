@@ -64,20 +64,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
     { keepPreviousData: true, staleTime: 5 * 60 * 1000, enabled: !!data?.product }
   );
 
-  const sessionId = amplitude.getInstance().getSessionId();
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
-
-  const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
-    sessionId,
-    counts: {},
-    isInit: !!sessionId,
-    lastAction: '',
-    isClosed: false,
-    mainCloseTime: '',
-    mainType: 0,
-    isTooltipView: false,
-    viewProductList: []
-  };
 
   const handleClickLogo = () => {
     push('/');
@@ -151,6 +138,19 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
           children: '찜목록에서 삭제했어요.'
         });
       } else {
+        const sessionId = amplitude.getInstance().getSessionId();
+        const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
+          sessionId,
+          counts: {},
+          isInit: !!sessionId,
+          lastAction: '',
+          isClosed: false,
+          mainCloseTime: '',
+          mainType: 0,
+          isTooltipView: false,
+          viewProductList: []
+        };
+
         appBanner.counts.WISH = (appBanner.counts.WISH || 0) + 1;
         LocalStorage.set(APP_BANNER, appBanner);
 

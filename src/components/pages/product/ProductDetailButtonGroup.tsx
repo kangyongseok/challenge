@@ -83,19 +83,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     (productDetail?.product?.site?.hasImage && productDetail?.product?.site?.id) ||
     '';
 
-  const sessionId = amplitude.getInstance().getSessionId();
-  const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
-    sessionId,
-    counts: {},
-    isInit: !!sessionId,
-    lastAction: '',
-    isClosed: false,
-    mainCloseTime: '',
-    mainType: 0,
-    isTooltipView: false,
-    viewProductList: []
-  };
-
   const logEventProductDetailAtt = ({
     key,
     att
@@ -136,6 +123,19 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       });
       return;
     }
+
+    const sessionId = amplitude.getInstance().getSessionId();
+    const appBanner: AppBanner = LocalStorage.get<AppBanner>(APP_BANNER) || {
+      sessionId,
+      counts: {},
+      isInit: !!sessionId,
+      lastAction: '',
+      isClosed: false,
+      mainCloseTime: '',
+      mainType: 0,
+      isTooltipView: false,
+      viewProductList: []
+    };
 
     if (!isDuplicate || !isTargetProduct) {
       appBanner.counts.PURCHASE = (appBanner.counts.PURCHASE || 0) + 1;

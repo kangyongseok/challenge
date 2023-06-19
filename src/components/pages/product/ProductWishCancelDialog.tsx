@@ -21,8 +21,8 @@ function ProductWishCancelDialog({
       >
         <Typography
           weight="medium"
+          textAlign="center"
           customStyle={{
-            textAlign: 'center',
             padding: '24px 0'
           }}
         >
