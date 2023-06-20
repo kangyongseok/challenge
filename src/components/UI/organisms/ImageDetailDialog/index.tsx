@@ -105,6 +105,10 @@ function ImageDetailDialog({
     const previousTransformRef = transformsRef.current[previousIndex];
 
     if (previousTransformRef) previousTransformRef.resetTransform();
+
+    if (typeof onChange === 'function' && realIndex !== undefined && label) {
+      onChange(swiper);
+    }
   };
 
   const handleZoomStart = () => {

@@ -53,13 +53,14 @@ function ProductImages({
   const [openModal, setOpenModal] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [syncIndex, setSyncIndex] = useState(0);
-  const [imageSwiper, setImageSwiper] = useState<SwiperClass | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isDisplay, setIsDisplay] = useState(true);
   const [isLoggedSwipeXPic, setIsLoggedSwipeXPic] = useState(false);
   const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
     useState<SearchLowerProductsParams | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
+
+  const swiperRef = useRef<SwiperClass>();
 
   const { data: searchRelatedProducts, isFetched } = useQuery(
     queryKeys.products.searchRelatedProducts(
@@ -140,9 +141,11 @@ function ProductImages({
       }
 
       setCurrentSlide(realIndex);
-      imageSwiper?.slideTo(realIndex, 0);
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(realIndex, 0);
+      }
     },
-    [detailImages, currentSlide, isLoggedSwipeXPic, imageSwiper]
+    [detailImages, currentSlide, isLoggedSwipeXPic]
   );
 
   const handleProductImagesSlideChange = useCallback(
@@ -239,10 +242,10 @@ function ProductImages({
   }, [openModal]);
 
   useEffect(() => {
-    if (imageSwiper) {
-      imageSwiper.slideTo(0, 0);
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(0, 0);
     }
-  }, [router.query.id, imageSwiper]);
+  }, [router.query.id]);
 
   return (
     <>
@@ -255,7 +258,11 @@ function ProductImages({
         <Swiper
           lazy
           modules={[Lazy]}
-          onSwiper={setImageSwiper}
+          onInit={(ref) => {
+            if (ref) {
+              swiperRef.current = ref;
+            }
+          }}
           initialSlide={currentSlide}
           onSlideChange={handleProductImagesSlideChange}
           preventClicks
