@@ -53,8 +53,7 @@ const nextConfig = {
   productionBrowserSourceMaps: process.env.NEXT_DISABLE_SOURCEMAPS === 'true',
   poweredByHeader: isDevelopment,
   experimental: {
-    scrollRestoration: true,
-    esmExternals: false
+    scrollRestoration: true
   },
   compiler: {
     emotion: true,
