@@ -152,7 +152,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   useEffect(() => {
     const slicedValues = chartValues.slice(1, 7);
     if (slicedValues.length > 0) {
-      const suggestedMax = Number(((105 / 100) * Math.max(...slicedValues)).toFixed(1));
+      const suggestedMax = Number(((108 / 100) * Math.max(...slicedValues)).toFixed(1));
       const suggestedMin = Number(((95 / 100) * Math.min(...slicedValues)).toFixed(1));
       const stepSize = Number(((suggestedMax - suggestedMin) / 3).toFixed(0));
 
@@ -257,9 +257,16 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               if (index < 5) return;
               createRoundRect({
                 ctx,
-                x: chartElement.x - String(slicedValues[index]).length * 11.5,
+                x:
+                  chartElement.x -
+                  (String(slicedValues[index]).length === 3
+                    ? String(slicedValues[index]).length * 14
+                    : String(slicedValues[index]).length * 11.5),
                 y: chartElement.y - 34,
-                width: String(slicedValues[index]).length * 13,
+                width:
+                  String(slicedValues[index]).length === 3
+                    ? String(slicedValues[index]).length * 18
+                    : String(slicedValues[index]).length * 13,
                 height: 28,
                 radius: 6,
                 isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
