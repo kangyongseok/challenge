@@ -71,6 +71,15 @@ function ImageDetailDialog({
     }
   });
 
+  const handleClose = () => {
+    if (typeof onClose === 'function') {
+      onClose();
+    }
+    if (typeof onChange === 'function' && swiperRef.current) {
+      onChange(swiperRef.current);
+    }
+  };
+
   const handleSlideMove = () => {
     if (images.length > 1) slideMovingRef.current = true;
   };
@@ -92,9 +101,6 @@ function ImageDetailDialog({
     const previousTransformRef = transformsRef.current[previousIndex];
 
     if (previousTransformRef) previousTransformRef.resetTransform();
-    if (typeof onChange === 'function') {
-      onChange(swiper);
-    }
   };
 
   const handleZoomStart = () => {
@@ -156,7 +162,7 @@ function ImageDetailDialog({
 
     if (currentDialogY > 10) {
       dialogRef.current.style.setProperty('transform', 'translateY(120%)');
-      swipeCloseTimerRef.current = setTimeout(() => onClose(), 50);
+      swipeCloseTimerRef.current = setTimeout(() => handleClose(), 50);
     } else {
       dialogRef.current.removeAttribute('style');
     }
@@ -304,7 +310,7 @@ function ImageDetailDialog({
       ref={dialogRef}
       fullScreen
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -343,7 +349,7 @@ function ImageDetailDialog({
         <CloseIcon
           name="CloseOutlined"
           color="cmnW"
-          onClick={onClose}
+          onClick={handleClose}
           customStyle={{ cursor: 'pointer' }}
         />
       </Box>

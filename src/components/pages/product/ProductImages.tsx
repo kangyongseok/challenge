@@ -126,6 +126,9 @@ function ProductImages({
 
   const handleSlideChange = useCallback(
     ({ realIndex }: SwiperClass) => {
+      if (realIndex === undefined) {
+        return;
+      }
       if (typeof detailImages[currentSlide] === 'object') {
         logEvent(attrKeys.products.VIEW_LOWPRICE_PRODUCT, {
           type: 'PIC'
@@ -138,6 +141,7 @@ function ProductImages({
           index: realIndex
         });
       }
+
       setCurrentSlide(realIndex);
       imageSwiper?.slideTo(realIndex, 0);
     },
