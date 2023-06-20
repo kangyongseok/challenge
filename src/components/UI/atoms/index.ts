@@ -5,5 +5,4 @@ export { default as PuffLoader } from './PuffLoader';
 export { default as TouchIcon } from './TouchIcon';
 export { default as LegitLabel } from './LegitLabel';
 export { default as ListItem } from './ListItem';
-export { default as WebpImg } from './WebpImg';
 export { default as CamelAuthLabel } from './CamelAuthLabel';

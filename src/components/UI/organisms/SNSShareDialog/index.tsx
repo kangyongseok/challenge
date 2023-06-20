@@ -5,8 +5,6 @@ import { Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
-import { logEvent } from '@library/amplitude';
-
 import { FACEBOOK_SHARE_URL, TWITTER_SHARE_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -77,14 +75,6 @@ function SNSShareDialog({ open, onClose, product, shareData }: SNSShareDialogPro
       shareDescription = shareData.description;
 
       if (shareData.image) shareImage = shareData.image;
-    }
-
-    if (router.pathname.includes('/crazycuration')) {
-      logEvent(attrKeys.crazycuration.clickShare, {
-        name: attrProperty.name.crazyWeek,
-        title,
-        att: 'TOP'
-      });
     }
 
     switch (platform) {

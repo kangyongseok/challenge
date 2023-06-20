@@ -32,46 +32,46 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip)
  * 라운드가 들어간 사각형을 그려주는 로직
  * https://codepen.io/simon-wu/pen/ExgLEXQ
  */
-// const createRoundRect = ({
-//   ctx,
-//   x,
-//   y,
-//   width,
-//   height,
-//   radius,
-//   isIntAndLess10,
-//   fillStyle
-// }: {
-//   ctx: CanvasRenderingContext2D;
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-//   radius: number;
-//   isIntAndLess10: boolean;
-//   fillStyle: string;
-// }) => {
-//   let $radius = radius;
+const createRoundRect = ({
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius,
+  isIntAndLess10,
+  fillStyle
+}: {
+  ctx: CanvasRenderingContext2D;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: number;
+  isIntAndLess10: boolean;
+  fillStyle: string;
+}) => {
+  let $radius = radius;
 
-//   if (width < 2 * radius) $radius = width / 2;
+  if (width < 2 * radius) $radius = width / 2;
 
-//   if (height < 2 * radius) $radius = height / 2;
+  if (height < 2 * radius) $radius = height / 2;
 
-//   ctx.beginPath();
+  ctx.beginPath();
 
-//   if (isIntAndLess10) {
-//     ctx.arc(x + $radius, y + 11, width, 0, 2 * Math.PI);
-//   } else {
-//     ctx.moveTo(x + $radius, y);
-//     ctx.arcTo(x + width, y, x + width, y + height, $radius);
-//     ctx.arcTo(x + width, y + height, x, y + height, $radius);
-//     ctx.arcTo(x, y + height, x, y, $radius);
-//     ctx.arcTo(x, y, x + width, y, $radius);
-//   }
-//   ctx.closePath();
-//   ctx.fillStyle = fillStyle;
-//   ctx.fill();
-// };
+  if (isIntAndLess10) {
+    ctx.arc(x + $radius, y + 11, width, 0, 2 * Math.PI);
+  } else {
+    ctx.moveTo(x + $radius, y);
+    ctx.arcTo(x + width, y, x + width, y + height, $radius);
+    ctx.arcTo(x + width, y + height, x, y + height, $radius);
+    ctx.arcTo(x, y + height, x, y, $radius);
+    ctx.arcTo(x, y, x + width, y, $radius);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fillStyle;
+  ctx.fill();
+};
 
 interface ProductAveragePriceChartProps {
   product?: Product;
@@ -86,6 +86,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   } = useTheme();
   const [data, setData] = useState<ChartData<'line'> | null>(null);
   const [options, setOptions] = useState<ChartOptions<'line'> | null>(null);
+  const [isViewLabel, setIsViewLabel] = useState(false);
   const chartValues = useMemo(() => {
     return (
       product?.weekAvgPrices
@@ -140,6 +141,15 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
   };
 
   useEffect(() => {
+    if (isViewLabel && options?.animation) {
+      setOptions((prevData) => ({
+        ...prevData,
+        animation: undefined
+      }));
+    }
+  }, [isViewLabel, options?.animation]);
+
+  useEffect(() => {
     const slicedValues = chartValues.slice(1, 7);
     if (slicedValues.length > 0) {
       const suggestedMax = Number(((105 / 100) * Math.max(...slicedValues)).toFixed(1));
@@ -169,6 +179,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               undefined,
               common.uiBlack
             ],
+            pointHitRadius: 100,
             pointBorderWidth: [0, 0, 0, 0, 0, 0]
           }
         ]
@@ -197,7 +208,14 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
                 // @ts-ignore
                 weight: ['400', '400', '400', '400', '400', '700']
               },
-              color: [undefined, undefined, undefined, undefined, undefined, common.uiBlack]
+              color: [
+                common.ui20,
+                common.ui20,
+                common.ui20,
+                common.ui20,
+                common.ui20,
+                common.uiBlack
+              ]
             },
             grid: {
               display: false
@@ -228,45 +246,60 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             }
           }
         },
-        interaction: {
-          intersect: true,
-          mode: 'nearest',
-          axis: 'y'
-        },
+        // interaction: {
+        //   intersect: true,
+        //   mode: 'nearest',
+        //   axis: 'y'
+        // },
         animation: {
-          // onComplete({ chart, chart: { ctx } }) {
-          //   chart.getDatasetMeta(0).data.forEach((chartElement, index) => {
-          //     createRoundRect({
-          //       ctx,
-          //       x: chartElement.x - String(slicedValues[index]).length * 4,
-          //       y: chartElement.y - 34,
-          //       width: String(slicedValues[index]).length * 8,
-          //       height: 20,
-          //       radius: 20,
-          //       isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
-          //       fillStyle: common.uiWhite
-          //     });
-          //     // eslint-disable-next-line quotes
-          //     ctx.font = "500 12px 'Camel Product Sans', 'Helvetica', 'Arial', sans-serif";
-          //     ctx.fillStyle = common.ui60;
-          //     ctx.textAlign = 'center';
-          //     ctx.textBaseline = 'bottom';
-          //     ctx.fillText(
-          //       slicedValues[index] ? `${String(slicedValues[index])}` : '',
-          //       chartElement.x,
-          //       chartElement.y - 18
-          //     );
-          //   });
-          // }
+          onComplete({ chart, chart: { ctx } }) {
+            chart.getDatasetMeta(0).data.forEach((chartElement, index) => {
+              if (index < 5) return;
+              createRoundRect({
+                ctx,
+                x: chartElement.x - String(slicedValues[index]).length * 11.5,
+                y: chartElement.y - 34,
+                width: String(slicedValues[index]).length * 13,
+                height: 28,
+                radius: 6,
+                isIntAndLess10: Number.isInteger(slicedValues[index]) && slicedValues[index] < 10,
+                fillStyle: common.ui20
+              });
+              // eslint-disable-next-line quotes
+              ctx.font = "500 12px 'Camel Product Sans', 'Helvetica', 'Arial', sans-serif";
+              ctx.fillStyle = common.uiWhite;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'bottom';
+              ctx.fillText(
+                slicedValues[index] ? `${String(slicedValues[index])}만원` : '',
+                chartElement.x - String(slicedValues[index]).length * 5,
+                chartElement.y - 14
+              );
+            });
+          }
         },
         plugins: {
           tooltip: {
-            enabled: false,
-            position: 'nearest',
-            borderColor: common.ui90,
-            borderWidth: 1,
-            backgroundColor: common.uiWhite,
-            bodyColor: common.ui60
+            padding: 6,
+            caretSize: 0,
+            caretPadding: 6,
+            backgroundColor: common.ui20,
+            callbacks: {
+              label(context) {
+                setIsViewLabel(true);
+                return `${context.formattedValue}만원`;
+              },
+              title() {
+                return '';
+              }
+            },
+            bodyFont: {
+              size: 12,
+              weight: '500'
+            },
+            displayColors: false,
+            yAlign: 'bottom',
+            xAlign: 'right'
           }
         }
       });

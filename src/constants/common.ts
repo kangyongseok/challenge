@@ -114,7 +114,6 @@ export const AUTH_PATH_NAMES = [
   '/user/shop',
   '/user/shop/edit',
   '/user/addressInput',
-  '/user/brandInput',
   '/user/likeModelInput',
   '/user/personalInput',
   '/user/purchaseInput',
