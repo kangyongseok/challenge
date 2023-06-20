@@ -86,7 +86,6 @@ function LegitStatusCardHolder({
   const { id: siteUrlId = 0, hasImage: siteUrlHasImage = false } = siteUrl || {};
 
   const [open, setOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [syncIndex, setSyncIndex] = useState(0);
   const [backgroundImageSrc, setBackgroundImageSrc] = useState('');
   const [labelText, setLabelText] = useState('');
@@ -136,7 +135,6 @@ function LegitStatusCardHolder({
         index: realIndex + 1
       });
     }
-    setCurrentIndex(realIndex);
 
     const currentSlides = slides.filter((slide: HTMLDivElement) => {
       return realIndex === Number(slide.getAttribute('data-swiper-slide-index'));
@@ -154,7 +152,9 @@ function LegitStatusCardHolder({
   };
 
   const handleImageDetailDialogSlideChange = ({ realIndex, slides }: SwiperClass) => {
-    setCurrentIndex(realIndex);
+    if (swiperRef.current) {
+      swiperRef.current.slideToLoop(realIndex, 0);
+    }
 
     const findPhotoGuideDetail = (photoGuideDetails || []).find((_, index) => index === realIndex);
 
@@ -189,9 +189,6 @@ function LegitStatusCardHolder({
   };
 
   const handleClose = () => {
-    if (swiperRef.current) {
-      swiperRef.current.slideToLoop(currentIndex);
-    }
     setOpen(false);
   };
 

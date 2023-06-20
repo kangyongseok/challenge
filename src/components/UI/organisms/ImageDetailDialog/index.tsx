@@ -72,11 +72,15 @@ function ImageDetailDialog({
   });
 
   const handleClose = () => {
+    if (
+      typeof onChange === 'function' &&
+      swiperRef.current &&
+      swiperRef.current.realIndex !== undefined
+    ) {
+      onChange(swiperRef.current);
+    }
     if (typeof onClose === 'function') {
       onClose();
-    }
-    if (typeof onChange === 'function' && swiperRef.current) {
-      onChange(swiperRef.current);
     }
   };
 

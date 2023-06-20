@@ -126,9 +126,6 @@ function ProductImages({
 
   const handleSlideChange = useCallback(
     ({ realIndex }: SwiperClass) => {
-      if (realIndex === undefined) {
-        return;
-      }
       if (typeof detailImages[currentSlide] === 'object') {
         logEvent(attrKeys.products.VIEW_LOWPRICE_PRODUCT, {
           type: 'PIC'
@@ -146,6 +143,26 @@ function ProductImages({
       imageSwiper?.slideTo(realIndex, 0);
     },
     [detailImages, currentSlide, isLoggedSwipeXPic, imageSwiper]
+  );
+
+  const handleProductImagesSlideChange = useCallback(
+    ({ realIndex }: SwiperClass) => {
+      if (typeof detailImages[currentSlide] === 'object') {
+        logEvent(attrKeys.products.VIEW_LOWPRICE_PRODUCT, {
+          type: 'PIC'
+        });
+      }
+      if (!isLoggedSwipeXPic) {
+        setIsLoggedSwipeXPic(true);
+        logEvent(attrKeys.products.SWIPE_X_PIC, {
+          name: attrProperty.productName.PICGALLERY,
+          index: realIndex
+        });
+      }
+
+      setCurrentSlide(realIndex);
+    },
+    [detailImages, currentSlide, isLoggedSwipeXPic]
   );
 
   const handleImageModal = (e: MouseEvent<HTMLElement>) => {
@@ -240,7 +257,7 @@ function ProductImages({
           modules={[Lazy]}
           onSwiper={setImageSwiper}
           initialSlide={currentSlide}
-          onSlideChange={handleSlideChange}
+          onSlideChange={handleProductImagesSlideChange}
           preventClicks
         >
           {product && !lowerPriceDisplay() && (
