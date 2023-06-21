@@ -14,7 +14,6 @@ import {
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
-  // ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsStructuredData,
   ProductsTopButton
@@ -42,7 +41,6 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
       >
         <ProductsCategoryTags variant="brands" />
         <ProductsDynamicFilter />
-        {/* <ProductsSafePaymentBanner /> */}
         <ProductsFilter variant="brands" />
         <ProductsFilterHistory variant="brands" />
         <ProductsStatus variant="brands" />

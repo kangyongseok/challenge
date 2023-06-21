@@ -176,28 +176,6 @@ function HomePersonalGuide() {
     router.push('/events/dogHoney');
   };
 
-  // const handleClickSafePayment = () => {
-  //   logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
-  //     name: attrProperty.name.MAIN,
-  //     title: attrProperty.title.ORDER,
-  //     att: '안전결제'
-  //   });
-
-  //   SessionStorage.set(sessionStorageKeys.productsEventProperties, {
-  //     name: attrProperty.name.MAIN,
-  //     title: attrProperty.title.ORDER,
-  //     type: attrProperty.type.GUIDED
-  //   });
-
-  //   router.push({
-  //     pathname: '/products/camel/새로 올라왔어요!',
-  //     query: {
-  //       order: 'postedAllDesc',
-  //       idFilterIds: [6]
-  //     }
-  //   });
-  // };
-
   const handleClickErusha = () => {
     logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
       name: attrProperty.name.MAIN,

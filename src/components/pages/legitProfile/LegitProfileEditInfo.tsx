@@ -441,33 +441,6 @@ const IconBox = styled.div`
   padding: 8px;
 `;
 
-// const Title = styled.div`
-//   position: relative;
-
-//   textarea {
-//     min-height: 168px;
-//     width: 100%;
-//     background-color: ${({ theme: { palette } }) => palette.common.bg01};
-//     border: 1px solid ${({ theme: { palette } }) => palette.common.line01};
-//     border-radius: 8px;
-//     padding: 12px 12px 24px;
-//     resize: none;
-//     color: ${({ theme: { palette } }) => palette.common.ui20};
-
-//     ${({ theme: { typography } }) => ({
-//       fontSize: typography.h4.size,
-//       fontWeight: typography.h4.weight.regular,
-//       lineHeight: typography.h4.lineHeight,
-//       letterSpacing: typography.h4.letterSpacing
-//     })};
-
-//     ::placeholder {
-//       color: ${({ theme: { palette } }) => palette.common.ui80};
-//       white-space: pre-wrap;
-//     }
-//   }
-// `;
-
 const TitleInfo = styled(Typography)`
   display: inline-flex;
   bottom: 6px;

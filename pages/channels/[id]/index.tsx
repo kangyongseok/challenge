@@ -44,6 +44,7 @@ import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
 import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
+import useProductType from '@hooks/useProductType';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useChannel from '@hooks/useChannel';
 
@@ -122,6 +123,7 @@ function Channel() {
 
   const [isFocused, setIsFocused] = useState(false);
   const [documentVisibilityState, setDocumentVisibilityState] = useState('hidden');
+  const { isAllOperatorProduct } = useProductType(product?.sellerType);
 
   const { showActionButtons } = useMemo(
     () => ({
@@ -535,7 +537,9 @@ function Channel() {
                 }
               />
             )}
-            {!channel?.isReserved && isCrawlingProduct && (
+
+            {isAllOperatorProduct && <ChannelCamelAuthFixBanner type="operator" />}
+            {!channel?.isReserved && isCrawlingProduct && !isAllOperatorProduct && (
               <ChannelCamelAuthFixBanner type="external" />
             )}
             {/* {!channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (

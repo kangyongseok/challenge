@@ -6,8 +6,6 @@ import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-// import { SafePaymentGuideDialog } from '@components/UI/organisms';
-
 import { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
@@ -40,7 +38,6 @@ function HomeMainBanner() {
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  // const [open, setOpen] = useState(false);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -65,97 +62,61 @@ function HomeMainBanner() {
     router.push('/mypage/settings/transfer');
   };
 
-  // const handleClick = () => {
-  //   logEvent(attrKeys.home.CLICK_BANNER, {
-  //     name: attrProperty.name.MAIN,
-  //     title: attrProperty.title.ORDER,
-  //     att: 'SAFE_PAYMENT'
-  //   });
-
-  //   setOpen(true);
-  // };
-
   return (
-    <>
-      <Swiper
-        onSlideChange={handleChange}
-        style={{
-          position: 'relative',
-          width: '100%'
-        }}
-      >
-        {/* <SwiperSlide>
-          <Box
-            onClick={handleClick}
-            customStyle={{
-              height: 104,
-              backgroundColor: '#528BFF'
-            }}
-          >
-            <Image
-              height={104}
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/safe-payment-banner.png`,
-                h: 104
-              })}
-              alt="Main Banner Img"
-              disableAspectRatio
-            />
-          </Box>
-        </SwiperSlide> */}
-        <SwiperSlide>
-          <Box
-            onClick={handleClickTransferBanner}
-            customStyle={{
-              height: 104,
-              backgroundColor: '#111A3D'
-            }}
-          >
-            <Image
-              height={104}
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`,
-                h: 104
-              })}
-              alt="내 상품 가져오기로 한번에 판매 등록 배너"
-              disableAspectRatio
-            />
-          </Box>
-        </SwiperSlide>
-        <Flexbox
-          alignment="center"
-          justifyContent="center"
+    <Swiper
+      onSlideChange={handleChange}
+      style={{
+        position: 'relative',
+        width: '100%'
+      }}
+    >
+      <SwiperSlide>
+        <Box
+          onClick={handleClickTransferBanner}
           customStyle={{
-            position: 'absolute',
-            right: 20,
-            bottom: 12,
-            padding: '2px 6px',
-            borderRadius: 12,
-            backgroundColor: common.ui20,
-            zIndex: 10
+            height: 104,
+            backgroundColor: '#111A3D'
           }}
         >
-          <Typography
-            variant="body2"
-            weight="medium"
-            customStyle={{
-              color: common.uiWhite,
-              '& > span': {
-                color: common.ui60
-              }
-            }}
-          >
-            {currentIndex + 1}
-            <span>/1</span>
-          </Typography>
-        </Flexbox>
-      </Swiper>
-      {/* <SafePaymentGuideDialog
-        open={open}
-        onClose={() => setOpen(false)}
-        ctaType="viewSafePaymentProducts"
-      /> */}
-    </>
+          <Image
+            height={104}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`,
+              h: 104
+            })}
+            alt="내 상품 가져오기로 한번에 판매 등록 배너"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <Flexbox
+        alignment="center"
+        justifyContent="center"
+        customStyle={{
+          position: 'absolute',
+          right: 20,
+          bottom: 12,
+          padding: '2px 6px',
+          borderRadius: 12,
+          backgroundColor: common.ui20,
+          zIndex: 10
+        }}
+      >
+        <Typography
+          variant="body2"
+          weight="medium"
+          customStyle={{
+            color: common.uiWhite,
+            '& > span': {
+              color: common.ui60
+            }
+          }}
+        >
+          {currentIndex + 1}
+          <span>/1</span>
+        </Typography>
+      </Flexbox>
+    </Swiper>
   );
 }
 

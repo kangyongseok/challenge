@@ -279,34 +279,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       push(getProductDetailUrl({ type: 'targetProduct', product: productDetail.product }));
   };
 
-  // const handleClickOpenReservation = () => {
-  //   setExhibitionOpen(true);
-  // };
-
-  // const handleClickOpenAlarm = () => {
-  //   mutate(
-  //     {
-  //       deviceId,
-  //       surveyId: 7,
-  //       answer: 0,
-  //       options: ''
-  //     },
-  //     {
-  //       onSuccess() {
-  //         setExhibitionOpen(false);
-  //         LocalStorage.set(IS_CAMEL_BUTLER_RESERVATION, true);
-  //         setReservation(true);
-  //       }
-  //     }
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   if (LocalStorage.get(IS_CAMEL_BUTLER_RESERVATION)) {
-  //     setReservation(true);
-  //   }
-  // }, []);
-
   if (isDisabledState) {
     return (
       <Button disabled size="xlarge" fullWidth variant="solid">
@@ -351,49 +323,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     );
   }
 
-  // if (isCamelButlerProduct) {
-  //   return (
-  //     <>
-  //       <Button
-  //         fullWidth
-  //         size="xlarge"
-  //         variant="solid"
-  //         brandColor="black"
-  //         onClick={handleClickOpenReservation}
-  //         disabled={isReservationDisabled}
-  //       >
-  //         {isReservationDisabled ? '알림 신청완료' : '오픈 알림받기'}
-  //       </Button>
-  //       {isCamelButlerProduct && (
-  //         <Dialog open={exhibitionOpen} onClose={() => setExhibitionOpen(false)}>
-  //           <Image
-  //             height={114}
-  //             src={getImageResizePath({
-  //               imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/chanel_exhibitions.png`,
-  //               h: 114
-  //             })}
-  //             alt="기획전 오픈알림 샤넬 커밍순"
-  //             disableAspectRatio
-  //           />
-  //           <Typography weight="bold" variant="h3" customStyle={{ marginTop: 8 }}>
-  //             기획전이 오픈되면 알려드릴까요?
-  //           </Typography>
-  //           <Button
-  //             fullWidth
-  //             size="xlarge"
-  //             variant="solid"
-  //             brandColor="primary"
-  //             customStyle={{ marginTop: 32 }}
-  //             onClick={handleClickOpenAlarm}
-  //           >
-  //             오픈 알림받기
-  //           </Button>
-  //         </Dialog>
-  //       )}
-  //     </>
-  //   );
-  // }
-
   if (isAllOperatorProduct) {
     return (
       <>
@@ -404,7 +333,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
               size="xlarge"
               variant="outline"
               brandColor="black"
-              // onClick={handleClickPlatformProduct}
               onClick={handleClickChannel}
               disabled={isDisabledState}
               customStyle={{ padding: 12, minWidth: 90 }}

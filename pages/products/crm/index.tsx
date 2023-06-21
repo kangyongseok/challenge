@@ -14,7 +14,6 @@ import {
   ProductsLegitFilterBottomSheet,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  // ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -55,7 +54,6 @@ function CrmProducts() {
         footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        {/* <ProductsSafePaymentBanner /> */}
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />

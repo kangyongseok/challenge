@@ -53,19 +53,6 @@ function ChannelMessageInput({
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setMessage(e.currentTarget.value);
 
-  // const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-  //   if (
-  //     e.keyCode === 13 &&
-  //     !checkAgent.isMobileApp() &&
-  //     window.performance &&
-  //     window.performance.memory
-  //   ) {
-  //     if (e.shiftKey) return;
-  //     e.preventDefault();
-  //     handleClickSand();
-  //   }
-  // };
-
   const handleClickSand = useCallback(async () => {
     if (!channelId || !channelUrl || !message || isLoadingMutate || pending) return;
 

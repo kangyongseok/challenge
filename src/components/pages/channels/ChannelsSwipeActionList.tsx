@@ -11,7 +11,6 @@ import {
 } from 'react-swipeable-list';
 import { useRouter } from 'next/router';
 import { QueryClient, useMutation } from '@tanstack/react-query';
-// import { BaseMessage } from '@sendbird/chat/message';
 import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Button, Flexbox, Icon, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
@@ -37,7 +36,6 @@ import {
   getChannelTitle,
   getLastMessage,
   getLastMessageCreatedAt,
-  // getLastMessageCreatedAt,
   getUnreadMessagesCount
 } from '@utils/channel';
 
@@ -227,15 +225,6 @@ function ChannelsSwipeActionList({
     setNotiStatus(!!camelChannel.channelUser?.isNoti);
   }, [camelChannel.channelUser?.isNoti]);
 
-  // const lastMessageTime = useMemo(() => {
-  //   const dateDiff = dayjs(
-  //     sendbirdChannel?.lastMessage?.createdAt || sendbirdChannel?.createdAt
-  //   ).diff(dayjs(), 'day');
-  //   return dayjs(sendbirdChannel?.lastMessage?.createdAt || sendbirdChannel?.createdAt).format(
-  //     dateDiff < 0 ? 'MM월 DD일' : 'A hh:mm'
-  //   );
-  // }, [sendbirdChannel?.createdAt, sendbirdChannel?.lastMessage?.createdAt]);
-
   return isSelectTargetUser ? (
     <ListItem
       avatarUrl={
@@ -265,7 +254,6 @@ function ChannelsSwipeActionList({
         letterSpacing: typography.h4.letterSpacing
       }}
       time={getLastMessageCreatedAt(camelChannel.lastMessageManage, sendbirdChannel)}
-      // time={lastMessageTime}
       action={
         <Button
           size="large"

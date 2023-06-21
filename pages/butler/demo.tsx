@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
-// import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-// import { useMutation } from '@tanstack/react-query';
 import { Button, Flexbox, Icon, dark, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
@@ -19,16 +17,11 @@ import {
 
 import { logEvent } from '@library/amplitude';
 
-// import { postPreReserve } from '@api/user';
-
 import { IOS_SAFE_AREA_TOP } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
-
-// import { SuccessDialogState } from '@recoil/myPortfolio';
-// import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 let globalCurrentSection = 0;
 const SECTION_PAGE_NUM = 5;
@@ -40,16 +33,12 @@ function Demo() {
       palette: { common }
     }
   } = useTheme();
-  // const { data: accessUser } = useQueryAccessUser();
   const [innerHeight, setInnerHeight] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
-  // const [openReservation, setOpenReservation] = useState(false);
-  // const { mutate: mutatePostManage } = useMutation(postPreReserve);
-  // const successDialog = useSetRecoilState(SuccessDialogState);
 
   const wheelRef = useRef(false);
   const touchRef = useRef(false);
-  // const timeoutRef = useRef<NodeJS.Timeout>();
+
   const startTargetRef = useRef<number>();
 
   const isSmallHeight = innerHeight < 630;

@@ -13,7 +13,6 @@ import {
   ProductsInfiniteGrid,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  // ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -30,7 +29,6 @@ function CamelProducts() {
       >
         <ProductsCategoryTags variant="camel" />
         <ProductsDynamicFilter />
-        {/* <ProductsSafePaymentBanner /> */}
         <ProductsFilter variant="camel" />
         <ProductsFilterHistory variant="camel" />
         <ProductsStatus variant="camel" />

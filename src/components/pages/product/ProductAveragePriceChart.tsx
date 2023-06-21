@@ -158,7 +158,6 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
 
       setData({
         labels: [
-          // `${dayjs().set('month', -6).format('YY년')} ${dayjs().set('month', -6).format('M')}월`,
           `${dayjs().subtract(6, 'month').format('M')}월`,
           `${dayjs().subtract(5, 'month').format('M')}월`,
           `${dayjs().subtract(4, 'month').format('M')}월`,
@@ -232,12 +231,6 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
               },
               stepSize
             },
-            // ticks: {
-            //   autoSkip: false,
-            //   maxRotation: 0,
-            //   display: false,
-            //   stepSize
-            // },
             grid: {
               lineWidth: 1,
               color: common.line02,
@@ -246,11 +239,6 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
             }
           }
         },
-        // interaction: {
-        //   intersect: true,
-        //   mode: 'nearest',
-        //   axis: 'y'
-        // },
         animation: {
           onComplete({ chart, chart: { ctx } }) {
             chart.getDatasetMeta(0).data.forEach((chartElement, index) => {

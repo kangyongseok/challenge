@@ -16,7 +16,6 @@ import {
   ProductsPageHead,
   ProductsRelated,
   ProductsRelatedKeywords,
-  // ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsStructuredData,
   ProductsTopButton
@@ -45,7 +44,6 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
       >
         <ProductsRelatedKeywords />
         <ProductsDynamicFilter />
-        {/* <ProductsSafePaymentBanner /> */}
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />

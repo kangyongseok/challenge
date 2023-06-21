@@ -126,12 +126,6 @@ function ProductDetail() {
     scrollEnable();
   }, [data]);
 
-  // useEffect(() => {
-  //   if (toast.status === 'soldout' && isMySelfProduct) {
-  //     refetch();
-  //   }
-  // }, [refetch, isMySelfProduct, toast.status]);
-
   const isSafe = useMemo(() => {
     if (data) {
       return (
