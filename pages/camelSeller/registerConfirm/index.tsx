@@ -126,24 +126,26 @@ function RegisterConfirm() {
   }, []);
 
   return (
-    <GeneralTemplate header={<CamelSellerHeader />} hideAppDownloadBanner>
-      <CamelSellerInfo />
-      <CamelSellerProductImage />
-      <CamelSellerTitle />
-      <CamelSellerCategoryBrand />
-      <CamelSellerCondition />
-      <CamelSellerSize />
-      <CamelSellerPrice />
-      <CamelSellerSurveyForm />
-      <CamelSellerDescription />
-      <CamelSellerCTAButton />
+    <>
+      <GeneralTemplate header={<CamelSellerHeader />} hideAppDownloadBanner>
+        <CamelSellerInfo />
+        <CamelSellerProductImage />
+        <CamelSellerTitle />
+        <CamelSellerCategoryBrand />
+        <CamelSellerCondition />
+        <CamelSellerSize />
+        <CamelSellerPrice />
+        <CamelSellerSurveyForm />
+        <CamelSellerDescription />
+        <CamelSellerCTAButton />
+      </GeneralTemplate>
       <CamelSellerConditionBottomSheet />
       <CamelSellerSizeBottomSheet />
       <CamelSellerRecentBottomSheet />
       <CamelSellerSurveyBottomSheet />
       <CamelSellerNotiChannelDialog open={open} />
       <CamelSellerAuthPushDialog open={openDialog} onClose={() => setOpenDialog(false)} />
-    </GeneralTemplate>
+    </>
   );
 }
 

@@ -55,13 +55,14 @@ const specifyProductDynamicOptionCodeTypes = [
 ];
 
 function ProductsDynamicFilter() {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
+
+  const {
+    theme: {
+      palette: { primary, common }
+    }
+  } = useTheme();
 
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
@@ -611,7 +612,8 @@ function ProductsDynamicFilter() {
                         customStyle={{
                           gap: 4,
                           fontWeight: isActive ? 700 : undefined,
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          color: isActive ? primary.light : undefined
                         }}
                       >
                         {codeDetail.name}

@@ -51,7 +51,7 @@ function CamelSellerProductImage() {
 
   const dragModeTransferTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: editData, isLoading } = useQuery(
+  const { data: editData } = useQuery(
     queryKeys.products.sellerEditProduct({ productId, deviceId }),
     () => fetchProduct({ productId, deviceId }),
     {
@@ -427,14 +427,12 @@ function CamelSellerProductImage() {
           </Flexbox>
         )}
       </List>
-      {!isLoading && (
-        <ImageDetailDialog
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          images={images.map((image) => image)}
-          syncIndex={currentIndex}
-        />
-      )}
+      <ImageDetailDialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        images={images.map((image) => image)}
+        syncIndex={currentIndex}
+      />
     </>
   );
 }
