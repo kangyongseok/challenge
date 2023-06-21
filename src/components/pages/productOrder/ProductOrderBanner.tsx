@@ -1,8 +1,8 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 
 import { Box, Image } from '@mrcamelhub/camel-ui';
 
-import { SafePaymentGuideDialog } from '@components/UI/organisms';
+// import { SafePaymentGuideDialog } from '@components/UI/organisms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -10,7 +10,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function ProductOrderBanner() {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   const handleClick = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
@@ -18,7 +18,7 @@ function ProductOrderBanner() {
       title: attrProperty.title.ORDER
     });
 
-    setOpen((prevState) => !prevState);
+    // setOpen((prevState) => !prevState);
   };
 
   return (
@@ -36,7 +36,7 @@ function ProductOrderBanner() {
           disableAspectRatio
         />
       </Box>
-      <SafePaymentGuideDialog open={open} onClose={() => setOpen(false)} />
+      {/* <SafePaymentGuideDialog open={open} onClose={() => setOpen(false)} /> */}
     </>
   );
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { SafePaymentGuideDialog } from '@components/UI/organisms';
+// import { SafePaymentGuideDialog } from '@components/UI/organisms';
 import { Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
@@ -24,7 +24,7 @@ function ProductsSafePaymentBanner() {
     closeSafePaymentBannerState
   );
 
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
 
   const handleClick = () => {
@@ -33,7 +33,7 @@ function ProductsSafePaymentBanner() {
       title: attrProperty.title.ORDER
     });
 
-    setOpen((prevState) => !prevState);
+    // setOpen((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -74,7 +74,7 @@ function ProductsSafePaymentBanner() {
         />
       </Flexbox>
       <Gap height={8} />
-      <SafePaymentGuideDialog open={open} onClose={() => setOpen(false)} />
+      {/* <SafePaymentGuideDialog open={open} onClose={() => setOpen(false)} /> */}
     </>
   );
 }

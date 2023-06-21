@@ -12,7 +12,7 @@ import {
   ProductsLandingInfo,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
-  ProductsSafePaymentBanner,
+  // ProductsSafePaymentBanner,
   ProductsStatus,
   ProductsTopButton
 } from '@components/pages/products';
@@ -47,7 +47,7 @@ function Products() {
         footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
-        <ProductsSafePaymentBanner />
+        {/* <ProductsSafePaymentBanner /> */}
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />

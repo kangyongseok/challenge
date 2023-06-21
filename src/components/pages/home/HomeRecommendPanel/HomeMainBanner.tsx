@@ -6,7 +6,7 @@ import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { SafePaymentGuideDialog } from '@components/UI/organisms';
+// import { SafePaymentGuideDialog } from '@components/UI/organisms';
 
 import { AccessUser } from '@dto/userAuth';
 
@@ -40,7 +40,7 @@ function HomeMainBanner() {
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -65,15 +65,15 @@ function HomeMainBanner() {
     router.push('/mypage/settings/transfer');
   };
 
-  const handleClick = () => {
-    logEvent(attrKeys.home.CLICK_BANNER, {
-      name: attrProperty.name.MAIN,
-      title: attrProperty.title.ORDER,
-      att: 'SAFE_PAYMENT'
-    });
+  // const handleClick = () => {
+  //   logEvent(attrKeys.home.CLICK_BANNER, {
+  //     name: attrProperty.name.MAIN,
+  //     title: attrProperty.title.ORDER,
+  //     att: 'SAFE_PAYMENT'
+  //   });
 
-    setOpen(true);
-  };
+  //   setOpen(true);
+  // };
 
   return (
     <>
@@ -84,7 +84,7 @@ function HomeMainBanner() {
           width: '100%'
         }}
       >
-        <SwiperSlide>
+        {/* <SwiperSlide>
           <Box
             onClick={handleClick}
             customStyle={{
@@ -102,7 +102,7 @@ function HomeMainBanner() {
               disableAspectRatio
             />
           </Box>
-        </SwiperSlide>
+        </SwiperSlide> */}
         <SwiperSlide>
           <Box
             onClick={handleClickTransferBanner}
@@ -146,15 +146,15 @@ function HomeMainBanner() {
             }}
           >
             {currentIndex + 1}
-            <span>/2</span>
+            <span>/1</span>
           </Typography>
         </Flexbox>
       </Swiper>
-      <SafePaymentGuideDialog
+      {/* <SafePaymentGuideDialog
         open={open}
         onClose={() => setOpen(false)}
         ctaType="viewSafePaymentProducts"
-      />
+      /> */}
     </>
   );
 }

@@ -22,8 +22,8 @@ import {
   ChannelProductStatusBottomSheet,
   ChannelPurchaseConfirmDialog,
   ChannelReservingDialog,
-  ChannelSafePaymentGuideBanner,
-  ChannelSafePaymentGuideDialog,
+  // ChannelSafePaymentGuideBanner,
+  // ChannelSafePaymentGuideDialog,
   ChannelSaleRequestRefuseDialog
 } from '@components/pages/channel';
 
@@ -538,9 +538,9 @@ function Channel() {
             {!channel?.isReserved && isCrawlingProduct && (
               <ChannelCamelAuthFixBanner type="external" />
             )}
-            {!channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
+            {/* {!channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
               <ChannelSafePaymentGuideBanner />
-            )}
+            )} */}
             {channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
               <ChannelReservingBanner
                 targetUserName={targetUserName}
@@ -694,7 +694,7 @@ function Channel() {
         refetchChannel={refetch}
       />
       <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
-      <ChannelSafePaymentGuideDialog />
+      {/* <ChannelSafePaymentGuideDialog /> */}
       <ChannelReservingDialog />
     </>
   );

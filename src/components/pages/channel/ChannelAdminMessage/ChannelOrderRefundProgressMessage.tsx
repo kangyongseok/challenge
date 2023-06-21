@@ -114,7 +114,7 @@ function ChannelOrderRefundProgressMessage({
             >
               안전결제수수료
             </Typography>
-            <Typography variant="body2">0원</Typography>
+            <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
             <Typography

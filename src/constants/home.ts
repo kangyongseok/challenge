@@ -135,13 +135,13 @@ export const defaultNonMemberPersonalGuideList = [
     type: 'category',
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_393_m.png`
   },
-  {
-    id: 286,
-    name: '자켓/바람막이',
-    parentId: 119,
-    type: 'category',
-    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_286_m.png`
-  },
+  // {
+  //   id: 286,
+  //   name: '자켓/바람막이',
+  //   parentId: 119,
+  //   type: 'category',
+  //   src: `https://${process.env.IMAGE_DOMAIN}/assets/images/category/ico_cate_286_m.png`
+  // },
   {
     id: 216,
     name: '에어조던',
@@ -183,5 +183,19 @@ export const defaultNonMemberPersonalGuideList = [
     parentId: 0,
     type: 'brand',
     src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/thombrowne.jpg`
+  },
+  {
+    id: 44,
+    name: '샤넬',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/chanel.jpg`
+  },
+  {
+    id: 51,
+    name: '애플',
+    parentId: 0,
+    type: 'brand',
+    src: `https://${process.env.IMAGE_DOMAIN}/assets/images/brands/white/apple.jpg`
   }
 ];

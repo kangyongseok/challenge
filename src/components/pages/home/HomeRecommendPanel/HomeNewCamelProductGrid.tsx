@@ -67,7 +67,7 @@ function HomeNewCamelProductGrid() {
             <br />
             채팅으로 거래를 시작해보세요.
           </Typography>
-          <Typography color="ui60">지금 거래하면 안전결제 수수료 무료!</Typography>
+          {/* <Typography color="ui60">지금 거래하면 안전결제 수수료 무료!</Typography> */}
         </Flexbox>
         <Button
           variant="inline"

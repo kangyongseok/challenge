@@ -6,7 +6,7 @@ import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductOrderAppUpdateDialog,
-  ProductOrderBanner,
+  // ProductOrderBanner,
   ProductOrderCard,
   ProductOrderCardOverDialog,
   ProductOrderConfirm,
@@ -47,7 +47,7 @@ function ProductOrder() {
         <ProductOrderDeliveryInfo />
         <Gap height={8} />
         <ProductOrderPaymentInfo />
-        <ProductOrderBanner />
+        {/* <ProductOrderBanner /> */}
         <Gap height={8} />
         <ProductOrderPaymentMethod
           paymentWidgetRef={paymentWidgetRef}

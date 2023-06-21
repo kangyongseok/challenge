@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flexbox, Label, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchProduct } from '@api/product';
 import { fetchProductOrder } from '@api/order';
@@ -70,7 +70,8 @@ function ProductOrderPaymentInfo() {
           상품금액
         </Typography>
         <Typography variant="h4">
-          {commaNumber(offers[0] && offers[0].status === 1 ? price : totalPrice)}원
+          {/* {commaNumber(offers[0] && offers[0].status === 1 ? price : totalPrice)}원 */}
+          {commaNumber(price || 0)}원
         </Typography>
       </Flexbox>
       {offers[0] && offers[0].status === 1 && (
@@ -110,17 +111,7 @@ function ProductOrderPaymentInfo() {
           안전결제수수료
         </Typography>
         <Flexbox gap={8}>
-          <Label variant="solid" brandColor="blue" size="xsmall" text="무료" round={9} />
-          <Typography
-            variant="h4"
-            customStyle={{
-              textDecoration: 'line-through',
-              color: common.ui80
-            }}
-          >
-            {commaNumber(fee || 0)}원
-          </Typography>
-          <Typography variant="h4">0원</Typography>
+          <Typography variant="h4">{commaNumber(fee || 0)}원</Typography>
         </Flexbox>
       </Flexbox>
       <Flexbox

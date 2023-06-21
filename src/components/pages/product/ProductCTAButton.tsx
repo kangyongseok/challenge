@@ -3,28 +3,28 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
-import { Box, Button, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import {
   AppUpdateForChatDialog,
-  OnBoardingSpotlight,
-  SafePaymentGuideDialog
+  OnBoardingSpotlight
+  // SafePaymentGuideDialog
 } from '@components/UI/organisms';
 
 import type { ProductOffer } from '@dto/productOffer';
 
 import SessionStorage from '@library/sessionStorage';
-import LocalStorage from '@library/localStorage';
-import { logEvent } from '@library/amplitude';
+// import LocalStorage from '@library/localStorage';
+// import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
-import { SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE } from '@constants/localStorage';
+// import { SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE } from '@constants/localStorage';
 import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
+// import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
@@ -50,15 +50,15 @@ import ProductDetailButtonGroup from './ProductDetailButtonGroup';
 function ProductCTAButton() {
   const { push } = useRouter();
 
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
+  // const {
+  //   theme: {
+  //     palette: { common }
+  //   }
+  // } = useTheme();
 
   const toastStack = useToastStack();
 
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
@@ -74,14 +74,15 @@ function ProductCTAButton() {
   const { data: accessUser } = useQueryAccessUser();
   const { data: productDetail, refetch } = useQueryProduct(); // mutateMetaInfo
 
-  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } =
-    useProductType(productDetail?.product.sellerType);
+  const { isOperatorProduct, isChannelProduct, isOperatorC2CProduct } = useProductType(
+    productDetail?.product.sellerType
+  );
 
   const {
     isDuplicate,
     isBlockedUser,
     isTargetProduct,
-    isSafePayment,
+    // isSafePayment,
     isPriceOffer,
     isSoldOut,
     isDisabledState
@@ -94,7 +95,7 @@ function ProductCTAButton() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setPendingCreateChannel] = useState(false); // pendingCreateChannel
-  const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
+  // const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
 
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
   const [hasOffer, setHasOffer] = useState(false);
@@ -130,16 +131,16 @@ function ProductCTAButton() {
       );
   };
 
-  const handleClickSafePaymentFreeBanner = () => {
-    if (isAllOperatorProduct) return;
+  // const handleClickSafePaymentFreeBanner = () => {
+  //   if (isAllOperatorProduct) return;
 
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.ORDER
-    });
+  //   logEvent(attrKeys.products.CLICK_BANNER, {
+  //     name: attrProperty.name.PRODUCT_DETAIL,
+  //     title: attrProperty.title.ORDER
+  //   });
 
-    setOpenSafePaymentGuideDialog((prevState) => !prevState);
-  };
+  //   setOpenSafePaymentGuideDialog((prevState) => !prevState);
+  // };
 
   const handleClickPriceOffer = async (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -238,18 +239,18 @@ function ProductCTAButton() {
     }));
   };
 
-  useEffect(() => {
-    const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+  // useEffect(() => {
+  //   const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
 
-    if (hideDate) {
-      if (dayjs().diff(hideDate, 'days') >= 1) {
-        LocalStorage.remove(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
-        setOpen(true);
-      }
-    } else {
-      setOpen(true);
-    }
-  }, []);
+  //   if (hideDate) {
+  //     if (dayjs().diff(hideDate, 'days') >= 1) {
+  //       LocalStorage.remove(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+  //       setOpen(true);
+  //     }
+  //   } else {
+  //     setOpen(true);
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   if (isDiscountCrm) {
@@ -293,7 +294,7 @@ function ProductCTAButton() {
 
   return (
     <>
-      {open && isSafePayment && !isDisabledState && !isDuplicate && !isTargetProduct && (
+      {/* {open && isSafePayment && !isDisabledState && !isDuplicate && !isTargetProduct && (
         <PaymentLabelWrap
           alignment="center"
           justifyContent="space-between"
@@ -312,7 +313,7 @@ function ProductCTAButton() {
             </Typography>
           </PaymentLabelContents>
         </PaymentLabelWrap>
-      )}
+      )} */}
       <Box
         customStyle={{
           minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
@@ -437,10 +438,10 @@ function ProductCTAButton() {
         </Tooltip>
         <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />
       </Wrapper>
-      <SafePaymentGuideDialog
+      {/* <SafePaymentGuideDialog
         open={openSafePaymentGuideDialog}
         onClose={() => setOpenSafePaymentGuideDialog(false)}
-      />
+      /> */}
       <AppUpdateForChatDialog open={openChatRequiredUpdateDialog} />
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <Typography variant="h3" weight="bold">
@@ -510,48 +511,48 @@ const Wrapper = styled.div`
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
 `;
 
-const Triangle = styled.div`
-  width: 0;
-  height: 0;
-  border-top: 10px solid
-    ${({
-      theme: {
-        palette: { primary }
-      }
-    }) => primary.light};
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  position: absolute;
-  bottom: -7px;
-  right: 80px;
-`;
+// const Triangle = styled.div`
+//   width: 0;
+//   height: 0;
+//   border-top: 10px solid
+//     ${({
+//       theme: {
+//         palette: { primary }
+//       }
+//     }) => primary.light};
+//   border-left: 10px solid transparent;
+//   border-right: 10px solid transparent;
+//   position: absolute;
+//   bottom: -7px;
+//   right: 80px;
+// `;
 
-const PaymentLabelWrap = styled(Flexbox)<{
-  isAllOperatorProduct: boolean;
-  openPriceOfferOnBoarding: boolean;
-}>`
-  position: fixed;
-  width: 100%;
-  height: 32px;
-  padding: 12px 20px;
-  left: 0;
-  bottom: calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'});
-  z-index: ${({ openPriceOfferOnBoarding, theme: { zIndex } }) =>
-    openPriceOfferOnBoarding ? 1 : zIndex.button + 1};
-  background: ${({
-    isAllOperatorProduct,
-    theme: {
-      palette: { common, primary }
-    }
-  }) => (isAllOperatorProduct ? primary.light : common.ui20)};
-`;
+// const PaymentLabelWrap = styled(Flexbox)<{
+//   isAllOperatorProduct: boolean;
+//   openPriceOfferOnBoarding: boolean;
+// }>`
+//   position: fixed;
+//   width: 100%;
+//   height: 32px;
+//   padding: 12px 20px;
+//   left: 0;
+//   bottom: calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'});
+//   z-index: ${({ openPriceOfferOnBoarding, theme: { zIndex } }) =>
+//     openPriceOfferOnBoarding ? 1 : zIndex.button + 1};
+//   background: ${({
+//     isAllOperatorProduct,
+//     theme: {
+//       palette: { common, primary }
+//     }
+//   }) => (isAllOperatorProduct ? primary.light : common.ui20)};
+// `;
 
-const PaymentLabelContents = styled(Flexbox)`
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+// const PaymentLabelContents = styled(Flexbox)`
+//   flex: 1;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+// `;
 
 function Outlink() {
   return (
