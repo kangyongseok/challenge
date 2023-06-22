@@ -299,7 +299,7 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
         customStyle={{
           position: 'relative',
           padding: open ? 0 : '12px 20px',
-          height: open ? 0 : 'auto',
+          height: open ? 0 : 53,
           overflow: 'hidden'
         }}
       >

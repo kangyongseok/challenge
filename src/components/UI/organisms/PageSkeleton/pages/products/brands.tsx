@@ -38,7 +38,7 @@ function BrandProducts() {
             <Wrapper>
               <List
                 css={{
-                  minHeight: 40,
+                  minHeight: 38,
                   padding: '0 20px',
                   gap: 20
                 }}
@@ -104,9 +104,11 @@ function BrandProducts() {
     >
       <Flexbox
         justifyContent="space-between"
+        alignment="center"
         customStyle={{
           position: 'relative',
-          padding: '12px 20px'
+          padding: '12px 20px',
+          minHeight: 53
         }}
       >
         <LinearProgress value={0} customStyle={{ position: 'absolute', top: 0, left: 0 }} />

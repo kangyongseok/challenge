@@ -140,14 +140,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
         page: pageParam
       }),
     {
-      onSuccess: ({ pages: newPages = [] }) => {
-        const lastPage = newPages[newPages.length - 1] || { productTotal: 0 };
-
-        setTotalCountState(({ type }) => ({
-          type,
-          count: lastPage.productTotal
-        }));
-      },
       getNextPageParam: (data) => {
         const { page: { number = 0, totalPages = 0 } = {} } = data || {};
 
@@ -387,6 +379,13 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     }
     return keyword;
   }, [keyword]);
+
+  useEffect(() => {
+    setTotalCountState(({ type }) => ({
+      type,
+      count: lastPage?.productTotal || 0
+    }));
+  }, [setTotalCountState, lastPage]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);

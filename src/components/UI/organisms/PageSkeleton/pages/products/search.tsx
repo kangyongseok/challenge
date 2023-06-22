@@ -70,9 +70,11 @@ function SearchProducts() {
     >
       <Flexbox
         justifyContent="space-between"
+        alignment="center"
         customStyle={{
           position: 'relative',
-          padding: '12px 20px'
+          padding: '12px 20px',
+          minHeight: 53
         }}
       >
         <LinearProgress value={0} customStyle={{ position: 'absolute', top: 0, left: 0 }} />

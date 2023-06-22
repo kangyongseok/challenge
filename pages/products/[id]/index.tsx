@@ -536,7 +536,7 @@ function ProductDetail() {
                   <>
                     <ProductActions
                       product={product}
-                      hasRoleSeller={!!data?.roleSeller?.userId}
+                      hasRoleSeller={!!data?.roleSeller?.userId && data?.roleSeller?.userId !== 113}
                       onClickSMS={handleClickSMS}
                     />
                     <ProductDetailBannerGroup product={product} />
