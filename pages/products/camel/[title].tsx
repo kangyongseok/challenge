@@ -29,6 +29,7 @@ function CamelProducts() {
       >
         <ProductsCategoryTags variant="camel" />
         <ProductsDynamicFilter />
+        <Gap height={8} />
         <ProductsFilter variant="camel" />
         <ProductsFilterHistory variant="camel" />
         <ProductsStatus variant="camel" />

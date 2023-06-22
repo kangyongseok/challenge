@@ -20,6 +20,9 @@ function SearchProducts() {
             <Skeleton width={24} height={24} round={8} disableAspectRatio />
             <Skeleton width="100%" height={44} round={8} disableAspectRatio />
           </Flexbox>
+          <Box component="section" customStyle={{ position: 'relative' }}>
+            <Gap height={8} />
+          </Box>
           <Box>
             <Flexbox
               justifyContent="space-between"

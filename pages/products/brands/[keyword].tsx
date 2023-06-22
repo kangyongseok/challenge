@@ -2,6 +2,7 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'nex
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductsCategoryTags,
@@ -41,6 +42,7 @@ function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerS
       >
         <ProductsCategoryTags variant="brands" />
         <ProductsDynamicFilter />
+        <Gap height={8} />
         <ProductsFilter variant="brands" />
         <ProductsFilterHistory variant="brands" />
         <ProductsStatus variant="brands" />

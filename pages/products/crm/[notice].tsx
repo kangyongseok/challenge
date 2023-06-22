@@ -54,6 +54,7 @@ function CrmProducts() {
         footer={<BottomNavigation disableHideOnScroll={false} />}
         disablePadding
       >
+        <Gap height={8} />
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />

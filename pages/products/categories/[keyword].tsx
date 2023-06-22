@@ -42,6 +42,7 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
       >
         <ProductsCategoryTags variant="categories" />
         <ProductsDynamicFilter />
+        <Gap height={8} />
         <ProductsFilter variant="categories" />
         <ProductsFilterHistory variant="categories" />
         <ProductsStatus variant="categories" />

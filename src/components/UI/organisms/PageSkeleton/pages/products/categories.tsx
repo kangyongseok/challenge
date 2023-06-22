@@ -2,6 +2,7 @@ import { Box, Flexbox, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { LinearProgress, NewProductGridCardSkeleton } from '@components/UI/molecules';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
 function CategoryProducts() {
@@ -37,7 +38,7 @@ function CategoryProducts() {
             <Wrapper>
               <List
                 css={{
-                  minHeight: 38,
+                  minHeight: 40,
                   padding: '0 20px',
                   gap: 20
                 }}
@@ -55,6 +56,7 @@ function CategoryProducts() {
               </List>
             </Wrapper>
           </Box>
+          <Gap height={8} />
           <Box>
             <Flexbox
               justifyContent="space-between"

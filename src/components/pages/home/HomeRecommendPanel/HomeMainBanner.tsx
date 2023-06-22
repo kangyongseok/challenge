@@ -93,6 +93,7 @@ function HomeMainBanner() {
         alignment="center"
         justifyContent="center"
         customStyle={{
+          display: 'none',
           position: 'absolute',
           right: 20,
           bottom: 12,
