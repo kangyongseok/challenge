@@ -18,7 +18,7 @@ function ChannelCamelAuthFixBanner({ type }: { type?: 'external' | 'operator' })
         <Box>
           <Typography variant="body2" weight="medium">
             구매대행 서비스는{' '}
-            <span style={{ color: primary.main }}>평일 07:00 ~ 18:00까지 운영</span>됩니다.
+            <span style={{ color: primary.main }}>평일 10:00 ~ 19:00까지 운영</span>됩니다.
           </Typography>
           <Typography variant="small2" weight="medium" customStyle={{ marginTop: 2 }}>
             운영시간이 되면 순차적으로 최대한 빠르게 답변드리겠습니다.

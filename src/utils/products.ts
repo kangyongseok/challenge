@@ -698,7 +698,8 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     productSellerId: product.productSeller.id,
     productSellerType: product.productSeller.type,
     productSellerAccount: product.productSeller.account,
-    useChat: product.sellerType !== productType.collection
+    useChat: product.sellerType !== productType.collection,
+    status: product.status
   });
 }
 
