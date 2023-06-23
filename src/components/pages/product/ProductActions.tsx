@@ -8,7 +8,6 @@ import { Gap } from '@components/UI/atoms';
 
 import type { Product } from '@dto/product';
 
-import { productType } from '@constants/user';
 import { INITIAL_REPORT_OPTIONS } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
@@ -16,10 +15,11 @@ import { productDetailAtt } from '@utils/products';
 import { checkAgent, getRandomNumber } from '@utils/common';
 
 import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useProductType from '@hooks/useProductType';
 
 interface ProductActionsProps {
   product?: Product;
-  hasRoleSeller: boolean;
+  isDisabledState?: boolean;
   onClickSMS: ({
     siteId,
     sellerType,
@@ -35,14 +35,14 @@ interface ProductActionsProps {
   }) => void;
 }
 
-function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsProps) {
+function ProductActions({ product, onClickSMS, isDisabledState }: ProductActionsProps) {
   const {
     theme: {
       palette: { common }
     }
   } = useTheme();
   const { data: accessUser } = useQueryAccessUser();
-  const isOperatorProduct = product?.sellerType === productType.operatorProduct;
+  const { isCrawlingProduct } = useProductType(product?.sellerType);
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const sellerPhoneNumber =
     (checkAgent.isIOSApp() || checkAgent.isAndroidApp() || !checkAgent.isMobileApp()) && product
@@ -95,7 +95,7 @@ function ProductActions({ product, hasRoleSeller, onClickSMS }: ProductActionsPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessUser?.userId, product]);
 
-  if (product && sellerPhoneNumber && !hasRoleSeller && !isOperatorProduct) {
+  if (product && sellerPhoneNumber && isCrawlingProduct && !isDisabledState) {
     return (
       <>
         <Flexbox

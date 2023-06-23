@@ -682,7 +682,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                           (searchParams.idFilterIds || []).includes(idFilterIds.lowPrice) ||
                           (!complete && step === 1)
                         }
-                        onChange={handleClickIdFilterOption(idFilterIds.lowPrice, '새상품급')}
+                        onChange={handleClickIdFilterOption(idFilterIds.lowPrice, '시세이하')}
                         customStyle={{
                           fontFamily: 'NanumSquareNeo',
                           fontSize: 13,

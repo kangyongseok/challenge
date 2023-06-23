@@ -75,7 +75,6 @@ import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductType from '@hooks/useProductType';
 import useProductState from '@hooks/useProductState';
-import useProductSellerType from '@hooks/useProductSellerType';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 function ProductDetail() {
@@ -115,12 +114,10 @@ function ProductDetail() {
     isHidden,
     isDeleted,
     isTargetProduct,
+    isDisabledState,
     discountedPrice
   } = useProductState({ productDetail: data, product: data?.product });
-  const { isNormalProduct, isCamelButlerProduct } = useProductType(data?.product.sellerType);
-  const { isLegitSeller } = useProductSellerType({
-    productSellerType: data?.product.productSeller.type
-  });
+  const { isCamelButlerProduct } = useProductType(data?.product.sellerType);
 
   useEffect(() => {
     scrollEnable();
@@ -186,14 +183,10 @@ function ProductDetail() {
 
   const handleClickSMS = useCallback(
     ({
-      siteId,
-      sellerType,
       id,
       sellerPhoneNumber,
       conversionId
     }: {
-      siteId?: number;
-      sellerType?: number;
       id?: number;
       sellerPhoneNumber: string | null;
       conversionId?: number;
@@ -204,12 +197,10 @@ function ProductDetail() {
 
       let message = '';
 
-      if (siteId === PRODUCT_SITE.CAMEL.id || (sellerType && isLegitSeller) || isNormalProduct) {
-        const { protocol, host } = window.location;
-        const newConversionId =
-          conversionId || Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
-        message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/products/${id}?conversionId=${newConversionId}`;
-      }
+      const { protocol, host } = window.location;
+      const newConversionId =
+        conversionId || Number(`${dayjs().format('YYMMDDHHmmss')}${getRandomNumber()}`);
+      message = `안녕하세요, 카멜에서 매물 보고 연락 드려요~! \n${protocol}//${host}/products/${id}?conversionId=${newConversionId}`;
 
       if (checkAgent.isAndroidApp() && window.webview && window.webview.callSendMessage) {
         window.webview.callSendMessage(sellerPhoneNumber, message);
@@ -232,7 +223,7 @@ function ProductDetail() {
         checkAgent.isAndroid() ? '?' : '&'
       }body=${message}`;
     },
-    [data, mutateMetaInfo, isLegitSeller, isNormalProduct]
+    [data, mutateMetaInfo]
   );
 
   const getProductImageOverlay = useCallback(
@@ -536,8 +527,8 @@ function ProductDetail() {
                   <>
                     <ProductActions
                       product={product}
-                      hasRoleSeller={!!data?.roleSeller?.userId && data?.roleSeller?.userId !== 113}
                       onClickSMS={handleClickSMS}
+                      isDisabledState={isDisabledState}
                     />
                     <ProductDetailBannerGroup product={product} />
                   </>
