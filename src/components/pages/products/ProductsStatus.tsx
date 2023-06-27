@@ -164,6 +164,10 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
+    logEvent(attrKeys.products.SUBMIT_SEARCH_AGAIN, {
+      keyword: searchAgainKeyword
+    });
+
     setSearchParamsState(({ type, searchParams: prevSearchParams }) => ({
       type,
       searchParams: { ...prevSearchParams, title: searchAgainKeyword || undefined }
@@ -199,6 +203,14 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
     setSearchAgainInputOpenStateFamily(({ type }) => ({
       type,
       open: false
+    }));
+  };
+
+  const handleClick = () => {
+    logEvent(attrKeys.products.CLICK_SEARCH_AGAIN);
+    setSearchAgainInputOpenStateFamily(({ type }) => ({
+      type,
+      open: true
     }));
   };
 
@@ -342,12 +354,7 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
                   variant="inline"
                   size="small"
                   startIcon={<Icon name="SearchOutlined" />}
-                  onClick={() =>
-                    setSearchAgainInputOpenStateFamily(({ type }) => ({
-                      type,
-                      open: true
-                    }))
-                  }
+                  onClick={handleClick}
                   customStyle={{
                     paddingLeft: 0,
                     paddingRight: 0,
@@ -383,7 +390,7 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
         )}
       </Flexbox>
       {progressDone && open && (
-        <ReSearchInputBox
+        <SearchAgainInputBox
           variant={variant}
           showAppDownloadBanner={showAppDownloadBanner}
           triggered={reverseTriggered}
@@ -418,13 +425,13 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
           >
             취소
           </Typography>
-        </ReSearchInputBox>
+        </SearchAgainInputBox>
       )}
     </>
   );
 }
 
-const ReSearchInputBox = styled.section<{
+const SearchAgainInputBox = styled.section<{
   variant?: ProductsVariant;
   showAppDownloadBanner: boolean;
   triggered: boolean;
