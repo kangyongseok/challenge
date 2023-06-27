@@ -228,12 +228,12 @@ function ProductOrderSuccess() {
           data: { code, message }
         } = error.response;
 
-        if (code === 'ALREADY_PROCESSED_PAYMENT') {
+        try {
+          logEvent(attrKeys.commonEvent.REQUEST_ERROR, {
+            error
+          });
+        } finally {
           router.replace(`/products/${id}/order/fail?code=${code}&message=${message}`);
-        } else {
-          router.replace(
-            `/products/${id}/order/fail?code=INVALID_PAYMENT&message=오류가 발생했어요. 결제를 다시 진행해주세요.`
-          );
         }
       });
   }, [
