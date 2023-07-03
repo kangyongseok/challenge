@@ -152,6 +152,7 @@ function Channel() {
     (e: MouseEvent<HTMLButtonElement>) => {
       logEvent(attrKeys.channel.CLICK_PURCHASE, {
         name: attrProperty.name.CHANNEL_DETAIL,
+        id: product?.id,
         att: 'ORDER'
       });
       logEvent(attrKeys.channel.CLICK_ORDER_STATUS, {
@@ -184,6 +185,7 @@ function Channel() {
     (e: MouseEvent<HTMLButtonElement>) => {
       logEvent(attrKeys.channel.CLICK_PURCHASE, {
         name: attrProperty.name.CHANNEL_DETAIL,
+        id: product?.id,
         att: 'ORDER'
       });
       logEvent(attrKeys.channel.CLICK_ORDER_STATUS, {

@@ -54,7 +54,7 @@ function ProductOrderPaymentMethod({
         '#payment-widget',
         totalPrice,
         {
-          variantKey: getTenThousandUnitPrice(totalPrice) > 3500 ? 'account' : ''
+          variantKey: getTenThousandUnitPrice(totalPrice) > 3500 ? 'account' : undefined
         }
       );
 
