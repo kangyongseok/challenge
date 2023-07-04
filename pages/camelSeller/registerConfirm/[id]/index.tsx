@@ -37,6 +37,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import type { CamelSellerTempData } from '@typings/camelSeller';
 import { deviceIdState } from '@recoil/common';
@@ -205,7 +206,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

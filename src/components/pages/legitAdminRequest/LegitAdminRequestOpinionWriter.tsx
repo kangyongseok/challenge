@@ -18,7 +18,7 @@ import {
   legitAdminOpinionDataState,
   legitAdminOpinionEditableState
 } from '@recoil/legitAdminOpinion/atom';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitAdminRequestOpinionWriter() {
   const router = useRouter();
@@ -39,7 +39,7 @@ function LegitAdminRequestOpinionWriter() {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const {
     data: { status, legitOpinions, productResult: { postType = 0 } = {}, isLegitHead } = {}

@@ -9,7 +9,7 @@ import { DISPLAY_COUNT_EXIT_SURVEY_BOTTOM_SHEET } from '@constants/localStorage'
 import attrKeys from '@constants/attrKeys';
 
 import { deviceIdState, exitNextStepBottomSheetState, exitUserNextStepState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import { CloseIcon } from './InterfereKingResult.style';
 
@@ -20,7 +20,7 @@ function InterfereKingResult() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const deviceId = useRecoilValue(deviceIdState);
   const exitUserNextStepText = useRecoilValue(exitUserNextStepState);

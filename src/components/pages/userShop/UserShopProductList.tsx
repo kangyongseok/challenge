@@ -28,7 +28,7 @@ import attrProperty from '@constants/attrProperty';
 
 import type { SavedLegitDataProps } from '@typings/product';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
@@ -44,7 +44,8 @@ interface UserShopProductListProps {
 }
 
 function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListProps) {
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
+
   const getSavedLegitData: SavedLegitDataProps | null = LocalStorage.get(
     String(accessUser?.userId)
   );

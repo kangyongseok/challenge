@@ -5,8 +5,6 @@ import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
-import { PRODUCT_NAME } from '@constants/product';
-
 import { handleClickAppDownload } from '@utils/common';
 
 import { FeatureBox } from './AppDownloadDialog.styles';
@@ -100,7 +98,7 @@ function AppDownloadDialog({
             fullWidth
             variant="solid"
             brandColor="primary"
-            onClick={() => handleClickAppDownload({ name: PRODUCT_NAME.PRODUCT_DETAIL, productId })}
+            onClick={() => handleClickAppDownload({ name: 'PRODUCT_DETAIL', productId })}
           >
             <Typography variant="body1" weight="bold" color="cmnW">
               앱 다운로드

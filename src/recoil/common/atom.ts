@@ -9,7 +9,7 @@ import {
   USER_ON_BOARDING_TRIGGER
 } from '@constants/localStorage';
 
-import type { AccessUserSettingValue, ThemeMode } from '@typings/common';
+import type { AccessUserSettingValue, LoginMode, ThemeMode } from '@typings/common';
 
 export const userOnBoardingTriggerDefaultState = {
   products: {
@@ -99,11 +99,16 @@ export const themeState = atom<ThemeMode>({
   ]
 });
 
-export const loginBottomSheetState = atom({
+export const loginBottomSheetState = atom<{
+  open: boolean;
+  returnUrl: string;
+  mode?: LoginMode;
+}>({
   key: 'common/loginBottomSheetState',
   default: {
     open: false,
-    returnUrl: ''
+    returnUrl: '',
+    mode: 'normal'
   }
 });
 
@@ -178,5 +183,15 @@ export const prevChannelAlarmPopup = atom({
 
 export const activeViewportTrickState = atom({
   key: 'common/activeViewportTrickState',
+  default: false
+});
+
+export const inputFocusState = atom({
+  key: 'common/inputFocusState',
+  default: false
+});
+
+export const decryptPendingState = atom({
+  key: 'common/decryptPendingState',
   default: false
 });

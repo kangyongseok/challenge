@@ -7,8 +7,8 @@ import type { Gender } from '@dto/user';
 
 import { SpinnerPicker } from '@utils/onboarding';
 
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import { CenterContents, DatePicker, GenderSelect } from './GenderYearInput.styles';
 
@@ -26,7 +26,7 @@ function GenderYearInput({
   themeType?: 'normal';
 }) {
   const textRef = useRef(null);
-  const { data: accessUser, refetch } = useQueryAccessUser();
+  const { data: accessUser, refetch } = useSession();
   const { data: userInfo, isSuccess } = useQueryUserInfo();
   // const [yearOfBirthValue, setYearOfBirthValue] = useState('');
   const [smallHeight, setSmallHeight] = useState(false);

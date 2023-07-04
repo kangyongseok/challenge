@@ -17,7 +17,7 @@ import {
   isNeedUpdateImageUploadIOSVersion
 } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitGuideCtaButton() {
   const router = useRouter();
@@ -36,7 +36,7 @@ function LegitGuideCtaButton() {
   const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
   const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const handleClick = () => {
     if (!tab || tab === 'upload') {
@@ -60,7 +60,7 @@ function LegitGuideCtaButton() {
         return;
       }
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: '/legit/guide' } });
         return;
       }

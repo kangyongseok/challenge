@@ -101,7 +101,7 @@ function ProductInfo({
 
   const {
     theme: {
-      palette: { primary, secondary, common }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -527,7 +527,7 @@ function ProductInfo({
       return (
         <CertificationCard>
           <Flexbox alignment="center" gap={6} customStyle={{ marginBottom: 4 }}>
-            <Icon name="ShieldFilled" width={16} height={16} color={primary.light} />
+            <Icon name="ShieldFilled" width={16} height={16} color="primary-light" />
             <Typography variant="body2" weight="medium">
               카멜이 직접 인증한 판매자의 상품입니다.
             </Typography>
@@ -644,27 +644,22 @@ function ProductInfo({
                         src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${platformId}.png`}
                         alt="Platform Logo Img"
                       />
-                      <Typography
-                        variant="body2"
-                        customStyle={{
-                          color: common.ui60
-                        }}
-                      >
+                      <Typography variant="body2" color="ui60">
                         {productDetail?.product?.siteUrl?.name}
                       </Typography>
                     </Flexbox>
                     <Typography
                       variant="body2"
+                      color="ui60"
                       customStyle={{
-                        margin: '0 4px',
-                        color: common.ui60
+                        margin: '0 4px'
                       }}
                     >
                       •
                     </Typography>
                   </>
                 )}
-                <Typography variant="body2" customStyle={{ color: common.ui60 }}>
+                <Typography variant="body2" color="ui60">
                   {productDetail?.product.datePosted > productDetail?.product.dateFirstPosted
                     ? '끌올 '
                     : ''}
@@ -697,28 +692,15 @@ function ProductInfo({
               >
                 {isWish ? (
                   <>
-                    <Icon name="HeartFilled" width={28} height={28} color={secondary.red.light} />
-                    <Typography
-                      variant="body2"
-                      weight="bold"
-                      customStyle={{
-                        textAlign: 'center',
-                        color: secondary.red.light
-                      }}
-                    >
+                    <Icon name="HeartFilled" width={28} height={28} color="red-light" />
+                    <Typography variant="body2" weight="bold" color="red-light" textAlign="center">
                       {productDetail?.product?.wishCount || 0}
                     </Typography>
                   </>
                 ) : (
                   <>
                     <Icon name="HeartOutlined" width={28} height={28} />
-                    <Typography
-                      variant="body2"
-                      weight="bold"
-                      customStyle={{
-                        textAlign: 'center'
-                      }}
-                    >
+                    <Typography variant="body2" weight="bold" textAlign="center">
                       {productDetail?.product?.wishCount || 0}
                     </Typography>
                   </>
@@ -768,7 +750,7 @@ function ProductInfo({
                 key={`product-status-data-${stateData.label}`}
                 customStyle={{ display: stateData.isView ? 'flex' : 'none' }}
               >
-                <Typography variant="h4" customStyle={{ minWidth: 60, color: common.ui60 }}>
+                <Typography variant="h4" color="ui60" customStyle={{ minWidth: 60 }}>
                   {stateData.label}
                 </Typography>
                 <Typography variant="h4">{stateData.value}</Typography>
@@ -811,15 +793,12 @@ function ProductInfo({
               gap={8}
             >
               <Typography variant="h4">{isExpended ? '접어보기' : '펼쳐보기'}</Typography>
-              <Icon
-                customStyle={{ color: common.uiBlack }}
-                name={isExpended ? 'CaretUpOutlined' : 'CaretDownOutlined'}
-              />
+              <Icon name={isExpended ? 'CaretUpOutlined' : 'CaretDownOutlined'} color="uiBlack" />
             </Flexbox>
           </MoreInfoButton>
         )}
         {isAllCrawlingProduct && (
-          <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 20 }}>
+          <Typography variant="body2" color="ui60" customStyle={{ marginTop: 20 }}>
             * 카멜Ai검색엔진이 수집·분석한 매물정보입니다.
           </Typography>
         )}
@@ -841,11 +820,11 @@ function ProductInfo({
                 {item.icon && (
                   <CircleBg>
                     <Image
-                      src={item.icon}
-                      disableAspectRatio
-                      alt={item.keyword}
                       width={18}
                       height={18}
+                      src={item.icon}
+                      alt={item.keyword}
+                      disableAspectRatio
                     />
                   </CircleBg>
                 )}
@@ -872,7 +851,7 @@ function ProductInfo({
         >
           <Flexbox alignment="center" gap={12}>
             {productDetail?.product?.viewCount > 0 && (
-              <Typography customStyle={{ color: common.ui60 }}>
+              <Typography color="ui60">
                 조회&nbsp;
                 {productDetail?.product.viewCount}
               </Typography>
@@ -883,22 +862,16 @@ function ProductInfo({
                   name="HeartFilled"
                   width={16}
                   height={16}
-                  customStyle={{ color: common.ui80, marginRight: 2 }}
+                  color="ui80"
+                  customStyle={{ marginRight: 2 }}
                 />
-                <Typography customStyle={{ color: common.ui60 }}>
-                  {productDetail?.product.wishCount}
-                </Typography>
+                <Typography color="ui60">{productDetail?.product.wishCount}</Typography>
               </Flexbox>
             )}
             {productDetail?.product?.purchaseCount > 0 && (
               <Flexbox gap={4} alignment="center">
-                <Icon
-                  name="MessageFilled"
-                  width={16}
-                  height={16}
-                  customStyle={{ color: common.ui80 }}
-                />
-                <Typography variant="body2" weight="medium" customStyle={{ color: common.ui60 }}>
+                <Icon name="MessageFilled" width={16} height={16} color="ui80" />
+                <Typography variant="body2" weight="medium" color="ui60">
                   {productDetail?.product.purchaseCount}
                 </Typography>
               </Flexbox>
@@ -906,13 +879,8 @@ function ProductInfo({
           </Flexbox>
           {!isMySelfProduct && (
             <Flexbox gap={2} alignment="center" onClick={handleClickReport}>
-              <Icon name="ReportFilled" width={20} height={20} color={common.ui80} />
-              <Typography
-                weight="medium"
-                customStyle={{
-                  color: common.ui60
-                }}
-              >
+              <Icon name="ReportFilled" width={20} height={20} color="ui80" />
+              <Typography weight="medium" color="ui60">
                 신고하기
               </Typography>
               <ReportTooltip open={isOpenReportTooltip}>
@@ -931,7 +899,8 @@ function ProductInfo({
                         <Icon
                           name="CheckOutlined"
                           size="small"
-                          customStyle={{ marginRight: 6, color: primary.main }}
+                          color="primary"
+                          customStyle={{ marginRight: 6 }}
                         />
                       )}
                       <Typography
@@ -942,11 +911,7 @@ function ProductInfo({
                         {label}
                       </Typography>
                     </Flexbox>
-                    <Typography
-                      variant="body2"
-                      weight="medium"
-                      customStyle={{ color: common.ui60 }}
-                    >
+                    <Typography variant="body2" weight="medium" color="ui60">
                       {count}
                     </Typography>
                   </ReportOption>

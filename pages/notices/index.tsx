@@ -20,8 +20,8 @@ import attrKeys from '@constants/attrKeys';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function Notices() {
   const {
@@ -32,7 +32,7 @@ function Notices() {
 
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<string | number>('활동알림');
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const params = {
     size: 20,
     sort: 'dateCreated,DESC',

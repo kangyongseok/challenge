@@ -14,7 +14,7 @@ import attrKeys from '@constants/attrKeys';
 import { productDetailAtt } from '@utils/products';
 import { checkAgent, getRandomNumber } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useProductType from '@hooks/useProductType';
 
 interface ProductActionsProps {
@@ -41,7 +41,7 @@ function ProductActions({ product, onClickSMS, isDisabledState }: ProductActions
       palette: { common }
     }
   } = useTheme();
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { isCrawlingProduct } = useProductType(product?.sellerType);
   const [reportOptions, setReportOptions] = useState(INITIAL_REPORT_OPTIONS);
   const sellerPhoneNumber =

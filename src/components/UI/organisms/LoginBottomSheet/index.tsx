@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { animated, useTransition } from '@react-spring/web';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { BottomSheet, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import { BottomSheet, Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { PuffLoader } from '@components/UI/atoms';
 import { LoginButtonList } from '@components/pages/login';
@@ -24,7 +24,10 @@ function LoginBottomSheet() {
 
   const toastStack = useToastStack();
 
-  const [{ open, returnUrl }, setLoginBottomSheetState] = useRecoilState(loginBottomSheetState);
+  // mode 는 현재 매물 상세 페이지 비회원 결제하기 한정으로 사용되고 있으며 이에 따라 구현 됨, 추후 필요에 따라 확장
+  // mode === 'nonMemberPayment', ProductNonMemberPaymentBottomSheet 컴포넌트가 import 되어있어야 사용 가능
+  const [{ open, returnUrl, mode }, setLoginBottomSheetState] =
+    useRecoilState(loginBottomSheetState);
 
   const {
     code,
@@ -57,31 +60,39 @@ function LoginBottomSheet() {
     leave: { opacity: 0 }
   });
 
+  const handleClose = () => setLoginBottomSheetState({ open: false, returnUrl: '' });
+
   useEffect(() => {
-    const attName = () => {
+    const getName = () => {
       if (router.query.keyword) return attrProperty.name.PRODUCT_LIST;
       if (router.query.id) return attrProperty.name.PRODUCT_DETAIL;
       if (router.pathname === '/') return attrProperty.name.MAIN;
       if (router.pathname === '/mypage') return attrProperty.name.MY;
       return '';
     };
+    const getTitle = () => {
+      if (returnUrl === '/camelSeller/registerConfirm') {
+        return attrProperty.title.PRODUCT_MAIN;
+      }
+      if (mode?.indexOf('nonMember') !== -1) {
+        return attrProperty.title.PAYMENT_WAIT;
+      }
+      return attrProperty.title.WISH;
+    };
 
     if (open) {
       logEvent(attrKeys.login.VIEW_LOGIN_MODAL, {
-        name: attName(),
-        title:
-          returnUrl === '/camelSeller/registerConfirm'
-            ? attrProperty.title.PRODUCT_MAIN
-            : attrProperty.title.WISH
+        name: getName(),
+        title: getTitle()
       });
     }
-  }, [open, returnUrl, router]);
+  }, [open, returnUrl, router, mode]);
 
   return (
     <>
       <BottomSheet
         open={open}
-        onClose={() => setLoginBottomSheetState({ open: false, returnUrl: '' })}
+        onClose={handleClose}
         disableSwipeable
         customStyle={{ padding: '52px 20px 32px 20px', textAlign: 'center' }}
       >
@@ -90,31 +101,23 @@ function LoginBottomSheet() {
           (styles, item) =>
             item && (
               <animated.div style={styles}>
-                <Flexbox gap={10} alignment="center" justifyContent="center">
-                  <Icon name="Logo_45_45" width={36} height={31} />
-                  <Icon name="LogoText_96_20" width={124} height={31} />
+                <Flexbox gap={6} alignment="center" justifyContent="center">
+                  <Icon name="Logo_45_45" width={36} height={31} color="uiBlack" />
+                  <Icon name="LogoText_96_20" width={96.8} height={20} color="uiBlack" />
                 </Flexbox>
-                {router.pathname === '/order/single/[id]' ? (
-                  <Typography variant="h4" customStyle={{ margin: '20px 0' }}>
+                {router.pathname === '/order/single/[id]' && (
+                  <Typography variant="h4" customStyle={{ margin: '20px 0 0' }}>
                     카멜 안전결제를 처음 이용하면
                     <br />
                     <span style={{ fontWeight: 'bold', color: '#425BFF' }}>5,000</span>원을 드려요!
                   </Typography>
-                ) : (
-                  <>
-                    <Typography customStyle={{ margin: '20px 0' }}>
-                      꿀매물과 가격변동 알림부터
-                      <br />내 주변, 내 사이즈 매물만 보기까지!
-                    </Typography>
-                    <Typography
-                      customStyle={{
-                        marginBottom: 32
-                      }}
-                    >
-                      로그인하고 득템하세요 🙌
-                    </Typography>
-                  </>
                 )}
+                <Box
+                  customStyle={{
+                    width: '100%',
+                    minHeight: 52
+                  }}
+                />
                 <LoginButtonList
                   authLogin={authLogin}
                   successLogin={successLogin}
@@ -128,6 +131,7 @@ function LoginBottomSheet() {
                     })
                   }
                   attName="MODAL"
+                  mode={mode}
                   disabledRecentLogin
                 />
               </animated.div>

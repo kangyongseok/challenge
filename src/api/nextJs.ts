@@ -1,8 +1,8 @@
-import { UserSnsLoginInfo, UserSnsLoginResult } from '@dto/userAuth';
+import type { AccessUser, UserSnsLoginInfo, UserSnsLoginResult } from '@dto/userAuth';
 
 import Axios from '@library/axios';
 
-import { ProductDealInfo } from '@typings/common';
+import type { ProductDealInfo } from '@typings/common';
 
 export async function postAuthLogin(params: {
   deviceId?: string;
@@ -33,23 +33,25 @@ export async function postDevLogin(params: { testUserId: string }) {
   return data;
 }
 
-export async function postToken(accessToken: string) {
+export async function postToken(accessToken: string, accessUser: Partial<AccessUser>) {
   const { data } = await Axios.getInstance().post<string>(
     `${process.env.NEXT_JS_API_BASE_URL}/auth/token`,
     {
-      accessToken
+      accessToken,
+      accessUser
     }
   );
 
   return data;
 }
 
-export async function deleteToken(accessToken: string) {
+export async function deleteToken(accessToken: string, accessUser: Partial<AccessUser>) {
   const { data } = await Axios.getInstance().delete<string>(
     `${process.env.NEXT_JS_API_BASE_URL}/auth/token`,
     {
       data: {
-        accessToken
+        accessToken,
+        accessUser
       }
     }
   );

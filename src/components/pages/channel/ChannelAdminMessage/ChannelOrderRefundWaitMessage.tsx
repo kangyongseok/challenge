@@ -4,7 +4,7 @@ import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderRefundWaitMessageProps {
   message: AdminMessage;
@@ -25,7 +25,7 @@ function ChannelOrderRefundWaitMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 

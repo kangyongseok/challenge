@@ -52,6 +52,7 @@ function ChannelHeader({
   dateActivated = ''
 }: ChannelHeaderProps) {
   const router = useRouter();
+  const { key } = router.query;
   const {
     theme: {
       palette: { primary, common }
@@ -61,13 +62,17 @@ function ChannelHeader({
   const setMoreBottomSheetState = useSetRecoilState(channelBottomSheetStateFamily('more'));
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
   const handleClickClose = useCallback(() => {
+    if (key) {
+      router.replace('/mypage/nonMember/orders');
+      return;
+    }
     if (window.history.length > 2 && !LocalStorage.get(PAYMENTS_SUCCESS)) {
       router.back();
       return;
     }
     LocalStorage.remove(PAYMENTS_SUCCESS);
     router.replace({ pathname: '/channels', query: { type: 0 } });
-  }, [router]);
+  }, [router, key]);
 
   const handleClickTitle = useCallback(() => {
     if (!targetUserId || isDeletedTargetUser) return;

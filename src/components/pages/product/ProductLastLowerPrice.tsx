@@ -80,7 +80,7 @@ function ProductLastLowerPrice({ type }: { type?: 'lastImage' }) {
 
   return (
     <>
-      {!type && <Divider />}
+      <Divider />
       <Wrap
         disabled={
           searchRelatedProducts?.page.content

@@ -7,7 +7,7 @@ import { fetchTransfers } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 
 import { settingsTransferPlatformsState } from '@recoil/settingsTransfer';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function SettingsTransferList() {
   const {
@@ -18,14 +18,14 @@ function SettingsTransferList() {
 
   const platforms = useRecoilValue(settingsTransferPlatformsState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const { data: { userTransfers = [] } = {} } = useQuery(
     queryKeys.users.transfers(),
     () => fetchTransfers(),
     {
       refetchOnMount: true,
-      enabled: !!accessUser
+      enabled: isLoggedIn
     }
   );
 

@@ -11,12 +11,13 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function MypageLegitInfo() {
   const router = useRouter();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { data: accessUser } = useSession();
   const { data: myUserInfo } = useQueryMyUserInfo();
 
   const infoMenu = useMemo(

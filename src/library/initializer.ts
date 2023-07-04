@@ -33,7 +33,7 @@ const Initializer = {
   initAccessUserInAmplitude(amplitudeClient: AmplitudeClient) {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
 
-    if (!accessUser) return;
+    if (!accessUser || accessUser?.snsType === 'sms') return;
 
     const { userId, email, userName, snsType, area, gender, birthday, alarmAgree, adAgree } =
       accessUser;
@@ -54,7 +54,7 @@ const Initializer = {
   initAccessUserInBraze() {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
 
-    if (!accessUser) return;
+    if (!accessUser || accessUser?.snsType === 'sms') return;
 
     if (checkAgent.isAndroidApp() && window.webview && window.webview.callSetLoginUser) {
       window.webview.callSetLoginUser(JSON.stringify(accessUser));
@@ -70,7 +70,7 @@ const Initializer = {
   initRum() {
     const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
 
-    if (!accessUser) return;
+    if (!accessUser || accessUser?.snsType === 'sms') return;
 
     datadogRum.init({
       applicationId: process.env.DATADOG_RUM_APP_ID,

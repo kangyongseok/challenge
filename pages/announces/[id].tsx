@@ -17,6 +17,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 function Announce() {
   const router = useRouter();
@@ -71,7 +72,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

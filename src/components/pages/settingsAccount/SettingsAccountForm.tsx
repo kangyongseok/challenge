@@ -23,7 +23,7 @@ import {
   settingsAccountData,
   settingsAccountSelectBankBottomSheetOpenState
 } from '@recoil/settingsAccount';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function SettingsAccountForm() {
   const router = useRouter();
@@ -42,14 +42,14 @@ function SettingsAccountForm() {
   const setOpenState = useSetRecoilState(settingsAccountSelectBankBottomSheetOpenState);
   const setConfirmDialogOpenState = useSetRecoilState(settingsAccountConfirmDialogOpenState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS } = useSession();
 
   const {
     data = [],
     isLoading,
     refetch
   } = useQuery(queryKeys.users.userAccounts(), () => fetchUserAccounts(), {
-    enabled: !!accessUser,
+    enabled: isLoggedInWithSMS,
     refetchOnMount: true
   });
 
@@ -57,7 +57,7 @@ function SettingsAccountForm() {
     queryKeys.users.userCerts(),
     () => fetchUserCerts(),
     {
-      enabled: !!accessUser,
+      enabled: isLoggedInWithSMS,
       refetchOnMount: true
     }
   );

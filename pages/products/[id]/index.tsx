@@ -20,20 +20,19 @@ import {
 } from '@components/UI/molecules';
 import { PageHead } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
-// import { UserShopProductDeleteConfirmDialog } from '@components/pages/userShop';
 import {
   ProductActions,
   ProductButlerContents,
-  ProductDeletedCard,
   ProductDetailBannerGroup,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
   ProductImages,
+  ProductInActiveCard,
   ProductInfo,
   ProductMowebAppContents,
+  ProductNonMemberPaymentBottomSheet,
   ProductRedirect,
   ProductRelatedProductList,
-  ProductSoldoutCard,
   ProductStructuredData
 } from '@components/pages/product';
 
@@ -67,37 +66,42 @@ import { scrollEnable } from '@utils/scroll';
 import { getMetaDescription, getProductType, productDetailAtt } from '@utils/products';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent, commaNumber, getProductDetailUrl, getRandomNumber } from '@utils/common';
 
 import { userShopSelectedProductState } from '@recoil/userShop';
 import { loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductType from '@hooks/useProductType';
 import useProductState from '@hooks/useProductState';
 import useOsAlarm from '@hooks/useOsAlarm';
+import useHistoryManage from '@hooks/useHistoryManage';
 
 function ProductDetail() {
   const {
     query: { id: productId, redirect, chainPrice },
     asPath,
+    replace,
     push
   } = useRouter();
-
-  const toastStack = useToastStack();
 
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
+  const toastStack = useToastStack();
   const { data: userData, set: setUserDate } = useQueryUserData();
   const { data, isLoading, mutatePostProductsAdd, mutatePostProductsRemove, mutateMetaInfo } =
     useQueryProduct();
+  const { isLoggedIn } = useSession();
+  const { isPopStateEvent } = useHistoryManage();
 
   const [readyForOpenToast, setReadyForOpenToast] = useState(false);
   const [isShowAppDownloadDialog, setIsShowAppDownloadDialog] = useState(false);
   const [isMySelfProduct, setMySelfProduct] = useState(false);
-  const [viewDetail, setViewDetail] = useState(false);
+  const [viewDetailProduct, setViewDetailProduct] = useState(false);
   const [{ isOpenPriceDownToast, isOpenDuplicatedToast }, setOpenToast] = useState({
     isOpenPriceDownToast: false,
     isOpenDuplicatedToast: false
@@ -114,14 +118,10 @@ function ProductDetail() {
     isHidden,
     isDeleted,
     isTargetProduct,
-    isDisabledState,
+    isSoldOut,
     discountedPrice
   } = useProductState({ productDetail: data, product: data?.product });
   const { isCamelButlerProduct } = useProductType(data?.product.sellerType);
-
-  useEffect(() => {
-    scrollEnable();
-  }, [data]);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -144,11 +144,7 @@ function ProductDetail() {
     return false;
   }, [data]);
 
-  const soldout = useMemo(
-    () => data?.product.status === productStatusCode.soldOut && !(isDuplicate && isTargetProduct),
-    [data?.product.status, isTargetProduct, isDuplicate]
-  );
-  const isSoldOutMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && soldout;
+  const isSoldOutMoweb = !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) && isSoldOut;
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
   const isRedirectPage = typeof redirect !== 'undefined' && Boolean(redirect);
   const product = !isLoading ? data?.product : undefined;
@@ -157,7 +153,7 @@ function ProductDetail() {
     (isWish: boolean) => {
       if (!data?.product) return false;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         setLoginBottomSheet({ open: true, returnUrl: '' });
         return false;
       }
@@ -172,7 +168,7 @@ function ProductDetail() {
       return true;
     },
     [
-      accessUser,
+      isLoggedIn,
       data?.product,
       mutatePostProductsAdd,
       mutatePostProductsRemove,
@@ -253,14 +249,6 @@ function ProductDetail() {
     [isForSale, isDuplicate, isTargetProduct, isReservation, isHidden, isPriceDown]
   );
 
-  const handleClickViewDetail = () => {
-    logEvent(attrKeys.products.CLICK_SOLDOUT_DETAIL, {
-      name: attrProperty.name.productDetail
-    });
-
-    setViewDetail(true);
-  };
-
   useEffect(() => {
     setUserShopSelectedProductState({ id: Number(productId) });
 
@@ -296,12 +284,13 @@ function ProductDetail() {
     if (
       !checkAgent.isMobileApp() &&
       !SessionStorage.get(sessionStorageKeys.isFirstVisitProductDetail) &&
-      !isRedirectPage
+      !isRedirectPage &&
+      isForSale
     ) {
       SessionStorage.set(sessionStorageKeys.isFirstVisitProductDetail, true);
       setIsShowAppDownloadDialog(true);
     }
-  }, [isRedirectPage]);
+  }, [isRedirectPage, isForSale]);
 
   useEffect(() => {
     if (!isRedirectPage && data?.product.brand && data.product.brand.name) {
@@ -371,7 +360,7 @@ function ProductDetail() {
   }, [asPath]);
 
   useEffect(() => {
-    if (!data || !data.product || !accessUser || loggedBrazeRef.current) return;
+    if (!data || !data.product || !isLoggedIn || !accessUser || loggedBrazeRef.current) return;
 
     loggedBrazeRef.current = true;
 
@@ -406,7 +395,7 @@ function ProductDetail() {
     }
 
     updateAccessUserOnBraze({ ...accessUser, lastProductModel: quoteTitle });
-  }, [data, accessUser]);
+  }, [data, isLoggedIn, accessUser]);
 
   useEffect(() => {
     if (userData?.savedLegitRequest?.showToast) {
@@ -440,6 +429,51 @@ function ProductDetail() {
     UserTraceRecord.increasePageViewCount('exitProduct');
   }, []);
 
+  useEffect(() => {
+    scrollEnable();
+  }, [data]);
+
+  const handlePopState = useCallback(() => {
+    replace(
+      `/products/brands/${data?.product.brand.name}?parentIds=${
+        data?.product.category.parentId
+      }&categorySizeIds=${data?.product.categorySizes.map((item) => item.categorySizeId)}`
+    ).then(() => {
+      toastStack({
+        children: (
+          <>
+            <p>전국의 중고명품을 모두 모았어요.</p>
+            <p>원하는 매물을 둘러보세요!</p>
+          </>
+        )
+      });
+    });
+    window.history.replaceState(
+      { prevPage: 'productDetail' },
+      '',
+      `/products/brands/${data?.product.brand.name}?parentIds=${
+        data?.product.category.parentId
+      }&categorySizeIds=${data?.product.categorySizes.map((item) => item.categorySizeId)}`
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    data?.product.brand.name,
+    data?.product.category.parentId,
+    data?.product.categorySizes,
+    replace
+  ]);
+
+  useEffect(() => {
+    const isSession = SessionStorage.get(sessionStorageKeys.isProductDetailPopState);
+    if (isPopStateEvent && !isSession) {
+      SessionStorage.set(sessionStorageKeys.isProductDetailPopState, true);
+      window.history.pushState('', '', '/');
+      window.history.pushState('', '', asPath);
+      window.addEventListener('popstate', handlePopState);
+    }
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [asPath, handlePopState, isPopStateEvent]);
+
   const sizeParser = () => {
     const selectedMainSize = data?.product?.categorySizes?.map((size) => size.name) || [];
     const selectedOption = data?.sizeOptions?.map((size) => size.description) || [];
@@ -469,23 +503,27 @@ function ProductDetail() {
       />
       <GeneralTemplate
         header={
-          <ProductDetailHeader data={data} isWish={data?.wish} onClickWish={handleClickWish} />
+          <ProductDetailHeader
+            data={data}
+            isWish={data?.wish}
+            hideWishButton={(isSoldOut || isDeleted) && !viewDetailProduct}
+            onClickWish={handleClickWish}
+          />
         }
         footer={
           <ProductDetailFooter
-            viewDetail={viewDetail}
             isRedirectPage={isRedirectPage}
             isMySelfProduct={isMySelfProduct}
-            soldout={soldout}
+            soldout={isSoldOut && !viewDetailProduct}
             deleted={data?.product.status === productStatusCode.deleted}
           />
         }
         hideAppDownloadBanner={isRedirectPage}
       >
         {isRedirectPage && data?.product && <ProductRedirect product={data.product} />}
-        {!isRedirectPage && isDeleted && (
+        {!isRedirectPage && isDeleted && !isLoading && (
           <>
-            <ProductDeletedCard />
+            <ProductInActiveCard variant="delete" product={data?.product} isSafe={isSafe} />
             <ProductRelatedProductList
               brandId={data?.product?.brand.id}
               categoryId={data?.product?.category.id}
@@ -494,16 +532,18 @@ function ProductDetail() {
               quoteTitle={data?.product.quoteTitle}
               price={data?.product.price}
               productId={data?.product.id}
+              isSoldOut={isSoldOut}
+              isDeleted={isDeleted}
             />
           </>
         )}
         {!isRedirectPage && !isDeleted && (
           <>
-            {isSoldOutMoweb && !viewDetail ? (
-              <ProductSoldoutCard
+            {isSoldOutMoweb && !viewDetailProduct && !isLoading ? (
+              <ProductInActiveCard
                 product={data?.product}
                 isSafe={isSafe}
-                onClick={handleClickViewDetail}
+                setViewDetailProduct={setViewDetailProduct}
               />
             ) : (
               <>
@@ -525,11 +565,7 @@ function ProductDetail() {
                 {isCamelButlerProduct && <ProductButlerContents />}
                 {!isCamelButlerProduct && (
                   <>
-                    <ProductActions
-                      product={product}
-                      onClickSMS={handleClickSMS}
-                      isDisabledState={isDisabledState}
-                    />
+                    <ProductActions product={product} onClickSMS={handleClickSMS} />
                     <ProductDetailBannerGroup product={product} />
                   </>
                 )}
@@ -537,7 +573,6 @@ function ProductDetail() {
             )}
             {!isCamelButlerProduct && (
               <>
-                <ProductMowebAppContents data={data} />
                 <ProductRelatedProductList
                   brandId={data?.product?.brand.id}
                   categoryId={data?.product?.category.id}
@@ -546,7 +581,12 @@ function ProductDetail() {
                   quoteTitle={data?.product.quoteTitle}
                   price={data?.product.price}
                   productId={data?.product.id}
+                  parentId={data?.product?.category.parentId}
+                  size={data?.product.size}
+                  isSoldOut={isSoldOut}
+                  isDeleted={isDeleted}
                 />
+                {(!isSoldOutMoweb || viewDetailProduct) && <ProductMowebAppContents data={data} />}
               </>
             )}
           </>
@@ -597,17 +637,22 @@ function ProductDetail() {
       <ProductDetailLegitBottomSheet product={data?.product} />
       <MyShopAppDownloadDialog />
       <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
+      <ProductNonMemberPaymentBottomSheet />
     </>
   );
 }
 
 export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
   const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
+  const accessUser = getAccessUserByCookies(getCookies({ req }));
+
   if (isGoBack) {
     res.setHeader('Set-Cookie', 'isGoBack=false;path=/');
 
     return {
-      props: {}
+      props: {
+        accessUser
+      }
     };
   }
 
@@ -621,7 +666,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     // TODO getServerSideProps 가 2번 호출되고, null 이 string 으로 들어옴
     if (!id || id === 'null') {
       return {
-        props: {}
+        props: {
+          accessUser
+        }
       };
     }
 
@@ -661,12 +708,12 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
       };
     }
 
-    queryClient.setQueryData(queryKeys.products.product({ productId }), product);
     await queryClient.prefetchQuery(queryKeys.categories.parentCategories(), fetchParentCategories);
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser
       }
     };
   } catch {

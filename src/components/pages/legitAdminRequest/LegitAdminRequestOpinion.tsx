@@ -12,7 +12,7 @@ import { fetchProductLegit } from '@api/productLegit';
 import queryKeys from '@constants/queryKeys';
 
 import { legitAdminOpinionEditableState } from '@recoil/legitAdminOpinion/atom';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitAdminRequestOpinion() {
   const router = useRouter();
@@ -24,8 +24,9 @@ function LegitAdminRequestOpinion() {
     }
   } = useTheme();
 
+  const { data: accessUser } = useSession();
+
   const editable = useRecoilValue(legitAdminOpinionEditableState);
-  const { data: accessUser } = useQueryAccessUser();
 
   const { data: { legitOpinions = [], isLegitHead } = {} } = useQuery(
     queryKeys.productLegits.legit(Number(id)),

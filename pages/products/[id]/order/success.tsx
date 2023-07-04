@@ -26,9 +26,10 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import type { Payment } from '@typings/tosspayments';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 // TODO 추후 결제 로직 리팩토링 및 서버에서 처리 되도록 수정 필요
@@ -40,7 +41,7 @@ function ProductOrderSuccess() {
 
   const completedRef = useRef(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: { roleSeller, product, channels = [] } = {}, isLoading } = useQuery(
     queryKeys.products.product({ productId }),
@@ -59,7 +60,7 @@ function ProductOrderSuccess() {
     queryKeys.orders.productOrder({ productId }),
     () => fetchProductOrder({ productId }),
     {
-      enabled: !!accessUser && !!productId,
+      enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
     }
   );
@@ -74,6 +75,7 @@ function ProductOrderSuccess() {
     if (
       isLoading ||
       isLoadingOrder ||
+      !isLoggedInWithSMS ||
       !accessUser ||
       !roleSeller ||
       !product ||
@@ -239,6 +241,7 @@ function ProductOrderSuccess() {
   }, [
     id,
     accessUser,
+    isLoggedInWithSMS,
     roleSeller,
     product,
     camelOrderId,
@@ -274,7 +277,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

@@ -28,9 +28,9 @@ import {
 import { legitRequestState } from '@recoil/legitRequest';
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserData from '@hooks/useQueryUserData';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitFloatingButton() {
   const {
@@ -46,11 +46,11 @@ function LegitFloatingButton() {
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
 
   const { isSuccess } = useQuery(queryKeys.users.userLegitTargets(), fetchUserLegitTargets, {
-    enabled: !!accessUser,
+    enabled: isLoggedIn,
     refetchOnMount: true
   });
 
@@ -86,7 +86,7 @@ function LegitFloatingButton() {
     // 매물등록 후 사진감정 신청 중단한 케이스 있을 경우 초기화
     if (userData?.[SAVED_LEGIT_REQUEST]?.state?.productId) removeUserDate(SAVED_LEGIT_REQUEST);
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }
@@ -94,15 +94,15 @@ function LegitFloatingButton() {
     resetLegitRequestState();
 
     router.push({ pathname: '/legit/request/selectCategory' });
-  }, [userData, removeUserDate, resetLegitRequestState, accessUser, router, setLoginBottomSheet]);
+  }, [userData, removeUserDate, resetLegitRequestState, isLoggedIn, router, setLoginBottomSheet]);
 
   useEffect(() => {
-    if (accessUser && isSuccess && !openLegitRecommendBottomSheet) {
+    if (isLoggedIn && isSuccess && !openLegitRecommendBottomSheet) {
       setOpen(true);
-    } else if (!accessUser) {
+    } else if (!isLoggedIn) {
       setOpen(true);
     }
-  }, [accessUser, isSuccess, openLegitRecommendBottomSheet]);
+  }, [isLoggedIn, isSuccess, openLegitRecommendBottomSheet]);
 
   useEffect(() => {
     if (open && !openLegitRecommendBottomSheet)

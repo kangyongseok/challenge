@@ -74,6 +74,7 @@ function useQueryProduct(): UseQueryProductResult {
       return resultProduct;
     },
     {
+      staleTime: 60 * 1000,
       refetchOnMount: true,
       retry: 2,
       enabled: !!productId

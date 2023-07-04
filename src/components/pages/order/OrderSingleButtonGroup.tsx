@@ -2,14 +2,9 @@ import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import type { AccessUser } from '@dto/userAuth';
-
-import LocalStorage from '@library/localStorage';
-
-import { ACCESS_USER } from '@constants/localStorage';
-
 import { loginBottomSheetState } from '@recoil/common';
 import { channelDialogStateFamily } from '@recoil/channel';
+import useSession from '@hooks/useSession';
 
 import OrderSearchDelieryForm from './OrderSearchDelieryForm';
 
@@ -35,13 +30,13 @@ function OrderSingleButtonGroup({
   } = useTheme();
   const { push } = useRouter();
 
-  const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
+  const { isLoggedInWithSMS } = useSession();
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const setOrderRefuseState = useSetRecoilState(channelDialogStateFamily('orderRequestRefuse'));
 
   const handleAccept = () => {
-    if (!accessUser) {
+    if (!isLoggedInWithSMS) {
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }

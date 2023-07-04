@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import omit from 'lodash-es/omit';
 import { useQuery } from '@tanstack/react-query';
 
-import { AccessUser } from '@dto/userAuth';
+import type { AccessUser } from '@dto/userAuth';
 
 import LocalStorage from '@library/localStorage';
 

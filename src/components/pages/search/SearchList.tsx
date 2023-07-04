@@ -28,8 +28,8 @@ import { commaNumber } from '@utils/formats';
 import { getImageResizePath } from '@utils/common';
 
 import { searchValueState } from '@recoil/search';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function SearchList() {
   const router = useRouter();
@@ -38,7 +38,7 @@ function SearchList() {
     palette: { common }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const { data: { info: { value: { gender: userGender = '' } = {} } = {} } = {} } =
     useQueryUserInfo();

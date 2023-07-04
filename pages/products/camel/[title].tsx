@@ -18,6 +18,8 @@ import {
 } from '@components/pages/products';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 function CamelProducts() {
   return (
@@ -48,6 +50,7 @@ export async function getServerSideProps({ query, req, res }: GetServerSideProps
   const params = convertSearchParamsByQuery(query, {
     variant: 'camel'
   });
+  const accessUser = getAccessUserByCookies(getCookies({ req }));
 
   const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
 
@@ -56,14 +59,16 @@ export async function getServerSideProps({ query, req, res }: GetServerSideProps
 
     return {
       props: {
-        params
+        params,
+        accessUser
       }
     };
   }
 
   return {
     props: {
-      params
+      params,
+      accessUser
     }
   };
 }

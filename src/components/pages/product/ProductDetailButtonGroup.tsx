@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import amplitude from 'amplitude-js';
@@ -31,9 +31,10 @@ import {
 } from '@utils/common';
 
 import type { AppBanner } from '@typings/common';
+import { productInquiryFormState, productInquiryReSendState } from '@recoil/productInquiry/atom';
 import { loginBottomSheetState, prevChannelAlarmPopup } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryProduct from '@hooks/useQueryProduct';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductType from '@hooks/useProductType';
 import useProductState from '@hooks/useProductState';
 import useOsAlarm from '@hooks/useOsAlarm';
@@ -49,9 +50,9 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   const [pendingCreateChannel, setPendingCreateChannel] = useState(false);
 
   const { data: productDetail, mutateMetaInfo } = useQueryProduct();
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, isLoggedInWithSMS, data: accessUser } = useSession();
   const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
-  const { isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } = useProductType(
+  const { isAllOperatorProduct, isChannelProduct } = useProductType(
     productDetail?.product.sellerType
   );
   const {
@@ -74,6 +75,8 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
+  const resetProductInquiryFormState = useResetRecoilState(productInquiryFormState);
+  const resetProductInquiryReSendState = useResetRecoilState(productInquiryReSendState);
 
   const { mutate: mutateCreateChannel, isLoading: isLoadingMutateCreateChannel } =
     useMutationCreateChannel();
@@ -179,6 +182,17 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       return;
     }
 
+    if (!isLoggedInWithSMS && !checkAgent.isMobileApp()) {
+      logEvent(attrKeys.login.CLICK_NOLOGIN, {
+        title: attrProperty.title.CHANNEL
+      });
+
+      resetProductInquiryFormState();
+      resetProductInquiryReSendState();
+      push(`/products/${id}/inquiry`);
+      return;
+    }
+
     const createChannelParams = {
       targetUserId: String(productDetail.roleSeller?.userId || 0),
       productId: String(productDetail.product.id),
@@ -190,9 +204,8 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       (channel) => channel.userId === accessUser?.userId
     )?.id;
 
-    if (!accessUser) {
+    if (!isLoggedInWithSMS) {
       SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
-      // push({ pathname: '/login' });
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }
@@ -214,7 +227,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     setPendingCreateChannel(true);
 
     mutateCreateChannel(
-      { userId: String(accessUser.userId || 0), ...createChannelParams },
+      { userId: String(accessUser?.userId || 0), ...createChannelParams },
       {
         onSettled() {
           setPendingCreateChannel(false);
@@ -249,8 +262,15 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       return;
     }
 
-    if (isAlreadyOrder) {
+    if (isAlreadyOrder && checkAgent.isMobileApp()) {
       setOpenAlreadyDialog(true);
+      return;
+    }
+
+    if (isAlreadyOrder) {
+      toastStack({
+        children: '이미 결제한 매물이에요.'
+      });
       return;
     }
 
@@ -259,11 +279,21 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       return;
     }
 
+    if (!accessUser) {
+      setLoginBottomSheet({
+        open: true,
+        returnUrl: '',
+        mode: !checkAgent.isMobileApp() ? 'nonMember' : 'normal'
+      });
+      return;
+    }
+
     SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
       source: 'PRODUCT_DETAIL'
     });
 
     mutateMetaInfo({ isAddPurchaseCount: true });
+
     push(`/products/${id}/order`);
   };
 
@@ -327,19 +357,18 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     return (
       <>
         <Flexbox alignment="center" gap={8} customStyle={{ width: '100%' }}>
-          {!isOperatorC2CProduct && (
-            <Button
-              fullWidth
-              size="xlarge"
-              variant="outline"
-              brandColor="black"
-              onClick={handleClickChannel}
-              disabled={isDisabledState}
-              customStyle={{ padding: 12, minWidth: 90 }}
-            >
-              구매문의
-            </Button>
-          )}
+          <Button
+            fullWidth
+            size="xlarge"
+            variant="outline"
+            brandColor="black"
+            // onClick={handleClickPlatformProduct}
+            onClick={handleClickChannel}
+            disabled={isDisabledState}
+            customStyle={{ padding: 12, minWidth: 63, maxWidth: 63 }}
+          >
+            문의
+          </Button>
           <Button
             fullWidth
             size="xlarge"
@@ -349,7 +378,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             disabled={isDisabledState}
             customStyle={{ minWidth: 'fit-content', padding: 12 }}
           >
-            구매대행 요청
+            안전결제
           </Button>
         </Flexbox>
         <AppUpdateForChatDialog open={open} />
@@ -371,7 +400,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             disabled={isDisabledState}
             customStyle={{ maxWidth: 64 }}
           >
-            채팅
+            {isLoggedIn ? '채팅' : '문의'}
           </Button>
           <Button
             fullWidth

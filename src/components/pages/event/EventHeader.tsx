@@ -13,8 +13,8 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function EventHeader() {
   const router = useRouter();
@@ -23,7 +23,7 @@ function EventHeader() {
   const eventId = Number(splitIds[splitIds.length - 1] || 0);
 
   const { data: { notViewedHistoryCount = 0 } = {} } = useQueryUserInfo();
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const { data: { title } = {}, isLoading } = useQuery(
     queryKeys.commons.content(Number(eventId)),
@@ -39,7 +39,7 @@ function EventHeader() {
       title: notViewedHistoryCount > 0 ? attrProperty.title.NEW : attrProperty.title.GENERAL
     });
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       router.push('/login');
       return;
     }

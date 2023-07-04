@@ -29,8 +29,10 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import validator from '@utils/common/validator';
+
 import { PreReserveCheckState, PreReserveDataState, SuccessDialogState } from '@recoil/myPortfolio';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import MyPortfolioCheckboxLabel from './MyPortfolioCheckboxLabel';
 
@@ -64,7 +66,7 @@ function MyPortfolioBottomSheet({
       typography
     }
   } = useTheme();
-  const { data: accessUser } = useQueryAccessUser();
+
   const [searchValue, setSearchValue] = useState('');
   const [searchValue2, setSearchValue2] = useState('');
   const [openSearchList, setOpenSearchList] = useState(false);
@@ -83,11 +85,13 @@ function MyPortfolioBottomSheet({
     }
   );
 
+  const { isLoggedIn, data: accessUser } = useSession();
+
   useEffect(() => {
-    if (accessUser && accessUser.phone) {
+    if (isLoggedIn && accessUser && accessUser.phone) {
       setReserveData((props) => ({ ...props, phone: accessUser.phone }));
     }
-  }, [accessUser, setReserveData]);
+  }, [isLoggedIn, accessUser, setReserveData]);
 
   useEffect(() => {
     if (openReservation) {
@@ -101,7 +105,7 @@ function MyPortfolioBottomSheet({
     if (router.query.login) {
       const localData = LocalStorage.get('preReserve') as preReserve;
       const postData = LocalStorage.get('preReserve') ? localData.reserveData : reserveData;
-      if (accessUser?.phone) {
+      if (isLoggedIn && accessUser?.phone) {
         postData.phone = accessUser?.phone;
       }
 
@@ -173,14 +177,13 @@ function MyPortfolioBottomSheet({
   };
 
   const handleClickReserve = () => {
-    const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
     logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
       name: attrProperty.productName.MYPORTFOLIO_MODAL,
       model: reserveData.model,
       checkList
     });
 
-    if (accessUser?.phone) {
+    if (isLoggedIn && accessUser?.phone) {
       mutatePostManage(reserveData, {
         onSuccess() {
           successDialog(true);
@@ -191,8 +194,9 @@ function MyPortfolioBottomSheet({
     }
 
     if (!phone) setValidatorText('휴대전화번호 입력은 필수입니다.');
-    if (phone && !regPhone.test(phone)) setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
-    if (phone && regPhone.test(phone)) {
+    if (phone && !validator.phoneNumber(phone))
+      setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
+    if (phone && validator.phoneNumber(phone)) {
       mutatePostManage(reserveData, {
         onSuccess() {
           setCheckList([]);
@@ -208,10 +212,10 @@ function MyPortfolioBottomSheet({
       name: attrProperty.productName.MYPORTFOLIO_MODAL
     });
 
-    const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
     if (!phone) setValidatorText('휴대전화번호 입력은 필수입니다.');
-    if (phone && !regPhone.test(phone)) setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
-    if (phone && regPhone.test(phone)) {
+    if (phone && !validator.phoneNumber(phone))
+      setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
+    if (phone && validator.phoneNumber(phone)) {
       LocalStorage.set('preReserve', { reserveData, checkList });
       router.push({
         pathname: '/login',
@@ -259,13 +263,13 @@ function MyPortfolioBottomSheet({
           direction="vertical"
           gap={20}
         >
-          {!accessUser?.phone && (
+          {!isLoggedIn && (
             <Flexbox gap={8} direction="vertical">
               <Typography weight="medium" color="ui60">
                 휴대전화번호
               </Typography>
               <TextInput
-                placeholder="010-"
+                placeholder="010-0000-0000"
                 borderWidth={1}
                 variant="outline"
                 onChange={handleChangePhone}
@@ -329,7 +333,7 @@ function MyPortfolioBottomSheet({
             <MyPortfolioCheckboxLabel onChange={handleChecked} data={checkData} />
           </Flexbox>
           <Box customStyle={{ marginTop: 'auto' }}>
-            {accessUser ? (
+            {isLoggedIn ? (
               <GradationCtaButton
                 variant="solid"
                 fullWidth

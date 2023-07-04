@@ -29,7 +29,7 @@ import { compareIds, isAdminMessage } from '@utils/channel';
 
 import type { CoreMessageType } from '@typings/channel';
 import { sendbirdState } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 const PREV_RESULT_SIZE = 30;
 
@@ -39,7 +39,7 @@ function useChannel() {
 
   const [{ initialized }, setSendbirdState] = useRecoilState(sendbirdState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
   const { mutate: mutatePostHistoryManage } = useMutation(postHistoryManage);
 
   const [{ messages, hasMorePrev, oldestMessageTimeStamp }, setState] = useState<{
@@ -66,7 +66,7 @@ function useChannel() {
     queryKeys.channels.channel(Number(id)),
     () => fetchChannel(Number(id)),
     {
-      enabled: !!id && initialized && !!accessUser,
+      enabled: !!id && initialized && isLoggedInWithSMS,
       refetchOnMount: true,
       async onSuccess(data) {
         // 최초 채널 입장시에만 초기화

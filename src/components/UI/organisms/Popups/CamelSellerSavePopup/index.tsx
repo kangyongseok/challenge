@@ -22,10 +22,11 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function CamelSellerSavePopup() {
   const router = useRouter();
+
   const [continueRegister, setContinueRegisterDialog] = useRecoilState(
     camelSellerDialogStateFamily('continue')
   );
@@ -41,7 +42,7 @@ function CamelSellerSavePopup() {
   );
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   useEffect(() => {
     if (continueRegister.open) {
@@ -63,7 +64,7 @@ function CamelSellerSavePopup() {
       SAVED_CAMEL_SELLER_PRODUCT_DATA
     );
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       router.push({
         pathname: '/login',
         query: {
@@ -74,45 +75,50 @@ function CamelSellerSavePopup() {
       return;
     }
 
-    if (!savedCamelSellerProductData || !savedCamelSellerProductData[accessUser.snsType]) {
+    if (
+      !savedCamelSellerProductData ||
+      (accessUser && !savedCamelSellerProductData[accessUser.snsType])
+    ) {
       router.push('/camelSeller/registerConfirm');
       return;
     }
 
-    const {
-      unitIds = [],
-      storeIds = [],
-      distanceIds = [],
-      colors = [],
-      hasOpenedSurveyBottomSheet = false,
-      ...props
-    } = savedCamelSellerProductData[accessUser.snsType];
+    if (accessUser) {
+      const {
+        unitIds = [],
+        storeIds = [],
+        distanceIds = [],
+        colors = [],
+        hasOpenedSurveyBottomSheet = false,
+        ...props
+      } = savedCamelSellerProductData[accessUser.snsType];
 
-    setContinueRegisterDialog(({ type }) => ({ type, open: false }));
-    setTempData({
-      ...tempData,
-      ...props
-    });
-    setHasOpenedSurveyBottomSheet(hasOpenedSurveyBottomSheet);
-    setSurveyState((prevState) => ({
-      units: prevState.units.map((unit) => ({
-        ...unit,
-        selected: unitIds.includes(unit.id)
-      })),
-      stores: prevState.stores.map((store) => ({
-        ...store,
-        selected: storeIds.includes(store.id)
-      })),
-      distances: prevState.distances.map((distance) => ({
-        ...distance,
-        selected: distanceIds.includes(distance.id)
-      })),
-      colors
-    }));
+      setContinueRegisterDialog(({ type }) => ({ type, open: false }));
+      setTempData({
+        ...tempData,
+        ...props
+      });
+      setHasOpenedSurveyBottomSheet(hasOpenedSurveyBottomSheet);
+      setSurveyState((prevState) => ({
+        units: prevState.units.map((unit) => ({
+          ...unit,
+          selected: unitIds.includes(unit.id)
+        })),
+        stores: prevState.stores.map((store) => ({
+          ...store,
+          selected: storeIds.includes(store.id)
+        })),
+        distances: prevState.distances.map((distance) => ({
+          ...distance,
+          selected: distanceIds.includes(distance.id)
+        })),
+        colors
+      }));
 
-    SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
+      SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
 
-    router.push('/camelSeller/registerConfirm');
+      router.push('/camelSeller/registerConfirm');
+    }
   };
 
   const handleClickNew = () => {

@@ -27,10 +27,11 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function PersonalInput() {
   const {
@@ -40,7 +41,7 @@ function PersonalInput() {
   } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { userNickName } = useQueryMyUserInfo();
   const { data: userInfo } = useQueryUserInfo();
   const { isLoading, mutate } = useMutation(postUserAgeAndGender, {
@@ -172,7 +173,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

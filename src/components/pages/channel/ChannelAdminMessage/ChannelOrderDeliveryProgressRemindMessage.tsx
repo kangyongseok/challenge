@@ -8,7 +8,7 @@ import type { Order } from '@dto/order';
 import { getOrderStatusText } from '@utils/common';
 
 import { channelDialogStateFamily } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderDeliveryProgressRemindMessageProps {
   message: AdminMessage;
@@ -27,7 +27,7 @@ function ChannelOrderDeliveryProgressRemindMessage({
 
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 

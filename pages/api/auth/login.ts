@@ -30,6 +30,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         sameSite: 'lax'
       });
 
+      setCookie('accessUser', userSnsLoginResult.accessUser, {
+        req,
+        res,
+        domain: process.env.NODE_ENV !== 'development' ? '.mrcamel.co.kr' : '',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax'
+      });
+
       res.statusCode = 200;
 
       return res.send(userSnsLoginResult);

@@ -28,7 +28,7 @@ import { checkAgent } from '@utils/common';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { channelBottomSheetStateFamily } from '@recoil/channel';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface UserShopProductManageBottomSheetProps {
   refetchData: () => Promise<void>;
@@ -43,7 +43,7 @@ function UserShopProductManageBottomSheet({
 }: UserShopProductManageBottomSheetProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const {
     theme: {
       palette: {

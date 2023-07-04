@@ -40,7 +40,7 @@ import { commaNumber } from '@utils/common';
 import { getOutgoingMessageState } from '@utils/channel';
 
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import ChannelAdminMessageDialog from '../ChannelAdminMessageDialog';
 import ChannelReviewSentMessage from './ChannelReviewSentMessage';
@@ -130,7 +130,8 @@ function ChannelAdminMessage({
   const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
   const currentOffer = offers.find((findOffer) => findOffer.id === Number(message.message));
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
+
   const { data: productDetail } = useQuery(
     queryKeys.products.productList([messageProductId]),
     () => fetchProductList([messageProductId]),

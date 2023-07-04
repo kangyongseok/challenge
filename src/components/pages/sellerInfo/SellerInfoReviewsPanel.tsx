@@ -19,7 +19,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { reviewBlockState } from '@recoil/productReview';
 import { deviceIdState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface SellerInfoReviewsPanelProps {
@@ -37,7 +37,8 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
+
   const { mutate: muatePostSellerReport, isLoading: isLoadingMutation } =
     useMutation(postSellerReport);
 
@@ -80,7 +81,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
     (productId: number, reviewId: number) => () => {
       if (isLoadingMutation) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
         return;
       }
@@ -92,7 +93,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
           reportType: 0,
           reviewId,
           sellerId,
-          userId: accessUser.userId
+          userId: accessUser?.userId
         },
         {
           onSuccess() {
@@ -124,6 +125,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       );
     },
     [
+      isLoggedIn,
       accessUser,
       deviceId,
       isLoadingMutation,
@@ -143,7 +145,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
     (productId: number, creator: string, reviewId: number) => () => {
       if (isLoadingMutation) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
         return;
       }
@@ -155,7 +157,7 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
           reportType: 0,
           creator,
           sellerId,
-          userId: accessUser.userId
+          userId: accessUser?.userId
         },
         {
           onSuccess() {
@@ -187,16 +189,17 @@ function SellerInfoReviewsPanel({ sellerId }: SellerInfoReviewsPanelProps) {
       );
     },
     [
-      accessUser,
+      isLoadingMutation,
+      isLoggedIn,
+      muatePostSellerReport,
       deviceId,
       sellerId,
-      isLoadingMutation,
-      muatePostSellerReport,
+      accessUser?.userId,
+      router,
+      queryClient,
+      params,
       pageParams,
       pages,
-      params,
-      queryClient,
-      router,
       setReviewBlockState,
       toastStack
     ]

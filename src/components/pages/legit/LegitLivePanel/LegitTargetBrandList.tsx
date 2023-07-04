@@ -27,8 +27,8 @@ import {
 } from '@utils/common';
 
 import { legitRequestState } from '@recoil/legitRequest';
+import useSession from '@hooks/useSession';
 import useQueryUserData from '@hooks/useQueryUserData';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitTargetBrandList() {
   const router = useRouter();
@@ -44,7 +44,7 @@ function LegitTargetBrandList() {
 
   const setLegitRequestState = useSetRecoilState(legitRequestState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
   const { data: userData, remove: removeUserDate } = useQueryUserData();
 
   const { data: { targetBrands = [] } = {}, isLoading } = useQuery(
@@ -86,7 +86,7 @@ function LegitTargetBrandList() {
         return;
       }
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: '/legit/request/selectCategory' } });
 
         return;
@@ -105,7 +105,7 @@ function LegitTargetBrandList() {
       }));
       router.push('/legit/request/selectCategory');
     },
-    [accessUser, removeUserDate, router, setLegitRequestState, userData]
+    [isLoggedIn, removeUserDate, router, setLegitRequestState, userData]
   );
 
   const handleSwiperBrand = () => {

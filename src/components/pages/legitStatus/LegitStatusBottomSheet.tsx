@@ -20,7 +20,7 @@ import {
   firstUserAnimationState,
   legitStatusBottomSheetOpenTriggerState
 } from '@recoil/legitStatus';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 const notWorkingDay = [0, 6];
 const norWorkingTime =
@@ -31,7 +31,9 @@ function LegitStatusBottomSheet() {
   const setTimeoutRef = useRef<NodeJS.Timeout>();
   const [isNotWorking, setIsNotWorking] = useState(false);
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn } = useSession();
+
   const isAnimation = useRecoilValue(firstUserAnimationState);
   const openTrigger = useRecoilValue(legitStatusBottomSheetOpenTriggerState);
   const splitIds = String(router.query.id || '').split('-');
@@ -73,7 +75,7 @@ function LegitStatusBottomSheet() {
   };
 
   const handleClick = () => {
-    if (accessUser) {
+    if (isLoggedIn) {
       logEvent(attrKeys.legit.CLICK_LEGIT_MODAL, {
         name: attrProperty.productName.LEGIT_PRODUCT,
         title: attrProperty.productTitle.PRE_CONFIRM,
@@ -111,9 +113,9 @@ function LegitStatusBottomSheet() {
           wrapCustomStyle={{ position: 'absolute', top: 15, right: 10 }}
         />
       </Flexbox>
-      {accessUser && isNotWorking && <OverTime />}
-      {!accessUser && <NotAppUser />}
-      {accessUser && !isNotWorking && <Basic />}
+      {isLoggedIn && isNotWorking && <OverTime />}
+      {!isLoggedIn && <NotAppUser />}
+      {isLoggedIn && !isNotWorking && <Basic />}
       <Button
         fullWidth
         brandColor="primary"
@@ -122,7 +124,7 @@ function LegitStatusBottomSheet() {
         customStyle={{ marginTop: 40 }}
         onClick={handleClick}
       >
-        {!accessUser ? '⚡ 3초 로그인 하기' : '내 사진감정 목록보기'}
+        {!isLoggedIn ? '⚡ 3초 로그인 하기' : '내 사진감정 목록보기'}
       </Button>
     </BottomSheet>
   );

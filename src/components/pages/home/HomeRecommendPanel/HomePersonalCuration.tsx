@@ -26,8 +26,8 @@ import { checkAgent } from '@utils/common';
 import type { HomeSeasonBannerData } from '@typings/common';
 import { homePersonalCurationBannersState } from '@recoil/home';
 import { eventContentProductsParamsState } from '@recoil/eventFilter';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 import HomeBannerCard from './HomeBannerCard';
@@ -36,7 +36,8 @@ function HomePersonalCuration() {
   const router = useRouter();
 
   const { userNickName } = useQueryMyUserInfo();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const [banners, setHomePersonalCurationBannersState] = useRecoilState(
     homePersonalCurationBannersState
@@ -203,17 +204,17 @@ function HomePersonalCuration() {
 
   useEffect(() => {
     setBannerGroup(
-      accessUser?.gender === 'F'
+      isLoggedIn && accessUser?.gender === 'F'
         ? [...defaultBanners, ...femaleBanners]
         : [...defaultBanners, ...maleBanners]
     );
-  }, [accessUser?.gender]);
+  }, [isLoggedIn, accessUser?.gender]);
 
   return (
     <>
       <Box customStyle={{ padding: '32px 0', overflowX: 'hidden' }}>
         <Typography variant="h3" weight="bold" customStyle={{ margin: '0 16px 20px' }}>
-          {!accessUser
+          {!isLoggedIn
             ? '많은 사람들이 보고 있어요'
             : `${userNickName}님이 찾고 있는 매물을 모았어요`}
         </Typography>

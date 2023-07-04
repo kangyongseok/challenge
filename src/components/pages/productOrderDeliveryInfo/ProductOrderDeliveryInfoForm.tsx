@@ -17,7 +17,9 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import validator from '@utils/common/validator';
+
+import useSession from '@hooks/useSession';
 
 function ProductOrderDeliveryInfoForm() {
   const router = useRouter();
@@ -25,7 +27,7 @@ function ProductOrderDeliveryInfoForm() {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS } = useSession();
 
   const [{ name, phone, address }, setDeliveryInfo] = useState<DeliveryInfo>({
     name: '',
@@ -38,7 +40,7 @@ function ProductOrderDeliveryInfoForm() {
     queryKeys.orders.productOrder({ productId }),
     () => fetchProductOrder({ productId }),
     {
-      enabled: !!accessUser && !!productId,
+      enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
     }
   );
@@ -47,6 +49,7 @@ function ProductOrderDeliveryInfoForm() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'phone') {
+      setShowHelperText(!validator.phoneNumber(e.target.value));
       setDeliveryInfo((prevState) => ({
         ...prevState,
         [e.target.name]: e.target.value.replace(/[^0-9]/g, '')
@@ -93,14 +96,6 @@ function ProductOrderDeliveryInfoForm() {
 
     setDeliveryInfo(deliveryInfo);
   }, [deliveryInfo]);
-
-  useEffect(() => {
-    if (!phone || phone.length < 8) {
-      setShowHelperText(true);
-    } else {
-      setShowHelperText(false);
-    }
-  }, [phone]);
 
   return (
     <>

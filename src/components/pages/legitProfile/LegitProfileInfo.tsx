@@ -42,7 +42,7 @@ import {
 } from '@utils/common';
 
 import type { ShareData } from '@typings/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface LegitProfileInfoProps {
   profile?: UserRoleLegit;
@@ -80,7 +80,8 @@ function LegitProfileInfo({
   const [open, setOpen] = useState(false);
   const [shareData, setShareData] = useState<ShareData>();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
+
   const { data: profileInfo } = useQuery(
     queryKeys.users.legitProfile(Number(router.query.id)),
     () => fetchLegitProfile(Number(router.query.id)),

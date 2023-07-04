@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+
+import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
@@ -20,16 +23,38 @@ import {
   ProductsTopButton
 } from '@components/pages/products';
 
+import SessionStorage from '@library/sessionStorage';
+
 import { fetchSearchMeta } from '@api/product';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 
 import { convertSearchParamsByQuery } from '@utils/products';
+import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
+import useHistoryManage from '@hooks/useHistoryManage';
 
 function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useProductKeywordAutoSave('brands');
+  const router = useRouter();
+  const { isGoToMain } = useHistoryManage();
+
+  const handlePopState = () => {
+    window.history.replaceState('', '', '/');
+    router.replace('/');
+  };
+
+  useEffect(() => {
+    const isSession = SessionStorage.get(sessionStorageKeys.isProductDetailPopState);
+    if (isGoToMain && isSession) {
+      window.addEventListener('popstate', handlePopState);
+    }
+    return () => window.removeEventListener('popstate', handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGoToMain]);
 
   return (
     <>
@@ -74,6 +99,7 @@ export async function getServerSideProps({
   const params = convertSearchParamsByQuery(query, {
     variant: 'brands'
   });
+  const accessUser = getAccessUserByCookies(getCookies({ req }));
 
   const isGoBack = req.cookies.isGoBack ? JSON.parse(req.cookies.isGoBack) : false;
   if (isGoBack) {
@@ -81,7 +107,8 @@ export async function getServerSideProps({
 
     return {
       props: {
-        params
+        params,
+        accessUser
       }
     };
   }
@@ -95,7 +122,8 @@ export async function getServerSideProps({
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
-      params
+      params,
+      accessUser
     }
   };
 }

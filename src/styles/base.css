@@ -5,6 +5,10 @@
   --sal: env(safe-area-inset-left);
 }
 
+body {
+  width: 100%;
+}
+
 body.legit-light {
   background-color: #F5F6F7;
 }

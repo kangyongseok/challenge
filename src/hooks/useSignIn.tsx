@@ -39,6 +39,7 @@ import { checkAgent } from '@utils/common';
 
 import { FindLocation } from '@typings/common';
 import { prevChannelAlarmPopup } from '@recoil/common';
+import useSignOut from '@hooks/useSignOut';
 import useMutationPostAlarm from '@hooks/useMutationPostAlarm';
 
 export const LOGIN_TYPE = {
@@ -64,6 +65,8 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
   } = useTheme();
 
   const setPrevChannelAlarmPopup = useSetRecoilState(prevChannelAlarmPopup);
+
+  const signOut = useSignOut();
 
   const { mutate: mutatePostAlarm } = useMutationPostAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
@@ -109,53 +112,55 @@ function useSignIn({ returnUrl, authLoginCallback, bottomSheet }: useSignInProps
 
   const successLogin = useCallback(
     (userSnsLoginResult: UserSnsLoginResult) => {
-      LocalStorage.set(ACCESS_USER, userSnsLoginResult.accessUser);
-      LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
-      LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
-      Axios.setAccessToken(userSnsLoginResult.jwtToken);
-      amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
-      Initializer.initAccessUserInAmplitude(amplitude.getInstance());
-      Initializer.initAccessUserInBraze();
+      signOut().then(() => {
+        LocalStorage.set(ACCESS_USER, userSnsLoginResult.accessUser);
+        LocalStorage.set(ACCESS_TOKEN, userSnsLoginResult.jwtToken);
+        LocalStorage.set(LAST_LOGIN_TYPE, userSnsLoginResult.accessUser.snsType);
+        Axios.setAccessToken(userSnsLoginResult.jwtToken);
+        amplitude.getInstance().setUserId(String(userSnsLoginResult.accessUser.userId));
+        Initializer.initAccessUserInAmplitude(amplitude.getInstance());
+        Initializer.initAccessUserInBraze();
 
-      fetchUserInfo().then((userInfo) => {
-        const userId = LocalStorage.get<AccessUser>(ACCESS_USER)?.userId;
-        const skipUserIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
+        fetchUserInfo().then((userInfo) => {
+          const userId = LocalStorage.get<AccessUser>(ACCESS_USER)?.userId;
+          const skipUserIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
 
-        if (!skipUserIds.includes(Number(userId)) && !userInfo.area.values.length) {
-          LocalStorage.set(SIGN_UP_STEP, 0);
-          router.replace('/onboarding?step=0');
-          return;
-        }
-        // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
-        if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
-          LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
-
-          if (checkAgent.isAndroidApp()) {
-            // window.webview.callAuthPush();
-            // window.webview.callAuthLocation();
-            // return;
-          } else if (
-            checkAgent.isIOSApp() &&
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.callAuthPush &&
-            window.webkit.messageHandlers.callAuthLocation
-          ) {
-            if (bottomSheet) {
-              window.webkit.messageHandlers.callAuthPush.postMessage(0);
-            }
-            window.webkit.messageHandlers.callAuthLocation.postMessage(0);
+          if (!skipUserIds.includes(Number(userId)) && !userInfo.area.values.length) {
+            LocalStorage.set(SIGN_UP_STEP, 0);
+            router.replace('/onboarding?step=0');
             return;
-          } else {
-            updateUserArea();
           }
-        }
+          // 앱설치 후 권한 요청을 받지 않은 유저의 경우 권한 요청
+          if (!LocalStorage.get(IS_DONE_SIGN_IN_PERMISSION)) {
+            LocalStorage.set(IS_DONE_SIGN_IN_PERMISSION, true);
 
-        router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
+            if (checkAgent.isAndroidApp()) {
+              // window.webview.callAuthPush();
+              // window.webview.callAuthLocation();
+              // return;
+            } else if (
+              checkAgent.isIOSApp() &&
+              window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers.callAuthPush &&
+              window.webkit.messageHandlers.callAuthLocation
+            ) {
+              if (bottomSheet) {
+                window.webkit.messageHandlers.callAuthPush.postMessage(0);
+              }
+              window.webkit.messageHandlers.callAuthLocation.postMessage(0);
+              return;
+            } else {
+              updateUserArea();
+            }
+          }
+
+          router.replace(state.includes('returnUrl') ? JSON.parse(state).returnUrl : returnUrl);
+        });
+        setLoading(false);
       });
-      setLoading(false);
     },
-    [bottomSheet, returnUrl, router, state, updateUserArea]
+    [bottomSheet, returnUrl, router, state, updateUserArea, signOut]
   );
 
   const authLogin = useCallback(

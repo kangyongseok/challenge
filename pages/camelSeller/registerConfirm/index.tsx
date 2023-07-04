@@ -38,13 +38,14 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent } from '@utils/common';
 
 import type { SaveCamelSellerProductData } from '@typings/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function RegisterConfirm() {
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -103,7 +104,7 @@ function RegisterConfirm() {
       sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm
     );
 
-    if (accessUser && data && data[accessUser.snsType] && !isFirstVisit) {
+    if (isLoggedIn && accessUser && data && data[accessUser.snsType] && !isFirstVisit) {
       logEvent(attrKeys.camelSeller.VIEW_PRODUCT_MAIN, {
         title: attrProperty.title.LEAVE,
         source,
@@ -119,7 +120,7 @@ function RegisterConfirm() {
     return () => {
       LocalStorage.remove(SOURCE);
     };
-  }, [accessUser]);
+  }, [isLoggedIn, accessUser]);
 
   useEffect(() => {
     SessionStorage.set(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm, true);
@@ -153,7 +154,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

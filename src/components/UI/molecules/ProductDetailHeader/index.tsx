@@ -36,10 +36,16 @@ import { CustomHeader, IconBox } from './ProductDetailHeader.styles';
 interface ProductDetailHeaderProps {
   data?: ProductDetail;
   isWish?: boolean;
+  hideWishButton?: boolean;
   onClickWish?: (isWish: boolean) => boolean;
 }
 
-function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetailHeaderProps) {
+function ProductDetailHeader({
+  data,
+  isWish = false,
+  hideWishButton,
+  onClickWish
+}: ProductDetailHeaderProps) {
   const {
     push,
     query: { id: redirect, isCrm, keyword }
@@ -47,7 +53,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
 
   const {
     theme: {
-      palette: { secondary }
+      palette: { common }
     }
   } = useTheme();
 
@@ -90,7 +96,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
           viewPrice - Math.floor(viewPrice) > 0
             ? Number(viewPrice.toFixed(1))
             : Math.floor(viewPrice)
-        )}만원\r\nAi추천지수 ${data.product.scoreTotal}/10`,
+        )}만원`,
         url: window.location.href,
         product: data.product
       };
@@ -215,7 +221,7 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
               >
                 <Icon
                   name={isWish ? 'HeartFilled' : 'HeartOutlined'}
-                  color={isWish ? secondary.red.light : undefined}
+                  color={isWish ? 'red-light' : undefined}
                 />
               </Box>
               <Box
@@ -273,15 +279,23 @@ function ProductDetailHeader({ data, isWish = false, onClickWish }: ProductDetai
     <>
       <Header
         customHeader={
-          <CustomHeader justifyContent="space-between" alignment="center">
-            <Icon name="LogoText_96_20" width={93.28} height={20} onClick={handleClickLogo} />
+          <CustomHeader
+            justifyContent="space-between"
+            alignment="center"
+            customStyle={{
+              borderBottom: hideWishButton ? `1px solid ${common.line01}` : undefined
+            }}
+          >
+            <Icon name="LogoText_96_20" width={76.8} height={16} onClick={handleClickLogo} />
             <Flexbox alignment="center">
-              <IconBox show disablePadding="right" onClick={handleClickWish}>
-                <Icon
-                  name={isWish ? 'HeartFilled' : 'HeartOutlined'}
-                  color={isWish ? secondary.red.light : undefined}
-                />
-              </IconBox>
+              {!hideWishButton && (
+                <IconBox show disablePadding="right" onClick={handleClickWish}>
+                  <Icon
+                    name={isWish ? 'HeartFilled' : 'HeartOutlined'}
+                    color={isWish ? 'red-light' : undefined}
+                  />
+                </IconBox>
+              )}
               <IconBox show disablePadding="right" onClick={handleClickShare}>
                 <Icon name="ShareOutlined" />
               </IconBox>

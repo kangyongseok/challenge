@@ -17,8 +17,10 @@ import { postPreReserve } from '@api/user';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import validator from '@utils/common/validator';
+
 import { PreReserveDataState, SuccessDialogState } from '@recoil/myPortfolio';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface preReserve {
   reserveData: {
@@ -43,7 +45,9 @@ function MyPortfolioNoneMemberReservationDialog({
       typography
     }
   } = useTheme();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn, data: accessUser } = useSession();
+
   const [reserveData, setReserveData] = useRecoilState(PreReserveDataState);
   const [validatorText, setValidatorText] = useState('');
   const [phone, setPhone] = useState('');
@@ -51,10 +55,10 @@ function MyPortfolioNoneMemberReservationDialog({
   const successDialog = useSetRecoilState(SuccessDialogState);
 
   useEffect(() => {
-    if (accessUser && accessUser.phone) {
+    if (isLoggedIn && accessUser && accessUser.phone) {
       setReserveData((props) => ({ ...props, phone: accessUser.phone }));
     }
-  }, [accessUser, setReserveData]);
+  }, [isLoggedIn, accessUser, setReserveData]);
 
   useEffect(() => {
     if (openReservation) {
@@ -68,7 +72,7 @@ function MyPortfolioNoneMemberReservationDialog({
     if (router.query.login) {
       const localData = LocalStorage.get('preReserve') as preReserve;
       const postData = LocalStorage.get('preReserve') ? localData.reserveData : reserveData;
-      if (accessUser?.phone) {
+      if (isLoggedIn && accessUser?.phone) {
         postData.phone = accessUser?.phone;
       }
 
@@ -103,12 +107,11 @@ function MyPortfolioNoneMemberReservationDialog({
   };
 
   const handleClickReserve = () => {
-    const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
     logEvent(attrKeys.myPortfolio.CLICK_RESERVATION, {
       name: attrProperty.productName.MYPORTFOLIO_MODAL
     });
 
-    if (accessUser?.phone) {
+    if (isLoggedIn && accessUser?.phone) {
       mutatePostManage(reserveData, {
         onSuccess() {
           onClick();
@@ -121,8 +124,9 @@ function MyPortfolioNoneMemberReservationDialog({
     }
 
     if (!phone) setValidatorText('휴대전화번호 입력은 필수입니다.');
-    if (phone && !regPhone.test(phone)) setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
-    if (phone && regPhone.test(phone)) {
+    if (phone && !validator.phoneNumber(phone))
+      setValidatorText('형식에 맞춰 숫자만 입력해주세요.');
+    if (phone && validator.phoneNumber(phone)) {
       mutatePostManage(reserveData, {
         onSuccess() {
           onClick();
@@ -181,7 +185,7 @@ function MyPortfolioNoneMemberReservationDialog({
               휴대전화번호
             </Typography>
             <TextInput
-              placeholder="010-"
+              placeholder="010-0000-0000"
               borderWidth={1}
               variant="outline"
               onChange={handleChangePhone}

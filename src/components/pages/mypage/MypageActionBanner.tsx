@@ -35,9 +35,8 @@ import {
 } from '@recoil/settingsTransfer';
 import { legitRequestState } from '@recoil/legitRequest';
 import { camelSellerDialogStateFamily, camelSellerTempSaveDataState } from '@recoil/camelSeller';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
-// import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 function MypageActionBanner() {
   const {
@@ -46,7 +45,8 @@ function MypageActionBanner() {
     }
   } = useTheme();
   const router = useRouter();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { notProcessedLegitCount = 0, roles = [] } = {} } = useQueryMyUserInfo();
 
   const [open, setOpen] = useState(false);
@@ -70,7 +70,8 @@ function MypageActionBanner() {
 
   const isSavedData =
     !!savedCamelSellerProductData &&
-    !!accessUser &&
+    isLoggedIn &&
+    accessUser &&
     savedCamelSellerProductData[accessUser.snsType];
 
   const handleClick = () => {

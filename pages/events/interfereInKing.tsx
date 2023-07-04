@@ -35,7 +35,7 @@ import { executedShareURl } from '@utils/common';
 
 import type { ShareData } from '@typings/common';
 import { deviceIdState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function EventInterfereInKing() {
   const router = useRouter();
@@ -46,7 +46,7 @@ function EventInterfereInKing() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const deviceId = useRecoilValue(deviceIdState);
 

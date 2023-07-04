@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ReactElement } from 'react';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { GroupChannelHandler } from '@sendbird/chat/groupChannel';
 
@@ -11,6 +11,7 @@ import Sendbird from '@library/sendbird';
 import { isProduction, uuidv4 } from '@utils/common';
 import { getUpdatedChannels } from '@utils/channel';
 
+import { decryptPendingState } from '@recoil/common';
 import { sendbirdState } from '@recoil/channel';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
@@ -23,24 +24,32 @@ interface SendbirdProviderProps {
 function SendbirdProvider({ children }: SendbirdProviderProps) {
   const router = useRouter();
   const [state, setState] = useRecoilState(sendbirdState);
+  const decryptPending = useRecoilValue(decryptPendingState);
 
   const { data: userInfo } = useQueryUserInfo();
-  const { userId, userNickName, userImageProfile, isLoading } = useQueryMyUserInfo();
+  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
   const initialize = useInitializeSendbird();
+
+  const initializingRef = useRef(false);
 
   const sdk = Sendbird.getInstance();
 
   useEffect(() => {
     if (
+      !decryptPending &&
       !!userId &&
-      (!!userInfo?.hasChannel || router.pathname.indexOf('channels') !== -1) &&
+      (!!userInfo?.hasChannel ||
+        router.pathname.indexOf('channels') !== -1 ||
+        router.pathname.indexOf('nonMember') !== -1) &&
       !state.loading &&
       !state.initialized &&
-      !isLoading
+      !initializingRef.current
     ) {
+      initializingRef.current = true;
       initialize(userId.toString(), userNickName, userImageProfile);
     }
   }, [
+    decryptPending,
     router.pathname,
     userId,
     state.initialized,
@@ -48,9 +57,12 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
     userInfo?.hasChannel,
     initialize,
     userNickName,
-    userImageProfile,
-    isLoading
+    userImageProfile
   ]);
+
+  useEffect(() => {
+    initializingRef.current = false;
+  }, [router.pathname]);
 
   useEffect(() => {
     const typingHandlerId = uuidv4();

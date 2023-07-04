@@ -62,8 +62,8 @@ import {
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
 import { showAppDownloadBannerState, userOnBoardingTriggerState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface ProductsGeneralFilterProps {
   aiFilterGroupRef: MutableRefObject<HTMLDivElement | null>;
@@ -136,7 +136,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
 
     const setActiveTabCodeIdState = useSetRecoilState(activeTabCodeIdState);
 
-    const { data: accessUser } = useQueryAccessUser();
+    const { isLoggedIn } = useSession();
     const {
       data: {
         info: { value: { gender = '' } = {} } = {},
@@ -144,7 +144,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
       } = {}
     } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-      enabled: !!accessUser
+      enabled: !!isLoggedIn
     });
 
     const triggered = useReverseScrollTrigger();
@@ -160,7 +160,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         generalFilterOptions[variant]
           .filter(({ codeId }) => {
             if (codeId === filterCodeIds.my) {
-              return accessUser && (tops.length || bottoms.length || shoes.length);
+              return isLoggedIn && (tops.length || bottoms.length || shoes.length);
             }
             return true;
           })
@@ -190,11 +190,11 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                   ).length
             };
           }),
-      [variant, accessUser, tops.length, bottoms.length, shoes.length, selectedSearchOptions]
+      [variant, isLoggedIn, tops.length, bottoms.length, shoes.length, selectedSearchOptions]
     );
 
     const handleClickMyFilter = useCallback(() => {
-      if (!accessUser) {
+      if (!isLoggedIn) {
         toastStack({
           children: '로그인이 필요해요',
           action: {
@@ -313,7 +313,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       }));
       setActiveMyFilterState(!activeMyFilter);
     }, [
-      accessUser,
+      isLoggedIn,
       activeMyFilter,
       baseSearchOptions,
       baseSearchParams,
@@ -419,7 +419,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         if (filterCodeIds.map === codeId) {
           logEvent(attrKeys.products.clickApplyMapFilter);
 
-          if (!accessUser) {
+          if (!isLoggedIn) {
             toastStack({
               children: '로그인이 필요해요',
               action: {
@@ -435,7 +435,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
             return;
           }
 
-          if (accessUser && areaValues.length === 0) {
+          if (isLoggedIn && areaValues.length === 0) {
             toastStack({
               children: '위치 정보가 필요해요!',
               action: {
@@ -512,7 +512,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         }));
       },
       [
-        accessUser,
+        isLoggedIn,
         areaValues.length,
         handleClickIdFilterOption,
         handleClickMyFilter,
@@ -682,7 +682,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                           (searchParams.idFilterIds || []).includes(idFilterIds.lowPrice) ||
                           (!complete && step === 1)
                         }
-                        onChange={handleClickIdFilterOption(idFilterIds.lowPrice, '시세이하')}
+                        onChange={handleClickIdFilterOption(idFilterIds.lowPrice, '새상품급')}
                         customStyle={{
                           fontFamily: 'NanumSquareNeo',
                           fontSize: 13,

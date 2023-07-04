@@ -9,15 +9,9 @@ export const GENERAL_FILTER_HEIGHT = 48;
 export const FILTER_HISTORY_HEIGHT = 57;
 export const CATEGORY_TAGS_HEIGHT = 39;
 export const MOBILE_WEB_FOOTER_HEIGHT = 561;
-export const TAB_HEIGHT_XLARGE = 45;
 export const TAB_HEIGHT = 41;
-export const CMR_LANDING_INFO_HEIGHT = 72;
 export const IMG_CAMEL_PLATFORM_NUMBER = 161;
 export const PRODUCT_INFORMATION_HEIGHT = 65;
-export const MESSAGE_INPUT_HEIGHT = 44;
-export const MESSAGE_ACTION_BUTTONS_HEIGHT = 36;
-export const MESSAGE_APPOINTMENT_BANNER_HEIGHT = 40;
-export const MESSAGE_NEW_MESSAGE_NOTIFICATION_HEIGHT = 32;
 export const LEGIT_FAKE_BANNER_HEIGHT = 40;
 export const extractTagRegx = /(<([^>]+)>)/gi;
 export const NEXT_IMAGE_BLUR_URL =
@@ -114,6 +108,7 @@ export const AUTH_PATH_NAMES = [
   '/user/shop',
   '/user/shop/edit',
   '/user/addressInput',
+  '/user/brandInput',
   '/user/likeModelInput',
   '/user/personalInput',
   '/user/purchaseInput',
@@ -133,5 +128,24 @@ export const AUTH_PATH_NAMES = [
   '/mypage/settings/theme',
   '/mypage/settings/transfer',
   '/mypage/settings/account',
+  '/mypage/settings/account/certification',
+  '/mypage/nonMember/orders'
+];
+
+export const SMS_LOGIN_AUTH_PASS_PATH_NAMES = [
+  '/channels/[id]',
+  '/channels/[id]/appointment',
+  '/channels/[id]/priceOffer',
+  '/products/[id]/order',
+  '/products/[id]/order/success',
+  '/user/reviews/form',
+  '/mypage/nonMember/orders',
+  '/mypage/settings/account',
   '/mypage/settings/account/certification'
+];
+
+export const DECRYPT_LOGIN_PATH_NAMES = [
+  '/channels/[id]',
+  '/channels/[id]/appointment',
+  '/channels/[id]/priceOffer'
 ];

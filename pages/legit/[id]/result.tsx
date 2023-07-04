@@ -24,6 +24,9 @@ import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 
+import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
+
 function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const {
     theme: {
@@ -114,7 +117,7 @@ function LegitResult({ status }: InferGetServerSidePropsType<typeof getServerSid
   );
 }
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, query }: GetServerSidePropsContext) {
   try {
     const queryClient = new QueryClient();
     const { id } = query;
@@ -138,7 +141,8 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
     return {
       props: {
         dehydratedState: dehydrate(queryClient),
-        status: data.status
+        status: data.status,
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

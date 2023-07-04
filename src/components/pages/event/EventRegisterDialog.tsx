@@ -13,7 +13,7 @@ import { fetchSurvey, postSurvey } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 
 import { deviceIdState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function EventRegisterDialog({ open, close }: { open: boolean; close: () => void }) {
   const router = useRouter();
@@ -24,13 +24,14 @@ function EventRegisterDialog({ open, close }: { open: boolean; close: () => void
   } = useTheme();
 
   const toastStack = useToastStack();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const [phoneNumber, setPhoneNumber] = useState('');
-  const { data: accessUser } = useQueryAccessUser();
+
   const { mutate } = useMutation(postSurvey);
   const deviceId = useRecoilValue(deviceIdState);
   const { data } = useQuery(queryKeys.client.survey(), fetchSurvey, {
-    enabled: !!accessUser,
+    enabled: isLoggedIn,
     refetchOnMount: true
   });
 

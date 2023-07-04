@@ -22,6 +22,7 @@ interface GeneralTemplateProps {
   footer?: ReactElement;
   disablePadding?: boolean;
   hideAppDownloadBanner?: boolean;
+  hideMowebFooter?: boolean;
   customStyle?: CustomStyle;
 }
 
@@ -42,9 +43,7 @@ function GeneralTemplate({
   const triggered = useReverseScrollTrigger(true);
   useViewportUnitsTrick(!activeViewportTrick);
 
-  const showMowebFooterCase = ['/', '/products/[id]', '/mypage', '/wishes'].includes(
-    router.pathname
-  );
+  const showMowebFooterCase = ['/', '/products/[id]', '/wishes'].includes(router.pathname);
 
   const paddingTopParser = () => {
     if (!checkAgent.isMobileApp() && triggered && !hideAppDownloadBanner && showAppDownloadBanner) {

@@ -3,19 +3,28 @@ import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
-import { Box, Button, Flexbox, Tooltip, Typography } from '@mrcamelhub/camel-ui';
+import { Avatar, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { AppUpdateForChatDialog, OnBoardingSpotlight } from '@components/UI/organisms';
+import {
+  AppUpdateForChatDialog,
+  OnBoardingSpotlight,
+  SafePaymentGuideDialog
+} from '@components/UI/organisms';
 
 import type { ProductOffer } from '@dto/productOffer';
 
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
+import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE } from '@constants/localStorage';
 import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
@@ -29,8 +38,8 @@ import {
 } from '@utils/common';
 
 import { loginBottomSheetState, userOnBoardingTriggerState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryProduct from '@hooks/useQueryProduct';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductType from '@hooks/useProductType';
 import useProductState from '@hooks/useProductState';
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
@@ -43,7 +52,7 @@ function ProductCTAButton() {
 
   const toastStack = useToastStack();
 
-  // const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
@@ -56,15 +65,23 @@ function ProductCTAButton() {
     setUserOnBoardingTriggerState
   ] = useRecoilState(userOnBoardingTriggerState);
 
-  const { data: accessUser } = useQueryAccessUser();
   const { data: productDetail, refetch } = useQueryProduct(); // mutateMetaInfo
 
-  const { isOperatorProduct, isChannelProduct, isOperatorC2CProduct } = useProductType(
+  const { isLoggedIn, data: accessUser } = useSession();
+
+  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct } = useProductType(
     productDetail?.product.sellerType
   );
 
-  const { isDuplicate, isBlockedUser, isTargetProduct, isPriceOffer, isSoldOut, isDisabledState } =
-    useProductState({ productDetail, product: productDetail?.product });
+  const {
+    isDuplicate,
+    isBlockedUser,
+    isTargetProduct,
+    isSafePayment,
+    isPriceOffer,
+    isSoldOut,
+    isDisabledState
+  } = useProductState({ productDetail, product: productDetail?.product });
 
   const {
     unblock: { mutate: mutateUnblock, isLoading: isLoadingMutateUnblock }
@@ -73,6 +90,7 @@ function ProductCTAButton() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setPendingCreateChannel] = useState(false); // pendingCreateChannel
+  const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
 
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
   const [hasOffer, setHasOffer] = useState(false);
@@ -106,6 +124,17 @@ function ProductCTAButton() {
         })}?redirect=1&userAgent=${userAgent}`,
         '_blank'
       );
+  };
+
+  const handleClickSafePaymentFreeBanner = () => {
+    if (isAllOperatorProduct) return;
+
+    logEvent(attrKeys.products.CLICK_BANNER, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.ORDER
+    });
+
+    setOpenSafePaymentGuideDialog((prevState) => !prevState);
   };
 
   const handleClickPriceOffer = async (e: MouseEvent<HTMLDivElement>) => {
@@ -145,7 +174,7 @@ function ProductCTAButton() {
         (channel) => channel.userId === accessUser?.userId
       )?.id;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
         // push({ pathname: '/login' });
         setLoginBottomSheet({ open: true, returnUrl: '' });
@@ -173,7 +202,7 @@ function ProductCTAButton() {
 
       setPendingCreateChannel(true);
       await mutateCreateChannel(
-        { userId: String(accessUser.userId || 0), ...createChannelParams },
+        { userId: String(accessUser?.userId || 0), ...createChannelParams },
         {
           onSettled() {
             setPendingCreateChannel(false);
@@ -206,14 +235,27 @@ function ProductCTAButton() {
   };
 
   useEffect(() => {
+    const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+
+    if (hideDate) {
+      if (dayjs().diff(hideDate, 'days') >= 1) {
+        LocalStorage.remove(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
+        setOpen(true);
+      }
+    } else {
+      setOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!productDetail?.offers) return;
 
     const validOffers = productDetail.offers.filter(({ status }) => [1, 2, 4].includes(status));
 
-    setIsPossibleOffer(isPriceOffer);
+    setIsPossibleOffer(isPriceOffer && isLoggedIn);
     setHasOffer(validOffers.length < 3 && productDetail.offers.some(({ status }) => status === 0));
     setCurrentOffer(validOffers.find(({ status }) => status === 1));
-  }, [productDetail?.offers, isPriceOffer]);
+  }, [productDetail?.offers, isPriceOffer, isLoggedIn]);
 
   useEffect(() => {
     if (
@@ -229,10 +271,56 @@ function ProductCTAButton() {
     }
   }, [complete, productWishComplete, isPossibleOffer, isChannelProduct]);
 
-  if (!!accessUser && productDetail?.roleSeller?.userId === accessUser.userId) return null;
+  if (isLoggedIn && productDetail?.roleSeller?.userId === accessUser?.userId) return null;
 
   return (
     <>
+      {open && isSafePayment && !isDisabledState && !isDuplicate && !isTargetProduct && (
+        <PaymentLabelWrap
+          alignment="center"
+          justifyContent="space-between"
+          gap={4}
+          onClick={handleClickSafePaymentFreeBanner}
+          isAllOperatorProduct={isAllOperatorProduct}
+          openPriceOfferOnBoarding={openPriceOfferOnBoarding}
+          hasAccessUser={isLoggedIn}
+        >
+          {isLoggedIn && isAllOperatorProduct && <Triangle />}
+          <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
+            {(!isLoggedIn || !isAllOperatorProduct) && (
+              <Icon
+                name={isLoggedIn ? 'WonCircleFilled' : 'UserFilled'}
+                width={isLoggedIn ? 20 : 16}
+                height={isLoggedIn ? 20 : 16}
+                color="uiWhite"
+              />
+            )}
+            {isLoggedIn && isAllOperatorProduct && (
+              <Flexbox gap={4} alignment="center">
+                <Avatar
+                  width={16}
+                  height={16}
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${productDetail?.product?.site?.id}.png`}
+                  alt="플랫폼 이미지"
+                />
+                <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
+                  {productDetail?.product?.site?.name} 매물을 카멜이 대신 구매해드려요.
+                </Typography>
+              </Flexbox>
+            )}
+            {isLoggedIn && !isAllOperatorProduct && (
+              <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
+                카멜은 안전결제 수수료 무료!
+              </Typography>
+            )}
+            {!isLoggedIn && (
+              <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
+                로그인 없이 비회원 구매와 문의가 가능해요!
+              </Typography>
+            )}
+          </PaymentLabelContents>
+        </PaymentLabelWrap>
+      )}
       <Box
         customStyle={{
           minHeight: `calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'})`
@@ -337,7 +425,7 @@ function ProductCTAButton() {
                   )}
                 </>
               )}
-            {(isOperatorProduct || isOperatorC2CProduct) && !isSoldOut && (
+            {isAllOperatorProduct && !isSoldOut && (
               <Flexbox alignment="center" gap={5}>
                 <Typography
                   weight="medium"
@@ -357,6 +445,10 @@ function ProductCTAButton() {
         </Tooltip>
         <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />
       </Wrapper>
+      <SafePaymentGuideDialog
+        open={openSafePaymentGuideDialog}
+        onClose={() => setOpenSafePaymentGuideDialog(false)}
+      />
       <AppUpdateForChatDialog open={openChatRequiredUpdateDialog} />
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <Typography variant="h3" weight="bold">
@@ -424,6 +516,57 @@ const Wrapper = styled.div`
   }) => common.uiWhite};
   padding: 12px 20px ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '12px'};
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
+`;
+
+const Triangle = styled.div`
+  width: 0;
+  height: 0;
+  border-top: 10px solid
+    ${({
+      theme: {
+        palette: { primary }
+      }
+    }) => primary.light};
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  position: absolute;
+  bottom: -7px;
+  right: 80px;
+`;
+
+const PaymentLabelWrap = styled(Flexbox)<{
+  isAllOperatorProduct: boolean;
+  openPriceOfferOnBoarding: boolean;
+  hasAccessUser: boolean;
+}>`
+  position: fixed;
+  width: 100%;
+  height: 32px;
+  padding: 12px 20px;
+  left: 0;
+  bottom: calc(76px + ${isExtendedLayoutIOSVersion() ? IOS_SAFE_AREA_BOTTOM : '0px'});
+  z-index: ${({ openPriceOfferOnBoarding, theme: { zIndex } }) =>
+    openPriceOfferOnBoarding ? 1 : zIndex.button + 1};
+  background-color: ${({
+    theme: {
+      palette: { common, primary }
+    },
+    isAllOperatorProduct,
+    hasAccessUser
+  }) => {
+    if (!hasAccessUser || isAllOperatorProduct) {
+      return primary.light;
+    }
+
+    return common.ui20;
+  }};
+`;
+
+const PaymentLabelContents = styled(Flexbox)`
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 function Outlink() {

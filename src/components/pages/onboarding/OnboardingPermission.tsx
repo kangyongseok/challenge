@@ -25,7 +25,7 @@ import { checkAgent } from '@utils/common';
 
 import type { FindLocation } from '@typings/common';
 import { modelParentCategoryIdsState, selectedModelCardState } from '@recoil/onboarding';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useMutationPutAlarm from '@hooks/useMutationPutAlarm';
 
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -59,10 +59,13 @@ function OnboardingPermission() {
 
   const { mutate: mutatePutAlarm } = useMutationPutAlarm();
   const { mutate: mutatePostArea } = useMutation(postArea);
-  const { data: acessUser } = useQueryAccessUser();
+
   const removeModelParentCategoryId = useResetRecoilState(modelParentCategoryIdsState);
   const removeModelCard = useResetRecoilState(selectedModelCardState);
+
   const [pending, setPending] = useState(false);
+
+  const { data: accessUser } = useSession();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_AUTH_MODAL, {
@@ -78,11 +81,11 @@ function OnboardingPermission() {
     const userIds = (LocalStorage.get(ONBOARDING_SKIP_USERIDS) as number[]) || [];
 
     if (userIds.length) {
-      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [...userIds, Number(acessUser?.userId)]);
+      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [...userIds, Number(accessUser?.userId)]);
     } else {
-      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [Number(acessUser?.userId)]);
+      LocalStorage.set(ONBOARDING_SKIP_USERIDS, [Number(accessUser?.userId)]);
     }
-  }, [acessUser?.userId]);
+  }, [accessUser?.userId]);
 
   const handleClick = useCallback(() => {
     setPending(true);

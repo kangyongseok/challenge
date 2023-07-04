@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Box, Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { ErrorBoundary } from '@components/UI/organisms';
@@ -20,12 +20,9 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
   const {
     query: { isCrm }
   } = useRouter();
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
+
   const [isApp, setIsApp] = useState(false);
+
   useEffect(() => {
     if (checkAgent.isAndroidApp() || checkAgent.isIOSApp()) {
       setIsApp(true);
@@ -47,7 +44,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
         <ProductLastLowerPrice />
         {isCrm && (
           <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
-            <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
+            <Typography variant="body1" weight="bold" color="cmnW">
               지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
             </Typography>
           </Button>
@@ -56,6 +53,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
       </>
     );
   }
+
   return (
     <>
       <ErrorBoundary disableFallback>
@@ -69,7 +67,7 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
       <ProductLastLowerPrice />
       {isCrm && (
         <Button variant="solid" brandColor="primary" customStyle={{ margin: '42px auto 0' }}>
-          <Typography variant="body1" weight="bold" customStyle={{ color: common.cmnW }}>
+          <Typography variant="body1" weight="bold" color="cmnW">
             지금 모델 전체보기 ({commaNumber(data?.quoteTitleCount || 0)}개)
           </Typography>
         </Button>
@@ -81,7 +79,12 @@ function ProductMowebAppContents({ data }: { data: ProductDetail | undefined }) 
 
 const Divider = styled.div`
   margin-top: 32px;
-  border-bottom: 8px solid ${({ theme: { palette } }) => palette.common.bg02};
+  border-bottom: 8px solid
+    ${({
+      theme: {
+        palette: { common }
+      }
+    }) => common.bg02};
   margin-left: -20px;
   width: calc(100% + 40px);
 `;

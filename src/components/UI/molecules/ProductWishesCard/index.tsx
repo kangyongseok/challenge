@@ -40,8 +40,8 @@ import { getProductCardImageResizePath, getProductDetailUrl } from '@utils/commo
 import type { WishAtt } from '@typings/product';
 import { openDeleteToastState, removeIdState } from '@recoil/wishes';
 import { deviceIdState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductState from '@hooks/useProductState';
 import useProductCardState from '@hooks/useProductCardState';
 
@@ -82,7 +82,8 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     const toastStack = useToastStack();
 
     const queryClient = useQueryClient();
-    const { data: accessUser } = useQueryAccessUser();
+    const { isLoggedIn } = useSession();
+
     const [isWish, setIsWish] = useState(false);
     const setDeleteToast = useSetRecoilState(openDeleteToastState);
     const setRemoveId = useSetRecoilState(removeIdState);
@@ -177,7 +178,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
     const handleClickWish = async (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
         return;
       }

@@ -10,7 +10,7 @@ import type { Order } from '@dto/order';
 import { getOrderStatusText } from '@utils/common';
 
 import { channelDialogStateFamily } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderDeliveryWaitMessageProps {
   message: AdminMessage;
@@ -29,7 +29,7 @@ function ChannelOrderDeliveryProgressWeekMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;

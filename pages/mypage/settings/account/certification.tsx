@@ -17,8 +17,9 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
-function SettingAccountSuccess({
+function SettingAccountCertification({
   userCert
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
@@ -67,10 +68,13 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
+  const accessUser = getAccessUserByCookies(getCookies({ req }));
+
   if (!imp_uid || success !== 'true') {
     return {
       props: {
-        userCert: null
+        userCert: null,
+        accessUser
       }
     };
   }
@@ -112,16 +116,18 @@ export async function getServerSideProps({
 
     return {
       props: {
-        userCert
+        userCert,
+        accessUser
       }
     };
   } catch {
     return {
       props: {
-        userCert: null
+        userCert: null,
+        accessUser
       }
     };
   }
 }
 
-export default SettingAccountSuccess;
+export default SettingAccountCertification;

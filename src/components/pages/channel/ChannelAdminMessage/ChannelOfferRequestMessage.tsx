@@ -29,7 +29,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOfferRequestMessageProps {
   message: AdminMessage;
@@ -56,7 +56,7 @@ function ChannelOfferRequestMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [isSellerRequestOffer, setIsSellerRequestOffer] = useState(false);
 

@@ -16,7 +16,7 @@ import styled from '@emotion/styled';
 
 import { checkAgent, handleClickAppDownload } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitResultLoginBottomSheet() {
   const router = useRouter();
@@ -29,10 +29,10 @@ function LegitResultLoginBottomSheet() {
 
   const bottomSheetOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   useEffect(() => {
-    if (!checkAgent.isMobileApp() && !accessUser) {
+    if (!checkAgent.isMobileApp() && !isLoggedIn) {
       bottomSheetOpenTimerRef.current = setTimeout(() => {
         setOpen(true);
       }, 8000);
@@ -43,7 +43,7 @@ function LegitResultLoginBottomSheet() {
         clearTimeout(bottomSheetOpenTimerRef.current);
       }
     };
-  }, [accessUser]);
+  }, [isLoggedIn]);
 
   return (
     <BottomSheet open={open} onClose={() => setOpen(false)} disableSwipeable>

@@ -14,7 +14,7 @@ import queryKeys from '@constants/queryKeys';
 import { commaNumber } from '@utils/formats';
 
 import { settingsAccountData } from '@recoil/settingsAccount';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderRefundWaitAccountMessageProps {
   message: AdminMessage;
@@ -35,13 +35,13 @@ function ChannelOrderRefundWaitAccountMessage({
 
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: userAccounts = [], isLoading } = useQuery(
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser
+      enabled: isLoggedInWithSMS
     }
   );
 
@@ -138,7 +138,7 @@ function ChannelOrderRefundWaitAccountMessage({
             >
               안전결제수수료
             </Typography>
-            <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+            <Typography variant="body2">0원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
             <Typography

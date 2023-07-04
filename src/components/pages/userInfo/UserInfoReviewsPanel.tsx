@@ -16,7 +16,7 @@ import { REPORT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 interface UserInfoReviewsPanelProps {
@@ -30,8 +30,8 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
 
   const toastStack = useToastStack();
   const { triggered } = useDetectScrollFloorTrigger();
+  const { isLoggedIn, data: accessUser } = useSession();
 
-  const { data: accessUser } = useQueryAccessUser();
   const { mutate: mutatePostReviewBlock, isLoading: isLoadingPostReviewBlock } =
     useMutation(postReviewBlock);
   const { mutate: mutatePostReviewReport, isLoading: isLoadingPostReviewReport } =
@@ -78,7 +78,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     (reviewId: number) => () => {
       if (isLoadingPostReviewBlock) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
       }
 
@@ -105,7 +105,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       });
     },
     [
-      accessUser,
+      isLoggedIn,
       isLoadingPostReviewBlock,
       mutatePostReviewBlock,
       pageParams,
@@ -121,7 +121,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     (reviewId: number) => () => {
       if (isLoadingPostReviewReport) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
       }
 
@@ -148,7 +148,7 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
       });
     },
     [
-      accessUser,
+      isLoggedIn,
       isLoadingPostReviewReport,
       mutatePostReviewReport,
       pageParams,

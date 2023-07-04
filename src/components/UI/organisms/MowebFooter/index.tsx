@@ -87,13 +87,7 @@ function MowebFooter() {
     return autumnAndWinter;
   }, []);
 
-  const handleClickDownload = () =>
-    handleClickAppDownload({
-      options: {
-        name: getPageNameByPathName(window.location.pathname),
-        att: 'BANNER'
-      }
-    });
+  const handleClickDownload = () => handleClickAppDownload({});
 
   const handleClick = (model: string) => () => {
     SessionStorage.set(sessionStorageKeys.productsEventProperties, {

@@ -34,10 +34,10 @@ import { legitRequestParamsState } from '@recoil/legitRequest';
 import { legitFilterGridParamsState } from '@recoil/legit';
 import { homeLegitResultTooltipCloseState, homePersonalCurationBannersState } from '@recoil/home';
 import { sendbirdState } from '@recoil/channel';
+import useSession from '@hooks/useSession';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 import {
@@ -106,7 +106,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
 
@@ -317,9 +317,9 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   ]);
 
   useEffect(() => {
-    if (accessUser) {
+    if (isLoggedIn) {
       Sendbird.getInstance().groupChannel?.addGroupChannelHandler(
-        `${accessUser.userId}-btm-urm-updater`,
+        `${accessUser?.userId}-btm-urm-updater`,
         new GroupChannelHandler({
           onMessageReceived: async () => {
             const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
@@ -345,7 +345,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         })
       );
       Sendbird.getInstance().addConnectionHandler(
-        `${accessUser.userId}-btm-urm-updater-connection`,
+        `${accessUser?.userId}-btm-urm-updater-connection`,
         new ConnectionHandler({
           onReconnectSucceeded: async () => {
             const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
@@ -357,7 +357,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
         })
       );
     }
-  }, [setSendbirdState, accessUser]);
+  }, [setSendbirdState, isLoggedIn, accessUser]);
 
   return (
     <>

@@ -27,7 +27,7 @@ import attrKeys from '@constants/attrKeys';
 import { getFormattedDistanceTime } from '@utils/formats';
 
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface LabelData {
   id: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
@@ -129,7 +129,9 @@ function ActivityNotificationPanel() {
   };
   const observerRef = useRef<IntersectionObserver>();
   const targetRef = useRef<HTMLDivElement>(null);
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn, data: accessUser } = useSession();
+
   const [openToast, setOpenToast] = useState(false);
   const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
   const { mutate: productNotiReadMutate } = useMutation(postNotiRead);
@@ -141,14 +143,14 @@ function ActivityNotificationPanel() {
         const { number = 0 } = nextData || {};
         return number < 4 ? number + 1 : undefined;
       },
-      enabled: !!accessUser
+      enabled: isLoggedIn
     }
   );
   const { data: { content: productKeywords = [] } = {} } = useQuery(
     queryKeys.users.userProductKeywords(),
     fetchProductKeywords,
     {
-      enabled: !!accessUser
+      enabled: isLoggedIn
     }
   );
 

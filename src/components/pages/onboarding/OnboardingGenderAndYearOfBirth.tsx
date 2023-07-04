@@ -18,8 +18,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { openState, selectedModelCardState } from '@recoil/onboarding';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -32,8 +32,8 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
   } = useTheme();
 
   const [genderValue, setGenderValue] = useState<'F' | 'M' | null>(null);
-  const { data: accessUser } = useQueryAccessUser();
   const [yearOfBirthValue, setYearOfBirthValue] = useState('');
+
   const resetLiketooltip = useResetRecoilState(openState('likeTooltip'));
   const { mutate } = useMutation(postUserAgeAndGender);
   const { mutate: styleMutate } = useMutation(postUserStyle);
@@ -41,6 +41,8 @@ function OnboardingGenderAndYearOfBirth({ onClick }: { onClick: () => void }) {
   const resetSelectedModelCard = useResetRecoilState(selectedModelCardState);
   const { data: { info: { value: { yearOfBirth = '', gender = '' } = {} } = {} } = {}, remove } =
     useQueryUserInfo();
+
+  const { data: accessUser } = useSession();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {

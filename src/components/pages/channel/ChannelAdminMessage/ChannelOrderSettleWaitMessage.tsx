@@ -13,7 +13,7 @@ import type { ChannelDetail } from '@dto/channel';
 
 import { putProductUpdateStatus } from '@api/product';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderSettleWaitMessageProps {
   message: AdminMessage;
@@ -44,7 +44,7 @@ function ChannelOrderSettleWaitMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const { mutate } = useMutation(putProductUpdateStatus);
 

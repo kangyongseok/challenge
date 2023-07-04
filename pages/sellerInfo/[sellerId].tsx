@@ -33,6 +33,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { getUserName, getUserScoreText } from '@utils/user';
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { commaNumber, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
@@ -183,7 +184,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

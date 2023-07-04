@@ -46,6 +46,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { getUserName } from '@utils/user';
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import {
   checkAgent,
   getImagePathStaticParser,
@@ -59,9 +60,9 @@ import {
 import { shake } from '@styles/transition';
 
 import { userShopUpdatedProfileDataState } from '@recoil/userShop';
+import useSession from '@hooks/useSession';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationDeleteAccount from '@hooks/useMutationDeleteAccount';
 import useGetImage from '@hooks/useGetImage';
 
@@ -82,14 +83,14 @@ function UserShopEdit() {
     userShopUpdatedProfileDataState
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
   const { data: myUserInfo, userId, userNickName } = useQueryMyUserInfo();
   const { data: { name, nickName, image, imageProfile, imageBackground, shopDescription } = {} } =
     useQuery(
       queryKeys.users.infoByUserId(accessUser?.userId || 0),
       () => fetchInfoByUserId(accessUser?.userId || 0),
       {
-        enabled: !!accessUser?.userId,
+        enabled: isLoggedInWithSMS,
         refetchOnMount: true
       }
     );
@@ -861,7 +862,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

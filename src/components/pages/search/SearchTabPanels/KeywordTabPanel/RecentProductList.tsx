@@ -15,7 +15,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { searchTabPanelsSwiperThresholdState } from '@recoil/search';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function RecentProductList() {
   const router = useRouter();
@@ -24,13 +24,13 @@ function RecentProductList() {
     searchTabPanelsSwiperThresholdState
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const { data: { content = [] } = {}, isInitialLoading } = useQuery(
     queryKeys.users.userHistory('recommendWishes'),
     () => fetchUserHistory({ page: 0, size: 12, type: 'PV' }),
     {
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );
@@ -48,7 +48,7 @@ function RecentProductList() {
     });
   };
 
-  if (!accessUser || (!isInitialLoading && !content.length)) return null;
+  if (!isLoggedIn || (!isInitialLoading && !content.length)) return null;
 
   return (
     <Box

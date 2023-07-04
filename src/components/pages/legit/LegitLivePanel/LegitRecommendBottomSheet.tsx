@@ -26,8 +26,8 @@ import { getCookie, setCookie } from '@utils/common';
 
 import { legitOpenRecommendBottomSheetState } from '@recoil/legit';
 import { deviceIdState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitRecommendBottomSheet() {
   const router = useRouter();
@@ -43,14 +43,14 @@ function LegitRecommendBottomSheet() {
     legitOpenRecommendBottomSheetState
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
   const { userNickName } = useQueryMyUserInfo();
 
   const { data: products = [] } = useQuery(
     queryKeys.users.userLegitTargets(),
     fetchUserLegitTargets,
     {
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );
@@ -125,10 +125,10 @@ function LegitRecommendBottomSheet() {
   useEffect(() => {
     if (getCookie('hideRecommendLegitProduct')) return;
 
-    if (accessUser && products.length > 0) {
+    if (isLoggedIn && products.length > 0) {
       setLegitOpenRecommendBottomSheetState(true);
     }
-  }, [setLegitOpenRecommendBottomSheetState, accessUser, products.length]);
+  }, [setLegitOpenRecommendBottomSheetState, isLoggedIn, products.length]);
 
   useEffect(() => {
     if (open) {
@@ -138,7 +138,7 @@ function LegitRecommendBottomSheet() {
     }
   }, [open]);
 
-  return accessUser && products.length > 0 ? (
+  return isLoggedIn && products.length > 0 ? (
     <BottomSheet
       open={open}
       onClose={() => setLegitOpenRecommendBottomSheetState(false)}

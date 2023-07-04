@@ -40,8 +40,8 @@ import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from 
 
 import type { ProductGridCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard.styles';
@@ -152,7 +152,7 @@ function NewProductGridCard({
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
 
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
@@ -223,7 +223,7 @@ function NewProductGridCard({
   const handleClickWish = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }

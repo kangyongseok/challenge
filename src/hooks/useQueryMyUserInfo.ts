@@ -13,13 +13,13 @@ import { DEFAUT_BACKGROUND_IMAGE } from '@constants/common';
 import { getUserName } from '@utils/user';
 import { hasImageFile } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function useQueryMyUserInfo(enabled = true) {
-  const { data: accessUser, refetch } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser, refetch } = useSession();
   const useQueryMyUserInfoResult = useQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo, {
-    refetchOnMount: 'always',
-    enabled: !!accessUser && enabled
+    refetchOnMount: true,
+    enabled: isLoggedInWithSMS && enabled
   });
 
   const { userId, userNickName, userImageProfile, userImageBackground } = useMemo(() => {
@@ -57,10 +57,11 @@ function useQueryMyUserInfo(enabled = true) {
 
   // 닉네임 변경 후 accessUser data 반영 되지 않은 유저들 처리 추후 제거
   useEffect(() => {
-    const updatedAccessUser = { ...accessUser };
     const nickName = useQueryMyUserInfoResult.data?.info?.value?.nickName || '';
 
-    if (!!accessUser && (nickName.length > 0 || userImageProfile.length > 0)) {
+    if (isLoggedInWithSMS && accessUser && (nickName.length > 0 || userImageProfile.length > 0)) {
+      const updatedAccessUser = { ...accessUser };
+
       if (accessUser.userName !== nickName) updatedAccessUser.userName = nickName;
 
       if (accessUser.image && accessUser.image !== userImageProfile)
@@ -68,6 +69,8 @@ function useQueryMyUserInfo(enabled = true) {
 
       LocalStorage.set(ACCESS_USER, updatedAccessUser);
 
+      refetch();
+    } else {
       refetch();
     }
 

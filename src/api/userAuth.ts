@@ -67,3 +67,30 @@ export async function fetchDevLogin(userId: string) {
 
   return data;
 }
+
+export async function postRequest(phoneNumber: string) {
+  const { data } = await Axios.getInstance().post<{
+    userId: number;
+  }>(`${BASE_PATH}/request`, {
+    phoneNumber
+  });
+
+  return data;
+}
+
+export async function postAuthorize(data: { userId: number; authNumber: string }) {
+  const response = await Axios.getInstance().post<UserSnsLoginResult>(
+    `${BASE_PATH}/authorize`,
+    data
+  );
+
+  return response.data;
+}
+
+export async function postDecrypt(secretKey: string) {
+  const response = await Axios.getInstance().post<UserSnsLoginResult>(`${BASE_PATH}/decrypt`, {
+    secretKey
+  });
+
+  return response.data;
+}

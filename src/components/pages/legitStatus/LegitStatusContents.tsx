@@ -14,21 +14,24 @@ import { fetchProductLegit } from '@api/productLegit';
 import queryKeys from '@constants/queryKeys';
 
 import { animationKeyframesState, firstUserAnimationState } from '@recoil/legitStatus';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusContents() {
   const router = useRouter();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn, data: accessUser } = useSession();
   const { userNickName } = useQueryMyUserInfo();
 
   const splitIds = String(router.query.id || '').split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
-  const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
   const boxFade = useRecoilValue(animationKeyframesState);
   const isAnimation = useRecoilValue(firstUserAnimationState);
+
+  const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
   const [openToast, setOpenToast] = useState(false);
+
   const { data, isSuccess } = useQuery(
     queryKeys.productLegits.legit(productId),
     () => fetchProductLegit(productId),
@@ -38,10 +41,10 @@ function LegitStatusContents() {
   );
 
   useEffect(() => {
-    if (accessUser && data && isSuccess) {
-      setIsAuthUser(accessUser.userId === data.userId);
+    if (isLoggedIn && data && isSuccess) {
+      setIsAuthUser(accessUser?.userId === data.userId);
     }
-  }, [accessUser, data, isSuccess]);
+  }, [isLoggedIn, accessUser, data, isSuccess]);
 
   const returnText = () => {
     if (router.query.firstLegit === 'true') {

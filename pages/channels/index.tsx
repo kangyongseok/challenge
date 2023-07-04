@@ -18,6 +18,7 @@ import Initializer from '@library/initializer';
 import { channelType } from '@constants/channel';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { needUpdateChatIOSVersion } from '@utils/common';
 
 import { channelBottomSheetStateFamily } from '@recoil/channel';
@@ -77,7 +78,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

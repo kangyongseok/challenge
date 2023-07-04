@@ -67,7 +67,7 @@ export type Area = {
 };
 
 export type Gender = 'N' | 'M' | 'F' | 'E';
-export type Sns = 'kakao' | 'facebook' | 'apple';
+export type Sns = 'kakao' | 'facebook' | 'apple' | 'sms';
 
 export interface UserAgeAndGender {
   age: number; // 삭제예정

@@ -12,6 +12,7 @@ import { LegitFloatingButton, LegitLivePanel, LegitMyPanel } from '@components/p
 import Initializer from '@library/initializer';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 function LegitAdmin() {
   const router = useRouter();
@@ -59,7 +60,8 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
   return {
     props: {
-      dehydratedState: dehydrate(queryClient)
+      dehydratedState: dehydrate(queryClient),
+      accessUser: getAccessUserByCookies(getCookies({ req }))
     }
   };
 }

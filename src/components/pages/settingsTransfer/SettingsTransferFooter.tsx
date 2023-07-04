@@ -18,8 +18,8 @@ import {
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
 import { sendbirdState } from '@recoil/channel';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function SettingsTransferFooter() {
@@ -36,14 +36,14 @@ function SettingsTransferFooter() {
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const { data: { userTransfers = [] } = {}, refetch } = useQuery(
     queryKeys.users.transfers(),
     () => fetchTransfers(),
     {
       refetchOnMount: true,
-      enabled: !!accessUser
+      enabled: isLoggedIn
     }
   );
 
@@ -114,7 +114,7 @@ function SettingsTransferFooter() {
             size="xlarge"
             fullWidth
             onClick={handleClick}
-            disabled={!siteId || !url || !accessUser}
+            disabled={!siteId || !url || !isLoggedIn}
           >
             신청하기
           </Button>

@@ -33,7 +33,7 @@ import {
   legitAdminOpinionDataState,
   legitAdminOpinionEditableState
 } from '@recoil/legitAdminOpinion/atom';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitAdminRequestCtaButton() {
   const router = useRouter();
@@ -52,14 +52,14 @@ function LegitAdminRequestCtaButton() {
   const setLegitAdminOpinionEditableState = useSetRecoilState(legitAdminOpinionEditableState);
   const resetLegitAdminOpinionDataState = useResetRecoilState(legitAdminOpinionDataState);
 
-  const { data: accessUser } = useQueryAccessUser();
-
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [focused, setFocused] = useState(false);
   const [preConfirmDescription, setPreConfirmDescription] = useState('');
   const [selectedPhotoGuideDetailIds, setSelectedPhotoGuideDetailIds] = useState<number[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const { data: accessUser } = useSession();
 
   const {
     data: {

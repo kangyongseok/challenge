@@ -96,6 +96,46 @@ function HistoryProvider({ children }: PropsWithChildren) {
         router.replace({ pathname: '/channels', query: { type: 0 } });
       }
 
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
+      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
+        LocalStorage.remove(PAYMENTS_SUCCESS);
+        router.replace({ pathname: '/channels', query: { type: 0 } });
+      }
+
       if (url.indexOf('/products') > -1) {
         setProductsFilterProgressDoneState(true);
       }

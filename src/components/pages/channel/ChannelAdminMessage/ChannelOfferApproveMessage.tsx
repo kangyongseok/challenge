@@ -11,7 +11,7 @@ import type { Order } from '@dto/order';
 import { commaNumber } from '@utils/formats';
 import { getOrderStatusText } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOfferApproveMessageProps {
   message: AdminMessage;
@@ -42,7 +42,7 @@ function ChannelOfferApproveMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [isOfferRequestUser, setIsOfferRequestUser] = useState(false);
   const [hideSafePaymentButton, setHideSafePaymentButton] = useState(false);

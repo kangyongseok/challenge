@@ -6,7 +6,7 @@ import type { Order } from '@dto/order';
 
 import { commaNumber } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderRefundProgressMessageProps {
   message: AdminMessage;
@@ -23,7 +23,7 @@ function ChannelOrderRefundProgressMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
@@ -114,7 +114,7 @@ function ChannelOrderRefundProgressMessage({
             >
               안전결제수수료
             </Typography>
-            <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+            <Typography variant="body2">0원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
             <Typography

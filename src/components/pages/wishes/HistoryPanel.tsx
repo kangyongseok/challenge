@@ -22,7 +22,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import WishesNotice from './WishesNotice';
 import HistoryDateItem from './HistoryDateItem';
@@ -38,12 +38,14 @@ function HistoryPanel() {
   const queryClient = useQueryClient();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openSuccessToast, setOpenSuccessToast] = useState(false);
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { isLoggedIn } = useSession();
+
   const { data, isInitialLoading } = useQuery(
     queryKeys.users.userHistory(0),
     () => fetchUserHistory({ page: 0 }),
     {
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );
@@ -89,7 +91,7 @@ function HistoryPanel() {
     deleteMutate();
   };
 
-  if (!isInitialLoading && !accessUser) {
+  if (!isInitialLoading && !isLoggedIn) {
     return (
       <WishesNotice
         imgName="login-img"
@@ -116,7 +118,7 @@ function HistoryPanel() {
     );
   }
 
-  if (isInitialLoading && accessUser) {
+  if (isInitialLoading && isLoggedIn) {
     return (
       <>
         <Flexbox
@@ -235,7 +237,7 @@ function HistoryPanel() {
     );
   }
 
-  if (!isInitialLoading && isEmpty(data?.content) && accessUser) {
+  if (!isInitialLoading && isEmpty(data?.content) && isLoggedIn) {
     return (
       <WishesNotice
         imgName="recent-empty-img"

@@ -10,7 +10,7 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useChannel from '@hooks/useChannel';
 
 interface ChannelReviewSentMessageProps {
@@ -32,7 +32,7 @@ function ChannelReviewSentMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [isMyReview, setIsMyReview] = useState(false);
 

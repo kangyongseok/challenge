@@ -5,6 +5,8 @@ import { Box, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import type { Product, ProductResult } from '@dto/product';
 
+import { logEvent } from '@library/amplitude';
+
 import { FACEBOOK_SHARE_URL, TWITTER_SHARE_URL } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -65,7 +67,7 @@ function SNSShareDialog({ open, onClose, product, shareData }: SNSShareDialogPro
       viewPrice = Number.isNaN(product.price / 10000) ? 0 : product.price / 10000;
       shareDescription = `${product.site.name} ${commaNumber(
         viewPrice - Math.floor(viewPrice) > 0 ? Number(viewPrice.toFixed(1)) : Math.floor(viewPrice)
-      )}만원\r\nAi추천지수 ${product.scoreTotal}/10`;
+      )}만원`;
       shareImage = product.imageMain;
     }
 
@@ -75,6 +77,14 @@ function SNSShareDialog({ open, onClose, product, shareData }: SNSShareDialogPro
       shareDescription = shareData.description;
 
       if (shareData.image) shareImage = shareData.image;
+    }
+
+    if (router.pathname.includes('/crazycuration')) {
+      logEvent(attrKeys.crazycuration.clickShare, {
+        name: attrProperty.name.crazyWeek,
+        title,
+        att: 'TOP'
+      });
     }
 
     switch (platform) {

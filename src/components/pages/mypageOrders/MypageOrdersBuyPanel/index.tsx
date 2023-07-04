@@ -12,13 +12,13 @@ import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function MypageOrdersBuyPanel() {
   const { triggered } = useDetectScrollFloorTrigger();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const {
     data: { pages = [] } = {},
@@ -44,7 +44,7 @@ function MypageOrdersBuyPanel() {
 
         return number < totalPages - 1 ? number + 1 : undefined;
       },
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );

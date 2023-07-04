@@ -26,7 +26,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { searchAutoFocusState, searchValueState } from '@recoil/search';
 import { showAppDownloadBannerState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDebounce from '@hooks/useDebounce';
 
 interface NewSearchHeaderProps {
@@ -50,7 +50,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
 
   const [searchValue, setSearchValue] = useState(value);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const debouncedSearchValue = useDebounce<string>(searchValue.replace(/-/g, ' '), 300);
 
@@ -96,7 +96,7 @@ function SearchHeader({ headerRef }: NewSearchHeaderProps) {
 
     LocalStorage.set(SEARCH_TIME_FOR_EXIT_BOTTOM_SHEET, dayjs());
 
-    if (accessUser) {
+    if (isLoggedIn && accessUser) {
       updateAccessUserOnBraze({ ...accessUser, lastKeyword: searchValue });
     }
 

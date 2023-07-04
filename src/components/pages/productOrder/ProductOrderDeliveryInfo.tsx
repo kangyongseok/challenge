@@ -6,7 +6,7 @@ import { fetchProductOrder } from '@api/order';
 
 import queryKeys from '@constants/queryKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function ProductOrderDeliveryInfo() {
   const router = useRouter();
@@ -20,13 +20,13 @@ function ProductOrderDeliveryInfo() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS } = useSession();
 
   const { data: { deliveryInfo } = {}, isLoading } = useQuery(
     queryKeys.orders.productOrder({ productId, isCreated: true }),
     () => fetchProductOrder({ productId, isCreated: true }),
     {
-      enabled: !!accessUser && !!productId,
+      enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
     }
   );

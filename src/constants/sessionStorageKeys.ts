@@ -17,6 +17,7 @@ const submitLegitProcessName = 'submitLegitProcessName';
 const legitIntroSource = 'legitIntroSource';
 const isFirstVisitCamelSellerRegisterConfirm = 'isFirstVisitCamelSellerRegisterConfirm';
 const lastPageUrl = 'lastPageUrl';
+const isProductDetailPopState = 'isProductDetailPopState';
 
 const sessionStorageKeys = {
   hideAppDownloadBanner,
@@ -37,7 +38,8 @@ const sessionStorageKeys = {
   legitIntroSource,
   isFirstVisitCamelSellerRegisterConfirm,
   lastPageUrl,
-  butlerSource
+  butlerSource,
+  isProductDetailPopState
 };
 
 export default sessionStorageKeys;

@@ -19,6 +19,7 @@ import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import type { SelectSize } from '@typings/user';
 
@@ -127,7 +128,8 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

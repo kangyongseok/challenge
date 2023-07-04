@@ -20,7 +20,7 @@ import attrKeys from '@constants/attrKeys';
 import { commaNumber } from '@utils/formats';
 
 import { mypageOrdersIsConfirmedState } from '@recoil/mypageOrders';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function MypageOrdersSalePanel() {
@@ -36,7 +36,7 @@ function MypageOrdersSalePanel() {
 
   const [isConfirmed, setIsConfirmedState] = useRecoilState(mypageOrdersIsConfirmedState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const {
     data: { pages = [] } = {},
@@ -62,7 +62,7 @@ function MypageOrdersSalePanel() {
 
         return number < totalPages - 1 ? number + 1 : undefined;
       },
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );
@@ -71,7 +71,7 @@ function MypageOrdersSalePanel() {
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       refetchOnMount: true
     }
   );

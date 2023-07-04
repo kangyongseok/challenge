@@ -19,13 +19,13 @@ import attrKeys from '@constants/attrKeys';
 import type { ProductsVariant } from '@typings/products';
 import { searchParamsStateFamily } from '@recoil/productsFilter';
 import { deviceIdState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function useProductKeywordAutoSave(variant: ProductsVariant) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
   const queryClient = useQueryClient();
 
   const deviceId = useRecoilValue(deviceIdState);
@@ -58,7 +58,7 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
   const handleRouteChange = useCallback(
     (url: string) => {
       if (
-        !!accessUser &&
+        isLoggedIn &&
         !isLoadingSearchOptions &&
         isFetchedSearchOptions &&
         url.indexOf('/products') === -1
@@ -90,7 +90,7 @@ function useProductKeywordAutoSave(variant: ProductsVariant) {
       }
     },
     [
-      accessUser,
+      isLoggedIn,
       deviceId,
       isFetchedSearchOptions,
       isLoadingSearchOptions,

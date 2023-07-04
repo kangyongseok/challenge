@@ -24,7 +24,7 @@ import { fetchReviewsByUserId, postReviewBlock, postReviewReport } from '@api/us
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 const cache = new CellMeasurerCache({
   fixedWidth: true
@@ -48,7 +48,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
 
   const toastStack = useToastStack();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { mutate: mutatePostReviewBlock, isLoading: isLoadingPostReviewBlock } =
     useMutation(postReviewBlock);
   const { mutate: mutatePostReviewReport, isLoading: isLoadingPostReviewReport } =
@@ -91,7 +91,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
     (reviewId: number) => () => {
       if (isLoadingPostReviewBlock) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
       }
 
@@ -118,7 +118,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
       });
     },
     [
-      accessUser,
+      isLoggedIn,
       isLoadingPostReviewBlock,
       mutatePostReviewBlock,
       pageParams,
@@ -134,7 +134,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
     (reviewId: number) => () => {
       if (isLoadingPostReviewReport) return;
 
-      if (!accessUser) {
+      if (!isLoggedIn) {
         router.push({ pathname: '/login', query: { returnUrl: router.asPath } });
       }
 
@@ -161,7 +161,7 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
       });
     },
     [
-      accessUser,
+      isLoggedIn,
       isLoadingPostReviewReport,
       mutatePostReviewReport,
       pageParams,

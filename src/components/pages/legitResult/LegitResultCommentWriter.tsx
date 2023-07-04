@@ -30,8 +30,8 @@ import {
   legitResultCommentFocusedState,
   legitResultCommentOpenContactBannerState
 } from '@recoil/legitResultComment/atom';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitResultCommentWriterProps {
   writerRef: RefObject<HTMLDivElement>;
@@ -69,7 +69,7 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
     size: 100
   });
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const { mutate, isLoading } = useMutation(postProductLegitComment);
@@ -113,7 +113,7 @@ function LegitResultCommentWriter({ writerRef }: LegitResultCommentWriterProps) 
   };
 
   const handleClickCommentWriter = () => {
-    if (!accessUser) {
+    if (!isLoggedIn) {
       router.push({
         pathname: '/login',
         query: {

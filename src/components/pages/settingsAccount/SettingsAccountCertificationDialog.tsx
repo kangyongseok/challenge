@@ -13,17 +13,17 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function SettingsAccountCertificationDialog() {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS } = useSession();
 
   const { data, isLoading } = useQuery(queryKeys.users.userCerts(), () => fetchUserCerts(), {
-    enabled: !!accessUser,
+    enabled: isLoggedInWithSMS,
     refetchOnMount: true
   });
 

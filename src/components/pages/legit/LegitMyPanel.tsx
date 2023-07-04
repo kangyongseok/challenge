@@ -29,12 +29,12 @@ import {
 } from '@utils/common';
 
 import { productLegitEditParamsState } from '@recoil/legitRequest';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitMyPanel() {
   const router = useRouter();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const [openIOSNoticeDialog, setOpenIOSNoticeDialog] = useState(false);
   const [openAOSNoticeDialog, setOpenAOSNoticeDialog] = useState(false);
@@ -44,7 +44,7 @@ function LegitMyPanel() {
     isLoading,
     isFetching
   } = useQuery(queryKeys.users.myProductLegits(), fetchMyProductLegits, {
-    enabled: !!accessUser,
+    enabled: isLoggedIn,
     keepPreviousData: true,
     refetchOnMount: true,
     onSuccess(data) {
@@ -149,7 +149,7 @@ function LegitMyPanel() {
   }, []);
 
   // TODO 추후 Viewport 에 맞춰질 수 있도록 개선
-  if ((!isFetching && !productLegits.length) || !accessUser) {
+  if (!isLoggedIn || (!isFetching && !productLegits.length)) {
     return (
       <Box component="section">
         <Image

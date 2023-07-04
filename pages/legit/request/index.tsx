@@ -24,6 +24,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
@@ -325,7 +326,8 @@ export async function getServerSideProps({ req, query: { id } = {} }: GetServerS
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

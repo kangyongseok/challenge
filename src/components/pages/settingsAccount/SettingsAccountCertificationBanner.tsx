@@ -5,7 +5,7 @@ import { fetchUserCerts } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function SettingsAccountCertificationBanner() {
   const {
@@ -14,10 +14,10 @@ function SettingsAccountCertificationBanner() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS } = useSession();
 
   const { data, isLoading } = useQuery(queryKeys.users.userCerts(), () => fetchUserCerts(), {
-    enabled: !!accessUser,
+    enabled: isLoggedInWithSMS,
     refetchOnMount: true
   });
 

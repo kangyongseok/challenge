@@ -24,8 +24,8 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface MyFilterInfoProps {
   variant: ProductsVariant;
@@ -55,14 +55,14 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
   const [activeToastOpen, setActiveToastOpen] = useState(false);
   const [inactiveToastOpen, setInActiveToastOpen] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
-
   const {
     data: {
       info: { value: { gender = '' } = {} } = {},
       size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
     } = {}
   } = useQueryUserInfo();
+
+  const { isLoggedIn } = useSession();
 
   const needGender = useMemo(
     () => variant === 'search' && gender && gender !== 'N',
@@ -164,10 +164,10 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
   };
 
   useEffect(() => {
-    if (accessUser && (tops.length || bottoms.length || shoes.length)) {
+    if (isLoggedIn && (tops.length || bottoms.length || shoes.length)) {
       logEvent(attrKeys.products.viewMyFilter);
     }
-  }, [accessUser, bottoms, shoes, tops]);
+  }, [isLoggedIn, bottoms, shoes, tops]);
 
   useEffect(() => {
     const newInfo = [];
@@ -207,7 +207,7 @@ function MyFilterInfo({ variant }: MyFilterInfoProps) {
     setInfo(newInfo.join(' / '));
   }, [needGender, tops, bottoms, shoes, gender]);
 
-  if (!accessUser || (!tops.length && !bottoms.length && !shoes.length)) return null;
+  if (!isLoggedIn || (!tops.length && !bottoms.length && !shoes.length)) return null;
 
   return (
     <>

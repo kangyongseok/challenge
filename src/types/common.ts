@@ -126,3 +126,5 @@ export interface UserTraceRecord {
 }
 
 export type UserTracePages = 'product' | 'exitProduct' | 'exitSearch';
+
+export type LoginMode = 'normal' | 'nonMember' | 'nonMemberInMyPage';

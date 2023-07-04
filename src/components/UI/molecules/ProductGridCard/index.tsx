@@ -39,8 +39,8 @@ import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from 
 import type { WishAtt } from '@typings/product';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useProductCardState from '@hooks/useProductCardState';
 import useOsAlarm from '@hooks/useOsAlarm';
 
@@ -165,7 +165,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const setUserShopSelectedProductState = useSetRecoilState(userShopSelectedProductState);
   const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { userWishIds = [] } = {}, refetch: refetchCategoryWishes } =
     useQueryCategoryWishes({ deviceId });
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
@@ -246,7 +246,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
   const handleClickWish = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setLoginBottomSheet({
         open: true,
         returnUrl: ''
@@ -254,7 +254,7 @@ const ProductGridCard = forwardRef<HTMLDivElement, ProductGridCardProps>(functio
       return;
     }
 
-    if (Number(product.productSeller.account) === accessUser.userId) {
+    if (Number(product.productSeller.account) === accessUser?.userId) {
       logEvent(attrKeys.products.CLICK_WISH_SELF, {
         ...wishAtt
       });

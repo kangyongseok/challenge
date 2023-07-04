@@ -44,6 +44,7 @@ import { ACCESS_USER } from '@constants/localStorage';
 import { getImagePathStaticParser } from '@utils/common';
 
 import { loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 
 function OrderSingle() {
   const { query, replace } = useRouter();
@@ -65,11 +66,13 @@ function OrderSingle() {
 
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
 
+  const { isLoggedInWithSMS } = useSession();
+
   const { data: userAccounts = [] } = useQuery(
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser
+      enabled: isLoggedInWithSMS
     }
   );
 
@@ -98,7 +101,7 @@ function OrderSingle() {
     }
   );
 
-  const isLoginAccountUser = !!accessUser && userAccounts.length !== 0;
+  const isLoginAccountUser = isLoggedInWithSMS && userAccounts.length !== 0;
   const isHideButtonGroup = isCalculated || isNotApproval || isReturning || isReturned;
 
   useEffect(() => {
@@ -126,7 +129,7 @@ function OrderSingle() {
   };
 
   const paymentDetailState = () => {
-    if (!accessUser && isSaveApprovalState) {
+    if (!isLoggedInWithSMS && isSaveApprovalState) {
       return {
         title: (
           <Typography weight="bold" variant="h2">
@@ -235,7 +238,7 @@ function OrderSingle() {
           <Flexbox alignment="center" customStyle={{ minHeight: 56, padding: '0 20px' }} gap={3}>
             <Icon name="LogoText_96_20" height={13} width={70} />
             <SafePaymentText />
-            {accessUser && !isLoading && (
+            {isLoggedInWithSMS && accessUser && !isLoading && (
               <Flexbox
                 alignment="center"
                 customStyle={{ marginLeft: 'auto' }}
@@ -250,7 +253,7 @@ function OrderSingle() {
                 <Icon name="DropdownFilled" size="large" customStyle={{ marginRight: -15 }} />
               </Flexbox>
             )}
-            {!accessUser && !isLoading && (
+            {!isLoggedInWithSMS && !isLoading && (
               <Button
                 variant="ghost"
                 brandColor="black"
@@ -297,10 +300,10 @@ function OrderSingle() {
               setInvoiceDialog={setInvoiceDialog}
               isLoginAccountUser={isLoginAccountUser}
               isDelivery={isDelivery}
-              isViewLogin={!accessUser && isSaveApprovalState}
+              isViewLogin={!isLoggedInWithSMS && isSaveApprovalState}
             />
           )}
-          {accessUser && !isLoading && (isApproval || isNotApproval) && (
+          {isLoggedInWithSMS && !isLoading && (isApproval || isNotApproval) && (
             <BannerWrap onClick={() => setSafePaymentBanner(true)}>
               <Image
                 disableAspectRatio
@@ -311,7 +314,7 @@ function OrderSingle() {
           )}
         </Box>
         <Gap />
-        {accessUser && (isApproval || isNotApproval) ? (
+        {isLoggedInWithSMS && (isApproval || isNotApproval) ? (
           <OrderPaymentInfo
             price={price}
             totalPrice={totalPrice}

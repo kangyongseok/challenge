@@ -20,8 +20,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { copyToClipboard } from '@utils/common';
 
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusFailContents() {
   const router = useRouter();
@@ -36,7 +36,7 @@ function LegitStatusFailContents() {
 
   const toastStack = useToastStack();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { userNickName } = useQueryMyUserInfo();
 
   const [isAuthUser, setIsAuthUser] = useState(false);

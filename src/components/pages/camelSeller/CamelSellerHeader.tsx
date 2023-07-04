@@ -34,8 +34,8 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 import useExitSurveyBottomSheet from '@hooks/useExitSurveyBottomSheet';
 
@@ -76,7 +76,7 @@ function CamelSellerHeader() {
 
   const clickBackRef = useRef(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
   const initializeSendbird = useInitializeSendbird();
 
@@ -119,7 +119,7 @@ function CamelSellerHeader() {
         hasOpenedSurveyBottomSheet
       };
 
-      if (accessUser) {
+      if (isLoggedIn && accessUser) {
         LocalStorage.set(SAVED_CAMEL_SELLER_PRODUCT_DATA, {
           ...data,
           [accessUser.snsType]: saveData
@@ -345,7 +345,7 @@ function CamelSellerHeader() {
           hasOpenedSurveyBottomSheet
         };
 
-        if (accessUser) {
+        if (isLoggedIn && accessUser) {
           LocalStorage.set(SAVED_CAMEL_SELLER_PRODUCT_DATA, {
             ...data,
             [accessUser.snsType]: saveData
@@ -372,7 +372,7 @@ function CamelSellerHeader() {
       return true;
     });
   }, [
-    accessUser,
+    isLoggedIn,
     beforePopState,
     colors,
     distances,
@@ -386,7 +386,8 @@ function CamelSellerHeader() {
     stores,
     tempData,
     units,
-    viewRecentPriceList.open
+    viewRecentPriceList.open,
+    accessUser
   ]);
 
   return (

@@ -232,10 +232,10 @@ function App({ Component, pageProps }: AppProps) {
                 <HistoryProvider>
                   <PageSkeleton />
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
-                    <SendbirdProvider>
-                      <PortalProvider>
-                        <AuthProvider>
-                          <SessionProvider>
+                    <PortalProvider>
+                      <AuthProvider accessUser={pageProps.accessUser}>
+                        <SessionProvider>
+                          <SendbirdProvider>
                             <ToastProvider>
                               <DialogProvider>
                                 <CamelSellerSavePopup />
@@ -243,10 +243,10 @@ function App({ Component, pageProps }: AppProps) {
                                 <Component {...pageProps} />
                               </DialogProvider>
                             </ToastProvider>
-                          </SessionProvider>
-                        </AuthProvider>
-                      </PortalProvider>
-                    </SendbirdProvider>
+                          </SendbirdProvider>
+                        </SessionProvider>
+                      </AuthProvider>
+                    </PortalProvider>
                   </ABTestProvider>
                   <LegitResultSurveyTypeform />
                   {router.pathname !== '/login' && <LoginBottomSheet />}

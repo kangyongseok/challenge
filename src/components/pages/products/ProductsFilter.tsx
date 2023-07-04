@@ -49,7 +49,7 @@ import {
   showAppDownloadBannerState,
   userOnBoardingTriggerState
 } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ProductsFilterProps {
   variant: ProductsVariant;
@@ -93,7 +93,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
     productsFilterTotalCountStateFamily(`searchOption-${atomParam}`)
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const {
     data: {
@@ -138,8 +138,9 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
     } = {},
     isLoading: isLoadingUserInfo
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-    enabled: !!accessUser
+    enabled: isLoggedIn
   });
+
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
 
   const needGender = useMemo(
@@ -604,7 +605,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       isFetched &&
       progressDone &&
       activeMyFilter &&
-      accessUser &&
+      isLoggedIn &&
       !productTotal &&
       !pendingInActiveMyFilterSearchRef.current
     ) {
@@ -630,7 +631,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   }, [
     isFetched,
     activeMyFilter,
-    accessUser,
+    isLoggedIn,
     productTotal,
     baseSearchParams,
     excludeAdditionalSelectedSearchOptions,
@@ -720,7 +721,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [accessUser, productsOnBoardingTrigger, showAppDownloadBanner]);
+  }, [productsOnBoardingTrigger, showAppDownloadBanner]);
 
   useEffect(() => {
     const handleScrollAndResize = debounce(() => {
@@ -766,7 +767,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
         });
       }
 
-      if (accessUser) {
+      if (isLoggedIn) {
         setProductsOnBoardingTrigger(productsOnBoardingTrigger);
 
         window.scrollTo({
@@ -783,7 +784,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       window.removeEventListener('scroll', handleScrollAndResize);
       window.removeEventListener('resize', handleScrollAndResize);
     };
-  }, [accessUser, productsOnBoardingTrigger, showAppDownloadBanner]);
+  }, [isLoggedIn, productsOnBoardingTrigger, showAppDownloadBanner]);
 
   useEffect(() => {
     if (!hasBaseSearchParams || !progressDone) return;
@@ -839,18 +840,18 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       });
     }
 
-    if (accessUser) {
+    if (isLoggedIn) {
       setProductsOnBoardingTrigger(productsOnBoardingTrigger);
     }
-  }, [productsOnBoardingTrigger, accessUser, hasBaseSearchParams, progressDone]);
+  }, [productsOnBoardingTrigger, isLoggedIn, hasBaseSearchParams, progressDone]);
 
   useEffect(() => {
-    if (accessUser) {
+    if (isLoggedIn) {
       if (productsOnBoardingTrigger.complete && productsOnBoardingTrigger.step === 2) {
         setProductsOnBoardingTrigger({ complete: false, step: 2 });
       }
     }
-  }, [accessUser, productsOnBoardingTrigger]);
+  }, [isLoggedIn, productsOnBoardingTrigger]);
 
   useEffect(() => {
     if (isFetched)

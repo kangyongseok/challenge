@@ -10,7 +10,7 @@ import { fetchUserAccounts } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 
 import { settingsAccountData } from '@recoil/settingsAccount';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderSettleWaitAccountMessageProps {
   message: AdminMessage;
@@ -29,13 +29,13 @@ function ChannelOrderSettleWaitAccountMessage({
 
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: userAccounts = [], isLoading } = useQuery(
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser
+      enabled: isLoggedInWithSMS
     }
   );
 

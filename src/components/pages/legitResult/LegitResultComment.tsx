@@ -29,7 +29,7 @@ import {
   legitResultCommentEditableState
 } from '@recoil/legitResultComment/atom';
 import { showAppDownloadBannerState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import LegitResultReply from './LegitResultReply';
 
@@ -48,10 +48,11 @@ function LegitResultComment({
   const splitIds = String(id).split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
-  const { data: accessUser } = useQueryAccessUser();
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const setLegitResultCommentDataState = useSetRecoilState(legitResultCommentDataState);
   const setLegitResultCommentEditableState = useSetRecoilState(legitResultCommentEditableState);
+
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const {
     theme: {
@@ -85,7 +86,7 @@ function LegitResultComment({
     useMutation(deleteProductLegitComment);
 
   const handleClick = () => {
-    if (!accessUser) {
+    if (!isLoggedIn) {
       router.push({
         pathname: '/login',
         query: {

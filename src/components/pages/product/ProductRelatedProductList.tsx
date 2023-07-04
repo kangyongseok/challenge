@@ -1,16 +1,16 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 
+import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Grid, Typography } from '@mrcamelhub/camel-ui';
+import { Box, Button, Grid, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
-import type { Product, SearchRelatedProductsParams } from '@dto/product';
+import type { Product } from '@dto/product';
 
 import { fetchSearchRelatedProducts } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
@@ -21,7 +21,11 @@ interface ProductRelatedProductListProps {
   prevProduct?: Product;
   quoteTitle?: string;
   price?: number;
+  size?: string | null;
   productId?: number;
+  parentId?: number | null;
+  isSoldOut: boolean;
+  isDeleted: boolean;
 }
 
 function ProductRelatedProductList({
@@ -31,68 +35,73 @@ function ProductRelatedProductList({
   prevProduct,
   quoteTitle,
   price,
-  productId
+  productId,
+  isSoldOut,
+  isDeleted,
+  size,
+  parentId
 }: ProductRelatedProductListProps) {
-  const [searchRelatedProductsParams, setSearchRelatedProductsParams] =
-    useState<SearchRelatedProductsParams>({
-      brandIds: brandId ? [brandId] : undefined,
-      categoryIds: categoryId ? [categoryId] : undefined,
-      line: line || undefined,
-      related: 1,
-      size: 8,
-      quoteTitle,
-      price
-    });
+  const router = useRouter();
 
-  const { data: searchRelatedProducts, isLoading } = useQuery(
-    queryKeys.products.searchRelatedProducts(searchRelatedProductsParams),
-    () => fetchSearchRelatedProducts(searchRelatedProductsParams),
+  const params = {
+    brandIds: brandId ? [brandId] : undefined,
+    categoryIds: categoryId ? [categoryId] : undefined,
+    line: line || undefined,
+    related: 1,
+    size: 12,
+    quoteTitle,
+    price,
+    productId,
+    sizes: size && [14, 45, 97, 104, 119, 282].includes(parentId || 0) ? [size] : []
+  };
+
+  const { data: searchRelatedProducts, isInitialLoading } = useQuery(
+    queryKeys.products.searchRelatedProducts(params),
+    () => fetchSearchRelatedProducts(params),
     {
       keepPreviousData: true,
       staleTime: 5 * 60 * 1000,
-      enabled:
-        (searchRelatedProductsParams.productId &&
-          !!searchRelatedProductsParams.brandIds &&
-          !!searchRelatedProductsParams.line) ||
-        (!!searchRelatedProductsParams.brandIds && !searchRelatedProductsParams.line)
+      enabled: (productId && !!brandId && !!line) || (!!brandId && !line)
     }
   );
 
-  useEffect(() => {
-    setSearchRelatedProductsParams({
-      brandIds: brandId ? [brandId] : undefined,
-      categoryIds: categoryId ? [categoryId] : undefined,
-      line: line || undefined,
-      related: 1,
-      size: 8,
-      quoteTitle,
-      price,
-      productId
-    });
-  }, [brandId, categoryId, line, price, quoteTitle, productId]);
-
-  if (!searchRelatedProducts?.page?.content?.length) return <Box customStyle={{ marginTop: -1 }} />;
+  if (
+    !isInitialLoading &&
+    (!searchRelatedProducts?.page?.content || !searchRelatedProducts?.page?.content?.length)
+  )
+    return null;
 
   return (
     <Box customStyle={{ margin: '32px 0' }}>
-      <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
-        {prevProduct?.status === productStatusCode.deleted
-          ? '이런 매물은 어때요?'
-          : '보고 있는 매물과 비슷해요'}
-      </Typography>
+      {isInitialLoading ? (
+        <Skeleton
+          width="100%"
+          maxWidth={144}
+          height={24}
+          round={8}
+          disableAspectRatio
+          customStyle={{
+            marginBottom: 20
+          }}
+        />
+      ) : (
+        <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 20 }}>
+          {isSoldOut || isDeleted ? '찾던 매물과 비슷해요' : '보고 있는 매물과 비슷해요'}
+        </Typography>
+      )}
       <Grid
         container
         rowGap={32}
         columnGap={12}
         customStyle={{ marginLeft: -20, width: 'calc(100% + 40px)', padding: '0 10px' }}
       >
-        {isLoading
+        {isInitialLoading
           ? Array.from({ length: 4 }, (_, index) => (
               <Grid key={`related-product-skeleton-${index}`} item xs={2}>
                 <NewProductGridCardSkeleton variant="gridB" />
               </Grid>
             ))
-          : searchRelatedProducts?.page?.content?.map((product, index) => (
+          : searchRelatedProducts?.page.content.map((product, index) => (
               <Grid key={`related-product-${product.id}`} item xs={2}>
                 <NewProductGridCard
                   variant="gridB"
@@ -128,6 +137,29 @@ function ProductRelatedProductList({
               </Grid>
             ))}
       </Grid>
+      <Button
+        variant="ghost"
+        brandColor="black"
+        size="large"
+        fullWidth
+        onClick={() =>
+          router.push({
+            pathname: `/products/search/${prevProduct?.brand.name}`,
+            query: {
+              brandIds: params.brandIds,
+              categoryIds: params.categoryIds,
+              line: params.line,
+              quoteTitle: params.quoteTitle,
+              sizes: params.sizes
+            }
+          })
+        }
+        customStyle={{
+          marginTop: 32
+        }}
+      >
+        매물 더보기
+      </Button>
     </Box>
   );
 }

@@ -14,7 +14,7 @@ import { fetchRecommWishes } from '@api/user';
 import queryKeys from '@constants/queryKeys';
 import { RECOMM_WISH_IDS } from '@constants/localStorage';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import HomeRecommendWishCard from './HomeRecommendWishCard';
 
@@ -25,7 +25,7 @@ function HomeWishAlertScreen() {
     palette: { common }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const [open, setOpen] = useState(false);
   const [toggle, setToggle] = useState(true);
@@ -33,7 +33,7 @@ function HomeWishAlertScreen() {
   const cardClickCheckRef = useRef(false);
 
   const { data = [], isFetching } = useQuery(queryKeys.users.recommWishes(), fetchRecommWishes, {
-    enabled: !!accessUser,
+    enabled: isLoggedIn,
     refetchOnMount: true
   });
 

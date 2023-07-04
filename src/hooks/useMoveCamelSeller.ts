@@ -27,7 +27,7 @@ import {
   camelSellerSurveyState,
   camelSellerTempSaveDataState
 } from '@recoil/camelSeller';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import useOsAlarm from './useOsAlarm';
 
@@ -55,7 +55,7 @@ export default function useMoveCamelSeller({
   );
   const resetSurveyState = useResetRecoilState(camelSellerSurveyState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
   const handleMoveCamelSeller = () => {
@@ -87,7 +87,7 @@ export default function useMoveCamelSeller({
 
     const checkedProductPhotoUploadGuide = LocalStorage.get(CHECKED_PRODUCT_PHOTO_UPLOAD_GUIDE);
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setOpenLoginBottomSheetState({
         open: true,
         returnUrl: checkedProductPhotoUploadGuide
@@ -111,6 +111,7 @@ export default function useMoveCamelSeller({
 
     // 이어하기 다이얼로그 띄우는 조건
     if (
+      isLoggedIn &&
       accessUser &&
       savedCamelSellerProductData &&
       savedCamelSellerProductData[accessUser.snsType]

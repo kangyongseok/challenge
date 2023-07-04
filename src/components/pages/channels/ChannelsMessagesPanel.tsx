@@ -54,6 +54,12 @@ function ChannelsMessagesPanel({
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
+  // const sortChannels = useMemo(() => {
+  //   return sortBy(channels, function (o) {
+  //     return o.sendbird?.lastMessage?.createdAt || o.sendbird?.createdAt;
+  //   }).reverse();
+  // }, [channels]);
+
   if (!isInitialLoading && !channels.length) {
     return (
       <Flexbox

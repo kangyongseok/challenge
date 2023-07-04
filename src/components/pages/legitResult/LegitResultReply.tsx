@@ -23,7 +23,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface LegitResultReplyProps extends HTMLAttributes<HTMLDivElement> {
   reply: ProductLegitReply;
@@ -44,7 +44,7 @@ function LegitResultReply({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [params] = useState<ProductLegitCommentsParams>({
     productId,

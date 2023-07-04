@@ -25,8 +25,8 @@ import attrKeys from '@constants/attrKeys';
 import { getImageResizePath } from '@utils/common';
 
 import { activeMyFilterState } from '@recoil/productsFilter';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 type PersonalGuide = (Brand | Category) & {
   type?: string;
@@ -72,7 +72,7 @@ function HomePersonalGuide() {
     }
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const {
     data: {
@@ -122,7 +122,7 @@ function HomePersonalGuide() {
           .filter(({ parentCategoryId }) => parentCategoryId === parentId)
           .map(({ categorySizeId }) => categorySizeId);
 
-        if (accessUser) {
+        if (isLoggedIn) {
           setActiveMyFilterState(true);
         }
         if (parentCategoryName) {
@@ -174,6 +174,28 @@ function HomePersonalGuide() {
     });
 
     router.push('/events/dogHoney');
+  };
+
+  const handleClickSafePayment = () => {
+    logEvent(attrKeys.home.CLICK_MAIN_BUTTON, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ORDER,
+      att: '안전결제'
+    });
+
+    SessionStorage.set(sessionStorageKeys.productsEventProperties, {
+      name: attrProperty.name.MAIN,
+      title: attrProperty.title.ORDER,
+      type: attrProperty.type.GUIDED
+    });
+
+    router.push({
+      pathname: '/products/camel/새로 올라왔어요!',
+      query: {
+        order: 'postedAllDesc',
+        idFilterIds: [6]
+      }
+    });
   };
 
   const handleClickErusha = () => {
@@ -280,7 +302,7 @@ function HomePersonalGuide() {
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 8);
+      ).slice(0, 7);
 
       setGuides([...categories, ...brands]);
     }
@@ -383,7 +405,7 @@ function HomePersonalGuide() {
               급처,개꿀매모음
             </Typography>
           </Flexbox>
-          {/* <Flexbox
+          <Flexbox
             direction="vertical"
             gap={8}
             alignment="center"
@@ -419,7 +441,7 @@ function HomePersonalGuide() {
             <Typography variant="body2" weight="bold" noWrap>
               안전결제
             </Typography>
-          </Flexbox> */}
+          </Flexbox>
           <Flexbox
             direction="vertical"
             gap={8}

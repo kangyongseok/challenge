@@ -17,16 +17,18 @@ import attrKeys from '@constants/attrKeys';
 
 import { getCookie, setCookie } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitResultSurveyTypeform() {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
-  const { data: accessUser } = useQueryAccessUser();
+
   const [loadSurveyTypeform, setLoadSurveyTypeform] = useState(false);
   const [open, setOpen] = useState<BehavioralType | undefined>(undefined);
+
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const { data: { userId, status } = {} } = useQuery(
     queryKeys.productLegits.legit(productId),
@@ -56,6 +58,7 @@ function LegitResultSurveyTypeform() {
     if (
       router.pathname === '/legit/[id]/result' &&
       !!id &&
+      isLoggedIn &&
       status === 30 &&
       accessUser &&
       accessUser.userId === userId &&
@@ -64,7 +67,7 @@ function LegitResultSurveyTypeform() {
     ) {
       setLoadSurveyTypeform(true);
     }
-  }, [router.pathname, accessUser, id, loadSurveyTypeform, status, userId]);
+  }, [router.pathname, isLoggedIn, accessUser, id, loadSurveyTypeform, status, userId]);
 
   useEffect(() => {
     if (loadSurveyTypeform) router.events.on('routeChangeComplete', handleRouteChangeComplete);

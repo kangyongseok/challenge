@@ -11,10 +11,10 @@ export { default as ProductDetailLegitBottomSheet } from './ProductDetailLegitBo
 export { default as ProductSellerBottomMenu } from './ProductSellerBottomMenu';
 export { default as ProductWishCancelDialog } from './ProductWishCancelDialog';
 export { default as ProductMowebAppContents } from './ProductMowebAppContents';
-export { default as ProductSoldoutCard } from './ProductSoldoutCard';
+export { default as ProductInActiveCard } from './ProductInActiveCard';
 export { default as ProductDetailFooter } from './ProductDetailFooter';
 export { default as ProductStructuredData } from './ProductStructuredData';
-export { default as ProductDeletedCard } from './ProductDeletedCard';
 export { default as ProductEventBannerBottomSheet } from './ProductEventBannerBottomSheet'; // 제거 대상
 export { default as ProductDetailBannerGroup } from './ProductDetailBannerGroup';
 export { default as ProductButlerContents } from './ProductButlerContents';
+export { default as ProductNonMemberPaymentBottomSheet } from './ProductNonMemberPaymentBottomSheet';

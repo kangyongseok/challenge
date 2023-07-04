@@ -21,10 +21,11 @@ import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import { shake } from '@styles/transition';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function ChannelFixMessage() {
   const {
@@ -42,12 +43,13 @@ function ChannelFixMessage() {
   const [open, setOpen] = useState(false);
 
   const { mutate } = useMutation(putFixedChannel);
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
+
   const { data: fixedChannel } = useQuery(
     queryKeys.users.fixedChannel(accessUser?.userId || 0),
     fetchFixedChannel,
     {
-      enabled: !!accessUser?.userId
+      enabled: isLoggedIn && !!accessUser?.userId
     }
   );
 
@@ -235,8 +237,11 @@ const ButtonBox = styled.div`
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
+
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

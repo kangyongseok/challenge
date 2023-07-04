@@ -26,11 +26,12 @@ import { APP_DOWNLOAD_BANNER_HEIGHT, HEADER_HEIGHT } from '@constants/common';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useScrollTrigger from '@hooks/useScrollTrigger';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const {
@@ -45,14 +46,14 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
 
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const userId = useMemo(() => Number(id), [id]);
   const { isLoading, data: { profile, roleSeller, cntOpinion = 0 } = {} } = useQuery(
     queryKeys.users.legitProfile(userId),
     () => fetchLegitProfile(userId),
     {
-      refetchOnWindowFocus: !isLegitUser || (!!accessUser && userId !== accessUser?.userId)
+      refetchOnWindowFocus: !isLegitUser || (isLoggedIn && userId !== accessUser?.userId)
     }
   );
   const { data: legitsBrands = [] } = useQuery(queryKeys.models.legitsBrands(), () =>
@@ -60,11 +61,6 @@ function LegitProfile({ isLegitUser }: InferGetServerSidePropsType<typeof getSer
   );
 
   const opinionLegitListRef = useRef<null | HTMLDivElement>(null);
-
-  // const handleCloseEditMode = useCallback(() => {
-  //   refetchLegitProfile();
-  //   back();
-  // }, [back, refetchLegitProfile]);
 
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_PROFILE);
@@ -164,7 +160,8 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
     return {
       props: {
         dehydratedState: dehydrate(queryClient),
-        isLegitUser: false
+        isLegitUser: false,
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

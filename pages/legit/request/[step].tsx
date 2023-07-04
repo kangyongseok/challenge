@@ -21,10 +21,11 @@ import { SAVED_LEGIT_REQUEST_STATE } from '@constants/localStorage';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useSession from '@hooks/useSession';
 import useQueryUserData from '@hooks/useQueryUserData';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 function LegitRequest() {
@@ -35,7 +36,7 @@ function LegitRequest() {
   const resetLegitRequestState = useResetRecoilState(legitRequestState);
   const resetProductLegitParamsState = useResetRecoilState(productLegitParamsState);
 
-  const { data: accessUser, isSuccess } = useQueryAccessUser();
+  const { isLoggedIn, isSuccess } = useSession();
   const { remove: removeUserData } = useQueryUserData();
   const { checkOsAlarm, openOsAlarmDialog, handleCloseOsAlarmDialog } = useOsAlarm();
 
@@ -63,10 +64,10 @@ function LegitRequest() {
   }, []);
 
   useEffect(() => {
-    if (isSuccess && !accessUser) {
+    if (isSuccess && !isLoggedIn) {
       router.back();
     }
-  }, [router, isSuccess, accessUser]);
+  }, [router, isSuccess, isLoggedIn]);
 
   useEffect(() => {
     if (
@@ -175,7 +176,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

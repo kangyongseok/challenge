@@ -40,7 +40,7 @@ import {
 } from '@utils/channel';
 
 import { channelBottomSheetStateFamily } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useMutationLeaveChannel from '@hooks/useMutationLeaveChannel';
 import useMutationChannelNoti from '@hooks/useMutationChannelNoti';
 
@@ -68,7 +68,7 @@ function ChannelsSwipeActionList({
     channelBottomSheetStateFamily('selectTargetUser')
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [open, setOpen] = useState(false);
 

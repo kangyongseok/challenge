@@ -17,6 +17,7 @@ import { fetchProductLegit } from '@api/productLegit';
 import queryKeys from '@constants/queryKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { getProductDetailUrl } from '@utils/common';
 
 function LegitAdminRequestDetail() {
@@ -57,7 +58,8 @@ export async function getServerSideProps({ req, query }: GetServerSidePropsConte
 
     return {
       props: {
-        dehydratedState: dehydrate(queryClient)
+        dehydratedState: dehydrate(queryClient),
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

@@ -36,7 +36,7 @@ export interface KeywordItemSub {
   lineIds: number[] | null;
   maxPrice: number | null;
   minPrice: number | null;
-  parentId: number | null;
+  parentId: number;
   subParentId: number | null;
   type: number;
 }
@@ -701,10 +701,11 @@ export interface SearchRelatedProductsParams {
   categoryIds?: number[];
   line?: string;
   related?: number;
-  size?: number;
+  size?: number | string;
   quoteTitle?: string;
   price?: number;
   productId?: number;
+  sizes?: string[];
 }
 
 export interface SearchLowerProductsParams extends SearchRelatedProductsParams {

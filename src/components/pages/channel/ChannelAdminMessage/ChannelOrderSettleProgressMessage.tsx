@@ -18,7 +18,7 @@ import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderSettleProgressMessageProps {
   message: AdminMessage;
@@ -51,13 +51,13 @@ function ChannelOrderSettleProgressMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: userAccounts = [], isLoading } = useQuery(
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser
+      enabled: isLoggedInWithSMS
     }
   );
 

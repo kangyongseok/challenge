@@ -18,7 +18,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { modelParentCategoryIdsState } from '@recoil/onboarding';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import OnboardingPermission from './OnboardingPermission';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -29,7 +29,9 @@ const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/onboarding`;
 function OnboardingResult() {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { data: accessUser } = useQueryAccessUser();
+
+  const { data: accessUser } = useSession();
+
   const [modelParentCategoryIds, setModelParentCategoryId] = useRecoilState(
     modelParentCategoryIdsState
   );

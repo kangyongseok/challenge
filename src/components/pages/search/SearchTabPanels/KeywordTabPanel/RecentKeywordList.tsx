@@ -23,7 +23,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { searchTabPanelsSwiperThresholdState } from '@recoil/search';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function RecentKeywordList() {
   const router = useRouter();
@@ -45,7 +45,7 @@ function RecentKeywordList() {
     searchTabPanelsSwiperThresholdState
   );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const {
     data: { content = [] } = {},
@@ -53,7 +53,7 @@ function RecentKeywordList() {
     refetch
   } = useQuery(queryKeys.users.userProductKeywords(), fetchProductKeywords, {
     refetchOnMount: true,
-    enabled: !!accessUser
+    enabled: isLoggedIn
   });
 
   const { mutate, isLoading } = useMutation(deleteProductKeywords);

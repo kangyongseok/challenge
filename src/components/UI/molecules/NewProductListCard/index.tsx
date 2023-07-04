@@ -41,8 +41,8 @@ import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from 
 
 import type { ProductListCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Overlay, ShopMoreButton, WishButton } from './NewProductListCard.styles';
@@ -155,7 +155,7 @@ function NewProductListCard({
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
 
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
@@ -217,7 +217,7 @@ function NewProductListCard({
   const handleClickWish = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }

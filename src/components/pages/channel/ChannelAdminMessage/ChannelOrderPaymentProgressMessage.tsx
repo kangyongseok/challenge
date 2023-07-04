@@ -10,7 +10,7 @@ import type { Order } from '@dto/order';
 import { commaNumber } from '@utils/formats';
 import { copyToClipboard } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderPaymentProgressMessageProps {
   message: AdminMessage;
@@ -29,7 +29,7 @@ function ChannelOrderPaymentProgressMessage({
 
   const [open, setOpen] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
@@ -100,7 +100,7 @@ function ChannelOrderPaymentProgressMessage({
               >
                 안전결제수수료
               </Typography>
-              <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+              <Typography variant="body2">0원</Typography>
             </Flexbox>
             <Flexbox justifyContent="space-between">
               <Typography

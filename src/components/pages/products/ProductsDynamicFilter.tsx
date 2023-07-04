@@ -48,6 +48,7 @@ import {
   searchParamsStateFamily,
   selectedSearchOptionsStateFamily
 } from '@recoil/productsFilter';
+import useHistoryManage from '@hooks/useHistoryManage';
 
 const specifyProductDynamicOptionCodeTypes = [
   productDynamicOptionCodeType.color,
@@ -82,6 +83,8 @@ function ProductsDynamicFilter() {
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const categories = useRecoilValue(categoryFilterOptionsSelector);
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
+
+  const { viewToast } = useHistoryManage();
 
   const [value, setValue] = useState<string | number>('');
 
@@ -411,6 +414,8 @@ function ProductsDynamicFilter() {
       setValue('');
     }
   }, [searchParams.maxPrice]);
+
+  if (!viewToast) return null;
 
   if (!dynamicOptions.length || !Object.keys(baseSearchParams).length || !progressDone) return null;
 

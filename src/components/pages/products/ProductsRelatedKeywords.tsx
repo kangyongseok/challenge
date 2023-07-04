@@ -101,25 +101,18 @@ function ProductsRelatedKeywords() {
                   disableAspectRatio
                 />
               ))
-            : relatedKeywords
-                .filter(
-                  ({ keyword: relatedKeyword }) =>
-                    String(keyword || '')
-                      .replace(/-/g, ' ')
-                      .indexOf(relatedKeyword) === -1
-                )
-                .map((relatedKeyword, index) => (
-                  <Chip
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`related-keyword-${relatedKeyword.keyword}-${index}`}
-                    onClick={handleClick(relatedKeyword)}
-                    customStyle={{
-                      minWidth: 'fit-content'
-                    }}
-                  >
-                    {String(keyword || '').replace(/-/g, ' ')} {relatedKeyword.keyword}
-                  </Chip>
-                ))}
+            : relatedKeywords.map((relatedKeyword, index) => (
+                <Chip
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`related-keyword-${relatedKeyword.keyword}-${index}`}
+                  onClick={handleClick(relatedKeyword)}
+                  customStyle={{
+                    minWidth: 'fit-content'
+                  }}
+                >
+                  {String(keyword || '').replace(/-/g, ' ')} {relatedKeyword.keyword}
+                </Chip>
+              ))}
         </KeywordList>
       </KeywordWrapper>
     </Wrapper>

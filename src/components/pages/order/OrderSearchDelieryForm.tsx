@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { find } from 'lodash-es';
@@ -21,6 +21,8 @@ function OrderSearchDelieryForm({
   const { query } = useRouter();
   const [open, setOpen] = useState(false);
 
+  const openRef = useRef(false);
+
   const { data: { orderDelivery } = {} } = useQuery(
     queryKeys.orders.order(id || Number(query.id)),
     () => fetchOrder(id || Number(query.id)),
@@ -29,7 +31,7 @@ function OrderSearchDelieryForm({
     }
   );
 
-  const { data: commonData } = useQuery(
+  const { data: commonData, isLoading } = useQuery(
     queryKeys.commons.codeDetails({ codeId: 22 }),
     () => fetchCommonCodeDetails({ codeId: 22 }),
     {
@@ -42,6 +44,13 @@ function OrderSearchDelieryForm({
 
     setOpen(true);
   };
+
+  useEffect(() => {
+    if (query.delivery && !isLoading && !openRef.current) {
+      openRef.current = true;
+      setOpen(true);
+    }
+  }, [query.delivery, isLoading]);
 
   return (
     <>

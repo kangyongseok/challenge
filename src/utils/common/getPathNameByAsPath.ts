@@ -14,7 +14,11 @@ export function getPathNameByAsPath(asPath: string) {
   if (asPath.indexOf('/products/crm') > -1) {
     return '/products/crm/[notice]';
   }
-  if (asPath.indexOf('/products') > -1 && asPath.indexOf('/order') === -1) {
+  if (
+    asPath.indexOf('/products') > -1 &&
+    asPath.indexOf('/order') === -1 &&
+    asPath.indexOf('/inquiry') === -1
+  ) {
     return '/products/[id]';
   }
   return '/';

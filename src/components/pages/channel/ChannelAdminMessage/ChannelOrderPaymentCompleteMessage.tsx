@@ -23,7 +23,7 @@ import { commaNumber } from '@utils/formats';
 import { getOrderStatusText } from '@utils/common';
 
 import { channelDialogStateFamily } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderPaymentCompleteMessageProps {
   message: AdminMessage;
@@ -48,7 +48,7 @@ function ChannelOrderPaymentCompleteMessage({
 
   const setOpenState = useSetRecoilState(channelDialogStateFamily('saleRequestRefuse'));
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const { mutate } = useMutation(postOrderApprove);
 
@@ -196,7 +196,7 @@ function ChannelOrderPaymentCompleteMessage({
             >
               안전결제수수료
             </Typography>
-            <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+            <Typography variant="body2">0원</Typography>
           </Flexbox>
           <Flexbox justifyContent="space-between">
             <Typography

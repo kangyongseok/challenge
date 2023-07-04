@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Typography, dark } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-import { getImageResizePath, handleClickAppDownload } from '@utils/common';
+import { checkAgent, getImageResizePath, handleClickAppDownload } from '@utils/common';
 
 import { showAppDownloadBannerState } from '@recoil/common';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
@@ -18,46 +19,58 @@ import {
   StyledAppDownloadBanner
 } from './AppDownloadBanner.styles';
 
-function getPageNameByPathName(pathname: string) {
-  let pageName = 'NONE';
-
-  if (pathname === '/') {
-    pageName = 'MAIN';
-  } else if (pathname === '/search') {
-    pageName = 'SEARCHMODAL';
-  } else if (pathname === '/category') {
-    pageName = 'CATEGORY';
-  } else if (pathname === '/ranking') {
-    pageName = 'HOT';
-  } else if (pathname === '/productList') {
-    pageName = 'PRODUCT_LIST';
-  } else if (pathname.indexOf('/product/') >= 0) {
-    pageName = 'PRODUCT_DETAIL';
-  } else if (pathname === '/brands') {
-    pageName = 'BRAND';
-  }
-
-  return pageName;
+interface AppDownloadBannerProps {
+  description?: string;
 }
 
-function AppDownloadBanner() {
+function AppDownloadBanner({
+  description = '앱으로 대한민국 중고명품 모두 보기!'
+}: AppDownloadBannerProps) {
+  const router = useRouter();
+
   const [showAppDownloadBanner, setShowAppDownloadBannerState] = useRecoilState(
     showAppDownloadBannerState
   );
-
-  const scrollTriggered = useReverseScrollTrigger(true);
+  const scrollTriggered = useReverseScrollTrigger();
 
   const handleClickDownload = () => {
+    const getName = () => {
+      let name = 'NONE';
+
+      if (router.pathname === '/') {
+        name = 'MAIN';
+      } else if (router.pathname === '/search') {
+        name = 'SEARCHMODAL';
+      } else if (router.pathname === '/products/[id]') {
+        name = 'PRODUCT_DETAIL';
+      } else if (router.pathname === '/products/[id]/inquiry') {
+        name = 'PRODUCT_INQUIRY';
+      } else if (router.pathname.indexOf('/products/') !== -1) {
+        name = 'PRODUCT_LIST';
+      } else if (router.pathname === '/myPortfolio') {
+        name = 'MY_PORTFOLIO';
+      }
+
+      return name;
+    };
+    const getTitle = () => {
+      if (checkAgent.isIOS()) {
+        return 'APPLE';
+      }
+      if (checkAgent.isAndroid()) {
+        return 'ANDROID';
+      }
+      return 'APP';
+    };
+
     logEvent(attrKeys.commonEvent.CLICK_APPDOWNLOAD, {
-      name: getPageNameByPathName(window.location.pathname),
+      name: getName(),
+      title: getTitle(),
       att: 'BANNER'
     });
 
     handleClickAppDownload({
-      options: {
-        name: getPageNameByPathName(window.location.pathname),
-        att: 'BANNER'
-      }
+      name: getName()
     });
   };
 
@@ -94,7 +107,7 @@ function AppDownloadBanner() {
             카멜 - 세상 모든 중고명품
           </Typography>
           <Typography weight="medium" variant="body2" noWrap color={dark.palette.common.uiBlack}>
-            앱으로 대한민국 중고명품 모두 보기!
+            {description}
           </Typography>
         </Box>
         <DownloadButtonBox variant="solid" onClick={handleClickDownload}>

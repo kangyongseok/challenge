@@ -11,7 +11,7 @@ import { fetchProductLegit } from '@api/productLegit';
 
 import queryKeys from '@constants/queryKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function LegitResultOpinionList() {
   const router = useRouter();
@@ -19,7 +19,7 @@ function LegitResultOpinionList() {
   const splitIds = String(id).split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const {
     data: { legitOpinions = [], userId, productResult: { sellerUserId = 0 } = {}, status } = {}
@@ -29,7 +29,7 @@ function LegitResultOpinionList() {
 
   if (
     status === 20 &&
-    (!accessUser || (accessUser.userId !== userId && accessUser.userId !== sellerUserId))
+    (!isLoggedIn || (accessUser?.userId !== userId && accessUser?.userId !== sellerUserId))
   )
     return null;
 

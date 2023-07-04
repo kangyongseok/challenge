@@ -18,8 +18,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { firstUserAnimationState } from '@recoil/legitStatus';
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function LegitStatusCtaButton() {
   const router = useRouter();
@@ -30,7 +30,7 @@ function LegitStatusCtaButton() {
   const splitIds = String(router.query.id || '').split('-');
   const productId = Number(splitIds[splitIds.length - 1] || 0);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
@@ -77,7 +77,7 @@ function LegitStatusCtaButton() {
   };
 
   const handleClick = () => {
-    if (!accessUser) {
+    if (!isLoggedIn) {
       logEvent(attrKeys.legit.CLICK_LEGIT_TOOLTIP, {
         name: attrProperty.productName.LEGIT_PRODUCT,
         title: attrProperty.productTitle.PRE_CONFIRM,
@@ -145,10 +145,10 @@ function LegitStatusCtaButton() {
   };
 
   useEffect(() => {
-    if (accessUser && data && isSuccess) {
+    if (isLoggedIn && accessUser && data && isSuccess) {
       setIsAuthUser(accessUser.userId === data.userId);
     }
-  }, [accessUser, data, isSuccess]);
+  }, [isLoggedIn, accessUser, data, isSuccess]);
 
   useEffect(() => {
     if (

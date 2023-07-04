@@ -36,8 +36,8 @@ import { commaNumber, getProductCardImageResizePath, getProductDetailUrl } from 
 
 import type { ProductGridCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 export interface EventDogHoneyProductCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ProductGridCardVariant;
@@ -140,7 +140,7 @@ function EventDogHoneyProductCard({
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
 
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
@@ -203,7 +203,7 @@ function EventDogHoneyProductCard({
   const handleClickWish = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!accessUser) {
+    if (!isLoggedIn) {
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }

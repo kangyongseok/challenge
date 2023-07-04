@@ -16,7 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import { getChannelHandler } from '@utils/channel';
 
 import { sendbirdState } from '@recoil/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 type UseInfiniteQueryChannelsProps = ChannelsParams;
 
@@ -27,7 +27,7 @@ function useInfiniteQueryChannels({
 }: UseInfiniteQueryChannelsProps) {
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [sendbird, setSendbirdState] = useRecoilState(sendbirdState);
 

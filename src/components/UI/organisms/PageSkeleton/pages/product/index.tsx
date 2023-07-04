@@ -5,6 +5,8 @@ import styled from '@emotion/styled';
 import { Divider } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 
+import { checkAgent } from '@utils/common';
+
 function ProductDetail() {
   const router = useRouter();
   const { redirect } = router.query;
@@ -19,7 +21,43 @@ function ProductDetail() {
 
   return (
     <GeneralTemplate
-      header={<Skeleton width="100%" height={56} minHeight={56} disableAspectRatio />}
+      header={
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
+          gap={8}
+          customStyle={{
+            padding: '0 20px',
+            minHeight: 56
+          }}
+        >
+          {checkAgent.isMobileApp() ? (
+            <>
+              <Flexbox>
+                <Skeleton width={24} height={24} round={8} disableAspectRatio />
+                <Box
+                  customStyle={{
+                    minWidth: 32
+                  }}
+                />
+              </Flexbox>
+              <Skeleton width={76.8} height={16} round={6} disableAspectRatio />
+              <Flexbox gap={16} alignment="center">
+                <Skeleton width={24} height={24} round={8} disableAspectRatio />
+                <Skeleton width={24} height={24} round={8} disableAspectRatio />
+              </Flexbox>
+            </>
+          ) : (
+            <>
+              <Skeleton width={76.8} height={16} round={6} disableAspectRatio />
+              <Flexbox gap={16} alignment="center">
+                <Skeleton width={24} height={24} round={8} disableAspectRatio />
+                <Skeleton width={24} height={24} round={8} disableAspectRatio />
+              </Flexbox>
+            </>
+          )}
+        </Flexbox>
+      }
       footer={
         <CtaButtonWrapper>
           <Skeleton width="100%" height={52} round={8} disableAspectRatio />

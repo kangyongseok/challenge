@@ -13,7 +13,6 @@ import {
   filterImageColorNames,
   productFilterEventPropertyTitle
 } from '@constants/productsFilter';
-import { PRODUCT_NAME } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -83,7 +82,7 @@ function FilterBottomOperation({ variant }: FilterBottomOperationProps) {
     }));
 
     const eventProperties = {
-      name: PRODUCT_NAME.PRODUCT_LIST,
+      name: 'PRODUCT_LIST',
       keyword: router.query.keyword
     };
 

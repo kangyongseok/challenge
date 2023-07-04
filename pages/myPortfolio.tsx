@@ -32,7 +32,7 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent, isExtendedLayoutIOSVersion } from '@utils/common';
 
 import { SuccessDialogState } from '@recoil/myPortfolio';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 let globalCurrentSection = 0;
 const SECTION_PAGE_NUM = 7;
@@ -44,7 +44,8 @@ function MyPortfolio() {
       palette: { common }
     }
   } = useTheme();
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
+
   const [innerHeight, setInnerHeight] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
   const [openReservation, setOpenReservation] = useState(false);
@@ -184,7 +185,7 @@ function MyPortfolio() {
       });
     }
 
-    if (!accessUser || (accessUser && !accessUser.phone)) {
+    if (!isLoggedIn || (accessUser && !accessUser.phone)) {
       setOpenReservation(true);
       return;
     }

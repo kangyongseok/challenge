@@ -12,14 +12,14 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useSession from '@hooks/useSession';
 import useQueryUserData from '@hooks/useQueryUserData';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 function HomeLegitContinueDialog() {
   const router = useRouter();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
   const { userNickName } = useQueryMyUserInfo();
   const { data: userData, remove: removeUserData } = useQueryUserData();
 
@@ -48,13 +48,13 @@ function HomeLegitContinueDialog() {
   };
 
   useEffect(() => {
-    if (accessUser && !!userData?.[SAVED_LEGIT_REQUEST_STATE]) {
+    if (isLoggedIn && !!userData?.[SAVED_LEGIT_REQUEST_STATE]) {
       logEvent(attrKeys.home.VIEW_LEGIT_MODAL, {
         name: attrProperty.name.LEGIT_RESET
       });
       setOpen(true);
     }
-  }, [accessUser, userData]);
+  }, [isLoggedIn, userData]);
 
   return (
     <Dialog open={open} onClose={handleClose}>

@@ -10,7 +10,7 @@ import { logEvent } from '@library/amplitude';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import OnboardingBottomCTA from './OnboardingBottomCTA';
 
@@ -37,7 +37,7 @@ function OnboardingWelcome({ onClick }: OnboardingWelcomeProps) {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_WELCOME);

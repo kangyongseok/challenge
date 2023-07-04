@@ -2,19 +2,16 @@ import { has } from 'lodash-es';
 
 import LocalStorage from '@library/localStorage';
 
-import { PRODUCT_NAME } from '@constants/product';
 import { UTM_PARAMS } from '@constants/localStorage';
 
 import { UtmParams } from '@typings/common';
 
 export function handleClickAppDownload({
   productId,
-  name
-}: // options
-{
+  name = ''
+}: {
   productId?: number;
   name?: string;
-  options?: { name: string; att: string };
 }) {
   const utmParams = LocalStorage.get<UtmParams>(UTM_PARAMS);
   let oneLinkParams = '';
@@ -41,30 +38,44 @@ export function handleClickAppDownload({
     deepLinkParams += `&utm_content=${utmParams.utmContent}`;
   }
 
-  // logEvent('CLICK_APPDOWNLOAD', options);
-
-  if (name === PRODUCT_NAME.PRODUCT_DETAIL) {
+  if (name === 'PRODUCT_DETAIL') {
     window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&deep_link_value=${encodeURIComponent(
       `mrcamel://view?view=/products/${productId}&isCrm=true${deepLinkParams}`
     )}&af_dp=${encodeURIComponent(
       `mrcamel://view?view=/products/${productId}&isCrm=true${deepLinkParams}`
-    )}&af_adset=detail${oneLinkParams}`;
+    )}&af_adset=detail${oneLinkParams}&af_force_deeplink=true`;
     return;
   }
 
-  if (window.location.pathname === '/productList') {
-    window.location.href =
-      'https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb' +
-      `&deep_link_value=${encodeURIComponent(
-        `mrcamel://view${window.location.search}&view=productList${deepLinkParams}`
-      )}&af_dp=${encodeURIComponent(
-        `mrcamel://view${window.location.search}&view=productList${deepLinkParams}`
-      )}&af_adset=productList${oneLinkParams}`;
+  if (name === 'MY_PORTFOLIO') {
+    window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=portfolio${deepLinkParams}${oneLinkParams}&af_force_deeplink=true`;
     return;
   }
-  if (window.location.pathname === '/myPortfolio') {
-    window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=portfolio${deepLinkParams}${oneLinkParams}`;
+
+  if (
+    ['PRODUCT_INQUIRY', 'PRODUCT_LIST', 'APP_FIRST_PAYMENT_EVENT', 'SEARCHMODAL'].includes(name)
+  ) {
+    const afAdSet = () => {
+      let newAfAdSet = 'not_detail';
+      if (name === 'PRODUCT_INQUIRY') {
+        newAfAdSet = 'inquiry';
+      } else if (name === 'PRODUCT_LIST') {
+        newAfAdSet = 'products';
+      } else if (name === 'APP_FIRST_PAYMENT_EVENT') {
+        newAfAdSet = 'appFirstPaymentEvent';
+      } else if (name === 'SEARCHMODAL') {
+        newAfAdSet = 'search';
+      }
+      return newAfAdSet;
+    };
+
+    window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&deep_link_value=${encodeURIComponent(
+      `mrcamel://view?view=${window.location.pathname}${window.location.search}${deepLinkParams}`
+    )}&af_dp=${encodeURIComponent(
+      `mrcamel://view?view=${window.location.pathname}${window.location.search}${deepLinkParams}`
+    )}&af_adset=${afAdSet()}${oneLinkParams}&af_force_deeplink=true`;
+    return;
   }
 
-  window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=not_detail${deepLinkParams}${oneLinkParams}`;
+  window.location.href = `https://camel.onelink.me/gPbg?pid=mrcamel&c=moweb&af_adset=not_detail${deepLinkParams}${oneLinkParams}&af_force_deeplink=true`;
 }

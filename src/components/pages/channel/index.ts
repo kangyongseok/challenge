@@ -9,6 +9,4 @@ export { default as ChannelCamelAuthFixBanner } from './ChannelCamelAuthFixBanne
 export { default as ChannelSaleRequestRefuseDialog } from './ChannelSaleRequestRefuseDialog';
 export { default as ChannelPurchaseConfirmDialog } from './ChannelPurchaseConfirmDialog';
 export { default as ChannelAdminBlockMessage } from './ChannelAdminBlockMessage';
-// export { default as ChannelSafePaymentGuideBanner } from './ChannelSafePaymentGuideBanner';
-// export { default as ChannelSafePaymentGuideDialog } from './ChannelSafePaymentGuideDialog';
 export { default as ChannelReservingDialog } from './ChannelReservingDialog';

@@ -1,6 +1,6 @@
 import { atom, atomFamily } from 'recoil';
 
-import { AccessUser } from '@dto/userAuth';
+import type { AccessUser } from '@dto/userAuth';
 import type { ProductSearchOption, SearchParams } from '@dto/product';
 import { ProductDynamicOption } from '@dto/product';
 import type { SizeCode } from '@dto/common';

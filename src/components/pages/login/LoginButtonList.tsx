@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,7 +10,7 @@ import {
   Flexbox,
   Icon,
   Image,
-  ThemeProvider,
+  Input,
   Tooltip,
   Typography,
   useTheme
@@ -17,7 +18,6 @@ import {
 import styled from '@emotion/styled';
 
 import { LoginErrorDialog } from '@components/UI/organisms';
-import { TextInput } from '@components/UI/molecules';
 
 import type { FacebookAccount, FacebookLoginResponse, UserSnsLoginResult } from '@dto/userAuth';
 
@@ -36,29 +36,40 @@ import attrKeys from '@constants/attrKeys';
 import type { ConvertUserSnsLoginInfoProps } from '@utils/login';
 import { checkAgent, isProduction } from '@utils/common';
 
+import type { LoginMode } from '@typings/common';
+import { productOpenNonMemberPaymentBottomSheetState } from '@recoil/product';
+import {
+  nonMemberCertificationFormState,
+  nonMemberCertificationReSendState
+} from '@recoil/nonMemberCertification/atom';
+import useSession from '@hooks/useSession';
+
 interface LoginButtonListProps {
   authLogin: (provider: string, userSnsLoginInfo: ConvertUserSnsLoginInfoProps) => Promise<void>;
   successLogin: (userSnsLoginResult: UserSnsLoginResult) => void;
-  returnUrl: string;
-  setShow: Dispatch<SetStateAction<boolean>>;
+  returnUrl?: string;
+  setShow?: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   onClickNotLoginShow?: () => void;
   attName?: 'MODAL';
+  mode?: LoginMode;
   disabledRecentLogin?: boolean;
 }
 
 function LoginButtonList({
   authLogin,
   successLogin,
-  returnUrl,
+  returnUrl = '',
   setShow,
   setLoading,
   onClickNotLoginShow,
   attName,
+  mode = 'normal',
   disabledRecentLogin
 }: LoginButtonListProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+
   const {
     theme: {
       zIndex: { button },
@@ -66,11 +77,22 @@ function LoginButtonList({
     }
   } = useTheme();
 
+  const { isLoggedInWithSMS } = useSession();
+
+  const setOpenNonMemberPaymentBottomSheetState = useSetRecoilState(
+    productOpenNonMemberPaymentBottomSheetState
+  );
+  const resetNonMemberCertificationFormState = useResetRecoilState(nonMemberCertificationFormState);
+  const resetNonMemberCertificationReSendState = useResetRecoilState(
+    nonMemberCertificationReSendState
+  );
+
   const [lastLoginType, setLastLoginType] = useState('');
   const [error, setError] = useState(false);
   const [errorProvider, setErrorProvider] = useState('');
 
   const kakaoLoginButtonRef = useRef<HTMLButtonElement>(null);
+  const nonMemberPaymentBottomSheetOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { openLogin, isRequiredLogin } = router.query;
 
@@ -204,8 +226,43 @@ function LoginButtonList({
       return;
     }
 
-    setShow(false);
-    setTimeout(() => router.replace(isRequiredLogin ? '/' : returnUrl), 300);
+    if (setShow) {
+      setShow(false);
+      setTimeout(() => router.replace(isRequiredLogin ? '/' : returnUrl), 300);
+    }
+  };
+
+  const handleClickNonMemberOrderCheck = () => {
+    logEvent(attrKeys.login.CLICK_NOLOGIN, {
+      title: attrProperty.title.ORDER
+    });
+
+    resetNonMemberCertificationFormState();
+    resetNonMemberCertificationReSendState();
+
+    if (isLoggedInWithSMS) {
+      router.push('/mypage/nonMember/orders');
+    } else {
+      router.push('/mypage/nonMember/certification');
+    }
+  };
+
+  const handleClickNonMemberPayment = () => {
+    logEvent(attrKeys.login.CLICK_NOLOGIN, {
+      title: attrProperty.title.PAYMENT
+    });
+
+    if (typeof onClickNotLoginShow === 'function') {
+      onClickNotLoginShow();
+    }
+
+    if (nonMemberPaymentBottomSheetOpenTimerRef.current) {
+      clearTimeout(nonMemberPaymentBottomSheetOpenTimerRef.current);
+    }
+
+    nonMemberPaymentBottomSheetOpenTimerRef.current = setTimeout(() => {
+      setOpenNonMemberPaymentBottomSheetState(true);
+    }, 500);
   };
 
   useEffect(() => {
@@ -220,6 +277,12 @@ function LoginButtonList({
     }
   }, [openLogin]);
 
+  useEffect(() => {
+    if (nonMemberPaymentBottomSheetOpenTimerRef.current) {
+      clearTimeout(nonMemberPaymentBottomSheetOpenTimerRef.current);
+    }
+  }, [router.pathname]);
+
   return (
     <>
       <Flexbox
@@ -229,24 +292,27 @@ function LoginButtonList({
         customStyle={{ textAlign: 'center' }}
       >
         {!isProduction && (
-          <ThemeProvider theme="light">
-            <Typography
-              variant="h3"
+          <>
+            <Button
+              variant="solid"
+              brandColor="black"
+              size={mode === 'nonMember' ? 'large' : 'xlarge'}
+              fullWidth
               onClick={() => LocalStorage.clear()}
-              customStyle={{ marginBottom: 30 }}
             >
               로컬스토리지 All Clear
-            </Typography>
+            </Button>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleCLickTestUserLogin();
               }}
             >
-              <TextInput
+              <Input
                 id="signIn"
                 variant="solid"
-                placeholder="테스트 아이디 입력해주세요"
+                size={mode === 'nonMember' ? 'large' : 'xlarge'}
+                placeholder="테스트 아이디를 입력해 주세요"
                 endAdornment={
                   <Icon
                     name="DownloadFilled"
@@ -254,25 +320,29 @@ function LoginButtonList({
                     onClick={handleCLickTestUserLogin}
                   />
                 }
-                inputStyle={{ flex: 1 }}
+                fullWidth
               />
             </form>
-          </ThemeProvider>
+          </>
         )}
         <TooltipWrapper>
           {lastLoginType === 'kakao' ? (
             <Tooltip
               open
               message="최근 로그인"
-              customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+              customStyle={{ top: 'auto', bottom: mode === 'normal' ? -2 : -8, zIndex: button }}
             >
               <Button
                 ref={kakaoLoginButtonRef}
                 fullWidth
                 startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
-                size="xlarge"
+                size={mode === 'nonMember' ? 'large' : 'xlarge'}
                 onClick={handleClickKakaoLogin}
-                customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+                customStyle={{
+                  backgroundColor: '#fee500',
+                  borderColor: 'transparent',
+                  color: common.cmnB
+                }}
               >
                 카카오톡으로 계속하기
               </Button>
@@ -283,9 +353,13 @@ function LoginButtonList({
               ref={kakaoLoginButtonRef}
               fullWidth
               startIcon={<Icon name="BrandKakaoFilled" color="cmnB" />}
-              size="xlarge"
+              size={mode === 'nonMember' ? 'large' : 'xlarge'}
               onClick={handleClickKakaoLogin}
-              customStyle={{ backgroundColor: '#fee500', color: common.cmnB }}
+              customStyle={{
+                backgroundColor: '#fee500',
+                borderColor: 'transparent',
+                color: common.cmnB
+              }}
             >
               카카오톡으로 계속하기
             </Button>
@@ -296,7 +370,7 @@ function LoginButtonList({
           <Tooltip
             open={lastLoginType === 'facebook'}
             message="최근 로그인"
-            customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+            customStyle={{ top: 'auto', bottom: mode === 'normal' ? -2 : -8, zIndex: button }}
           >
             <Button
               fullWidth
@@ -309,9 +383,13 @@ function LoginButtonList({
                   alt="Facebook Logo Img"
                 />
               }
-              size="xlarge"
+              size={mode === 'nonMember' ? 'large' : 'xlarge'}
               onClick={handleClickFacebookLogin}
-              customStyle={{ backgroundColor: '#5890ff', color: common.cmnW }}
+              customStyle={{
+                backgroundColor: '#5890ff',
+                borderColor: 'transparent',
+                color: common.cmnW
+              }}
             >
               페이스북으로 계속하기
             </Button>
@@ -322,16 +400,17 @@ function LoginButtonList({
             <Tooltip
               open={lastLoginType === 'apple'}
               message="최근 로그인"
-              customStyle={{ top: 'auto', bottom: -2, zIndex: button }}
+              customStyle={{ top: 'auto', bottom: mode === 'normal' ? -2 : -8, zIndex: button }}
             >
               <Button
                 fullWidth
                 variant="solid"
-                size="xlarge"
+                size={mode === 'nonMember' ? 'large' : 'xlarge'}
                 startIcon={<Icon name="BrandAppleFilled" color="uiWhite" />}
                 onClick={handleClickAppleLogin}
                 customStyle={{
                   backgroundColor: common.uiBlack,
+                  borderColor: 'transparent',
                   color: common.uiWhite
                 }}
               >
@@ -340,14 +419,55 @@ function LoginButtonList({
             </Tooltip>
           </TooltipWrapper>
         )}
-        <Box
-          customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
-          onClick={handleClickCancel}
-        >
-          <Typography weight="medium" customStyle={{ color: common.ui80 }}>
-            로그인하지 않고 둘러보기
-          </Typography>
-        </Box>
+        {mode === 'normal' && (
+          <Box
+            customStyle={{ margin: disabledRecentLogin ? '12px 0 20px' : '12px 0 80px' }}
+            onClick={handleClickCancel}
+          >
+            <Typography weight="medium" color="ui80">
+              로그인하지 않고 둘러보기
+            </Typography>
+          </Box>
+        )}
+        {mode === 'nonMember' && (
+          <TooltipWrapper
+            css={{
+              marginTop: 24
+            }}
+          >
+            <Tooltip
+              open
+              message="로그인 없이 구매할 수 있어요!"
+              customStyle={{ top: 'auto', bottom: -8, zIndex: button }}
+            >
+              <Button
+                fullWidth
+                variant="ghost"
+                brandColor="black"
+                size="large"
+                onClick={handleClickNonMemberPayment}
+              >
+                비회원으로 결제하기
+              </Button>
+            </Tooltip>
+          </TooltipWrapper>
+        )}
+        {mode === 'nonMemberInMyPage' && (
+          <Button
+            variant="ghost"
+            brandColor="gray"
+            size="large"
+            fullWidth
+            onClick={handleClickNonMemberOrderCheck}
+            customStyle={{
+              margin: '32px 0 120px',
+              backgroundColor: common.bg01,
+              textDecoration: 'underline'
+            }}
+          >
+            비회원 주문조회
+          </Button>
+        )}
       </Flexbox>
       <LoginErrorDialog provider={errorProvider} open={error} onClose={() => setError(false)} />
     </>

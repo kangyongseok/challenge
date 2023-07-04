@@ -7,7 +7,7 @@ import type { ProductOffer } from '@dto/productOffer';
 
 import { commaNumber } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOfferAdminTextMessageProps {
   message: AdminMessage;
@@ -24,7 +24,7 @@ function ChannelOfferAdminTextMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const [isOfferRequestUser, setIsOfferRequestUser] = useState(false);
 

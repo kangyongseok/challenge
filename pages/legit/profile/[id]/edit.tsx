@@ -51,6 +51,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import {
   getImagePathStaticParser,
   getImageResizePath,
@@ -59,9 +60,9 @@ import {
 
 import { legitProfileEditState, legitProfileUpdatedProfileDataState } from '@recoil/legitProfile';
 import { showAppDownloadBannerState } from '@recoil/common';
+import useSession from '@hooks/useSession';
 import useScrollTrigger from '@hooks/useScrollTrigger';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 import useMutationDeleteAccount from '@hooks/useMutationDeleteAccount';
 
 function LegitProfileEdit() {
@@ -84,7 +85,7 @@ function LegitProfileEdit() {
   );
   const [sellerEditInfo, setSellerEditInfo] = useRecoilState(legitProfileEditState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { backgroundImage } = useMyProfileInfo();
 
   const { mutate: mutateWitdhdraw } = useMutationDeleteAccount();
@@ -450,7 +451,8 @@ export async function getServerSideProps({ req, query: { id } }: GetServerSidePr
     return {
       props: {
         dehydratedState: dehydrate(queryClient),
-        isLegitUser: false
+        isLegitUser: false,
+        accessUser: getAccessUserByCookies(getCookies({ req }))
       }
     };
   } catch {

@@ -12,7 +12,7 @@ import queryKeys from '@constants/queryKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ProductOrderPaymentMethodProps {
   paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
@@ -30,19 +30,25 @@ function ProductOrderPaymentMethod({
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: { totalPrice = 0 } = {} } = useQuery(
     queryKeys.orders.productOrder({ productId, isCreated: true }),
     () => fetchProductOrder({ productId, isCreated: true }),
     {
-      enabled: !!accessUser && !!productId,
+      enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
     }
   );
 
   useEffect(() => {
-    if (!accessUser || !totalPrice || paymentWidgetRef.current || paymentMethodsWidgetRef.current)
+    if (
+      !isLoggedInWithSMS ||
+      !accessUser ||
+      !totalPrice ||
+      paymentWidgetRef.current ||
+      paymentMethodsWidgetRef.current
+    )
       return;
 
     const loadTossPaymentWidget = async () => {
@@ -63,7 +69,7 @@ function ProductOrderPaymentMethod({
     };
 
     loadTossPaymentWidget();
-  }, [accessUser, paymentWidgetRef, paymentMethodsWidgetRef, totalPrice]);
+  }, [isLoggedInWithSMS, accessUser, paymentWidgetRef, paymentMethodsWidgetRef, totalPrice]);
 
   return <div id="payment-widget" />;
 }

@@ -29,16 +29,17 @@ import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent } from '@utils/common';
 
 import type { CreateChannelParams } from '@typings/channel';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 function Home() {
   const router = useRouter();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const { mutate: mutatePostManage } = useMutation(postManage);
   const { mutate: mutateCreateChannel } = useMutationCreateChannel();
@@ -63,10 +64,10 @@ function Home() {
     // 가입 온보딩 완료하지 않은 유저의 경우 온보딩 페이지로 이동
     const signUpStep = LocalStorage.get<number>(SIGN_UP_STEP);
 
-    if (!!accessUser && typeof signUpStep === 'number') {
+    if (isLoggedIn && typeof signUpStep === 'number') {
       router.replace(`/onboarding?step=${signUpStep}`);
     }
-  }, [accessUser, router]);
+  }, [isLoggedIn, router]);
 
   useEffect(() => {
     const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
@@ -77,6 +78,7 @@ function Home() {
     );
 
     if (
+      isLoggedIn &&
       !(
         (checkAgent.isMobileApp() && !isNotFirstVisit) ||
         (!!accessUser && typeof signUpStep === 'number')
@@ -147,7 +149,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initABTestIdentifierByCookie(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

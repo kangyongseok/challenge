@@ -12,8 +12,8 @@ import { USER_DEFAULT_SIZE } from '@constants/user';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -29,7 +29,7 @@ function OnboardingSize({ onClick }: OnboardingSizeProps) {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { data: userInfo } = useQueryUserInfo();
 
   const { mutateAsync } = useMutation(postUserSize);

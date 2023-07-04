@@ -7,7 +7,11 @@ import type { GetServerSidePropsContext } from 'next';
 import type { FileMessage } from '@sendbird/chat/message';
 import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 
-import { ImageDetailDialog, SelectTargetUserBottomSheet } from '@components/UI/organisms';
+import {
+  AppDownloadBanner,
+  ImageDetailDialog,
+  SelectTargetUserBottomSheet
+} from '@components/UI/organisms';
 import FixedProductInfo from '@components/UI/molecules/FixedProductInfo';
 import FlexibleTemplate from '@components/templates/FlexibleTemplate';
 import ChannelReservingBanner from '@components/pages/channel/ChannelReservingBanner';
@@ -22,8 +26,6 @@ import {
   ChannelProductStatusBottomSheet,
   ChannelPurchaseConfirmDialog,
   ChannelReservingDialog,
-  // ChannelSafePaymentGuideBanner,
-  // ChannelSafePaymentGuideDialog,
   ChannelSaleRequestRefuseDialog
 } from '@components/pages/channel';
 
@@ -35,11 +37,13 @@ import { logEvent } from '@library/amplitude';
 
 import { channelUserType, productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
@@ -487,77 +491,85 @@ function Channel() {
     <>
       <FlexibleTemplate
         header={
-          <Box
-            ref={headerRef}
-            component="header"
-            customStyle={{
-              position: 'sticky',
-              top: 0,
-              transform: `translateY(${isFocused ? focusScrollY : 0}px)`,
-              zIndex: zIndex.header
-            }}
-          >
-            <ChannelHeader
-              sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
-              isCrawlingProduct={isCrawlingProduct}
-              isLoading={isLoading || !isFetched}
-              isTargetUserSeller={!isSeller}
-              isDeletedTargetUser={isDeletedTargetUser}
-              isTargetUserBlocked={isTargetUserBlocked}
-              targetUserImage={
-                (hasImageFile(channelTargetUser?.user?.imageProfile) &&
-                  channelTargetUser?.user?.imageProfile) ||
-                (hasImageFile(channelTargetUser?.user?.image) && channelTargetUser?.user?.image) ||
-                ''
-              }
-              targetUserName={targetUserName}
-              targetUserId={targetUserId}
-              isAdminBlockUser={isAdminBlockUser}
-              dateActivated={useQueryChannel?.data?.dateActivated}
-            />
-            {!isCamelAdminUser && (
-              <FixedProductInfo
+          <>
+            {!checkAgent.isMobileApp() && (
+              <Box
+                customStyle={{
+                  minHeight: isFocused ? 'inherit' : APP_DOWNLOAD_BANNER_HEIGHT
+                }}
+              >
+                <AppDownloadBanner />
+              </Box>
+            )}
+            <Box
+              ref={headerRef}
+              component="header"
+              customStyle={{
+                position: 'sticky',
+                top: 0,
+                transform: `translateY(${isFocused ? focusScrollY : 0}px)`,
+                zIndex: zIndex.header
+              }}
+            >
+              <ChannelHeader
+                sellerUserId={useQueryChannel?.data?.product?.productSeller?.id}
+                isCrawlingProduct={isCrawlingProduct}
                 isLoading={isLoading || !isFetched}
-                isEditableProductStatus={isSeller}
-                isDeletedProduct={isDeletedProduct}
+                isTargetUserSeller={!isSeller}
+                isDeletedTargetUser={isDeletedTargetUser}
                 isTargetUserBlocked={isTargetUserBlocked}
-                isAdminBlockUser={isAdminBlockUser}
-                isReserved={channel?.isReserved}
-                image={product?.imageThumbnail || product?.imageMain || ''}
-                status={productStatus}
-                title={product?.title || ''}
-                price={product?.price || 0}
-                order={orders[0]}
-                offer={offers[0]}
-                onClick={handleClickProduct}
-                onClickSafePayment={handleClickSafePayment}
-                onClickStatus={() =>
-                  logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
-                    name: attrProperty.name.CHANNEL_DETAIL,
-                    title: getLogEventTitle(product?.status || 0)
-                  })
+                targetUserImage={
+                  (hasImageFile(channelTargetUser?.user?.imageProfile) &&
+                    channelTargetUser?.user?.imageProfile) ||
+                  (hasImageFile(channelTargetUser?.user?.image) &&
+                    channelTargetUser?.user?.image) ||
+                  ''
                 }
-              />
-            )}
-
-            {isAllOperatorProduct && <ChannelCamelAuthFixBanner type="operator" />}
-            {!channel?.isReserved && isCrawlingProduct && !isAllOperatorProduct && (
-              <ChannelCamelAuthFixBanner type="external" />
-            )}
-            {/* {!channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
-              <ChannelSafePaymentGuideBanner />
-            )} */}
-            {channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
-              <ChannelReservingBanner
                 targetUserName={targetUserName}
-                isSeller={isSeller}
-                hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
+                targetUserId={targetUserId}
+                isAdminBlockUser={isAdminBlockUser}
+                dateActivated={useQueryChannel?.data?.dateActivated}
               />
-            )}
-            {!!appointment && showAppointmentBanner && (
-              <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
-            )}
-          </Box>
+              {!isCamelAdminUser && (
+                <FixedProductInfo
+                  isLoading={isLoading || !isFetched}
+                  isEditableProductStatus={isSeller}
+                  isDeletedProduct={isDeletedProduct}
+                  isTargetUserBlocked={isTargetUserBlocked}
+                  isAdminBlockUser={isAdminBlockUser}
+                  isReserved={channel?.isReserved}
+                  image={product?.imageThumbnail || product?.imageMain || ''}
+                  status={productStatus}
+                  title={product?.title || ''}
+                  price={product?.price || 0}
+                  order={orders[0]}
+                  offer={offers[0]}
+                  onClick={handleClickProduct}
+                  onClickSafePayment={handleClickSafePayment}
+                  onClickStatus={() =>
+                    logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
+                      name: attrProperty.name.CHANNEL_DETAIL,
+                      title: getLogEventTitle(product?.status || 0)
+                    })
+                  }
+                />
+              )}
+              {isAllOperatorProduct && <ChannelCamelAuthFixBanner type="operator" />}
+              {!channel?.isReserved && isCrawlingProduct && !isAllOperatorProduct && (
+                <ChannelCamelAuthFixBanner type="external" />
+              )}
+              {channel?.isReserved && !showAppointmentBanner && !isCrawlingProduct && (
+                <ChannelReservingBanner
+                  targetUserName={targetUserName}
+                  isSeller={isSeller}
+                  hasLastMessage={!!lastMessageManage || !!sendbirdChannel?.lastMessage}
+                />
+              )}
+              {!!appointment && showAppointmentBanner && (
+                <ChannelAppointmentBanner dateAppointment={appointment.dateAppointment} />
+              )}
+            </Box>
+          </>
         }
         footer={
           <Box
@@ -700,7 +712,6 @@ function Channel() {
         refetchChannel={refetch}
       />
       <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
-      {/* <ChannelSafePaymentGuideDialog /> */}
       <ChannelReservingDialog />
     </>
   );
@@ -710,7 +721,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

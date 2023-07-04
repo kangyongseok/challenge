@@ -21,8 +21,8 @@ import {
 } from '@utils/common';
 
 import type { ShareData } from '@typings/common';
+import useSession from '@hooks/useSession';
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface UserShopLegitProfileProps {
   isLoading?: boolean;
@@ -54,7 +54,7 @@ function UserShopLegitProfile({
 
   const getTimeForamt = getFormattedActivatedTime(dateActivated);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
 
   const {
     userId,

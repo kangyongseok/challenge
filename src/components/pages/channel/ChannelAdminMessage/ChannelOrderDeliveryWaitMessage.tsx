@@ -12,7 +12,7 @@ import type { Order } from '@dto/order';
 import { getFormatPhoneNumberDashParser } from '@utils/formats';
 import { copyToClipboard } from '@utils/common';
 
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 interface ChannelOrderDeliveryWaitMessageProps {
   message: AdminMessage;
@@ -31,7 +31,8 @@ function ChannelOrderDeliveryWaitMessage({
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
+
   const [openInvoiceDialog, setInvoiceDialog] = useState(false);
   const [openEmptyInvoiceDialog, setEmptyInvoiceDialog] = useState(false);
   const [open, setOpen] = useState(false);

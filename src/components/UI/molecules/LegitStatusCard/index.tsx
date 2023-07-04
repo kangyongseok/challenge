@@ -13,8 +13,8 @@ import { productPostType } from '@constants/common';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getProductCardImageResizePath } from '@utils/common';
 
+import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 interface LegitStatusCardProps extends HTMLAttributes<HTMLDivElement> {
   productLegit: ProductLegit;
@@ -45,7 +45,7 @@ function LegitStatusCard({
 
   const [loadFailed, setLoadFailed] = useState(false);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { data: accessUser } = useSession();
   const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const isMine = accessUser && accessUser.userId === userId;

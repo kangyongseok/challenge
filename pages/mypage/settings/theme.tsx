@@ -10,6 +10,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import Initializer from '@library/initializer';
 
 import { getCookies } from '@utils/cookies';
+import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import type { ThemeMode } from '@typings/common';
 import { themeState } from '@recoil/common';
@@ -95,7 +96,9 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
   return {
-    props: {}
+    props: {
+      accessUser: getAccessUserByCookies(getCookies({ req }))
+    }
   };
 }
 

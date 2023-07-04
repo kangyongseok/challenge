@@ -49,7 +49,9 @@ function MyPortfolioLanding07({
                 name: attrProperty.productName.MYPORTFOLIO,
                 title: attrProperty.productTitle.STEP09
               });
-              handleClickAppDownload({});
+              handleClickAppDownload({
+                name: 'MY_PORTFOLIO'
+              });
             }}
           >
             앱 다운로드

@@ -7,18 +7,18 @@ import { postWithdraw } from '@api/userAuth';
 import { checkAgent } from '@utils/common';
 
 import { accessUserSettingValuesState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 function useMutationDeleteAccount() {
   const router = useRouter();
 
   const setAccessUserSettingValuesState = useSetRecoilState(accessUserSettingValuesState);
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const useMutationResult = useMutation(postWithdraw, {
     onSuccess() {
-      if (accessUser) {
+      if (isLoggedIn && accessUser) {
         if (checkAgent.isAndroidApp()) window.webview?.callSetLogoutUser?.(accessUser.userId);
 
         if (checkAgent.isIOSApp())

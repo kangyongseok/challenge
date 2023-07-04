@@ -3,7 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Badge, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import Dialog from '@mrcamelhub/camel-ui-dialog';
+import { Badge, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { FeatureIsMobileAppDownDialog } from '@components/UI/organisms';
 import { Menu, MenuItem } from '@components/UI/molecules';
@@ -23,24 +24,33 @@ import {
   settingsTransferPlatformsState
 } from '@recoil/settingsTransfer';
 import { settingsAccountData } from '@recoil/settingsAccount';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import {
+  nonMemberCertificationFormState,
+  nonMemberCertificationReSendState
+} from '@recoil/nonMemberCertification/atom';
+import useSession from '@hooks/useSession';
 
 function MypageSetting() {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
+  const [openNonMemberDialog, setOpenNonMemberDialog] = useState(false);
 
   const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
   const resetDataState = useResetRecoilState(settingsTransferDataState);
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
+  const resetNonMemberCertificationFormState = useResetRecoilState(nonMemberCertificationFormState);
+  const resetNonMemberCertificationReSendState = useResetRecoilState(
+    nonMemberCertificationReSendState
+  );
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn } = useSession();
 
   const { data: userAccounts = [] } = useQuery(
     queryKeys.users.userAccounts(),
     () => fetchUserAccounts(),
     {
-      enabled: !!accessUser
+      enabled: isLoggedIn
     }
   );
 
@@ -98,14 +108,26 @@ function MypageSetting() {
     router.push('/mypage/settings/account');
   }, [resetAccountDataState, router]);
 
+  const handleClickNonMemberOrderCheck = useCallback(() => {
+    setOpenNonMemberDialog(true);
+  }, []);
+
+  const handleClickNonMemberOrderCheckConfirm = () => {
+    resetNonMemberCertificationFormState();
+    resetNonMemberCertificationReSendState();
+
+    router.push('/mypage/nonMember/certification');
+  };
+
   const settingMenu = useMemo(
     () => [
       { label: '정산계좌', isNew: false, onClick: handleClickAccount },
       { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
       { label: '키워드 알림', isNew: false, onClick: handleClickKeywordAlert },
       { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
-      { label: '채팅 고정 메시지 설정', isNew: true, onClick: handleClickFixMessage },
-      { label: '내 상품 가져오기', isNew: true, onClick: handleClickTransfer }
+      { label: '채팅 고정 메시지 설정', isNew: false, onClick: handleClickFixMessage },
+      { label: '내 상품 가져오기', isNew: false, onClick: handleClickTransfer },
+      { label: '비회원 주문조회', isNew: false, onClick: handleClickNonMemberOrderCheck }
     ],
     [
       handleClickAccount,
@@ -113,7 +135,8 @@ function MypageSetting() {
       handleClickKeywordAlert,
       handleClickBlockedUsers,
       handleClickFixMessage,
-      handleClickTransfer
+      handleClickTransfer,
+      handleClickNonMemberOrderCheck
     ]
   );
 
@@ -156,6 +179,48 @@ function MypageSetting() {
         ))}
       </Menu>
       <FeatureIsMobileAppDownDialog open={open} onClose={() => setOpen(false)} />
+      <Dialog open={openNonMemberDialog} onClose={() => setOpenNonMemberDialog(false)}>
+        <Typography variant="h3" weight="bold">
+          로그아웃 후<br />
+          비회원 주문조회를 할 수 있어요
+        </Typography>
+        <Typography
+          variant="h4"
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          현재 계정이 로그아웃됩니다.
+          <br />
+          주문조회 후 다시 로그인해주세요.
+        </Typography>
+        <Flexbox
+          direction="vertical"
+          gap={8}
+          customStyle={{
+            marginTop: 32
+          }}
+        >
+          <Button
+            variant="solid"
+            brandColor="primary"
+            size="large"
+            fullWidth
+            onClick={handleClickNonMemberOrderCheckConfirm}
+          >
+            비회원 주문조회
+          </Button>
+          <Button
+            variant="ghost"
+            brandColor="black"
+            size="large"
+            fullWidth
+            onClick={() => setOpenNonMemberDialog(false)}
+          >
+            취소
+          </Button>
+        </Flexbox>
+      </Dialog>
     </>
   );
 }

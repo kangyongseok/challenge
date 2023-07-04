@@ -34,8 +34,8 @@ import attrKeys from '@constants/attrKeys';
 import { checkAgent } from '@utils/common';
 
 import { legitRequestState, productLegitParamsState } from '@recoil/legitRequest';
+import useSession from '@hooks/useSession';
 import useQueryUserData from '@hooks/useQueryUserData';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
 
 import LegitUploadPhoto from './LegitUploadPhoto';
 import LegitSelectAdditionalInfo from './LegitSelectAdditionalInfo';
@@ -52,7 +52,6 @@ function LegitRequestForm() {
     }
   } = useTheme();
 
-  const { data: accessUser } = useQueryAccessUser();
   const { set: setUserData } = useQueryUserData();
 
   const [legitRequest, setLegitRequestState] = useRecoilState(legitRequestState);
@@ -62,6 +61,8 @@ function LegitRequestForm() {
   const [hasPhotoLibraryAuth, setHasPhotoLibraryAuth] = useState(false);
   const [hasCameraAuth, setHasCameraAuth] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const { data: accessUser } = useSession();
 
   const {
     categoryName,
@@ -193,6 +194,20 @@ function LegitRequestForm() {
     mutatePostProductLegit(productLegitParams);
   }, [isCompleted, isLoadingGetPhoto, isLoadingMutate, mutatePostProductLegit, productLegitParams]);
 
+  const handleClick = () => {
+    if (accessUser?.userId)
+      setUserData({
+        [SAVED_LEGIT_REQUEST_STATE]: {
+          state: legitRequest,
+          params: productLegitParams
+        }
+      });
+
+    if (checkAgent.isIOSApp()) window.webkit?.messageHandlers?.callMoveToSetting?.postMessage(0);
+
+    if (checkAgent.isAndroidApp()) window.webview?.moveToSetting?.();
+  };
+
   useEffect(() => {
     logEvent(attrKeys.legit.VIEW_LEGIT_UPLOAD, {
       name: attrProperty.legitName.LEGIT_PROCESS
@@ -316,20 +331,7 @@ function LegitRequestForm() {
           }));
           setOpen(false);
         }}
-        onClick={() => {
-          if (accessUser?.userId)
-            setUserData({
-              [SAVED_LEGIT_REQUEST_STATE]: {
-                state: legitRequest,
-                params: productLegitParams
-              }
-            });
-
-          if (checkAgent.isIOSApp())
-            window.webkit?.messageHandlers?.callMoveToSetting?.postMessage(0);
-
-          if (checkAgent.isAndroidApp()) window.webview?.moveToSetting?.();
-        }}
+        onClick={handleClick}
       />
     </>
   );

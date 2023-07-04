@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { animated, useTransition } from '@react-spring/web';
 import { ThemeProvider } from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
 
 import { LoginErrorDialog } from '@components/UI/organisms';
 import PuffLoader from '@components/UI/atoms/PuffLoader';
@@ -58,36 +57,28 @@ function Login() {
         (styles, item) =>
           item && (
             <animated.div style={styles}>
-              <Wrapper>
-                <GeneralTemplate>
-                  <LoginMainContent />
-                  <LoginButtonList
-                    authLogin={authLogin}
-                    successLogin={successLogin}
-                    returnUrl={returnUrl}
-                    setShow={setShow}
-                    setLoading={setLoading}
-                  />
-                  <LoginUserAgreement />
-                  <LoginErrorDialog
-                    variant={errorProvider ? 'provider' : 'common'}
-                    provider={errorProvider}
-                    open={hasError}
-                    onClose={() => setHasError(false)}
-                  />
-                </GeneralTemplate>
-              </Wrapper>
+              <GeneralTemplate>
+                <LoginMainContent />
+                <LoginButtonList
+                  authLogin={authLogin}
+                  successLogin={successLogin}
+                  returnUrl={returnUrl}
+                  setShow={setShow}
+                  setLoading={setLoading}
+                />
+                <LoginUserAgreement />
+                <LoginErrorDialog
+                  variant={errorProvider ? 'provider' : 'common'}
+                  provider={errorProvider}
+                  open={hasError}
+                  onClose={() => setHasError(false)}
+                />
+              </GeneralTemplate>
             </animated.div>
           )
       )}
     </ThemeProvider>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-`;
 
 export default Login;

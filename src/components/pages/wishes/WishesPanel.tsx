@@ -34,7 +34,7 @@ import {
   removeIdState
 } from '@recoil/wishes';
 import { deviceIdState, showAppDownloadBannerState } from '@recoil/common';
-import useQueryAccessUser from '@hooks/useQueryAccessUser';
+import useSession from '@hooks/useSession';
 
 import WishesNotice from './WishesNotice';
 import type { OrderOptionKeys } from './WishesFilter';
@@ -70,13 +70,13 @@ function WishesPanel({
 
   const queryClient = useQueryClient();
 
-  const { data: accessUser } = useQueryAccessUser();
+  const { isLoggedIn, data: accessUser } = useSession();
   const { data, isFetchedAfterMount, refetch, isInitialLoading } = useQuery(
     queryKeys.users.categoryWishes(categoryWishesParam),
     () => fetchCategoryWishes(categoryWishesParam),
     {
       refetchOnMount: true,
-      enabled: !!accessUser,
+      enabled: isLoggedIn,
       keepPreviousData: true
     }
   );
@@ -125,13 +125,13 @@ function WishesPanel({
 
   // 필터 버튼을 위해 최초 카테고리 정보를 저장
   useEffect(() => {
-    if (accessUser && data?.categories.length && initialCategories.length === 0) {
+    if (isLoggedIn && data?.categories.length && initialCategories.length === 0) {
       setInitialCategories(data.categories);
     }
-  }, [accessUser, data, initialCategories.length, setInitialCategories]);
+  }, [isLoggedIn, data, initialCategories.length, setInitialCategories]);
 
   useEffect(() => {
-    if (accessUser) {
+    if (isLoggedIn) {
       const { categories = [] } = data || {};
 
       setInitialCategories((prevState) =>
@@ -143,7 +143,7 @@ function WishesPanel({
           .filter(({ count }) => count)
       );
     }
-  }, [accessUser, data, setInitialCategories]);
+  }, [isLoggedIn, data, setInitialCategories]);
 
   useEffect(() => {
     setSelectedCategoryIds((prevState) =>
@@ -160,13 +160,13 @@ function WishesPanel({
   }, [router.query.selectedCategoryIds, setSelectedCategoryIds]);
 
   useEffect(() => {
-    if (!accessUser) return;
+    if (!isLoggedIn) return;
 
     mutate({
-      userId: accessUser.userId,
+      userId: accessUser?.userId,
       event: 'VIEW_WISH_LIST'
     });
-  }, [mutate, accessUser]);
+  }, [mutate, isLoggedIn, accessUser]);
 
   useEffect(() => {
     if (router.query.scrollToProductId && isFetchedAfterMount && data) {
@@ -231,7 +231,7 @@ function WishesPanel({
     );
   };
 
-  if (!isInitialLoading && !accessUser) {
+  if (!isInitialLoading && !isLoggedIn) {
     return (
       <WishesNotice
         imgName="login-img"
@@ -258,7 +258,7 @@ function WishesPanel({
     );
   }
 
-  if (isInitialLoading && accessUser) {
+  if (isInitialLoading && isLoggedIn) {
     return (
       <>
         <Flexbox gap={6} alignment="center" customStyle={{ height: 60 }}>
@@ -287,7 +287,7 @@ function WishesPanel({
     );
   }
 
-  if (!isInitialLoading && isEmpty(data?.userWishes) && accessUser) {
+  if (!isInitialLoading && isEmpty(data?.userWishes) && isLoggedIn) {
     return (
       <WishesNotice
         imgName="wishe-empty-img"
