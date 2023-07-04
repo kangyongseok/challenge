@@ -313,7 +313,7 @@ function ProductCTAButton() {
                 카멜은 안전결제 수수료 무료!
               </Typography>
             )}
-            {!isLoggedIn && (
+            {!isLoggedIn && !checkAgent.isMobileApp() && (
               <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
                 로그인 없이 비회원 구매와 문의가 가능해요!
               </Typography>
