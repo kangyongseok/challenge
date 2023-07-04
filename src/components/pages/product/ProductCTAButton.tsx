@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Avatar, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
-import styled from '@emotion/styled';
+import styled, { CSSObject } from '@emotion/styled';
 
 import {
   AppUpdateForChatDialog,
@@ -284,6 +284,7 @@ function ProductCTAButton() {
           isAllOperatorProduct={isAllOperatorProduct}
           openPriceOfferOnBoarding={openPriceOfferOnBoarding}
           hasAccessUser={isLoggedIn}
+          hide={!isLoggedIn && checkAgent.isMobileApp()}
         >
           {isLoggedIn && isAllOperatorProduct && <Triangle />}
           <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
@@ -313,7 +314,7 @@ function ProductCTAButton() {
                 카멜은 안전결제 수수료 무료!
               </Typography>
             )}
-            {!isLoggedIn && !checkAgent.isMobileApp() && (
+            {!isLoggedIn && (
               <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
                 로그인 없이 비회원 구매와 문의가 가능해요!
               </Typography>
@@ -538,7 +539,14 @@ const PaymentLabelWrap = styled(Flexbox)<{
   isAllOperatorProduct: boolean;
   openPriceOfferOnBoarding: boolean;
   hasAccessUser: boolean;
+  hide?: boolean;
 }>`
+  ${({ hide }): CSSObject =>
+    hide
+      ? {
+          display: 'none'
+        }
+      : {}}
   position: fixed;
   width: 100%;
   height: 32px;
