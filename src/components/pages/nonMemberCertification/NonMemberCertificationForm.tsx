@@ -200,6 +200,7 @@ function NonMemberCertificationForm({ authNumberInputRef }: NonMemberCertificati
           size="large"
           unit={date}
           placeholder="인증번호 입력"
+          autoComplete="one-time-code"
           onFocus={handleFocus}
           onBlur={handleFocus}
           onChange={(e) =>

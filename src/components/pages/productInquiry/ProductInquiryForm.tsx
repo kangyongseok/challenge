@@ -179,7 +179,6 @@ function ProductInquiryForm({ authNumberInputRef }: ProductInquiryFormProps) {
           <Input
             ref={authNumberInputRef}
             fullWidth
-            name="test"
             autoFocus={!!phoneNumber}
             type="number"
             inputMode="numeric"

@@ -282,7 +282,7 @@ function ProductInquiryFooter({ authNumberInputRef }: ProductInquiryFooterProps)
       size="xlarge"
       fullWidth
       onClick={handleClickInquiry}
-      disabled={!content || !phoneNumber || !authNumber || authNumber.length < 6 || pending}
+      disabled={!content || !phoneNumber || !authNumber || authNumber.length !== 6 || pending}
       customStyle={{
         borderRadius: 0
       }}

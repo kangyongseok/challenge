@@ -492,10 +492,10 @@ function Channel() {
       <FlexibleTemplate
         header={
           <>
-            {!checkAgent.isMobileApp() && (
+            {!isFocused && !checkAgent.isMobileApp() && (
               <Box
                 customStyle={{
-                  minHeight: isFocused ? 'inherit' : APP_DOWNLOAD_BANNER_HEIGHT
+                  minHeight: APP_DOWNLOAD_BANNER_HEIGHT
                 }}
               >
                 <AppDownloadBanner />

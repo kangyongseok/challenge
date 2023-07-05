@@ -9,48 +9,55 @@ export default function useSafariKeyboardFocus() {
   const resetInputFocusState = useResetRecoilState(inputFocusState);
 
   const [height, setHeight] = useState(0);
-  const [isKeyboardFocusing, setIsKeyboardFocusing] = useState(false);
-  const prevCalcHeightRef = useRef(0);
 
-  const keyboardFocusDurationTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const syncHeightRef = useRef(0);
+  const isFocusingRef = useRef(true);
+  const focusDurationTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const heightSyncIntervalRef = useRef<ReturnType<typeof setInterval>>();
-  const keyboardFocusScrollYRef = useRef(0);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (inputFocus) {
-      if (keyboardFocusDurationTimerRef.current) {
-        clearTimeout(keyboardFocusDurationTimerRef.current);
+      isFocusingRef.current = true;
+
+      if (focusDurationTimerRef.current) {
+        clearTimeout(focusDurationTimerRef.current);
       }
 
-      setHeight(prevCalcHeightRef.current);
-      setIsKeyboardFocusing(true);
+      if (syncHeightRef.current) setHeight(syncHeightRef.current);
 
-      keyboardFocusDurationTimerRef.current = setTimeout(() => {
-        const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
-        setHeight(newHeight);
-        prevCalcHeightRef.current = newHeight;
-        keyboardFocusScrollYRef.current = window.scrollY;
+      focusDurationTimerRef.current = setTimeout(
+        () => {
+          let newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
 
-        // 최초 focus 활성화 시 스크롤 disabled 이벤트 내 로직이 정상 동작하지 않는 문제 대응
-        if (!keyboardFocusScrollYRef.current) keyboardFocusScrollYRef.current = 1;
+          if (!newHeight) newHeight = window.scrollY;
 
-        setIsKeyboardFocusing(false);
-      }, 600); // Safari Keyboard Open Animation Duration + 100
+          setHeight(newHeight);
+          syncHeightRef.current = newHeight;
+          isFocusingRef.current = false;
+          initializedRef.current = true;
+        },
+        initializedRef.current ? 600 : 1000
+      ); // Safari Keyboard Open Animation Duration + 100
     } else {
       setHeight(0);
-      keyboardFocusScrollYRef.current = 0;
     }
   }, [inputFocus]);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!inputFocus) return;
+      if (!inputFocus || !height || isFocusingRef.current) return;
 
-      if (keyboardFocusScrollYRef.current) {
-        window.scrollTo({
-          top: keyboardFocusScrollYRef.current
-        });
-      }
+      window.scrollTo({
+        top: height
+      });
+
+      const inputs = document.getElementsByTagName('input');
+      const textAreas = document.getElementsByTagName('textarea');
+
+      [...Array.from(inputs), ...Array.from(textAreas)].forEach((input) => {
+        input.blur();
+      });
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -58,7 +65,7 @@ export default function useSafariKeyboardFocus() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [inputFocus]);
+  }, [inputFocus, height]);
 
   useEffect(() => {
     if (heightSyncIntervalRef.current) {
@@ -66,9 +73,13 @@ export default function useSafariKeyboardFocus() {
     }
 
     heightSyncIntervalRef.current = setInterval(() => {
-      const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
-      if (newHeight !== height && inputFocus && !isKeyboardFocusing) {
+      let newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
+
+      if (!newHeight) newHeight = window.scrollY;
+
+      if (newHeight !== height && inputFocus && !isFocusingRef.current) {
         setHeight(newHeight);
+        syncHeightRef.current = newHeight;
       }
     }, 10);
 
@@ -77,14 +88,14 @@ export default function useSafariKeyboardFocus() {
         clearInterval(heightSyncIntervalRef.current);
       }
     };
-  }, [height, inputFocus, isKeyboardFocusing]);
+  }, [height, inputFocus]);
 
   useEffect(() => {
     return () => {
       resetInputFocusState();
 
-      if (keyboardFocusDurationTimerRef.current) {
-        clearTimeout(keyboardFocusDurationTimerRef.current);
+      if (focusDurationTimerRef.current) {
+        clearTimeout(focusDurationTimerRef.current);
       }
     };
   }, [resetInputFocusState]);

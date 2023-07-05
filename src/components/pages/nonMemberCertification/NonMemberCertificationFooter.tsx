@@ -178,7 +178,7 @@ function NonMemberCertificationFooter({ authNumberInputRef }: NonMemberCertifica
       size="xlarge"
       fullWidth
       onClick={handleClickConfirm}
-      disabled={!phoneNumber || !authNumber || authNumber.length < 6 || pending}
+      disabled={!phoneNumber || !authNumber || authNumber.length !== 6 || pending}
       customStyle={{
         borderRadius: 0
       }}

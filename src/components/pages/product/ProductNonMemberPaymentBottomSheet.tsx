@@ -296,6 +296,7 @@ function ProductNonMemberPaymentBottomSheet() {
               unit={reSendDate}
               onChange={(e) => setAuthNumber(e.currentTarget.value)}
               value={authNumber}
+              autoComplete="one-time-code"
               placeholder="인증번호 입력"
               customStyle={{
                 transform: `translateY(-${step !== 1 ? 52 : 0}px)`,
