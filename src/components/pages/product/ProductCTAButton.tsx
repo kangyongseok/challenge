@@ -69,9 +69,8 @@ function ProductCTAButton() {
 
   const { isLoggedIn, data: accessUser } = useSession();
 
-  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct } = useProductType(
-    productDetail?.product.sellerType
-  );
+  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } =
+    useProductType(productDetail?.product.sellerType);
 
   const {
     isDuplicate,
@@ -426,7 +425,7 @@ function ProductCTAButton() {
                   )}
                 </>
               )}
-            {isAllOperatorProduct && !isSoldOut && (
+            {(isOperatorProduct || isOperatorC2CProduct) && !isSoldOut && (
               <Flexbox alignment="center" gap={5}>
                 <Typography
                   weight="medium"
