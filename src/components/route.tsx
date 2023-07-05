@@ -1,12 +1,10 @@
-import type { ReactNode } from 'react'
+import { useContext } from 'react'
+import { RouterContext } from './Router';
 
-function Route({ path, component }: { path: string; component: ReactNode }) {
-  if (path === window.location.pathname) {
-    return (
-      <div>
-        {component}
-      </div>
-    )
+function Route({ path, component }: { path: string; component: JSX.Element }) {
+  const routerContext = useContext(RouterContext)
+  if (path === routerContext?.path) {
+    return component
   }
   return null
 }
