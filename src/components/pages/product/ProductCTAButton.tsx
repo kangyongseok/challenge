@@ -283,7 +283,7 @@ function ProductCTAButton() {
           isAllOperatorProduct={isAllOperatorProduct}
           openPriceOfferOnBoarding={openPriceOfferOnBoarding}
           hasAccessUser={isLoggedIn}
-          hide={!isLoggedIn && checkAgent.isMobileApp()}
+          hide={(!isLoggedIn && checkAgent.isMobileApp()) || (isLoggedIn && !isAllOperatorProduct)}
         >
           {isLoggedIn && isAllOperatorProduct && <Triangle />}
           <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
