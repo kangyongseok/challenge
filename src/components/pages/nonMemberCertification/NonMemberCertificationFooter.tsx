@@ -25,7 +25,7 @@ import {
   nonMemberCertificationFormState
 } from '@recoil/nonMemberCertification/atom';
 import useSignOut from '@hooks/useSignOut';
-import useSafariKeyboardFocus from '@hooks/useSafariKeyboardFocus';
+import useSafariInputFocus from '@hooks/useSafariInputFocus';
 
 interface NonMemberCertificationFooterProps {
   authNumberInputRef: RefObject<HTMLInputElement>;
@@ -34,7 +34,7 @@ interface NonMemberCertificationFooterProps {
 function NonMemberCertificationFooter({ authNumberInputRef }: NonMemberCertificationFooterProps) {
   const router = useRouter();
 
-  const { height } = useSafariKeyboardFocus();
+  const { height } = useSafariInputFocus();
   const signOut = useSignOut();
 
   const [{ step, phoneNumber, authNumber, userId }, setNonMemberCertificationFormState] =

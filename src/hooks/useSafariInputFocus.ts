@@ -4,7 +4,7 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 
 import { inputFocusState } from '@recoil/common';
 
-export default function useSafariKeyboardFocus() {
+export default function useSafariInputFocus() {
   const inputFocus = useRecoilValue(inputFocusState);
   const resetInputFocusState = useResetRecoilState(inputFocusState);
 
@@ -77,7 +77,7 @@ export default function useSafariKeyboardFocus() {
 
       if (!newHeight) newHeight = window.scrollY;
 
-      if (newHeight !== height && inputFocus && !isFocusingRef.current) {
+      if (newHeight !== height && height && inputFocus && !isFocusingRef.current) {
         setHeight(newHeight);
         syncHeightRef.current = newHeight;
       }

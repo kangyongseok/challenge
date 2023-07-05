@@ -26,7 +26,7 @@ import {
   productInquiryFormState
 } from '@recoil/productInquiry/atom';
 import useSignOut from '@hooks/useSignOut';
-import useSafariKeyboardFocus from '@hooks/useSafariKeyboardFocus';
+import useSafariInputFocus from '@hooks/useSafariInputFocus';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
@@ -42,7 +42,7 @@ function ProductInquiryFooter({ authNumberInputRef }: ProductInquiryFooterProps)
 
   const queryClient = useQueryClient();
   const toastStack = useToastStack();
-  const { height } = useSafariKeyboardFocus();
+  const { height } = useSafariInputFocus();
   const signOut = useSignOut();
 
   const [{ step, content, phoneNumber, authNumber, userId }, setProductInquiryFormState] =
