@@ -11,6 +11,7 @@ import {
   MypageEtc,
   MypageIntro,
   MypageLegitInfo,
+  MypageManage,
   MypageMyInfo,
   MypageNonMemberLogin,
   MypageProfile,
@@ -105,6 +106,8 @@ function MyPage() {
       <MypageMyInfo />
       <Gap height={1} />
       <MypageSetting />
+      <Gap height={1} />
+      <MypageManage />
       <Gap height={1} />
       <MypageEtc />
     </GeneralTemplate>

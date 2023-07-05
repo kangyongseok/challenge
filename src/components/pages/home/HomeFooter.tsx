@@ -27,9 +27,13 @@ function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
       <Typography variant="body2">사업자등록번호: 662-81-00864</Typography>
       <Typography variant="body2">통신판매업 신고번호: 2019-서울성동-01263</Typography>
       <Typography variant="body2">고객센터: 070-4788-9600</Typography>
-      <Typography variant="small2" customStyle={{ color: common.ui60, margin: '10px 0 28px 0' }}>
-        (주)미스터카멜은 통신판매중개자로서 중고 명품 전문 거래 마켓플레이스 카멜의 거래당사자가
-        아니며, 입점판매자가 등록한 상품정보 및 거래에 대해 책임을 지지 않습니다.
+      <Typography
+        variant="small2"
+        customStyle={{ color: common.ui60, margin: '10px 0 28px 0', wordBreak: 'keep-all' }}
+      >
+        (주)미스터카멜은 통신판매중개자로서 거래 당사자가 아니며, 판매 회원과 구매 회원 간의
+        상품정보 및 거래에 대해 책임을 지지 않습니다. 또한 상품에 직접 관여하지 않으며, 상품 주문,
+        배송 및 환불의 의무와 책임은 각 판매자에게 있습니다.
       </Typography>
       <Flexbox alignment="center" gap={10}>
         <Link href="/terms/privacy" prefetch={false}>

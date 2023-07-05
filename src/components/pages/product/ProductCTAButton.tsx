@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
@@ -47,6 +47,8 @@ import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 import ProductDetailButtonGroup from './ProductDetailButtonGroup';
 
+let lastScrollY = 0;
+
 function ProductCTAButton() {
   const { push } = useRouter();
 
@@ -54,6 +56,7 @@ function ProductCTAButton() {
 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [isScrollDown, setIsScrollDown] = useState(false);
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
 
@@ -233,6 +236,17 @@ function ProductCTAButton() {
     }));
   };
 
+  const handleScrollEvent = useCallback(() => {
+    const { scrollY } = window;
+    if (scrollY > lastScrollY && !isScrollDown) {
+      setIsScrollDown(true);
+    }
+    if (scrollY === 0) {
+      setIsScrollDown(false);
+    }
+    lastScrollY = scrollY;
+  }, [isScrollDown]);
+
   useEffect(() => {
     const hideDate = LocalStorage.get<string>(SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE);
 
@@ -269,6 +283,11 @@ function ProductCTAButton() {
       setOpenPriceOfferOnBoarding(true);
     }
   }, [complete, productWishComplete, isPossibleOffer, isChannelProduct]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScrollEvent);
+    return () => window.removeEventListener('scroll', handleScrollEvent);
+  }, [handleScrollEvent]);
 
   if (isLoggedIn && productDetail?.roleSeller?.userId === accessUser?.userId) return null;
 

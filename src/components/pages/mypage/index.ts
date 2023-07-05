@@ -9,3 +9,4 @@ export { default as MypageAlarmSettingOff } from './MypageAlarmSettingOff';
 export { default as MypageAlarmSetting } from './MypageAlarmSetting';
 export { default as MypageNonMemberLogin } from './MypageNonMemberLogin';
 export { default as MypageEventBanner } from './MypageEventBanner';
+export { default as MypageManage } from './MypageManage';

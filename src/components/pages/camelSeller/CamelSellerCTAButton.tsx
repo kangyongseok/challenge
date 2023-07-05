@@ -4,7 +4,7 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Button } from '@mrcamelhub/camel-ui';
+import { Box, Button, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import SessionStorage from '@library/sessionStorage';
@@ -32,6 +32,11 @@ import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 import useInitializeSendbird from '@hooks/useInitializeSendbird';
 
 function CamelSellerCTAButton() {
+  const {
+    theme: {
+      palette: { common }
+    }
+  } = useTheme();
   const router = useRouter();
   const { id: productId } = router.query;
 
@@ -229,6 +234,21 @@ function CamelSellerCTAButton() {
 
   return (
     <>
+      <Box
+        customStyle={{
+          borderTop: `1px solid ${common.line01}`,
+          marginTop: 52,
+          padding: 20,
+          marginLeft: -20,
+          width: 'calc(100% + 40px)'
+        }}
+      >
+        <Typography variant="small2" color="ui60" customStyle={{ wordBreak: 'keep-all' }}>
+          (주)미스터카멜은 통신판매중개자로서 거래 당사자가 아니며, 판매 회원과 구매 회원 간의
+          상품정보 및 거래에 대해 책임을 지지 않습니다. 또한 상품에 직접 관여하지 않으며, 상품 주문,
+          배송 및 환불의 의무와 책임은 각 판매자에게 있습니다.
+        </Typography>
+      </Box>
       <CustomButton
         variant="solid"
         size="xlarge"
@@ -237,7 +257,7 @@ function CamelSellerCTAButton() {
         customDisabled={!isValid || isImageLoading || isLoading || isLoadingEditMutate}
         onClick={handleClick}
         customStyle={{
-          margin: '32px 0 20px',
+          margin: '0 0 20px',
           pointerEvents: 'auto'
         }}
       >

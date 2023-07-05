@@ -23,6 +23,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   ProductActions,
   ProductButlerContents,
+  ProductCamelGuardText,
   ProductDetailBannerGroup,
   ProductDetailFooter,
   ProductDetailLegitBottomSheet,
@@ -591,6 +592,7 @@ function ProductDetail() {
             )}
           </>
         )}
+        <ProductCamelGuardText />
       </GeneralTemplate>
       <AppDownloadDialog
         variant="wish"

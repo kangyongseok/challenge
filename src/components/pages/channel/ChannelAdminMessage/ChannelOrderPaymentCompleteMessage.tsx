@@ -103,12 +103,29 @@ function ChannelOrderPaymentCompleteMessage({
               marginTop: 8
             }}
           >
-            구매자가 매물을 결제했어요.
+            결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.
+            <br />
             <br />
             판매하려면 판매승인 버튼을 눌러주세요.
             <br />
+            <br />
+          </Typography>
+          <Typography color="ui60" variant="body2">
             {dayjs(order?.dateExpired).format('MM월 DD일')}까지 미확인시 주문이 취소됩니다.
           </Typography>
+          <Box
+            customStyle={{
+              background: common.bg02,
+              borderRadius: 8,
+              padding: '8px 12px',
+              marginTop: 20
+            }}
+          >
+            <Typography customStyle={{ wordBreak: 'keep-all' }} variant="body2" color="ui60">
+              판매승인 이후에는 취소가 어려울 수 있어요. 구매자의 주문/배송 문의에 친절히
+              답변해주세요. 기분좋은 거래문화, 함께 만들어요🤗
+            </Typography>
+          </Box>
           {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래대기' && (
             <Flexbox
               gap={8}

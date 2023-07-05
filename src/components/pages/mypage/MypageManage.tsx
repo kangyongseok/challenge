@@ -9,24 +9,34 @@ import { Badge, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import { FeatureIsMobileAppDownDialog } from '@components/UI/organisms';
 import { Menu, MenuItem } from '@components/UI/molecules';
 
+import { logEvent } from '@library/amplitude';
+
 import { fetchUserAccounts } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
 
-import { checkAgent } from '@utils/common';
-
+import {
+  settingsTransferDataState,
+  settingsTransferPlatformsState
+} from '@recoil/settingsTransfer';
+import { settingsAccountData } from '@recoil/settingsAccount';
 import {
   nonMemberCertificationFormState,
   nonMemberCertificationReSendState
 } from '@recoil/nonMemberCertification/atom';
 import useSession from '@hooks/useSession';
 
-function MypageSetting() {
+function MypageManage() {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [openNonMemberDialog, setOpenNonMemberDialog] = useState(false);
 
+  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
+  const resetDataState = useResetRecoilState(settingsTransferDataState);
+  const resetAccountDataState = useResetRecoilState(settingsAccountData);
   const resetNonMemberCertificationFormState = useResetRecoilState(nonMemberCertificationFormState);
   const resetNonMemberCertificationReSendState = useResetRecoilState(
     nonMemberCertificationReSendState
@@ -42,39 +52,29 @@ function MypageSetting() {
     }
   );
 
-  const handleClickAlarmSetting = useCallback(() => {
-    if (!checkAgent.isMobileApp()) {
-      setOpen(true);
-      return;
-    }
-
-    if (checkAgent.isAndroidApp() && window.webview && window.webview.callAuthPush) {
-      window.webview.callAuthPush();
-    }
-
-    if (
-      checkAgent.isIOSApp() &&
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.callAuthPush &&
-      window.webkit.messageHandlers.callAuthPush.postMessage
-    ) {
-      window.webkit.messageHandlers.callAuthPush.postMessage(0);
-    }
-
-    window.getAuthPush = (result: string) => {
-      router.push(`/mypage/settings/alarm?setting=${result}`);
-    };
+  const handleClickBlockedUsers = useCallback(() => {
+    logEvent(attrKeys.mypage.CLICK_BLOCK_LIST, { name: attrProperty.name.MY });
+    router.push('/mypage/settings/blockedUsers');
   }, [router]);
 
-  const handleClickKeywordAlert = useCallback(
-    () => router.push('/mypage/settings/keywordAlert'),
-    [router]
-  );
+  const handleClickTransfer = useCallback(() => {
+    resetPlatformsState();
+    resetDataState();
+    router.push('/mypage/settings/transfer');
+  }, [resetPlatformsState, resetDataState, router]);
 
-  const handleClickFixMessage = useCallback(() => {
-    router.push('/mypage/settings/channelFixMessage');
-  }, [router]);
+  const handleClickAccount = useCallback(() => {
+    logEvent(attrKeys.mypage.CLICK_PERSONAL_INPUT, {
+      name: attrProperty.name.MY,
+      title: attrProperty.title.ACCOUNT
+    });
+    resetAccountDataState();
+    router.push('/mypage/settings/account');
+  }, [resetAccountDataState, router]);
+
+  const handleClickNonMemberOrderCheck = useCallback(() => {
+    setOpenNonMemberDialog(true);
+  }, []);
 
   const handleClickNonMemberOrderCheckConfirm = () => {
     resetNonMemberCertificationFormState();
@@ -85,16 +85,24 @@ function MypageSetting() {
 
   const settingMenu = useMemo(
     () => [
-      { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
-      { label: '키워드 알림', isNew: false, onClick: handleClickKeywordAlert },
-      { label: '채팅 고정 메시지 설정', isNew: false, onClick: handleClickFixMessage }
+      { label: '정산계좌', isNew: false, onClick: handleClickAccount },
+      { label: '차단 사용자 관리', isNew: false, onClick: handleClickBlockedUsers },
+      { label: '내 상품 가져오기', isNew: false, onClick: handleClickTransfer },
+      { label: '비회원 주문조회', isNew: false, onClick: handleClickNonMemberOrderCheck },
+      { label: '자주 묻는 질문', isNew: false, onClick: () => router.push('/mypage/qna') }
     ],
-    [handleClickAlarmSetting, handleClickFixMessage, handleClickKeywordAlert]
+    [
+      handleClickAccount,
+      handleClickBlockedUsers,
+      handleClickNonMemberOrderCheck,
+      handleClickTransfer,
+      router
+    ]
   );
 
   return (
     <>
-      <Menu id="mypage-setting" title="알림 및 설정">
+      <Menu id="mypage-manage" title="관리">
         {settingMenu.map(({ label, isNew, onClick }) => (
           <MenuItem
             key={`info-menu-${label}`}
@@ -177,4 +185,4 @@ function MypageSetting() {
   );
 }
 
-export default MypageSetting;
+export default MypageManage;

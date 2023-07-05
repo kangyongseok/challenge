@@ -73,7 +73,7 @@ function ChannelPurchaseConfirmDialog({
   return (
     <Dialog open={open} onClose={handleClose}>
       <Typography variant="h3" weight="bold" textAlign="center">
-        구매한 매물을 구매확정할까요?
+        구매하신 매물 잘 받으셨나요?
       </Typography>
       <Typography
         variant="h4"
@@ -82,9 +82,9 @@ function ChannelPurchaseConfirmDialog({
           marginTop: 8
         }}
       >
-        매물상태를 확인하고 구매확정해주세요.
+        구매확정 후 반품/교환은 불가능하니
         <br />
-        구매확정 후 반품은 불가능합니다.
+        매물을 꼼꼼히 확인 후 구매확정해주세요.
       </Typography>
       <Flexbox
         direction="vertical"
