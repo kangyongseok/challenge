@@ -11,7 +11,7 @@ export default function useSafariInputFocus() {
   const [height, setHeight] = useState(0);
 
   const syncHeightRef = useRef(0);
-  const isFocusingRef = useRef(true);
+  const isFocusingRef = useRef(false);
   const focusDurationTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const heightSyncIntervalRef = useRef<ReturnType<typeof setInterval>>();
   const initializedRef = useRef(false);
@@ -46,7 +46,7 @@ export default function useSafariInputFocus() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!inputFocus || !height || isFocusingRef.current) return;
+      if (!inputFocus || isFocusingRef.current) return;
 
       window.scrollTo({
         top: height
@@ -81,7 +81,7 @@ export default function useSafariInputFocus() {
         setHeight(newHeight);
         syncHeightRef.current = newHeight;
       }
-    }, 10);
+    }, 50);
 
     return () => {
       if (heightSyncIntervalRef.current) {
@@ -96,6 +96,9 @@ export default function useSafariInputFocus() {
 
       if (focusDurationTimerRef.current) {
         clearTimeout(focusDurationTimerRef.current);
+      }
+      if (heightSyncIntervalRef.current) {
+        clearInterval(heightSyncIntervalRef.current);
       }
     };
   }, [resetInputFocusState]);

@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
-
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
-import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 
 import BottomNavigation from '@components/UI/molecules/BottomNavigation';
 import { Gap } from '@components/UI/atoms';
@@ -32,28 +29,9 @@ import { getCookies } from '@utils/cookies';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
-import useHistoryManage from '@hooks/useHistoryManage';
 
 function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useProductKeywordAutoSave('categories');
-
-  const { viewToast } = useHistoryManage();
-
-  const toastStack = useToastStack();
-
-  useEffect(() => {
-    if (viewToast) {
-      toastStack({
-        children: (
-          <>
-            <p>전국의 중고명품을 모두 모았어요.</p>
-            <p>원하는 매물을 둘러보세요!</p>
-          </>
-        )
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
