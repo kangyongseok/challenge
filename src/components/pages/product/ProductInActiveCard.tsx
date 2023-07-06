@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
@@ -62,7 +63,9 @@ function ProductInActiveCard({
 
   const isNormalSeller = product?.sellerType === productType.normal;
 
-  const handleClick = (item: KeywordList) => () => {
+  const handleClick = (item: KeywordList) => (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     let viewType = 'search';
     const productKeyword = item.name?.replace('(P)', '') || item.keyword;
 

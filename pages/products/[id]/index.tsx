@@ -572,7 +572,7 @@ function ProductDetail() {
                 )}
               </>
             )}
-            {!isCamelButlerProduct && (
+            {!isCamelButlerProduct && !checkAgent.isMobileApp() && (
               <>
                 <ProductRelatedProductList
                   brandId={data?.product?.brand.id}
@@ -588,6 +588,24 @@ function ProductDetail() {
                   isDeleted={isDeleted}
                 />
                 {(!isSoldOutMoweb || viewDetailProduct) && <ProductMowebAppContents data={data} />}
+              </>
+            )}
+            {!isCamelButlerProduct && checkAgent.isMobileApp() && (
+              <>
+                {(!isSoldOutMoweb || viewDetailProduct) && <ProductMowebAppContents data={data} />}
+                <ProductRelatedProductList
+                  brandId={data?.product?.brand.id}
+                  categoryId={data?.product?.category.id}
+                  line={data?.product?.line}
+                  prevProduct={data?.product}
+                  quoteTitle={data?.product.quoteTitle}
+                  price={data?.product.price}
+                  productId={data?.product.id}
+                  parentId={data?.product?.category.parentId}
+                  size={data?.product.size}
+                  isSoldOut={isSoldOut}
+                  isDeleted={isDeleted}
+                />
               </>
             )}
           </>
