@@ -32,6 +32,7 @@ function GeneralTemplate({
   footer,
   disablePadding,
   hideAppDownloadBanner,
+  hideMowebFooter,
   customStyle
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
@@ -69,6 +70,7 @@ function GeneralTemplate({
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>
       {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) &&
+        !hideMowebFooter &&
         showMowebFooterCase &&
         !router.query.redirect &&
         !router.query.userAgent && <MowebFooter />}

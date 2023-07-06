@@ -48,7 +48,11 @@ function Error500({ logging = true }: Error500Props) {
   }, [router]);
 
   return (
-    <GeneralTemplate customStyle={{ backgroundColor: common.ui98 }} hideAppDownloadBanner>
+    <GeneralTemplate
+      customStyle={{ backgroundColor: common.ui98 }}
+      hideAppDownloadBanner
+      hideMowebFooter
+    >
       <Flexbox
         direction="vertical"
         alignment="center"

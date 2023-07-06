@@ -224,17 +224,17 @@ function App({ Component, pageProps }: AppProps) {
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
       <GoogleTagManagerProvider />
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient.current}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <RecoilRoot>
-              <ThemeModeProvider>
+      <QueryClientProvider client={queryClient.current}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <RecoilRoot>
+            <ThemeModeProvider>
+              <ErrorBoundary>
                 <HistoryProvider>
                   <PageSkeleton />
                   <ABTestProvider identifier={pageProps.abTestIdentifier}>
                     <PortalProvider>
-                      <AuthProvider accessUser={pageProps.accessUser}>
-                        <SessionProvider>
+                      <SessionProvider>
+                        <AuthProvider accessUser={pageProps.accessUser}>
                           <SendbirdProvider>
                             <ToastProvider>
                               <DialogProvider>
@@ -244,19 +244,19 @@ function App({ Component, pageProps }: AppProps) {
                               </DialogProvider>
                             </ToastProvider>
                           </SendbirdProvider>
-                        </SessionProvider>
-                      </AuthProvider>
+                        </AuthProvider>
+                      </SessionProvider>
                     </PortalProvider>
                   </ABTestProvider>
                   <LegitResultSurveyTypeform />
                   {router.pathname !== '/login' && <LoginBottomSheet />}
                 </HistoryProvider>
-              </ThemeModeProvider>
-            </RecoilRoot>
-          </Hydrate>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </ErrorBoundary>
+              </ErrorBoundary>
+            </ThemeModeProvider>
+          </RecoilRoot>
+        </Hydrate>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }

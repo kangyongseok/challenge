@@ -42,7 +42,11 @@ function Error404() {
   }, [router]);
 
   return (
-    <GeneralTemplate customStyle={{ backgroundColor: common.ui98 }} hideAppDownloadBanner>
+    <GeneralTemplate
+      customStyle={{ backgroundColor: common.ui98 }}
+      hideAppDownloadBanner
+      hideMowebFooter
+    >
       <Flexbox
         direction="vertical"
         alignment="center"

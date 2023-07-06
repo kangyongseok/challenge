@@ -280,7 +280,7 @@ function HomePersonalGuide() {
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 7);
+      ).slice(0, 8);
 
       setGuides([...categories, ...brands]);
     }
