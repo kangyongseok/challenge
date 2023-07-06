@@ -9,22 +9,16 @@ import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Avatar, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import {
-  AppUpdateForChatDialog,
-  OnBoardingSpotlight,
-  SafePaymentGuideDialog
-} from '@components/UI/organisms';
+import { AppUpdateForChatDialog, OnBoardingSpotlight } from '@components/UI/organisms';
 
 import type { ProductOffer } from '@dto/productOffer';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
-import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { SAFE_PAYMENT_COMMISSION_FREE_BANNER_HIDE_DATE } from '@constants/localStorage';
 import { IOS_SAFE_AREA_BOTTOM } from '@constants/common';
-import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { productDetailAtt } from '@utils/products';
@@ -92,7 +86,6 @@ function ProductCTAButton() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setPendingCreateChannel] = useState(false); // pendingCreateChannel
-  const [openSafePaymentGuideDialog, setOpenSafePaymentGuideDialog] = useState(false);
 
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
   const [hasOffer, setHasOffer] = useState(false);
@@ -126,17 +119,6 @@ function ProductCTAButton() {
         })}?redirect=1&userAgent=${userAgent}`,
         '_blank'
       );
-  };
-
-  const handleClickSafePaymentFreeBanner = () => {
-    if (isAllOperatorProduct) return;
-
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.ORDER
-    });
-
-    setOpenSafePaymentGuideDialog((prevState) => !prevState);
   };
 
   const handleClickPriceOffer = async (e: MouseEvent<HTMLDivElement>) => {
@@ -298,7 +280,6 @@ function ProductCTAButton() {
           alignment="center"
           justifyContent="space-between"
           gap={4}
-          onClick={handleClickSafePaymentFreeBanner}
           isAllOperatorProduct={isAllOperatorProduct}
           openPriceOfferOnBoarding={openPriceOfferOnBoarding}
           hasAccessUser={isLoggedIn}
@@ -459,10 +440,6 @@ function ProductCTAButton() {
         </Tooltip>
         <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />
       </Wrapper>
-      <SafePaymentGuideDialog
-        open={openSafePaymentGuideDialog}
-        onClose={() => setOpenSafePaymentGuideDialog(false)}
-      />
       <AppUpdateForChatDialog open={openChatRequiredUpdateDialog} />
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <Typography variant="h3" weight="bold">

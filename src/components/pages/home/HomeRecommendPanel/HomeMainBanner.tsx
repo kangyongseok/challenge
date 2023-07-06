@@ -6,8 +6,6 @@ import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { SafePaymentGuideDialog } from '@components/UI/organisms';
-
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
@@ -38,7 +36,6 @@ function HomeMainBanner() {
   const { isLoggedIn } = useSession();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [open, setOpen] = useState(false);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
@@ -71,87 +68,80 @@ function HomeMainBanner() {
   // };
 
   return (
-    <>
-      <Swiper
-        onSlideChange={handleChange}
-        style={{
-          position: 'relative',
-          width: '100%'
-        }}
-      >
-        {/* <SwiperSlide> */}
-        {/*  <Box */}
-        {/*    onClick={handleClick} */}
-        {/*    customStyle={{ */}
-        {/*      height: 104, */}
-        {/*      backgroundColor: primary.main */}
-        {/*    }} */}
-        {/*  > */}
-        {/*    <Image */}
-        {/*      height={104} */}
-        {/*      src={getImageResizePath({ */}
-        {/*        imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/app-first-payment-event-banner.png`, */}
-        {/*        h: 104 */}
-        {/*      })} */}
-        {/*      alt="Main Banner Img" */}
-        {/*      disableAspectRatio */}
-        {/*    /> */}
-        {/*  </Box> */}
-        {/* </SwiperSlide> */}
-        <SwiperSlide>
-          <Box
-            onClick={handleClickTransferBanner}
-            customStyle={{
-              height: 104,
-              backgroundColor: '#111A3D'
-            }}
-          >
-            <Image
-              height={104}
-              src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`,
-                h: 104
-              })}
-              alt="내 상품 가져오기로 한번에 판매 등록 배너"
-              disableAspectRatio
-            />
-          </Box>
-        </SwiperSlide>
-        <Flexbox
-          alignment="center"
-          justifyContent="center"
+    <Swiper
+      onSlideChange={handleChange}
+      style={{
+        position: 'relative',
+        width: '100%'
+      }}
+    >
+      {/* <SwiperSlide> */}
+      {/*  <Box */}
+      {/*    onClick={handleClick} */}
+      {/*    customStyle={{ */}
+      {/*      height: 104, */}
+      {/*      backgroundColor: primary.main */}
+      {/*    }} */}
+      {/*  > */}
+      {/*    <Image */}
+      {/*      height={104} */}
+      {/*      src={getImageResizePath({ */}
+      {/*        imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/app-first-payment-event-banner.png`, */}
+      {/*        h: 104 */}
+      {/*      })} */}
+      {/*      alt="Main Banner Img" */}
+      {/*      disableAspectRatio */}
+      {/*    /> */}
+      {/*  </Box> */}
+      {/* </SwiperSlide> */}
+      <SwiperSlide>
+        <Box
+          onClick={handleClickTransferBanner}
           customStyle={{
-            display: 'none',
-            position: 'absolute',
-            right: 20,
-            bottom: 12,
-            padding: '2px 6px',
-            borderRadius: 12,
-            backgroundColor: common.ui20,
-            zIndex: 10
+            height: 104,
+            backgroundColor: '#111A3D'
           }}
         >
-          <Typography
-            variant="body2"
-            weight="medium"
-            customStyle={{
-              color: common.uiWhite,
-              '& > span': {
-                color: common.ui60
-              }
-            }}
-          >
-            {currentIndex + 1}
-            <span>/2</span>
-          </Typography>
-        </Flexbox>
-      </Swiper>
-      <SafePaymentGuideDialog
-        open={open}
-        onClose={() => setOpen(false)}
-        ctaType="viewSafePaymentProducts"
-      />
-    </>
+          <Image
+            height={104}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`,
+              h: 104
+            })}
+            alt="내 상품 가져오기로 한번에 판매 등록 배너"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <Flexbox
+        alignment="center"
+        justifyContent="center"
+        customStyle={{
+          display: 'none',
+          position: 'absolute',
+          right: 20,
+          bottom: 12,
+          padding: '2px 6px',
+          borderRadius: 12,
+          backgroundColor: common.ui20,
+          zIndex: 10
+        }}
+      >
+        <Typography
+          variant="body2"
+          weight="medium"
+          customStyle={{
+            color: common.uiWhite,
+            '& > span': {
+              color: common.ui60
+            }
+          }}
+        >
+          {currentIndex + 1}
+          <span>/2</span>
+        </Typography>
+      </Flexbox>
+    </Swiper>
   );
 }
 
