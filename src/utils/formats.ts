@@ -1,5 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import relativeTime from 'dayjs/plugin/relativeTime';
+import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
 import { CSSValue } from '@mrcamelhub/camel-ui';
 
@@ -7,6 +8,7 @@ require('dayjs/locale/ko');
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
+dayjs.extend(isBetween);
 
 /**
  * @name getTenThousandUnitPrice

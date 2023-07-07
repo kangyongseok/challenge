@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { Box, Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -36,6 +37,7 @@ interface ChannelHeaderProps {
   isAdminBlockUser?: boolean;
   isTargetUserBlocked?: boolean;
   dateActivated?: string;
+  isAllOperatorProduct?: boolean;
 }
 
 function ChannelHeader({
@@ -49,7 +51,8 @@ function ChannelHeader({
   sellerUserId,
   isAdminBlockUser,
   isTargetUserBlocked,
-  dateActivated = ''
+  dateActivated = '',
+  isAllOperatorProduct
 }: ChannelHeaderProps) {
   const router = useRouter();
   const { key } = router.query;
@@ -102,6 +105,15 @@ function ChannelHeader({
     setMoreBottomSheetState({ open: true, isChannel: true });
   }, [setMoreBottomSheetState]);
 
+  const getOperatorTime = useMemo(() => {
+    const now = dayjs();
+    const start = dayjs().set('hour', 10).set('minute', 0).set('second', 0);
+    const end = dayjs().set('hour', 19).set('minute', 0).set('second', 0);
+    const weekday = now.day();
+
+    return now.isBetween(start, end) && weekday >= 1 && weekday <= 5;
+  }, []);
+
   return (
     <Layout>
       <Wrapper>
@@ -125,27 +137,56 @@ function ChannelHeader({
         ) : (
           <>
             <Title disabled={isDeletedTargetUser} onClick={handleClickTitle}>
-              {!isTargetUserBlocked && !isAdminBlockUser && !isDeletedTargetUser && (
-                <UserAvatar
-                  width={32}
-                  height={32}
-                  src={getImageResizePath({
-                    imagePath: getImagePathStaticParser(targetUserImage || ''),
-                    w: 32
-                  })}
-                  isRound
-                  iconCustomStyle={{ width: 16, height: 16 }}
+              {isAllOperatorProduct && (
+                <Icon
+                  name="Logo_45_45"
+                  width={28}
+                  height={28}
+                  color={getOperatorTime ? 'primary' : 'ui80'}
                 />
               )}
+              {!isTargetUserBlocked &&
+                !isAdminBlockUser &&
+                !isDeletedTargetUser &&
+                !isAllOperatorProduct && (
+                  <UserAvatar
+                    width={32}
+                    height={32}
+                    src={getImageResizePath({
+                      imagePath: getImagePathStaticParser(targetUserImage || ''),
+                      w: 32
+                    })}
+                    isRound
+                    iconCustomStyle={{ width: 16, height: 16 }}
+                  />
+                )}
               <Flexbox direction="vertical">
-                <UserName
-                  weight="bold"
-                  disabled={isTargetUserBlocked || isAdminBlockUser || isDeletedTargetUser}
-                >
-                  {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
-                  {!isDeletedTargetUser && (isTargetUserBlocked || isAdminBlockUser) && ' (차단)'}
-                </UserName>
-                {dateActivated && (
+                {isAllOperatorProduct && (
+                  <Typography weight="bold" variant="h3">
+                    카멜 구매대행 ({targetUserName.split('(')[0]})
+                  </Typography>
+                )}
+                {!isAllOperatorProduct && (
+                  <UserName
+                    weight="bold"
+                    disabled={isTargetUserBlocked || isAdminBlockUser || isDeletedTargetUser}
+                  >
+                    {`${targetUserName}${isDeletedTargetUser ? ' (탈퇴)' : ''}`}
+                    {!isDeletedTargetUser && (isTargetUserBlocked || isAdminBlockUser) && ' (차단)'}
+                  </UserName>
+                )}
+                {isAllOperatorProduct && (
+                  <Flexbox alignment="center">
+                    <Typography
+                      color={getOperatorTime ? 'primary' : 'ui60'}
+                      variant="small2"
+                      weight="medium"
+                    >
+                      {getOperatorTime ? '운영중' : '운영시간 평일 10:00 ~ 19:00'} •
+                    </Typography>
+                  </Flexbox>
+                )}
+                {dateActivated && !isAllOperatorProduct && (
                   <Flexbox alignment="center">
                     {getTimeForamt.icon === 'time' ? (
                       <Icon

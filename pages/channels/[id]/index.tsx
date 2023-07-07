@@ -153,7 +153,7 @@ function Channel() {
   }, [isDeletedProduct, product, router]);
 
   const handleClickSafePayment = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
+    (inspector?: boolean) => {
       logEvent(attrKeys.channel.CLICK_PURCHASE, {
         name: attrProperty.name.CHANNEL_DETAIL,
         id: product?.id,
@@ -169,12 +169,14 @@ function Channel() {
 
       if (!product || isDeletedProduct) return;
 
-      e.stopPropagation();
-
-      const pathname = `${getProductDetailUrl({
+      let pathname = `${getProductDetailUrl({
         product: product as ProductResult,
         type: 'productResult'
       })}/order`;
+
+      if (inspector) {
+        pathname += `?includeLegit=${inspector}`;
+      }
 
       SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
         source: 'CHANNEL_DETAIL'
@@ -529,6 +531,7 @@ function Channel() {
                 targetUserId={targetUserId}
                 isAdminBlockUser={isAdminBlockUser}
                 dateActivated={useQueryChannel?.data?.dateActivated}
+                isAllOperatorProduct={isAllOperatorProduct}
               />
               {!isCamelAdminUser && (
                 <FixedProductInfo
@@ -544,8 +547,10 @@ function Channel() {
                   price={product?.price || 0}
                   order={orders[0]}
                   offer={offers[0]}
+                  productId={product?.id}
                   onClick={handleClickProduct}
                   onClickSafePayment={handleClickSafePayment}
+                  isAllOperatorProduct={isAllOperatorProduct}
                   onClickStatus={() =>
                     logEvent(attrKeys.channel.CLICK_PRODUCT_MANAGE, {
                       name: attrProperty.name.CHANNEL_DETAIL,
@@ -554,7 +559,9 @@ function Channel() {
                   }
                 />
               )}
-              {isAllOperatorProduct && <ChannelCamelAuthFixBanner type="operator" />}
+              {isAllOperatorProduct && (
+                <ChannelCamelAuthFixBanner type="operator" platformName={product?.site.name} />
+              )}
               {!channel?.isReserved && isCrawlingProduct && !isAllOperatorProduct && (
                 <ChannelCamelAuthFixBanner type="external" />
               )}

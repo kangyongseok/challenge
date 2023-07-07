@@ -8,6 +8,7 @@ import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Avatar, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
+import PurchasingAgentBottomSheet from '@components/UI/organisms/PurchasingAgentBottomSheet';
 import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { AppUpdateForChatDialog, AppUpdateForSafePayment } from '@components/UI/organisms';
 
@@ -72,6 +73,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
@@ -280,6 +282,18 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     }
 
     if (!accessUser) {
+      if (openPurchasingAgentBottomSheet) {
+        setOpenPurchasingAgentBottomSheet(false);
+        setTimeout(() => {
+          setLoginBottomSheet({
+            open: true,
+            returnUrl: '',
+            mode: !checkAgent.isMobileApp() ? 'nonMember' : 'normal'
+          });
+        }, 500);
+        return;
+      }
+
       setLoginBottomSheet({
         open: true,
         returnUrl: '',
@@ -293,7 +307,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     });
 
     mutateMetaInfo({ isAddPurchaseCount: true });
-
     push(`/products/${id}/order`);
   };
 
@@ -307,6 +320,10 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
     if (productDetail?.product)
       push(getProductDetailUrl({ type: 'targetProduct', product: productDetail.product }));
+  };
+
+  const handleClickOperatorPayment = () => {
+    setOpenPurchasingAgentBottomSheet(true);
   };
 
   if (isDisabledState) {
@@ -367,14 +384,15 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             disabled={isDisabledState}
             customStyle={{ padding: 12, minWidth: 63, maxWidth: 63 }}
           >
-            문의
+            채팅
           </Button>
           <Button
             fullWidth
             size="xlarge"
             variant="solid"
             brandColor="black"
-            onClick={handleClickSafePayment}
+            // onClick={handleClickSafePayment}
+            onClick={handleClickOperatorPayment}
             disabled={isDisabledState}
             customStyle={{ minWidth: 'fit-content', padding: 12 }}
           >
@@ -383,6 +401,12 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
         </Flexbox>
         <AppUpdateForChatDialog open={open} />
         <AppUpdateForSafePayment open={openDialog} />
+        <PurchasingAgentBottomSheet
+          open={openPurchasingAgentBottomSheet}
+          onClose={() => setOpenPurchasingAgentBottomSheet(false)}
+          onClickPayment={handleClickSafePayment}
+          logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
+        />
       </>
     );
   }
@@ -407,7 +431,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             size="xlarge"
             variant="solid"
             brandColor="black"
-            onClick={handleClickSafePayment}
+            onClick={() => handleClickSafePayment()}
             disabled={isDisabledState}
           >
             안전결제

@@ -26,6 +26,8 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
 
+import useProductType from '@hooks/useProductType';
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
 /**
@@ -95,6 +97,8 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         .reverse() || []
     );
   }, [product?.weekAvgPrices]);
+
+  const { isAllOperatorProduct } = useProductType(product?.sellerType);
 
   const productPrice = useMemo(() => {
     const viewPrice = chartValues[6] || 0;
@@ -350,7 +354,7 @@ function ProductAveragePriceChart({ product }: ProductAveragePriceChartProps) {
         >
           시세이하 매물보기
         </Button>
-        <Divider />
+        {!isAllOperatorProduct && <Divider />}
       </>
     </>
   );

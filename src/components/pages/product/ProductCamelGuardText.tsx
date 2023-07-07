@@ -25,6 +25,7 @@ const CamelGuardText = styled.div`
   padding: 20px;
   width: calc(100% + 40px);
   margin-left: -20px;
+  padding-bottom: 52px;
 `;
 
 export default ProductCamelGuardText;

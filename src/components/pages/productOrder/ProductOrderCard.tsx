@@ -1,13 +1,42 @@
-import { Avatar, Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
+import { Box } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 
+import { fetchProductOrder } from '@api/order';
+
+import queryKeys from '@constants/queryKeys';
+
+import useSession from '@hooks/useSession';
 import useQueryProduct from '@hooks/useQueryProduct';
+import useProductType from '@hooks/useProductType';
 
-function ProductOrderCard() {
+function ProductOrderCard({ includeLegit }: { includeLegit: boolean }) {
+  const router = useRouter();
+  const { id } = router.query;
+  const splitId = String(id).split('-');
+  const productId = Number(splitId[splitId.length - 1] || 0);
   const { data: { product, offers = [] } = {}, isLoading } = useQueryProduct();
-
-  const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
+  const { isAllOperatorProduct } = useProductType(product?.sellerType);
+  const { isLoggedInWithSMS } = useSession();
+  const { data: { totalPrice = 0 } = {} } = useQuery(
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
+    {
+      enabled: isLoggedInWithSMS && !!productId,
+      refetchOnMount: true
+    }
+  );
 
   return (
     <Box
@@ -26,9 +55,10 @@ function ProductOrderCard() {
           hideMetaInfo
           hideAreaInfo
           hideWishButton
+          operatorTotalPrice={isAllOperatorProduct ? totalPrice : undefined}
         />
       )}
-      {isAllOperatorType && (
+      {/* {isAllOperatorType && (
         <Flexbox
           alignment="flex-start"
           gap={6}
@@ -44,7 +74,7 @@ function ProductOrderCard() {
             {product?.site.name} 매물을 카멜이 대신 구매하여 입력한 배송지로 보내드립니다.
           </Typography>
         </Flexbox>
-      )}
+      )} */}
     </Box>
   );
 }

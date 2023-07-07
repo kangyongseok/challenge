@@ -1,6 +1,7 @@
-import type { MouseEvent } from 'react';
+import { MouseEvent, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
+import { useQuery } from '@tanstack/react-query';
 import {
   Avatar,
   Box,
@@ -14,11 +15,17 @@ import {
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
+import PurchasingAgentBottomSheet from '@components/UI/organisms/PurchasingAgentBottomSheet';
+
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 
+import { fetchProduct } from '@api/product';
+
+import queryKeys from '@constants/queryKeys';
 import { PRODUCT_INFORMATION_HEIGHT } from '@constants/common';
 import { productStatus } from '@constants/channel';
+import attrProperty from '@constants/attrProperty';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import {
@@ -46,8 +53,10 @@ interface FixedProductInfoProps {
   price: number;
   order?: Order | null;
   offer?: ProductOffer | null;
+  isAllOperatorProduct?: boolean;
+  productId?: number;
   onClick?: () => void;
-  onClickSafePayment?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClickSafePayment?: () => void;
   onClickStatus?: () => void;
   customStyle?: CustomStyle;
 }
@@ -66,6 +75,8 @@ function FixedProductInfo({
   price,
   order,
   offer,
+  productId,
+  isAllOperatorProduct,
   onClick,
   onClickSafePayment,
   onClickStatus,
@@ -76,6 +87,16 @@ function FixedProductInfo({
       palette: { primary, common }
     }
   } = useTheme();
+
+  const { data } = useQuery(
+    queryKeys.products.product({ productId: Number(productId) }),
+    () => fetchProduct({ productId: Number(productId) }),
+    {
+      enabled: !!productId
+    }
+  );
+
+  const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
 
   const setProductStatusBottomSheetState = useSetRecoilState(
     channelBottomSheetStateFamily('productStatus')
@@ -91,9 +112,7 @@ function FixedProductInfo({
     if (onClickStatus) onClickStatus();
   };
 
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-
+  const handleClick = () => {
     if (status === 4) {
       setReservingDialogState((prevState) => ({
         ...prevState,
@@ -115,7 +134,7 @@ function FixedProductInfo({
       return;
 
     if (onClickSafePayment) {
-      onClickSafePayment(e);
+      onClickSafePayment();
     }
   };
 
@@ -142,79 +161,99 @@ function FixedProductInfo({
   ) : (
     <Flexbox
       component="section"
-      onClick={onClick}
       customStyle={{
         minHeight: PRODUCT_INFORMATION_HEIGHT,
         ...customStyle
       }}
     >
       <Wrapper>
-        <Avatar
-          width={48}
-          height={48}
-          src={getImageResizePath({
-            imagePath: getImagePathStaticParser(image || ''),
-            w: 48
-          })}
-          alt="Product Img"
-          round={8}
-          customStyle={{
-            opacity: isDeletedProduct ? 0.4 : 1
-          }}
-        />
-        <Flexbox direction="vertical" gap={4} customStyle={{ overflow: 'hidden' }}>
-          <Flexbox alignment="center" gap={8}>
-            <Flexbox
-              alignment="center"
-              gap={2}
-              customStyle={{
-                whiteSpace: 'nowrap'
-              }}
-              onClick={handleClickProductStatus}
-            >
-              <Typography
-                variant="body2"
-                weight="bold"
-                customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
+        <Flexbox
+          onClick={onClick}
+          alignment="center"
+          gap={8}
+          customStyle={{ width: 'calc(100% - 80px)' }}
+        >
+          <Avatar
+            width={48}
+            height={48}
+            src={getImageResizePath({
+              imagePath: getImagePathStaticParser(image || ''),
+              w: 48
+            })}
+            alt="Product Img"
+            round={8}
+            customStyle={{
+              opacity: isDeletedProduct ? 0.4 : 1
+            }}
+          />
+          <Flexbox direction="vertical" gap={4} customStyle={{ overflow: 'hidden' }}>
+            <Flexbox alignment="center" gap={8}>
+              <Flexbox
+                alignment="center"
+                gap={2}
+                customStyle={{
+                  whiteSpace: 'nowrap'
+                }}
+                onClick={handleClickProductStatus}
               >
-                {isDeletedProduct ? '삭제됨' : productStatus[status as keyof typeof productStatus]}
-              </Typography>
-              {isEditableProductStatus && (
-                <Icon
-                  name="DropdownFilled"
-                  viewBox="0 0 12 26"
-                  width={8}
-                  height={16}
-                  color={isDeletedProduct ? 'ui80' : 'ui20'}
-                />
-              )}
+                <Typography
+                  variant="body2"
+                  weight="bold"
+                  customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
+                >
+                  {isDeletedProduct
+                    ? '삭제됨'
+                    : productStatus[status as keyof typeof productStatus]}
+                </Typography>
+                {isEditableProductStatus && (
+                  <Icon
+                    name="DropdownFilled"
+                    viewBox="0 0 12 26"
+                    width={8}
+                    height={16}
+                    color={isDeletedProduct ? 'ui80' : 'ui20'}
+                  />
+                )}
+              </Flexbox>
+              <Title variant="body2" isDeletedProduct={isDeletedProduct}>
+                {title}
+              </Title>
             </Flexbox>
-            <Title variant="body2" isDeletedProduct={isDeletedProduct}>
-              {title}
-            </Title>
+            {!isDeletedProduct && offer?.status === 1 && (
+              <Flexbox gap={4} alignment="center">
+                <Typography variant="h4" weight="bold" customStyle={{ color: primary.main }}>
+                  {commaNumber(getTenThousandUnitPrice(offer?.price))}만원
+                </Typography>
+                <Typography
+                  variant="body2"
+                  customStyle={{ textDecoration: 'line-through', color: common.ui60 }}
+                >
+                  {commaNumber(getTenThousandUnitPrice(price))}만원
+                </Typography>
+              </Flexbox>
+            )}
+            {offer?.status !== 1 && (
+              <Flexbox alignment="flex-end" gap={5}>
+                <Typography
+                  variant="h4"
+                  weight="bold"
+                  customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
+                >
+                  {commaNumber(
+                    getTenThousandUnitPrice(
+                      isAllOperatorProduct ? data?.orderInfo.totalPrice || 0 : price
+                    )
+                  )}
+                  만원
+                </Typography>
+                {isAllOperatorProduct && (
+                  <Typography variant="small2" color="ui60" customStyle={{ paddingBottom: 2 }}>
+                    카멜 구매대행가
+                  </Typography>
+                )}
+              </Flexbox>
+            )}
           </Flexbox>
-          {!isDeletedProduct && offer?.status === 1 && (
-            <Flexbox gap={4} alignment="center">
-              <Typography variant="h4" weight="bold" customStyle={{ color: primary.main }}>
-                {commaNumber(getTenThousandUnitPrice(offer?.price))}만원
-              </Typography>
-              <Typography
-                variant="body2"
-                customStyle={{ textDecoration: 'line-through', color: common.ui60 }}
-              >
-                {commaNumber(getTenThousandUnitPrice(price))}만원
-              </Typography>
-            </Flexbox>
-          )}
-          {offer?.status !== 1 && (
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
-            >
-              {commaNumber(getTenThousandUnitPrice(price))}만원
-            </Typography>
-          )}
         </Flexbox>
         {onClickSafePayment && !isEditableProductStatus && (
           <Box
@@ -226,7 +265,13 @@ function FixedProductInfo({
             <SafePaymentButton
               variant="solid"
               brandColor="black"
-              onClick={handleClick}
+              onClick={() => {
+                if (isAllOperatorProduct) {
+                  setOpenPurchasingAgentBottomSheet(true);
+                } else {
+                  handleClick();
+                }
+              }}
               customDisabled={
                 (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
                   getOrderStatusText({ status: order?.status, result: order?.result })
@@ -246,6 +291,14 @@ function FixedProductInfo({
           </Box>
         )}
       </Wrapper>
+      <PurchasingAgentBottomSheet
+        open={openPurchasingAgentBottomSheet}
+        onClose={() => setOpenPurchasingAgentBottomSheet(false)}
+        onClickPayment={handleClick}
+        logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
+        orderInfoProps={data?.orderInfo}
+        siteName={data?.product.site.name}
+      />
     </Flexbox>
   );
 }

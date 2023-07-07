@@ -61,6 +61,7 @@ export interface NewProductListCardProps extends HTMLAttributes<HTMLDivElement> 
   hideAreaInfo?: boolean;
   hideMetaInfo?: boolean;
   hideWishButton?: boolean;
+  operatorTotalPrice?: number;
   attributes?: {
     name?: string;
     title?: string;
@@ -91,6 +92,7 @@ function NewProductListCard({
   onClickManageProduct,
   measure,
   customStyle,
+  operatorTotalPrice,
   ...props
 }: NewProductListCardProps) {
   const router = useRouter();
@@ -426,7 +428,7 @@ function NewProductListCard({
                 </Flexbox>
               ) : (
                 <Typography variant="h3" weight="bold">
-                  {`${commaNumber(getTenThousandUnitPrice(price))}만원`}
+                  {`${commaNumber(getTenThousandUnitPrice(operatorTotalPrice || price))}만원`}
                 </Typography>
               )}
               {subText && (

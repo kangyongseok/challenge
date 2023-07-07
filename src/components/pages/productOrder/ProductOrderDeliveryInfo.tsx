@@ -8,7 +8,7 @@ import queryKeys from '@constants/queryKeys';
 
 import useSession from '@hooks/useSession';
 
-function ProductOrderDeliveryInfo() {
+function ProductOrderDeliveryInfo({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
@@ -23,8 +23,17 @@ function ProductOrderDeliveryInfo() {
   const { isLoggedInWithSMS } = useSession();
 
   const { data: { deliveryInfo } = {}, isLoading } = useQuery(
-    queryKeys.orders.productOrder({ productId, isCreated: true }),
-    () => fetchProductOrder({ productId, isCreated: true }),
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
     {
       enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true

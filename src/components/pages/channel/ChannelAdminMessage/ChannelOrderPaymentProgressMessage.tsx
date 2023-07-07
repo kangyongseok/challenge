@@ -31,6 +31,8 @@ function ChannelOrderPaymentProgressMessage({
 
   const { data: accessUser } = useSession();
 
+  const isAllOperatorProduct = false;
+
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
   const handleClick = () => {
@@ -58,6 +60,16 @@ function ChannelOrderPaymentProgressMessage({
             borderRadius: 20
           }}
         >
+          {isAllOperatorProduct && (
+            <Typography
+              weight="bold"
+              color="primary"
+              variant="h4"
+              customStyle={{ marginBottom: 4 }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             입금요청
           </Typography>
@@ -98,7 +110,7 @@ function ChannelOrderPaymentProgressMessage({
                   color: common.ui60
                 }}
               >
-                안전결제수수료
+                {isAllOperatorProduct ? '구매대행수수료' : '안전결제수수료'}
               </Typography>
               <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
             </Flexbox>

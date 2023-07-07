@@ -1,3 +1,5 @@
+import { OrderFees } from './product';
+
 export interface Order {
   id: number;
   channelId: number;
@@ -8,6 +10,7 @@ export interface Order {
   orderDetails: OrderDetail[];
   orderPayments: OrderPayments[];
   orderFeeInfos: OrderFeeInfos[];
+  orderFees: OrderFees[];
   orderDelivery: OrderDelivery;
   firstProductId: number;
   reviewFormInfo: {
@@ -95,4 +98,5 @@ export interface OrderSearchParams {
 export interface ProductOrderParams {
   productId: number;
   isCreated?: boolean;
+  includeLegit?: boolean;
 }

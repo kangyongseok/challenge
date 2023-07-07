@@ -425,7 +425,8 @@ const title = {
   RANK: 'RANK',
   RECOMMKEYWORD: 'RECOMMKEYWORD',
   FOOTER_RANK: 'FOOTER_RANK',
-  CHANNEL: 'CHANNEL'
+  CHANNEL: 'CHANNEL',
+  OPERATOR: 'OPERATOR'
 };
 
 const source = {

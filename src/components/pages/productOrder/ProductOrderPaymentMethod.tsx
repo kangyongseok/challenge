@@ -19,11 +19,13 @@ interface ProductOrderPaymentMethodProps {
   paymentMethodsWidgetRef: MutableRefObject<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>;
+  includeLegit: boolean;
 }
 
 function ProductOrderPaymentMethod({
   paymentWidgetRef,
-  paymentMethodsWidgetRef
+  paymentMethodsWidgetRef,
+  includeLegit
 }: ProductOrderPaymentMethodProps) {
   const router = useRouter();
   const { id } = router.query;
@@ -33,8 +35,17 @@ function ProductOrderPaymentMethod({
   const { isLoggedInWithSMS, data: accessUser } = useSession();
 
   const { data: { totalPrice = 0 } = {} } = useQuery(
-    queryKeys.orders.productOrder({ productId, isCreated: true }),
-    () => fetchProductOrder({ productId, isCreated: true }),
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
     {
       enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true

@@ -30,13 +30,15 @@ export const getChannelTitle = ({
   groupChannel,
   isTargetUserBlocked,
   isAdminBlockUser,
-  currentUserId
+  currentUserId,
+  isOperator
 }: {
   targetUser: ChannelUser | null;
   groupChannel: GroupChannel | undefined;
   isTargetUserBlocked: boolean;
   isAdminBlockUser: boolean;
   currentUserId: string;
+  isOperator?: boolean;
 }): string => {
   if (targetUser) {
     let suffix = '';
@@ -45,8 +47,12 @@ export const getChannelTitle = ({
 
     if (targetUser.user.isDeleted) suffix = ' (탈퇴)';
 
-    if (targetUser.user.nickName || targetUser.user.name)
+    if (targetUser.user.nickName || targetUser.user.name) {
+      if (isOperator) {
+        return `구매대행 (${targetUser.user.nickName.split('(')[0]})`;
+      }
       return `${targetUser.user.nickName || targetUser.user.name}${suffix}`;
+    }
 
     return `회원${targetUser.user.id}${suffix}`;
   }

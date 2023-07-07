@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 
@@ -12,20 +12,29 @@ import {
   ProductOrderDeliveryInfo,
   ProductOrderHeader,
   ProductOrderPaymentInfo,
-  ProductOrderPaymentMethod
+  ProductOrderPaymentMethod,
+  ProductOrderPurchasingInfo
 } from '@components/pages/productOrder';
 
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrKeys from '@constants/attrKeys';
+
+import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductOrder() {
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
+
+  const [includeLegit, setIncludeLegit] = useState(false);
+
+  const { data: { product } = {} } = useQueryProduct();
+  const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
 
   useEffect(() => {
     const { source } =
@@ -34,27 +43,35 @@ function ProductOrder() {
       ) || {};
 
     logEvent(attrKeys.productOrder.VIEW_ORDER_PAYMENT, {
-      source
+      source,
+      type: isAllOperatorType ? 'OPERATOR' : ''
     });
+  }, [isAllOperatorType]);
+
+  useEffect(() => {
+    setIncludeLegit(LocalStorage.get('includeLegit') || false);
+    return () => LocalStorage.remove('includeLegit');
   }, []);
 
   return (
     <>
       <GeneralTemplate header={<ProductOrderHeader />} disablePadding hideAppDownloadBanner>
-        <ProductOrderCard />
+        <ProductOrderPurchasingInfo />
+        <ProductOrderCard includeLegit={includeLegit} />
         <Gap height={8} />
-        <ProductOrderDeliveryInfo />
+        <ProductOrderDeliveryInfo includeLegit={includeLegit} />
         <Gap height={8} />
-        <ProductOrderPaymentInfo />
+        <ProductOrderPaymentInfo includeLegit={includeLegit} />
         <Gap height={8} />
         <ProductOrderPaymentMethod
           paymentWidgetRef={paymentWidgetRef}
           paymentMethodsWidgetRef={paymentMethodsWidgetRef}
+          includeLegit={includeLegit}
         />
         <Gap height={8} />
-        <ProductOrderConfirm paymentWidgetRef={paymentWidgetRef} />
+        <ProductOrderConfirm paymentWidgetRef={paymentWidgetRef} includeLegit={includeLegit} />
       </GeneralTemplate>
-      <ProductOrderCardOverDialog />
+      <ProductOrderCardOverDialog includeLegit={includeLegit} />
       <ProductOrderAppUpdateDialog />
     </>
   );

@@ -50,6 +50,10 @@ function ChannelMessage({ sendbirdChannel: channel, message, nextMessage }: Chan
     }
   }, [isByMe, status]);
 
+  // if (!!channel.members.find((member) => member.userId === '113')) {
+  //   console.log(message);
+  // }
+
   if (isTextMessage(message as UserMessage) || isOGMessage(message as UserMessage)) {
     return (
       <>

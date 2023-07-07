@@ -259,8 +259,8 @@ const Table = styled.table`
     font-size: 12px;
     vertical-align: top;
   }
-  th:first-child,
-  td:first-child {
+  th:first-of-type,
+  td:first-of-type {
     border-right: 1px solid
       ${({
         theme: {

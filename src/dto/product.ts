@@ -537,6 +537,23 @@ export interface ProductDetail {
   distances: CommonCode[];
   offers: ProductOffer[];
   hasOrder: boolean;
+  orderInfo: OrderInfo;
+}
+
+export interface OrderInfo {
+  fee: number;
+  price: number;
+  totalPrice: number;
+  orderFees: OrderFees[];
+}
+
+export interface OrderFees {
+  type: 1 | 2;
+  name: string;
+  fee: number;
+  totalFee: number;
+  discountFee: number;
+  feeRate: number;
 }
 
 export type ProductSellerReview = {

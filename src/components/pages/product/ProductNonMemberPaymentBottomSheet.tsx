@@ -139,7 +139,6 @@ function ProductNonMemberPaymentBottomSheet() {
     logEvent(attrKeys.products.SUBMIT_CHECK_NUMBER, {
       title: attrProperty.title.PAYMENT
     });
-
     mutateAuthorize(
       {
         userId,
@@ -153,8 +152,8 @@ function ProductNonMemberPaymentBottomSheet() {
           LocalStorage.set(ACCESS_USER, accessUser);
           LocalStorage.set(ACCESS_TOKEN, jwtToken);
           Axios.setAccessToken(jwtToken);
-
-          await router.replace(`/products/${id}/order`);
+          const includeLegit = LocalStorage.get('INCLUDELEGIT');
+          await router.replace(`/products/${id}/order?includeLegit=${includeLegit}`);
         },
         onError(data) {
           const { response } = (data as AxiosError) || {};

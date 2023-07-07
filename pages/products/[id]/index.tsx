@@ -30,6 +30,7 @@ import {
   ProductImages,
   ProductInActiveCard,
   ProductInfo,
+  ProductInfoOperator,
   ProductMowebAppContents,
   ProductNonMemberPaymentBottomSheet,
   ProductRedirect,
@@ -122,7 +123,7 @@ function ProductDetail() {
     isSoldOut,
     discountedPrice
   } = useProductState({ productDetail: data, product: data?.product });
-  const { isCamelButlerProduct } = useProductType(data?.product.sellerType);
+  const { isCamelButlerProduct, isAllOperatorProduct } = useProductType(data?.product.sellerType);
 
   const isSafe = useMemo(() => {
     if (data) {
@@ -554,15 +555,24 @@ function ProductDetail() {
                   getProductImageOverlay={getProductImageOverlay}
                   isProductLegit={data?.productLegit}
                 />
-                <ProductInfo
-                  isMySelfProduct={isMySelfProduct}
-                  sizeData={sizeParser()}
-                  unitText={data?.units[0]?.description}
-                  storeText={data?.stores[0]?.description}
-                  distanceText={data?.distances[0]?.description}
-                  isWish={data?.wish}
-                  onClickWish={handleClickWish}
-                />
+                {isAllOperatorProduct && (
+                  <ProductInfoOperator
+                    isMySelfProduct={isMySelfProduct}
+                    isWish={data?.wish}
+                    onClickWish={handleClickWish}
+                  />
+                )}
+                {!isAllOperatorProduct && (
+                  <ProductInfo
+                    isMySelfProduct={isMySelfProduct}
+                    sizeData={sizeParser()}
+                    unitText={data?.units[0]?.description}
+                    storeText={data?.stores[0]?.description}
+                    distanceText={data?.distances[0]?.description}
+                    isWish={data?.wish}
+                    onClickWish={handleClickWish}
+                  />
+                )}
                 {isCamelButlerProduct && <ProductButlerContents />}
                 {!isCamelButlerProduct && (
                   <>

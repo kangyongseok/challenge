@@ -19,3 +19,4 @@ export { default as ProductDetailBannerGroup } from './ProductDetailBannerGroup'
 export { default as ProductButlerContents } from './ProductButlerContents';
 export { default as ProductNonMemberPaymentBottomSheet } from './ProductNonMemberPaymentBottomSheet';
 export { default as ProductCamelGuardText } from './ProductCamelGuardText';
+export { default as ProductInfoOperator } from './ProductInfoOperator';

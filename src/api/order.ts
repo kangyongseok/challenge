@@ -5,10 +5,15 @@ import Axios from '@library/axios';
 
 const BASE_PATH = '/orders';
 
-export async function fetchProductOrder({ productId, isCreated }: ProductOrderParams) {
+export async function fetchProductOrder({
+  productId,
+  isCreated,
+  includeLegit
+}: ProductOrderParams) {
   const { data } = await Axios.getInstance().get<Order>(`${BASE_PATH}/products/${productId}`, {
     params: {
-      isCreated
+      isCreated,
+      includeLegit
     }
   });
 

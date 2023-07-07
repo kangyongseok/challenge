@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
-import { Avatar, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import { AppUpdateForChatDialog, OnBoardingSpotlight } from '@components/UI/organisms';
@@ -26,7 +26,6 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 import {
   checkAgent,
   commaNumber,
-  getProductDetailUrl,
   isExtendedLayoutIOSVersion,
   needUpdateChatIOSVersion
 } from '@utils/common';
@@ -66,8 +65,9 @@ function ProductCTAButton() {
 
   const { isLoggedIn, data: accessUser } = useSession();
 
-  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct, isOperatorC2CProduct } =
-    useProductType(productDetail?.product.sellerType);
+  const { isOperatorProduct, isAllOperatorProduct, isChannelProduct } = useProductType(
+    productDetail?.product.sellerType
+  );
 
   const {
     isDuplicate,
@@ -75,7 +75,6 @@ function ProductCTAButton() {
     isTargetProduct,
     isSafePayment,
     isPriceOffer,
-    isSoldOut,
     isDisabledState
   } = useProductState({ productDetail, product: productDetail?.product });
 
@@ -95,31 +94,31 @@ function ProductCTAButton() {
 
   const priceOfferAreaRef = useRef<HTMLDivElement>(null);
 
-  const pageMovePlatform = () => {
-    if (!productDetail?.product) return;
-    const { source: productDetailSource } =
-      SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
-      {};
-    productDetailAtt({
-      key: attrKeys.products.CLICK_PURCHASE,
-      product: productDetail?.product,
-      source: productDetailSource || undefined,
-      rest: { att: 'REDIRECT' }
-    });
+  // const pageMovePlatform = () => {
+  //   if (!productDetail?.product) return;
+  //   const { source: productDetailSource } =
+  //     SessionStorage.get<{ source?: string }>(sessionStorageKeys.productDetailEventProperties) ||
+  //     {};
+  //   productDetailAtt({
+  //     key: attrKeys.products.CLICK_PURCHASE,
+  //     product: productDetail?.product,
+  //     source: productDetailSource || undefined,
+  //     rest: { att: 'REDIRECT' }
+  //   });
 
-    let userAgent = 0;
+  //   let userAgent = 0;
 
-    if (checkAgent.isIOSApp()) userAgent = 1;
-    if (checkAgent.isAndroidApp()) userAgent = 2;
+  //   if (checkAgent.isIOSApp()) userAgent = 1;
+  //   if (checkAgent.isAndroidApp()) userAgent = 2;
 
-    if (productDetail.product)
-      window.open(
-        `${getProductDetailUrl({
-          product: productDetail.product
-        })}?redirect=1&userAgent=${userAgent}`,
-        '_blank'
-      );
-  };
+  //   if (productDetail.product)
+  //     window.open(
+  //       `${getProductDetailUrl({
+  //         product: productDetail.product
+  //       })}?redirect=1&userAgent=${userAgent}`,
+  //       '_blank'
+  //     );
+  // };
 
   const handleClickPriceOffer = async (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -285,7 +284,6 @@ function ProductCTAButton() {
           hasAccessUser={isLoggedIn}
           hide={(!isLoggedIn && checkAgent.isMobileApp()) || (isLoggedIn && !isAllOperatorProduct)}
         >
-          {isLoggedIn && isAllOperatorProduct && <Triangle />}
           <PaymentLabelContents gap={4} alignment="center" justifyContent="center">
             {(!isLoggedIn || !isAllOperatorProduct) && (
               <Icon
@@ -297,14 +295,8 @@ function ProductCTAButton() {
             )}
             {isLoggedIn && isAllOperatorProduct && (
               <Flexbox gap={4} alignment="center">
-                <Avatar
-                  width={16}
-                  height={16}
-                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${productDetail?.product?.site?.id}.png`}
-                  alt="플랫폼 이미지"
-                />
                 <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
-                  {productDetail?.product?.site?.name} 매물을 카멜이 대신 구매해드려요.
+                  카멜 구매대행으로 판매자에게 즉시 문의하고 거래하세요!
                 </Typography>
               </Flexbox>
             )}
@@ -374,7 +366,14 @@ function ProductCTAButton() {
                   lineHeight: '26px'
                 }}
               >
-                {commaNumber(getTenThousandUnitPrice(productDetail?.product?.price || 0))}만원
+                {commaNumber(
+                  getTenThousandUnitPrice(
+                    isAllOperatorProduct
+                      ? productDetail?.orderInfo.totalPrice || 0
+                      : productDetail?.product?.price || 0
+                  )
+                )}
+                만원
               </Typography>
             )}
             {isPossibleOffer &&
@@ -420,7 +419,8 @@ function ProductCTAButton() {
                   )}
                 </>
               )}
-            {(isOperatorProduct || isOperatorC2CProduct) && !isSoldOut && (
+            {isAllOperatorProduct && <Typography color="ui60">카멜 구매대행가</Typography>}
+            {/* {isCrawlingProduct && !isSoldOut && (
               <Flexbox alignment="center" gap={5}>
                 <Typography
                   weight="medium"
@@ -435,7 +435,7 @@ function ProductCTAButton() {
                 </Typography>
                 <Outlink />
               </Flexbox>
-            )}
+            )} */}
           </Flexbox>
         </Tooltip>
         <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />
@@ -509,22 +509,6 @@ const Wrapper = styled.div`
   z-index: ${({ theme: { zIndex } }) => zIndex.button};
 `;
 
-const Triangle = styled.div`
-  width: 0;
-  height: 0;
-  border-top: 10px solid
-    ${({
-      theme: {
-        palette: { primary }
-      }
-    }) => primary.light};
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  position: absolute;
-  bottom: -7px;
-  right: 80px;
-`;
-
 const PaymentLabelWrap = styled(Flexbox)<{
   isAllOperatorProduct: boolean;
   openPriceOfferOnBoarding: boolean;
@@ -566,24 +550,5 @@ const PaymentLabelContents = styled(Flexbox)`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-
-function Outlink() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M0 1.5C0 0.671573 0.671573 0 1.5 0H3V1.5H1.5V10.5H10.5V9H12V10.5C12 11.3284 11.3284 12 10.5 12H1.5C0.671573 12 0 11.3284 0 10.5V1.5Z"
-        fill="#425BFF"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M6 0H12V6H10.5V2.56066L5.25 7.81066L4.18934 6.75L9.43934 1.5H6V0Z"
-        fill="#425BFF"
-      />
-    </svg>
-  );
-}
 
 export default ProductCTAButton;

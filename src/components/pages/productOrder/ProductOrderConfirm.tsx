@@ -31,12 +31,14 @@ import { getProductType } from '@utils/products';
 import { commaNumber } from '@utils/formats';
 
 import useSession from '@hooks/useSession';
+import useProductType from '@hooks/useProductType';
 
 interface ProductOrderConfirmProps {
   paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
+  includeLegit: boolean;
 }
 
-function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
+function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderConfirmProps) {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
@@ -61,8 +63,17 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
     } = {},
     isLoading
   } = useQuery(
-    queryKeys.orders.productOrder({ productId, isCreated: true }),
-    () => fetchProductOrder({ productId, isCreated: true }),
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
     {
       enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
@@ -91,7 +102,9 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
     subChecked3: false
   });
   const [checked, setChecked] = useState(false);
+  const [operatorChecked, setOperatorChecked] = useState(false);
   const [openPolicy, setOpenPolicy] = useState(false);
+  const { isAllOperatorProduct } = useProductType(product?.sellerType);
 
   const handleClick = () => {
     const { source } =
@@ -193,7 +206,7 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
             onClick={() => setToggle(!toggle)}
           >
             <CheckboxGroup
-              text="상품정보 및 결제 대행 서비스 이용약관 동의"
+              text="개인정보 및 결제 대행 서비스 이용약관 동의"
               size="large"
               onChange={() =>
                 setCheckedGroup((prevState) => ({
@@ -318,16 +331,43 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
             </Flexbox>
           </Flexbox>
         </Box>
-        <CheckboxGroup
-          text="주문 및 문의내역을 카카오 알림톡으로 받을게요."
-          size="large"
-          checked={checked}
-          onChange={() => setChecked(!checked)}
-          customStyle={{
-            gap: 4,
-            fontWeight: 700
-          }}
-        />
+        {accessUser?.snsType === 'sms' && (
+          <CheckboxGroup
+            text="주문 및 문의내역을 카카오 알림톡으로 받을게요."
+            size="large"
+            checked={checked}
+            onChange={() => setChecked(!checked)}
+            customStyle={{
+              gap: 4,
+              fontWeight: 700
+            }}
+          />
+        )}
+        {isAllOperatorProduct && (
+          <>
+            <CheckboxGroup
+              text="결제하시면 즉시 구매대행이 진행되며, 단순 변심이나 실수에 따른 매물의 반품/환불은 불가능합니다. 매물정보를 꼼꼼히 확인해주세요."
+              size="large"
+              checked={operatorChecked}
+              onChange={() => setOperatorChecked((prev) => !prev)}
+              customStyle={{
+                gap: 4,
+                fontWeight: 700,
+                alignItems: 'flex-start',
+                wordBreak: 'keep-all'
+              }}
+            />
+            <Typography
+              customStyle={{ wordBreak: 'keep-all', marginLeft: 24, marginTop: -10 }}
+              variant="body2"
+              color="ui60"
+            >
+              본 거래는 개인간 거래로 전자상거래법(제17조)에 따른 청약철회(환불, 교환) 규정이
+              적용되지 않습니다. 중고거래의 특성상 결제 전 충분한 사진/정보를 꼼꼼히 확인 후 결제를
+              진행해주세요.
+            </Typography>
+          </>
+        )}
         <Button
           variant="solid"
           brandColor="black"
@@ -336,7 +376,7 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
           onClick={handleClick}
           disabled={
             !checkedAll ||
-            !checked ||
+            (accessUser?.snsType === 'sms' ? !checked : false) ||
             !accessUser ||
             isLoading ||
             isLoadingProduct ||
@@ -345,7 +385,8 @@ function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
             !totalPrice ||
             !deliveryInfo ||
             status !== 0 ||
-            result !== 0
+            result !== 0 ||
+            (isAllOperatorProduct ? !operatorChecked : false)
           }
           customStyle={{
             marginTop: 20

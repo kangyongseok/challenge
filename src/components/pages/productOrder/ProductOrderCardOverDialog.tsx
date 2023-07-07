@@ -13,7 +13,7 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 
 import useSession from '@hooks/useSession';
 
-function ProductOrderCardOverDialog() {
+function ProductOrderCardOverDialog({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
@@ -21,8 +21,17 @@ function ProductOrderCardOverDialog() {
 
   const { isLoggedInWithSMS } = useSession();
   const { data: { price } = {} } = useQuery(
-    queryKeys.orders.productOrder({ productId, isCreated: true }),
-    () => fetchProductOrder({ productId, isCreated: true }),
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
     {
       enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true

@@ -1,6 +1,8 @@
+import { useState } from 'react';
+
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { fetchProduct } from '@api/product';
 import { fetchProductOrder } from '@api/order';
@@ -10,12 +12,18 @@ import queryKeys from '@constants/queryKeys';
 import { commaNumber } from '@utils/formats';
 
 import useSession from '@hooks/useSession';
+import useQueryProduct from '@hooks/useQueryProduct';
 
-function ProductOrderPaymentInfo() {
+function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
   const { id } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
+  const [openTooltip, setOpenTooltip] = useState(false);
+
+  const { data: { product } = {} } = useQueryProduct();
+
+  const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
 
   const {
     theme: {
@@ -25,16 +33,25 @@ function ProductOrderPaymentInfo() {
 
   const { isLoggedInWithSMS } = useSession();
 
-  const { data: { totalPrice = 0, fee = 0 } = {} } = useQuery(
-    queryKeys.orders.productOrder({ productId, isCreated: true }),
-    () => fetchProductOrder({ productId, isCreated: true }),
+  const { data: { totalPrice = 0, fee = 0, orderFees } = {} } = useQuery(
+    queryKeys.orders.productOrder({
+      productId,
+      isCreated: true,
+      includeLegit
+    }),
+    () =>
+      fetchProductOrder({
+        productId,
+        isCreated: true,
+        includeLegit
+      }),
     {
       enabled: isLoggedInWithSMS && !!productId,
       refetchOnMount: true
     }
   );
 
-  const { data: { product: { price = 0 } = {}, offers = [] } = {} } = useQuery(
+  const { data: { product: { price = 0 } = {}, offers = [], orderInfo } = {} } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId }),
     {
@@ -67,9 +84,11 @@ function ProductOrderPaymentInfo() {
             color: common.ui60
           }}
         >
-          상품금액
+          {isAllOperatorType ? '매물금액' : '상품금액'}
         </Typography>
-        <Typography variant="h4">{commaNumber(price)}원</Typography>
+        <Typography variant="h4">
+          {commaNumber(isAllOperatorType ? orderInfo?.price || 0 : price)}원
+        </Typography>
       </Flexbox>
       {offers[0] && offers[0].status === 1 && (
         <Flexbox
@@ -91,24 +110,115 @@ function ProductOrderPaymentInfo() {
           <Typography variant="h4">- {commaNumber(price - totalPrice)}원</Typography>
         </Flexbox>
       )}
-      <Flexbox
-        alignment="center"
-        justifyContent="space-between"
-        customStyle={{
-          marginTop: 8,
-          color: common.ui60
-        }}
-      >
-        <Typography
-          variant="h4"
+      {isAllOperatorType ? (
+        orderFees?.map((orderFee) => (
+          <Flexbox
+            key={orderFee.name}
+            alignment="center"
+            justifyContent="space-between"
+            customStyle={{
+              marginTop: 8,
+              color: common.ui60
+            }}
+          >
+            <Typography
+              variant="h4"
+              customStyle={{
+                color: common.ui60,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              {orderFee.name}
+              {orderFee.type === 1 && (
+                <Tooltip
+                  open={openTooltip}
+                  message={
+                    <>
+                      <Typography
+                        color="uiWhite"
+                        variant="body2"
+                        weight="medium"
+                        customStyle={{
+                          textAlign: 'left',
+                          wordBreak: 'keep-all',
+                          width: 240,
+                          whiteSpace: 'pre-wrap'
+                        }}
+                      >
+                        {product?.site.name} 구매대행수수료는 {orderFee.feeRate}
+                        %입니다
+                      </Typography>
+                      <Typography
+                        color="uiWhite"
+                        variant="body2"
+                        weight="medium"
+                        customStyle={{
+                          textAlign: 'left',
+                          wordBreak: 'keep-all',
+                          width: 240,
+                          whiteSpace: 'pre-wrap',
+                          margin: '10px 0'
+                        }}
+                      >
+                        카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시, 판매자와
+                        직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여 안전합니다.
+                      </Typography>
+                      <Typography
+                        color="uiWhite"
+                        variant="body2"
+                        weight="medium"
+                        customStyle={{
+                          textAlign: 'left',
+                          wordBreak: 'keep-all',
+                          width: 240,
+                          whiteSpace: 'pre-wrap'
+                        }}
+                      >
+                        카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
+                      </Typography>
+                    </>
+                  }
+                  placement="bottom"
+                  triangleLeft={18}
+                  customStyle={{
+                    top: 'auto',
+                    bottom: 20,
+                    left: 115
+                  }}
+                >
+                  <Icon
+                    name="QuestionCircleOutlined"
+                    width={16}
+                    color="ui60"
+                    onClick={() => setOpenTooltip((prev) => !prev)}
+                  />
+                </Tooltip>
+              )}
+            </Typography>
+            <Typography variant="h4">{commaNumber(orderFee.totalFee || 0)}원</Typography>
+          </Flexbox>
+        ))
+      ) : (
+        <Flexbox
+          alignment="center"
+          justifyContent="space-between"
           customStyle={{
+            marginTop: 8,
             color: common.ui60
           }}
         >
-          안전결제수수료
-        </Typography>
-        <Typography variant="h4">{commaNumber(fee || 0)}원</Typography>
-      </Flexbox>
+          <Typography
+            variant="h4"
+            customStyle={{
+              color: common.ui60
+            }}
+          >
+            안전결제수수료
+          </Typography>
+          <Typography variant="h4">{commaNumber(fee || 0)}원</Typography>
+        </Flexbox>
+      )}
       <Flexbox
         alignment="center"
         justifyContent="space-between"
