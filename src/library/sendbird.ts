@@ -75,6 +75,7 @@ const SendBird = {
         nickname
       });
       console.log('Sendbird error', error);
+      throw error;
     }
 
     return sb;
