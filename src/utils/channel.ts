@@ -49,7 +49,7 @@ export const getChannelTitle = ({
 
     if (targetUser.user.nickName || targetUser.user.name) {
       if (isOperator) {
-        return `구매대행 (${targetUser.user.nickName.split('(')[0]})`;
+        return targetUser.user.nickName;
       }
       return `${targetUser.user.nickName || targetUser.user.name}${suffix}`;
     }

@@ -163,7 +163,7 @@ function ChannelHeader({
               <Flexbox direction="vertical">
                 {isAllOperatorProduct && (
                   <Typography weight="bold" variant="h3">
-                    카멜 구매대행 ({targetUserName.split('(')[0]})
+                    {targetUserName}
                   </Typography>
                 )}
                 {!isAllOperatorProduct && (
