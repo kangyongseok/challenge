@@ -612,7 +612,7 @@ export function convertSelectedSearchOptions(
               {
                 codeId: filterCodeIds.gender,
                 gender,
-                viewName: filterGenders[gender as keyof typeof filterGenders].name
+                viewName: filterGenders[gender as keyof typeof filterGenders]?.name
               }
             ];
           });

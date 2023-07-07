@@ -12,7 +12,7 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
   result += excludeViewKeys.map((key) => `${key}=${query[key]}`).join('&');
   return {
     redirect: {
-      destination: result,
+      destination: encodeURI(result),
       permanent: false
     }
   };
