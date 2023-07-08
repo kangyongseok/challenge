@@ -218,10 +218,10 @@ function PurchasingAgentBottomSheet({
                 </Tooltip>
               )}
             </Typography>
-            {!isCheck && orderInfo.type === 2 ? (
+            {!isCheck && orderInfo?.type === 2 ? (
               <Typography color="ui60">선택안함</Typography>
             ) : (
-              <Typography>{commaNumber(orderInfo.totalFee)}만원</Typography>
+              <Typography>{commaNumber(orderInfo?.totalFee)}만원</Typography>
             )}
           </Flexbox>
         ))}

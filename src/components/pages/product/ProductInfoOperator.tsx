@@ -724,7 +724,7 @@ function ProductInfoOperator({
                   )}
                 </Typography>
                 <Typography weight="medium" color="ui60">
-                  + {commaNumber(getTenThousandUnitPrice(orderInfo.totalFee))}만원
+                  + {commaNumber(getTenThousandUnitPrice(orderInfo?.totalFee))}만원
                 </Typography>
               </Flexbox>
             ))}

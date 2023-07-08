@@ -369,7 +369,7 @@ function ProductCTAButton() {
                 {commaNumber(
                   getTenThousandUnitPrice(
                     isAllOperatorProduct
-                      ? productDetail?.orderInfo.totalPrice || 0
+                      ? productDetail?.orderInfo?.totalPrice || 0
                       : productDetail?.product?.price || 0
                   )
                 )}

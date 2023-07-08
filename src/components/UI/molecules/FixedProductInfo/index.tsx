@@ -241,7 +241,7 @@ function FixedProductInfo({
                 >
                   {commaNumber(
                     getTenThousandUnitPrice(
-                      isAllOperatorProduct ? data?.orderInfo.totalPrice || 0 : price
+                      isAllOperatorProduct ? data?.orderInfo?.totalPrice || 0 : price
                     )
                   )}
                   만원
