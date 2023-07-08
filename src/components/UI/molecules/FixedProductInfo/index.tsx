@@ -298,6 +298,7 @@ function FixedProductInfo({
         logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
         orderInfoProps={data?.orderInfo}
         siteName={data?.product.site.name}
+        productDetail={data?.product}
       />
     </Flexbox>
   );

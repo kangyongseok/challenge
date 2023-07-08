@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { OrderInfo } from '@dto/product';
+import { OrderInfo, Product } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -14,15 +14,14 @@ import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
 
-import useQueryProduct from '@hooks/useQueryProduct';
-
 function PurchasingAgentBottomSheet({
   open,
   onClose,
   onClickPayment,
   logTitle,
   orderInfoProps,
-  siteName
+  siteName,
+  productDetail
 }: {
   open: boolean;
   onClose: () => void;
@@ -30,12 +29,13 @@ function PurchasingAgentBottomSheet({
   logTitle: 'OPERATOR' | 'ORDER';
   orderInfoProps?: OrderInfo;
   siteName?: string;
+  productDetail?: Product;
 }) {
   const router = useRouter();
   const [isCheck, setCheck] = useState(true);
   const [openTooltip, setOpenTooltip] = useState(false);
 
-  const { data: productDetail } = useQueryProduct();
+  // const { data: productDetail } = useQueryProduct();
 
   const handleClickCheck = () => {
     setCheck((prev) => !prev);
@@ -60,13 +60,8 @@ function PurchasingAgentBottomSheet({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let inspectorFee =
-    productDetail?.orderInfo?.orderFees?.find((orderInfo) => orderInfo.type === 2)?.totalFee || 0;
-
-  if (orderInfoProps) {
-    inspectorFee =
-      orderInfoProps?.orderFees?.find((orderInfo) => orderInfo.type === 2)?.totalFee || 0;
-  }
+  const inspectorFee =
+    orderInfoProps?.orderFees?.find((orderInfo) => orderInfo.type === 2)?.totalFee || 0;
 
   return (
     <BottomSheet
@@ -139,21 +134,17 @@ function PurchasingAgentBottomSheet({
         </Typography>
         <Typography color="red-light" weight="bold" customStyle={{ fontSize: 20 }}>
           {isCheck
-            ? commaNumber((productDetail?.orderInfo || orderInfoProps)?.totalPrice || 0)
-            : commaNumber(
-                ((productDetail?.orderInfo || orderInfoProps)?.totalPrice || 0) - inspectorFee
-              )}
+            ? commaNumber(orderInfoProps?.totalPrice || 0)
+            : commaNumber((orderInfoProps?.totalPrice || 0) - inspectorFee)}
           원
         </Typography>
       </Flexbox>
       <FeeOptionBox direction="vertical" gap={6}>
         <Flexbox alignment="center" justifyContent="space-between">
           <Typography color="ui60">매물가격</Typography>
-          <Typography>
-            {commaNumber((productDetail?.orderInfo || orderInfoProps)?.price || 0)}만원
-          </Typography>
+          <Typography>{commaNumber(orderInfoProps?.price || 0)}만원</Typography>
         </Flexbox>
-        {(productDetail?.orderInfo || orderInfoProps)?.orderFees?.map((orderInfo) => (
+        {orderInfoProps?.orderFees?.map((orderInfo) => (
           <Flexbox
             alignment="center"
             justifyContent="space-between"
@@ -177,8 +168,7 @@ function PurchasingAgentBottomSheet({
                           whiteSpace: 'pre-wrap'
                         }}
                       >
-                        {productDetail?.product?.site?.name || siteName} 구매대행수수료는{' '}
-                        {orderInfo.feeRate}
+                        {productDetail?.site?.name || siteName} 구매대행수수료는 {orderInfo.feeRate}
                         %입니다
                       </Typography>
                       <Typography

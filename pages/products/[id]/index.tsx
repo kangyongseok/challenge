@@ -577,7 +577,7 @@ function ProductDetail() {
                 {!isCamelButlerProduct && (
                   <>
                     <ProductActions product={product} onClickSMS={handleClickSMS} />
-                    <ProductDetailBannerGroup product={product} />
+                    <ProductDetailBannerGroup />
                   </>
                 )}
               </>
