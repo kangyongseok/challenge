@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import type { MutableRefObject } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -104,6 +104,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     const [{ searchParams }, setSearchParamsState] = useRecoilState(
       searchParamsStateFamily(`search-${atomParam}`)
     );
+
     const setSearchOptionsParamsState = useSetRecoilState(
       searchParamsStateFamily(`searchOptions-${atomParam}`)
     );
@@ -144,7 +145,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
       } = {}
     } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-      enabled: !!isLoggedIn
+      enabled: isLoggedIn
     });
 
     const triggered = useReverseScrollTrigger();
@@ -154,46 +155,11 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
     const [inactiveToastOpen, setInActiveToastOpen] = useState(false);
     const [showMySizeFilter, setShowMySizeFilter] = useState(false);
     const [selectedSearchOptionsHistoryCount, setSelectedSearchOptionsHistoryCount] = useState(0);
+    const [extendsGeneralFilterOptions, setExtendsGeneralFilterOptions] = useState<
+      { name: string; count: number; codeId: number }[]
+    >([]);
 
-    const extendsGeneralFilterOptions = useMemo(
-      () =>
-        generalFilterOptions[variant]
-          .filter(({ codeId }) => {
-            if (codeId === filterCodeIds.my) {
-              return isLoggedIn && (tops.length || bottoms.length || shoes.length);
-            }
-            return true;
-          })
-          .map((option) => {
-            const selectedGenderSearchOptions =
-              selectedSearchOptions.filter(({ codeId }) => codeId === filterCodeIds.gender) || [];
-
-            return {
-              ...option,
-              name:
-                (option.codeId === filterCodeIds.gender &&
-                  selectedGenderSearchOptions.length === 1 &&
-                  selectedGenderSearchOptions[0].viewName) ||
-                option.name,
-              count: [filterCodeIds.map, filterCodeIds.id, filterCodeIds.gender].includes(
-                option.codeId
-              )
-                ? 0
-                : selectedSearchOptions.filter((selectedSearchOption) =>
-                    option.codeId === filterCodeIds.detailOption
-                      ? [
-                          filterCodeIds.season,
-                          filterCodeIds.color,
-                          filterCodeIds.material
-                        ].includes(selectedSearchOption.codeId)
-                      : selectedSearchOption.codeId === option.codeId
-                  ).length
-            };
-          }),
-      [variant, isLoggedIn, tops.length, bottoms.length, shoes.length, selectedSearchOptions]
-    );
-
-    const handleClickMyFilter = useCallback(() => {
+    const handleClickMyFilter = () => {
       if (!isLoggedIn) {
         toastStack({
           children: '로그인이 필요해요',
@@ -312,109 +278,83 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         })
       }));
       setActiveMyFilterState(!activeMyFilter);
-    }, [
-      isLoggedIn,
-      activeMyFilter,
-      baseSearchOptions,
-      baseSearchParams,
-      gender,
-      myFilterIntersectionCategorySizes,
-      router,
-      selectedSearchOptions,
-      setActiveMyFilterState,
-      setSearchOptionsParamsState,
-      setSearchParamsState,
-      setSelectedSearchOptionsState,
-      toastStack,
-      variant
-    ]);
+    };
 
-    const handleClickIdFilterOption = useCallback(
+    const handleClickIdFilterOption =
       (id: number, name: string, disableClickEvent = false) =>
-        () => {
-          if (isLoading) return;
+      () => {
+        if (isLoading) return;
 
-          if (legitIdFilterOptionIds.includes(id)) {
-            logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
-              name: attrProperty.productName.PRODUCT_LIST,
-              att: (searchParams.idFilterIds || []).some((idFilterId) =>
-                legitIdFilterOptionIds.includes(idFilterId)
-              )
-                ? 'OFF'
-                : 'ON'
-            });
-          } else if (!disableClickEvent) {
-            logEvent(attrKeys.products.clickApplyIdFilter);
-          }
+        if (legitIdFilterOptionIds.includes(id)) {
+          logEvent(attrKeys.products.CLICK_LEGIT_FILTER, {
+            name: attrProperty.productName.PRODUCT_LIST,
+            att: (searchParams.idFilterIds || []).some((idFilterId) =>
+              legitIdFilterOptionIds.includes(idFilterId)
+            )
+              ? 'OFF'
+              : 'ON'
+          });
+        } else if (!disableClickEvent) {
+          logEvent(attrKeys.products.clickApplyIdFilter);
+        }
 
-          const selectedIdFilterOptionIndex = selectedSearchOptions.findIndex(
-            (selectedSearchOption) =>
-              selectedSearchOption.codeId === filterCodeIds.id && selectedSearchOption.id === id
+        const selectedIdFilterOptionIndex = selectedSearchOptions.findIndex(
+          (selectedSearchOption) =>
+            selectedSearchOption.codeId === filterCodeIds.id && selectedSearchOption.id === id
+        );
+
+        let newSelectedSearchOptions: SelectedSearchOption[];
+        let newSearchParams: Partial<SearchParams>;
+
+        if (selectedIdFilterOptionIndex > -1) {
+          newSelectedSearchOptions = selectedSearchOptions.filter(
+            (_, index) => index !== selectedIdFilterOptionIndex
           );
-
-          let newSelectedSearchOptions: SelectedSearchOption[];
-          let newSearchParams: Partial<SearchParams>;
-
-          if (selectedIdFilterOptionIndex > -1) {
-            newSelectedSearchOptions = selectedSearchOptions.filter(
-              (_, index) => index !== selectedIdFilterOptionIndex
-            );
-            newSearchParams = {
-              ...searchParams,
-              idFilterIds: (searchParams.idFilterIds || []).filter(
-                (idFilterId) => idFilterId !== id
-              )
-            };
-          } else {
-            if (!legitIdFilterOptionIds.includes(id)) {
-              logEvent(attrKeys.products.selectIdFilter, {
-                name: attrProperty.name.productList,
-                att: name
-              });
-            }
-
-            newSelectedSearchOptions = selectedSearchOptions.concat({
-              id,
-              codeId: filterCodeIds.id
+          newSearchParams = {
+            ...searchParams,
+            idFilterIds: (searchParams.idFilterIds || []).filter((idFilterId) => idFilterId !== id)
+          };
+        } else {
+          if (!legitIdFilterOptionIds.includes(id)) {
+            logEvent(attrKeys.products.selectIdFilter, {
+              name: attrProperty.name.productList,
+              att: name
             });
-            newSearchParams = {
-              ...searchParams,
-              idFilterIds: (searchParams.idFilterIds || []).concat(id)
-            };
-
-            if (id === idFilterIds.lowPrice) {
-              newSelectedSearchOptions = newSelectedSearchOptions.filter(
-                ({ codeId }) => codeId !== filterCodeIds.price
-              );
-              delete newSearchParams.minPrice;
-              delete newSearchParams.maxPrice;
-            }
           }
 
-          setSelectedSearchOptionsState(({ type }) => ({
-            type,
-            selectedSearchOptions: newSelectedSearchOptions
-          }));
-          setSearchParamsState(({ type }) => ({
-            type,
-            searchParams: newSearchParams
-          }));
-          setSearchOptionsParamsState(({ type }) => ({
-            type,
-            searchParams: newSearchParams
-          }));
-        },
-      [
-        isLoading,
-        searchParams,
-        selectedSearchOptions,
-        setSearchOptionsParamsState,
-        setSearchParamsState,
-        setSelectedSearchOptionsState
-      ]
-    );
+          newSelectedSearchOptions = selectedSearchOptions.concat({
+            id,
+            codeId: filterCodeIds.id
+          });
+          newSearchParams = {
+            ...searchParams,
+            idFilterIds: (searchParams.idFilterIds || []).concat(id)
+          };
 
-    const handleClickFilterOption = useCallback(
+          if (id === idFilterIds.lowPrice) {
+            newSelectedSearchOptions = newSelectedSearchOptions.filter(
+              ({ codeId }) => codeId !== filterCodeIds.price
+            );
+            delete newSearchParams.minPrice;
+            delete newSearchParams.maxPrice;
+          }
+        }
+
+        setSelectedSearchOptionsState(({ type }) => ({
+          type,
+          selectedSearchOptions: newSelectedSearchOptions
+        }));
+        setSearchParamsState(({ type }) => ({
+          type,
+          searchParams: newSearchParams
+        }));
+        setSearchOptionsParamsState(({ type }) => ({
+          type,
+          searchParams: newSearchParams
+        }));
+      };
+
+    const handleClickFilterOption =
       (codeId: number, id: number | undefined, name: string) => () => {
         if (filterCodeIds.map === codeId) {
           logEvent(attrKeys.products.clickApplyMapFilter);
@@ -510,23 +450,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
           type,
           selectedSearchOptions
         }));
-      },
-      [
-        isLoggedIn,
-        areaValues.length,
-        handleClickIdFilterOption,
-        handleClickMyFilter,
-        router,
-        selectedSearchOptions,
-        setActiveTabCodeIdState,
-        setBackupSelectedSearchOptionsState,
-        setProductsFilterState,
-        setSearchOptionsParamsState,
-        setSearchParamsState,
-        setSelectedSearchOptionsState,
-        toastStack
-      ]
-    );
+      };
 
     const handleClickOpenFilter = () => {
       logEvent(attrKeys.products.clickFilter, {
@@ -541,6 +465,44 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         selectedSearchOptions
       }));
     };
+
+    useEffect(() => {
+      setExtendsGeneralFilterOptions(
+        generalFilterOptions[variant]
+          .filter(({ codeId }) => {
+            if (codeId === filterCodeIds.my) {
+              return isLoggedIn && (tops.length || bottoms.length || shoes.length);
+            }
+            return true;
+          })
+          .map((option) => {
+            const selectedGenderSearchOptions =
+              selectedSearchOptions.filter(({ codeId }) => codeId === filterCodeIds.gender) || [];
+
+            return {
+              ...option,
+              name:
+                (option.codeId === filterCodeIds.gender &&
+                  selectedGenderSearchOptions.length === 1 &&
+                  selectedGenderSearchOptions[0].viewName) ||
+                option.name,
+              count: [filterCodeIds.map, filterCodeIds.id, filterCodeIds.gender].includes(
+                option.codeId
+              )
+                ? 0
+                : selectedSearchOptions.filter((selectedSearchOption) =>
+                    option.codeId === filterCodeIds.detailOption
+                      ? [
+                          filterCodeIds.season,
+                          filterCodeIds.color,
+                          filterCodeIds.material
+                        ].includes(selectedSearchOption.codeId)
+                      : selectedSearchOption.codeId === option.codeId
+                  ).length
+            };
+          })
+      );
+    }, [bottoms, isLoggedIn, selectedSearchOptions, shoes, tops, variant]);
 
     useEffect(() => {
       setSelectedSearchOptionsHistoryCount(

@@ -135,7 +135,6 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   >([]);
   const [excludeAdditionalSelectedSearchOptions, setExcludeAdditionalSelectedSearchOptions] =
     useState<SelectedSearchOption[]>([]);
-  const [hasBaseSearchParams, setHasBaseSearchParams] = useState(false);
 
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
@@ -155,6 +154,8 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   });
 
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
+
+  const hasBaseSearchParams = !!Object.keys(baseSearchParams).length;
 
   const handleClickMyFilterTooltip = () => {
     logEvent(attrKeys.products.clickMyFilter, {
@@ -333,10 +334,6 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
 
     setExcludeAdditionalSelectedSearchOptions(newSelectedSearchOptions);
   }, [additionalSelectedSearchOptions, genderId, needGender, selectedSearchOptions]);
-
-  useEffect(() => {
-    setHasBaseSearchParams(!!Object.keys(baseSearchParams).length);
-  }, [baseSearchParams]);
 
   // TODO 전반적인 필터 관련 state 업데이트 흐름 및 로직 개선
   // 최초 또는 query 변화에 따른 baseSearchParams state 업데이트
