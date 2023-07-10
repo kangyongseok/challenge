@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -104,215 +104,204 @@ function ProductsDynamicFilter() {
     logEvent(attrKeys.products.swipeXDynamicFilter);
   }, 300);
 
-  const handleClickDynamicFilter = useCallback(
+  const handleClickDynamicFilter =
     ({
-        codeType,
-        codeDetail,
-        filterName,
-        active
-      }: {
-        codeType: ProductDynamicOptionCodeType;
-        codeDetail: ProductDynamicOptionCodeDetail;
-        filterName: string;
-        active: boolean;
-      }) =>
-      () => {
-        if (!active) {
-          logEvent(attrKeys.products.clickDynamicFilter, {
-            name: attrProperty.name.productList,
-            title: productDynamicFilterEventPropertyTitle[codeType],
-            att: filterName.replace(/~/gi, '')
-          });
-          logEvent(attrKeys.products.clickApplyFilter, {
-            name: attrProperty.name.productList,
-            title: attrProperty.title.dynamicFilter,
-            keyword: router.query?.keyword
-          });
-        }
+      codeType,
+      codeDetail,
+      filterName,
+      active
+    }: {
+      codeType: ProductDynamicOptionCodeType;
+      codeDetail: ProductDynamicOptionCodeDetail;
+      filterName: string;
+      active: boolean;
+    }) =>
+    () => {
+      if (!active) {
+        logEvent(attrKeys.products.clickDynamicFilter, {
+          name: attrProperty.name.productList,
+          title: productDynamicFilterEventPropertyTitle[codeType],
+          att: filterName.replace(/~/gi, '')
+        });
+        logEvent(attrKeys.products.clickApplyFilter, {
+          name: attrProperty.name.productList,
+          title: attrProperty.title.dynamicFilter,
+          keyword: router.query?.keyword
+        });
+      }
 
-        let newSelectedSearchOptions: SelectedSearchOption[] = [];
+      let newSelectedSearchOptions: SelectedSearchOption[] = [];
 
-        switch (codeType) {
-          case productDynamicOptionCodeType.line: {
-            const { id, name } = codeDetail as CommonCode;
-            newSelectedSearchOptions = selectedSearchOptions.some(
-              (prevSelectedSearchOption) =>
-                prevSelectedSearchOption.codeId === filterCodeIds.line &&
-                prevSelectedSearchOption.id === id &&
-                prevSelectedSearchOption.name === name
-            )
-              ? selectedSearchOptions.filter(
-                  (prevSelectedSearchOption) =>
-                    !(
-                      prevSelectedSearchOption.codeId === filterCodeIds.line &&
-                      prevSelectedSearchOption.id === id &&
-                      prevSelectedSearchOption.name === name
-                    )
-                )
-              : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
-
-            break;
-          }
-          case productDynamicOptionCodeType.size: {
-            const { categorySizeId } = codeDetail as SizeCode;
-
-            newSelectedSearchOptions = selectedSearchOptions.some(
-              (prevSelectedSearchOption) =>
-                prevSelectedSearchOption.codeId === filterCodeIds.size &&
-                prevSelectedSearchOption.categorySizeId === categorySizeId
-            )
-              ? selectedSearchOptions.filter(
-                  (prevSelectedSearchOption) =>
-                    !(
-                      prevSelectedSearchOption.codeId === filterCodeIds.size &&
-                      prevSelectedSearchOption.categorySizeId === categorySizeId
-                    )
-                )
-              : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
-
-            break;
-          }
-          case productDynamicOptionCodeType.price: {
-            const { minPrice, maxPrice } = codeDetail as PriceCode;
-
-            newSelectedSearchOptions = selectedSearchOptions.filter(
-              (prevSelectedSearchOption) =>
-                !(
-                  prevSelectedSearchOption.codeId === filterCodeIds.id &&
-                  prevSelectedSearchOption.id === idFilterIds.lowPrice
-                )
-            );
-
-            if (newSelectedSearchOptions.some((option) => option.codeId === filterCodeIds.price)) {
-              newSelectedSearchOptions = newSelectedSearchOptions.some(
-                (option) => option.minPrice === minPrice && option.maxPrice === maxPrice
+      switch (codeType) {
+        case productDynamicOptionCodeType.line: {
+          const { id, name } = codeDetail as CommonCode;
+          newSelectedSearchOptions = selectedSearchOptions.some(
+            (prevSelectedSearchOption) =>
+              prevSelectedSearchOption.codeId === filterCodeIds.line &&
+              prevSelectedSearchOption.id === id &&
+              prevSelectedSearchOption.name === name
+          )
+            ? selectedSearchOptions.filter(
+                (prevSelectedSearchOption) =>
+                  !(
+                    prevSelectedSearchOption.codeId === filterCodeIds.line &&
+                    prevSelectedSearchOption.id === id &&
+                    prevSelectedSearchOption.name === name
+                  )
               )
-                ? newSelectedSearchOptions.filter((option) => option.codeId !== filterCodeIds.price)
-                : newSelectedSearchOptions.map((option) =>
-                    option.codeId === filterCodeIds.price
-                      ? { codeId: filterCodeIds.price, minPrice, maxPrice }
-                      : option
-                  );
-            } else {
-              newSelectedSearchOptions = newSelectedSearchOptions.concat([
-                { codeId: filterCodeIds.price, minPrice, maxPrice }
-              ]);
-            }
+            : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
 
-            break;
-          }
-          case productDynamicOptionCodeType.color: {
-            const { id, description } = codeDetail as CommonCode;
-            newSelectedSearchOptions = selectedSearchOptions.some(
-              (prevSelectedSearchOption) =>
-                prevSelectedSearchOption.codeId === filterCodeIds.color &&
-                prevSelectedSearchOption.id === id &&
-                prevSelectedSearchOption.description === description
-            )
-              ? selectedSearchOptions.filter(
-                  (prevSelectedSearchOption) =>
-                    !(
-                      prevSelectedSearchOption.codeId === filterCodeIds.color &&
-                      prevSelectedSearchOption.id === id &&
-                      prevSelectedSearchOption.description === description
-                    )
-                )
-              : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
-
-            break;
-          }
-          case productDynamicOptionCodeType.brand: {
-            const { id } = codeDetail as CommonCode;
-
-            newSelectedSearchOptions = selectedSearchOptions.some(
-              (prevSelectedSearchOption) =>
-                prevSelectedSearchOption.codeId === filterCodeIds.brand &&
-                prevSelectedSearchOption.id === id
-            )
-              ? selectedSearchOptions.filter(
-                  (prevSelectedSearchOption) =>
-                    !(
-                      prevSelectedSearchOption.codeId === filterCodeIds.brand &&
-                      prevSelectedSearchOption.id === id
-                    )
-                )
-              : selectedSearchOptions.concat(brands.find((brand) => brand.id === id) || []);
-
-            break;
-          }
-          case productDynamicOptionCodeType.category: {
-            const { parentId, subParentId, genderId } = codeDetail as CategoryCode;
-            const selectedCategories: SelectedSearchOption[] = [];
-
-            categories.forEach((category) => {
-              const selectedCategory = category.parentCategories
-                .find((parentCategory) => parentCategory.id === parentId)
-                ?.subParentCategories.find(
-                  (subParentCategory) =>
-                    subParentCategory.id === subParentId &&
-                    (genderId ? subParentCategory.genderIds.includes(genderId) : true)
-                );
-
-              if (selectedCategory) selectedCategories.push(selectedCategory);
-            });
-
-            newSelectedSearchOptions = selectedSearchOptions.some(
-              (prevSelectedSearchOption) =>
-                prevSelectedSearchOption.codeId === filterCodeIds.category &&
-                prevSelectedSearchOption.parentId === parentId &&
-                prevSelectedSearchOption.id === subParentId &&
-                (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
-            )
-              ? selectedSearchOptions.filter(
-                  (prevSelectedSearchOption) =>
-                    !(
-                      prevSelectedSearchOption.codeId === filterCodeIds.category &&
-                      prevSelectedSearchOption.parentId === parentId &&
-                      prevSelectedSearchOption.id === subParentId &&
-                      (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
-                    )
-                )
-              : selectedSearchOptions.concat(selectedCategories);
-
-            break;
-          }
-          default: {
-            break;
-          }
+          break;
         }
+        case productDynamicOptionCodeType.size: {
+          const { categorySizeId } = codeDetail as SizeCode;
 
-        if (!isEmpty(newSelectedSearchOptions)) {
-          const newSearchParams = convertSearchParams(newSelectedSearchOptions, {
-            baseSearchParams
+          newSelectedSearchOptions = selectedSearchOptions.some(
+            (prevSelectedSearchOption) =>
+              prevSelectedSearchOption.codeId === filterCodeIds.size &&
+              prevSelectedSearchOption.categorySizeId === categorySizeId
+          )
+            ? selectedSearchOptions.filter(
+                (prevSelectedSearchOption) =>
+                  !(
+                    prevSelectedSearchOption.codeId === filterCodeIds.size &&
+                    prevSelectedSearchOption.categorySizeId === categorySizeId
+                  )
+              )
+            : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
+
+          break;
+        }
+        case productDynamicOptionCodeType.price: {
+          const { minPrice, maxPrice } = codeDetail as PriceCode;
+
+          newSelectedSearchOptions = selectedSearchOptions.filter(
+            (prevSelectedSearchOption) =>
+              !(
+                prevSelectedSearchOption.codeId === filterCodeIds.id &&
+                prevSelectedSearchOption.id === idFilterIds.lowPrice
+              )
+          );
+
+          if (newSelectedSearchOptions.some((option) => option.codeId === filterCodeIds.price)) {
+            newSelectedSearchOptions = newSelectedSearchOptions.some(
+              (option) => option.minPrice === minPrice && option.maxPrice === maxPrice
+            )
+              ? newSelectedSearchOptions.filter((option) => option.codeId !== filterCodeIds.price)
+              : newSelectedSearchOptions.map((option) =>
+                  option.codeId === filterCodeIds.price
+                    ? { codeId: filterCodeIds.price, minPrice, maxPrice }
+                    : option
+                );
+          } else {
+            newSelectedSearchOptions = newSelectedSearchOptions.concat([
+              { codeId: filterCodeIds.price, minPrice, maxPrice }
+            ]);
+          }
+
+          break;
+        }
+        case productDynamicOptionCodeType.color: {
+          const { id, description } = codeDetail as CommonCode;
+          newSelectedSearchOptions = selectedSearchOptions.some(
+            (prevSelectedSearchOption) =>
+              prevSelectedSearchOption.codeId === filterCodeIds.color &&
+              prevSelectedSearchOption.id === id &&
+              prevSelectedSearchOption.description === description
+          )
+            ? selectedSearchOptions.filter(
+                (prevSelectedSearchOption) =>
+                  !(
+                    prevSelectedSearchOption.codeId === filterCodeIds.color &&
+                    prevSelectedSearchOption.id === id &&
+                    prevSelectedSearchOption.description === description
+                  )
+              )
+            : selectedSearchOptions.concat([{ checked: false, ...codeDetail }]);
+
+          break;
+        }
+        case productDynamicOptionCodeType.brand: {
+          const { id } = codeDetail as CommonCode;
+
+          newSelectedSearchOptions = selectedSearchOptions.some(
+            (prevSelectedSearchOption) =>
+              prevSelectedSearchOption.codeId === filterCodeIds.brand &&
+              prevSelectedSearchOption.id === id
+          )
+            ? selectedSearchOptions.filter(
+                (prevSelectedSearchOption) =>
+                  !(
+                    prevSelectedSearchOption.codeId === filterCodeIds.brand &&
+                    prevSelectedSearchOption.id === id
+                  )
+              )
+            : selectedSearchOptions.concat(brands.find((brand) => brand.id === id) || []);
+
+          break;
+        }
+        case productDynamicOptionCodeType.category: {
+          const { parentId, subParentId, genderId } = codeDetail as CategoryCode;
+          const selectedCategories: SelectedSearchOption[] = [];
+
+          categories.forEach((category) => {
+            const selectedCategory = category.parentCategories
+              .find((parentCategory) => parentCategory.id === parentId)
+              ?.subParentCategories.find(
+                (subParentCategory) =>
+                  subParentCategory.id === subParentId &&
+                  (genderId ? subParentCategory.genderIds.includes(genderId) : true)
+              );
+
+            if (selectedCategory) selectedCategories.push(selectedCategory);
           });
 
-          setSelectedSearchOptionsState(({ type }) => ({
-            type,
-            selectedSearchOptions: newSelectedSearchOptions
-          }));
-          setSearchOptionsParamsState(({ type }) => ({
-            type,
-            searchParams: newSearchParams
-          }));
-          setSearchParamsState(({ type }) => ({
-            type,
-            searchParams: newSearchParams
-          }));
-        }
-      },
-    [
-      baseSearchParams,
-      brands,
-      categories,
-      router.query?.keyword,
-      selectedSearchOptions,
-      setSearchOptionsParamsState,
-      setSearchParamsState,
-      setSelectedSearchOptionsState
-    ]
-  );
+          newSelectedSearchOptions = selectedSearchOptions.some(
+            (prevSelectedSearchOption) =>
+              prevSelectedSearchOption.codeId === filterCodeIds.category &&
+              prevSelectedSearchOption.parentId === parentId &&
+              prevSelectedSearchOption.id === subParentId &&
+              (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
+          )
+            ? selectedSearchOptions.filter(
+                (prevSelectedSearchOption) =>
+                  !(
+                    prevSelectedSearchOption.codeId === filterCodeIds.category &&
+                    prevSelectedSearchOption.parentId === parentId &&
+                    prevSelectedSearchOption.id === subParentId &&
+                    (genderId ? prevSelectedSearchOption.genderIds?.includes(genderId) : true)
+                  )
+              )
+            : selectedSearchOptions.concat(selectedCategories);
 
-  const handleClickApplyLowerPriceFilter = useCallback(() => {
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+
+      if (!isEmpty(newSelectedSearchOptions)) {
+        const newSearchParams = convertSearchParams(newSelectedSearchOptions, {
+          baseSearchParams
+        });
+
+        setSelectedSearchOptionsState(({ type }) => ({
+          type,
+          selectedSearchOptions: newSelectedSearchOptions
+        }));
+        setSearchOptionsParamsState(({ type }) => ({
+          type,
+          searchParams: newSearchParams
+        }));
+        setSearchParamsState(({ type }) => ({
+          type,
+          searchParams: newSearchParams
+        }));
+      }
+    };
+
+  const handleClickApplyLowerPriceFilter = () => {
     if (!value) return;
 
     let newValue = Number(value);
@@ -384,13 +373,7 @@ function ProductsDynamicFilter() {
       };
     });
     isInitRef.current = true;
-  }, [
-    setSelectedSearchOptionsState,
-    setSearchParamsState,
-    setSearchOptionsParamsState,
-    value,
-    router.query?.keyword
-  ]);
+  };
 
   useEffect(() => {
     const hasLowerPriceIdFilter = searchParams.idFilterIds?.some(

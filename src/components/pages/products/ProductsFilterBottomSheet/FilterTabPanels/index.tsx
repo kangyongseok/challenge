@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperClass } from 'swiper';
@@ -12,7 +12,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { convertSearchParams } from '@utils/products';
 
-import { ProductsVariant } from '@typings/products';
+import type { ProductsVariant } from '@typings/products';
 import {
   activeTabCodeIdState,
   searchParamsStateFamily,
@@ -39,6 +39,8 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
+  const [activeSlide, setActiveSlide] = useState(0);
+
   const [activeTabCodeId, setActiveTabCodeIdState] = useRecoilState(activeTabCodeIdState);
   const { searchParams: baseSearchParams } = useRecoilValue(
     searchParamsStateFamily(`base-${atomParam}`)
@@ -51,11 +53,6 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
   );
 
   const swiperRef = useRef<SwiperClass | null>(null);
-
-  const activeSlide = useMemo(
-    () => filterCodes[variant].findIndex((filterCode) => filterCode.codeId === activeTabCodeId),
-    [variant, activeTabCodeId]
-  );
 
   const handleSlideChange = (swiper: SwiperClass) => {
     if (selectedSearchOptions.length) {
@@ -87,6 +84,12 @@ function FilterTabPanels({ variant }: FilterTabPanelsProps) {
       logEvent(attrKeys.products.swipeXFilter, eventProperties);
     }
   };
+
+  useEffect(() => {
+    setActiveSlide(
+      filterCodes[variant].findIndex((filterCode) => filterCode.codeId === activeTabCodeId)
+    );
+  }, [activeTabCodeId, variant]);
 
   useEffect(() => {
     if (swiperRef.current) {

@@ -240,6 +240,7 @@ function ProductsFilterHistory({ variant }: ProductsFilterHistoryProps) {
       open: true
     }));
   };
+
   useEffect(() => {
     const hasUnSelectedMyFilterOption = myFilterIntersectionCategorySizes.some(
       ({ categorySizeId, parentCategoryId, viewSize }) =>

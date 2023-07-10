@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -33,6 +33,8 @@ function BrandTabPanel() {
     }
   } = useTheme();
 
+  const [navigationConsonants, setNavigationConsonants] = useState<string[]>([]);
+
   const brands = useRecoilValue(brandFilterOptionsSelector);
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
@@ -42,14 +44,6 @@ function BrandTabPanel() {
   );
 
   const scrollElementRef = useRef<HTMLDivElement>(null);
-
-  const navigationConsonants = useMemo(
-    () =>
-      Array.from(new Set(brands.map((brand) => parseWordToConsonant(brand.name))))
-        .filter((consonant) => !doubleCon.includes(consonant))
-        .sort((a, b) => a.localeCompare(b)),
-    [brands]
-  );
 
   const handleClick = (newCodeId: number, newId: number) => () => {
     const selectedSearchOptionIndex = selectedSearchOptions.findIndex(
@@ -113,6 +107,14 @@ function BrandTabPanel() {
   useEffect(() => {
     if (scrollElementRef.current) scrollElementRef.current?.scrollTo(0, 0);
   }, [sortValue]);
+
+  useEffect(() => {
+    setNavigationConsonants(
+      Array.from(new Set(brands.map((brand) => parseWordToConsonant(brand.name))))
+        .filter((consonant) => !doubleCon.includes(consonant))
+        .sort((a, b) => a.localeCompare(b))
+    );
+  }, [brands]);
 
   useEffect(() => {
     return () => {

@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -7,6 +8,8 @@ import { Box, Button, Flexbox, Icon, Input, Typography, useTheme } from '@mrcame
 import styled, { CSSObject } from '@emotion/styled';
 
 import LinearProgress from '@components/UI/molecules/LinearProgress';
+
+import type { ProductOrder } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
@@ -137,16 +140,16 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
   const [value, setValue] = useState(0);
   const [progressCount, setProgressCount] = useState(0);
   const [isFocus, setIsFocus] = useState(false);
+  const [selectedOrderFilterOption, setSelectedOrderFilterOption] = useState<{
+    name: string;
+    order: ProductOrder;
+    viewName: string;
+  }>();
 
   const ref = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const updatedFirstAnalysisCountRef = useRef(false);
   const updatedSecondAnalysisCountRef = useRef(false);
-
-  const selectedOrderFilterOption = useMemo(
-    () => orderFilterOptions.find(({ order }) => order === searchParams.order),
-    [searchParams]
-  );
 
   const triggered = useScrollTrigger({
     ref,
@@ -294,6 +297,12 @@ function ProductsStatus({ variant }: ProductsStatusProps) {
       resetSearchAgainKeywordStateFamily();
     }
   }, [setSearchAgainInputOpenStateFamily, resetSearchAgainKeywordStateFamily, isFocus]);
+
+  useEffect(() => {
+    setSelectedOrderFilterOption(
+      orderFilterOptions.find(({ order }) => order === searchParams.order)
+    );
+  }, [searchParams]);
 
   useEffect(() => {
     return () => {

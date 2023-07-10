@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -46,22 +46,22 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
 
   const [newTitle, setNewTitle] = useState('');
 
-  const handleClickBack = useCallback(() => {
+  const handleClickBack = () => {
     logEvent(attrKeys.products.clickBack, {
       name: attrProperty.name.productList
     });
     resetSearchValueState();
     router.back();
-  }, [router, resetSearchValueState]);
+  };
 
-  const handleClickSearchIcon = useCallback(() => {
+  const handleClickSearchIcon = () => {
     logEvent(attrKeys.products.CLICK_SEARCHMODAL, {
       name: attrProperty.productName.PRODUCT_LIST,
       att: 'HEADER'
     });
     resetSearchValueState();
     router.push('/search');
-  }, [router, resetSearchValueState]);
+  };
 
   useEffect(() => {
     const newKeyword = (keyword || '').split('-').join(' X ');

@@ -1,9 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import { Box, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
+
+import type { SearchParams } from '@dto/product';
+import type { ParentCategory } from '@dto/category';
 
 import { logEvent } from '@library/amplitude';
 
@@ -33,6 +36,10 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const { keyword = '', title, parentIds, subParentIds } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
+  const [parentCategory, setParentCategory] = useState<ParentCategory>();
+  const [excludedSearchParams, setExcludedSearchParams] = useState<Partial<SearchParams>>();
+  const [showParentCategories, setShowParentCategories] = useState(false);
+
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -42,22 +49,6 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
   const {
     searchOptions: { parentCategories = [], subParentCategories = [] }
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
-  const parentCategory = useMemo(
-    () => parentCategories.find(({ name }) => name === keyword),
-    [parentCategories, keyword]
-  );
-  const excludedSearchParams = useMemo(
-    () =>
-      convertSearchParamsByQuery(router.query, {
-        onlyBaseSearchParams: true,
-        excludeSearchParams: ['parentIds', 'subParentIds', 'keyword', 'brands', 'categories']
-      }),
-    [router.query]
-  );
-  const showParentCategories = useMemo(
-    () => variant !== 'categories' && !parentIds,
-    [variant, parentIds]
-  );
 
   const handleClickAll = () => {
     if (variant === 'categories') {
@@ -145,6 +136,23 @@ function ProductsCategoryTags({ variant }: ProductsCategoryTagListProps) {
         })
         .then(() => window.scrollTo(0, 0));
     };
+
+  useEffect(() => {
+    setParentCategory(parentCategories.find(({ name }) => name === keyword));
+  }, [keyword, parentCategories]);
+
+  useEffect(() => {
+    setExcludedSearchParams(
+      convertSearchParamsByQuery(router.query, {
+        onlyBaseSearchParams: true,
+        excludeSearchParams: ['parentIds', 'subParentIds', 'keyword', 'brands', 'categories']
+      })
+    );
+  }, [router.query]);
+
+  useEffect(() => {
+    setShowParentCategories(variant !== 'categories' && !parentIds);
+  }, [parentIds, variant]);
 
   useEffect(() => {
     if (wrapperRef.current && parentCategoryTagRefs.current.length) {

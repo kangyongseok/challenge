@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -24,17 +24,12 @@ function DetailOptionTabPanel() {
   const router = useRouter();
   const atomParam = router.asPath.split('?')[0];
 
+  const [expand, setExpand] = useState(false);
+
   const { season, material } = useRecoilValue(detailFilterOptionsSelector);
   const [{ selectedSearchOptions }, setSelectedSearchOptionsState] = useRecoilState(
     selectedSearchOptionsStateFamily(`active-${atomParam}`)
   );
-
-  const expand = useMemo(() => {
-    return (
-      [season.filterOptions.length, material.filterOptions.length].filter((length) => length)
-        .length === 1
-    );
-  }, [season.filterOptions.length, material.filterOptions.length]);
 
   const handleClickSelectedAll = (newCodeId: number) => (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -157,6 +152,13 @@ function DetailOptionTabPanel() {
         }));
       }
     };
+
+  useEffect(() => {
+    setExpand(
+      [season.filterOptions.length, material.filterOptions.length].filter((length) => length)
+        .length === 1
+    );
+  }, [material.filterOptions.length, season.filterOptions.length]);
 
   return (
     <Flexbox direction="vertical" customStyle={{ height: '100%' }}>

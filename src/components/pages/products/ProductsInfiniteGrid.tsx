@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment,no-param-reassign */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import WindowScroller from 'react-virtualized/dist/commonjs/WindowScroller';
@@ -17,7 +17,7 @@ import { Box, Button, Flexbox, Grid, Typography, useTheme } from '@mrcamelhub/ca
 
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
-import type { Product } from '@dto/product';
+import type { Product, ProductResult, Search } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
@@ -91,15 +91,6 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   const loggedLoadProductListLogEventRef = useRef(false);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const thrHandleResize = useRef(
-    throttle(() => {
-      if (windowInnerWidthRef.current !== window.innerWidth) {
-        windowInnerWidthRef.current = window.innerWidth;
-        cache.clearAll();
-      }
-    }, 500)
-  ).current;
-
   const {
     theme: {
       palette: { common },
@@ -113,6 +104,8 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   const [isNotUsedBrand, setIsNotUsedBrand] = useState(false);
   const [hasSelectedSearchOptions, setHasSelectedSearchOptions] = useState(false);
   const [openToast, setOpenToast] = useState(false);
+  const [lastPage, setLastPage] = useState<Search>();
+  const [viewKeyword, setViewKeyword] = useState('');
 
   const queryClient = useQueryClient();
 
@@ -151,10 +144,8 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     }
   );
 
-  const lastPage = useMemo(() => pages[pages.length - 1], [pages]);
-
-  const products = useMemo(() => {
-    const newProducts = pages
+  const products = groupingProducts(
+    pages
       .map(({ page }) => {
         if (page && page.content) {
           return page.content;
@@ -162,13 +153,8 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
         return null;
       })
       .flat()
-      .filter((product) => product);
-
-    if (newProducts.length) {
-      return groupingProducts(newProducts as Product[]);
-    }
-    return [];
-  }, [pages]);
+      .filter((product) => product) as Product[]
+  );
 
   const loadMoreRows = async () => {
     if (!hasNextPage || isFetchingNextPage) return;
@@ -189,153 +175,138 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     await fetchNextPage();
   };
 
-  const handleWishAfterChangeCallback = useCallback(
-    () => (product: Product, isWish: boolean) => {
-      queryClient.setQueryData(queryKeys.products.search(searchParams), {
-        pageParams,
-        pages: pages.map((page) => {
-          const findIndex = page.page.content.findIndex(({ id }) => id === product.id);
+  const handleWishAfterChangeCallback = (product: Product | ProductResult, isWish: boolean) => {
+    queryClient.setQueryData(queryKeys.products.search(searchParams), {
+      pageParams,
+      pages: pages.map((page) => {
+        const findIndex = page.page.content.findIndex(({ id }) => id === product.id);
 
-          if (findIndex !== -1) {
-            const { wishCount } = page.page.content[findIndex];
+        if (findIndex !== -1) {
+          const { wishCount } = page.page.content[findIndex];
 
-            if (!isWish) {
-              page.page.content[findIndex].wishCount = wishCount + 1;
-            } else if (isWish && wishCount > 0) {
-              page.page.content[findIndex].wishCount = wishCount - 1;
-            }
-            return page;
+          if (!isWish) {
+            page.page.content[findIndex].wishCount = wishCount + 1;
+          } else if (isWish && wishCount > 0) {
+            page.page.content[findIndex].wishCount = wishCount - 1;
           }
-
           return page;
-        })
-      });
-    },
-    [pageParams, pages, queryClient, searchParams]
-  );
+        }
 
-  const getProductAttributes = useCallback(
-    (product: Product) => {
-      return {
-        name: attrProperty.productName.PRODUCT_LIST,
-        index: (product.index || 0) + 1,
-        id: product.id,
-        brand: product.brand.name,
-        category: product.category.name,
-        parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
-        parentId: product.category.parentId,
-        line: product.line,
-        site: product.site.name,
-        price: product.price,
-        scoreTotal: product.scoreTotal,
-        scoreStatus: product.scoreStatus,
-        scoreSeller: product.scoreSeller,
-        scorePrice: product.scorePrice,
-        scorePriceAvg: product.scorePriceAvg,
-        scorePriceCount: product.scorePriceCount,
-        scorePriceRate: product.scorePriceRate,
-        cluster: product.cluster,
-        listMode: 'LIST',
-        isSafeTrade: product.isSafeTrade,
-        purchaseCount: product.purchaseCount,
-        wishCount: product.wishCount,
-        viewCount: product.viewCount,
-        labels: product.labels && product.labels.map((l) => l.description),
-        source: attrProperty.productSource.PRODUCT_LIST,
-        sort: getEventPropertySortValue(searchParams.order)
-      };
-    },
-    [searchParams.order]
-  );
+        return page;
+      })
+    });
+  };
 
-  const rowRenderer = useCallback(
-    ({ index, key, parent, style }: ListRowProps) => {
-      const productsGroup = products[index] || [];
-      const firstProduct = productsGroup[0];
-      const secondProduct = productsGroup[1];
-      let isVisible = false;
+  const getProductAttributes = (product: Product) => {
+    return {
+      name: attrProperty.productName.PRODUCT_LIST,
+      index: (product.index || 0) + 1,
+      id: product.id,
+      brand: product.brand.name,
+      category: product.category.name,
+      parentCategory: FIRST_CATEGORIES[product.category.parentId as number],
+      parentId: product.category.parentId,
+      line: product.line,
+      site: product.site.name,
+      price: product.price,
+      scoreTotal: product.scoreTotal,
+      scoreStatus: product.scoreStatus,
+      scoreSeller: product.scoreSeller,
+      scorePrice: product.scorePrice,
+      scorePriceAvg: product.scorePriceAvg,
+      scorePriceCount: product.scorePriceCount,
+      scorePriceRate: product.scorePriceRate,
+      cluster: product.cluster,
+      listMode: 'LIST',
+      isSafeTrade: product.isSafeTrade,
+      purchaseCount: product.purchaseCount,
+      wishCount: product.wishCount,
+      viewCount: product.viewCount,
+      labels: product.labels && product.labels.map((l) => l.description),
+      source: attrProperty.productSource.PRODUCT_LIST,
+      sort: getEventPropertySortValue(searchParams.order)
+    };
+  };
 
-      if (!firstProduct && !secondProduct) return null;
+  const rowRenderer = ({ index, key, parent, style }: ListRowProps) => {
+    const productsGroup = products[index] || [];
+    const firstProduct = productsGroup[0];
+    const secondProduct = productsGroup[1];
+    let isVisible = false;
 
-      if (listRef.current) {
-        const listTop =
-          (listRef.current.getBoundingClientRect().top || 0) +
-          (typeof style?.height === 'string' ? 0 : style?.height || 0) +
-          (typeof style?.top === 'string' ? 0 : style?.top || 0);
-        const windowHeight = (typeof window !== 'undefined' && window.innerHeight) || 0;
+    if (!firstProduct && !secondProduct) return null;
 
-        isVisible = listTop > 0 && listTop < windowHeight * 2;
-      }
+    if (listRef.current) {
+      const listTop =
+        (listRef.current.getBoundingClientRect().top || 0) +
+        (typeof style?.height === 'string' ? 0 : style?.height || 0) +
+        (typeof style?.top === 'string' ? 0 : style?.top || 0);
+      const windowHeight = (typeof window !== 'undefined' && window.innerHeight) || 0;
 
-      if (!isVisible) {
-        return (
-          // @ts-ignore
-          <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-            <div style={style}>
-              <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
-                {firstProduct && (
-                  <Grid item xs={2}>
-                    <NewProductGridCardSkeleton
-                      hideMetaInfo={!firstProduct.wishCount && !firstProduct.purchaseCount}
-                    />
-                  </Grid>
-                )}
-                {secondProduct && (
-                  <Grid item xs={2}>
-                    <NewProductGridCardSkeleton
-                      hideMetaInfo={!secondProduct.wishCount && !secondProduct.purchaseCount}
-                    />
-                  </Grid>
-                )}
-              </Grid>
-            </div>
-          </CellMeasurer>
-        );
-      }
+      isVisible = listTop > 0 && listTop < windowHeight * 2;
+    }
 
+    if (!isVisible) {
       return (
         // @ts-ignore
         <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
-          {({ measure }) => (
-            <div style={style}>
-              <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
-                {firstProduct && (
-                  <Grid item xs={2}>
-                    <NewProductGridCard
-                      product={firstProduct}
-                      attributes={getProductAttributes(firstProduct)}
-                      measure={measure}
-                      onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                    />
-                  </Grid>
-                )}
-                {secondProduct && (
-                  <Grid item xs={2}>
-                    <NewProductGridCard
-                      product={secondProduct}
-                      attributes={getProductAttributes(secondProduct)}
-                      measure={measure}
-                      onWishAfterChangeCallback={handleWishAfterChangeCallback}
-                    />
-                  </Grid>
-                )}
-              </Grid>
-              {index === 15 && !hasSelectedSearchOptions && (
-                <ProductsMiddleFilter isFetched={isFetched} measure={measure} />
+          <div style={style}>
+            <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
+              {firstProduct && (
+                <Grid item xs={2}>
+                  <NewProductGridCardSkeleton
+                    hideMetaInfo={!firstProduct.wishCount && !firstProduct.purchaseCount}
+                  />
+                </Grid>
               )}
-            </div>
-          )}
+              {secondProduct && (
+                <Grid item xs={2}>
+                  <NewProductGridCardSkeleton
+                    hideMetaInfo={!secondProduct.wishCount && !secondProduct.purchaseCount}
+                  />
+                </Grid>
+              )}
+            </Grid>
+          </div>
         </CellMeasurer>
       );
-    },
-    [
-      products,
-      getProductAttributes,
-      handleWishAfterChangeCallback,
-      hasSelectedSearchOptions,
-      isFetched
-    ]
-  );
+    }
+
+    return (
+      // @ts-ignore
+      <CellMeasurer cache={cache} parent={parent} key={key} columnIndex={0} rowIndex={index}>
+        {({ measure }) => (
+          <div style={style}>
+            <Grid container columnGap={2} customStyle={{ paddingBottom: 20 }}>
+              {firstProduct && (
+                <Grid item xs={2}>
+                  <NewProductGridCard
+                    product={firstProduct}
+                    attributes={getProductAttributes(firstProduct)}
+                    measure={measure}
+                    onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                  />
+                </Grid>
+              )}
+              {secondProduct && (
+                <Grid item xs={2}>
+                  <NewProductGridCard
+                    product={secondProduct}
+                    attributes={getProductAttributes(secondProduct)}
+                    measure={measure}
+                    onWishAfterChangeCallback={handleWishAfterChangeCallback}
+                  />
+                </Grid>
+              )}
+            </Grid>
+            {index === 15 && !hasSelectedSearchOptions && (
+              <ProductsMiddleFilter isFetched={isFetched} measure={measure} />
+            )}
+          </div>
+        )}
+      </CellMeasurer>
+    );
+  };
 
   const handleClickRequestKeyword = () => {
     if (isNotUsedBrand) {
@@ -353,32 +324,9 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     setOpenToast(true);
   };
 
-  const handleRouteChangeStart = useCallback(
-    (_: unknown, { shallow }: { shallow: boolean }) => {
-      if (!shallow) {
-        setPrevScrollTopState(({ type }) => ({
-          type,
-          prevScrollTop: window.scrollY
-        }));
-      }
-    },
-    [setPrevScrollTopState]
-  );
-
-  const handleScroll = useCallback(() => setListScrollTop(window.scrollY), []);
-
-  const handleRouteChangeComplete = useCallback(() => {
-    if (prevScrollTop && prevScrollTopRef.current) {
-      window.scrollTo(0, prevScrollTop);
-    }
-  }, [prevScrollTop]);
-
-  const getViewKeyword = useMemo(() => {
-    if (keyword && typeof keyword === 'string') {
-      return keyword.replace(/-/g, ' ');
-    }
-    return keyword;
-  }, [keyword]);
+  useEffect(() => {
+    setLastPage(pages[pages.length - 1]);
+  }, [pages]);
 
   useEffect(() => {
     setTotalCountState(({ type }) => ({
@@ -388,37 +336,64 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   }, [setTotalCountState, lastPage]);
 
   useEffect(() => {
+    const handleScroll = () => {
+      setListScrollTop(window.scrollY);
+    };
+
     window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [handleScroll]);
+  }, []);
 
   useEffect(() => {
+    const handleRouteChangeComplete = () => {
+      if (prevScrollTop && prevScrollTopRef.current) {
+        window.scrollTo(0, prevScrollTop);
+      }
+    };
+
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
 
     return () => {
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
     };
-  }, [router, handleRouteChangeComplete]);
+  }, [router.events, prevScrollTop]);
 
   useEffect(() => {
     windowInnerWidthRef.current = window.innerWidth;
-    window.addEventListener('resize', thrHandleResize);
+    const handleResize = () =>
+      throttle(() => {
+        if (windowInnerWidthRef.current !== window.innerWidth) {
+          windowInnerWidthRef.current = window.innerWidth;
+          cache.clearAll();
+        }
+      }, 500);
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', thrHandleResize);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [thrHandleResize]);
+  }, []);
 
   useEffect(() => {
+    const handleRouteChangeStart = (_: unknown, { shallow }: { shallow: boolean }) => {
+      if (!shallow) {
+        setPrevScrollTopState(({ type }) => ({
+          type,
+          prevScrollTop: window.scrollY
+        }));
+      }
+    };
+
     router.events.on('routeChangeStart', handleRouteChangeStart);
 
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart);
     };
-  }, [router, handleRouteChangeStart]);
+  }, [router.events, setPrevScrollTopState]);
 
   useEffect(() => {
     if (
@@ -590,6 +565,16 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
     });
   }, [pages]);
 
+  useEffect(() => {
+    let newViewKeyword = keyword;
+
+    if (keyword && typeof keyword === 'string') {
+      newViewKeyword = keyword.replace(/-/g, ' ');
+    }
+
+    setViewKeyword(String(newViewKeyword));
+  }, [keyword]);
+
   if (!progressDone)
     return (
       <Grid container rowGap={20}>
@@ -607,7 +592,7 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
       <>
         <Flexbox gap={4} direction="vertical" customStyle={{ margin: '0 20px 24px 20px' }}>
           {variant === 'search' && keyword && !debouncedSearchAgainKeyword && (
-            <Typography weight="medium">{getViewKeyword}</Typography>
+            <Typography weight="medium">{viewKeyword}</Typography>
           )}
           <Typography variant="body2" color="ui60">
             {!hasSelectedSearchOptions && !isNotUsedBrand

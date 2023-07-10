@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -9,6 +9,8 @@ import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import OnBoardingSpotlight from '@components/UI/organisms/OnBoardingSpotlight';
 import { ProductsGeneralFilter } from '@components/pages/products';
+
+import type { SizeCode } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
@@ -31,7 +33,7 @@ import {
 } from '@utils/products';
 import { convertStringToArray } from '@utils/common';
 
-import type { ProductsVariant } from '@typings/products';
+import type { ProductsVariant, SelectedSearchOption } from '@typings/products';
 import {
   activeMyFilterState,
   dynamicOptionsStateFamily,
@@ -123,6 +125,17 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   const [step2TooltipCustomStyle, setStep2TooltipCustomStyle] = useState<CustomStyle>({});
   const [step3TooltipCustomStyle, setStep3TooltipCustomStyle] = useState<CustomStyle>({});
   const [openOnBoarding, setOpenOnBoarding] = useState(false);
+  const [genderId, setGenderId] = useState(0);
+  const [needGender, setNeedGender] = useState(false);
+  const [intersectionCategorySizes, setIntersectionCategorySizes] = useState<SizeCode[]>([]);
+  const [intersectionParentCategoryIds, setIntersectionParentCategoryIds] = useState<number[]>([]);
+  const [notIntersectionCategorySizes, setNotIntersectionCategorySizes] = useState<SizeCode[]>([]);
+  const [additionalSelectedSearchOptions, setAdditionalSelectedSearchOptions] = useState<
+    SelectedSearchOption[]
+  >([]);
+  const [excludeAdditionalSelectedSearchOptions, setExcludeAdditionalSelectedSearchOptions] =
+    useState<SelectedSearchOption[]>([]);
+  const [hasBaseSearchParams, setHasBaseSearchParams] = useState(false);
 
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
@@ -143,55 +156,94 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
 
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
 
-  const needGender = useMemo(
-    () => variant === 'search' && gender && gender !== 'N',
-    [variant, gender]
-  );
-  const genderId = useMemo(() => {
-    if (gender === 'M') return filterGenders.male.id;
-    if (gender === 'F') return filterGenders.female.id;
-    return 0;
-  }, [gender]);
-  const intersectionCategorySizes = useMemo(() => {
-    if (!gender) return [];
-    if (!categorySizes.length) return [];
+  const handleClickMyFilterTooltip = () => {
+    logEvent(attrKeys.products.clickMyFilter, {
+      name: attrProperty.name.productList,
+      title: attrProperty.title.auto,
+      att: 'OFF'
+    });
+    setSearchParamsState(({ type }) => ({
+      type,
+      searchParams: convertSearchParams(excludeAdditionalSelectedSearchOptions, {
+        baseSearchParams
+      })
+    }));
+    setSearchOptionsParamsState(({ type }) => ({
+      type,
+      searchParams: convertSearchParams(excludeAdditionalSelectedSearchOptions, {
+        baseSearchParams
+      })
+    }));
+    setSelectedSearchOptionsState(({ type }) => ({
+      type,
+      selectedSearchOptions: excludeAdditionalSelectedSearchOptions
+    }));
+    setActiveMyFilter(false);
+    setOpenMyFilterTooltip(false);
+  };
 
-    return uniqBy(
-      [...tops, ...bottoms, ...shoes]
-        .map(({ parentCategoryId, viewSize }) =>
-          (categorySizes || [])
-            .filter(
-              ({
-                parentCategoryId: categorySizeParentCategoryId,
-                viewSize: categorySizeViewSize
-              }) =>
-                viewSize === categorySizeViewSize &&
-                myFilterRelatedParentCategoryIds[
-                  parentCategoryId as keyof typeof myFilterRelatedParentCategoryIds
-                ].genders[gender as 'M' | 'F' | 'N'].includes(categorySizeParentCategoryId)
-            )
-            .filter(({ count }) => count)
-        )
-        .flat(),
-      'categorySizeId'
+  useEffect(() => {
+    setAtomParamState(atomParam);
+  }, [setAtomParamState, atomParam]);
+
+  useEffect(() => {
+    setNeedGender(variant === 'search' && !!gender && gender !== 'N');
+  }, [gender, variant]);
+
+  useEffect(() => {
+    let newGenderId = 0;
+
+    if (gender === 'M') {
+      newGenderId = filterGenders.male.id;
+    } else if (gender === 'F') {
+      newGenderId = filterGenders.female.id;
+    }
+
+    setGenderId(newGenderId);
+  }, [gender]);
+
+  useEffect(() => {
+    if (!gender || !categorySizes.length) return;
+
+    setIntersectionCategorySizes(
+      uniqBy(
+        [...tops, ...bottoms, ...shoes]
+          .map(({ parentCategoryId, viewSize }) =>
+            (categorySizes || [])
+              .filter(
+                ({
+                  parentCategoryId: categorySizeParentCategoryId,
+                  viewSize: categorySizeViewSize
+                }) =>
+                  viewSize === categorySizeViewSize &&
+                  myFilterRelatedParentCategoryIds[
+                    parentCategoryId as keyof typeof myFilterRelatedParentCategoryIds
+                  ].genders[gender as 'M' | 'F' | 'N'].includes(categorySizeParentCategoryId)
+              )
+              .filter(({ count }) => count)
+          )
+          .flat(),
+        'categorySizeId'
+      )
     );
-  }, [tops, bottoms, shoes, categorySizes, gender]);
-  const intersectionParentCategoryIds = useMemo(
-    () =>
-      Array.from(
-        new Set(intersectionCategorySizes.map(({ parentCategoryId }) => parentCategoryId))
-      ),
-    [intersectionCategorySizes]
-  );
-  const notIntersectionCategorySizes = useMemo(
-    () =>
+  }, [bottoms, categorySizes, gender, shoes, tops]);
+
+  useEffect(() => {
+    setIntersectionParentCategoryIds(
+      Array.from(new Set(intersectionCategorySizes.map(({ parentCategoryId }) => parentCategoryId)))
+    );
+  }, [intersectionCategorySizes]);
+
+  useEffect(() => {
+    setNotIntersectionCategorySizes(
       categorySizes.filter(
         ({ parentCategoryId }) => !intersectionParentCategoryIds.includes(parentCategoryId)
-      ),
-    [categorySizes, intersectionParentCategoryIds]
-  );
-  const additionalSelectedSearchOptions = useMemo(() => {
-    if (!Object.keys(baseSearchOptions).length) return [];
+      )
+    );
+  }, [categorySizes, intersectionParentCategoryIds]);
+
+  useEffect(() => {
+    if (!Object.keys(baseSearchOptions).length) return;
 
     const convertedInitSearchParams = convertSearchParamsByQuery(router.query, {
       variant,
@@ -240,20 +292,20 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
         ];
     }
 
-    return newSelectedSearchOptions;
+    setAdditionalSelectedSearchOptions(newSelectedSearchOptions);
   }, [
-    baseSearchOptions,
-    router.query,
-    variant,
     activeMyFilter,
-    intersectionCategorySizes,
-    notIntersectionCategorySizes,
-    needGender,
+    baseSearchOptions,
     genderCategories,
-    genderId
+    genderId,
+    intersectionCategorySizes,
+    needGender,
+    notIntersectionCategorySizes,
+    router.query,
+    variant
   ]);
 
-  const excludeAdditionalSelectedSearchOptions = useMemo(() => {
+  useEffect(() => {
     let newSelectedSearchOptions;
 
     newSelectedSearchOptions = selectedSearchOptions.filter(
@@ -279,42 +331,12 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
         return codeId !== filterCodeIds.category && selectedGenderId !== genderId;
       });
 
-    return newSelectedSearchOptions;
-  }, [selectedSearchOptions, additionalSelectedSearchOptions, needGender, genderId]);
-  const hasBaseSearchParams = useMemo(
-    () => !!Object.keys(baseSearchParams).length,
-    [baseSearchParams]
-  );
-
-  const handleClickMyFilterTooltip = () => {
-    logEvent(attrKeys.products.clickMyFilter, {
-      name: attrProperty.name.productList,
-      title: attrProperty.title.auto,
-      att: 'OFF'
-    });
-    setSearchParamsState(({ type }) => ({
-      type,
-      searchParams: convertSearchParams(excludeAdditionalSelectedSearchOptions, {
-        baseSearchParams
-      })
-    }));
-    setSearchOptionsParamsState(({ type }) => ({
-      type,
-      searchParams: convertSearchParams(excludeAdditionalSelectedSearchOptions, {
-        baseSearchParams
-      })
-    }));
-    setSelectedSearchOptionsState(({ type }) => ({
-      type,
-      selectedSearchOptions: excludeAdditionalSelectedSearchOptions
-    }));
-    setActiveMyFilter(false);
-    setOpenMyFilterTooltip(false);
-  };
+    setExcludeAdditionalSelectedSearchOptions(newSelectedSearchOptions);
+  }, [additionalSelectedSearchOptions, genderId, needGender, selectedSearchOptions]);
 
   useEffect(() => {
-    setAtomParamState(atomParam);
-  }, [setAtomParamState, atomParam]);
+    setHasBaseSearchParams(!!Object.keys(baseSearchParams).length);
+  }, [baseSearchParams]);
 
   // TODO 전반적인 필터 관련 state 업데이트 흐름 및 로직 개선
   // 최초 또는 query 변화에 따른 baseSearchParams state 업데이트
@@ -793,7 +815,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       setOpenOnBoarding(true);
     }
 
-    if (!productsOnBoardingTrigger.complete) {
+    if (isLoggedIn && !productsOnBoardingTrigger.complete) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'

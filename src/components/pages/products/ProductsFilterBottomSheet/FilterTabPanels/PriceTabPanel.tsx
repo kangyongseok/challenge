@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
@@ -142,7 +142,7 @@ function PriceTabPanel() {
     });
   };
 
-  const handleClickApply = useCallback(() => {
+  const handleClickApply = () => {
     let applyMinPrice = 0;
     let applyMaxPrice = 0;
     const tenThousandUnitMinPrice = getTenThousandUnitPrice(minPrice);
@@ -192,7 +192,7 @@ function PriceTabPanel() {
         })
       );
     }
-  }, [setSelectedSearchOptionsState, codeId, minPrice, maxPrice, minPriceValue, maxPriceValue]);
+  };
 
   const handleClickRecommendApply = () => {
     checkApplyRecommendPriceRef.current = true;
