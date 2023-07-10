@@ -20,16 +20,16 @@ export function getTenThousandUnitPrice(price: number) {
 
   if (resultPrice - Math.floor(resultPrice) > 0) {
     if (resultPrice.toString().length > 6) {
-      return Math.round(resultPrice);
+      return Math.round(resultPrice); // 반올림
     }
 
     return Number(resultPrice.toFixed(1));
   }
 
   if (resultPrice.toString().length > 6) {
-    return Math.round(resultPrice);
+    return Math.round(resultPrice); // 반올림
   }
-  return Math.floor(resultPrice);
+  return Math.round(resultPrice);
 }
 
 /**

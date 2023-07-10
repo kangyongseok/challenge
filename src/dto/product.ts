@@ -548,7 +548,7 @@ export interface OrderInfo {
 }
 
 export interface OrderFees {
-  type: 1 | 2;
+  type: 0 | 1 | 2;
   name: string;
   fee: number;
   totalFee: number;

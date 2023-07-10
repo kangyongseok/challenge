@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import { BottomSheet, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { OrderInfo, Product } from '@dto/product';
+import { OrderInfo } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import { ORDER_FEE_TOOLTIP_MESSAGE } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -19,21 +20,17 @@ function PurchasingAgentBottomSheet({
   onClose,
   onClickPayment,
   logTitle,
-  orderInfoProps,
-  siteName,
-  productDetail
+  orderInfoProps
 }: {
   open: boolean;
   onClose: () => void;
   onClickPayment: () => void;
   logTitle: 'OPERATOR' | 'ORDER';
   orderInfoProps?: OrderInfo;
-  siteName?: string;
-  productDetail?: Product;
 }) {
   const router = useRouter();
   const [isCheck, setCheck] = useState(true);
-  const [openTooltip, setOpenTooltip] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
 
   // const { data: productDetail } = useQueryProduct();
 
@@ -82,11 +79,11 @@ function PurchasingAgentBottomSheet({
             router.push('/products/purchasingInfo?step=2');
           }}
         >
-          카멜 구매대행이란?
+          구매대행이란?
         </Typography>
       </Flexbox>
       <Typography variant="h4" customStyle={{ marginTop: 6, wordBreak: 'keep-all' }}>
-        직접 거래하기 어려운 매물을 문의, 거래, 검수, 배송까지 모두 카멜이 대신해드려요!
+        직접 거래하기 어렵고 무서울 때, 문의, 검수, 배송까지 모두 카멜이 대신해드려요!
       </Typography>
       <Box
         customStyle={{
@@ -152,48 +149,39 @@ function PurchasingAgentBottomSheet({
           >
             <Typography color="ui60" customStyle={{ display: 'flex', alignItems: 'center' }}>
               {orderInfo.name}
-              {orderInfo.type === 1 && (
-                <Tooltip
-                  open={openTooltip}
-                  message={
-                    <>
-                      <TooltipText color="uiWhite" variant="body2" weight="medium">
-                        {productDetail?.site?.name || siteName} 구매대행수수료는 {orderInfo.feeRate}
-                        %입니다
+              <Tooltip
+                open={openTooltip === orderInfo.type}
+                message={
+                  <>
+                    {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
+                      <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                        {message}
                       </TooltipText>
-                      <TooltipText
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          margin: '10px 0'
-                        }}
-                      >
-                        카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시, 판매자와
-                        직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여 안전합니다.
-                      </TooltipText>
-                      <TooltipText color="uiWhite" variant="body2" weight="medium">
-                        카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                      </TooltipText>
-                    </>
-                  }
-                  placement="top"
-                  triangleLeft={18}
-                  customStyle={{
-                    top: 20,
-                    bottom: 'auto',
-                    left: 115,
-                    zIndex: 5
+                    ))}
+                  </>
+                }
+                placement="top"
+                triangleLeft={33}
+                customStyle={{
+                  top: 15,
+                  bottom: 'auto',
+                  left: 100,
+                  zIndex: 5
+                }}
+              >
+                <Icon
+                  name="QuestionCircleOutlined"
+                  width={16}
+                  color="ui80"
+                  onClick={() => {
+                    if (orderInfo.type === openTooltip) {
+                      setOpenTooltip(null);
+                      return;
+                    }
+                    setOpenTooltip(orderInfo.type);
                   }}
-                >
-                  <Icon
-                    name="QuestionCircleOutlined"
-                    width={16}
-                    color="ui60"
-                    onClick={() => setOpenTooltip((prev) => !prev)}
-                  />
-                </Tooltip>
-              )}
+                />
+              </Tooltip>
             </Typography>
             {!isCheck && orderInfo?.type === 2 ? (
               <Typography color="ui60">선택안함</Typography>

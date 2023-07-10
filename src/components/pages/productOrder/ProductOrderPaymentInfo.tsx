@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
+import { ORDER_FEE_TOOLTIP_MESSAGE } from '@constants/product';
 
 import { commaNumber } from '@utils/formats';
 
@@ -19,7 +20,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const { id } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
-  const [openTooltip, setOpenTooltip] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
 
   const { data: { product } = {} } = useQueryProduct();
 
@@ -115,50 +116,48 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
               }}
             >
               {orderFee.name}
-              {orderFee.type === 1 && (
-                <Tooltip
-                  open={openTooltip}
-                  message={
-                    <>
-                      <TooltipText color="uiWhite" variant="body2" weight="medium">
-                        {product?.site.name} 구매대행수수료는 {orderFee.feeRate}
-                        %입니다
+              <Tooltip
+                open={openTooltip === orderFee.type}
+                message={
+                  <>
+                    {ORDER_FEE_TOOLTIP_MESSAGE[orderFee.type].map((message: string) => (
+                      <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                        {message}
                       </TooltipText>
-                      <TooltipText
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          margin: '10px 0'
-                        }}
-                      >
-                        카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시, 판매자와
-                        직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여 안전합니다.
-                      </TooltipText>
-                      <TooltipText color="uiWhite" variant="body2" weight="medium">
-                        카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                      </TooltipText>
-                    </>
-                  }
-                  placement="bottom"
-                  triangleLeft={18}
-                  customStyle={{
-                    top: 'auto',
-                    bottom: 20,
-                    left: 115,
-                    zIndex: 5
+                    ))}
+                  </>
+                }
+                placement="top"
+                triangleLeft={33}
+                customStyle={{
+                  top: 15,
+                  bottom: 'auto',
+                  left: 100,
+                  zIndex: 5
+                }}
+              >
+                <Icon
+                  name="QuestionCircleOutlined"
+                  width={16}
+                  color="ui80"
+                  onClick={() => {
+                    if (orderFee.type === openTooltip) {
+                      setOpenTooltip(null);
+                      return;
+                    }
+                    setOpenTooltip(orderFee.type);
                   }}
-                >
-                  <Icon
-                    name="QuestionCircleOutlined"
-                    width={16}
-                    color="ui60"
-                    onClick={() => setOpenTooltip((prev) => !prev)}
-                  />
-                </Tooltip>
-              )}
+                />
+              </Tooltip>
             </Typography>
-            <Typography variant="h4">{commaNumber(orderFee.totalFee || 0)}원</Typography>
+            <Typography
+              variant="h4"
+              color={!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? 'ui60' : 'ui20'}
+            >
+              {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee
+                ? '선택안함'
+                : `${commaNumber(orderFee.totalFee || 0)}원`}
+            </Typography>
           </Flexbox>
         ))
       ) : (

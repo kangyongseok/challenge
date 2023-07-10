@@ -37,6 +37,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import {
   INITIAL_REPORT_OPTIONS,
+  ORDER_FEE_TOOLTIP_MESSAGE,
   PRODUCT_SITE,
   REPORT_TYPE_COUNTERFEITER,
   REPORT_TYPE_FAKE_PRODUCT,
@@ -140,7 +141,7 @@ function ProductInfoOperator({
   const [isIntersecting, setIntersecting] = useState(false);
   const [isDoneWishOnBoarding, setIsDoneWishOnBoarding] = useState(true);
   const [isToggleDropDown, setIsToggleDropDown] = useState(false);
-  const [openTooltip, setOpenTooltip] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
 
   const wishButtonRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -641,7 +642,7 @@ function ProductInfoOperator({
                 매물가격
               </Typography>
               <Typography weight="medium" color="primary-light">
-                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo?.price))}만원
+                {commaNumber(productDetail?.orderInfo?.price)}원
               </Typography>
             </Flexbox>
             {productDetail?.orderInfo?.orderFees?.map((orderInfo) => (
@@ -656,53 +657,48 @@ function ProductInfoOperator({
                   customStyle={{ display: 'flex', alignItems: 'center' }}
                 >
                   {orderInfo.name}
-                  {orderInfo.type === 1 && (
-                    <Tooltip
-                      open={openTooltip}
-                      message={
-                        <>
-                          <TooltipText color="uiWhite" variant="body2" weight="medium">
-                            {productDetail.product.site.name} 구매대행수수료는 {orderInfo.feeRate}
-                            %입니다
-                          </TooltipText>
+                  <Tooltip
+                    open={openTooltip === orderInfo.type}
+                    message={
+                      <>
+                        {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
                           <TooltipText
+                            key={message}
                             color="uiWhite"
                             variant="body2"
                             weight="medium"
-                            customStyle={{
-                              margin: '10px 0'
-                            }}
                           >
-                            카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시,
-                            판매자와 직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여
-                            안전합니다.
+                            {message}
                           </TooltipText>
-                          <TooltipText color="uiWhite" variant="body2" weight="medium">
-                            카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                          </TooltipText>
-                        </>
-                      }
-                      placement="bottom"
-                      triangleLeft={18}
-                      customStyle={{
-                        top: 'auto',
-                        bottom: 15,
-                        left: 115,
-                        zIndex: 5
+                        ))}
+                      </>
+                    }
+                    placement="bottom"
+                    triangleLeft={18}
+                    customStyle={{
+                      top: 'auto',
+                      bottom: 15,
+                      left: 115,
+                      zIndex: 5
+                    }}
+                  >
+                    <Icon
+                      name="QuestionCircleOutlined"
+                      width={16}
+                      height={16}
+                      color="ui80"
+                      onClick={() => {
+                        if (orderInfo.type === openTooltip) {
+                          setOpenTooltip(null);
+                          return;
+                        }
+                        setOpenTooltip(orderInfo.type);
                       }}
-                    >
-                      <Icon
-                        name="QuestionCircleOutlined"
-                        width={16}
-                        height={16}
-                        color="ui80"
-                        onClick={() => setOpenTooltip((prev) => !prev)}
-                      />
-                    </Tooltip>
-                  )}
+                    />
+                  </Tooltip>
                 </Typography>
                 <Typography weight="medium" color="ui60">
-                  + {commaNumber(getTenThousandUnitPrice(orderInfo?.totalFee))}만원
+                  + {commaNumber(orderInfo?.totalFee)}원
                 </Typography>
               </Flexbox>
             ))}
@@ -740,13 +736,10 @@ function ProductInfoOperator({
           </Typography>
         </PlatformUpdateTime>
         <PurchasingAgentInfo>
-          <Flexbox alignment="center" gap={4}>
-            <Icon name="BoxFilled" color="primary" size="small" />
-            <Typography weight="medium" variant="body2" color="primary">
-              카멜 구매대행
-            </Typography>
-            <Typography weight="medium" variant="body2">
-              매물이에요!
+          <Flexbox alignment="center" gap={4} customStyle={{ marginBottom: 12 }}>
+            <Icon name="BoxFilled" color="primary-light" size="small" />
+            <Typography weight="medium" variant="body2" color="primary-light">
+              [카멜 구매대행] 하세요!
             </Typography>
             <Typography
               customStyle={{ marginLeft: 'auto', textDecoration: 'underline' }}
@@ -757,25 +750,33 @@ function ProductInfoOperator({
                 router.push('/products/purchasingInfo');
               }}
             >
-              카멜 구매대행이란?
+              구매대행이란?
             </Typography>
           </Flexbox>
-          <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 12 }}>
-            <Icon name="CheckOutlined" width={10} height={10} />
-            <Typography variant="body2" color="ui60">
-              전 지역, 모든 플랫폼의 문의와 거래를 대신해드려요
+          {productDetail?.product?.siteUrl.id === 103 && (
+            <Flexbox alignment="flex-start" gap={4}>
+              <Flexbox customStyle={{ minWidth: 16, height: 16 }}>
+                <CheckBoxOutline />
+              </Flexbox>
+              <Typography variant="body2" color="ui20">
+                카멜 네트워크를 통해 타지역 당근마켓 문의가 가능해요!
+              </Typography>
+            </Flexbox>
+          )}
+          <Flexbox alignment="flex-start" gap={4} customStyle={{ marginTop: 4 }}>
+            <Flexbox customStyle={{ minWidth: 16, height: 16 }}>
+              <CheckBoxOutline />
+            </Flexbox>
+            <Typography variant="body2" color="ui20">
+              판매자의 막말, 안전결제 거부, 미발송이 걱정된다면? 모두 카멜이 대신 해드릴게요!
             </Typography>
           </Flexbox>
-          <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
-            <Icon name="CheckOutlined" width={10} height={10} />
-            <Typography variant="body2" color="ui60">
-              카멜 직접 정품검수로 100% 사기를 방지해요
-            </Typography>
-          </Flexbox>
-          <Flexbox alignment="center" gap={4} customStyle={{ marginTop: 4 }}>
-            <Icon name="CheckOutlined" width={10} height={10} />
-            <Typography variant="body2" color="ui60">
-              상태와 가격이 마음에 든다면 바로 채팅해보세요 :)
+          <Flexbox alignment="flex-start" gap={4} customStyle={{ marginTop: 4 }}>
+            <Flexbox customStyle={{ minWidth: 16, height: 16 }}>
+              <CheckBoxOutline />
+            </Flexbox>
+            <Typography variant="body2" color="ui20">
+              상태와 가격이 괜찮다면 주저말고 채팅해보세요 :)
             </Typography>
           </Flexbox>
         </PurchasingAgentInfo>
@@ -1169,6 +1170,19 @@ function OutLink() {
         clipRule="evenodd"
         d="M6 2H10V6H9V3.70711L5.5 7.20711L4.79289 6.5L8.29289 3H6V2Z"
         fill="#7B7D85"
+      />
+    </svg>
+  );
+}
+
+function CheckBoxOutline() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4.19531 7.47145L5.13812 6.52865L7.33338 8.72391L10.862 5.19531L11.8048 6.13812L7.33338 10.6095L4.19531 7.47145Z"
+        fill="#425BFF"
       />
     </svg>
   );
