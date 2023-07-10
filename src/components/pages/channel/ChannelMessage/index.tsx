@@ -24,9 +24,17 @@ interface ChannelMessageProps {
   sendbirdChannel: GroupChannel;
   message: UserMessage | FileMessage;
   nextMessage?: UserMessage | FileMessage;
+  hasSameTimeMessage: boolean;
+  sameGroupLastMessage: boolean;
 }
 
-function ChannelMessage({ sendbirdChannel: channel, message, nextMessage }: ChannelMessageProps) {
+function ChannelMessage({
+  sendbirdChannel: channel,
+  message,
+  nextMessage,
+  hasSameTimeMessage,
+  sameGroupLastMessage
+}: ChannelMessageProps) {
   const status = useMemo(
     () => getOutgoingMessageState(channel, message),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,6 +69,8 @@ function ChannelMessage({ sendbirdChannel: channel, message, nextMessage }: Chan
           message={message as UserMessage}
           status={status}
           isByMe={isByMe}
+          hasSameTimeMessage={hasSameTimeMessage}
+          sameGroupLastMessage={sameGroupLastMessage}
           nextMessageUserIsDiff={
             isOGMessage(message as UserMessage) ? false : nextMessageUserIsDiff
           }

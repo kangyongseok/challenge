@@ -19,7 +19,6 @@ import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
-import { fetchProductOrder } from '@api/order';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
@@ -31,6 +30,7 @@ import { getProductType } from '@utils/products';
 import { commaNumber } from '@utils/formats';
 
 import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 import useProductType from '@hooks/useProductType';
 
 interface ProductOrderConfirmProps {
@@ -48,7 +48,7 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
     palette: { common }
   } = useTheme();
 
-  const { isLoggedInWithSMS, data: accessUser } = useSession();
+  const { data: accessUser } = useSession();
 
   const {
     data,
@@ -62,24 +62,7 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
       result
     } = {},
     isLoading
-  } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
-
+  } = useQueryProductOrder({ productId, includeLegit });
   const { data: { product } = {}, isLoading: isLoadingProduct } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId }),

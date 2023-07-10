@@ -157,48 +157,24 @@ function PurchasingAgentBottomSheet({
                   open={openTooltip}
                   message={
                     <>
-                      <Typography
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap'
-                        }}
-                      >
+                      <TooltipText color="uiWhite" variant="body2" weight="medium">
                         {productDetail?.site?.name || siteName} 구매대행수수료는 {orderInfo.feeRate}
                         %입니다
-                      </Typography>
-                      <Typography
+                      </TooltipText>
+                      <TooltipText
                         color="uiWhite"
                         variant="body2"
                         weight="medium"
                         customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap',
                           margin: '10px 0'
                         }}
                       >
                         카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시, 판매자와
                         직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여 안전합니다.
-                      </Typography>
-                      <Typography
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap'
-                        }}
-                      >
+                      </TooltipText>
+                      <TooltipText color="uiWhite" variant="body2" weight="medium">
                         카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                      </Typography>
+                      </TooltipText>
                     </>
                   }
                   placement="top"
@@ -206,7 +182,8 @@ function PurchasingAgentBottomSheet({
                   customStyle={{
                     top: 20,
                     bottom: 'auto',
-                    left: 115
+                    left: 115,
+                    zIndex: 5
                   }}
                 >
                   <Icon
@@ -243,6 +220,12 @@ function PurchasingAgentBottomSheet({
 const FeeOptionBox = styled(Flexbox)`
   margin: 12px 0;
   width: 100%;
+`;
+
+const TooltipText = styled(Typography)`
+  text-align: left;
+  width: 240px;
+  white-space: pre-wrap;
 `;
 
 export default PurchasingAgentBottomSheet;

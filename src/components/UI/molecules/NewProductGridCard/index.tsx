@@ -435,7 +435,8 @@ function NewProductGridCard({
             lineClamp={2}
             color="ui60"
             customStyle={{
-              marginTop: 2
+              marginTop: 2,
+              wordBreak: 'keep-all'
             }}
           >
             {productTitle}

@@ -1,14 +1,9 @@
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import { Box } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
 
-import { fetchProductOrder } from '@api/order';
-
-import queryKeys from '@constants/queryKeys';
-
-import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductType from '@hooks/useProductType';
 
@@ -19,25 +14,7 @@ function ProductOrderCard({ includeLegit }: { includeLegit: boolean }) {
   const productId = Number(splitId[splitId.length - 1] || 0);
   const { data: { product, offers = [] } = {}, isLoading } = useQueryProduct();
   const { isAllOperatorProduct } = useProductType(product?.sellerType);
-  const { isLoggedInWithSMS } = useSession();
-  const { data: { totalPrice = 0 } = {} } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
-
+  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({ productId, includeLegit });
   return (
     <Box
       component="section"

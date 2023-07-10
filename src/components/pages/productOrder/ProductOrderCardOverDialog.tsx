@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Button, Typography } from '@mrcamelhub/camel-ui';
 
-import { fetchProductOrder } from '@api/order';
-
-import queryKeys from '@constants/queryKeys';
-
 import { getTenThousandUnitPrice } from '@utils/formats';
 
-import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
 function ProductOrderCardOverDialog({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
@@ -19,24 +14,7 @@ function ProductOrderCardOverDialog({ includeLegit }: { includeLegit: boolean })
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  const { isLoggedInWithSMS } = useSession();
-  const { data: { price } = {} } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
+  const { data: { price } = {} } = useQueryProductOrder({ productId, includeLegit });
 
   const [open, setOpen] = useState(false);
 

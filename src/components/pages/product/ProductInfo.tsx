@@ -621,7 +621,8 @@ function ProductInfo({
               variant="h3"
               weight="medium"
               customStyle={{
-                lineHeight: '24px'
+                lineHeight: '24px',
+                wordBreak: 'keep-all'
               }}
             >
               {productDetail?.product?.title}
@@ -764,13 +765,13 @@ function ProductInfo({
             dangerouslySetInnerHTML={{
               __html: convertedDescription !== 'null' ? convertedDescription : ''
             }}
-            customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+            customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}
           />
         ) : (
           <Content ref={descriptionRef} component="article" variant="h4" isClamped={isClamped}>
             <LinesEllipsis
               text={convertedDescription !== 'null' ? convertedDescription : ''}
-              maxLine="20"
+              maxLine="10"
               ellipsis="..."
               basedOn="letters"
               component="p"
@@ -871,9 +872,7 @@ function ProductInfo({
             {productDetail?.product?.purchaseCount > 0 && (
               <Flexbox gap={4} alignment="center">
                 <Icon name="MessageFilled" width={16} height={16} color="ui80" />
-                <Typography variant="body2" weight="medium" color="ui60">
-                  {productDetail?.product.purchaseCount}
-                </Typography>
+                <Typography color="ui60">{productDetail?.product.purchaseCount}</Typography>
               </Flexbox>
             )}
           </Flexbox>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import { find, groupBy } from 'lodash-es';
 import dayjs from 'dayjs';
 import type {
   QueryObserverResult,
@@ -88,17 +89,34 @@ function ChannelMessages({
   const scrollingTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const prevScrollHeightRef = useRef(0);
 
+  const groupLastMessages = useMemo(() => {
+    const groupMessage = groupBy(messages, (message) =>
+      dayjs(message.createdAt).format('MMDDHHmm')
+    );
+    const groupMessageArr = Object.values(groupMessage);
+    return groupMessageArr.map((arr) => arr[arr.length - 1]);
+  }, [messages]);
+
   const memorizedAllMessages = useMemo(
     () =>
       messages.length > 0 ? (
         messages.map((message, idx) => {
           const previousMessage = messages[idx - 1];
           const nextMessage = messages[idx + 1];
+
+          const previousSender = (messages[idx - 1] as UserMessage | FileMessage)?.sender?.userId;
+          const nextSender = (messages[idx + 1] as UserMessage | FileMessage)?.sender?.userId;
+          const currentSender = (message as UserMessage | FileMessage)?.sender?.userId;
+
           const previousCreatedAt = previousMessage?.createdAt;
           const currentCreatedAt = message?.createdAt;
           const hasSeparator = !(
             previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'date')
           );
+          const hasSameTimeMessage = !(
+            previousCreatedAt && dayjs(currentCreatedAt).isSame(previousCreatedAt, 'minute')
+          );
+          const sameGroupLastMessage = !!find(groupLastMessages, { createdAt: currentCreatedAt });
 
           return message ? (
             <Box key={`message-${message.messageId}`}>
@@ -129,6 +147,8 @@ function ChannelMessages({
                   sendbirdChannel={sendbirdChannel}
                   message={message as UserMessage | FileMessage}
                   nextMessage={nextMessage as UserMessage | FileMessage | undefined}
+                  hasSameTimeMessage={hasSameTimeMessage || previousSender !== currentSender}
+                  sameGroupLastMessage={sameGroupLastMessage || nextSender !== currentSender}
                 />
               )}
               {isAdminBlockUser && <ChannelAdminBlockMessage message={message as AdminMessage} />}
@@ -154,7 +174,8 @@ function ChannelMessages({
       isTargetUserBlocked,
       isAdminBlockUser,
       status,
-      onClickSafePayment
+      onClickSafePayment,
+      groupLastMessages
     ]
   );
 

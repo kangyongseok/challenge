@@ -4,15 +4,11 @@ import type { MutableRefObject } from 'react';
 import { useRouter } from 'next/router';
 import { loadPaymentWidget } from '@tosspayments/payment-widget-sdk';
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
-import { useQuery } from '@tanstack/react-query';
-
-import { fetchProductOrder } from '@api/order';
-
-import queryKeys from '@constants/queryKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
 import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
 interface ProductOrderPaymentMethodProps {
   paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
@@ -34,23 +30,7 @@ function ProductOrderPaymentMethod({
 
   const { isLoggedInWithSMS, data: accessUser } = useSession();
 
-  const { data: { totalPrice = 0 } = {} } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
+  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({ productId, includeLegit });
 
   useEffect(() => {
     if (

@@ -588,7 +588,8 @@ function ProductInfoOperator({
               variant="h3"
               weight="medium"
               customStyle={{
-                lineHeight: '24px'
+                lineHeight: '24px',
+                wordBreak: 'keep-all'
               }}
             >
               {productDetail?.product?.title}
@@ -660,49 +661,25 @@ function ProductInfoOperator({
                       open={openTooltip}
                       message={
                         <>
-                          <Typography
-                            color="uiWhite"
-                            variant="body2"
-                            weight="medium"
-                            customStyle={{
-                              textAlign: 'left',
-                              wordBreak: 'keep-all',
-                              width: 240,
-                              whiteSpace: 'pre-wrap'
-                            }}
-                          >
+                          <TooltipText color="uiWhite" variant="body2" weight="medium">
                             {productDetail.product.site.name} 구매대행수수료는 {orderInfo.feeRate}
                             %입니다
-                          </Typography>
-                          <Typography
+                          </TooltipText>
+                          <TooltipText
                             color="uiWhite"
                             variant="body2"
                             weight="medium"
                             customStyle={{
-                              textAlign: 'left',
-                              wordBreak: 'keep-all',
-                              width: 240,
-                              whiteSpace: 'pre-wrap',
                               margin: '10px 0'
                             }}
                           >
                             카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시,
                             판매자와 직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여
                             안전합니다.
-                          </Typography>
-                          <Typography
-                            color="uiWhite"
-                            variant="body2"
-                            weight="medium"
-                            customStyle={{
-                              textAlign: 'left',
-                              wordBreak: 'keep-all',
-                              width: 240,
-                              whiteSpace: 'pre-wrap'
-                            }}
-                          >
+                          </TooltipText>
+                          <TooltipText color="uiWhite" variant="body2" weight="medium">
                             카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                          </Typography>
+                          </TooltipText>
                         </>
                       }
                       placement="bottom"
@@ -710,7 +687,8 @@ function ProductInfoOperator({
                       customStyle={{
                         top: 'auto',
                         bottom: 15,
-                        left: 115
+                        left: 115,
+                        zIndex: 5
                       }}
                     >
                       <Icon
@@ -807,13 +785,13 @@ function ProductInfoOperator({
             dangerouslySetInnerHTML={{
               __html: convertedDescription !== 'null' ? convertedDescription : ''
             }}
-            customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+            customStyle={{ marginTop: 24, whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}
           />
         ) : (
           <Content ref={descriptionRef} component="article" variant="h4" isClamped={isClamped}>
             <LinesEllipsis
               text={convertedDescription !== 'null' ? convertedDescription : ''}
-              maxLine="20"
+              maxLine="10"
               ellipsis="..."
               basedOn="letters"
               component="p"
@@ -914,9 +892,7 @@ function ProductInfoOperator({
             {productDetail?.product?.purchaseCount > 0 && (
               <Flexbox gap={4} alignment="center">
                 <Icon name="MessageFilled" width={16} height={16} color="ui80" />
-                <Typography variant="body2" weight="medium" color="ui60">
-                  {productDetail?.product.purchaseCount}
-                </Typography>
+                <Typography color="ui60">{productDetail?.product.purchaseCount}</Typography>
               </Flexbox>
             )}
           </Flexbox>
@@ -1171,6 +1147,12 @@ const PurchasingAgentInfo = styled.div`
         palette: { common }
       }
     }) => common.line01};
+`;
+
+const TooltipText = styled(Typography)`
+  text-align: left;
+  width: 240px;
+  white-space: pre-wrap;
 `;
 
 function OutLink() {

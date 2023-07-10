@@ -1,12 +1,7 @@
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Flexbox, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { fetchProductOrder } from '@api/order';
-
-import queryKeys from '@constants/queryKeys';
-
-import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
 function ProductOrderDeliveryInfo({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
@@ -20,25 +15,10 @@ function ProductOrderDeliveryInfo({ includeLegit }: { includeLegit: boolean }) {
     }
   } = useTheme();
 
-  const { isLoggedInWithSMS } = useSession();
-
-  const { data: { deliveryInfo } = {}, isLoading } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
+  const { data: { deliveryInfo } = {}, isLoading } = useQueryProductOrder({
+    productId,
+    includeLegit
+  });
 
   return (
     <Box

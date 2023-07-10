@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import styled from '@emotion/styled';
 
 import { fetchProduct } from '@api/product';
-import { fetchProductOrder } from '@api/order';
 
 import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
 
-import useSession from '@hooks/useSession';
+import useQueryProductOrder from '@hooks/useQueryProductOrder';
 import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
@@ -31,25 +31,10 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
     }
   } = useTheme();
 
-  const { isLoggedInWithSMS } = useSession();
-
-  const { data: { totalPrice = 0, fee = 0, orderFees } = {} } = useQuery(
-    queryKeys.orders.productOrder({
-      productId,
-      isCreated: true,
-      includeLegit
-    }),
-    () =>
-      fetchProductOrder({
-        productId,
-        isCreated: true,
-        includeLegit
-      }),
-    {
-      enabled: isLoggedInWithSMS && !!productId,
-      refetchOnMount: true
-    }
-  );
+  const { data: { totalPrice = 0, fee = 0, orderFees } = {} } = useQueryProductOrder({
+    productId,
+    includeLegit
+  });
 
   const { data: { product: { price = 0 } = {}, offers = [], orderInfo } = {} } = useQuery(
     queryKeys.products.product({ productId }),
@@ -135,48 +120,24 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
                   open={openTooltip}
                   message={
                     <>
-                      <Typography
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap'
-                        }}
-                      >
+                      <TooltipText color="uiWhite" variant="body2" weight="medium">
                         {product?.site.name} 구매대행수수료는 {orderFee.feeRate}
                         %입니다
-                      </Typography>
-                      <Typography
+                      </TooltipText>
+                      <TooltipText
                         color="uiWhite"
                         variant="body2"
                         weight="medium"
                         customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap',
                           margin: '10px 0'
                         }}
                       >
                         카멜은 판매자와 대신 대화하며 필요한 정보를 확인해 드려요. 필요 시, 판매자와
                         직거래도 진행합니다. 배송은 프리미엄 안전배송을 사용하여 안전합니다.
-                      </Typography>
-                      <Typography
-                        color="uiWhite"
-                        variant="body2"
-                        weight="medium"
-                        customStyle={{
-                          textAlign: 'left',
-                          wordBreak: 'keep-all',
-                          width: 240,
-                          whiteSpace: 'pre-wrap'
-                        }}
-                      >
+                      </TooltipText>
+                      <TooltipText color="uiWhite" variant="body2" weight="medium">
                         카멜은 유저님의 편리하고 안전한 거래를 위해 최선을 다하겠습니다.
-                      </Typography>
+                      </TooltipText>
                     </>
                   }
                   placement="bottom"
@@ -184,7 +145,8 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
                   customStyle={{
                     top: 'auto',
                     bottom: 20,
-                    left: 115
+                    left: 115,
+                    zIndex: 5
                   }}
                 >
                   <Icon
@@ -243,5 +205,11 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
     </Box>
   );
 }
+
+const TooltipText = styled(Typography)`
+  text-align: left;
+  width: 240px;
+  white-space: pre-wrap;
+`;
 
 export default ProductOrderPaymentInfo;
