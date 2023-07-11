@@ -10,3 +10,4 @@ export { default as ChannelSaleRequestRefuseDialog } from './ChannelSaleRequestR
 export { default as ChannelPurchaseConfirmDialog } from './ChannelPurchaseConfirmDialog';
 export { default as ChannelAdminBlockMessage } from './ChannelAdminBlockMessage';
 export { default as ChannelReservingDialog } from './ChannelReservingDialog';
+export { default as ChannelSafePaymentGuideBanner } from './ChannelSafePaymentGuideBanner';

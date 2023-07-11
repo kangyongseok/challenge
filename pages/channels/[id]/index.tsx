@@ -26,6 +26,7 @@ import {
   ChannelProductStatusBottomSheet,
   ChannelPurchaseConfirmDialog,
   ChannelReservingDialog,
+  ChannelSafePaymentGuideBanner,
   ChannelSaleRequestRefuseDialog
 } from '@components/pages/channel';
 
@@ -559,7 +560,12 @@ function Channel() {
                   }
                 />
               )}
-              {isAllOperatorProduct && (
+              {channel &&
+                !channel?.isReserved &&
+                !showAppointmentBanner &&
+                !isCrawlingProduct &&
+                !isAllOperatorProduct && <ChannelSafePaymentGuideBanner />}
+              {channel && isAllOperatorProduct && isFetched && (
                 <ChannelCamelAuthFixBanner type="operator" platformName={product?.site.name} />
               )}
               {!channel?.isReserved && isCrawlingProduct && !isAllOperatorProduct && (
