@@ -17,6 +17,7 @@ import {
   Flexbox,
   Icon,
   Image,
+  Label,
   Tooltip,
   Typography,
   useTheme
@@ -699,9 +700,25 @@ function ProductInfoOperator({
                       />
                     </Tooltip>
                   </Typography>
-                  <Typography weight="medium" color="ui60">
-                    + {commaNumber(orderInfo?.totalFee)}원
-                  </Typography>
+                  <Flexbox alignment="center" gap={8}>
+                    {orderInfo.fee - orderInfo.discountFee === 0 && (
+                      <Label
+                        text="무료"
+                        variant="solid"
+                        brandColor="primary"
+                        round={10}
+                        size="xsmall"
+                      />
+                    )}
+                    {!!orderInfo.discountFee && (
+                      <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
+                        {commaNumber(orderInfo.discountFee)}원
+                      </Typography>
+                    )}
+                    <Typography weight="medium" color="ui60">
+                      + {commaNumber(orderInfo?.totalFee)}원
+                    </Typography>
+                  </Flexbox>
                 </Flexbox>
               ))}
           </FeeOptionBox>
@@ -838,7 +855,9 @@ function ProductInfoOperator({
                 size="medium"
                 onClick={() => handleClickChip(item)}
                 customStyle={{
-                  padding: item.icon || item.symbol ? '4px 12px 4px 4px' : '6px 12px'
+                  padding: item.icon || item.symbol ? '4px 12px 4px 4px' : '6px 12px',
+                  textAlign: 'left',
+                  height: 'fit-content'
                 }}
               >
                 {item.icon && (

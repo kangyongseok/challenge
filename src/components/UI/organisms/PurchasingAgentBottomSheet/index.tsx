@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { BottomSheet, Box, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
+import {
+  BottomSheet,
+  Box,
+  Button,
+  Flexbox,
+  Icon,
+  Label,
+  Tooltip,
+  Typography
+} from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { OrderInfo } from '@dto/product';
@@ -32,8 +41,6 @@ function PurchasingAgentBottomSheet({
   const [isCheck, setCheck] = useState(true);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
 
-  // const { data: productDetail } = useQueryProduct();
-
   const handleClickCheck = () => {
     setCheck((prev) => !prev);
   };
@@ -51,14 +58,17 @@ function PurchasingAgentBottomSheet({
   };
 
   useEffect(() => {
-    logEvent(attrKeys.productOrder.VIEW_ORDER_OPTION, {
-      title: logTitle
-    });
+    if (open) {
+      logEvent(attrKeys.productOrder.VIEW_ORDER_OPTION, {
+        title: logTitle
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [open]);
 
-  const inspectorFee =
-    orderInfoProps?.orderFees?.find((orderInfo) => orderInfo.type === 2)?.totalFee || 0;
+  const inspector = orderInfoProps?.orderFees?.find((orderInfo) => orderInfo.type === 2);
+  const inspectorFee = inspector?.totalFee || 0;
+  const inspectorFree = (inspector?.fee || 0) - (inspector?.discountFee || 0) === 0;
 
   return (
     <BottomSheet
@@ -106,7 +116,7 @@ function PurchasingAgentBottomSheet({
                 카멜 정품검수
               </Typography>
               <Typography variant="h3" weight="bold" color={isCheck ? 'ui20' : 'ui60'}>
-                {commaNumber(inspectorFee)}원
+                {inspectorFree ? '무료' : `${commaNumber(inspectorFee)}원`}
               </Typography>
             </Flexbox>
             {isCheck ? (
@@ -185,10 +195,27 @@ function PurchasingAgentBottomSheet({
                   />
                 </Tooltip>
               </Typography>
+
               {!isCheck && orderInfo?.type === 2 ? (
                 <Typography color="ui60">선택안함</Typography>
               ) : (
-                <Typography>{commaNumber(orderInfo?.totalFee)}원</Typography>
+                <Flexbox alignment="center" gap={8}>
+                  {orderInfo.fee - orderInfo.discountFee === 0 && (
+                    <Label
+                      text="무료"
+                      variant="solid"
+                      brandColor="primary"
+                      round={10}
+                      size="xsmall"
+                    />
+                  )}
+                  {!!orderInfo.discountFee && (
+                    <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
+                      {commaNumber(orderInfo.discountFee)}원
+                    </Typography>
+                  )}
+                  <Typography>{commaNumber(orderInfo?.totalFee)}원</Typography>
+                </Flexbox>
               )}
             </Flexbox>
           ))}

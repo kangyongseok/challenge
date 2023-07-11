@@ -93,7 +93,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     att
   }: {
     key: string;
-    att?: 'CHANNEL' | 'ORDER' | 'CPPRICELOW' | 'CPSAME' | 'REDIRECT';
+    att?: 'CHANNEL' | 'ORDER' | 'CPPRICELOW' | 'CPSAME' | 'REDIRECT' | 'OPERATOR';
   }) => {
     if (!productDetail?.product) return;
 
@@ -242,15 +242,17 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   const handleClickSafePayment = () => {
     if (!productDetail?.product) return;
 
-    logEventProductDetailAtt({ key: attrKeys.products.CLICK_PURCHASE, att: 'ORDER' });
+    if (!isAllOperatorProduct) {
+      logEventProductDetailAtt({ key: attrKeys.products.CLICK_PURCHASE, att: 'ORDER' });
 
-    logEvent(attrKeys.products.CLICK_ORDER_STATUS, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.PAYMENT_WAIT,
-      data: {
-        ...productDetail.product
-      }
-    });
+      logEvent(attrKeys.products.CLICK_ORDER_STATUS, {
+        name: attrProperty.name.PRODUCT_DETAIL,
+        title: attrProperty.title.PAYMENT_WAIT,
+        data: {
+          ...productDetail.product
+        }
+      });
+    }
 
     if (isSoldOut) {
       toastStack({
@@ -323,6 +325,17 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   };
 
   const handleClickOperatorPayment = () => {
+    if (!productDetail?.product) return;
+
+    logEventProductDetailAtt({ key: attrKeys.products.CLICK_PURCHASE, att: 'OPERATOR' });
+
+    logEvent(attrKeys.products.CLICK_OPERATOR_STATUS, {
+      name: attrProperty.name.PRODUCT_DETAIL,
+      title: attrProperty.title.PAYMENT_WAIT,
+      data: {
+        ...productDetail.product
+      }
+    });
     setOpenPurchasingAgentBottomSheet(true);
   };
 
@@ -391,7 +404,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             size="xlarge"
             variant="solid"
             brandColor="black"
-            // onClick={handleClickSafePayment}
             onClick={handleClickOperatorPayment}
             disabled={isDisabledState}
             customStyle={{ minWidth: 'fit-content', padding: 12 }}

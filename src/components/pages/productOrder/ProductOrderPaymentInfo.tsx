@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Flexbox, Icon, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Icon, Label, Tooltip, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { fetchProduct } from '@api/product';
@@ -150,14 +150,27 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
                 />
               </Tooltip>
             </Typography>
-            <Typography
-              variant="h4"
-              color={!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? 'ui60' : 'ui20'}
-            >
-              {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee
-                ? '선택안함'
-                : `${commaNumber(orderFee.totalFee || 0)}원`}
-            </Typography>
+            {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? (
+              <Typography color="ui60">선택안함</Typography>
+            ) : (
+              <Flexbox alignment="center" gap={8}>
+                {orderFee.fee - orderFee.discountFee === 0 && (
+                  <Label
+                    text="무료"
+                    variant="solid"
+                    brandColor="primary"
+                    round={10}
+                    size="xsmall"
+                  />
+                )}
+                {!!orderFee.discountFee && (
+                  <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
+                    {commaNumber(orderFee.discountFee)}원
+                  </Typography>
+                )}
+                <Typography>{commaNumber(orderFee?.totalFee)}원</Typography>
+              </Flexbox>
+            )}
           </Flexbox>
         ))
       ) : (
