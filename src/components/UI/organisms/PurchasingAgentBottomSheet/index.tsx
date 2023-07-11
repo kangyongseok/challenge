@@ -139,7 +139,7 @@ function PurchasingAgentBottomSheet({
       <FeeOptionBox direction="vertical" gap={6}>
         <Flexbox alignment="center" justifyContent="space-between">
           <Typography color="ui60">매물가격</Typography>
-          <Typography>{commaNumber(orderInfoProps?.price || 0)}만원</Typography>
+          <Typography>{commaNumber(orderInfoProps?.price || 0)}원</Typography>
         </Flexbox>
         {orderInfoProps?.orderFees
           ?.filter((orderInfo) => orderInfo.type !== 0)
@@ -188,7 +188,7 @@ function PurchasingAgentBottomSheet({
               {!isCheck && orderInfo?.type === 2 ? (
                 <Typography color="ui60">선택안함</Typography>
               ) : (
-                <Typography>{commaNumber(orderInfo?.totalFee)}만원</Typography>
+                <Typography>{commaNumber(orderInfo?.totalFee)}원</Typography>
               )}
             </Flexbox>
           ))}
