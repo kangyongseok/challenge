@@ -141,55 +141,57 @@ function PurchasingAgentBottomSheet({
           <Typography color="ui60">매물가격</Typography>
           <Typography>{commaNumber(orderInfoProps?.price || 0)}만원</Typography>
         </Flexbox>
-        {orderInfoProps?.orderFees?.map((orderInfo) => (
-          <Flexbox
-            alignment="center"
-            justifyContent="space-between"
-            key={`product-operator-${orderInfo.name}`}
-          >
-            <Typography color="ui60" customStyle={{ display: 'flex', alignItems: 'center' }}>
-              {orderInfo.name}
-              <Tooltip
-                open={openTooltip === orderInfo.type}
-                message={
-                  <>
-                    {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
-                      <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
-                        {message}
-                      </TooltipText>
-                    ))}
-                  </>
-                }
-                placement="top"
-                triangleLeft={33}
-                customStyle={{
-                  top: 15,
-                  bottom: 'auto',
-                  left: 100,
-                  zIndex: 5
-                }}
-              >
-                <Icon
-                  name="QuestionCircleOutlined"
-                  width={16}
-                  color="ui80"
-                  onClick={() => {
-                    if (orderInfo.type === openTooltip) {
-                      setOpenTooltip(null);
-                      return;
-                    }
-                    setOpenTooltip(orderInfo.type);
+        {orderInfoProps?.orderFees
+          ?.filter((orderInfo) => orderInfo.type !== 0)
+          ?.map((orderInfo) => (
+            <Flexbox
+              alignment="center"
+              justifyContent="space-between"
+              key={`product-operator-${orderInfo.name}`}
+            >
+              <Typography color="ui60" customStyle={{ display: 'flex', alignItems: 'center' }}>
+                {orderInfo.name}
+                <Tooltip
+                  open={openTooltip === orderInfo.type}
+                  message={
+                    <>
+                      {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
+                        <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                          {message}
+                        </TooltipText>
+                      ))}
+                    </>
+                  }
+                  placement="top"
+                  triangleLeft={33}
+                  customStyle={{
+                    top: 15,
+                    bottom: 'auto',
+                    left: 100,
+                    zIndex: 5
                   }}
-                />
-              </Tooltip>
-            </Typography>
-            {!isCheck && orderInfo?.type === 2 ? (
-              <Typography color="ui60">선택안함</Typography>
-            ) : (
-              <Typography>{commaNumber(orderInfo?.totalFee)}만원</Typography>
-            )}
-          </Flexbox>
-        ))}
+                >
+                  <Icon
+                    name="QuestionCircleOutlined"
+                    width={16}
+                    color="ui80"
+                    onClick={() => {
+                      if (orderInfo.type === openTooltip) {
+                        setOpenTooltip(null);
+                        return;
+                      }
+                      setOpenTooltip(orderInfo.type);
+                    }}
+                  />
+                </Tooltip>
+              </Typography>
+              {!isCheck && orderInfo?.type === 2 ? (
+                <Typography color="ui60">선택안함</Typography>
+              ) : (
+                <Typography>{commaNumber(orderInfo?.totalFee)}만원</Typography>
+              )}
+            </Flexbox>
+          ))}
       </FeeOptionBox>
       <Button
         fullWidth

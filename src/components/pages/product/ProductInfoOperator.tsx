@@ -645,63 +645,65 @@ function ProductInfoOperator({
                 {commaNumber(productDetail?.orderInfo?.price)}원
               </Typography>
             </Flexbox>
-            {productDetail?.orderInfo?.orderFees?.map((orderInfo) => (
-              <Flexbox
-                alignment="center"
-                justifyContent="space-between"
-                key={`product-operator-${orderInfo.name}`}
-              >
-                <Typography
-                  variant="body2"
-                  color="ui60"
-                  customStyle={{ display: 'flex', alignItems: 'center' }}
+            {productDetail?.orderInfo?.orderFees
+              ?.filter((orderInfo) => orderInfo.type !== 0)
+              ?.map((orderInfo) => (
+                <Flexbox
+                  alignment="center"
+                  justifyContent="space-between"
+                  key={`product-operator-${orderInfo.name}`}
                 >
-                  {orderInfo.name}
-                  <Tooltip
-                    open={openTooltip === orderInfo.type}
-                    message={
-                      <>
-                        {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
-                          <TooltipText
-                            key={message}
-                            color="uiWhite"
-                            variant="body2"
-                            weight="medium"
-                          >
-                            {message}
-                          </TooltipText>
-                        ))}
-                      </>
-                    }
-                    placement="bottom"
-                    triangleLeft={18}
-                    customStyle={{
-                      top: 'auto',
-                      bottom: 15,
-                      left: 115,
-                      zIndex: 5
-                    }}
+                  <Typography
+                    variant="body2"
+                    color="ui60"
+                    customStyle={{ display: 'flex', alignItems: 'center' }}
                   >
-                    <Icon
-                      name="QuestionCircleOutlined"
-                      width={16}
-                      height={16}
-                      color="ui80"
-                      onClick={() => {
-                        if (orderInfo.type === openTooltip) {
-                          setOpenTooltip(null);
-                          return;
-                        }
-                        setOpenTooltip(orderInfo.type);
+                    {orderInfo.name}
+                    <Tooltip
+                      open={openTooltip === orderInfo.type}
+                      message={
+                        <>
+                          {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
+                            <TooltipText
+                              key={message}
+                              color="uiWhite"
+                              variant="body2"
+                              weight="medium"
+                            >
+                              {message}
+                            </TooltipText>
+                          ))}
+                        </>
+                      }
+                      placement="bottom"
+                      triangleLeft={18}
+                      customStyle={{
+                        top: 'auto',
+                        bottom: 15,
+                        left: 115,
+                        zIndex: 5
                       }}
-                    />
-                  </Tooltip>
-                </Typography>
-                <Typography weight="medium" color="ui60">
-                  + {commaNumber(orderInfo?.totalFee)}원
-                </Typography>
-              </Flexbox>
-            ))}
+                    >
+                      <Icon
+                        name="QuestionCircleOutlined"
+                        width={16}
+                        height={16}
+                        color="ui80"
+                        onClick={() => {
+                          if (orderInfo.type === openTooltip) {
+                            setOpenTooltip(null);
+                            return;
+                          }
+                          setOpenTooltip(orderInfo.type);
+                        }}
+                      />
+                    </Tooltip>
+                  </Typography>
+                  <Typography weight="medium" color="ui60">
+                    + {commaNumber(orderInfo?.totalFee)}원
+                  </Typography>
+                </Flexbox>
+              ))}
           </FeeOptionBox>
         )}
         <PlatformUpdateTime alignment="center" gap={4}>
