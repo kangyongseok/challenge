@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { fetchProduct } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
-import { ORDER_FEE_TOOLTIP_MESSAGE } from '@constants/product';
+import { OrderFeeTooltipMessage } from '@constants/product';
 
 import { commaNumber } from '@utils/formats';
 
@@ -21,6 +21,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
+  const [openSafeFeeTooltip, setOpenSafeFeeTooltip] = useState(false);
 
   const { data: { product } = {} } = useQueryProduct();
 
@@ -120,11 +121,13 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
                 open={openTooltip === orderFee.type}
                 message={
                   <>
-                    {ORDER_FEE_TOOLTIP_MESSAGE[orderFee.type].map((message: string) => (
-                      <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
-                        {message}
-                      </TooltipText>
-                    ))}
+                    {OrderFeeTooltipMessage({ safeFee: orderFee.feeRate })[orderFee.type].map(
+                      (message: string) => (
+                        <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                          {message}
+                        </TooltipText>
+                      )
+                    )}
                   </>
                 }
                 placement="top"
@@ -182,14 +185,42 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
             color: common.ui60
           }}
         >
-          <Typography
-            variant="h4"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
-            안전결제수수료
-          </Typography>
+          <Flexbox alignment="center">
+            <Typography
+              variant="h4"
+              customStyle={{
+                color: common.ui60
+              }}
+            >
+              안전결제수수료
+            </Typography>
+            <Tooltip
+              open={openSafeFeeTooltip}
+              message={
+                <TooltipText color="uiWhite" variant="body2" weight="medium" w={170}>
+                  사기 걱정 없는 안전결제 수수료는
+                  <br />
+                  상품금액의 2%예요.
+                </TooltipText>
+              }
+              placement="top"
+              triangleLeft={33}
+              customStyle={{
+                top: 15,
+                bottom: 'auto',
+                left: 65,
+                zIndex: 5,
+                width: 50
+              }}
+            >
+              <Icon
+                name="QuestionCircleOutlined"
+                width={16}
+                color="ui80"
+                onClick={() => setOpenSafeFeeTooltip((prev) => !prev)}
+              />
+            </Tooltip>
+          </Flexbox>
           <Typography variant="h4">{commaNumber(fee || 0)}원</Typography>
         </Flexbox>
       )}
@@ -218,9 +249,9 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   );
 }
 
-const TooltipText = styled(Typography)`
+const TooltipText = styled(Typography)<{ w?: number }>`
   text-align: left;
-  width: 240px;
+  width: ${({ w }) => w || 240}px;
   white-space: pre-wrap;
 `;
 

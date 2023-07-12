@@ -18,7 +18,7 @@ import { OrderInfo } from '@dto/product';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { ORDER_FEE_TOOLTIP_MESSAGE } from '@constants/product';
+import { OrderFeeTooltipMessage } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -165,11 +165,18 @@ function PurchasingAgentBottomSheet({
                   open={openTooltip === orderInfo.type}
                   message={
                     <>
-                      {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
-                        <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
-                          {message}
-                        </TooltipText>
-                      ))}
+                      {OrderFeeTooltipMessage({ safeFee: orderInfo.feeRate })[orderInfo.type].map(
+                        (message: string) => (
+                          <TooltipText
+                            key={message}
+                            color="uiWhite"
+                            variant="body2"
+                            weight="medium"
+                          >
+                            {message}
+                          </TooltipText>
+                        )
+                      )}
                     </>
                   }
                   placement="top"

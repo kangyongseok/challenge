@@ -38,7 +38,7 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import {
   INITIAL_REPORT_OPTIONS,
-  ORDER_FEE_TOOLTIP_MESSAGE,
+  OrderFeeTooltipMessage,
   PRODUCT_SITE,
   REPORT_TYPE_COUNTERFEITER,
   REPORT_TYPE_FAKE_PRODUCT,
@@ -664,7 +664,9 @@ function ProductInfoOperator({
                       open={openTooltip === orderInfo.type}
                       message={
                         <>
-                          {ORDER_FEE_TOOLTIP_MESSAGE[orderInfo.type].map((message: string) => (
+                          {OrderFeeTooltipMessage({ safeFee: orderInfo.feeRate })[
+                            orderInfo.type
+                          ].map((message: string) => (
                             <TooltipText
                               key={message}
                               color="uiWhite"
@@ -766,7 +768,7 @@ function ProductInfoOperator({
               variant="body2"
               onClick={() => {
                 logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
-                router.push('/products/purchasingInfo');
+                router.push('/products/purchasingInfo?step=2');
               }}
             >
               구매대행이란?
@@ -787,7 +789,9 @@ function ProductInfoOperator({
               <CheckBoxOutline />
             </Flexbox>
             <Typography variant="body2" color="ui20">
-              판매자의 막말, 안전결제 거부, 미발송이 걱정된다면? 모두 카멜이 대신 해드릴게요!
+              판매자의 막말, 안전결제 거부, 미발송이 걱정된다면?
+              <br />
+              모두 카멜이 대신 해드릴게요!
             </Typography>
           </Flexbox>
           <Flexbox alignment="flex-start" gap={4} customStyle={{ marginTop: 4 }}>
