@@ -414,7 +414,14 @@ function ProductCTAButton() {
                         textDecorationLine: 'line-through'
                       }}
                     >
-                      {commaNumber(getTenThousandUnitPrice(productDetail?.product?.price || 0))}만원
+                      {commaNumber(
+                        getTenThousandUnitPrice(
+                          isAllOperatorProduct
+                            ? productDetail?.orderInfo?.totalPrice || 0
+                            : productDetail?.product?.price || 0
+                        )
+                      )}
+                      만원
                     </Typography>
                   )}
                 </>
