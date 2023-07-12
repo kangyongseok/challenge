@@ -501,6 +501,7 @@ function ProductInfoOperator({
 
     return () => {
       if (observer) observer.disconnect();
+      setIsToggleDropDown(false);
     };
   }, [productDetail?.product]);
 
@@ -596,9 +597,9 @@ function ProductInfoOperator({
             >
               {productDetail?.product?.title}
             </Typography>
-            <Flexbox alignment="flex-end" gap={4}>
+            <Flexbox alignment="flex-end" gap={4} customStyle={{ alignItems: 'baseline' }}>
               <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
-                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo?.totalPrice || 0))}
+                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo.totalPrice || 0))}
                 만원
               </Typography>
               <Flexbox alignment="center" onClick={handleClickDropDownFeeOption}>
@@ -648,7 +649,7 @@ function ProductInfoOperator({
               </Typography>
             </Flexbox>
             {productDetail?.orderInfo?.orderFees
-              ?.filter((orderInfo) => orderInfo.type !== 0)
+              ?.filter((orderInfo) => orderInfo.type !== 2)
               ?.map((orderInfo) => (
                 <Flexbox
                   alignment="center"

@@ -308,7 +308,6 @@ function ChannelsSwipeActionList({
               groupChannel: sendbirdChannel,
               isTargetUserBlocked,
               isAdminBlockUser,
-              isOperator: camelChannel?.channel?.targetUserId === 113,
               currentUserId: String(accessUser?.userId || '')
             })}
             description={

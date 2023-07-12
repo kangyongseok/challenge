@@ -368,9 +368,7 @@ function ProductCTAButton() {
               >
                 {commaNumber(
                   getTenThousandUnitPrice(
-                    isAllOperatorProduct
-                      ? productDetail?.orderInfo?.totalPrice || 0
-                      : productDetail?.product?.price || 0
+                    productDetail?.orderInfo?.totalPrice || productDetail?.product?.price || 0
                   )
                 )}
                 만원
@@ -414,35 +412,13 @@ function ProductCTAButton() {
                         textDecorationLine: 'line-through'
                       }}
                     >
-                      {commaNumber(
-                        getTenThousandUnitPrice(
-                          isAllOperatorProduct
-                            ? productDetail?.orderInfo?.totalPrice || 0
-                            : productDetail?.product?.price || 0
-                        )
-                      )}
+                      {commaNumber(getTenThousandUnitPrice(productDetail?.product?.price || 0))}
                       만원
                     </Typography>
                   )}
                 </>
               )}
             {isAllOperatorProduct && <Typography color="ui60">카멜 구매대행가</Typography>}
-            {/* {isCrawlingProduct && !isSoldOut && (
-              <Flexbox alignment="center" gap={5}>
-                <Typography
-                  weight="medium"
-                  onClick={() => pageMovePlatform()}
-                  color="primary-light"
-                  customStyle={{
-                    textDecorationLine: 'underline',
-                    cursor: 'pointer'
-                  }}
-                >
-                  보러가기
-                </Typography>
-                <Outlink />
-              </Flexbox>
-            )} */}
           </Flexbox>
         </Tooltip>
         <ProductDetailButtonGroup blockUserDialog={() => setOpenDialog(true)} />

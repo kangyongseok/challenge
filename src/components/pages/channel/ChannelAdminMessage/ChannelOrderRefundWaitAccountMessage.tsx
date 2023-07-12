@@ -130,17 +130,33 @@ function ChannelOrderRefundWaitAccountMessage({
             </Typography>
             <Typography variant="body2">{commaNumber(order?.price || 0)}원</Typography>
           </Flexbox>
-          <Flexbox justifyContent="space-between">
-            <Typography
-              variant="body2"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
-              안전결제수수료
-            </Typography>
-            <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
-          </Flexbox>
+          {order?.orderFees.length ? (
+            order?.orderFees.map((orderFee) => (
+              <Flexbox justifyContent="space-between" key={`order-fee${orderFee.name}`}>
+                <Typography
+                  variant="body2"
+                  customStyle={{
+                    color: common.ui60
+                  }}
+                >
+                  {orderFee.name}
+                </Typography>
+                <Typography variant="body2">{commaNumber(orderFee.totalFee || 0)}원</Typography>
+              </Flexbox>
+            ))
+          ) : (
+            <Flexbox justifyContent="space-between">
+              <Typography
+                variant="body2"
+                customStyle={{
+                  color: common.ui60
+                }}
+              >
+                안전결제수수료
+              </Typography>
+              <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+            </Flexbox>
+          )}
           <Flexbox justifyContent="space-between">
             <Typography
               variant="body2"

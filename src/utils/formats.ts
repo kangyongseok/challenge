@@ -29,6 +29,7 @@ export function getTenThousandUnitPrice(price: number) {
   if (resultPrice.toString().length > 6) {
     return Math.round(resultPrice); // 반올림
   }
+
   return Math.round(resultPrice);
 }
 

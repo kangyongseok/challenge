@@ -31,8 +31,6 @@ function ChannelOrderPaymentProgressMessage({
 
   const { data: accessUser } = useSession();
 
-  const isAllOperatorProduct = false;
-
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
   const handleClick = () => {
@@ -60,11 +58,11 @@ function ChannelOrderPaymentProgressMessage({
             borderRadius: 20
           }}
         >
-          {isAllOperatorProduct && (
+          {order?.orderFees.length && (
             <Typography
               weight="bold"
-              color="primary"
-              variant="h4"
+              color="primary-light"
+              variant="small2"
               customStyle={{ marginBottom: 4 }}
             >
               카멜 구매대행
@@ -103,17 +101,33 @@ function ChannelOrderPaymentProgressMessage({
               </Typography>
               <Typography variant="body2">{commaNumber(order?.price || 0)}원</Typography>
             </Flexbox>
-            <Flexbox justifyContent="space-between">
-              <Typography
-                variant="body2"
-                customStyle={{
-                  color: common.ui60
-                }}
-              >
-                {isAllOperatorProduct ? '구매대행수수료' : '안전결제수수료'}
-              </Typography>
-              <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
-            </Flexbox>
+            {order?.orderFees.length ? (
+              order?.orderFees.map((orderFee) => (
+                <Flexbox justifyContent="space-between" key={`order-fee${orderFee.name}`}>
+                  <Typography
+                    variant="body2"
+                    customStyle={{
+                      color: common.ui60
+                    }}
+                  >
+                    {orderFee.name}
+                  </Typography>
+                  <Typography variant="body2">{commaNumber(orderFee.totalFee || 0)}원</Typography>
+                </Flexbox>
+              ))
+            ) : (
+              <Flexbox justifyContent="space-between">
+                <Typography
+                  variant="body2"
+                  customStyle={{
+                    color: common.ui60
+                  }}
+                >
+                  안전결제수수료
+                </Typography>
+                <Typography variant="body2">{commaNumber(order?.fee || 0)}원</Typography>
+              </Flexbox>
+            )}
             <Flexbox justifyContent="space-between">
               <Typography
                 variant="body2"

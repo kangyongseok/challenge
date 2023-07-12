@@ -36,6 +36,7 @@ import { getProductType } from '@utils/products';
 import { getOrderStatusText } from '@utils/common';
 
 import { channelDialogStateFamily } from '@recoil/channel';
+import useProductType from '@hooks/useProductType';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 
 interface ChannelBottomActionButtonsProps {
@@ -106,6 +107,7 @@ function ChannelBottomActionButtons({
   const { mutate: mutatePutProductUpdateStatus, isLoading: isLoadingMutate } =
     useMutation(putProductUpdateStatus);
   const { mutate: mutateSendMessage } = useMutationSendMessage({ lastMessageIndex });
+  const { isAllOperatorProduct } = useProductType(product?.sellerType);
 
   const [currentOffer, setCurrentOffer] = useState<ProductOffer | null>(null);
   const [isPossibleOffer, setIsPossibleOffer] = useState(false);
@@ -158,10 +160,6 @@ function ChannelBottomActionButtons({
     // }
     hiddenInputRef.current?.click();
   };
-
-  const isOperatorProduct = product?.sellerType === productType.operatorProduct;
-  const isOperatorB2CProduct = product?.sellerType === productType.operatorB2CProduct;
-  const isOperatorC2CProduct = product?.sellerType === productType.operatorC2CProduct;
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -334,7 +332,7 @@ function ChannelBottomActionButtons({
     );
   }
 
-  if (!hasSentMessage && !isFocused && (!offers || !offers.length)) {
+  if (!hasSentMessage && !isFocused && (!offers || !offers.length) && !isAllOperatorProduct) {
     return (
       <Box
         customStyle={{
@@ -412,9 +410,9 @@ function ChannelBottomActionButtons({
           사진
         </Typography>
       </Chip>
-      {!isDeletedProduct && !isOperatorB2CProduct && !isOperatorC2CProduct && (
+      {!isDeletedProduct && (
         <>
-          {isPossibleOffer && currentOffer?.status !== 1 && (
+          {isPossibleOffer && currentOffer?.status !== 1 && !isAllOperatorProduct && (
             <Chip
               variant="outline"
               startIcon={<Icon name="WonCircleFilled" />}
@@ -426,7 +424,7 @@ function ChannelBottomActionButtons({
               </Typography>
             </Chip>
           )}
-          {showAppointmentButton && !showPurchaseConfirmButton && !isOperatorProduct && (
+          {showAppointmentButton && !showPurchaseConfirmButton && !isAllOperatorProduct && (
             <Chip
               variant="outline"
               startIcon={<Icon name="TimeFilled" />}
@@ -455,7 +453,7 @@ function ChannelBottomActionButtons({
               </Typography>
             </Chip>
           )}
-          {showReviewButton && (
+          {showReviewButton && !isAllOperatorProduct && (
             <Chip startIcon={<Icon name="EditFilled" />} onClick={handleClickReview}>
               <Typography variant="h4" customStyle={{ whiteSpace: 'nowrap' }}>
                 후기 보내기

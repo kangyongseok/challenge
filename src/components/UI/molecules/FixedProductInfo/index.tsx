@@ -239,11 +239,7 @@ function FixedProductInfo({
                   weight="bold"
                   customStyle={{ color: isDeletedProduct ? common.ui80 : common.ui20 }}
                 >
-                  {commaNumber(
-                    getTenThousandUnitPrice(
-                      isAllOperatorProduct ? data?.orderInfo?.totalPrice || 0 : price
-                    )
-                  )}
+                  {commaNumber(getTenThousandUnitPrice(data?.orderInfo?.totalPrice || price))}
                   만원
                 </Typography>
                 {isAllOperatorProduct && (
