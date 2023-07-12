@@ -598,7 +598,8 @@ function ProductInfoOperator({
             </Typography>
             <Flexbox alignment="flex-end" gap={4}>
               <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
-                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo?.totalPrice))}만원
+                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo?.totalPrice || 0))}
+                만원
               </Typography>
               <Flexbox alignment="center" onClick={handleClickDropDownFeeOption}>
                 <Typography weight="medium" color="ui60">
@@ -1179,6 +1180,7 @@ const TooltipText = styled(Typography)`
   text-align: left;
   width: 240px;
   white-space: pre-wrap;
+  word-break: keep-all;
 `;
 
 function OutLink() {

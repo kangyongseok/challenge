@@ -75,7 +75,8 @@ function ChannelOrderRefundWaitAccountMessage({
         </Typography>
         <Typography
           customStyle={{
-            marginTop: 8
+            marginTop: 8,
+            wordBreak: 'keep-all'
           }}
         >
           거래가 취소되었어요. 환불 받을 계좌를 입력해주세요.

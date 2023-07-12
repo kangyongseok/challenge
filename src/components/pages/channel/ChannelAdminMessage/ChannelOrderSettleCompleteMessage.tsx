@@ -104,7 +104,8 @@ function ChannelOrderSettleCompleteMessage({
         {!hasUserReview ? (
           <Typography
             customStyle={{
-              marginTop: 8
+              marginTop: 8,
+              wordBreak: 'keep-all'
             }}
           >
             정산계좌로 판매대금이 입금되었어요.

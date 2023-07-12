@@ -84,8 +84,10 @@ function useChannel() {
         if (externalId) {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
           if (!currentChannel.current) currentChannel.current = channel;
-          await currentChannel.current.markAsRead();
           const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+          if (unreadMessagesCount) {
+            await currentChannel.current.markAsRead();
+          }
           setSendbirdState((prevState) => ({
             ...prevState,
             unreadMessagesCount

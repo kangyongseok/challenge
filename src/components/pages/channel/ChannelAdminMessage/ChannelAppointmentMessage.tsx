@@ -13,6 +13,7 @@ function ChannelAppointmentMessage() {
       textAlign="center"
       onClick={() => router.push(`/channels/${id}/appointment`)}
       customStyle={{
+        wordBreak: 'keep-all',
         margin: '20px 0',
         '& > span': {
           textDecoration: 'underline'

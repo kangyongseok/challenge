@@ -253,6 +253,7 @@ const TooltipText = styled(Typography)<{ w?: number }>`
   text-align: left;
   width: ${({ w }) => w || 240}px;
   white-space: pre-wrap;
+  word-break: keep-all;
 `;
 
 export default ProductOrderPaymentInfo;

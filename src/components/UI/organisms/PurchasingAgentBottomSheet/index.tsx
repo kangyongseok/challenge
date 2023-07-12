@@ -250,6 +250,7 @@ const TooltipText = styled(Typography)`
   text-align: left;
   width: 240px;
   white-space: pre-wrap;
+  word-break: keep-all;
 `;
 
 export default PurchasingAgentBottomSheet;

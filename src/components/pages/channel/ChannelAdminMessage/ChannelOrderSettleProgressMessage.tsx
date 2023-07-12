@@ -104,7 +104,8 @@ function ChannelOrderSettleProgressMessage({
         {!hasUserReview ? (
           <Typography
             customStyle={{
-              marginTop: 8
+              marginTop: 8,
+              wordBreak: 'keep-all'
             }}
           >
             정산계좌로 영업일 기준 1일 이내에 판매대금이 입금예정이에요.
@@ -115,7 +116,8 @@ function ChannelOrderSettleProgressMessage({
         ) : (
           <Typography
             customStyle={{
-              marginTop: 8
+              marginTop: 8,
+              wordBreak: 'keep-all'
             }}
           >
             정산계좌로 1일 이내에 판매대금이 입금예정이에요.

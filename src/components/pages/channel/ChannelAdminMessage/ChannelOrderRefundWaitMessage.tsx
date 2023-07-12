@@ -52,7 +52,8 @@ function ChannelOrderRefundWaitMessage({
           </Typography>
           <Typography
             customStyle={{
-              marginTop: 8
+              marginTop: 8,
+              wordBreak: 'keep-all'
             }}
           >
             {targetUserName}님과의 거래가 취소되었어요.
@@ -118,7 +119,8 @@ function ChannelOrderRefundWaitMessage({
         </Typography>
         <Typography
           customStyle={{
-            marginTop: 8
+            marginTop: 8,
+            wordBreak: 'keep-all'
           }}
         >
           {targetUserName}님과의 거래가 취소되었어요.

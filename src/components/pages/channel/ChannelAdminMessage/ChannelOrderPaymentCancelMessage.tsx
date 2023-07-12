@@ -53,7 +53,8 @@ function ChannelOrderPaymentCancelMessage({
           {isSeller ? (
             <Typography
               customStyle={{
-                marginTop: 8
+                marginTop: 8,
+                wordBreak: 'keep-all'
               }}
             >
               {targetUserName}님과의 거래가 취소되었어요.
@@ -61,7 +62,8 @@ function ChannelOrderPaymentCancelMessage({
           ) : (
             <Typography
               customStyle={{
-                marginTop: 8
+                marginTop: 8,
+                wordBreak: 'keep-all'
               }}
             >
               가상계좌 결제가 취소되었어요.
@@ -128,7 +130,8 @@ function ChannelOrderPaymentCancelMessage({
         </Typography>
         <Typography
           customStyle={{
-            marginTop: 8
+            marginTop: 8,
+            wordBreak: 'keep-all'
           }}
         >
           품절로 인해 가상계좌 결제가 취소되었어요.

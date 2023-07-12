@@ -83,7 +83,8 @@ function ChannelReviewSentMessage({
           </Typography>
           <Typography
             customStyle={{
-              marginTop: 8
+              marginTop: 8,
+              wordBreak: 'keep-all'
             }}
           >
             {targetUserName}님이 남긴 {product?.quoteTitle} 거래 후기를 확인해보세요.
@@ -134,7 +135,8 @@ function ChannelReviewSentMessage({
         </Typography>
         <Typography
           customStyle={{
-            marginTop: 8
+            marginTop: 8,
+            wordBreak: 'keep-all'
           }}
         >
           {targetUserName}님에게 거래 후기를 보냈어요.
