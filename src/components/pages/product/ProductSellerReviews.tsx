@@ -56,7 +56,7 @@ function ProductSellerReviews({
     }
   );
 
-  const { isAllCrawlingProduct } = useProductType(reviewInfo?.sellerType);
+  const { isAllCrawlingProduct, isAllOperatorProduct } = useProductType(product?.sellerType);
 
   const handleClickMoreList = () => {
     if (product)
@@ -106,6 +106,8 @@ function ProductSellerReviews({
   useEffect(() => {
     setReviewInfoParams((props) => ({ ...props, sellerId }));
   }, [sellerId]);
+
+  if (isAllOperatorProduct) return null;
 
   return reviewInfo?.sellerReviews?.totalElements ? (
     <Box>

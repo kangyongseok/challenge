@@ -85,7 +85,7 @@ function useChannel() {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
           if (!currentChannel.current) currentChannel.current = channel;
           const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-          if (unreadMessagesCount) {
+          if (channel.unreadMessageCount) {
             await currentChannel.current.markAsRead();
           }
           setSendbirdState((prevState) => ({
@@ -327,17 +327,22 @@ function useChannel() {
         if (markAsReadTimerRef.current) {
           clearTimeout(markAsReadTimerRef.current);
         }
-        markAsReadTimerRef.current = setTimeout(() => {
+        markAsReadTimerRef.current = setTimeout(async () => {
           if (!currentChannel.current) return;
 
-          currentChannel.current.markAsRead().then(async () => {
-            setUnreadCount(0);
-            const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-            setSendbirdState((prevState) => ({
-              ...prevState,
-              unreadMessagesCount
-            }));
-          });
+          const channel = await Sendbird.getInstance().groupChannel.getChannel(
+            useQueryResult.data?.channel?.externalId || ''
+          );
+          if (channel.unreadMessageCount) {
+            currentChannel.current.markAsRead().then(async () => {
+              setUnreadCount(0);
+              const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+              setSendbirdState((prevState) => ({
+                ...prevState,
+                unreadMessagesCount
+              }));
+            });
+          }
         }, 500);
       }
     };
@@ -347,7 +352,7 @@ function useChannel() {
     return () => {
       window.flexibleContent.removeEventListener('scroll', handleScroll);
     };
-  }, [setSendbirdState, pending]);
+  }, [setSendbirdState, pending, useQueryResult.data?.channel?.externalId]);
 
   // 메시지 목록 컨테이너의 스크롤이 하단 1/4 만큼 위치한 경우, 항상 최신 메시지를 볼 수 있도록 스크롤 처리
   useEffect(() => {
@@ -409,13 +414,18 @@ function useChannel() {
             document.visibilityState === 'visible'
           ) {
             setUnreadCount(0);
-            (channel as GroupChannel).markAsRead().then(async () => {
-              const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
-              setSendbirdState((prevState) => ({
-                ...prevState,
-                unreadMessagesCount: newUnreadMessagesCount
-              }));
-            });
+            const getGroupChannel = await Sendbird.getInstance().groupChannel.getChannel(
+              useQueryResult.data?.channel?.externalId || ''
+            );
+            if (getGroupChannel.unreadMessageCount) {
+              (channel as GroupChannel).markAsRead().then(async () => {
+                const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+                setSendbirdState((prevState) => ({
+                  ...prevState,
+                  unreadMessagesCount: newUnreadMessagesCount
+                }));
+              });
+            }
           }
 
           setState((prevState) => ({
