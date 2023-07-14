@@ -146,7 +146,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   const {
     data: {
       info: { value: { gender = '' } = {} } = {},
-      size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
+      size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
     } = {},
     isLoading: isLoadingUserInfo
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
@@ -208,7 +208,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
 
     setIntersectionCategorySizes(
       uniqBy(
-        [...tops, ...bottoms, ...shoes]
+        [...(tops || []), ...(bottoms || []), ...(shoes || [])]
           .map(({ parentCategoryId, viewSize }) =>
             (categorySizes || [])
               .filter(
@@ -236,6 +236,8 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   }, [intersectionCategorySizes]);
 
   useEffect(() => {
+    if (!intersectionParentCategoryIds.length) return;
+
     setNotIntersectionCategorySizes(
       categorySizes.filter(
         ({ parentCategoryId }) => !intersectionParentCategoryIds.includes(parentCategoryId)

@@ -43,7 +43,7 @@ function OnBoardingSpotlight({
   const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   useEffect(() => {
-    if (targetRef.current) {
+    if (open && targetRef.current) {
       const { clientWidth, clientHeight } = targetRef.current;
       const { top, left } = targetRef.current.getBoundingClientRect();
       const {

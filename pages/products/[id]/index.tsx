@@ -690,7 +690,6 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     const queryClient = new QueryClient();
 
     Initializer.initAccessTokenByCookies(getCookies({ req }));
-
     const { id } = query;
 
     // TODO getServerSideProps 가 2번 호출되고, null 이 string 으로 들어옴

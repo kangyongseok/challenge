@@ -142,7 +142,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       data: {
         info: { value: { gender = '' } = {} } = {},
         area: { values: areaValues = [] } = {},
-        size: { value: { tops = [], bottoms = [], shoes = [] } = {} } = {}
+        size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
       } = {}
     } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
       enabled: isLoggedIn
