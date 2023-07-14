@@ -98,6 +98,16 @@ function ProductOrderSuccess() {
       return;
     }
 
+    logEvent(attrKeys.productOrder.REQUEST_TOSS_PAYMENT_CONFIRM, {
+      name: attrProperty.name.ORDER_PAYMENT,
+      title: attrProperty.title.PAYMENT,
+      data: {
+        paymentKey,
+        orderId,
+        amount
+      }
+    });
+
     axios
       .post(
         'https://api.tosspayments.com/v1/payments/confirm',
@@ -124,6 +134,15 @@ function ProductOrderSuccess() {
             receipt: { url }
           }
         }: { data: Payment } = response;
+
+        logEvent(attrKeys.productOrder.SUCCESS_TOSS_PAYMENT_CONFIRM, {
+          name: attrProperty.name.ORDER_PAYMENT,
+          title: attrProperty.title.PAYMENT,
+          data: {
+            response
+          }
+        });
+
         const {
           issuerCode,
           installmentPlanMonths,
@@ -140,20 +159,8 @@ function ProductOrderSuccess() {
         )?.id;
 
         const orderPaymentsData: OrderPaymentsData =
-          method === '카드'
+          method === '가상계좌'
             ? {
-                id: Number(camelOrderId),
-                channelId,
-                partnerId: 0,
-                method: 0,
-                externalKey: newOrderId,
-                externalPaymentKey: newPaymentKey,
-                agencyCode: String(issuerCode),
-                data: `${installmentPlanMonths}|${isInterestFree}|${number}|${approveNo}|${acquireStatus}`,
-                receiptUrl: url,
-                amount: Number(cardAmount)
-              }
-            : {
                 id: Number(camelOrderId),
                 channelId,
                 partnerId: 0,
@@ -165,6 +172,18 @@ function ProductOrderSuccess() {
                 data: accountNumber,
                 receiptUrl: url,
                 amount: Number(amount)
+              }
+            : {
+                id: Number(camelOrderId),
+                channelId,
+                partnerId: 0,
+                method: 0,
+                externalKey: newOrderId,
+                externalPaymentKey: newPaymentKey,
+                agencyCode: String(issuerCode),
+                data: `${installmentPlanMonths}|${isInterestFree}|${number}|${approveNo}|${acquireStatus}`,
+                receiptUrl: url,
+                amount: Number(cardAmount)
               };
 
         if (channelId) {
@@ -180,7 +199,8 @@ function ProductOrderSuccess() {
               data: {
                 product,
                 data,
-                res
+                res,
+                orderPaymentsData
               },
               source
             });
