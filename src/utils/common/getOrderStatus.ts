@@ -33,6 +33,7 @@ export interface OrderStatus {
     subText?: string;
   }[];
   isExpired: boolean;
+  isSeller: boolean;
   hasReview: boolean;
   orderDate: string;
   paymentDate: string;
@@ -119,7 +120,8 @@ export default function getOrderStatus({
     orderDate: '',
     paymentDate: '',
     waitingSettlementDate: '',
-    completeSettlementDate: ''
+    completeSettlementDate: '',
+    isSeller: false
   };
 
   const isDirectTransaction = type === 1;

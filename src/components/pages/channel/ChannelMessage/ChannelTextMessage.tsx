@@ -27,7 +27,7 @@ function ChannelTextMessage({
         <ChannelMessageStatus isByMe={isByMe} status={status} createdAt={message.createdAt} />
       )}
       <Box>
-        {message.sender.userId === '113' && hasSameTimeMessage && (
+        {['113', '112'].includes(message.sender.userId) && hasSameTimeMessage && (
           <CamelAgentTitle weight="medium" variant="small2" color="ui60" isByMe={isByMe}>
             카멜 구매대행
           </CamelAgentTitle>

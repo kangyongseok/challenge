@@ -36,7 +36,8 @@ import {
   ordersDetailSalesCancelDialogState
 } from '@recoil/ordersDetail';
 import useSession from '@hooks/useSession';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailStatus() {
   const router = useRouter();
@@ -71,18 +72,9 @@ function OrdersDetailStatus() {
   const { isLoggedInWithSMS } = useSession();
   const {
     data,
-    data: {
-      id: orderId,
-      channelId,
-      hold,
-      type,
-      orderDelivery,
-      reviewFormInfo,
-      additionalInfo
-    } = {},
-    orderStatus,
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+    data: { id: orderId, channelId, hold, type, orderDelivery, reviewFormInfo, additionalInfo } = {}
+  } = useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   const { data: userAccounts = [] } = useQuery(
     queryKeys.users.userAccounts(),
@@ -226,7 +218,7 @@ function OrdersDetailStatus() {
           }}
         />
       )}
-      {isSeller && orderStatus.name === '정산대기' && (
+      {orderStatus.isSeller && orderStatus.name === '정산대기' && (
         <Typography
           variant="h4"
           customStyle={{
@@ -242,7 +234,7 @@ function OrdersDetailStatus() {
           )}
         </Typography>
       )}
-      {!isSeller && orderStatus.name === '환불대기' && !orderStatus.isExpired && (
+      {!orderStatus.isSeller && orderStatus.name === '환불대기' && !orderStatus.isExpired && (
         <Typography
           variant="h4"
           customStyle={{
@@ -355,7 +347,7 @@ function OrdersDetailStatus() {
           })}
         </Flexbox>
       )}
-      {isSeller && orderStatus.name === '결제완료' && (
+      {orderStatus.isSeller && orderStatus.name === '결제완료' && (
         <Flexbox
           gap={8}
           customStyle={{
@@ -387,7 +379,7 @@ function OrdersDetailStatus() {
           </Button>
         </Flexbox>
       )}
-      {isSeller && orderStatus.name === '배송대기' && (
+      {orderStatus.isSeller && orderStatus.name === '배송대기' && (
         <Flexbox
           direction="vertical"
           gap={16}
@@ -418,7 +410,7 @@ function OrdersDetailStatus() {
           </Button>
         </Flexbox>
       )}
-      {isSeller &&
+      {orderStatus.isSeller &&
         ['배송진행', '배송완료'].includes(orderStatus.name) &&
         orderDelivery?.type === 1 && (
           <Button
@@ -434,7 +426,7 @@ function OrdersDetailStatus() {
             배송조회
           </Button>
         )}
-      {!isSeller && orderStatus.name === '배송진행' && orderDelivery && (
+      {!orderStatus.isSeller && orderStatus.name === '배송진행' && orderDelivery && (
         <Flexbox
           gap={8}
           customStyle={{
@@ -468,7 +460,7 @@ function OrdersDetailStatus() {
           </Button>
         </Flexbox>
       )}
-      {!isSeller && orderStatus.name === '거래대기' && (
+      {!orderStatus.isSeller && orderStatus.name === '거래대기' && (
         <Button
           variant="solid"
           brandColor="black"
@@ -487,7 +479,7 @@ function OrdersDetailStatus() {
           구매확정
         </Button>
       )}
-      {!isSeller && orderStatus.name === '배송완료' && orderDelivery && (
+      {!orderStatus.isSeller && orderStatus.name === '배송완료' && orderDelivery && (
         <Button
           variant="solid"
           brandColor="black"
@@ -506,7 +498,7 @@ function OrdersDetailStatus() {
           구매확정
         </Button>
       )}
-      {isSeller &&
+      {orderStatus.isSeller &&
         ['배송준비 중 취소 요청', '거래준비 중 취소 요청'].includes(orderStatus.name) &&
         hold && (
           <Flexbox
@@ -535,7 +527,7 @@ function OrdersDetailStatus() {
             </Button>
           </Flexbox>
         )}
-      {!isSeller &&
+      {!orderStatus.isSeller &&
         orderStatus.transactionMethod !== '카멜 구매대행' &&
         orderStatus.name === '정산대기' &&
         !orderStatus.hasReview && (
@@ -553,7 +545,7 @@ function OrdersDetailStatus() {
             후기 작성하기
           </Button>
         )}
-      {isSeller && orderStatus.name === '정산대기' && userAccounts.length === 0 && (
+      {orderStatus.isSeller && orderStatus.name === '정산대기' && userAccounts.length === 0 && (
         <Button
           variant="solid"
           brandColor="black"
@@ -567,7 +559,7 @@ function OrdersDetailStatus() {
           본인인증 및 정산계좌 입력
         </Button>
       )}
-      {!isSeller &&
+      {!orderStatus.isSeller &&
         orderStatus.name === '환불대기' &&
         !orderStatus.isExpired &&
         !orderStatus.hasReview &&
@@ -585,7 +577,7 @@ function OrdersDetailStatus() {
             본인인증 및 환불계좌 입력
           </Button>
         )}
-      {isSeller &&
+      {orderStatus.isSeller &&
         orderStatus.transactionMethod !== '카멜 구매대행' &&
         ['정산진행', '정산완료'].includes(orderStatus.name) &&
         !orderStatus.hasReview && (

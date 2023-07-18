@@ -554,7 +554,6 @@ function Channel() {
                   isTargetUserBlocked={isTargetUserBlocked}
                   isAdminBlockUser={isAdminBlockUser}
                   isReserved={channel?.isReserved}
-                  isSeller={isSeller}
                   image={product?.imageThumbnail || product?.imageMain || ''}
                   status={productStatus}
                   title={product?.title || ''}

@@ -16,7 +16,8 @@ import {
   ordersDetailOpenCancelDialogState,
   ordersDetailOpenCancelRequestDialogState
 } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailPaymentInfo() {
   const router = useRouter();
@@ -30,6 +31,7 @@ function OrdersDetailPaymentInfo() {
   const [openOrderFeeType, setOpenOrderFeeType] = useState<0 | 1 | 2 | null>(null);
 
   const {
+    data,
     data: {
       price = 0,
       totalPrice = 0,
@@ -38,10 +40,9 @@ function OrdersDetailPaymentInfo() {
       type,
       hold,
       cancelReasons
-    } = {},
-    isSeller,
-    orderStatus
-  } = useOrdersDetail({ id: Number(id) });
+    } = {}
+  } = useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   const handleClick = (newFeeType: 0 | 1 | 2) => () => {
     if (openOrderFeeType === newFeeType) {
@@ -52,7 +53,7 @@ function OrdersDetailPaymentInfo() {
   };
 
   if (
-    isSeller ||
+    orderStatus.isSeller ||
     ['결제취소', '환불대기', '환불진행', '환불완료', '배송준비 중 취소 요청'].includes(
       orderStatus.name
     )
@@ -111,6 +112,7 @@ function OrdersDetailPaymentInfo() {
                   triangleLeft={33}
                   spaceBetween={5}
                   customStyle={{
+                    display: 'flex',
                     left: 100,
                     zIndex: 5
                   }}

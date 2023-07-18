@@ -17,7 +17,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { ordersDetailOpenCancelRequestRefuseDialogState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailCancelRequestRefuseDialog() {
   const router = useRouter();
@@ -25,9 +26,10 @@ function OrdersDetailCancelRequestRefuseDialog() {
 
   const queryClient = useQueryClient();
 
-  const { data: { id: orderId, additionalInfo } = {}, isSeller } = useOrdersDetail({
+  const { data, data: { id: orderId, additionalInfo } = {} } = useQueryOrder({
     id: Number(id)
   });
+  const orderStatus = useOrderStatus({ order: data });
 
   const [open, setOpenState] = useRecoilState(ordersDetailOpenCancelRequestRefuseDialogState);
 
@@ -45,7 +47,7 @@ function OrdersDetailCancelRequestRefuseDialog() {
       title: attrProperty.title.REFUSE,
       orderId,
       productId: additionalInfo?.product?.id,
-      att: isSeller ? 'BUYER' : 'SELLER'
+      att: orderStatus.isSeller ? 'BUYER' : 'SELLER'
     });
 
     mutate(

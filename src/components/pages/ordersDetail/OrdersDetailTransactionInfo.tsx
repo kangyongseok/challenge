@@ -3,17 +3,15 @@ import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
 import { Gap } from '@components/UI/atoms';
 
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailTransactionInfo() {
   const router = useRouter();
   const { id } = router.query;
 
-  const {
-    data: { id: orderId, additionalInfo } = {},
-    isSeller,
-    orderStatus
-  } = useOrdersDetail({ id: Number(id) });
+  const { data, data: { id: orderId, additionalInfo } = {} } = useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   return (
     <>
@@ -46,9 +44,9 @@ function OrdersDetailTransactionInfo() {
           )}
           {orderStatus.transactionMethod !== '카멜 구매대행' && (
             <Flexbox justifyContent="space-between" alignment="center">
-              <Typography color="ui60">{!isSeller ? '판매자' : '구매자'}</Typography>
+              <Typography color="ui60">{!orderStatus.isSeller ? '판매자' : '구매자'}</Typography>
               <Typography>
-                {!isSeller ? additionalInfo?.sellerName : additionalInfo?.buyerName}
+                {!orderStatus.isSeller ? additionalInfo?.sellerName : additionalInfo?.buyerName}
               </Typography>
             </Flexbox>
           )}

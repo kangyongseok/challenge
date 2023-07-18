@@ -13,7 +13,8 @@ import { commaNumber } from '@utils/formats';
 
 import { ordersDetailSalesCancelDialogState } from '@recoil/ordersDetail';
 import useSession from '@hooks/useSession';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailRefundInfo() {
   const router = useRouter();
@@ -22,11 +23,8 @@ function OrdersDetailRefundInfo() {
   const setSalesCancelDialogState = useSetRecoilState(ordersDetailSalesCancelDialogState);
 
   const { isLoggedInWithSMS } = useSession();
-  const {
-    data: { price = 0, type, hold } = {},
-    orderStatus,
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+  const { data, data: { price = 0, type, hold } = {} } = useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   const { data: userAccounts = [] } = useQuery(
     queryKeys.users.userAccounts(),
@@ -37,7 +35,7 @@ function OrdersDetailRefundInfo() {
   );
 
   if (
-    !isSeller ||
+    !orderStatus.isSeller ||
     [
       '결제취소',
       '환불대기',

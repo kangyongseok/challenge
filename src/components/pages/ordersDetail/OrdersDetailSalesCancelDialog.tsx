@@ -13,7 +13,7 @@ import { postOrderCancel } from '@api/order';
 import queryKeys from '@constants/queryKeys';
 
 import { ordersDetailSalesCancelDialogState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
 
 function OrdersDetailSalesCancelDialog() {
   const router = useRouter();
@@ -26,7 +26,7 @@ function OrdersDetailSalesCancelDialog() {
   const [value, setValue] = useState('');
   const [reason, setReason] = useState('');
 
-  const { data: { additionalInfo } = {} } = useOrdersDetail({ id: Number(id) });
+  const { data: { additionalInfo } = {} } = useQueryOrder({ id: Number(id) });
   const { mutate, isLoading } = useMutation(postOrderCancel);
 
   const handleClose = () =>

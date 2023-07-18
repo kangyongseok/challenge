@@ -4,7 +4,8 @@ import { useTheme } from '@emotion/react';
 
 import { Gap } from '@components/UI/atoms';
 
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailCancelInfo() {
   const router = useRouter();
@@ -14,14 +15,13 @@ function OrdersDetailCancelInfo() {
     palette: { common }
   } = useTheme();
 
-  const {
-    data: { reason, cancelReasons: { request = '' } = {} } = {},
-    orderStatus,
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+  const { data, data: { reason, cancelReasons: { request = '' } = {} } = {} } = useQueryOrder({
+    id: Number(id)
+  });
+  const orderStatus = useOrderStatus({ order: data });
 
   if (
-    !isSeller ||
+    !orderStatus.isSeller ||
     !reason ||
     !['결제취소', '환불대기', '환불진행', '환불완료', '배송준비 중 취소 요청'].includes(
       orderStatus.name

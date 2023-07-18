@@ -7,7 +7,7 @@ import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import { putOrderApprove } from '@api/order';
 
 import { ordersDetailOpenSalesApproveDialogState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
 
 function OrdersDetailSalesApproveDialog() {
   const router = useRouter();
@@ -15,7 +15,7 @@ function OrdersDetailSalesApproveDialog() {
 
   const [open, setOpenState] = useRecoilState(ordersDetailOpenSalesApproveDialogState);
 
-  const { data: { id: orderId = 0, additionalInfo } = {}, refetch } = useOrdersDetail({
+  const { data: { id: orderId = 0, additionalInfo } = {}, refetch } = useQueryOrder({
     id: Number(id)
   });
 

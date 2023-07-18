@@ -7,8 +7,9 @@ import type { Product } from '@dto/product';
 import { commaNumber, getTenThousandUnitPrice } from '@utils/formats';
 import { getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
+import useQueryOrder from '@hooks/useQueryOrder';
 import useProductType from '@hooks/useProductType';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailProductInfo() {
   const router = useRouter();
@@ -19,14 +20,14 @@ function OrdersDetailProductInfo() {
   } = useTheme();
 
   const {
+    data,
     data: {
       channelId,
       orderDetails = [],
-      additionalInfo: { sellerName = '', sellerUserId = 0, product = {} as Product } = {},
-      type
-    } = {},
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+      additionalInfo: { sellerName = '', sellerUserId = 0, product = {} as Product } = {}
+    } = {}
+  } = useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   const { isAllCrawlingProduct } = useProductType(product?.sellerType);
 
@@ -91,7 +92,7 @@ function OrdersDetailProductInfo() {
           채팅하기
         </Button>
       </Flexbox>
-      {!isSeller && type !== 2 && (
+      {!orderStatus.isSeller && orderStatus.transactionMethod !== '카멜 구매대행' && (
         <Flexbox
           justifyContent="space-between"
           alignment="center"

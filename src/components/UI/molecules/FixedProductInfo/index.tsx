@@ -1,4 +1,5 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from '@tanstack/react-query';
@@ -31,10 +32,10 @@ import { productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import getOrderStatus, { OrderStatus } from '@utils/common/getOrderStatus';
 import { commaNumber, getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import { channelBottomSheetStateFamily, channelDialogStateFamily } from '@recoil/channel/atom';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 import { Title, Wrapper } from './FixedProductInfo.styles';
 
@@ -46,7 +47,6 @@ interface FixedProductInfoProps {
   isTargetUserBlocked?: boolean;
   isAdminBlockUser?: boolean;
   isReserved?: boolean;
-  isSeller?: boolean;
   image: string;
   title: string;
   status: number;
@@ -69,7 +69,6 @@ function FixedProductInfo({
   isAdminBlockUser,
   isChannel = true,
   isReserved,
-  isSeller = false,
   image,
   title,
   status,
@@ -97,9 +96,8 @@ function FixedProductInfo({
     }
   );
 
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
-    getOrderStatus({ ...(order as Order), isSeller })
-  );
+  const orderStatus = useOrderStatus({ order: order as Order });
+
   const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
   const [openProductPaymentBottomSheet, setOpenProductPaymentBottomSheet] = useState(false);
 
@@ -153,10 +151,6 @@ function FixedProductInfo({
       onClickSafePayment();
     }
   };
-
-  useEffect(() => {
-    setOrderStatus(getOrderStatus({ ...(order as Order), isSeller }));
-  }, [isSeller, order]);
 
   return isLoading ? (
     <Flexbox

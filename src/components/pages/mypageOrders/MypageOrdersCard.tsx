@@ -19,11 +19,10 @@ import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import getOrderType from '@utils/common/getOrderType';
-import type { OrderStatus } from '@utils/common/getOrderStatus';
-import getOrderStatus from '@utils/common/getOrderStatus';
 import { getOrderStatusText } from '@utils/common';
 
 import { mypageOrdersPurchaseConfirmDialogState } from '@recoil/mypageOrders';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 interface MypageOrdersCardProps extends HTMLAttributes<HTMLDivElement> {
   order: Order;
@@ -58,11 +57,10 @@ function MypageOrdersCard({
 
   const [src, setSrc] = useState('');
   const [brandName, setBrandName] = useState('');
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
-    getOrderStatus({ ...order, isSeller: type !== 0 })
-  );
   const [orderStatusText, setOrderStatusText] = useState('');
   const [isSafePayment, setIsSafePayment] = useState(false);
+
+  const orderStatus = useOrderStatus({ order });
 
   const { mutate, isLoading } = useMutation(putProductUpdateStatus);
 
@@ -155,10 +153,6 @@ function MypageOrdersCard({
     );
     setSrc(data[1]);
   }, [orderDetails]);
-
-  useEffect(() => {
-    setOrderStatus(getOrderStatus({ ...order, isSeller: type !== 0 }));
-  }, [order, type]);
 
   useEffect(() => {
     const newOrderStatusText = getOrderStatusText({

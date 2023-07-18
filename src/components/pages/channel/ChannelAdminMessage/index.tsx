@@ -41,12 +41,12 @@ import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 import getOrderType from '@utils/common/getOrderType';
-import getOrderStatus from '@utils/common/getOrderStatus';
 import { commaNumber } from '@utils/common';
 import { getOutgoingMessageState } from '@utils/channel';
 
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 import useSession from '@hooks/useSession';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 import ChannelAdminMessageDialog from '../ChannelAdminMessageDialog';
 import ChannelReviewSentMessage from './ChannelReviewSentMessage';
@@ -139,9 +139,7 @@ function ChannelAdminMessage({
   const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
   const currentOffer = offers.find((findOffer) => findOffer.id === Number(message.message));
 
-  const [orderStatus, setOrderStatus] = useState(
-    getOrderStatus({ ...(currentOrder as Order), isSeller })
-  );
+  const orderStatus = useOrderStatus({ order: currentOrder });
 
   const { data: accessUser } = useSession();
 
@@ -307,10 +305,6 @@ function ChannelAdminMessage({
       });
     }
   }, [isByMe, messageStatus]);
-
-  useEffect(() => {
-    setOrderStatus(getOrderStatus({ ...(currentOrder as Order), isSeller }));
-  }, [currentOrder, isSeller]);
 
   if (isAdminMessageType) {
     return (

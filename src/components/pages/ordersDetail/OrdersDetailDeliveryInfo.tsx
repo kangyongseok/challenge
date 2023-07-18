@@ -15,7 +15,8 @@ import queryKeys from '@constants/queryKeys';
 import { copyToClipboard } from '@utils/common';
 
 import { ordersDetailOpenDeliveryStatusFrameState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailDeliveryInfo() {
   const router = useRouter();
@@ -35,12 +36,10 @@ function OrdersDetailDeliveryInfo() {
     ordersDetailOpenDeliveryStatusFrameState
   );
 
-  const {
-    data,
-    data: { deliveryInfo, orderDelivery, type } = {},
-    orderStatus,
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+  const { data, data: { deliveryInfo, orderDelivery, type } = {} } = useQueryOrder({
+    id: Number(id)
+  });
+  const orderStatus = useOrderStatus({ order: data });
 
   const { data: deliveryCompanies = [] } = useQuery(
     queryKeys.commons.codeDetails({ codeId: 21 }),
@@ -110,13 +109,14 @@ function OrdersDetailDeliveryInfo() {
         <Typography variant="h3" weight="bold">
           배송정보
         </Typography>
-        {(!isSeller || (isSeller && !['결제대기', '결제진행'].includes(orderStatus.name))) && (
+        {(!orderStatus.isSeller ||
+          (orderStatus.isSeller && !['결제대기', '결제진행'].includes(orderStatus.name))) && (
           <Flexbox direction="vertical" gap={4}>
             <Flexbox justifyContent="space-between" alignment="center">
               <Typography color="ui60">받는사람</Typography>
               <Flexbox alignment="center" gap={4}>
                 <Typography>{deliveryInfo?.name}</Typography>
-                {isSeller && (
+                {orderStatus.isSeller && (
                   <Icon
                     name="CopyOutlined"
                     width={16}
@@ -131,7 +131,7 @@ function OrdersDetailDeliveryInfo() {
               <Typography color="ui60">연락처</Typography>
               <Flexbox alignment="center" gap={4}>
                 <Typography>{deliveryInfo?.phone}</Typography>
-                {isSeller && (
+                {orderStatus.isSeller && (
                   <Icon
                     name="CopyOutlined"
                     width={16}
@@ -143,10 +143,17 @@ function OrdersDetailDeliveryInfo() {
               </Flexbox>
             </Flexbox>
             <Flexbox justifyContent="space-between" alignment="center">
-              <Typography color="ui60">배송지</Typography>
+              <Typography
+                color="ui60"
+                customStyle={{
+                  minWidth: 80
+                }}
+              >
+                배송지
+              </Typography>
               <Flexbox alignment="center" gap={4}>
-                <Typography>{deliveryInfo?.address}</Typography>
-                {isSeller && (
+                <Typography textAlign="right">{deliveryInfo?.address}</Typography>
+                {orderStatus.isSeller && (
                   <Icon
                     name="CopyOutlined"
                     width={16}
@@ -171,7 +178,7 @@ function OrdersDetailDeliveryInfo() {
             )}
           </Flexbox>
         )}
-        {isSeller && ['결제대기', '결제진행'].includes(orderStatus.name) && (
+        {orderStatus.isSeller && ['결제대기', '결제진행'].includes(orderStatus.name) && (
           <Flexbox
             alignment="center"
             gap={4}

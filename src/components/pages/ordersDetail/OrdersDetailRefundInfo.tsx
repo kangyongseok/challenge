@@ -8,7 +8,8 @@ import { Gap } from '@components/UI/atoms';
 import { commaNumber } from '@utils/formats';
 
 import { ordersDetailOpenCancelRequestWithdrawDialogState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
+import useOrderStatus from '@hooks/useOrderStatus';
 
 function OrdersDetailRefundInfo() {
   const router = useRouter();
@@ -18,18 +19,16 @@ function OrdersDetailRefundInfo() {
     palette: { common }
   } = useTheme();
 
-  const {
-    data: { price = 0, totalPrice = 0, fee = 0, orderPayments = [], reason } = {},
-    orderStatus,
-    isSeller
-  } = useOrdersDetail({ id: Number(id) });
+  const { data, data: { price = 0, totalPrice = 0, fee = 0, orderPayments = [], reason } = {} } =
+    useQueryOrder({ id: Number(id) });
+  const orderStatus = useOrderStatus({ order: data });
 
   const setOpenCancelRequestWithdrawDialogState = useSetRecoilState(
     ordersDetailOpenCancelRequestWithdrawDialogState
   );
 
   if (
-    isSeller ||
+    orderStatus.isSeller ||
     ![
       '환불대기',
       '환불진행',

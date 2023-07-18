@@ -1,14 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { BottomSheet, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import { BottomSheet, Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import type { OrderInfo } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
+import { OrderFeeTooltipMessage } from '@constants/product';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/formats';
@@ -43,6 +44,8 @@ function ProductPaymentMethodBottomSheet({
 
   const [type, setOrderTypeState] = useRecoilState(productOrderTypeState);
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
+
+  const [openOrderFeeType, setOpenOrderFeeType] = useState<0 | 1 | 2 | null>(null);
 
   const loginBottomSheetOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -82,6 +85,14 @@ function ProductPaymentMethodBottomSheet({
   const handleClickSafePaymentGuideText = () => {
     logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
     router.push('/products/purchasingInfo');
+  };
+
+  const handleClickOrderFeeTypeTooltip = (newFeeType: 0 | 1 | 2) => () => {
+    if (openOrderFeeType === newFeeType) {
+      setOpenOrderFeeType(null);
+    } else {
+      setOpenOrderFeeType(newFeeType);
+    }
   };
 
   useEffect(() => {
@@ -177,10 +188,56 @@ function ProductPaymentMethodBottomSheet({
             <Typography color="ui60">매물금액</Typography>
             <Typography>{commaNumber(orderInfo?.price || 0)}원</Typography>
           </Flexbox>
-          <Flexbox alignment="center" justifyContent="space-between">
-            <Typography color="ui60">안전결제수수료</Typography>
-            <Typography>{commaNumber(orderInfo?.fee || 0)}원</Typography>
-          </Flexbox>
+          {orderInfo?.orderFees.map(({ name, fee: orderFee, type: orderFeeType, feeRate }) => (
+            <Flexbox key={`order-fee-${name}`} justifyContent="space-between" alignment="center">
+              <Typography
+                color="ui60"
+                customStyle={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2
+                }}
+              >
+                {name}
+                <Tooltip
+                  open={openOrderFeeType === orderFeeType}
+                  message={
+                    <>
+                      {OrderFeeTooltipMessage({ safeFee: feeRate })[orderFeeType].map(
+                        (message: string) => (
+                          <TooltipText
+                            key={message}
+                            color="uiWhite"
+                            variant="body2"
+                            weight="medium"
+                          >
+                            {message}
+                          </TooltipText>
+                        )
+                      )}
+                    </>
+                  }
+                  placement="top"
+                  triangleLeft={33}
+                  spaceBetween={5}
+                  customStyle={{
+                    display: 'flex',
+                    left: 100,
+                    zIndex: 5
+                  }}
+                >
+                  <Icon
+                    name="QuestionCircleOutlined"
+                    width={16}
+                    height={16}
+                    color="ui80"
+                    onClick={handleClickOrderFeeTypeTooltip(orderFeeType)}
+                  />
+                </Tooltip>
+              </Typography>
+              <Typography>{commaNumber(orderFee || 0)}원</Typography>
+            </Flexbox>
+          ))}
         </Flexbox>
         <Button
           variant="solid"
@@ -212,6 +269,13 @@ const PaymentMethodSelectBox = styled.div<{ selected?: boolean }>`
       selected
     }) => (selected ? common.ui20 : common.line01)};
   border-radius: 8px;
+`;
+
+const TooltipText = styled(Typography)`
+  text-align: left;
+  width: 240px;
+  white-space: pre-wrap;
+  word-break: keep-all;
 `;
 
 export default ProductPaymentMethodBottomSheet;

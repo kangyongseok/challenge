@@ -21,7 +21,6 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
-  const [openSafeFeeTooltip, setOpenSafeFeeTooltip] = useState(false);
 
   const { data: { product } = {} } = useQueryProduct();
 
@@ -33,7 +32,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
     }
   } = useTheme();
 
-  const { data: { totalPrice = 0, fee = 0, orderFees } = {} } = useQueryProductOrder({
+  const { data: { totalPrice = 0, orderFees = [] } = {} } = useQueryProductOrder({
     productId,
     includeLegit,
     type: Number(type)
@@ -98,88 +97,9 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
           <Typography variant="h4">- {commaNumber(price - totalPrice)}원</Typography>
         </Flexbox>
       )}
-      {isAllOperatorType ? (
-        orderFees?.map((orderFee) => (
-          <Flexbox
-            key={orderFee.name}
-            alignment="center"
-            justifyContent="space-between"
-            customStyle={{
-              marginTop: 8,
-              color: common.ui60
-            }}
-          >
-            <Typography
-              variant="h4"
-              customStyle={{
-                color: common.ui60,
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              {orderFee.name}
-              <Tooltip
-                open={openTooltip === orderFee.type}
-                message={
-                  <>
-                    {OrderFeeTooltipMessage({ safeFee: orderFee.feeRate })[orderFee.type].map(
-                      (message: string) => (
-                        <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
-                          {message}
-                        </TooltipText>
-                      )
-                    )}
-                  </>
-                }
-                placement="top"
-                triangleLeft={33}
-                customStyle={{
-                  top: 15,
-                  bottom: 'auto',
-                  left: 100,
-                  zIndex: 5
-                }}
-              >
-                <Icon
-                  name="QuestionCircleOutlined"
-                  width={16}
-                  height={16}
-                  color="ui80"
-                  onClick={() => {
-                    if (orderFee.type === openTooltip) {
-                      setOpenTooltip(null);
-                      return;
-                    }
-                    setOpenTooltip(orderFee.type);
-                  }}
-                />
-              </Tooltip>
-            </Typography>
-            {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? (
-              <Typography color="ui60">선택안함</Typography>
-            ) : (
-              <Flexbox alignment="center" gap={8}>
-                {orderFee.fee - orderFee.discountFee === 0 && (
-                  <Label
-                    text="무료"
-                    variant="solid"
-                    brandColor="primary"
-                    round={10}
-                    size="xsmall"
-                  />
-                )}
-                {!!orderFee.discountFee && (
-                  <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
-                    {commaNumber(orderFee.discountFee)}원
-                  </Typography>
-                )}
-                <Typography>{commaNumber(orderFee?.totalFee)}원</Typography>
-              </Flexbox>
-            )}
-          </Flexbox>
-        ))
-      ) : (
+      {orderFees?.map((orderFee) => (
         <Flexbox
+          key={orderFee.name}
           alignment="center"
           justifyContent="space-between"
           customStyle={{
@@ -187,45 +107,70 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
             color: common.ui60
           }}
         >
-          <Flexbox alignment="center">
-            <Typography
-              variant="h4"
-              customStyle={{
-                color: common.ui60
-              }}
-            >
-              안전결제수수료
-            </Typography>
+          <Typography
+            variant="h4"
+            customStyle={{
+              color: common.ui60,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2
+            }}
+          >
+            {orderFee.name}
             <Tooltip
-              open={openSafeFeeTooltip}
+              open={openTooltip === orderFee.type}
               message={
-                <TooltipText color="uiWhite" variant="body2" weight="medium" w={170}>
-                  사기 걱정 없는 안전결제 수수료는
-                  <br />
-                  상품금액의 2%예요.
-                </TooltipText>
+                <>
+                  {OrderFeeTooltipMessage({ safeFee: orderFee.feeRate })[orderFee.type].map(
+                    (message: string) => (
+                      <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                        {message}
+                      </TooltipText>
+                    )
+                  )}
+                </>
               }
               placement="top"
+              spaceBetween={5}
               triangleLeft={33}
               customStyle={{
-                top: 15,
-                bottom: 'auto',
-                left: 65,
-                zIndex: 5,
-                width: 50
+                display: 'flex',
+                left: 100,
+                zIndex: 5
               }}
             >
               <Icon
                 name="QuestionCircleOutlined"
                 width={16}
+                height={16}
                 color="ui80"
-                onClick={() => setOpenSafeFeeTooltip((prev) => !prev)}
+                onClick={() => {
+                  if (orderFee.type === openTooltip) {
+                    setOpenTooltip(null);
+                    return;
+                  }
+                  setOpenTooltip(orderFee.type);
+                }}
               />
             </Tooltip>
-          </Flexbox>
-          <Typography variant="h4">{commaNumber(fee || 0)}원</Typography>
+          </Typography>
+          {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? (
+            <Typography color="ui60">선택안함</Typography>
+          ) : (
+            <Flexbox alignment="center" gap={8}>
+              {orderFee.fee - orderFee.discountFee === 0 && (
+                <Label text="무료" variant="solid" brandColor="primary" round={10} size="xsmall" />
+              )}
+              {!!orderFee.discountFee && (
+                <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
+                  {commaNumber(orderFee.discountFee)}원
+                </Typography>
+              )}
+              <Typography>{commaNumber(orderFee?.totalFee)}원</Typography>
+            </Flexbox>
+          )}
         </Flexbox>
-      )}
+      ))}
       <Flexbox
         alignment="center"
         justifyContent="space-between"

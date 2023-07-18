@@ -9,13 +9,13 @@ import SessionStorage from '@library/sessionStorage';
 
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
 
 function OrdersDetailHeader() {
   const router = useRouter();
   const { id, paymentComplete } = router.query;
 
-  const { data: { orderPayments = [] } = {}, isLoading } = useOrdersDetail({ id: Number(id) });
+  const { data: { orderPayments = [] } = {}, isLoading } = useQueryOrder({ id: Number(id) });
 
   const [title, setTitle] = useState('');
 

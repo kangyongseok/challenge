@@ -9,7 +9,7 @@ import { fetchCommonCodeDetails } from '@api/common';
 import queryKeys from '@constants/queryKeys';
 
 import { ordersDetailOpenDeliveryStatusFrameState } from '@recoil/ordersDetail';
-import useOrdersDetail from '@hooks/useOrdersDetail';
+import useQueryOrder from '@hooks/useQueryOrder';
 
 function OrdersDetailDeliveryStatusFrame() {
   const router = useRouter();
@@ -17,7 +17,7 @@ function OrdersDetailDeliveryStatusFrame() {
 
   const [open, setOpenState] = useRecoilState(ordersDetailOpenDeliveryStatusFrameState);
 
-  const { data: { orderDelivery } = {} } = useOrdersDetail({ id: Number(id) });
+  const { data: { orderDelivery } = {} } = useQueryOrder({ id: Number(id) });
 
   const { data, isLoading } = useQuery(
     queryKeys.commons.codeDetails({ codeId: 22 }),
