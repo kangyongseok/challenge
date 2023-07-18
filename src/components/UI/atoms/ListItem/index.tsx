@@ -21,6 +21,8 @@ interface ListItemProps {
   customStyle?: CustomStyle;
   titleCustomStyle?: CustomStyle;
   descriptionCustomStyle?: CustomStyle;
+  productName?: string;
+  isOperator?: boolean;
 }
 
 function ListItem({
@@ -36,7 +38,9 @@ function ListItem({
   disabled = false,
   customStyle,
   titleCustomStyle,
-  descriptionCustomStyle
+  descriptionCustomStyle,
+  productName,
+  isOperator
 }: ListItemProps) {
   const {
     theme: {
@@ -45,14 +49,25 @@ function ListItem({
   } = useTheme();
 
   return (
-    <StyledListItem css={customStyle} onClick={onClick}>
-      <UserAvatar
-        src={avatarUrl || ''}
-        width={52}
-        height={52}
-        isRound
-        iconCustomStyle={{ width: 24, height: 24 }}
-      />
+    <StyledListItem css={customStyle} onClick={onClick} isOperator={isOperator}>
+      {isOperator ? (
+        <Icon
+          name="Logo_45_45"
+          width={40}
+          height={40}
+          color="primary-light"
+          customStyle={{ minWidth: 40, marginTop: description ? -20 : 0 }}
+        />
+      ) : (
+        <UserAvatar
+          src={avatarUrl || ''}
+          width={40}
+          height={40}
+          isRound
+          iconCustomStyle={{ width: 24, height: 24 }}
+        />
+      )}
+
       {!!avatar && avatar}
       <Item>
         <Flexbox alignment="center" gap={4}>
@@ -65,8 +80,13 @@ function ListItem({
           </Flexbox>
         </Flexbox>
         {!isAdminBlockUser && description && (
-          <Description variant="body2" disabled={disabled} css={descriptionCustomStyle}>
+          <Description disabled={disabled} css={descriptionCustomStyle}>
             {description}
+          </Description>
+        )}
+        {productName && (
+          <Description color="ui60" variant="body2" disabled={disabled}>
+            {productName}
           </Description>
         )}
         {isAdminBlockUser && (

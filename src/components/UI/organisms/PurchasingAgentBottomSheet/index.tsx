@@ -93,11 +93,13 @@ function PurchasingAgentBottomSheet({
           color="ui60"
           customStyle={{ textDecoration: 'underline' }}
           onClick={() => {
-            logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
-            router.push('/products/purchasingInfo?step=2');
+            logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+              title: attrProperty.title.OPERATOR
+            });
+            router.push('/guide/operator');
           }}
         >
-          구매대행이란?
+          카멜 구매대행이란?
         </Typography>
       </Flexbox>
       <Typography variant="h4" customStyle={{ marginTop: 6, wordBreak: 'keep-all' }}>

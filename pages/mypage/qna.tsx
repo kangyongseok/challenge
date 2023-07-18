@@ -218,6 +218,98 @@ function Qna() {
             </Table>
           </AnswerContent>
         </Box>
+        <Box
+          customStyle={{
+            borderBottom: hideAnswer.includes(5) ? 'none' : `1px solid ${common.line01}`,
+            paddingBottom: hideAnswer.includes(5) ? 0 : 32
+          }}
+        >
+          <Flexbox
+            alignment="center"
+            justifyContent="space-between"
+            customStyle={{ width: '100%', position: 'relative', zIndex: 1 }}
+            data-num={5}
+            onClick={handleClickArcodian}
+          >
+            <Typography weight="medium" variant="h4">
+              구매대행한 매물의 취소/반품이 가능한가요?
+            </Typography>
+            <Icon
+              name={hideAnswer.includes(5) ? 'Arrow2UpOutlined' : 'Arrow2DownOutlined'}
+              color="ui60"
+            />
+          </Flexbox>
+          <AnswerContent isOpen={hideAnswer.includes(5)}>
+            <Typography customStyle={{ wordBreak: 'keep-all' }}>
+              구매대행 (카멜이 판매자에게 매물을 구매) 이 시작되기 전에는 취소가 가능해요.
+              <br />
+              <br />
+              하지만 구매대행이 시작된 이후에는 개인간 거래로 전자상거래법(제17조)에 따른
+              청약철회(환불, 교환) 규정이 적용되지 않아 반품 또는 취소가 불가능해요.
+              <br />
+              <br />
+              결제 전 꼼꼼히 확인 후 결제해주세요.
+            </Typography>
+          </AnswerContent>
+        </Box>
+        <Box
+          customStyle={{
+            borderBottom: hideAnswer.includes(6) ? 'none' : `1px solid ${common.line01}`,
+            paddingBottom: hideAnswer.includes(6) ? 0 : 32
+          }}
+        >
+          <Flexbox
+            alignment="center"
+            justifyContent="space-between"
+            customStyle={{ width: '100%', position: 'relative', zIndex: 1 }}
+            data-num={6}
+            onClick={handleClickArcodian}
+          >
+            <Typography weight="medium" variant="h4">
+              구매대행 수수료를 알고싶어요.
+            </Typography>
+            <Icon
+              name={hideAnswer.includes(6) ? 'Arrow2UpOutlined' : 'Arrow2DownOutlined'}
+              color="ui60"
+            />
+          </Flexbox>
+          <AnswerContent isOpen={hideAnswer.includes(6)}>
+            <Typography customStyle={{ wordBreak: 'keep-all' }}>
+              구매대행 수수료는 구매하시는 플랫폼별로 다르게 적용됩니다. 약 2~8%사이의 수수료가
+              적용됩니다.
+            </Typography>
+          </AnswerContent>
+        </Box>
+        <Box
+          customStyle={{
+            borderBottom: hideAnswer.includes(7) ? 'none' : `1px solid ${common.line01}`,
+            paddingBottom: hideAnswer.includes(7) ? 0 : 32
+          }}
+        >
+          <Flexbox
+            alignment="center"
+            justifyContent="space-between"
+            customStyle={{ width: '100%', position: 'relative', zIndex: 1 }}
+            data-num={7}
+            onClick={handleClickArcodian}
+          >
+            <Typography weight="medium" variant="h4">
+              구매대행 상담 시간이 어떻게 되나요?
+            </Typography>
+            <Icon
+              name={hideAnswer.includes(7) ? 'Arrow2UpOutlined' : 'Arrow2DownOutlined'}
+              color="ui60"
+            />
+          </Flexbox>
+          <AnswerContent isOpen={hideAnswer.includes(7)}>
+            <Typography customStyle={{ wordBreak: 'keep-all' }}>
+              평일 10시 ~ 19시까지 운영됩니다.
+              <br />
+              <br />
+              운영시간이 아닌 때에 문의주신 내용은 잊지 않고 순차적으로 답변드릴게요.
+            </Typography>
+          </AnswerContent>
+        </Box>
       </Flexbox>
     </GeneralTemplate>
   );

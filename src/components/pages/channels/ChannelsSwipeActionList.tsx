@@ -280,7 +280,16 @@ function ChannelsSwipeActionList({
     />
   ) : (
     <>
-      <SwipeableList fullSwipe={false} type={ListType.IOS}>
+      <SwipeableList
+        fullSwipe={false}
+        type={ListType.IOS}
+        style={{
+          overflow: 'hidden',
+          minHeight: [113, 112].includes(camelChannel.channel?.targetUserId || 0) ? 80 : 'auto',
+          height: 'auto',
+          flex: 'none'
+        }}
+      >
         <SwipeableListItem
           onSwipeStart={() => logEvent(attrKeys.channel.SWIPE_X_CHANNEL_LIST)}
           trailingActions={
@@ -321,19 +330,24 @@ function ChannelsSwipeActionList({
               isAdminBlockUser,
               currentUserId: String(accessUser?.userId || '')
             })}
+            productName={
+              [113, 112].includes(camelChannel.channel?.targetUserId || 0)
+                ? camelChannel?.product?.title
+                : ''
+            }
+            isOperator={[113, 112].includes(camelChannel.channel?.targetUserId || 0)}
             description={
               camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
                 ? camelChannel.lastMessageManage.content
                 : camelChannel.lastMessageManage?.content || getLastMessage(sendbirdChannel) || ''
             }
             isAdminBlockUser={isAdminBlockUser}
-            descriptionCustomStyle={{
-              fontSize: typography.h4.size,
-              lineHeight: typography.h4.lineHeight,
-              letterSpacing: typography.h4.letterSpacing
-            }}
+            // descriptionCustomStyle={{
+            //   fontSize: typography.h4.size,
+            //   lineHeight: typography.h4.lineHeight,
+            //   letterSpacing: typography.h4.letterSpacing
+            // }}
             time={getLastMessageCreatedAt(camelChannel.lastMessageManage, sendbirdChannel)}
-            // time={lastMessageTime}
             showNotificationOffIcon={!notiStatus}
             onClick={handleClickChannel}
             action={
@@ -350,7 +364,7 @@ function ChannelsSwipeActionList({
                     imagePath: getImagePathStaticParser(
                       camelChannel.product?.imageThumbnail || camelChannel.product?.imageMain || ''
                     ),
-                    w: 44
+                    w: 36
                   })}
                 />
               </>
@@ -451,9 +465,9 @@ const ActionContent = styled.div<{ isRed?: boolean; disabled?: boolean }>`
 const ProductImage = styled.div<{ url?: string }>`
   display: flex;
   flex-direction: column;
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
   border-radius: 8px;
   background-image: ${({ url }) => `url(${url})`};
   background-position: center;

@@ -13,6 +13,7 @@ import {
   ProductsHeader,
   ProductsInfiniteGrid,
   ProductsKeywordAlertFab,
+  ProductsListBanner,
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
@@ -47,6 +48,7 @@ function SearchProducts({ params }: InferGetServerSidePropsType<typeof getServer
       >
         <ProductsRelatedKeywords />
         <ProductsDynamicFilter />
+        <ProductsListBanner />
         <Gap height={8} />
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />

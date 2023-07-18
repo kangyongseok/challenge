@@ -1,7 +1,7 @@
 import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-export const StyledListItem = styled.li`
+export const StyledListItem = styled.li<{ isOperator?: boolean }>`
   position: relative;
   display: flex;
   justify-content: flex-start;

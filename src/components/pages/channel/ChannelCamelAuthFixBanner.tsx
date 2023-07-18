@@ -3,6 +3,7 @@ import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 function ChannelCamelAuthFixBanner({
@@ -28,8 +29,10 @@ function ChannelCamelAuthFixBanner({
         gap={6}
         customStyle={{ background: common.bg02, padding: '12px 20px' }}
         onClick={() => {
-          logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
-          router.push('/products/purchasingInfo?step=2');
+          logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+            title: attrProperty.title.OPERATOR
+          });
+          router.push('/guide/operator');
         }}
       >
         <Flexbox gap={6} alignment="flex-start">

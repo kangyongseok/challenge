@@ -11,6 +11,7 @@ import {
   ProductsFilterHistory,
   ProductsHeader,
   ProductsInfiniteGrid,
+  ProductsListBanner,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
@@ -31,6 +32,7 @@ function CamelProducts() {
       >
         <ProductsCategoryTags variant="camel" />
         <ProductsDynamicFilter />
+        <ProductsListBanner />
         <Gap height={8} />
         <ProductsFilter variant="camel" />
         <ProductsFilterHistory variant="camel" />

@@ -769,8 +769,10 @@ function ProductInfoOperator({
               color="ui60"
               variant="body2"
               onClick={() => {
-                logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
-                router.push('/products/purchasingInfo?step=2');
+                logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+                  title: attrProperty.title.OPERATOR
+                });
+                router.push('/guide/operator');
               }}
             >
               구매대행이란?

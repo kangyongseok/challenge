@@ -1,6 +1,11 @@
 import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
+import { logEvent } from '@library/amplitude';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
+
 function ChannelSafePaymentGuideBanner() {
   const {
     theme: {
@@ -15,7 +20,12 @@ function ChannelSafePaymentGuideBanner() {
       gap={8}
       alignment="center"
       justifyContent="space-between"
-      onClick={() => router.push('/products/purchasingInfo')}
+      onClick={() => {
+        logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+          title: attrProperty.title.ORDER
+        });
+        router.push('/products/purchasingInfo');
+      }}
       customStyle={{
         padding: '12px 20px',
         backgroundColor: common.bg02

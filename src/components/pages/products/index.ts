@@ -17,3 +17,4 @@ export { default as ProductsPageHead } from './ProductsPageHead';
 export { default as ProductsMiddleFilter } from './ProductsMiddleFilter';
 export { default as ProductsStructuredData } from './ProductsStructuredData';
 export { default as ProductsKeywordAlertFab } from './ProductsKeywordAlertFab';
+export { default as ProductsListBanner } from './ProductsListBanner';

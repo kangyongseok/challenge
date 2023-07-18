@@ -802,6 +802,10 @@ const userShop = {
   CLICK_BANNER: 'CLICK_BANNER'
 };
 
+const guide = {
+  VIEW_CAMEL_GUIDE: 'VIEW_CAMEL_GUIDE'
+};
+
 const orderDetail = {
   SUBMIT_ORDER_CANCEL: 'SUBMIT_ORDER_CANCEL',
   VIEW_ORDER_DETAIL: 'VIEW_ORDER_DETAIL',
@@ -844,6 +848,7 @@ const attrKeys = {
   events,
   channel,
   userShop,
+  guide,
   orderDetail
 };
 

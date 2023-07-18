@@ -12,6 +12,7 @@ import {
   ProductsFilterHistory,
   ProductsInfiniteGrid,
   ProductsLegitFilterBottomSheet,
+  ProductsListBanner,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
@@ -55,6 +56,7 @@ function CrmProducts() {
         disablePadding
       >
         <Gap height={8} />
+        <ProductsListBanner />
         <ProductsFilter variant="search" />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />

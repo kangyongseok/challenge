@@ -10,6 +10,7 @@ import {
   ProductsFilterHistory,
   ProductsInfiniteGrid,
   ProductsLandingInfo,
+  ProductsListBanner,
   ProductsOrderFilterBottomSheet,
   ProductsRelated,
   ProductsStatus,
@@ -48,6 +49,7 @@ function Products() {
       >
         <Gap height={8} />
         <ProductsFilter variant="search" />
+        <ProductsListBanner />
         <ProductsFilterHistory variant="search" />
         <ProductsStatus variant="search" />
         <ProductsInfiniteGrid variant="search" />

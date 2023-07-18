@@ -60,6 +60,14 @@ function HomeMainBanner() {
     router.push('/mypage/settings/transfer');
   };
 
+  const handleClickOperatorFee = () => {
+    logEvent(attrKeys.products.CLICK_BANNER, {
+      att: 'OPERATOR_FEE'
+    });
+
+    router.push('/guide/operator');
+  };
+
   // const handleClick = () => {
   //   logEvent(attrKeys.home.CLICK_BANNER, {
   //     att: 'appFirstPayment'
@@ -96,6 +104,25 @@ function HomeMainBanner() {
       {/* </SwiperSlide> */}
       <SwiperSlide>
         <Box
+          onClick={handleClickOperatorFee}
+          customStyle={{
+            height: 104,
+            backgroundColor: '#425BFF'
+          }}
+        >
+          <Image
+            height={104}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_fee_banner.png`,
+              h: 104
+            })}
+            alt="사기, 안전결제 거부, 막말에 지쳤다면? 카멜이 대신 거래해드려요!"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <SwiperSlide>
+        <Box
           onClick={handleClickTransferBanner}
           customStyle={{
             height: 104,
@@ -117,7 +144,6 @@ function HomeMainBanner() {
         alignment="center"
         justifyContent="center"
         customStyle={{
-          display: 'none',
           position: 'absolute',
           right: 20,
           bottom: 12,

@@ -12,6 +12,7 @@ import {
   ProductsFilterHistory,
   ProductsHeader,
   ProductsInfiniteGrid,
+  ProductsListBanner,
   ProductsOrderFilterBottomSheet,
   ProductsPageHead,
   ProductsRelated,
@@ -44,6 +45,7 @@ function CategoryProducts({ params }: InferGetServerSidePropsType<typeof getServ
       >
         <ProductsCategoryTags variant="categories" />
         <ProductsDynamicFilter />
+        <ProductsListBanner />
         <Gap height={8} />
         <ProductsFilter variant="categories" />
         <ProductsFilterHistory variant="categories" />

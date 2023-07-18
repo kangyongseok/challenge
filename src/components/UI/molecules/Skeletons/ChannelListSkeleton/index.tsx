@@ -6,7 +6,7 @@ function ChannelListSkeleton() {
       alignment="center"
       customStyle={{ padding: '12px 20px', columnGap: 12, width: '100%' }}
     >
-      <Skeleton width={52} height={52} round="50%" disableAspectRatio />
+      <Skeleton width={40} height={40} round="50%" disableAspectRatio />
       <Flexbox customStyle={{ flex: '1 1 auto', minWidth: 0 }}>
         <Flexbox direction="vertical" gap={4}>
           <Flexbox gap={4}>
@@ -16,7 +16,7 @@ function ChannelListSkeleton() {
           <Skeleton width={170} height={16} round={8} disableAspectRatio />
         </Flexbox>
       </Flexbox>
-      <Skeleton width={44} height={44} round={8} disableAspectRatio />
+      <Skeleton width={36} height={36} round={8} disableAspectRatio />
     </Flexbox>
   );
 }
