@@ -16,7 +16,7 @@ const tabData = [
 function MyPortfolioLanding04() {
   const {
     theme: {
-      palette: { primary, common }
+      palette: { primary }
     }
   } = useTheme();
   const [activeTab, setActiveTab] = useState(1);
@@ -48,7 +48,9 @@ function MyPortfolioLanding04() {
               }}
               active={num === activeTab}
             >
-              <Typography customStyle={{ color: common.ui60 }}>#{tab}</Typography>
+              <Typography color="ui60" customStyle={{ fontSize: 12 }}>
+                #{tab}
+              </Typography>
             </Tab>
           ))}
         </TabArea>

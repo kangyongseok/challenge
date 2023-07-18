@@ -44,18 +44,20 @@ function MyPortfolio() {
       palette: { common }
     }
   } = useTheme();
-  const { isLoggedIn, data: accessUser } = useSession();
 
   const [innerHeight, setInnerHeight] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
   const [openReservation, setOpenReservation] = useState(false);
-  const { mutate: mutatePostManage } = useMutation(postPreReserve);
-  const successDialog = useSetRecoilState(SuccessDialogState);
+
+  const { isLoggedIn, data: accessUser } = useSession();
 
   const wheelRef = useRef(false);
   const touchRef = useRef(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
   const startTargetRef = useRef<number>();
+
+  const successDialog = useSetRecoilState(SuccessDialogState);
+
+  const { mutate: mutatePostManage } = useMutation(postPreReserve);
 
   const isSmallHeight = innerHeight < 630;
 
@@ -87,18 +89,6 @@ function MyPortfolio() {
     }, 500);
   };
 
-  const toggleEvent = useCallback(() => {
-    if (openReservation) {
-      windowRemoveEvent();
-    } else {
-      windowAddEvent();
-      // timeoutRef.current = setTimeout(() => {
-      //   bodyStyleSet();
-      // }, 500);
-    }
-    return () => clearTimeout(timeoutRef.current);
-  }, [openReservation, windowRemoveEvent, windowAddEvent]);
-
   useEffect(() => {
     return () => {
       setInnerHeight(0);
@@ -108,15 +98,11 @@ function MyPortfolio() {
   }, []);
 
   useEffect(() => {
-    logEvent(attrKeys.myPortfolio.VIEW_MYPORTFOLIO, {
-      name: attrProperty.productName.MYPORTFOLIO,
+    logEvent(attrKeys.events.VIEW_BUTLER, {
+      name: attrProperty.name.BUTLER,
       title: `STEP0${currentSection + 1}`
     });
   }, [currentSection]);
-
-  useEffect(() => {
-    toggleEvent();
-  }, [openReservation, toggleEvent]);
 
   useEffect(() => {
     bodyStyleSet();
@@ -166,10 +152,29 @@ function MyPortfolio() {
         globalCurrentSection -= 1;
         setCurrentSection((section) => section - 1);
       }
+
       setTimeout(() => {
         wheelRef.current = false;
       }, 1000);
     }
+  };
+
+  const getBackgroundColor = () => {
+    switch (currentSection) {
+      case 0:
+        return common.uiBlack;
+      case 1:
+      case 3:
+      case 5:
+      case 7:
+        return common.ui95;
+      default:
+        return common.uiWhite;
+    }
+  };
+
+  const handleClose = () => {
+    setOpenReservation(false);
   };
 
   const handleClickReservation = () => {
@@ -201,23 +206,6 @@ function MyPortfolio() {
           }
         }
       );
-    }
-  };
-  const handleClose = () => {
-    setOpenReservation(false);
-  };
-
-  const getBackgroundColor = () => {
-    switch (currentSection) {
-      case 0:
-        return common.uiBlack;
-      case 1:
-      case 3:
-      case 5:
-      case 7:
-        return common.ui95;
-      default:
-        return common.uiWhite;
     }
   };
 
@@ -399,6 +387,7 @@ const StyledWrap = styled.div<{ innerHeight: number; bgColor: string }>`
   transform: translate3d(0px, -${({ innerHeight }) => innerHeight && innerHeight}px, 0);
   transition: all 700ms ease 0s;
   width: 100vw;
+  /* min-height: 100%; */
   background: ${({ bgColor }) => bgColor};
 `;
 

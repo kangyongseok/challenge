@@ -4,8 +4,8 @@ import type { ChangeEvent } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
-import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import styled from '@emotion/styled';
 
 import { TextInput } from '@components/UI/molecules';
 
@@ -149,10 +149,11 @@ function MyPortfolioNoneMemberReservationDialog({
     setReserveData({ phone: '' });
     setValidatorText('');
   };
-
   return (
-    <Dialog open={openReservation} onClose={handleClose} customStyle={{ height: 400 }}>
-      <Box>
+    <ReservationModal alignment="center" justifyContent="center" open={openReservation}>
+      <Box
+        customStyle={{ background: 'white', borderRadius: 10, padding: '30px 20px', width: '100%' }}
+      >
         <Box
           customStyle={{
             textAlign: 'center',
@@ -170,7 +171,11 @@ function MyPortfolioNoneMemberReservationDialog({
             <GradationText />
           </Flexbox>
           <Typography weight="medium">전화번호만 입력하면</Typography>
-          <Typography weight="medium">오픈될 때 카카오톡 알림을 보내드릴게요!</Typography>
+          <Typography weight="medium">
+            오픈될 때 카카오톡 알림을
+            <br />
+            보내드릴게요!
+          </Typography>
         </Box>
         <Flexbox
           customStyle={{
@@ -220,7 +225,7 @@ function MyPortfolioNoneMemberReservationDialog({
               variant="solid"
               fullWidth
               size="large"
-              onClick={onClick}
+              onClick={handleClose}
               customStyle={{
                 background: common.ui95,
                 color: common.ui20
@@ -231,9 +236,21 @@ function MyPortfolioNoneMemberReservationDialog({
           </Flexbox>
         </Flexbox>
       </Box>
-    </Dialog>
+    </ReservationModal>
   );
 }
+
+const ReservationModal = styled(Flexbox)<{ open: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  z-index: 100;
+  display: ${({ open }) => (open ? 'flex' : 'none')};
+`;
 
 function GradationText() {
   return (
