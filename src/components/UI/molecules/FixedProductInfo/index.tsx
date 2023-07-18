@@ -34,6 +34,7 @@ import attrProperty from '@constants/attrProperty';
 import { getTenThousandUnitPrice } from '@utils/formats';
 import { commaNumber, getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
+import { productOrderTypeState } from '@recoil/common';
 import { channelBottomSheetStateFamily, channelDialogStateFamily } from '@recoil/channel/atom';
 import useOrderStatus from '@hooks/useOrderStatus';
 
@@ -105,6 +106,7 @@ function FixedProductInfo({
     channelBottomSheetStateFamily('productStatus')
   );
   const setReservingDialogState = useSetRecoilState(channelDialogStateFamily('reserving'));
+  const setOrderTypeState = useSetRecoilState(productOrderTypeState);
 
   const handleClickProductStatus = (e: MouseEvent<HTMLDivElement>) => {
     if (!isEditableProductStatus || isDeletedProduct) return;
@@ -148,6 +150,7 @@ function FixedProductInfo({
     if (!isOperator) {
       setOpenProductPaymentBottomSheet(true);
     } else if (onClickSafePayment) {
+      setOrderTypeState(2);
       onClickSafePayment();
     }
   };
