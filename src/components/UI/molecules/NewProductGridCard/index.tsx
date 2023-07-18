@@ -42,6 +42,7 @@ import type { ProductGridCardVariant } from '@typings/common';
 import { deviceIdState, loginBottomSheetState } from '@recoil/common';
 import useSession from '@hooks/useSession';
 import useQueryCategoryWishes from '@hooks/useQueryCategoryWishes';
+import useProductType from '@hooks/useProductType';
 import useOsAlarm from '@hooks/useOsAlarm';
 
 import { Content, Overlay, WishButtonA, WishButtonB } from './NewProductGridCard.styles';
@@ -154,6 +155,7 @@ function NewProductGridCard({
 
   const { isLoggedIn, data: accessUser } = useSession();
   const { data: { userWishIds = [] } = {}, refetch } = useQueryCategoryWishes({ deviceId });
+  const { isAllOperatorProduct } = useProductType(product.sellerType);
 
   const { mutate: mutatePostProductsAdd } = useMutation(postProductsAdd, {
     async onSuccess() {
@@ -319,7 +321,7 @@ function NewProductGridCard({
                     alignment="center"
                     justifyContent="center"
                     customStyle={{
-                      height: 18,
+                      height: 20,
                       borderRadius: 4,
                       backgroundColor: common.ui20
                     }}
@@ -328,8 +330,8 @@ function NewProductGridCard({
                   </Flexbox>
                 ) : (
                   <Avatar
-                    width={18}
-                    height={18}
+                    width={20}
+                    height={20}
                     src={`https://${process.env.IMAGE_DOMAIN}/assets/images/platforms/${
                       (siteUrlHasImage && siteUrlId) || (siteHasImage && siteId) || ''
                     }.png`}
@@ -337,9 +339,15 @@ function NewProductGridCard({
                     disableSkeleton
                   />
                 )}
-                {isAuthProduct && (
-                  <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
-                )}
+                {isAuthProduct ||
+                  (isAllOperatorProduct && (
+                    <Label
+                      variant="solid"
+                      brandColor="black"
+                      text={isAuthProduct ? '정품의견' : '구매대행'}
+                      customStyle={{ height: 20 }}
+                    />
+                  ))}
               </Flexbox>
             )}
           {!hideLabel &&
@@ -360,7 +368,7 @@ function NewProductGridCard({
                   alignment="center"
                   justifyContent="center"
                   customStyle={{
-                    height: 18,
+                    height: 20,
                     borderRadius: 4,
                     backgroundColor: common.ui20
                   }}
@@ -368,7 +376,12 @@ function NewProductGridCard({
                   <CamelLogoIcon />
                 </Flexbox>
                 {isAuthProduct && (
-                  <Label variant="solid" brandColor="black" size="xsmall" text="정품의견" />
+                  <Label
+                    variant="solid"
+                    brandColor="black"
+                    text="정품의견"
+                    customStyle={{ height: 20 }}
+                  />
                 )}
               </Flexbox>
             )}

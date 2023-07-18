@@ -72,6 +72,8 @@ function ChannelsSwipeActionList({
 
   const [open, setOpen] = useState(false);
 
+  const isOperatorUser = [113, 112].includes(accessUser?.userId || 0);
+
   const {
     notiOn: { mutate: mutateNotiOn, isLoading: isLoadingMutateNotiOn },
     notiOff: { mutate: mutateNotiOff, isLoading: isLoadingMutateNotiOff }
@@ -335,7 +337,9 @@ function ChannelsSwipeActionList({
                 ? camelChannel?.product?.title
                 : ''
             }
-            isOperator={[113, 112].includes(camelChannel.channel?.targetUserId || 0)}
+            isOperator={
+              [113, 112].includes(camelChannel.channel?.targetUserId || 0) && !isOperatorUser
+            }
             description={
               camelChannel.lastMessageManage?.content.includes('사진을 보냈습니다.')
                 ? camelChannel.lastMessageManage.content
