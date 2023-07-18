@@ -110,7 +110,7 @@ function ChannelOrderSettleWaitMessage({
         <Typography variant="h4" weight="bold">
           거래완료
         </Typography>
-        {!hasUserReview ? (
+        {order?.type !== 2 && !hasUserReview ? (
           <Typography
             customStyle={{
               marginTop: 8
@@ -129,7 +129,7 @@ function ChannelOrderSettleWaitMessage({
             {targetUserName}님과 거래가 완료되었어요.
           </Typography>
         )}
-        {!hasUserReview && (
+        {order?.type !== 2 && !hasUserReview && (
           <Button
             variant="ghost"
             brandColor="black"

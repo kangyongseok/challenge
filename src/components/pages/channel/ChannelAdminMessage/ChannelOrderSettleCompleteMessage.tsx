@@ -198,7 +198,7 @@ function ChannelOrderSettleCompleteMessage({
             {commaNumber(order?.price || 0)}원
           </Typography>
         </Flexbox>
-        {!hasUserReview && (
+        {order?.type !== 2 && !hasUserReview && (
           <Button
             variant="ghost"
             brandColor="black"

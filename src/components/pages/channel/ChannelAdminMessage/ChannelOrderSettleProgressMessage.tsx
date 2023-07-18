@@ -126,9 +126,13 @@ function ChannelOrderSettleProgressMessage({
             }}
           >
             정산계좌로 영업일 기준 1일 이내에 판매대금이 입금예정이에요.
-            <br />
-            <br />
-            {targetUserName}님과 거래는 어떠셨나요? 거래후기도 남겨주세요.
+            {order?.type !== 2 && (
+              <>
+                <br />
+                <br />
+                {targetUserName}님과 거래는 어떠셨나요? 거래후기도 남겨주세요.
+              </>
+            )}
           </Typography>
         ) : (
           <Typography
@@ -199,7 +203,7 @@ function ChannelOrderSettleProgressMessage({
             {commaNumber(order?.price || 0)}원
           </Typography>
         </Flexbox>
-        {!hasUserReview && (
+        {order?.type !== 2 && !hasUserReview && (
           <Button
             variant="ghost"
             brandColor="black"

@@ -58,7 +58,9 @@ function MypageOrdersCard({
 
   const [src, setSrc] = useState('');
   const [brandName, setBrandName] = useState('');
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>();
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
+    getOrderStatus({ ...order, isSeller: type !== 0 })
+  );
   const [orderStatusText, setOrderStatusText] = useState('');
   const [isSafePayment, setIsSafePayment] = useState(false);
 
@@ -66,7 +68,7 @@ function MypageOrdersCard({
 
   const handleClick = () => {
     logEvent(attrKeys.orderDetail.CLICK_ORDER_DETAIL, {
-      name: attrProperty.name.ORDER_DETAIL,
+      name: attrProperty.name.ORDER_LIST,
       orderId: id,
       productId,
       type: getOrderType(orderType),
@@ -246,19 +248,21 @@ function MypageOrdersCard({
             구매확정
           </Button>
         )}
-        {['거래완료', '정산완료'].includes(orderStatusText) && !hasReview && (
-          <Button
-            variant="ghost"
-            brandColor="black"
-            onClick={handleClickReviewWrite}
-            disabled={isLoading}
-            customStyle={{
-              marginTop: 12
-            }}
-          >
-            후기 작성하기
-          </Button>
-        )}
+        {orderStatus.paymentMethod !== '카멜 구매대행' &&
+          ['거래완료', '정산완료'].includes(orderStatusText) &&
+          !hasReview && (
+            <Button
+              variant="ghost"
+              brandColor="black"
+              onClick={handleClickReviewWrite}
+              disabled={isLoading}
+              customStyle={{
+                marginTop: 12
+              }}
+            >
+              후기 작성하기
+            </Button>
+          )}
       </div>
     </Flexbox>
   );
