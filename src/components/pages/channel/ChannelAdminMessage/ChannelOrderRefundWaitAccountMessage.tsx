@@ -70,6 +70,18 @@ function ChannelOrderRefundWaitAccountMessage({
           borderRadius: 20
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           거래취소
         </Typography>

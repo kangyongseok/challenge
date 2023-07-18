@@ -12,6 +12,7 @@ import type { AdminMessage } from '@sendbird/chat/message';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { ProductOffer } from '@dto/productOffer';
+import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
 import SessionStorage from '@library/sessionStorage';
@@ -33,6 +34,7 @@ import useSession from '@hooks/useSession';
 
 interface ChannelOfferRequestMessageProps {
   message: AdminMessage;
+  order?: Order | null;
   offer?: ProductOffer | null;
   offersSize: number;
   isSeller: boolean;
@@ -43,6 +45,7 @@ interface ChannelOfferRequestMessageProps {
 
 function ChannelOfferRequestMessage({
   message: { createdAt },
+  order,
   offer,
   offersSize,
   isSeller,
@@ -152,6 +155,18 @@ function ChannelOfferRequestMessage({
             overflow: 'hidden'
           }}
         >
+          {order?.type === 2 && (
+            <Typography
+              variant="body3"
+              weight="bold"
+              color="primary-light"
+              customStyle={{
+                marginBottom: 4
+              }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             {commaNumber(offer?.price || 0)}원에 거래하고 싶어요.
           </Typography>
@@ -234,6 +249,18 @@ function ChannelOfferRequestMessage({
           overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           {commaNumber(offer?.price || 0)}원에 거래하고 싶어요.
         </Typography>

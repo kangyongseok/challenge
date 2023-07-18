@@ -27,7 +27,7 @@ import { shake } from '@styles/transition';
 
 import useSession from '@hooks/useSession';
 
-function ChannelFixMessage() {
+function SettingsChannelFixMessage() {
   const {
     theme: {
       palette: { common, secondary }
@@ -245,4 +245,4 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   };
 }
 
-export default ChannelFixMessage;
+export default SettingsChannelFixMessage;

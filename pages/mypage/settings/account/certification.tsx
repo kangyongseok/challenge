@@ -19,7 +19,7 @@ import attrKeys from '@constants/attrKeys';
 import { getCookies } from '@utils/cookies';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
-function SettingAccountCertification({
+function SettingsAccountCertification({
   userCert
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
@@ -130,4 +130,4 @@ export async function getServerSideProps({
   }
 }
 
-export default SettingAccountCertification;
+export default SettingsAccountCertification;

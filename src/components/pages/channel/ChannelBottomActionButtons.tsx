@@ -208,7 +208,13 @@ function ChannelBottomActionButtons({
   const handleClickReview = () => {
     if (isLoadingMutate || !targetUserId) return;
 
-    logEvent(attrKeys.channel.CLICK_REVIEW_SEND, { name: attrProperty.name.CHANNEL_DETAIL });
+    logEvent(attrKeys.channel.CLICK_REVIEW_SEND, {
+      name: attrProperty.name.CHANNEL_DETAIL,
+      productId,
+      orderId: order?.id,
+      channelId: order?.channelId,
+      att: isTargetUserSeller ? 'BUYER' : 'SELLER'
+    });
     logEvent(attrKeys.channel.VIEW_REVIEW_SEND_POPUP, {
       att: isTargetUserSeller ? 'BUYER' : 'SELLER'
     });
@@ -244,7 +250,9 @@ function ChannelBottomActionButtons({
           productId,
           targetUserName,
           targetUserId,
-          isTargetUserSeller
+          isTargetUserSeller,
+          orderId: order?.id,
+          channelId: order?.channelId
         }
       });
     } else {
@@ -259,7 +267,9 @@ function ChannelBottomActionButtons({
                 productId,
                 targetUserName,
                 targetUserId,
-                isTargetUserSeller
+                isTargetUserSeller,
+                orderId: order?.id,
+                channelId: order?.channelId
               }
             });
           }

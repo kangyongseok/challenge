@@ -7,7 +7,7 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
-import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
@@ -31,6 +31,7 @@ interface ChannelOrderSettleProgressMessageProps {
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
+  onClickOrderDetail: () => void;
 }
 
 function ChannelOrderSettleProgressMessage({
@@ -41,7 +42,8 @@ function ChannelOrderSettleProgressMessage({
   targetUserName,
   hasUserReview,
   isSeller,
-  refetchChannel
+  refetchChannel,
+  onClickOrderDetail
 }: ChannelOrderSettleProgressMessageProps) {
   const router = useRouter();
 
@@ -76,7 +78,9 @@ function ChannelOrderSettleProgressMessage({
         productId,
         targetUserName,
         targetUserId,
-        isTargetUserSeller: !isSeller
+        isTargetUserSeller: !isSeller,
+        orderId: order?.id,
+        channelId: order?.channelId
       }
     });
   };
@@ -95,9 +99,22 @@ function ChannelOrderSettleProgressMessage({
           maxWidth: 265,
           padding: 20,
           border: `1px solid ${common.line01}`,
-          borderRadius: 20
+          borderRadius: 20,
+          overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           정산예정
         </Typography>
@@ -195,6 +212,21 @@ function ChannelOrderSettleProgressMessage({
             후기 작성하기
           </Button>
         )}
+        <Flexbox
+          alignment="center"
+          gap={4}
+          onClick={onClickOrderDetail}
+          customStyle={{
+            margin: '20px -20px -20px',
+            padding: '12px 20px',
+            backgroundColor: common.bg02
+          }}
+        >
+          <Icon name="FileFilled" color="primary-light" />
+          <Typography weight="medium" color="primary-light">
+            주문상세보기
+          </Typography>
+        </Flexbox>
       </Box>
       <Typography
         variant="small2"

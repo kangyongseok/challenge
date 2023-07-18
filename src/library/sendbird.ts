@@ -65,6 +65,7 @@ const SendBird = {
         userId,
         nickname
       });
+
       if (!isProduction) console.log('Sendbird initialized', { sb, user });
     } catch (error) {
       logEvent('SUPPORT_ERROR', {

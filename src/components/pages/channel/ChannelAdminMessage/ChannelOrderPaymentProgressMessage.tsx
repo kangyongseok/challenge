@@ -3,7 +3,7 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 
@@ -15,11 +15,13 @@ import useSession from '@hooks/useSession';
 interface ChannelOrderPaymentProgressMessageProps {
   message: AdminMessage;
   order?: Order | null;
+  onClickOrderDetail: () => void;
 }
 
 function ChannelOrderPaymentProgressMessage({
   message: { data, createdAt },
-  order
+  order,
+  onClickOrderDetail
 }: ChannelOrderPaymentProgressMessageProps) {
   const {
     theme: {
@@ -55,15 +57,18 @@ function ChannelOrderPaymentProgressMessage({
             maxWidth: 265,
             padding: 20,
             border: `1px solid ${common.line01}`,
-            borderRadius: 20
+            borderRadius: 20,
+            overflow: 'hidden'
           }}
         >
-          {order?.orderFees.length && (
+          {order?.type === 2 && (
             <Typography
+              variant="body3"
               weight="bold"
               color="primary-light"
-              variant="small2"
-              customStyle={{ marginBottom: 4 }}
+              customStyle={{
+                marginBottom: 4
+              }}
             >
               카멜 구매대행
             </Typography>
@@ -202,6 +207,21 @@ function ChannelOrderPaymentProgressMessage({
           >
             계좌번호 복사
           </Button>
+          <Flexbox
+            alignment="center"
+            gap={4}
+            onClick={onClickOrderDetail}
+            customStyle={{
+              margin: '20px -20px -20px',
+              padding: '12px 20px',
+              backgroundColor: common.bg02
+            }}
+          >
+            <Icon name="FileFilled" color="primary-light" />
+            <Typography weight="medium" color="primary-light">
+              주문상세보기
+            </Typography>
+          </Flexbox>
         </Box>
         <Typography
           variant="small2"

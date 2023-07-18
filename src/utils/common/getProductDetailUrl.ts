@@ -1,4 +1,4 @@
-import { Product, ProductResult } from '@dto/product';
+import type { Product, ProductResult } from '@dto/product';
 
 export function getProductDetailUrl({
   type = 'product',

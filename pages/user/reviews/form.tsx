@@ -38,18 +38,22 @@ function ReviewForm() {
 
   const toastStack = useToastStack();
 
-  const { productId, userId, userName, isSeller } = useMemo(
+  const { productId, userId, userName, isSeller, orderId, channelId } = useMemo(
     () => ({
       productId: Number(router.query.productId || ''),
       userId: Number(router.query.targetUserId || ''),
       userName: String(router.query.targetUserName || ''),
-      isSeller: router.query.isTargetUserSeller || false
+      isSeller: router.query.isTargetUserSeller || false,
+      orderId: Number(router.query.orderId),
+      channelId: Number(router.query.channelId)
     }),
     [
       router.query.isTargetUserSeller,
       router.query.productId,
       router.query.targetUserId,
-      router.query.targetUserName
+      router.query.targetUserName,
+      router.query.orderId,
+      router.query.channelId
     ]
   );
 
@@ -74,13 +78,16 @@ function ReviewForm() {
 
     mutatePostReview(params, {
       onSuccess() {
-        logEvent(attrKeys.channel.SUBMIT_REVIEW, {
+        logEvent(attrKeys.channel.SUBMIT_REVIEW_SEND, {
           name: attrKeys.channel.REVIEW_SEND,
           att: isSeller ? 'BUYER' : 'SELLER',
           score: Number(params.score) / 2,
           data: {
             ...product
           },
+          productId,
+          orderId,
+          channelId,
           description: params.content
         });
 
@@ -101,10 +108,13 @@ function ReviewForm() {
       loggedRef.current = true;
       logEvent(attrKeys.channel.VIEW_REVIEW_SEND, {
         att: isSeller ? 'BUYER' : 'SELLER',
-        data: { ...product }
+        data: { ...product },
+        productId,
+        orderId,
+        channelId
       });
     }
-  }, [isLoading, isSeller, product, productId, router, userId]);
+  }, [isLoading, isSeller, product, productId, router, userId, orderId, channelId]);
 
   return (
     <GeneralTemplate

@@ -195,3 +195,8 @@ export const decryptPendingState = atom({
   key: 'common/decryptPendingState',
   default: false
 });
+
+export const productOrderTypeState = atom<0 | 1 | 2>({
+  key: 'common/productOrderTypeState',
+  default: 0
+});

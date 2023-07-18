@@ -142,12 +142,17 @@ function ChannelsSwipeActionList({
   const handleClickChannel = useCallback(() => {
     if (!camelChannel.channel) return;
 
-    logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, { name: attrProperty.name.CHANNEL });
+    logEvent(attrKeys.channel.CLICK_CHANNEL_DETAIL, {
+      name: attrProperty.name.CHANNEL,
+      productId: camelChannel.product?.id,
+      channelId: camelChannel.channel?.id,
+      userId: accessUser?.userId
+    });
 
     SessionStorage.remove(sessionStorageKeys.pushToSavedRedirectChannel);
 
-    router.push(`/channels/${camelChannel.channel.id}`);
-  }, [camelChannel.channel, router]);
+    router.push(`/channels/${camelChannel.channel?.id}`);
+  }, [camelChannel.channel, camelChannel.product?.id, accessUser?.userId, router]);
 
   const handleClickSelectTargetUser = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -180,6 +185,8 @@ function ChannelsSwipeActionList({
       const isTargetUserSeller =
         channelUserType[camelChannel.channelTargetUser.type as keyof typeof channelUserType] ===
         channelUserType[1];
+      const orderId = camelChannel.orders[0]?.id;
+      const channelId = camelChannel.channel?.id;
 
       mutatePutProductUpdateStatus(
         {
@@ -203,7 +210,9 @@ function ChannelsSwipeActionList({
                 productId,
                 targetUserId,
                 targetUserName,
-                isTargetUserSeller
+                isTargetUserSeller,
+                orderId,
+                channelId
               }
             });
           }
@@ -211,7 +220,9 @@ function ChannelsSwipeActionList({
       );
     },
     [
+      camelChannel.channel?.id,
       camelChannel.channelTargetUser,
+      camelChannel.orders,
       camelChannel.product,
       isLoadingMutatePutProductUpdateStatus,
       location,

@@ -18,7 +18,7 @@ import type { ChannelDetail } from '@dto/channel';
 
 import { logEvent } from '@library/amplitude';
 
-import { postOrderRefuse } from '@api/order';
+import { putOrderRefuse } from '@api/order';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -43,7 +43,7 @@ function ChannelSaleRequestRefuseDialog({
 
   const [{ open }, setOpenState] = useRecoilState(channelDialogStateFamily('saleRequestRefuse'));
 
-  const { mutate } = useMutation(postOrderRefuse);
+  const { mutate } = useMutation(putOrderRefuse);
 
   const handleClose = () =>
     setOpenState((prevState) => ({

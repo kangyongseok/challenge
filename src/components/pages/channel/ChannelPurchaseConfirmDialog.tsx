@@ -14,7 +14,7 @@ import type { ChannelDetail } from '@dto/channel';
 
 import { logEvent } from '@library/amplitude';
 
-import { postOrderConfirm } from '@api/order';
+import { putOrderConfirm } from '@api/order';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -36,7 +36,7 @@ function ChannelPurchaseConfirmDialog({
 }: ChannelPurchaseConfirmDialogProps) {
   const [{ open }, setOpenState] = useRecoilState(channelDialogStateFamily('purchaseConfirm'));
 
-  const { mutate } = useMutation(postOrderConfirm);
+  const { mutate } = useMutation(putOrderConfirm);
 
   const handleClose = () =>
     setOpenState((prevState) => ({

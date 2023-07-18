@@ -71,3 +71,13 @@ export const shake = keyframes`
     animation-timing-function: ease-in;
   }
 `;
+
+export const circlePulse = keyframes`
+  0% {
+    transform: translate(-50%, -50%) scale(0.33);
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+`;

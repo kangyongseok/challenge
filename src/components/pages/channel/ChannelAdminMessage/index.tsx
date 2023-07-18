@@ -17,6 +17,10 @@ import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { Box, Button, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import ChannelOrderDirectWaitMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderDirectWaitMessage';
+import ChannelOrderCancelRequestWithdrawAdditionalMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderCancelRequestWithdrawAdditionalMessage';
+import ChannelOrderCancelRequestRefuseAdditionalMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderCancelRequestRefuseAdditionalMessage';
+
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
@@ -36,6 +40,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
+import getOrderType from '@utils/common/getOrderType';
+import getOrderStatus from '@utils/common/getOrderStatus';
 import { commaNumber } from '@utils/common';
 import { getOutgoingMessageState } from '@utils/channel';
 
@@ -61,6 +67,9 @@ import ChannelOrderDeliveryProgressWeekMessage from './ChannelOrderDeliveryProgr
 import ChannelOrderDeliveryProgressRemindMessage from './ChannelOrderDeliveryProgressRemindMessage';
 import ChannelOrderDeliveryProgressMessage from './ChannelOrderDeliveryProgressMessage';
 import ChannelOrderDeliveryCompleteMessage from './ChannelOrderDeliveryCompleteMessage';
+import ChannelOrderCancelRequestWithdrawMessage from './ChannelOrderCancelRequestWithdrawMessage';
+import ChannelOrderCancelRequestRefuseMessage from './ChannelOrderCancelRequestRefuseMessage';
+import ChannelOrderCancelRequestMessage from './ChannelOrderCancelRequestMessage';
 import ChannelOfferRequestTipMessage from './ChannelOfferRequestTipMessage';
 import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
 import ChannelOfferApproveMessage from './ChannelOfferApproveMessage';
@@ -129,6 +138,10 @@ function ChannelAdminMessage({
 
   const currentOrder = orders.find((findOrder) => findOrder.id === Number(message.message));
   const currentOffer = offers.find((findOffer) => findOffer.id === Number(message.message));
+
+  const [orderStatus, setOrderStatus] = useState(
+    getOrderStatus({ ...(currentOrder as Order), isSeller })
+  );
 
   const { data: accessUser } = useSession();
 
@@ -274,6 +287,18 @@ function ChannelAdminMessage({
     }
   };
 
+  const handleClickOrderDetail = () => {
+    logEvent(attrKeys.orderDetail.CLICK_ORDER_DETAIL, {
+      name: attrProperty.name.ORDER_DETAIL,
+      orderId: currentOrder?.id,
+      productId,
+      type: getOrderType(currentOrder?.type || 0),
+      att: orderStatus.overlayText
+    });
+
+    router.push(`/mypage/orders/${currentOrder?.id}`);
+  };
+
   useEffect(() => {
     if (isByMe && messageStates.read === messageStatus) {
       window.flexibleContent.scrollTo({
@@ -282,6 +307,10 @@ function ChannelAdminMessage({
       });
     }
   }, [isByMe, messageStatus]);
+
+  useEffect(() => {
+    setOrderStatus(getOrderStatus({ ...(currentOrder as Order), isSeller }));
+  }, [currentOrder, isSeller]);
 
   if (isAdminMessageType) {
     return (
@@ -399,7 +428,13 @@ function ChannelAdminMessage({
   }
 
   if (message.customType === 'orderPaymentProgress') {
-    return <ChannelOrderPaymentProgressMessage message={message} order={currentOrder} />;
+    return (
+      <ChannelOrderPaymentProgressMessage
+        message={message}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
   }
 
   if (message.customType === 'orderPaymentComplete') {
@@ -409,6 +444,7 @@ function ChannelAdminMessage({
         order={currentOrder}
         isSeller={isSeller}
         refetchChannel={refetchChannel}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
@@ -441,34 +477,46 @@ function ChannelAdminMessage({
         message={message}
         order={currentOrder}
         isSeller={isSeller}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
 
   if (message.customType === 'orderDeliveryWait') {
     return (
-      <ChannelOrderDeliveryWaitMessage message={message} order={currentOrder} isSeller={isSeller} />
+      <ChannelOrderDeliveryWaitMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
     );
   }
 
   if (message.customType === 'orderRefundWaitAccount') {
     return <ChannelOrderRefundWaitAccountMessage message={message} order={currentOrder} />;
   }
+
   if (message.customType === 'orderDeliveryComplete') {
     return (
       <ChannelOrderDeliveryCompleteMessage
         message={message}
         order={currentOrder}
         isSeller={isSeller}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
-  if (message.customType === 'orderRefundProgress') {
-    return <ChannelOrderRefundProgressMessage message={message} order={currentOrder} />;
+
+  if (
+    message.customType === 'orderRefundComplete' ||
+    (message.customType === 'orderRefundProgress' && currentOrder?.orderPayments[0]?.method === 0)
+  ) {
+    return <ChannelOrderRefundCompleteMessage message={message} order={currentOrder} />;
   }
 
-  if (message.customType === 'orderRefundComplete') {
-    return <ChannelOrderRefundCompleteMessage message={message} order={currentOrder} />;
+  if (message.customType === 'orderRefundProgress') {
+    return <ChannelOrderRefundProgressMessage message={message} order={currentOrder} />;
   }
 
   if (message.customType === 'orderDeliveryProgress') {
@@ -477,30 +525,45 @@ function ChannelAdminMessage({
         message={message}
         order={currentOrder}
         isSeller={isSeller}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
 
   if (message.customType === 'orderDeliveryProgressRemind') {
-    return <ChannelOrderDeliveryProgressRemindMessage message={message} order={currentOrder} />;
+    return (
+      <ChannelOrderDeliveryProgressRemindMessage
+        message={message}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
   }
 
   if (message.customType === 'orderSettleWait') {
     return (
       <ChannelOrderSettleWaitMessage
         message={message}
+        order={currentOrder}
         productId={productId}
         targetUserId={targetUserId}
         targetUserName={targetUserName}
         hasUserReview={hasUserReview}
         isSeller={isSeller}
         refetchChannel={refetchChannel}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
 
   if (message.customType === 'orderSettleWaitAccount') {
-    return <ChannelOrderSettleWaitAccountMessage message={message} />;
+    return (
+      <ChannelOrderSettleWaitAccountMessage
+        message={message}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
   }
 
   if (message.customType === 'orderSettleProgress') {
@@ -514,6 +577,7 @@ function ChannelAdminMessage({
         hasUserReview={hasUserReview}
         isSeller={isSeller}
         refetchChannel={refetchChannel}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
@@ -529,9 +593,63 @@ function ChannelAdminMessage({
         hasUserReview={hasUserReview}
         isSeller={isSeller}
         refetchChannel={refetchChannel}
+        onClickOrderDetail={handleClickOrderDetail}
       />
     );
   }
+
+  if (message.customType === 'orderCancelRequest') {
+    return (
+      <ChannelOrderCancelRequestMessage
+        message={message}
+        isSeller={isSeller}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
+  }
+
+  if (message.customType === 'orderCancelRefuse') {
+    return (
+      <ChannelOrderCancelRequestRefuseMessage
+        message={message}
+        isSeller={isSeller}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
+  }
+
+  if (message.customType === 'orderCancelWithDraw') {
+    return (
+      <ChannelOrderCancelRequestWithdrawMessage
+        message={message}
+        isSeller={isSeller}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
+  }
+
+  if (message.customType === 'orderDirectWait') {
+    return (
+      <ChannelOrderDirectWaitMessage
+        message={message}
+        isSeller={isSeller}
+        order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
+  }
+
+  if (message.customType === 'orderCancelRefuseAdditional') {
+    return <ChannelOrderCancelRequestRefuseAdditionalMessage />;
+  }
+
+  if (message.customType === 'orderCancelWithDrawAdditional') {
+    return <ChannelOrderCancelRequestWithdrawAdditionalMessage />;
+  }
+
   if (message.customType === 'reviewReceived') {
     return <Box />;
   }

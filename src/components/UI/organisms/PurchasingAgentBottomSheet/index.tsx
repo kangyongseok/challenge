@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import {
   BottomSheet,
@@ -13,7 +14,7 @@ import {
 } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import { OrderInfo } from '@dto/product';
+import type { OrderInfo } from '@dto/product';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
@@ -23,6 +24,8 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { commaNumber } from '@utils/common';
+
+import { productOrderTypeState } from '@recoil/common';
 
 function PurchasingAgentBottomSheet({
   open,
@@ -38,8 +41,11 @@ function PurchasingAgentBottomSheet({
   orderInfoProps?: OrderInfo;
 }) {
   const router = useRouter();
+
   const [isCheck, setCheck] = useState(false);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
+
+  const setOrderTypeState = useSetRecoilState(productOrderTypeState);
 
   const handleClickCheck = () => {
     setCheck((prev) => !prev);
@@ -53,6 +59,8 @@ function PurchasingAgentBottomSheet({
     });
 
     LocalStorage.set('includeLegit', isCheck);
+
+    setOrderTypeState(2);
 
     onClickPayment();
   };

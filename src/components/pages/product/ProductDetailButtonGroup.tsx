@@ -8,9 +8,13 @@ import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Avatar, Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 
-import PurchasingAgentBottomSheet from '@components/UI/organisms/PurchasingAgentBottomSheet';
 import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
-import { AppUpdateForChatDialog, AppUpdateForSafePayment } from '@components/UI/organisms';
+import {
+  AppUpdateForChatDialog,
+  AppUpdateForSafePayment,
+  ProductPaymentMethodBottomSheet,
+  PurchasingAgentBottomSheet
+} from '@components/UI/organisms';
 
 import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
@@ -74,12 +78,12 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
+  const [openPaymentMethodBottomSheet, setOpenPaymentMethodBottomSheet] = useState(false);
 
   const setLoginBottomSheet = useSetRecoilState(loginBottomSheetState);
   const prevChannelAlarm = useRecoilValue(prevChannelAlarmPopup);
   const resetProductInquiryFormState = useResetRecoilState(productInquiryFormState);
   const resetProductInquiryReSendState = useResetRecoilState(productInquiryReSendState);
-
   const { mutate: mutateCreateChannel, isLoading: isLoadingMutateCreateChannel } =
     useMutationCreateChannel();
 
@@ -90,10 +94,14 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
 
   const logEventProductDetailAtt = ({
     key,
-    att
+    att,
+    productId,
+    channelId
   }: {
     key: string;
     att?: 'CHANNEL' | 'ORDER' | 'CPPRICELOW' | 'CPSAME' | 'REDIRECT' | 'OPERATOR';
+    productId?: number;
+    channelId?: number;
   }) => {
     if (!productDetail?.product) return;
 
@@ -110,6 +118,12 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
         product: productDetail?.product,
         source: productDetailSource || undefined,
         rest: { conversionId, att }
+      });
+    } else if (key === 'CLICK_CHANNEL_DETAIL') {
+      productDetailAtt({
+        key,
+        product: productDetail?.product,
+        rest: { productId, channelId }
       });
     } else {
       productDetailAtt({
@@ -169,8 +183,16 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
   const handleClickChannel = () => {
     if (!productDetail?.product || pendingCreateChannel || isLoadingMutateCreateChannel) return;
 
+    const channelId = (productDetail.channels || []).find(
+      (channel) => channel.userId === accessUser?.userId
+    )?.id;
+
     logEventProductDetailAtt({ key: attrKeys.products.CLICK_PURCHASE, att: 'CHANNEL' });
-    logEventProductDetailAtt({ key: attrKeys.channel.CLICK_CHANNEL_DETAIL });
+    logEventProductDetailAtt({
+      key: attrKeys.channel.CLICK_CHANNEL_DETAIL,
+      productId: productDetail.product.id,
+      channelId
+    });
 
     if (isBlockedUser) {
       blockUserDialog();
@@ -201,10 +223,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       productTitle: productDetail.product.title,
       productImage: productDetail.product.imageThumbnail || productDetail.product.imageMain || ''
     };
-
-    const channelId = (productDetail.channels || []).find(
-      (channel) => channel.userId === accessUser?.userId
-    )?.id;
 
     if (!isLoggedInWithSMS) {
       SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
@@ -283,7 +301,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       return;
     }
 
-    if (!accessUser) {
+    if (!isLoggedInWithSMS) {
       if (openPurchasingAgentBottomSheet) {
         setOpenPurchasingAgentBottomSheet(false);
         setTimeout(() => {
@@ -296,11 +314,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
         return;
       }
 
-      setLoginBottomSheet({
-        open: true,
-        returnUrl: '',
-        mode: !checkAgent.isMobileApp() ? 'nonMember' : 'normal'
-      });
+      setOpenPaymentMethodBottomSheet(true);
       return;
     }
 
@@ -309,7 +323,17 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     });
 
     mutateMetaInfo({ isAddPurchaseCount: true });
-    push(`/products/${id}/order`);
+
+    if (!isAllOperatorProduct) {
+      setOpenPaymentMethodBottomSheet(true);
+    } else {
+      push({
+        pathname: `/products/${id}/order`,
+        query: {
+          type: 2
+        }
+      });
+    }
   };
 
   const handleClickDuplicateProduct = () => {
@@ -444,7 +468,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
             size="xlarge"
             variant="solid"
             brandColor="black"
-            onClick={() => handleClickSafePayment()}
+            onClick={handleClickSafePayment}
             disabled={isDisabledState}
           >
             안전결제
@@ -452,6 +476,15 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
         </Flexbox>
         <AppUpdateForChatDialog open={open} />
         <AppUpdateForSafePayment open={openDialog} />
+        <ProductPaymentMethodBottomSheet
+          open={openPaymentMethodBottomSheet}
+          onClose={() => setOpenPaymentMethodBottomSheet(false)}
+          orderInfo={productDetail?.orderInfo}
+          attributes={{
+            name: attrProperty.name.PRODUCT_DETAIL,
+            title: attrProperty.title.ORDER
+          }}
+        />
       </>
     );
   }

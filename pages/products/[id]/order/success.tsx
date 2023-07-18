@@ -26,6 +26,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getCookies } from '@utils/cookies';
+import getOrderType from '@utils/common/getOrderType';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 
 import type { Payment } from '@typings/tosspayments';
@@ -54,7 +55,7 @@ function ProductOrderSuccess() {
 
   const {
     data,
-    data: { totalPrice = 0 } = {},
+    data: { totalPrice = 0, type = 0 } = {},
     isLoading: isLoadingOrder
   } = useQuery(
     queryKeys.orders.productOrder({ productId }),
@@ -202,10 +203,16 @@ function ProductOrderSuccess() {
                 res,
                 orderPaymentsData
               },
-              source
+              source,
+              type: getOrderType(type)
             });
 
-            router.push(`/channels/${channelId}`);
+            router.push({
+              pathname: `/mypage/orders/${camelOrderId}`,
+              query: {
+                paymentComplete: true
+              }
+            });
           });
         } else {
           await mutate(
@@ -233,10 +240,16 @@ function ProductOrderSuccess() {
                       data,
                       res
                     },
-                    source
+                    source,
+                    type: getOrderType(type)
                   });
 
-                  router.push(`/channels/${newChannelId}`);
+                  router.push({
+                    pathname: `/mypage/orders/${camelOrderId}`,
+                    query: {
+                      paymentComplete: true
+                    }
+                  });
                 }
               );
             },
@@ -274,7 +287,8 @@ function ProductOrderSuccess() {
     isLoadingOrder,
     router,
     channels,
-    data
+    data,
+    type
   ]);
 
   return (

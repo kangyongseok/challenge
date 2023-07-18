@@ -1,4 +1,4 @@
-import { OrderFees } from './product';
+import type { OrderFees, Product } from '@dto/product';
 
 export interface Order {
   id: number;
@@ -12,6 +12,7 @@ export interface Order {
   orderFeeInfos: OrderFeeInfos[];
   orderFees: OrderFees[];
   orderDelivery: OrderDelivery;
+  orderHistories: OrderHistory[];
   firstProductId: number;
   reviewFormInfo: {
     hasReview: boolean;
@@ -23,9 +24,23 @@ export interface Order {
   price: number;
   quantity: number;
   totalPrice: number;
-  status: 0 | 1 | 2 | 3; // 0: 결제, 1: 배송, 2: 정산, 3: 환불
+  status: 0 | 1 | 2 | 3 | 4; // 0: 결제, 1: 배송, 2: 정산, 3: 환불, 4: 취소
   result: 0 | 1 | 2 | 3; // 0: 대기, 1: 진행, 2: 완료, 3: 취소
   reason: string;
+  hold: 0 | 1; // 0: 기본, 1: 취소 요청
+  type: 0 | 1 | 2; // 0: 택배거래, 2: 직거래, 3: 구매대행
+  cancelReasons: {
+    request: null; // 취소 요청이 있는 경우
+    response: null; // 취소 요청 거절이 있는 경우
+  };
+  additionalInfo?: {
+    buyerName: string;
+    buyerUserId: number;
+    product: Product;
+    sellerName: string;
+    sellerUserId: number;
+  };
+  userId: number;
   description: string;
   dateCompleted: string;
   dateExpired: string;
@@ -35,6 +50,14 @@ export interface OrderDelivery {
   contents: string;
   deliveryCode: string;
   type: 0 | 1 | 2 | 3;
+}
+
+export interface OrderHistory {
+  dateCreated: string;
+  description: string;
+  name: string;
+  result: number;
+  status: number;
 }
 
 export interface OrderFeeInfos {
@@ -98,5 +121,6 @@ export interface OrderSearchParams {
 export interface ProductOrderParams {
   productId: number;
   isCreated?: boolean;
+  type?: number;
   includeLegit?: boolean;
 }

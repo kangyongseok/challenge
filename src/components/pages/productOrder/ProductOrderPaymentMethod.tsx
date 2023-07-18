@@ -4,6 +4,7 @@ import type { MutableRefObject } from 'react';
 import { useRouter } from 'next/router';
 import { loadPaymentWidget } from '@tosspayments/payment-widget-sdk';
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import { Skeleton } from '@mrcamelhub/camel-ui';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
 
@@ -24,13 +25,17 @@ function ProductOrderPaymentMethod({
   includeLegit
 }: ProductOrderPaymentMethodProps) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
   const { isLoggedInWithSMS, data: accessUser } = useSession();
 
-  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({ productId, includeLegit });
+  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({
+    productId,
+    includeLegit,
+    type: Number(type)
+  });
 
   useEffect(() => {
     if (
@@ -62,7 +67,11 @@ function ProductOrderPaymentMethod({
     loadTossPaymentWidget();
   }, [isLoggedInWithSMS, accessUser, paymentWidgetRef, paymentMethodsWidgetRef, totalPrice]);
 
-  return <div id="payment-widget" />;
+  return (
+    <div id="payment-widget">
+      <Skeleton width="100%" height={175} disableAspectRatio />
+    </div>
+  );
 }
 
 export default ProductOrderPaymentMethod;

@@ -14,8 +14,10 @@ function ProductOrderPurchasingInfo() {
       palette: { primary, common }
     }
   } = useTheme();
+
   const { data: { product } = {} } = useQueryProduct();
   const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
+
   if (!isAllOperatorType) return null;
 
   return (

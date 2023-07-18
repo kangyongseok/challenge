@@ -66,7 +66,8 @@ function ProductSellerReviews({
         rest: {
           att: 'ALL'
         },
-        source: attrProperty.productSource.PRODUCT_LIST
+        source: attrProperty.productSource.PRODUCT_LIST,
+        userId: accessUser?.userId
       });
     // 내 매물 shop
 

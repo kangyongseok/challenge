@@ -16,7 +16,7 @@ import { logEvent } from '@library/amplitude';
 
 import attrKeys from '@constants/attrKeys';
 
-function SettingAccount() {
+function SettingsAccount() {
   useEffect(() => {
     logEvent(attrKeys.mypage.VIEW_ACCOUNT_MANAGE);
   }, []);
@@ -39,4 +39,4 @@ function SettingAccount() {
   );
 }
 
-export default SettingAccount;
+export default SettingsAccount;

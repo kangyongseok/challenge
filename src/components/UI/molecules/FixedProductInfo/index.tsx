@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useQuery } from '@tanstack/react-query';
@@ -15,7 +15,10 @@ import {
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import PurchasingAgentBottomSheet from '@components/UI/organisms/PurchasingAgentBottomSheet';
+import {
+  ProductPaymentMethodBottomSheet,
+  PurchasingAgentBottomSheet
+} from '@components/UI/organisms';
 
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
@@ -28,12 +31,8 @@ import { productStatus } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
-import {
-  commaNumber,
-  getImagePathStaticParser,
-  getImageResizePath,
-  getOrderStatusText
-} from '@utils/common';
+import getOrderStatus, { OrderStatus } from '@utils/common/getOrderStatus';
+import { commaNumber, getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import { channelBottomSheetStateFamily, channelDialogStateFamily } from '@recoil/channel/atom';
 
@@ -47,6 +46,7 @@ interface FixedProductInfoProps {
   isTargetUserBlocked?: boolean;
   isAdminBlockUser?: boolean;
   isReserved?: boolean;
+  isSeller?: boolean;
   image: string;
   title: string;
   status: number;
@@ -69,6 +69,7 @@ function FixedProductInfo({
   isAdminBlockUser,
   isChannel = true,
   isReserved,
+  isSeller = false,
   image,
   title,
   status,
@@ -96,7 +97,11 @@ function FixedProductInfo({
     }
   );
 
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
+    getOrderStatus({ ...(order as Order), isSeller })
+  );
   const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
+  const [openProductPaymentBottomSheet, setOpenProductPaymentBottomSheet] = useState(false);
 
   const setProductStatusBottomSheetState = useSetRecoilState(
     channelBottomSheetStateFamily('productStatus')
@@ -112,7 +117,7 @@ function FixedProductInfo({
     if (onClickStatus) onClickStatus();
   };
 
-  const handleClick = () => {
+  const handleClick = (isOperator: boolean) => () => {
     if (status === 4) {
       setReservingDialogState((prevState) => ({
         ...prevState,
@@ -122,9 +127,18 @@ function FixedProductInfo({
     }
 
     if (
-      (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
-        getOrderStatusText({ status: order?.status, result: order?.result })
-      ) &&
+      ([
+        '결제진행',
+        '결제완료',
+        '배송대기',
+        '배송진행',
+        '배송완료',
+        '배송준비 중 취소 요청',
+        '거래준비 중 취소 요청',
+        '정산대기',
+        '정산진행',
+        '정산완료'
+      ].includes(orderStatus.name) &&
         !!order) ||
       status !== 0 ||
       isTargetUserBlocked ||
@@ -133,10 +147,16 @@ function FixedProductInfo({
     )
       return;
 
-    if (onClickSafePayment) {
+    if (!isOperator) {
+      setOpenProductPaymentBottomSheet(true);
+    } else if (onClickSafePayment) {
       onClickSafePayment();
     }
   };
+
+  useEffect(() => {
+    setOrderStatus(getOrderStatus({ ...(order as Order), isSeller }));
+  }, [isSeller, order]);
 
   return isLoading ? (
     <Flexbox
@@ -265,13 +285,22 @@ function FixedProductInfo({
                 if (isAllOperatorProduct) {
                   setOpenPurchasingAgentBottomSheet(true);
                 } else {
-                  handleClick();
+                  handleClick(false)();
                 }
               }}
               customDisabled={
-                (!['결제대기', '결제취소', '환불완료/거래취소'].includes(
-                  getOrderStatusText({ status: order?.status, result: order?.result })
-                ) &&
+                ([
+                  '결제진행',
+                  '결제완료',
+                  '배송대기',
+                  '배송진행',
+                  '배송완료',
+                  '배송준비 중 취소 요청',
+                  '거래준비 중 취소 요청',
+                  '정산대기',
+                  '정산진행',
+                  '정산완료'
+                ].includes(orderStatus.name) &&
                   !!order) ||
                 status !== 0 ||
                 isTargetUserBlocked ||
@@ -290,9 +319,19 @@ function FixedProductInfo({
       <PurchasingAgentBottomSheet
         open={openPurchasingAgentBottomSheet}
         onClose={() => setOpenPurchasingAgentBottomSheet(false)}
-        onClickPayment={handleClick}
+        onClickPayment={handleClick(true)}
         logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
         orderInfoProps={data?.orderInfo}
+      />
+      <ProductPaymentMethodBottomSheet
+        open={openProductPaymentBottomSheet}
+        onClose={() => setOpenProductPaymentBottomSheet(false)}
+        orderInfo={data?.orderInfo}
+        onClick={onClickSafePayment}
+        attributes={{
+          name: attrProperty.name.ORDER_DETAIL,
+          title: attrProperty.title.ORDER
+        }}
       />
     </Flexbox>
   );

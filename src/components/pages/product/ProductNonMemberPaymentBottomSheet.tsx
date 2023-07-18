@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
@@ -23,6 +23,7 @@ import attrKeys from '@constants/attrKeys';
 import validator from '@utils/common/validator';
 
 import { productOpenNonMemberPaymentBottomSheetState } from '@recoil/product';
+import { productOrderTypeState } from '@recoil/common';
 import useSignOut from '@hooks/useSignOut';
 
 function ProductNonMemberPaymentBottomSheet() {
@@ -34,6 +35,7 @@ function ProductNonMemberPaymentBottomSheet() {
   } = useTheme();
 
   const [open, setOpen] = useRecoilState(productOpenNonMemberPaymentBottomSheetState);
+  const type = useRecoilValue(productOrderTypeState);
   const resetOpen = useResetRecoilState(productOpenNonMemberPaymentBottomSheetState);
 
   const [step, setStep] = useState(0);
@@ -139,6 +141,7 @@ function ProductNonMemberPaymentBottomSheet() {
     logEvent(attrKeys.products.SUBMIT_CHECK_NUMBER, {
       title: attrProperty.title.PAYMENT
     });
+
     mutateAuthorize(
       {
         userId,
@@ -152,8 +155,22 @@ function ProductNonMemberPaymentBottomSheet() {
           LocalStorage.set(ACCESS_USER, accessUser);
           LocalStorage.set(ACCESS_TOKEN, jwtToken);
           Axios.setAccessToken(jwtToken);
-          const includeLegit = LocalStorage.get('INCLUDELEGIT');
-          await router.replace(`/products/${id}/order?includeLegit=${includeLegit}`);
+
+          const includeLegit = LocalStorage.get<boolean>('INCLUDELEGIT');
+
+          const query = {
+            type,
+            includeLegit: includeLegit || undefined
+          };
+
+          if (!query.includeLegit) {
+            delete query.includeLegit;
+          }
+
+          await router.replace({
+            pathname: `/products/${id}/order`,
+            query
+          });
         },
         onError(data) {
           const { response } = (data as AxiosError) || {};

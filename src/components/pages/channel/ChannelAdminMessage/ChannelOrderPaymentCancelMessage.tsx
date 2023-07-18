@@ -47,6 +47,18 @@ function ChannelOrderPaymentCancelMessage({
             borderRadius: 20
           }}
         >
+          {order?.type === 2 && (
+            <Typography
+              variant="body3"
+              weight="bold"
+              color="primary-light"
+              customStyle={{
+                marginBottom: 4
+              }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             거래취소
           </Typography>
@@ -66,7 +78,7 @@ function ChannelOrderPaymentCancelMessage({
                 wordBreak: 'keep-all'
               }}
             >
-              가상계좌 결제가 취소되었어요.
+              {order?.orderPayments[0]?.method === 0 ? '카드결제' : '가상계좌 결제'}가 취소되었어요.
             </Typography>
           )}
           <Box
@@ -125,6 +137,18 @@ function ChannelOrderPaymentCancelMessage({
           borderRadius: 20
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           거래취소
         </Typography>
@@ -134,7 +158,7 @@ function ChannelOrderPaymentCancelMessage({
             wordBreak: 'keep-all'
           }}
         >
-          품절로 인해 가상계좌 결제가 취소되었어요.
+          시간초과로 가상계좌 결제가 취소되었어요.
         </Typography>
       </Box>
       <Typography

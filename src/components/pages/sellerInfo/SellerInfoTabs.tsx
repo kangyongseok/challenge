@@ -34,12 +34,14 @@ const SellerInfoTabs = forwardRef<HTMLDivElement, SellerInfoTabsProps>(function 
       logEvent(attrKeys.sellerInfo.CLICK_SELLER_REVIEW, {
         name: attrProperty.name.SELLER_REVIEW,
         att: 'TAB',
+        userId: sellerId,
         sellerId
       });
     } else {
       logEvent(attrKeys.sellerInfo.CLICK_SELLER_PRODUCT, {
         name: attrProperty.name.SELLER_PRODUCT,
         att: 'TAB',
+        userId: sellerId,
         sellerId
       });
     }

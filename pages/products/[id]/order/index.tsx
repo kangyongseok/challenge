@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { useRouter } from 'next/router';
 import type { PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 
 import { Gap } from '@components/UI/atoms';
@@ -23,9 +24,12 @@ import { logEvent } from '@library/amplitude';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrKeys from '@constants/attrKeys';
 
-import useQueryProduct from '@hooks/useQueryProduct';
+import getOrderType from '@utils/common/getOrderType';
 
 function ProductOrder() {
+  const router = useRouter();
+  const { type = 0 } = router.query;
+
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
@@ -33,10 +37,9 @@ function ProductOrder() {
 
   const [includeLegit, setIncludeLegit] = useState(false);
 
-  const { data: { product } = {} } = useQueryProduct();
-  const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
-
   useEffect(() => {
+    if (!router.isReady) return;
+
     const { source } =
       SessionStorage.get<{ source?: string }>(
         sessionStorageKeys.productDetailOrderEventProperties
@@ -44,9 +47,9 @@ function ProductOrder() {
 
     logEvent(attrKeys.productOrder.VIEW_ORDER_PAYMENT, {
       source,
-      type: isAllOperatorType ? 'OPERATOR' : ''
+      type: getOrderType(Number(type) as 0 | 1 | 2)
     });
-  }, [isAllOperatorType]);
+  }, [router.isReady, type]);
 
   useEffect(() => {
     setIncludeLegit(LocalStorage.get('includeLegit') || false);
@@ -58,7 +61,6 @@ function ProductOrder() {
       <GeneralTemplate header={<ProductOrderHeader />} disablePadding hideAppDownloadBanner>
         <ProductOrderPurchasingInfo />
         <ProductOrderCard includeLegit={includeLegit} />
-        <Gap height={8} />
         <ProductOrderDeliveryInfo includeLegit={includeLegit} />
         <Gap height={8} />
         <ProductOrderPaymentInfo includeLegit={includeLegit} />

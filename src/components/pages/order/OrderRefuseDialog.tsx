@@ -9,7 +9,7 @@ import styled, { CSSObject } from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { postOrderRefuse } from '@api/order';
+import { putOrderRefuse } from '@api/order';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -20,7 +20,7 @@ function OrderRefuseDialog({ orderId }: { orderId?: number }) {
   const [value, setValue] = useState('');
   const [reason, setReason] = useState('');
 
-  const { mutate: orderRfuseMutate } = useMutation(postOrderRefuse);
+  const { mutate: orderRefuseMutate } = useMutation(putOrderRefuse);
   const [{ open }, setOpenState] = useRecoilState(channelDialogStateFamily('orderRequestRefuse'));
 
   const handleChange = (newValue?: string | number) => setValue(String(newValue));
@@ -43,7 +43,7 @@ function OrderRefuseDialog({ orderId }: { orderId?: number }) {
 
     if (!orderId) return;
 
-    orderRfuseMutate(
+    orderRefuseMutate(
       { id: orderId, reason: value === '직접입력' ? reason : value },
       {
         onSuccess: async () => {

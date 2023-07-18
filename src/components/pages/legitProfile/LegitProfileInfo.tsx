@@ -140,7 +140,8 @@ function LegitProfileInfo({
 
   const handleClickMoveToShop = () => {
     logEvent(attrKeys.legit.CLICK_SELLER_PRODUCT, {
-      name: attrProperty.legitName.LEGIT_PROFILE
+      name: attrProperty.legitName.LEGIT_PROFILE,
+      userId
     });
 
     router.push({

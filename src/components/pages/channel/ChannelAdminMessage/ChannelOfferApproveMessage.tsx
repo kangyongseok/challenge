@@ -84,6 +84,18 @@ function ChannelOfferApproveMessage({
             overflow: 'hidden'
           }}
         >
+          {order?.type === 2 && (
+            <Typography
+              variant="body3"
+              weight="bold"
+              color="primary-light"
+              customStyle={{
+                marginBottom: 4
+              }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             가격제안 수락
           </Typography>
@@ -194,6 +206,18 @@ function ChannelOfferApproveMessage({
           overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           가격제안 수락
         </Typography>

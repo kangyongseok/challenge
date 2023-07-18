@@ -44,18 +44,41 @@ function ChannelOrderRefundCompleteMessage({
           borderRadius: 20
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           환불완료
         </Typography>
-        <Typography
-          customStyle={{
-            marginTop: 8
-          }}
-        >
-          {order?.orderPayments[0].method === 0
-            ? '거래가 취소되어 결제한 방법으로 환불되었어요.'
-            : '등록된 정산계좌로 환불되었어요.'}
-        </Typography>
+        {order?.orderPayments[0]?.method === 0 ? (
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            customStyle={{
+              marginTop: 8
+            }}
+          >
+            <Typography>거래가 취소되어 결제한 방법으로 환불되었어요.</Typography>
+            <Typography>카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</Typography>
+          </Flexbox>
+        ) : (
+          <Typography
+            customStyle={{
+              marginTop: 8
+            }}
+          >
+            등록된 정산계좌로 환불되었어요.
+          </Typography>
+        )}
         {order?.reason ? (
           <Box
             customStyle={{

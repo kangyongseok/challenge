@@ -18,12 +18,14 @@ interface ChannelOrderDeliveryWaitMessageProps {
   message: AdminMessage;
   order?: Order | null;
   isSeller: boolean;
+  onClickOrderDetail: () => void;
 }
 
 function ChannelOrderDeliveryWaitMessage({
   message: { data, createdAt },
   order,
-  isSeller
+  isSeller,
+  onClickOrderDetail
 }: ChannelOrderDeliveryWaitMessageProps) {
   const {
     theme: {
@@ -62,9 +64,22 @@ function ChannelOrderDeliveryWaitMessage({
               maxWidth: 265,
               padding: 20,
               border: `1px solid ${common.line01}`,
-              borderRadius: 20
+              borderRadius: 20,
+              overflow: 'hidden'
             }}
           >
+            {order?.type === 2 && (
+              <Typography
+                variant="body3"
+                weight="bold"
+                color="primary-light"
+                customStyle={{
+                  marginBottom: 4
+                }}
+              >
+                카멜 구매대행
+              </Typography>
+            )}
             <Typography variant="h4" weight="bold">
               배송준비
             </Typography>
@@ -117,6 +132,21 @@ function ChannelOrderDeliveryWaitMessage({
                 </Typography>
               </>
             )}
+            <Flexbox
+              alignment="center"
+              gap={4}
+              onClick={onClickOrderDetail}
+              customStyle={{
+                margin: '20px -20px -20px',
+                padding: '12px 20px',
+                backgroundColor: common.bg02
+              }}
+            >
+              <Icon name="FileFilled" color="primary-light" />
+              <Typography weight="medium" color="primary-light">
+                주문상세보기
+              </Typography>
+            </Flexbox>
           </Box>
           <Typography
             variant="small2"
@@ -159,13 +189,45 @@ function ChannelOrderDeliveryWaitMessage({
           maxWidth: 265,
           padding: 20,
           border: `1px solid ${common.line01}`,
-          borderRadius: 20
+          borderRadius: 20,
+          overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           배송준비
         </Typography>
-        <Typography customStyle={{ marginTop: 8 }}>판매자가 배송을 준비하고 있어요.</Typography>
+        <Typography customStyle={{ marginTop: 8 }}>
+          {order?.type === 2
+            ? '카멜이 배송을 준비하고 있어요.'
+            : '판매자가 배송을 준비하고 있어요.'}
+        </Typography>
+        <Flexbox
+          alignment="center"
+          gap={4}
+          onClick={onClickOrderDetail}
+          customStyle={{
+            margin: '20px -20px -20px',
+            padding: '12px 20px',
+            backgroundColor: common.bg02
+          }}
+        >
+          <Icon name="FileFilled" color="primary-light" />
+          <Typography weight="medium" color="primary-light">
+            주문상세보기
+          </Typography>
+        </Flexbox>
       </Box>
       <Typography
         variant="small2"

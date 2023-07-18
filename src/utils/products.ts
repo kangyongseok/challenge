@@ -24,6 +24,7 @@ interface ProductDetailAttProps {
   product: Product;
   rest?: object;
   source?: string;
+  userId?: number;
 }
 
 export function convertSearchParams(
@@ -671,7 +672,7 @@ export function getProductType(siteId?: number, sellerType?: number) {
   return 'crawled';
 }
 
-export function productDetailAtt({ key, product, rest, source }: ProductDetailAttProps) {
+export function productDetailAtt({ key, product, rest, source, userId }: ProductDetailAttProps) {
   logEvent(key, {
     name: attrProperty.productName.PRODUCT_DETAIL,
     ...rest,
@@ -699,7 +700,8 @@ export function productDetailAtt({ key, product, rest, source }: ProductDetailAt
     productSellerType: product.productSeller.type,
     productSellerAccount: product.productSeller.account,
     useChat: product.sellerType !== productType.collection,
-    status: product.status
+    status: product.status,
+    userId
   });
 }
 

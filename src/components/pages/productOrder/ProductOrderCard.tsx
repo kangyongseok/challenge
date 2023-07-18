@@ -9,12 +9,18 @@ import useProductType from '@hooks/useProductType';
 
 function ProductOrderCard({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
+
   const { data: { product, offers = [] } = {}, isLoading } = useQueryProduct();
   const { isAllOperatorProduct } = useProductType(product?.sellerType);
-  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({ productId, includeLegit });
+  const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({
+    productId,
+    includeLegit,
+    type: Number(type)
+  });
+
   return (
     <Box
       component="section"

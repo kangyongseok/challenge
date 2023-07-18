@@ -6,7 +6,7 @@ import { Button, Flexbox, Typography } from '@mrcamelhub/camel-ui';
 import { logEvent } from '@library/amplitude';
 
 import { fetchProduct } from '@api/product';
-import { fetchOrderSearch, postOrderConfirm } from '@api/order';
+import { fetchOrderSearch, putOrderConfirm } from '@api/order';
 
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
@@ -44,7 +44,7 @@ function MypageOrdersPurchaseConfirmDialog() {
     }
   );
 
-  const { mutate } = useMutation(postOrderConfirm);
+  const { mutate } = useMutation(putOrderConfirm);
 
   const handleClose = () =>
     setDialogState({

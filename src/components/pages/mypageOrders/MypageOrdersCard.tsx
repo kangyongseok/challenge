@@ -18,6 +18,9 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
+import getOrderType from '@utils/common/getOrderType';
+import type { OrderStatus } from '@utils/common/getOrderStatus';
+import getOrderStatus from '@utils/common/getOrderStatus';
 import { getOrderStatusText } from '@utils/common';
 
 import { mypageOrdersPurchaseConfirmDialogState } from '@recoil/mypageOrders';
@@ -30,11 +33,13 @@ interface MypageOrdersCardProps extends HTMLAttributes<HTMLDivElement> {
 function MypageOrdersCard({
   order,
   order: {
+    id,
     channelId,
     orderDetails,
     price,
     status,
     result,
+    type: orderType,
     reviewFormInfo: { hasReview, productId, targetUserName, targetUserId, isTargetUserSeller },
     dateCompleted
   },
@@ -53,22 +58,31 @@ function MypageOrdersCard({
 
   const [src, setSrc] = useState('');
   const [brandName, setBrandName] = useState('');
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>();
   const [orderStatusText, setOrderStatusText] = useState('');
   const [isSafePayment, setIsSafePayment] = useState(false);
 
   const { mutate, isLoading } = useMutation(putProductUpdateStatus);
 
   const handleClick = () => {
-    logEvent(attrKeys.mypage.CLICK_CHANNEL_DETAIL, {
-      name: attrProperty.name.ORDER_LIST
+    logEvent(attrKeys.orderDetail.CLICK_ORDER_DETAIL, {
+      name: attrProperty.name.ORDER_DETAIL,
+      orderId: id,
+      productId,
+      type: getOrderType(orderType),
+      att: orderStatus?.overlayText
     });
 
-    router.push(`/channels/${channelId}`);
+    router.push(`/mypage/orders/${id}`);
   };
 
-  const handeClickReviewWrite = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleClickReviewWrite = (e: MouseEvent<HTMLButtonElement>) => {
     logEvent(attrKeys.mypage.CLICK_REVIEW_SEND, {
-      name: attrProperty.name.ORDER_LIST
+      name: attrProperty.name.ORDER_LIST,
+      productId,
+      orderId: id,
+      channelId,
+      att: isTargetUserSeller ? 'BUYER' : 'SELLER'
     });
 
     e.stopPropagation();
@@ -80,7 +94,9 @@ function MypageOrdersCard({
           productId,
           targetUserName,
           targetUserId,
-          isTargetUserSeller
+          isTargetUserSeller,
+          orderId: id,
+          channelId
         }
       });
     } else {
@@ -99,7 +115,9 @@ function MypageOrdersCard({
                 productId,
                 targetUserName,
                 targetUserId,
-                isTargetUserSeller
+                isTargetUserSeller,
+                orderId: id,
+                channelId
               }
             });
           }
@@ -137,6 +155,10 @@ function MypageOrdersCard({
   }, [orderDetails]);
 
   useEffect(() => {
+    setOrderStatus(getOrderStatus({ ...order, isSeller: type !== 0 }));
+  }, [order, type]);
+
+  useEffect(() => {
     const newOrderStatusText = getOrderStatusText({
       status,
       result,
@@ -164,14 +186,8 @@ function MypageOrdersCard({
         {src && <Image ratio="5:6" src={src} alt={orderDetails[0]?.name} round={8} />}
         {orderStatusText !== '거래중' && (
           <Overlay>
-            <Typography
-              variant="h4"
-              weight="bold"
-              customStyle={{
-                color: common.cmnW
-              }}
-            >
-              {orderStatusText}
+            <Typography variant="h4" weight="bold" color="cmnW">
+              {orderStatus?.overlayText}
             </Typography>
           </Overlay>
         )}
@@ -187,9 +203,9 @@ function MypageOrdersCard({
           variant="body2"
           noWrap
           lineClamp={2}
+          color="ui60"
           customStyle={{
-            marginTop: 2,
-            color: common.ui60
+            marginTop: 2
           }}
         >
           {orderDetails[0]?.name}
@@ -234,7 +250,7 @@ function MypageOrdersCard({
           <Button
             variant="ghost"
             brandColor="black"
-            onClick={handeClickReviewWrite}
+            onClick={handleClickReviewWrite}
             disabled={isLoading}
             customStyle={{
               marginTop: 12

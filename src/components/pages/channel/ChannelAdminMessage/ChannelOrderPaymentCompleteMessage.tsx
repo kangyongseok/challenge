@@ -7,14 +7,14 @@ import {
   useMutation
 } from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
-import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
 import { logEvent } from '@library/amplitude';
 
-import { postOrderApprove } from '@api/order';
+import { putOrderApprove } from '@api/order';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -32,13 +32,15 @@ interface ChannelOrderPaymentCompleteMessageProps {
   refetchChannel: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
+  onClickOrderDetail: () => void;
 }
 
 function ChannelOrderPaymentCompleteMessage({
   message: { data, createdAt },
   order,
   isSeller,
-  refetchChannel
+  refetchChannel,
+  onClickOrderDetail
 }: ChannelOrderPaymentCompleteMessageProps) {
   const {
     theme: {
@@ -50,7 +52,7 @@ function ChannelOrderPaymentCompleteMessage({
 
   const { data: accessUser } = useSession();
 
-  const { mutate } = useMutation(postOrderApprove);
+  const { mutate } = useMutation(putOrderApprove);
 
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
@@ -92,9 +94,22 @@ function ChannelOrderPaymentCompleteMessage({
             maxWidth: 265,
             padding: 20,
             border: `1px solid ${common.line01}`,
-            borderRadius: 20
+            borderRadius: 20,
+            overflow: 'hidden'
           }}
         >
+          {order?.type === 2 && (
+            <Typography
+              variant="body3"
+              weight="bold"
+              color="primary-light"
+              customStyle={{
+                marginBottom: 4
+              }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             판매요청
           </Typography>
@@ -141,6 +156,21 @@ function ChannelOrderPaymentCompleteMessage({
               </Button>
             </Flexbox>
           )}
+          <Flexbox
+            alignment="center"
+            gap={4}
+            onClick={onClickOrderDetail}
+            customStyle={{
+              margin: '20px -20px -20px',
+              padding: '12px 20px',
+              backgroundColor: common.bg02
+            }}
+          >
+            <Icon name="FileFilled" color="primary-light" />
+            <Typography weight="medium" color="primary-light">
+              주문상세보기
+            </Typography>
+          </Flexbox>
         </Box>
         <Typography
           variant="small2"
@@ -168,9 +198,22 @@ function ChannelOrderPaymentCompleteMessage({
           maxWidth: 265,
           padding: 20,
           border: `1px solid ${common.line01}`,
-          borderRadius: 20
+          borderRadius: 20,
+          overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
           결제완료
         </Typography>
@@ -261,6 +304,21 @@ function ChannelOrderPaymentCompleteMessage({
             }}
           >
             {commaNumber(order?.totalPrice || 0)}원
+          </Typography>
+        </Flexbox>
+        <Flexbox
+          alignment="center"
+          gap={4}
+          onClick={onClickOrderDetail}
+          customStyle={{
+            margin: '20px -20px -20px',
+            padding: '12px 20px',
+            backgroundColor: common.bg02
+          }}
+        >
+          <Icon name="FileFilled" color="primary-light" />
+          <Typography weight="medium" color="primary-light">
+            주문상세보기
           </Typography>
         </Flexbox>
       </Box>

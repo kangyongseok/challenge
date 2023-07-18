@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import type { FileMessage } from '@sendbird/chat/message';
@@ -19,6 +19,8 @@ import {
   ChannelAppointmentBanner,
   ChannelBottomActionButtons,
   ChannelCamelAuthFixBanner,
+  ChannelCancelRequestApproveDialog,
+  ChannelCancelRequestRefuseDialog,
   ChannelHeader,
   ChannelMessageInput,
   ChannelMessages,
@@ -33,6 +35,7 @@ import {
 import type { ProductResult } from '@dto/product';
 
 import SessionStorage from '@library/sessionStorage';
+import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
@@ -48,7 +51,9 @@ import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent, getProductDetailUrl, hasImageFile } from '@utils/common';
 import { getLogEventTitle } from '@utils/channel';
 
+import { productOrderTypeState } from '@recoil/common';
 import { channelBottomSheetStateFamily, channelThumbnailMessageImageState } from '@recoil/channel';
+import useSession from '@hooks/useSession';
 import useProductType from '@hooks/useProductType';
 import useMutationSendMessage from '@hooks/useMutationSendMessage';
 import useChannel from '@hooks/useChannel';
@@ -61,17 +66,20 @@ function Channel() {
   } = useTheme();
 
   const [focusScrollY, setFocusScrollY] = useState(0);
+  const [detailImages, setDetailImages] = useState<string[]>([]);
 
   const [channelThumbnailMessageImage, setChannelThumbnailMessageImage] = useRecoilState(
     channelThumbnailMessageImageState
   );
-  const [detailImages, setDetailImages] = useState<string[]>([]);
+  const type = useRecoilValue(productOrderTypeState);
+
   const resetMoreBottomSheetState = useResetRecoilState(channelBottomSheetStateFamily('more'));
   const resetProductStatusBottomSheetState = useResetRecoilState(
     channelBottomSheetStateFamily('productStatus')
   );
 
   const headerRef = useRef<HTMLDivElement>(null);
+  const loggedRef = useRef(false);
   const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const aosFocusTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const loggingTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -129,6 +137,7 @@ function Channel() {
   const [isFocused, setIsFocused] = useState(false);
   const [documentVisibilityState, setDocumentVisibilityState] = useState('hidden');
   const { isAllOperatorProduct } = useProductType(product?.sellerType);
+  const { data: accessUser } = useSession();
 
   const { showActionButtons } = useMemo(
     () => ({
@@ -153,40 +162,39 @@ function Channel() {
     router.push(pathname);
   }, [isDeletedProduct, product, router]);
 
-  const handleClickSafePayment = useCallback(
-    (inspector?: boolean) => {
-      logEvent(attrKeys.channel.CLICK_PURCHASE, {
-        name: attrProperty.name.CHANNEL_DETAIL,
-        id: product?.id,
-        att: 'ORDER'
-      });
-      logEvent(attrKeys.channel.CLICK_ORDER_STATUS, {
-        name: attrProperty.name.CHANNEL_DETAIL,
-        title: attrProperty.title.PAYMENT_WAIT,
-        data: {
-          ...product
-        }
-      });
-
-      if (!product || isDeletedProduct) return;
-
-      let pathname = `${getProductDetailUrl({
-        product: product as ProductResult,
-        type: 'productResult'
-      })}/order`;
-
-      if (inspector) {
-        pathname += `?includeLegit=${inspector}`;
+  const handleClickSafePayment = useCallback(() => {
+    logEvent(attrKeys.channel.CLICK_PURCHASE, {
+      name: attrProperty.name.CHANNEL_DETAIL,
+      id: product?.id,
+      att: 'ORDER'
+    });
+    logEvent(attrKeys.channel.CLICK_ORDER_STATUS, {
+      name: attrProperty.name.CHANNEL_DETAIL,
+      title: attrProperty.title.PAYMENT_WAIT,
+      data: {
+        ...product
       }
+    });
 
-      SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
-        source: 'CHANNEL_DETAIL'
-      });
+    if (!product || isDeletedProduct) return;
 
-      router.push(pathname);
-    },
-    [isDeletedProduct, product, router]
-  );
+    const pathname = `${getProductDetailUrl({
+      product: product as ProductResult,
+      type: 'productResult'
+    })}/order`;
+
+    SessionStorage.set(sessionStorageKeys.productDetailOrderEventProperties, {
+      source: 'CHANNEL_DETAIL'
+    });
+
+    router.push({
+      pathname,
+      query: {
+        type,
+        includeLegit: LocalStorage.get('includeLegit')
+      }
+    });
+  }, [isDeletedProduct, product, router, type]);
 
   const handleClickOfferSafePayment = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -243,38 +251,42 @@ function Channel() {
   ]);
 
   useEffect(() => {
-    if (typeof channelUser?.type === 'number') {
-      const adminUser = channel?.userId === 100;
-      const getUserType = channelUserType[channelUser.type];
-      const attParser = () => {
-        if (adminUser) return 'ADMIN';
-        if (getUserType === channelUserType[1]) return 'SELLER';
-        return 'BUYER';
-      };
+    if (loggedRef.current || !product || !channelUser) return;
 
-      logEvent(attrKeys.channel.VIEW_CHANNEL_DETAIL, {
-        att: attParser(),
-        id: product?.id,
-        brand: product?.brand?.name,
-        category: product?.category?.name,
-        parentCategory: FIRST_CATEGORIES[product?.category?.id as number],
-        site: product?.site?.name,
-        price: product?.price,
-        source: 'CHANNEL_DETAIL',
-        sellerType: product?.sellerType,
-        productSellerId: product?.productSeller?.id,
-        productSellerType: product?.productSeller?.type,
-        productSellerAccount: product?.productSeller?.account,
-        useChat: product?.sellerType !== productType.collection,
-        channel: useQueryChannel.data?.channel,
-        channelTargetUser: useQueryChannel.data?.channelTargetUser?.user,
-        channelUser: useQueryChannel.data?.channelUser?.user,
-        isTargetUserNoti: useQueryChannel.data?.isTargetUserNoti,
-        lastMessageManage: useQueryChannel.data?.lastMessageManage
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+    loggedRef.current = true;
+
+    const adminUser = channel?.userId === 100;
+    const getUserType = channelUserType[channelUser.type];
+    const attParser = () => {
+      if (adminUser) return 'ADMIN';
+      if (getUserType === channelUserType[1]) return 'SELLER';
+      return 'BUYER';
+    };
+
+    logEvent(attrKeys.channel.VIEW_CHANNEL_DETAIL, {
+      att: attParser(),
+      id: product?.id,
+      brand: product?.brand?.name,
+      category: product?.category?.name,
+      parentCategory: FIRST_CATEGORIES[product?.category?.id as number],
+      site: product?.site?.name,
+      price: product?.price,
+      source: 'CHANNEL_DETAIL',
+      sellerType: product?.sellerType,
+      productSellerId: product?.productSeller?.id,
+      productSellerType: product?.productSeller?.type,
+      productSellerAccount: product?.productSeller?.account,
+      useChat: product?.sellerType !== productType.collection,
+      channel: useQueryChannel.data?.channel,
+      channelTargetUser: useQueryChannel.data?.channelTargetUser?.user,
+      channelUser: useQueryChannel.data?.channelUser?.user,
+      isTargetUserNoti: useQueryChannel.data?.isTargetUserNoti,
+      lastMessageManage: useQueryChannel.data?.lastMessageManage,
+      channelId: useQueryChannel.data?.channel?.id,
+      productId: product?.id,
+      userId: accessUser?.userId
+    });
+  }, [product, accessUser, useQueryChannel, channel, channelUser]);
 
   useEffect(() => {
     window.getChannelMessage = (message: string) => {
@@ -542,6 +554,7 @@ function Channel() {
                   isTargetUserBlocked={isTargetUserBlocked}
                   isAdminBlockUser={isAdminBlockUser}
                   isReserved={channel?.isReserved}
+                  isSeller={isSeller}
                   image={product?.imageThumbnail || product?.imageMain || ''}
                   status={productStatus}
                   title={product?.title || ''}
@@ -726,6 +739,18 @@ function Channel() {
       />
       <ChannelPurchaseConfirmDialog order={orders[0]} product={product} refetchChannel={refetch} />
       <ChannelReservingDialog />
+      <ChannelCancelRequestRefuseDialog
+        order={orders[0]}
+        productId={productId}
+        isSeller={isSeller}
+        refetchChannel={refetch}
+      />
+      <ChannelCancelRequestApproveDialog
+        order={orders[0]}
+        productId={productId}
+        isSeller={isSeller}
+        refetchChannel={refetch}
+      />
     </>
   );
 }

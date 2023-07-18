@@ -49,7 +49,13 @@ export const channelDialogStateFamily = atomFamily<
     isChannel: boolean;
     location?: string;
   },
-  'purchaseConfirm' | 'saleRequestRefuse' | 'safePaymentGuide' | 'orderRequestRefuse' | 'reserving'
+  | 'purchaseConfirm'
+  | 'saleRequestRefuse'
+  | 'safePaymentGuide'
+  | 'orderRequestRefuse'
+  | 'reserving'
+  | 'orderCancelRequestApprove'
+  | 'orderCancelRequestRefuse'
 >({
   key: 'channel/dialogStateFamily',
   default: {

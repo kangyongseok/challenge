@@ -217,6 +217,7 @@ function NewProductGridCard({
     if (UserTraceRecord.getPageViewCount('exitSearch')) {
       UserTraceRecord.setExitWishChannel();
     }
+
     router.push(getProductDetailUrl({ product: product as Product }));
   };
 

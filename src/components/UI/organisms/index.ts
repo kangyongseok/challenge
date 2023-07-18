@@ -28,3 +28,5 @@ export { default as FeatureIsMobileAppDownDialog } from './FeatureIsMobileAppDow
 export { default as AppUpdateForChatDialog } from './AppUpdateForChatDialog';
 export { default as AppUpdateForSafePayment } from './AppUpdateForSafePayment';
 export { default as NonMemberAuthFeedbackDialog } from './NonMemberAuthFeedbackDialog';
+export { default as PurchasingAgentBottomSheet } from './PurchasingAgentBottomSheet';
+export { default as ProductPaymentMethodBottomSheet } from './ProductPaymentMethodBottomSheet';

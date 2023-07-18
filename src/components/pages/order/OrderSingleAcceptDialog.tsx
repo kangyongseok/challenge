@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
 import { Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-import { postOrderApprove } from '@api/order';
+import { putOrderApprove } from '@api/order';
 
 function OrderSingleAcceptDialog({
   open,
@@ -21,7 +21,7 @@ function OrderSingleAcceptDialog({
   } = useTheme();
   const { query } = useRouter();
 
-  const { mutate: approveMutate } = useMutation(postOrderApprove);
+  const { mutate: approveMutate } = useMutation(putOrderApprove);
 
   const handleClickApprove = () => {
     approveMutate(Number(query.id), {

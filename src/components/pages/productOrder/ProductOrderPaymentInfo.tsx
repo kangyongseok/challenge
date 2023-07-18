@@ -17,7 +17,7 @@ import useQueryProduct from '@hooks/useQueryProduct';
 
 function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
@@ -35,7 +35,8 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
 
   const { data: { totalPrice = 0, fee = 0, orderFees } = {} } = useQueryProductOrder({
     productId,
-    includeLegit
+    includeLegit,
+    type: Number(type)
   });
 
   const { data: { product: { price = 0 } = {}, offers = [], orderInfo } = {} } = useQuery(
@@ -142,6 +143,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
                 <Icon
                   name="QuestionCircleOutlined"
                   width={16}
+                  height={16}
                   color="ui80"
                   onClick={() => {
                     if (orderFee.type === openTooltip) {

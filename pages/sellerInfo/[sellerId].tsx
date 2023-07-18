@@ -87,11 +87,13 @@ function SellerInfo() {
     if (tab === 'products') {
       logEvent(attrKeys.sellerInfo.VIEW_SELLER_PRODUCT, {
         name: attrProperty.name.SELLER_PRODUCT,
+        userId: sellerId,
         sellerId
       });
     } else {
       logEvent(attrKeys.sellerInfo.VIEW_SELLER_REVIEW, {
         name: attrProperty.name.SELLER_REVIEW,
+        userId: sellerId,
         sellerId
       });
     }

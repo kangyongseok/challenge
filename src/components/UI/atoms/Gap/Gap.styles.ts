@@ -8,6 +8,6 @@ export const StyledGap = styled.div<GapProps>`
     theme: {
       palette: { common }
     }
-  }) => common.ui95};
+  }) => common.bg02};
   height: ${({ height }) => height}px;
 `;

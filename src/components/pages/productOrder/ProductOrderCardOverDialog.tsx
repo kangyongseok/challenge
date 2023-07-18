@@ -10,11 +10,15 @@ import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
 function ProductOrderCardOverDialog({ includeLegit }: { includeLegit: boolean }) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
-  const { data: { price } = {} } = useQueryProductOrder({ productId, includeLegit });
+  const { data: { price } = {} } = useQueryProductOrder({
+    productId,
+    includeLegit,
+    type: Number(type)
+  });
 
   const [open, setOpen] = useState(false);
 

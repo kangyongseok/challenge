@@ -40,7 +40,7 @@ interface ProductOrderConfirmProps {
 
 function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderConfirmProps) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
@@ -62,7 +62,8 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
       result
     } = {},
     isLoading
-  } = useQueryProductOrder({ productId, includeLegit });
+  } = useQueryProductOrder({ productId, includeLegit, type: Number(type) });
+
   const { data: { product } = {}, isLoading: isLoadingProduct } = useQuery(
     queryKeys.products.product({ productId }),
     () => fetchProduct({ productId }),
@@ -133,11 +134,15 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
       source
     });
 
+    const { protocol, host, pathname, search } = window.location;
+
     paymentWidgetRef.current?.requestPayment({
       orderId: externalId,
       orderName: name,
-      successUrl: `${window.location.href}/success?camelOrderId=${orderId}`,
-      failUrl: `${window.location.href}/fail`,
+      successUrl: `${protocol}//${host}${pathname}${
+        search ? `/success${search}&camelOrderId=${orderId}` : `/success?camelOrderId=${orderId}`
+      }`,
+      failUrl: `${protocol}//${host}${pathname}${search ? `/fail${search}` : '/fail'}`,
       customerName: deliveryInfo?.name,
       customerMobilePhone: deliveryInfo?.phone,
       customerEmail: accessUser?.email || undefined,

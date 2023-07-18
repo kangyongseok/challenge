@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
-import { Box, Button, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import OrderSearchDelieryForm from '@components/pages/order/OrderSearchDelieryForm';
 
@@ -16,12 +16,14 @@ interface ChannelOrderDeliveryCompleteMessageProps {
   message: AdminMessage;
   order?: Order | null;
   isSeller: boolean;
+  onClickOrderDetail: () => void;
 }
 
 function ChannelOrderDeliveryCompleteMessage({
   message: { data, createdAt },
   order,
-  isSeller
+  isSeller,
+  onClickOrderDetail
 }: ChannelOrderDeliveryCompleteMessageProps) {
   const {
     theme: {
@@ -66,9 +68,22 @@ function ChannelOrderDeliveryCompleteMessage({
             maxWidth: 265,
             padding: 20,
             border: `1px solid ${common.line01}`,
-            borderRadius: 20
+            borderRadius: 20,
+            overflow: 'hidden'
           }}
         >
+          {order?.type === 2 && (
+            <Typography
+              variant="body3"
+              weight="bold"
+              color="primary-light"
+              customStyle={{
+                marginBottom: 4
+              }}
+            >
+              카멜 구매대행
+            </Typography>
+          )}
           <Typography variant="h4" weight="bold">
             배송완료
           </Typography>
@@ -114,6 +129,21 @@ function ChannelOrderDeliveryCompleteMessage({
               <Typography variant="body2">{getTypeText()}</Typography>
             </Flexbox>
           )}
+          <Flexbox
+            alignment="center"
+            gap={4}
+            onClick={onClickOrderDetail}
+            customStyle={{
+              margin: '20px -20px -20px',
+              padding: '12px 20px',
+              backgroundColor: common.bg02
+            }}
+          >
+            <Icon name="FileFilled" color="primary-light" />
+            <Typography weight="medium" color="primary-light">
+              주문상세보기
+            </Typography>
+          </Flexbox>
         </Box>
         <Typography
           variant="small2"
@@ -141,11 +171,24 @@ function ChannelOrderDeliveryCompleteMessage({
           maxWidth: 265,
           padding: 20,
           border: `1px solid ${common.line01}`,
-          borderRadius: 20
+          borderRadius: 20,
+          overflow: 'hidden'
         }}
       >
+        {order?.type === 2 && (
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+        )}
         <Typography variant="h4" weight="bold">
-          배송완료
+          구매확정 대기
         </Typography>
         <Typography
           customStyle={{
@@ -188,6 +231,21 @@ function ChannelOrderDeliveryCompleteMessage({
               구매확정
             </Button>
           )}
+        </Flexbox>
+        <Flexbox
+          alignment="center"
+          gap={4}
+          onClick={onClickOrderDetail}
+          customStyle={{
+            margin: '20px -20px -20px',
+            padding: '12px 20px',
+            backgroundColor: common.bg02
+          }}
+        >
+          <Icon name="FileFilled" color="primary-light" />
+          <Typography weight="medium" color="primary-light">
+            주문상세보기
+          </Typography>
         </Flexbox>
       </Box>
       <Typography

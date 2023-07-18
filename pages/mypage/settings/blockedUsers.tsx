@@ -31,7 +31,7 @@ import { getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import useMutationUserBlock from '@hooks/useMutationUserBlock';
 
-function BlockedUsers() {
+function SettingsBlockedUsers() {
   const {
     theme: {
       palette: { common }
@@ -228,4 +228,4 @@ export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   };
 }
 
-export default BlockedUsers;
+export default SettingsBlockedUsers;
