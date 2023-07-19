@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +18,8 @@ import queryKeys from '@constants/queryKeys';
 import { NOTI, SOURCE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImagePathStaticParser, getImageResizePath } from '@utils/common';
 
 import useQueryMyUserInfo from '@hooks/useQueryMyUserInfo';
 
@@ -128,6 +132,40 @@ function NoticeNotificationPanel() {
                         {announceDetail.content}
                       </Button>
                     </Box>
+                  );
+                }
+                if (announceDetail.type === 2 || announceDetail.images.split('|').length > 1) {
+                  return (
+                    <Swiper
+                      key={`announce-detail-${announceDetail.id}`}
+                      spaceBetween={30}
+                      speed={2500}
+                      loop
+                      modules={[Autoplay]}
+                      autoplay={{
+                        delay: 0
+                      }}
+                      slidesPerView="auto"
+                      style={{
+                        position: 'relative',
+                        width: '100%'
+                      }}
+                    >
+                      {announceDetail.images.split('|').map((img) => (
+                        <SwiperSlide key={`announce-detail-${announceDetail.id}-${img}`}>
+                          <Box>
+                            <Image
+                              src={getImageResizePath({
+                                imagePath: getImagePathStaticParser(img),
+                                w: 350
+                              })}
+                              alt="구매대행 후기"
+                              disableAspectRatio
+                            />
+                          </Box>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
                   );
                 }
                 return (
