@@ -16,6 +16,7 @@ import {
   useTheme
 } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
+import styled from '@emotion/styled';
 
 import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 
@@ -289,6 +290,7 @@ function NewProductGridCard({
         >
           {!hideLabel && !isAuthProduct && isAuthSeller && (
             <Flexbox
+              alignment="center"
               customStyle={{
                 position: 'absolute',
                 top: 8,
@@ -299,16 +301,12 @@ function NewProductGridCard({
               }}
             >
               <CamelLogoIcon />
-              <Typography
-                variant="small2"
-                weight="bold"
-                color="uiWhite"
-                customStyle={{
-                  padding: '3px 4px 3px 2px'
-                }}
-              >
-                인증판매자
-              </Typography>
+              <LabelText
+                text="인증판매자"
+                variant="solid"
+                brandColor="black"
+                customStyle={{ marginLeft: -5 }}
+              />
             </Flexbox>
           )}
           {!hideLabel &&
@@ -341,11 +339,10 @@ function NewProductGridCard({
                 )}
                 {isAuthProduct ||
                   (isAllOperatorProduct && (
-                    <Label
+                    <LabelText
                       variant="solid"
                       brandColor="black"
                       text={isAuthProduct ? '정품의견' : '구매대행'}
-                      customStyle={{ height: 20 }}
                     />
                   ))}
               </Flexbox>
@@ -375,14 +372,7 @@ function NewProductGridCard({
                 >
                   <CamelLogoIcon />
                 </Flexbox>
-                {isAuthProduct && (
-                  <Label
-                    variant="solid"
-                    brandColor="black"
-                    text="정품의견"
-                    customStyle={{ height: 20 }}
-                  />
-                )}
+                {isAuthProduct && <LabelText variant="solid" brandColor="black" text="정품의견" />}
               </Flexbox>
             )}
           <Image
@@ -540,14 +530,29 @@ function NewProductGridCard({
   );
 }
 
+const LabelText = styled(Label)`
+  font-weight: 800;
+  font-family: NanumSquareNeo;
+  font-size: 11px;
+  height: 20px;
+`;
+
 // TODO 추후 UI 라이브러리 추가?
 function CamelLogoIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M2.67529 12.2355L4.39429 7.51046C4.50051 7.21865 4.7183 6.981 4.99974 6.84977C5.28119 6.71854 5.60324 6.70449 5.89504 6.81071C6.18685 6.91693 6.4245 7.13471 6.55573 7.41616C6.68696 7.69761 6.70101 8.01965 6.59479 8.31146L5.17504 12.2355H2.67529ZM8.52529 12.2355H6.02554L7.74454 7.51046C7.85076 7.21865 8.06855 6.981 8.34999 6.84977C8.63144 6.71854 8.95349 6.70449 9.24529 6.81071C9.5371 6.91693 9.77475 7.13471 9.90598 7.41616C10.0372 7.69761 10.0513 8.01965 9.94504 8.31146L8.52529 12.2355ZM14.445 8.07071L13.275 8.37221L11.8665 12.2355H9.37354L11.4953 6.41021L13.8623 5.80271C14.163 5.72543 14.4822 5.77079 14.7495 5.92882C15.0168 6.08684 15.2104 6.34458 15.2877 6.64533C15.3649 6.94609 15.3196 7.26522 15.1616 7.53253C15.0035 7.79984 14.7458 7.99343 14.445 8.07071Z"
-        fill="white"
-      />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_490_7686)">
+        <rect width="20" height="20" rx="4" fill="#313438" />
+        <path
+          d="M2.97253 13.595L4.88253 8.34499C5.00056 8.02076 5.24254 7.7567 5.55526 7.61089C5.86797 7.46508 6.22581 7.44947 6.55003 7.56749C6.87426 7.68551 7.13832 7.92749 7.28413 8.24021C7.42994 8.55293 7.44555 8.91076 7.32753 9.23499L5.75003 13.595H2.97253ZM9.47253 13.595H6.69503L8.60503 8.34499C8.72306 8.02076 8.96504 7.7567 9.27776 7.61089C9.59048 7.46508 9.94831 7.44947 10.2725 7.56749C10.5968 7.68551 10.8608 7.92749 11.0066 8.24021C11.1524 8.55293 11.1681 8.91076 11.05 9.23499L9.47253 13.595ZM16.05 8.96749L14.75 9.30249L13.185 13.595H10.415L12.7725 7.12249L15.4025 6.44749C15.7367 6.36162 16.0913 6.41203 16.3883 6.58761C16.6853 6.76319 16.9004 7.04956 16.9863 7.38374C17.0721 7.71791 17.0217 8.0725 16.8462 8.36952C16.6706 8.66653 16.3842 8.88162 16.05 8.96749Z"
+          fill="white"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_490_7686">
+          <rect width="20" height="20" rx="4" fill="white" />
+        </clipPath>
+      </defs>
     </svg>
   );
 }
