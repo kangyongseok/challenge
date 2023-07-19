@@ -140,18 +140,21 @@ function MypageOrdersCard({
 
     const data = (orderDetails[0]?.data || '').split('|');
 
-    if (!data[0] || !data[1]) return;
+    if (data[0]) {
+      setBrandName(
+        data[0]
+          .split(' ')
+          .map(
+            (splitNameEng) =>
+              `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(1, splitNameEng.length)}`
+          )
+          .join(' ')
+      );
+    }
 
-    setBrandName(
-      data[0]
-        .split(' ')
-        .map(
-          (splitNameEng) =>
-            `${splitNameEng.charAt(0).toUpperCase()}${splitNameEng.slice(1, splitNameEng.length)}`
-        )
-        .join(' ')
-    );
-    setSrc(data[1]);
+    if (data[1]) {
+      setSrc(data[1]);
+    }
   }, [orderDetails]);
 
   useEffect(() => {

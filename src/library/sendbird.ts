@@ -32,10 +32,10 @@ import type { CreateChannelParams } from '@typings/channel';
 
 import { logEvent } from './amplitude';
 
-const sendFailLog = (error: Error, message: SendableMessage) => {
+const sendFailLog = (error: Error, message: SendableMessage, name = 'SEND FAIL') => {
   logEvent('SUPPORT_ERROR', {
     type: 'SENDBIRD',
-    name: 'SEND FAIL',
+    name,
     error,
     message
   });
@@ -55,16 +55,30 @@ const SendBird = {
     try {
       const user = await sb.connect(userId);
 
-      const userUpdateParams: UserUpdateParams = { nickname };
+      if (sb.connectionState === 'OPEN') {
+        const userUpdateParams: UserUpdateParams = { nickname };
 
-      if (image) userUpdateParams.profileUrl = image;
+        if (image) userUpdateParams.profileUrl = image;
 
-      await sb.updateCurrentUserInfo(userUpdateParams);
-      logEvent('LOAD_SUPPORT', {
-        type: 'SENDBIRD',
-        userId,
-        nickname
-      });
+        try {
+          await sb.updateCurrentUserInfo(userUpdateParams);
+
+          logEvent('LOAD_SUPPORT', {
+            type: 'SENDBIRD',
+            userId,
+            nickname
+          });
+        } catch (error) {
+          logEvent('SUPPORT_ERROR', {
+            type: 'SENDBIRD',
+            name: 'SENDBIRD_UPDATE_CURRENT_USERINFO',
+            error,
+            userId,
+            nickname
+          });
+          if (!isProduction) console.log('Sendbird error', error);
+        }
+      }
 
       if (!isProduction) console.log('Sendbird initialized', { sb, user });
     } catch (error) {
@@ -75,7 +89,7 @@ const SendBird = {
         userId,
         nickname
       });
-      console.log('Sendbird error', error);
+      if (!isProduction) console.log('Sendbird error', error);
       throw error;
     }
 
@@ -264,6 +278,14 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+
+        if (sb.reconnect()) {
+          channel
+            .sendUserMessage(params)
+            .onFailed((newError, newMessage) => sendFailLog(newError, newMessage, 'RESEND FAIL'));
+        } else {
+          sendFailLog(error, message, 'RECONNECT FAIL');
+        }
       });
   },
   async sendFile({
@@ -291,6 +313,16 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+
+        if (sb.reconnect()) {
+          channel
+            .sendFileMessage(params)
+            .onFailed((newError, newMessage) =>
+              sendFailLog(newError, newMessage, 'RESEND FILE FAIL')
+            );
+        } else {
+          sendFailLog(error, message, 'RECONNECT FAIL');
+        }
       });
   },
   async sendFiles({
@@ -319,6 +351,16 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+
+        if (sb.reconnect()) {
+          channel
+            .sendFileMessages(paramsList)
+            .onFailed((newError, newMessage) =>
+              sendFailLog(newError, newMessage, 'RESEND FILES FAIL')
+            );
+        } else {
+          sendFailLog(error, message, 'RECONNECT FAIL');
+        }
       });
   },
   async isSnoozedNotification(retry = 0): Promise<SnoozePeriod | undefined> {

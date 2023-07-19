@@ -34,25 +34,29 @@ import queryKeys from '@constants/queryKeys';
 import { convertSearchParamsByQuery } from '@utils/products';
 import { getCookies } from '@utils/cookies';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
+import { checkAgent } from '@utils/common';
 
 import useProductKeywordAutoSave from '@hooks/useProductKeywordAutoSave';
 import useHistoryManage from '@hooks/useHistoryManage';
 
 function BrandProducts({ params }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  useProductKeywordAutoSave('brands');
   const router = useRouter();
   const { isGoToMain } = useHistoryManage();
 
-  const handlePopState = () => {
-    window.history.replaceState('', '', '/');
-    router.replace('/');
-  };
+  useProductKeywordAutoSave('brands');
 
   useEffect(() => {
+    const handlePopState = () => {
+      window.history.replaceState('', '', '/');
+      router.replace('/');
+    };
+
     const isSession = SessionStorage.get(sessionStorageKeys.isProductDetailPopState);
-    if (isGoToMain && isSession) {
+
+    if (isGoToMain && isSession && !checkAgent.isMobileApp()) {
       window.addEventListener('popstate', handlePopState);
     }
+
     return () => window.removeEventListener('popstate', handlePopState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGoToMain]);

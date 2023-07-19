@@ -154,7 +154,6 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   });
 
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
-
   const hasBaseSearchParams = !!Object.keys(baseSearchParams).length;
 
   const handleClickMyFilterTooltip = () => {

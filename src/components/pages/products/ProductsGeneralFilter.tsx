@@ -528,7 +528,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
       }
 
       if (!newShowMySizeFilter) {
-        newShowMySizeFilter = !complete && !step;
+        newShowMySizeFilter = !complete || !step;
       }
 
       setShowMySizeFilter(newShowMySizeFilter);

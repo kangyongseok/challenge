@@ -86,7 +86,8 @@ function ChannelMessageInput({
         setMessage('');
         setPending(false);
       },
-      failCallback: () => setPending(false)
+      failCallback: () => setPending(false),
+      onPending: () => setPending(true)
     });
   }, [
     channelId,

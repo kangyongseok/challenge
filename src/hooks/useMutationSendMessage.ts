@@ -34,6 +34,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     multipleImage,
     callback,
     failCallback,
+    onPending,
     options,
     userId,
     productId
@@ -49,6 +50,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
     productId: number;
     callback?: (message: SendableMessage) => void;
     failCallback?: () => void;
+    onPending?: () => void;
     options?:
       | Omit<UseMutationOptions<void, unknown, PostHistoryManageData, unknown>, 'mutationFn'>
       | undefined;
@@ -85,6 +87,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             customType,
             pushNotificationDeliveryOption,
             file,
+            onPending,
             onSucceeded,
             onFailed
           });
@@ -102,6 +105,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
                 file: a
               })) as FileMessageCreateParams[]
             ),
+            onPending,
             onSucceeded,
             onFailed
           });
@@ -114,6 +118,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
             customType,
             pushNotificationDeliveryOption,
             file: await urlToBlob(fileUrl),
+            onPending,
             onSucceeded,
             onFailed
           });
@@ -131,6 +136,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
                 file: await urlToBlob(url)
               }))
             ),
+            onPending,
             onSucceeded,
             onFailed
           });
@@ -142,6 +148,7 @@ function useMutationSendMessage({ lastMessageIndex }: UseMutationSendMessageProp
           customType,
           pushNotificationDeliveryOption,
           message: data.content,
+          onPending,
           onSucceeded,
           onFailed
         });

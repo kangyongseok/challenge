@@ -13,8 +13,6 @@ export default function useSafariInputFocus() {
   const syncHeightRef = useRef(0);
   const isFocusingRef = useRef(false);
   const focusDurationTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const heightSyncIntervalRef = useRef<ReturnType<typeof setInterval>>();
-  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (inputFocus) {
@@ -26,19 +24,13 @@ export default function useSafariInputFocus() {
 
       if (syncHeightRef.current) setHeight(syncHeightRef.current);
 
-      focusDurationTimerRef.current = setTimeout(
-        () => {
-          let newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
+      focusDurationTimerRef.current = setTimeout(() => {
+        const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
 
-          if (!newHeight) newHeight = window.scrollY;
-
-          setHeight(newHeight);
-          syncHeightRef.current = newHeight;
-          isFocusingRef.current = false;
-          initializedRef.current = true;
-        },
-        initializedRef.current ? 600 : 1000
-      ); // Safari Keyboard Open Animation Duration + 100
+        setHeight(newHeight);
+        syncHeightRef.current = newHeight;
+        isFocusingRef.current = false;
+      }, 600); // Safari Keyboard Open Animation Duration + 100
     } else {
       setHeight(0);
     }
@@ -46,7 +38,7 @@ export default function useSafariInputFocus() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!inputFocus || isFocusingRef.current) return;
+      if (!inputFocus || !height || isFocusingRef.current) return;
 
       window.scrollTo({
         top: height
@@ -68,25 +60,19 @@ export default function useSafariInputFocus() {
   }, [inputFocus, height]);
 
   useEffect(() => {
-    if (heightSyncIntervalRef.current) {
-      clearInterval(heightSyncIntervalRef.current);
-    }
+    const handleResize = () => {
+      const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
 
-    heightSyncIntervalRef.current = setInterval(() => {
-      let newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
+      if (!newHeight) return;
 
-      if (!newHeight) newHeight = window.scrollY;
+      setHeight(newHeight);
+      syncHeightRef.current = newHeight;
+    };
 
-      if (newHeight !== height && height && inputFocus && !isFocusingRef.current) {
-        setHeight(newHeight);
-        syncHeightRef.current = newHeight;
-      }
-    }, 50);
+    window?.visualViewport?.addEventListener('resize', handleResize);
 
     return () => {
-      if (heightSyncIntervalRef.current) {
-        clearInterval(heightSyncIntervalRef.current);
-      }
+      window?.visualViewport?.removeEventListener('resize', handleResize);
     };
   }, [height, inputFocus]);
 
@@ -96,9 +82,6 @@ export default function useSafariInputFocus() {
 
       if (focusDurationTimerRef.current) {
         clearTimeout(focusDurationTimerRef.current);
-      }
-      if (heightSyncIntervalRef.current) {
-        clearInterval(heightSyncIntervalRef.current);
       }
     };
   }, [resetInputFocusState]);

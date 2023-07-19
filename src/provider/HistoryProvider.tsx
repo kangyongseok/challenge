@@ -45,6 +45,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     router.beforePopState(({ url }) => {
       setIsGoBack(true);
+
       if (isSearchExitPattern && searchProductLeave && isUserViewPerDay() && url === '/search') {
         setExitUserNextStep((prev) => ({ ...prev, currentView: '검색' }));
         setTimeout(() => {
@@ -66,77 +67,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
         router.replace({ pathname: '/channels', query: { type: 0 } });
       }
 
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (router.pathname === '/channels/[id]' && LocalStorage.get(PAYMENTS_SUCCESS)) {
-        LocalStorage.remove(PAYMENTS_SUCCESS);
-        router.replace({ pathname: '/channels', query: { type: 0 } });
-      }
-
-      if (url.indexOf('/products') > -1) {
+      if (url !== '/products/[id]' && url.indexOf('/products') > -1) {
         setProductsFilterProgressDoneState(true);
       }
 
@@ -200,7 +131,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
       router.events.off('routeChangeStart', handleRouteChangeStart);
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
     };
-  }, [setHistoryState, setIsGoBack, router, history, isGoBack]);
+  }, [setHistoryState, setProductsFilterProgressDoneState, setIsGoBack, router, history, isGoBack]);
 
   return children as ReactElement;
 }

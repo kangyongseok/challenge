@@ -468,7 +468,7 @@ function ProductDetail() {
 
   useEffect(() => {
     const isSession = SessionStorage.get(sessionStorageKeys.isProductDetailPopState);
-    if (isPopStateEvent && !isSession) {
+    if (isPopStateEvent && !isSession && !checkAgent.isMobileApp()) {
       SessionStorage.set(sessionStorageKeys.isProductDetailPopState, true);
       window.history.pushState('', '', '/');
       window.history.pushState('', '', asPath);

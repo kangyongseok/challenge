@@ -4,6 +4,7 @@ import type { MouseEvent } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import type { FileMessage } from '@sendbird/chat/message';
 import { Box, Flexbox, Skeleton, useTheme } from '@mrcamelhub/camel-ui';
 
@@ -39,8 +40,11 @@ import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 import { logEvent } from '@library/amplitude';
 
+import { fetchChannel } from '@api/channel';
+
 import { channelUserType, productType } from '@constants/user';
 import sessionStorageKeys from '@constants/sessionStorageKeys';
+import queryKeys from '@constants/queryKeys';
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
@@ -754,12 +758,38 @@ function Channel() {
   );
 }
 
-export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  query: { id },
+  resolvedUrl
+}: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
+
+  const queryClient = new QueryClient();
+
+  try {
+    const { channel } = await queryClient.fetchQuery(queryKeys.channels.channel(Number(id)), () =>
+      fetchChannel(Number(id))
+    );
+
+    if (!channel) {
+      return {
+        redirect: {
+          destination: `/login?returnUrl=${encodeURI(resolvedUrl)}`,
+          permanent: false
+        }
+      };
+    }
+  } catch {
+    return {
+      notFound: true
+    };
+  }
 
   return {
     props: {
-      accessUser: getAccessUserByCookies(getCookies({ req }))
+      accessUser: getAccessUserByCookies(getCookies({ req })),
+      dehydratedState: dehydrate(queryClient)
     }
   };
 }
