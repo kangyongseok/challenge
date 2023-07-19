@@ -4,7 +4,7 @@ function ChannelListSkeleton() {
   return (
     <Flexbox
       alignment="center"
-      customStyle={{ padding: '12px 20px', columnGap: 12, width: '100%' }}
+      customStyle={{ padding: '14px 20px', columnGap: 12, width: '100%' }}
     >
       <Skeleton width={40} height={40} round="50%" disableAspectRatio />
       <Flexbox customStyle={{ flex: '1 1 auto', minWidth: 0 }}>

@@ -55,8 +55,8 @@ function useChannel() {
   const [isPrevFetching, setIsPrevFetching] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [senderUserId, setSenderUserId] = useState(0);
+  const [currentChannel, setCurrentChannel] = useState<GroupChannel>();
 
-  const currentChannel = useRef<GroupChannel | null>(null);
   const prevScrollHeightRef = useRef(0);
   const fetchingPrevMessagesRef = useRef(false);
   const initializedChannelRef = useRef(false);
@@ -83,10 +83,12 @@ function useChannel() {
 
         if (externalId) {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
-          if (!currentChannel.current) currentChannel.current = channel;
+          if (!currentChannel) {
+            setCurrentChannel(channel);
+          }
           const unreadMessagesCount = await Sendbird.unreadMessagesCount();
           if (channel.unreadMessageCount) {
-            await currentChannel.current.markAsRead();
+            await channel.markAsRead();
           }
           setSendbirdState((prevState) => ({
             ...prevState,
@@ -94,13 +96,10 @@ function useChannel() {
           }));
           setUnreadCount(0);
 
-          const newMessages = await currentChannel.current.getMessagesByTimestamp(
-            new Date().getTime() + 5000,
-            {
-              prevResultSize: PREV_RESULT_SIZE,
-              nextResultSize: 0
-            }
-          );
+          const newMessages = await channel.getMessagesByTimestamp(new Date().getTime() + 5000, {
+            prevResultSize: PREV_RESULT_SIZE,
+            nextResultSize: 0
+          });
 
           setState({
             messages: newMessages as CoreMessageType[],
@@ -202,12 +201,7 @@ function useChannel() {
     if (useQueryResult.data?.isSentMessage) return true;
     if (filteredMessages.length >= 30) return true;
 
-    if (
-      currentChannel.current &&
-      !channelData.isSeller &&
-      filteredMessages.length < 30 &&
-      accessUser
-    ) {
+    if (currentChannel && !channelData.isSeller && filteredMessages.length < 30 && accessUser) {
       return filteredMessages.some(
         (filteredMessage) =>
           (filteredMessage as UserMessage | FileMessage).sender?.userId ===
@@ -216,7 +210,13 @@ function useChannel() {
     }
 
     return true;
-  }, [accessUser, channelData.isSeller, filteredMessages, useQueryResult.data?.isSentMessage]);
+  }, [
+    accessUser,
+    channelData.isSeller,
+    filteredMessages,
+    useQueryResult.data?.isSentMessage,
+    currentChannel
+  ]);
 
   const fetchPrevMessages = useCallback(async () => {
     try {
@@ -224,7 +224,7 @@ function useChannel() {
       fetchingPrevMessagesRef.current = true;
       setIsPrevFetching(true);
 
-      const newMessages = await currentChannel.current?.getMessagesByTimestamp(
+      const newMessages = await currentChannel?.getMessagesByTimestamp(
         oldestMessageTimeStamp || new Date().getTime() + 5000,
         {
           prevResultSize: PREV_RESULT_SIZE,
@@ -320,7 +320,7 @@ function useChannel() {
 
       if (
         Math.ceil(scrollTop + clientHeight) >= scrollHeight &&
-        currentChannel.current &&
+        currentChannel &&
         !pending &&
         document.visibilityState === 'visible'
       ) {
@@ -328,13 +328,13 @@ function useChannel() {
           clearTimeout(markAsReadTimerRef.current);
         }
         markAsReadTimerRef.current = setTimeout(async () => {
-          if (!currentChannel.current) return;
+          if (!currentChannel) return;
 
           const channel = await Sendbird.getInstance().groupChannel.getChannel(
             useQueryResult.data?.channel?.externalId || ''
           );
           if (channel.unreadMessageCount) {
-            currentChannel.current.markAsRead().then(async () => {
+            currentChannel.markAsRead().then(async () => {
               setUnreadCount(0);
               const unreadMessagesCount = await Sendbird.unreadMessagesCount();
               setSendbirdState((prevState) => ({
@@ -352,7 +352,7 @@ function useChannel() {
     return () => {
       window.flexibleContent.removeEventListener('scroll', handleScroll);
     };
-  }, [setSendbirdState, pending, useQueryResult.data?.channel?.externalId]);
+  }, [setSendbirdState, pending, useQueryResult.data?.channel?.externalId, currentChannel]);
 
   // 메시지 목록 컨테이너의 스크롤이 하단 1/4 만큼 위치한 경우, 항상 최신 메시지를 볼 수 있도록 스크롤 처리
   useEffect(() => {
@@ -377,7 +377,7 @@ function useChannel() {
           const newChannel = await Sendbird.getInstance().groupChannel.getChannel(
             useQueryResult.data?.channel?.externalId || ''
           );
-          currentChannel.current = newChannel;
+          setCurrentChannel(newChannel);
           newChannel.refresh().then(async () => {
             initializedChannelRef.current = false;
             await useQueryResult.refetch();
@@ -397,7 +397,7 @@ function useChannel() {
           await useQueryResult.refetch();
 
           if (
-            !compareIds(channel?.url, currentChannel.current?.url) ||
+            !compareIds(channel?.url, currentChannel?.url) ||
             messages.some((msg) => compareIds(msg.messageId, message.messageId))
           )
             return;
@@ -445,7 +445,7 @@ function useChannel() {
           }));
           await useQueryResult.refetch();
 
-          if (compareIds(channel?.url, currentChannel.current?.url)) {
+          if (compareIds(channel?.url, currentChannel?.url)) {
             if (!isProduction) console.log('Channel | onChannelChanged', channel);
           }
         },
@@ -456,7 +456,7 @@ function useChannel() {
             unreadMessagesCount
           }));
 
-          if (compareIds(channel?.url, currentChannel.current?.url)) {
+          if (compareIds(channel?.url, currentChannel?.url)) {
             if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
             setUnreadCount(channel.unreadMessageCount);
             mutatePostHistoryManage({
@@ -488,7 +488,8 @@ function useChannel() {
     mutatePostHistoryManage,
     router.query.id,
     setSendbirdState,
-    useQueryResult
+    useQueryResult,
+    currentChannel
   ]);
 
   useEffect(() => {
@@ -504,7 +505,7 @@ function useChannel() {
     useQueryChannel: useQueryResult,
     pending,
     channelData,
-    sendbirdChannel: currentChannel.current,
+    sendbirdChannel: currentChannel,
     messages: filteredMessages,
     hasMorePrev,
     fetchPrevMessages,

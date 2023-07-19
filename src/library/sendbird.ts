@@ -55,29 +55,27 @@ const SendBird = {
     try {
       const user = await sb.connect(userId);
 
-      if (sb.connectionState === 'OPEN') {
-        const userUpdateParams: UserUpdateParams = { nickname };
+      const userUpdateParams: UserUpdateParams = { nickname };
 
-        if (image) userUpdateParams.profileUrl = image;
+      if (image) userUpdateParams.profileUrl = image;
 
-        try {
-          await sb.updateCurrentUserInfo(userUpdateParams);
+      try {
+        await sb.updateCurrentUserInfo(userUpdateParams);
 
-          logEvent('LOAD_SUPPORT', {
-            type: 'SENDBIRD',
-            userId,
-            nickname
-          });
-        } catch (error) {
-          logEvent('SUPPORT_ERROR', {
-            type: 'SENDBIRD',
-            name: 'SENDBIRD_UPDATE_CURRENT_USERINFO',
-            error,
-            userId,
-            nickname
-          });
-          if (!isProduction) console.log('Sendbird error', error);
-        }
+        logEvent('LOAD_SUPPORT', {
+          type: 'SENDBIRD',
+          userId,
+          nickname
+        });
+      } catch (error) {
+        logEvent('SUPPORT_ERROR', {
+          type: 'SENDBIRD',
+          name: 'SENDBIRD_UPDATE_CURRENT_USERINFO',
+          error,
+          userId,
+          nickname
+        });
+        if (!isProduction) console.log('Sendbird error', error);
       }
 
       if (!isProduction) console.log('Sendbird initialized', { sb, user });

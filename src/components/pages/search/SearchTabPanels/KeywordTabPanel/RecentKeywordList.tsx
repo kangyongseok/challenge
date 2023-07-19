@@ -124,7 +124,9 @@ function RecentKeywordList() {
       }
 
       router.push({
-        pathname: `/products/${viewType}/${encodeURIComponent(String(productKeyword))}`,
+        pathname: `/products/${viewType}/${encodeURIComponent(
+          viewType === 'brands' ? String(productKeyword).split(',')[0] : String(productKeyword)
+        )}`,
         query
       });
     };

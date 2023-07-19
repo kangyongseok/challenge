@@ -330,7 +330,8 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
       push({
         pathname: `/products/${id}/order`,
         query: {
-          type: 2
+          type: 2,
+          includeLegit: LocalStorage.get('includeLegit')
         }
       });
     }
