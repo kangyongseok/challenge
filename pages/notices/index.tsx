@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge, Box, Button, Tab, TabGroup, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
@@ -29,6 +30,8 @@ function Notices() {
       palette: { common }
     }
   } = useTheme();
+
+  const router = useRouter();
 
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<string | number>('활동알림');
@@ -60,12 +63,21 @@ function Notices() {
     if (notViewedAnnounceCount > 0 && newValue === '공지사항') {
       mutatePostManage({ event: 'READ_ALL_ANNOUNCE' });
     }
+    if (newValue === '활동알림' && router.query?.tab === 'notice') {
+      router.push('/notices');
+    }
     setTab(newValue);
   };
 
   const handleClickAllRead = () => {
     productNotiReadAllMutate();
   };
+
+  useEffect(() => {
+    if (router.query?.tab === 'notice') {
+      setTab('공지사항');
+    }
+  }, [router.query?.tab]);
 
   return (
     <GeneralTemplate
