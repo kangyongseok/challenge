@@ -67,7 +67,7 @@ function useChannel() {
     () => fetchChannel(Number(id)),
     {
       enabled: !!id && initialized && isLoggedInWithSMS,
-      refetchOnMount: true,
+      refetchOnMount: 'always',
       async onSuccess(data) {
         // 최초 채널 입장시에만 초기화
         if (messages.length > 0 && initializedChannelRef.current) {
@@ -76,6 +76,8 @@ function useChannel() {
         if (!messages.length) {
           setPending(true);
         }
+
+        console.log('onSuccess');
 
         initializedChannelRef.current = true;
 
