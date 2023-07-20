@@ -609,7 +609,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
                             isRound={false}
                             value={filterCodeIds.my}
                             text="내 사이즈"
-                            checked={activeMyFilter || (!complete && !step)}
+                            checked={activeMyFilter || (isLoggedIn && !complete && step === 0)}
                             onChange={handleClickMyFilter}
                             customStyle={{
                               fontFamily: 'NanumSquareNeo',

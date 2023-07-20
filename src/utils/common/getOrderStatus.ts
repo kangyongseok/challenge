@@ -21,7 +21,7 @@ export type OrderStatusName =
   | '환불완료';
 
 export interface OrderStatus {
-  name: string;
+  name: OrderStatusName | '';
   displayText: string;
   overlayText: string;
   description: string;
@@ -91,6 +91,7 @@ export const orderStatusName: {
 
 // TODO 오퍼레이터 주문 상태 분기 처리
 export default function getOrderStatus({
+  id,
   status,
   result,
   type,
@@ -729,7 +730,7 @@ export default function getOrderStatus({
           text: '정산대기'
         }
       ];
-    } else if (name === '정산예정') {
+    } else if (name === '정산진행') {
       newOrderStatus.displayText = '정산예정';
       newOrderStatus.description = `정산계좌로 ${dayjs(dateCompleted).format(
         'MM월 DD일(ddd)'
@@ -786,6 +787,11 @@ export default function getOrderStatus({
         dateExpired
       ).format('MM월 DD일')}까지 미확인시 주문이 취소됩니다.</p>`;
     }
+  }
+
+  if (!newOrderStatus.name || !newOrderStatus.displayText) {
+    newOrderStatus.displayText = '주문상태 알 수 없음';
+    newOrderStatus.description = `마이 > 1:1 문의를 통해 아래의 주문번호와 함께 문의해 주세요!<p class="mt-8 ui60">주문번호: ${id}</p>`;
   }
 
   return newOrderStatus;

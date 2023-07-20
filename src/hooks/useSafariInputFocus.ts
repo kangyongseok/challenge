@@ -40,10 +40,6 @@ export default function useSafariInputFocus() {
     const handleScroll = () => {
       if (!inputFocus || !height || isFocusingRef.current) return;
 
-      window.scrollTo({
-        top: height
-      });
-
       const inputs = document.getElementsByTagName('input');
       const textAreas = document.getElementsByTagName('textarea');
 
@@ -61,9 +57,9 @@ export default function useSafariInputFocus() {
 
   useEffect(() => {
     const handleResize = () => {
-      const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
+      if (isFocusingRef.current) return;
 
-      if (!newHeight) return;
+      const newHeight = window.innerHeight - (window?.visualViewport?.height || 0);
 
       setHeight(newHeight);
       syncHeightRef.current = newHeight;
@@ -74,7 +70,7 @@ export default function useSafariInputFocus() {
     return () => {
       window?.visualViewport?.removeEventListener('resize', handleResize);
     };
-  }, [height, inputFocus]);
+  }, [height]);
 
   useEffect(() => {
     return () => {

@@ -809,7 +809,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   useEffect(() => {
     if (!hasBaseSearchParams || !progressDone) return;
 
-    if (!window.scrollY) {
+    if (window.scrollY <= 0) {
       setOpenOnBoarding(true);
     }
 

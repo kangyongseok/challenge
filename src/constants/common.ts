@@ -121,6 +121,7 @@ export const AUTH_PATH_NAMES = [
   '/products/[id]/order',
   '/products/[id]/order/success',
   '/mypage/orders',
+  '/mypage/orders/[id]',
   '/mypage/settings/alarm',
   '/mypage/settings/blockedUsers',
   '/mypage/settings/transfer',
@@ -139,6 +140,7 @@ export const SMS_LOGIN_AUTH_PASS_PATH_NAMES = [
   '/products/[id]/order',
   '/products/[id]/order/success',
   '/user/reviews/form',
+  '/mypage/orders/[id]',
   '/mypage/nonMember/orders',
   '/mypage/settings/account',
   '/mypage/settings/account/certification'
