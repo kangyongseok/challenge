@@ -45,9 +45,17 @@ function CrmProducts() {
                 <Typography variant="h4" weight="bold">
                   {userNickName}님
                 </Typography>
-                <Typography variant="h4" weight="bold" brandColor="primary">
-                  {notice}
-                </Typography>
+                <Typography
+                  variant="h4"
+                  weight="bold"
+                  brandColor="primary"
+                  customStyle={{
+                    '& > span': {
+                      fontWeight: 400
+                    }
+                  }}
+                  dangerouslySetInnerHTML={{ __html: String(notice) }}
+                />
               </NoticeWrapper>
             )}
           </Box>
