@@ -280,7 +280,16 @@ const SendBird = {
         if (sb.reconnect()) {
           channel
             .sendUserMessage(params)
-            .onFailed((newError, newMessage) => sendFailLog(newError, newMessage, 'RESEND FAIL'));
+            .onPending((reSendMessage) => {
+              if (onPending) onPending(reSendMessage);
+            })
+            .onSucceeded((reSendMessage) => {
+              onSucceeded(reSendMessage);
+            })
+            .onFailed((reSendError, reSendMessage) => {
+              sendFailLog(reSendError, reSendMessage, 'RESEND FAIL');
+              if (onFailed) onFailed(reSendError, reSendMessage);
+            });
         } else {
           sendFailLog(error, message, 'RECONNECT FAIL');
         }
@@ -315,9 +324,16 @@ const SendBird = {
         if (sb.reconnect()) {
           channel
             .sendFileMessage(params)
-            .onFailed((newError, newMessage) =>
-              sendFailLog(newError, newMessage, 'RESEND FILE FAIL')
-            );
+            .onPending((reSendMessage) => {
+              if (onPending) onPending(reSendMessage);
+            })
+            .onSucceeded((fileMessage) => {
+              onSucceeded(fileMessage);
+            })
+            .onFailed((reSendError, reSendMessage) => {
+              sendFailLog(reSendError, reSendMessage, 'RESEND FILE FAIL');
+              if (onFailed) onFailed(reSendError, reSendMessage);
+            });
         } else {
           sendFailLog(error, message, 'RECONNECT FAIL');
         }
@@ -353,9 +369,16 @@ const SendBird = {
         if (sb.reconnect()) {
           channel
             .sendFileMessages(paramsList)
-            .onFailed((newError, newMessage) =>
-              sendFailLog(newError, newMessage, 'RESEND FILES FAIL')
-            );
+            .onPending((reSendMessage) => {
+              if (onPending) onPending(reSendMessage);
+            })
+            .onSucceeded((fileMessage) => {
+              onSucceeded(fileMessage);
+            })
+            .onFailed((reSendError, reSendMessage) => {
+              sendFailLog(reSendError, reSendMessage, 'RESEND FILES FAIL');
+              if (onFailed) onFailed(reSendError, reSendMessage);
+            });
         } else {
           sendFailLog(error, message, 'RECONNECT FAIL');
         }

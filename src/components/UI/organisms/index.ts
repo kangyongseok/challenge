@@ -30,3 +30,4 @@ export { default as AppUpdateForSafePayment } from './AppUpdateForSafePayment';
 export { default as NonMemberAuthFeedbackDialog } from './NonMemberAuthFeedbackDialog';
 export { default as PurchasingAgentBottomSheet } from './PurchasingAgentBottomSheet';
 export { default as ProductPaymentMethodBottomSheet } from './ProductPaymentMethodBottomSheet';
+export { default as MowebFooter } from './MowebFooter';

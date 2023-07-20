@@ -77,8 +77,6 @@ function useChannel() {
           setPending(true);
         }
 
-        console.log('onSuccess');
-
         initializedChannelRef.current = true;
 
         const { externalId } = data?.channel || {};

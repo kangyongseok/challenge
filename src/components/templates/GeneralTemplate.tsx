@@ -1,13 +1,12 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
-import MowebFooter from '@components/UI/organisms/MowebFooter';
-import { AppDownloadBanner } from '@components/UI/organisms';
+import { AppDownloadBanner, MowebFooter } from '@components/UI/organisms';
 
 import { APP_DOWNLOAD_BANNER_HEIGHT } from '@constants/common';
 
@@ -37,49 +36,56 @@ function GeneralTemplate({
 }: PropsWithChildren<GeneralTemplateProps>) {
   const router = useRouter();
 
-  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
   const [activeViewportTrick, setActiveViewportTrickState] =
     useRecoilState(activeViewportTrickState);
+  const showAppDownloadBanner = useRecoilValue(showAppDownloadBannerState);
 
   const triggered = useReverseScrollTrigger(true);
+
   useViewportUnitsTrick(!activeViewportTrick);
 
-  const showMowebFooterCase = ['/', '/products/[id]', '/wishes'].includes(router.pathname);
+  const [paddingTop, setPaddingTop] = useState(0);
+  const [openAppDownloadBanner, setOpenAppDownloadBanner] = useState(false);
+  const [openMowebFooter, setOpenMowebFooter] = useState(false);
 
-  const paddingTopParser = () => {
-    if (!checkAgent.isMobileApp() && triggered && !hideAppDownloadBanner && showAppDownloadBanner) {
-      return APP_DOWNLOAD_BANNER_HEIGHT;
-    }
+  useEffect(() => {
+    setPaddingTop(
+      triggered && !hideAppDownloadBanner && showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0
+    );
+  }, [hideAppDownloadBanner, showAppDownloadBanner, triggered]);
 
-    return 0;
-  };
+  useEffect(() => {
+    setOpenAppDownloadBanner(!checkAgent.isMobileApp() && !hideAppDownloadBanner);
+  }, [hideAppDownloadBanner]);
+
+  useEffect(() => {
+    const { redirect, userAgent } = router.query;
+
+    setOpenMowebFooter(
+      !(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) &&
+        ['/', '/products/[id]', '/wishes'].includes(router.pathname) &&
+        !hideMowebFooter &&
+        !redirect &&
+        !userAgent
+    );
+  }, [router.pathname, router.query, hideMowebFooter]);
 
   useEffect(() => {
     setActiveViewportTrickState(true);
   }, [setActiveViewportTrickState]);
 
   return (
-    <Wrapper
-      activeViewportTrick={activeViewportTrick}
-      css={{
-        paddingTop: paddingTopParser(),
-        ...customStyle
-      }}
-    >
-      {!hideAppDownloadBanner && !checkAgent.isMobileApp() && <AppDownloadBanner />}
+    <Wrapper activeViewportTrick={activeViewportTrick} paddingTop={paddingTop} css={customStyle}>
+      {openAppDownloadBanner && <AppDownloadBanner />}
       {header}
       <Content disablePadding={disablePadding}>{children}</Content>
-      {!(checkAgent.isIOSApp() || checkAgent.isAndroidApp()) &&
-        !hideMowebFooter &&
-        showMowebFooterCase &&
-        !router.query.redirect &&
-        !router.query.userAgent && <MowebFooter />}
+      {openMowebFooter && <MowebFooter />}
       {footer}
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div<{ activeViewportTrick: boolean }>`
+const Wrapper = styled.div<{ activeViewportTrick: boolean; paddingTop: number }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -91,6 +97,7 @@ const Wrapper = styled.div<{ activeViewportTrick: boolean }>`
           height: 'calc((var(--vh, 1vh) * 100))'
         }
       : {}};
+  padding-top: ${({ paddingTop }) => paddingTop}px;
   background-color: ${({
     theme: {
       palette: { common }
