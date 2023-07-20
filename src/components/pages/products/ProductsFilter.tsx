@@ -147,8 +147,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
     data: {
       info: { value: { gender = '' } = {} } = {},
       size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
-    } = {},
-    isLoading: isLoadingUserInfo
+    } = {}
   } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
     enabled: isLoggedIn
   });
@@ -424,7 +423,6 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       additionalSelectedSearchOptions.length &&
       !progressDone &&
       !isLoading &&
-      !isLoadingUserInfo &&
       !isUpdatedAdditionalSelectedSearchOptionsRef.current
     ) {
       isUpdatedAdditionalSelectedSearchOptionsRef.current = true;
@@ -452,7 +450,6 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
     additionalSelectedSearchOptions,
     hasBaseSearchParams,
     isLoading,
-    isLoadingUserInfo,
     progressDone
   ]);
 

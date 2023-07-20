@@ -180,6 +180,7 @@ export function convertSearchParamsByQuery(
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
+    title,
     deviceId
   }: SearchParams & { notice?: string } = query;
   const baseSearchParams = {
@@ -239,6 +240,7 @@ export function convertSearchParamsByQuery(
     requiredBrandIds,
     requiredLineIds,
     collaboIds,
+    title,
     deviceId: deviceId || defaultValue?.deviceId
   };
 
@@ -400,7 +402,8 @@ export function convertSelectedSearchOptions(
     idFilterIds = [],
     distance,
     order,
-    genders = []
+    genders = [],
+    title
   } = searchParams;
   const {
     brands = [],
@@ -618,6 +621,15 @@ export function convertSelectedSearchOptions(
             ];
           });
         }
+      } else if (key === 'title') {
+        selectedSearchOptions = [
+          ...selectedSearchOptions,
+          {
+            codeId: filterCodeIds.title,
+            title,
+            name: title
+          }
+        ];
       }
     }
   });
