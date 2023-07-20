@@ -246,6 +246,8 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   useEffect(() => {
     if (!Object.keys(baseSearchOptions).length) return;
 
+    isUpdatedAdditionalSelectedSearchOptionsRef.current = false;
+
     const convertedInitSearchParams = convertSearchParamsByQuery(router.query, {
       variant,
       defaultValue: {
