@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment,no-param-reassign */
+// @ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -15,6 +16,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import Toast from '@mrcamelhub/camel-ui-toast';
 import { Box, Button, Flexbox, Grid, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
+import { ErrorBoundary } from '@components/UI/organisms';
 import { NewProductGridCard, NewProductGridCardSkeleton } from '@components/UI/molecules';
 
 import type { Product, ProductResult, Search } from '@dto/product';
@@ -647,41 +649,43 @@ function ProductsInfiniteGrid({ variant }: ProductsInfiniteGridProps) {
   }
 
   return (
-    // @ts-ignore
-    <InfiniteLoader
-      loadMoreRows={loadMoreRows}
-      isRowLoaded={(params: Index) => !!products[params.index]}
-      rowCount={hasNextPage ? products.length + 15 : products.length}
-    >
-      {({ registerChild, onRowsRendered }) => (
-        // @ts-ignore
-        <WindowScroller>
-          {({ height, isScrolling }) => (
-            // @ts-ignore
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <Box ref={listRef}>
-                  {/* @ts-ignore */}
-                  <List
-                    ref={registerChild}
-                    onRowsRendered={onRowsRendered}
-                    autoHeight
-                    width={width}
-                    height={height}
-                    isScrolling={isScrolling}
-                    scrollTop={listScrollTop}
-                    rowCount={products.length}
-                    rowHeight={cache.rowHeight}
-                    rowRenderer={rowRenderer}
-                    deferredMeasurementCache={cache}
-                  />
-                </Box>
-              )}
-            </AutoSizer>
-          )}
-        </WindowScroller>
-      )}
-    </InfiniteLoader>
+    <ErrorBoundary>
+      {/* // @ts-ignore */}
+      <InfiniteLoader
+        loadMoreRows={loadMoreRows}
+        isRowLoaded={(params: Index) => !!products[params.index]}
+        rowCount={hasNextPage ? products.length + 15 : products.length}
+      >
+        {({ registerChild, onRowsRendered }) => (
+          // @ts-ignore
+          <WindowScroller>
+            {({ height, isScrolling }) => (
+              // @ts-ignore
+              <AutoSizer disableHeight>
+                {({ width }) => (
+                  <Box ref={listRef}>
+                    {/* @ts-ignore */}
+                    <List
+                      ref={registerChild}
+                      onRowsRendered={onRowsRendered}
+                      autoHeight
+                      width={width}
+                      height={height}
+                      isScrolling={isScrolling}
+                      scrollTop={listScrollTop}
+                      rowCount={products.length}
+                      rowHeight={cache.rowHeight}
+                      rowRenderer={rowRenderer}
+                      deferredMeasurementCache={cache}
+                    />
+                  </Box>
+                )}
+              </AutoSizer>
+            )}
+          </WindowScroller>
+        )}
+      </InfiniteLoader>
+    </ErrorBoundary>
   );
 }
 

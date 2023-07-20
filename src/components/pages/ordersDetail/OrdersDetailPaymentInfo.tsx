@@ -183,7 +183,8 @@ function OrdersDetailPaymentInfo() {
             주문취소
           </Button>
         )}
-        {!cancelReasons?.request &&
+        {!orderStatus.isSeller &&
+          !cancelReasons?.request &&
           ['배송대기', '거래대기'].includes(orderStatus.name) &&
           orderStatus.paymentMethod !== '카멜 구매대행' &&
           !hold && (

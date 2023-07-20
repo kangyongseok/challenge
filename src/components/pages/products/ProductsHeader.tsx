@@ -16,7 +16,7 @@ import { convertSearchParamsByQuery } from '@utils/products';
 import { isExtendedLayoutIOSVersion } from '@utils/common';
 
 import type { ProductsVariant } from '@typings/products';
-import { searchValueState } from '@recoil/search';
+import { searchAutoFocusState, searchValueState } from '@recoil/search';
 import { searchOptionsStateFamily } from '@recoil/productsFilter';
 
 interface ProductsHeaderProps {
@@ -43,8 +43,15 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
   } = useRecoilValue(searchOptionsStateFamily(`base-${atomParam}`));
 
   const resetSearchValueState = useResetRecoilState(searchValueState);
+  const resetSearchAutoFocusState = useResetRecoilState(searchAutoFocusState);
 
   const [newTitle, setNewTitle] = useState('');
+
+  const handleClick = () => {
+    resetSearchAutoFocusState();
+
+    router.push('/search');
+  };
 
   const handleClickBack = () => {
     logEvent(attrKeys.products.clickBack, {
@@ -121,7 +128,7 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
             placeholder="검색어를 입력해 주세요."
             readOnly
             value={(keyword || '').replace(/-/g, ' ')}
-            onClick={() => router.push('/search')}
+            onClick={handleClick}
             endAdornment={
               (keyword || '').replace(/-/g, ' ') ? (
                 <Icon

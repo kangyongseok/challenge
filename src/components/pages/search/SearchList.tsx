@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import omitBy from 'lodash-es/omitBy';
 import isEmpty from 'lodash-es/isEmpty';
@@ -46,7 +46,7 @@ function SearchList() {
   const [categoryKeywords, setCategoryKeywords] = useState<SuggestKeyword[]>([]);
   const [brandKeywords, setBrandKeywords] = useState<SuggestKeyword[]>([]);
 
-  const value = useRecoilValue(searchValueState);
+  const [value, setSearchValueState] = useRecoilState(searchValueState);
 
   const { data = [], isLoading } = useQuery(
     queryKeys.products.keywordsSuggest(value),
@@ -102,7 +102,7 @@ function SearchList() {
         type: attrProperty.type.INPUT
       });
 
-      router.push(`/products/search/${keyword}`);
+      router.push(`/products/search/${keyword}`).then(() => setSearchValueState(keyword));
     };
 
   const handleClickCategoryKeyword =

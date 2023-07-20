@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
@@ -44,19 +44,17 @@ function GeneralTemplate({
 
   useViewportUnitsTrick(!activeViewportTrick);
 
-  const [paddingTop, setPaddingTop] = useState(0);
-  const [openAppDownloadBanner, setOpenAppDownloadBanner] = useState(false);
   const [openMowebFooter, setOpenMowebFooter] = useState(false);
 
-  useEffect(() => {
-    setPaddingTop(
-      triggered && !hideAppDownloadBanner && showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0
-    );
-  }, [hideAppDownloadBanner, showAppDownloadBanner, triggered]);
-
-  useEffect(() => {
-    setOpenAppDownloadBanner(!checkAgent.isMobileApp() && !hideAppDownloadBanner);
-  }, [hideAppDownloadBanner]);
+  const paddingTop = useMemo(
+    () =>
+      triggered && !hideAppDownloadBanner && showAppDownloadBanner ? APP_DOWNLOAD_BANNER_HEIGHT : 0,
+    [hideAppDownloadBanner, showAppDownloadBanner, triggered]
+  );
+  const openAppDownloadBanner = useMemo(
+    () => !checkAgent.isMobileApp() && !hideAppDownloadBanner,
+    [hideAppDownloadBanner]
+  );
 
   useEffect(() => {
     const { redirect, userAgent } = router.query;
