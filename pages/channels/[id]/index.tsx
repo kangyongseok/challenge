@@ -760,7 +760,7 @@ function Channel() {
 
 export async function getServerSideProps({
   req,
-  query: { id },
+  query: { id, key },
   resolvedUrl
 }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
@@ -772,7 +772,7 @@ export async function getServerSideProps({
       fetchChannel(Number(id))
     );
 
-    if (!channel) {
+    if (!channel && !key) {
       return {
         redirect: {
           destination: `/login?returnUrl=${encodeURI(resolvedUrl)}`,
