@@ -46,7 +46,7 @@ function LegitFree() {
             <Icon
               name="CloseOutlined"
               customStyle={{ marginLeft: 16 }}
-              onClick={() => router.back()}
+              onClick={() => router.push('/')}
             />
           }
         >

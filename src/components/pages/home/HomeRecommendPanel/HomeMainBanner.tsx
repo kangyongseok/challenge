@@ -95,8 +95,7 @@ function HomeMainBanner() {
           <Image
             height={104}
             src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_carrot_banner.png`,
-              h: 104
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_carrot_banner.png`
             })}
             alt="카멜이 대신 거래해드려요. 전국 당근매물 구매대행하세요!"
             disableAspectRatio
@@ -114,8 +113,7 @@ function HomeMainBanner() {
           <Image
             height={104}
             src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/legit_fee_free_banner2.png`,
-              h: 104
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/legit_fee_free_banner2.png`
             })}
             alt="정품검수 무료로 받아보세요!"
             disableAspectRatio
