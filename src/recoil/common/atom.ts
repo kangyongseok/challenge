@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, atomFamily } from 'recoil';
 
 import LocalStorage from '@library/localStorage';
 
@@ -199,4 +199,15 @@ export const decryptPendingState = atom({
 export const productOrderTypeState = atom<0 | 1 | 2>({
   key: 'common/productOrderTypeState',
   default: 0
+});
+
+export const popupBottomSheetState = atomFamily({
+  key: 'common/popupBottomSheetStateFamily',
+  default: (type) => ({
+    type,
+    open: false,
+    isOnceaDay: false, // 하루 한번만 노출
+    isNeverShowAgain: false, // 다시보지않기
+    isTodayShowAgain: false // 오늘 하루 보지않기
+  })
 });

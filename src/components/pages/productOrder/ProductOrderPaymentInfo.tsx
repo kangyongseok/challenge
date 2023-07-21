@@ -25,6 +25,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
   const { data: { product } = {} } = useQueryProduct();
 
   const isAllOperatorType = [5, 6, 7].includes(product?.sellerType || 0);
+  const isLegit = product?.purchaseType === 2;
 
   const {
     theme: {
@@ -155,11 +156,25 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
             </Tooltip>
           </Typography>
           {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? (
-            <Typography color="ui60">선택안함</Typography>
+            <Typography color="ui60">{isLegit ? '선택안함' : '감정불가'}</Typography>
           ) : (
             <Flexbox alignment="center" gap={8}>
-              {orderFee.fee - orderFee.discountFee === 0 && (
+              {orderFee.fee === 0 && orderFee.discountFee === 0 && orderFee.totalFee === 0 && (
                 <Label text="무료" variant="solid" brandColor="primary" round={10} size="xsmall" />
+              )}
+              {!!(
+                orderFee.type === 2 &&
+                orderFee.fee &&
+                orderFee.discountFee &&
+                orderFee.fee - orderFee.discountFee === 0
+              ) && (
+                <Label
+                  text="무료 이벤트"
+                  variant="solid"
+                  brandColor="primary"
+                  round={10}
+                  size="xsmall"
+                />
               )}
               {!!orderFee.discountFee && (
                 <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
@@ -171,6 +186,47 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
           )}
         </Flexbox>
       ))}
+      {!orderFees.find((fee) => fee.type === 2) && !isLegit && isAllOperatorType && (
+        <Flexbox alignment="center" justifyContent="space-between" customStyle={{ marginTop: 8 }}>
+          <Typography color="ui60" customStyle={{ display: 'flex', alignItems: 'center' }}>
+            정품검수
+            <Tooltip
+              open={openTooltip === 2}
+              message={
+                <>
+                  {OrderFeeTooltipMessage({ safeFee: 0 })[2].map((message: string) => (
+                    <TooltipText key={message} color="uiWhite" variant="body2" weight="medium">
+                      {message}
+                    </TooltipText>
+                  ))}
+                </>
+              }
+              placement="top"
+              triangleLeft={33}
+              customStyle={{
+                top: 15,
+                bottom: 'auto',
+                left: 100,
+                zIndex: 5
+              }}
+            >
+              <Icon
+                name="QuestionCircleOutlined"
+                width={16}
+                color="ui80"
+                onClick={() => {
+                  if (openTooltip === 2) {
+                    setOpenTooltip(null);
+                    return;
+                  }
+                  setOpenTooltip(2);
+                }}
+              />
+            </Tooltip>
+          </Typography>
+          <Typography color="ui60">감정불가</Typography>
+        </Flexbox>
+      )}
       <Flexbox
         alignment="center"
         justifyContent="space-between"

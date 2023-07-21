@@ -348,6 +348,7 @@ export type Product = {
   wishCount: number;
   index?: number;
   sellerType?: (typeof productType)[keyof typeof productType]; // 0: 크롤링 매물 1: 사용자 판매자 2: 인증 판매자 3: 감정사 판매자
+  purchaseType: 0 | 1 | 2 | 3; // 결제X / C2C / 구매대행 + 정품감정 / 구매대행
 };
 
 export type ProductResult = {

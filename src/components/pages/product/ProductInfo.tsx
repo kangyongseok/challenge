@@ -744,7 +744,7 @@ function ProductInfo({
           </Flexbox>
         )}
         {productDetail?.product?.site.code === 'CAMELSELLER' && (
-          <Flexbox direction="vertical" gap={8}>
+          <Flexbox direction="vertical" gap={8} customStyle={{ marginTop: 20 }}>
             {templateInfoData.map((stateData) => (
               <Flexbox
                 gap={8}

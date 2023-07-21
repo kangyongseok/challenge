@@ -50,7 +50,7 @@ function NoticeNotificationPanel() {
     if (targetIndex && openNoticeId) {
       setTimeout(() => {
         window.scrollTo({
-          top: targetIndex * 112,
+          top: targetIndex * 120,
           behavior: 'smooth'
         });
       }, 200);
@@ -83,6 +83,15 @@ function NoticeNotificationPanel() {
     }
   };
 
+  useEffect(() => {
+    if (router.query.announceId) {
+      setTargetIndex(
+        data?.content.findIndex((content) => content.id === Number(router.query.announceId)) || 0
+      );
+      setOpenNoticeId(Number(router.query.announceId));
+    }
+  }, [data?.content, router.query.announceId]);
+
   return (
     <Flexbox customStyle={{ padding: '32px 20px' }} direction="vertical">
       {data?.content.map((notice, i) => (
@@ -96,9 +105,12 @@ function NoticeNotificationPanel() {
             onClick={handleClickItem}
           >
             <Box>
-              <Typography variant="h3" weight="bold" customStyle={{ marginBottom: 8 }}>
-                {notice.title}
-              </Typography>
+              <Typography
+                variant="h3"
+                weight="bold"
+                customStyle={{ marginBottom: 8 }}
+                dangerouslySetInnerHTML={{ __html: notice.title }}
+              />
               <Typography variant="body2" customStyle={{ color: common.ui60 }}>
                 {dayjs(notice.dateCreated).format('YYYY.MM.DD')}
               </Typography>
@@ -118,7 +130,7 @@ function NoticeNotificationPanel() {
                     <Box
                       key={`announce-detail-${announceDetail.id}`}
                       customStyle={{
-                        padding: '0 20px 16px'
+                        padding: '0 0 16px'
                       }}
                     >
                       <Button
@@ -169,15 +181,16 @@ function NoticeNotificationPanel() {
                   );
                 }
                 return (
-                  <Box key={`announce-detail-${announceDetail.id}`}>
+                  <Wrap key={`announce-detail-${announceDetail.id}`}>
                     <Box
                       customStyle={{
-                        padding: '0 20px 8px'
+                        padding: '0 0 8px'
                       }}
                     >
                       <Typography
                         variant="h4"
                         weight="bold"
+                        customStyle={{ wordBreak: 'keep-all' }}
                         dangerouslySetInnerHTML={{
                           __html: announceDetail.content.replace(/{userName}/gi, userNickName ?? '')
                         }}
@@ -185,13 +198,14 @@ function NoticeNotificationPanel() {
                     </Box>
                     <Box
                       customStyle={{
-                        padding: '0 20px 20px'
+                        padding: '0 0 20px'
                       }}
                     >
                       <Typography
                         customStyle={{
                           lineHeight: '18px',
-                          letterSpacing: '-0.2px'
+                          letterSpacing: '-0.2px',
+                          wordBreak: 'keep-all'
                         }}
                         dangerouslySetInnerHTML={{
                           __html: announceDetail.subContent.replace(
@@ -215,7 +229,7 @@ function NoticeNotificationPanel() {
                             />
                           )
                       )}
-                  </Box>
+                  </Wrap>
                 );
               })}
           </NoticeContentsWrap>
@@ -225,6 +239,16 @@ function NoticeNotificationPanel() {
     </Flexbox>
   );
 }
+
+const Wrap = styled.div`
+  span {
+    color: #7b7d85;
+    font-size: 12px;
+    margin-top: -25px;
+    position: relative;
+    display: block;
+  }
+`;
 
 const IconWrap = styled(Flexbox)<{ open: boolean }>`
   width: 24px;

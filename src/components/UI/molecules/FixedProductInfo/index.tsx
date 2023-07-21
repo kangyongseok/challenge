@@ -319,6 +319,7 @@ function FixedProductInfo({
         onClickPayment={handleClick(true)}
         logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
         orderInfoProps={data?.orderInfo}
+        isLegitType={data?.product?.purchaseType === 2}
       />
       <ProductPaymentMethodBottomSheet
         open={openProductPaymentBottomSheet}

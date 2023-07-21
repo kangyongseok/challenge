@@ -98,7 +98,7 @@ function ProductInfoOperator({
 
   const {
     theme: {
-      palette: { primary }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -806,6 +806,31 @@ function ProductInfoOperator({
               상태와 가격이 괜찮다면 주저말고 채팅해보세요 :)
             </Typography>
           </Flexbox>
+          {productDetail?.product?.purchaseType === 2 && (
+            <Flexbox
+              alignment="flex-start"
+              gap={4}
+              customStyle={{
+                marginTop: 12,
+                borderTop: `1px solid ${common.line02}`,
+                paddingTop: 12
+              }}
+            >
+              <Flexbox customStyle={{ minWidth: 16, height: 16 }}>
+                <Image
+                  src={`https://${process.env.IMAGE_DOMAIN}/assets/images/icon_search.png`}
+                  alt="search"
+                  disableAspectRatio
+                  width={16}
+                />
+              </Flexbox>
+              <Typography variant="body2" color="ui20">
+                정품검수 가능한 매물이에요.
+                <br />
+                이벤트 기간동안 무료로 정품검수 받아보세요.
+              </Typography>
+            </Flexbox>
+          )}
         </PurchasingAgentInfo>
         {isExpended ? (
           <Typography

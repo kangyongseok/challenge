@@ -444,6 +444,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
           onClickPayment={handleClickSafePayment}
           logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
           orderInfoProps={productDetail?.orderInfo}
+          isLegitType={productDetail?.product?.purchaseType === 2}
         />
       </>
     );

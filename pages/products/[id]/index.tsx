@@ -10,6 +10,7 @@ import type { TypographyVariant } from '@mrcamelhub/camel-ui';
 
 import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 import { AppDownloadDialog, MyShopAppDownloadDialog } from '@components/UI/organisms';
+import PopupBottomSheet from '@components/UI/molecules/PopupBottomSheet';
 import {
   DuplicatedOverlay,
   HideOverlay,
@@ -179,6 +180,10 @@ function ProductDetail() {
       checkOsAlarm
     ]
   );
+
+  const handleClickPopupBanner = () => {
+    push('/notices?tab=notice&announceId=21');
+  };
 
   const handleClickSMS = useCallback(
     ({
@@ -669,6 +674,15 @@ function ProductDetail() {
       <MyShopAppDownloadDialog />
       <OsAlarmDialog open={openOsAlarmDialog} onClose={handleCloseOsAlarmDialog} />
       <ProductNonMemberPaymentBottomSheet />
+      <PopupBottomSheet
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_carrot_popup.png`}
+        alt="카멜이 대신 거래해드려요. 전국 당근매물 구매대행하세요!"
+        openProp={product?.site.name === '당근마켓' && isAllOperatorProduct}
+        popupName="OPERATOR_DANGUN"
+        onClick={handleClickPopupBanner}
+        isOnceDay
+        isNeverShowAgain
+      />
     </>
   );
 }

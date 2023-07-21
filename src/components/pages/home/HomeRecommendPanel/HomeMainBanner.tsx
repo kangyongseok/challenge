@@ -62,18 +62,19 @@ function HomeMainBanner() {
 
   const handleClickOperatorFee = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
-      att: 'OPERATOR_FEE'
+      att: 'OPERATOR_FEE_LEGIT'
     });
 
-    router.push('/guide/operator');
+    router.push('/guide/legitFree');
   };
 
-  // const handleClick = () => {
-  //   logEvent(attrKeys.home.CLICK_BANNER, {
-  //     att: 'appFirstPayment'
-  //   });
-  //   router.push('/events/appFirstPayment');
-  // };
+  const handleClickOperatorDaangn = () => {
+    logEvent(attrKeys.products.CLICK_BANNER, {
+      att: 'OPERATOR_FEE_DAANGN'
+    });
+
+    router.push('/notices?tab=notice&announceId=21');
+  };
 
   return (
     <Swiper
@@ -83,40 +84,40 @@ function HomeMainBanner() {
         width: '100%'
       }}
     >
-      {/* <SwiperSlide> */}
-      {/*  <Box */}
-      {/*    onClick={handleClick} */}
-      {/*    customStyle={{ */}
-      {/*      height: 104, */}
-      {/*      backgroundColor: primary.main */}
-      {/*    }} */}
-      {/*  > */}
-      {/*    <Image */}
-      {/*      height={104} */}
-      {/*      src={getImageResizePath({ */}
-      {/*        imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/app-first-payment-event-banner.png`, */}
-      {/*        h: 104 */}
-      {/*      })} */}
-      {/*      alt="Main Banner Img" */}
-      {/*      disableAspectRatio */}
-      {/*    /> */}
-      {/*  </Box> */}
-      {/* </SwiperSlide> */}
       <SwiperSlide>
         <Box
-          onClick={handleClickOperatorFee}
+          onClick={handleClickOperatorDaangn}
           customStyle={{
             height: 104,
-            backgroundColor: '#425BFF'
+            backgroundColor: '#FF7E36'
           }}
         >
           <Image
             height={104}
             src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_fee_banner.png`,
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_carrot_banner.png`,
               h: 104
             })}
-            alt="사기, 안전결제 거부, 막말에 지쳤다면? 카멜이 대신 거래해드려요!"
+            alt="카멜이 대신 거래해드려요. 전국 당근매물 구매대행하세요!"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
+      <SwiperSlide>
+        <Box
+          onClick={handleClickOperatorFee}
+          customStyle={{
+            height: 104,
+            backgroundColor: '#313438'
+          }}
+        >
+          <Image
+            height={104}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/legit_fee_free_banner2.png`,
+              h: 104
+            })}
+            alt="정품검수 무료로 받아보세요!"
             disableAspectRatio
           />
         </Box>
@@ -164,7 +165,7 @@ function HomeMainBanner() {
           }}
         >
           {currentIndex + 1}
-          <span>/2</span>
+          <span>/3</span>
         </Typography>
       </Flexbox>
     </Swiper>

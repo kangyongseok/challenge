@@ -531,10 +531,11 @@ function NewProductGridCard({
 }
 
 const LabelText = styled(Label)`
-  font-weight: 800;
+  font-weight: 700;
   font-family: NanumSquareNeo;
   font-size: 11px;
   height: 20px;
+  padding: 3px 4px;
 `;
 
 // TODO 추후 UI 라이브러리 추가?
