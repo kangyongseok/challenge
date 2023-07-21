@@ -368,7 +368,9 @@ function ProductCTAButton() {
               >
                 {commaNumber(
                   getTenThousandUnitPrice(
-                    productDetail?.orderInfo?.totalPrice || productDetail?.product?.price || 0
+                    isAllOperatorProduct
+                      ? productDetail?.orderInfo?.totalPrice || 0
+                      : productDetail?.product?.price || 0
                   )
                 )}
                 만원
