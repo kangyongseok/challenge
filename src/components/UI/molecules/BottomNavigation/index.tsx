@@ -371,6 +371,10 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
               isActive = true;
             }
 
+            if (router.pathname === '/legit/search' && isActive && href === '/search') {
+              isActive = false;
+            }
+
             if (router.pathname !== '/' && !name && isActive) {
               isActive = false;
             }

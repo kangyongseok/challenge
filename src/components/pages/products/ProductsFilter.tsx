@@ -139,6 +139,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   const isUpdateSelectedSearchOptions = useRef(false);
   const pendingInActiveMyFilterSearchRef = useRef(false);
   const isUpdatedAdditionalSelectedSearchOptionsRef = useRef(false);
+  const isUpdatedExcludeSelectedSearchOptionsRef = useRef(false);
   const aiFilterGroupRef = useRef<HTMLDivElement>(null);
   const camelAuthFilterRef = useRef<HTMLButtonElement>(null);
   const mySizeFilterRef = useRef<HTMLDivElement>(null);
@@ -161,6 +162,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       title: attrProperty.title.auto,
       att: 'OFF'
     });
+
     setSearchParamsState(({ type }) => ({
       type,
       searchParams: convertSearchParams(excludeAdditionalSelectedSearchOptions, {
@@ -310,6 +312,9 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
 
   useEffect(() => {
     let newSelectedSearchOptions;
+    const requireFilterCodeIds = [filterCodeIds.order, filterCodeIds.id, filterCodeIds.map];
+
+    isUpdatedExcludeSelectedSearchOptionsRef.current = false;
 
     newSelectedSearchOptions = selectedSearchOptions.filter(
       ({ codeId, categorySizeId, parentCategoryId, viewSize }) =>
@@ -320,6 +325,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
             parentCategoryId: additionalParentCategoryId,
             viewSize: additionalViewSize
           }) =>
+            !requireFilterCodeIds.includes(additionalCodeId) &&
             codeId === additionalCodeId &&
             categorySizeId === additionalCategorySizeId &&
             parentCategoryId === additionalParentCategoryId &&
@@ -626,7 +632,8 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       activeMyFilter &&
       isLoggedIn &&
       !productTotal &&
-      !pendingInActiveMyFilterSearchRef.current
+      !pendingInActiveMyFilterSearchRef.current &&
+      isUpdatedExcludeSelectedSearchOptionsRef.current
     ) {
       pendingInActiveMyFilterSearchRef.current = true;
       fetchSearch(
@@ -873,6 +880,17 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
   }, [isLoggedIn, productsOnBoardingTrigger]);
 
   useEffect(() => {
+    if (!hasBaseSearchParams || !progressDone || !complete) {
+      setOpenMyFilterTooltip(false);
+    }
+  }, [hasBaseSearchParams, progressDone, complete]);
+
+  useEffect(() => {
+    if (excludeAdditionalSelectedSearchOptions.length)
+      isUpdatedExcludeSelectedSearchOptionsRef.current = true;
+  }, [excludeAdditionalSelectedSearchOptions]);
+
+  useEffect(() => {
     if (isFetched)
       window.scrollTo({
         top: 0,
@@ -888,7 +906,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
         camelAuthFilterRef={camelAuthFilterRef}
         isLoading={!hasBaseSearchParams || !progressDone}
         variant={variant}
-        openMyFilterTooltip={hasBaseSearchParams && progressDone && openMyFilterTooltip && complete}
+        openMyFilterTooltip={openMyFilterTooltip}
         onClickMyFilterTooltip={handleClickMyFilterTooltip}
       />
       <OnBoardingSpotlight
