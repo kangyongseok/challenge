@@ -705,18 +705,20 @@ function ProductInfoOperator({
                     </Tooltip>
                   </Typography>
                   <Flexbox alignment="center" gap={8}>
-                    {orderInfo.fee - orderInfo.discountFee === 0 && (
-                      <Label
-                        text="무료"
-                        variant="solid"
-                        brandColor="primary"
-                        round={10}
-                        size="xsmall"
-                      />
-                    )}
+                    {!!orderInfo.fee &&
+                      !!orderInfo.discountFee &&
+                      orderInfo.fee - orderInfo.discountFee === 0 && (
+                        <Label
+                          text="무료"
+                          variant="solid"
+                          brandColor="primary"
+                          round={10}
+                          size="xsmall"
+                        />
+                      )}
                     {!!orderInfo.discountFee && (
                       <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
-                        {commaNumber(orderInfo.discountFee)}원
+                        {commaNumber(orderInfo.fee)}원
                       </Typography>
                     )}
                     <Typography weight="medium" color="ui60">

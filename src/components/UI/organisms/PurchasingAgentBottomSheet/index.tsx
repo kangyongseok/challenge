@@ -259,7 +259,7 @@ function PurchasingAgentBottomSheet({
                 )}
                 {!!orderInfo.discountFee && (
                   <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
-                    {commaNumber(orderInfo.discountFee)}원
+                    {commaNumber(orderInfo.fee)}원
                   </Typography>
                 )}
                 <Typography>{commaNumber(orderInfo?.totalFee)}원</Typography>

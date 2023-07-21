@@ -105,7 +105,8 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
           justifyContent="space-between"
           customStyle={{
             marginTop: 8,
-            color: common.ui60
+            color: common.ui60,
+            flexWrap: 'wrap'
           }}
         >
           <Typography
@@ -156,9 +157,11 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
             </Tooltip>
           </Typography>
           {!orderFee.totalFee && !orderFee.fee && !orderFee.discountFee ? (
-            <Typography color="ui60">{isLegit ? '선택안함' : '감정불가'}</Typography>
+            <Typography color="ui60" customStyle={{ marginLeft: 'auto' }}>
+              {isLegit ? '선택안함' : '감정불가'}
+            </Typography>
           ) : (
-            <Flexbox alignment="center" gap={8}>
+            <Flexbox alignment="center" gap={8} customStyle={{ marginLeft: 'auto' }}>
               {orderFee.fee === 0 && orderFee.discountFee === 0 && orderFee.totalFee === 0 && (
                 <Label text="무료" variant="solid" brandColor="primary" round={10} size="xsmall" />
               )}
@@ -178,7 +181,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
               )}
               {!!orderFee.discountFee && (
                 <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
-                  {commaNumber(orderFee.discountFee)}원
+                  {commaNumber(orderFee.fee)}원
                 </Typography>
               )}
               <Typography>{commaNumber(orderFee?.totalFee)}원</Typography>
@@ -232,7 +235,8 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
         justifyContent="space-between"
         customStyle={{
           marginTop: 23,
-          color: common.ui60
+          color: common.ui60,
+          flexWrap: 'wrap'
         }}
       >
         <Typography variant="h4" weight="medium">
@@ -242,7 +246,8 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
           variant="h3"
           weight="bold"
           customStyle={{
-            color: secondary.red.light
+            color: secondary.red.light,
+            marginLeft: 'auto'
           }}
         >
           {commaNumber(totalPrice)}원
