@@ -765,14 +765,22 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
 
-  const queryClient = new QueryClient();
-
   try {
+    if (key) {
+      return {
+        props: {
+          accessUser: getAccessUserByCookies(getCookies({ req }))
+        }
+      };
+    }
+
+    const queryClient = new QueryClient();
+
     const { channel } = await queryClient.fetchQuery(queryKeys.channels.channel(Number(id)), () =>
       fetchChannel(Number(id))
     );
 
-    if (!channel && !key) {
+    if (!channel) {
       return {
         redirect: {
           destination: `/login?returnUrl=${encodeURI(resolvedUrl)}`,
@@ -780,18 +788,18 @@ export async function getServerSideProps({
         }
       };
     }
+
+    return {
+      props: {
+        accessUser: getAccessUserByCookies(getCookies({ req })),
+        dehydratedState: dehydrate(queryClient)
+      }
+    };
   } catch {
     return {
       notFound: true
     };
   }
-
-  return {
-    props: {
-      accessUser: getAccessUserByCookies(getCookies({ req })),
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
 }
 
 export default Channel;
