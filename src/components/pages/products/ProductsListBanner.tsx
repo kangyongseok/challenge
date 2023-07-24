@@ -32,6 +32,7 @@ function ProductsListBanner() {
 
   const handleClick = () => {
     logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+      name: attrProperty.name.PRODUCT_LIST,
       title: attrProperty.title.OPERATOR
     });
 

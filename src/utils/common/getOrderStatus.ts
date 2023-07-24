@@ -181,7 +181,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '결제완료';
       newOrderStatus.overlayText = '결제완료';
       newOrderStatus.description =
-        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<br/><p class="mt-8">판매자 승인 후 거래가 진행됩니다.</p>';
+        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<p class="mt-8">판매자 승인 후 거래가 진행됩니다.</p>';
       newOrderStatus.stepperValues = [
         {
           name: 'completeWithActive',
@@ -241,7 +241,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '환불완료';
       newOrderStatus.overlayText = '환불완료';
       newOrderStatus.description =
-        '거래가 취소되어 결제한 방법으로 환불되었어요.<br/><p class="mt-8">카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</p>';
+        '거래가 취소되어 결제한 방법으로 환불되었어요.<p class="mt-8">카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</p>';
     } else if (name === '환불대기') {
       newOrderStatus.displayText = '거래취소';
       newOrderStatus.overlayText = '거래취소';
@@ -290,7 +290,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '결제완료';
       newOrderStatus.overlayText = '결제완료';
       newOrderStatus.description =
-        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<br/><p class="mt-8">판매하려면 판매승인 버튼을 눌러주세요.</p>';
+        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<p class="mt-8">판매하려면 판매승인 버튼을 눌러주세요.</p>';
       newOrderStatus.stepperValues = [
         {
           name: 'completeWithActive',
@@ -444,7 +444,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '결제완료';
       newOrderStatus.overlayText = '결제완료';
       newOrderStatus.description =
-        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<br/><p class="mt-8">판매자 승인 후 거래가 진행됩니다.</p>';
+        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<p class="mt-8">판매자 승인 후 거래가 진행됩니다.</p>';
 
       newOrderStatus.stepperValues = [
         {

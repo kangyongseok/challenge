@@ -4,6 +4,11 @@ import { useTheme } from '@emotion/react';
 
 import type { Product } from '@dto/product';
 
+import { logEvent } from '@library/amplitude';
+
+import attrProperty from '@constants/attrProperty';
+import attrKeys from '@constants/attrKeys';
+
 import { commaNumber, getTenThousandUnitPrice } from '@utils/formats';
 import { getProductCardImageResizePath, getProductDetailUrl } from '@utils/common';
 
@@ -39,7 +44,11 @@ function OrdersDetailProductInfo() {
 
   const handleClickChat = () => router.push(`/channels/${channelId}`);
 
-  const handleClickShop = () =>
+  const handleClickShop = () => {
+    logEvent(attrKeys.orderDetail.CLICK_SELLER_PRODUCT, {
+      name: attrProperty.name.ORDER_DETAIL
+    });
+
     router.push({
       pathname: isAllCrawlingProduct
         ? `/sellerInfo/${product?.sellerId}`
@@ -48,6 +57,7 @@ function OrdersDetailProductInfo() {
         tab: 'products'
       }
     });
+  };
 
   return (
     <Flexbox

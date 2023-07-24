@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { Chip, Skeleton } from '@mrcamelhub/camel-ui';
@@ -16,6 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import { searchValueState } from '@recoil/search';
 import {
   filterOperationInfoSelector,
   productsFilterProgressDoneState,
@@ -27,6 +28,7 @@ function ProductsRelatedKeywords() {
   const { keyword = '', ...query } = router.query;
   const atomParam = router.asPath.split('?')[0];
 
+  const setSearchValueState = useSetRecoilState(searchValueState);
   const progressDone = useRecoilValue(productsFilterProgressDoneState);
   const { selectedSearchOptionsHistory } = useRecoilValue(filterOperationInfoSelector);
   const { searchParams: searchOptionsParams } = useRecoilValue(
@@ -71,19 +73,24 @@ function ProductsRelatedKeywords() {
           title,
           att: relatedKeyword
         });
+
+        const newKeyword = `${String(keyword || '').replace(
+          ` ${relatedKeyword}`,
+          ''
+        )} ${relatedKeyword}`;
+
+        setSearchValueState(newKeyword);
+
         router.push(
           {
-            pathname: `/products/search/${String(keyword || '').replace(
-              ` ${relatedKeyword}`,
-              ''
-            )} ${relatedKeyword}`,
+            pathname: `/products/search/${newKeyword}`,
             query
           },
           undefined,
           { shallow: true }
         );
       },
-    [keyword, query, router]
+    [keyword, query, router, setSearchValueState]
   );
 
   return !progressDone || relatedKeywords.length > 0 ? (

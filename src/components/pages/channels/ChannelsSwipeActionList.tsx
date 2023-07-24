@@ -187,7 +187,7 @@ function ChannelsSwipeActionList({
       const isTargetUserSeller =
         channelUserType[camelChannel.channelTargetUser.type as keyof typeof channelUserType] ===
         channelUserType[1];
-      const orderId = camelChannel.orders[0]?.id;
+      const orderId = camelChannel?.orders ? camelChannel?.orders[0]?.id : undefined;
       const channelId = camelChannel.channel?.id;
 
       mutatePutProductUpdateStatus(
@@ -222,10 +222,10 @@ function ChannelsSwipeActionList({
       );
     },
     [
-      camelChannel.channel?.id,
-      camelChannel.channelTargetUser,
-      camelChannel.orders,
-      camelChannel.product,
+      camelChannel?.channel?.id,
+      camelChannel?.channelTargetUser,
+      camelChannel?.orders,
+      camelChannel?.product,
       isLoadingMutatePutProductUpdateStatus,
       location,
       mutatePutProductUpdateStatus,
@@ -273,6 +273,7 @@ function ChannelsSwipeActionList({
           variant="ghost"
           brandColor="black"
           onClick={handleClickSelectTargetUser}
+          disabled={!camelChannel}
           customStyle={{ minWidth: 55 }}
         >
           선택

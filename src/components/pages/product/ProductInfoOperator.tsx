@@ -772,6 +772,7 @@ function ProductInfoOperator({
               variant="body2"
               onClick={() => {
                 logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+                  name: attrProperty.name.PRODUCT_DETAIL,
                   title: attrProperty.title.OPERATOR
                 });
                 router.push('/guide/operator');

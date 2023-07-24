@@ -442,6 +442,7 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
           open={openPurchasingAgentBottomSheet}
           onClose={() => setOpenPurchasingAgentBottomSheet(false)}
           onClickPayment={handleClickSafePayment}
+          logName={attrProperty.name.PRODUCT_DETAIL}
           logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
           orderInfoProps={productDetail?.orderInfo}
           isLegitType={productDetail?.product?.purchaseType === 2}

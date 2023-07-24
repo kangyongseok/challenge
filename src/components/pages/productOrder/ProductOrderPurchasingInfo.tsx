@@ -3,6 +3,7 @@ import { Box, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import { logEvent } from '@library/amplitude';
 
+import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import useQueryProduct from '@hooks/useQueryProduct';
@@ -27,7 +28,10 @@ function ProductOrderPurchasingInfo() {
       gap={6}
       customStyle={{ background: common.bg02, padding: '12px 20px' }}
       onClick={() => {
-        logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
+        logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+          name: attrProperty.name.ORDER_PAYMENT,
+          title: attrProperty.title.OPERATOR
+        });
         router.push('/products/purchasingInfo?step=2');
       }}
     >

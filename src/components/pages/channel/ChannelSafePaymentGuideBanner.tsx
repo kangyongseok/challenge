@@ -22,6 +22,7 @@ function ChannelSafePaymentGuideBanner() {
       justifyContent="space-between"
       onClick={() => {
         logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+          name: attrProperty.name.CHANNEL_DETAIL,
           title: attrProperty.title.ORDER
         });
         router.push('/products/purchasingInfo');

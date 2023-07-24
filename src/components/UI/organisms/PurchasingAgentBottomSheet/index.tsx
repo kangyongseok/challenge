@@ -32,6 +32,7 @@ function PurchasingAgentBottomSheet({
   open,
   onClose,
   onClickPayment,
+  logName,
   logTitle,
   orderInfoProps,
   isLegitType
@@ -39,6 +40,7 @@ function PurchasingAgentBottomSheet({
   open: boolean;
   onClose: () => void;
   onClickPayment: () => void;
+  logName: string;
   logTitle: 'OPERATOR' | 'ORDER';
   orderInfoProps?: OrderInfo;
   isLegitType: boolean;
@@ -71,6 +73,7 @@ function PurchasingAgentBottomSheet({
 
   const handleClickPurchasingAgent = () => {
     logEvent(attrKeys.productOrder.CLICK_ORDER_OPTION, {
+      name: logName,
       title: attrProperty.title.OPERATOR,
       att: isCheck ? 'LEGIT' : 'NONE',
       type: 'OPERATOR'
@@ -86,6 +89,7 @@ function PurchasingAgentBottomSheet({
   useEffect(() => {
     if (open) {
       logEvent(attrKeys.productOrder.VIEW_ORDER_OPTION, {
+        name: logName,
         title: logTitle
       });
     }
@@ -114,6 +118,7 @@ function PurchasingAgentBottomSheet({
           customStyle={{ textDecoration: 'underline' }}
           onClick={() => {
             logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+              name: logName,
               title: attrProperty.title.OPERATOR
             });
             router.push('/guide/operator');

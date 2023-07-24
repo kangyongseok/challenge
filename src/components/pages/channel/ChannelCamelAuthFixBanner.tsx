@@ -30,6 +30,7 @@ function ChannelCamelAuthFixBanner({
         customStyle={{ background: common.bg02, padding: '12px 20px' }}
         onClick={() => {
           logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, {
+            name: attrProperty.name.CHANNEL_DETAIL,
             title: attrProperty.title.OPERATOR
           });
           router.push('/guide/operator');

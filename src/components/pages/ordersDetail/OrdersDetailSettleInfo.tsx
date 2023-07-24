@@ -72,7 +72,6 @@ function OrdersDetailRefundInfo() {
               <Typography>배송비 별도</Typography>
             </Flexbox>
           )}
-
           <Flexbox justifyContent="space-between" alignment="center">
             <Typography color="ui60">정산계좌</Typography>
             {!userAccounts[0] ? (

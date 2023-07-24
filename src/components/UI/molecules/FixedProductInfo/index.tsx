@@ -317,6 +317,7 @@ function FixedProductInfo({
         open={openPurchasingAgentBottomSheet}
         onClose={() => setOpenPurchasingAgentBottomSheet(false)}
         onClickPayment={handleClick(true)}
+        logName={attrProperty.name.CHANNEL_DETAIL}
         logTitle={attrProperty.title.OPERATOR as 'OPERATOR'}
         orderInfoProps={data?.orderInfo}
         isLegitType={data?.product?.purchaseType === 2}
@@ -327,7 +328,7 @@ function FixedProductInfo({
         orderInfo={data?.orderInfo}
         onClick={onClickSafePayment}
         attributes={{
-          name: attrProperty.name.ORDER_DETAIL,
+          name: attrProperty.name.CHANNEL_DETAIL,
           title: attrProperty.title.ORDER
         }}
       />

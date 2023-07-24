@@ -48,6 +48,7 @@ function ProductPaymentMethodBottomSheet({
   const [openOrderFeeType, setOpenOrderFeeType] = useState<0 | 1 | 2 | null>(null);
 
   const loginBottomSheetOpenTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const loggedRef = useRef(false);
 
   const handleClick = (newType: 0 | 1 | 2) => () => setOrderTypeState(newType);
 
@@ -83,7 +84,7 @@ function ProductPaymentMethodBottomSheet({
   };
 
   const handleClickSafePaymentGuideText = () => {
-    logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE);
+    logEvent(attrKeys.productOrder.CLICK_CAMEL_GUIDE, attributes);
     router.push('/products/purchasingInfo');
   };
 
@@ -102,10 +103,17 @@ function ProductPaymentMethodBottomSheet({
   }, [setOrderTypeState, open, type]);
 
   useEffect(() => {
-    if (open) {
+    if (open && !loggedRef.current) {
+      loggedRef.current = true;
       logEvent(attrKeys.products.VIEW_ORDER_OPTION, attributes);
     }
   }, [open, attributes]);
+
+  useEffect(() => {
+    if (!open) {
+      loggedRef.current = false;
+    }
+  }, [open]);
 
   useEffect(() => {
     return () => {

@@ -107,7 +107,7 @@ function OrdersDetailStatus() {
     const { productId, targetUserName, targetUserId, isTargetUserSeller } = reviewFormInfo || {};
 
     logEvent(attrKeys.mypage.CLICK_REVIEW_SEND, {
-      name: attrProperty.name.ORDER_LIST,
+      name: attrProperty.name.ORDER_DETAIL,
       productId,
       orderId,
       channelId,
@@ -157,7 +157,6 @@ function OrdersDetailStatus() {
     if (typeof type !== 'number' || !orderStatus.name) return;
 
     logEvent(attrKeys.orderDetail.VIEW_ORDER_DETAIL, {
-      name: attrProperty.name.ORDER_DETAIL,
       orderId,
       productId: additionalInfo?.product?.id,
       type: getOrderType(type),
