@@ -47,7 +47,7 @@ function PurchasingAgentBottomSheet({
 }) {
   const {
     theme: {
-      palette: { common }
+      palette: { primary, common }
     }
   } = useTheme();
 
@@ -128,7 +128,7 @@ function PurchasingAgentBottomSheet({
         </Typography>
       </Flexbox>
       <Typography variant="h4" customStyle={{ marginTop: 6, wordBreak: 'keep-all' }}>
-        직접 거래하기 어렵고 무서울 때, 문의, 검수, 배송까지 모두 카멜이 대신해드려요!
+        직접 거래하기 어려운 매물을 문의, 거래, 검수, 배송까지 모두 카멜이 대신해드려요!
       </Typography>
       {isLegitType && (
         <Box
@@ -160,7 +160,7 @@ function PurchasingAgentBottomSheet({
                     }
                     variant="solid"
                     brandColor="primary"
-                    customStyle={{ borderRadius: 12 }}
+                    customStyle={{ backgroundColor: primary.light, borderRadius: 12 }}
                   />
                 ) : (
                   <Typography variant="h3" weight="bold" color={isCheck ? 'ui20' : 'ui60'}>
@@ -260,6 +260,21 @@ function PurchasingAgentBottomSheet({
                     brandColor="primary"
                     round={10}
                     size="xsmall"
+                    customStyle={{
+                      backgroundColor: primary.light
+                    }}
+                  />
+                )}
+                {orderInfo.discountFee > 0 && !orderInfo.totalFee && (
+                  <Label
+                    text="무료 이벤트"
+                    variant="solid"
+                    brandColor="primary"
+                    round={10}
+                    size="xsmall"
+                    customStyle={{
+                      backgroundColor: primary.light
+                    }}
                   />
                 )}
                 {!!orderInfo.discountFee && (

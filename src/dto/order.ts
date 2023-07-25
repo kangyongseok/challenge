@@ -44,6 +44,7 @@ export interface Order {
   description: string;
   dateCompleted: string;
   dateExpired: string;
+  beforeTotalPrice?: number;
 }
 
 export interface OrderDelivery {

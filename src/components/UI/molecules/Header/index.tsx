@@ -6,8 +6,10 @@ import { useRouter } from 'next/router';
 import { Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { HEADER_HEIGHT } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -146,7 +148,15 @@ function Header({
     const splitPathNames = router.pathname.split('/');
     const lastPathName = splitPathNames[splitPathNames.length - 1] || '';
 
-    const callBack = () => (window.history.length > 2 ? router.back() : router.push('/'));
+    const callBack = () => {
+      const lastPageUrl = SessionStorage.get(sessionStorageKeys.lastPageUrl);
+
+      if (lastPageUrl) {
+        router.back();
+      } else {
+        router.push('/');
+      }
+    };
 
     if (router.query.success) {
       router.replace('/user/shop');

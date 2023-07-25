@@ -25,7 +25,7 @@ function HomeMainBanner() {
 
   const {
     theme: {
-      palette: { common }
+      palette: { common, primary }
     }
   } = useTheme();
 
@@ -38,6 +38,13 @@ function HomeMainBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
+
+  const handleClick = () => {
+    logEvent(attrKeys.home.CLICK_BANNER, {
+      att: 'appFirstPayment'
+    });
+    router.push('/events/appFirstPayment');
+  };
 
   const handleClickTransferBanner = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
@@ -84,6 +91,25 @@ function HomeMainBanner() {
         width: '100%'
       }}
     >
+      <SwiperSlide>
+        <Box
+          onClick={handleClick}
+          customStyle={{
+            height: 104,
+            backgroundColor: primary.main
+          }}
+        >
+          <Image
+            height={104}
+            src={getImageResizePath({
+              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/banners/app-first-payment-event-banner.png`,
+              h: 104
+            })}
+            alt="앱 결제 시, 안전결제 ㄹ수수료 무료"
+            disableAspectRatio
+          />
+        </Box>
+      </SwiperSlide>
       <SwiperSlide>
         <Box
           onClick={handleClickOperatorDaangn}
@@ -163,7 +189,7 @@ function HomeMainBanner() {
           }}
         >
           {currentIndex + 1}
-          <span>/3</span>
+          <span>/4</span>
         </Typography>
       </Flexbox>
     </Swiper>

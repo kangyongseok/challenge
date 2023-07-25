@@ -9,7 +9,6 @@ import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/mole
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  HomeEventBannerBottomSheet,
   HomeFooter,
   HomeLegitContinueDialog,
   HomeRecommendPanel,
@@ -138,7 +137,6 @@ function Home() {
         }}
       />
       <HomeLegitContinueDialog />
-      <HomeEventBannerBottomSheet />
       <HomeWishAlertScreen />
     </>
   );

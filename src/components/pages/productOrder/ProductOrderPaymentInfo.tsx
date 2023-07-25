@@ -29,7 +29,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
 
   const {
     theme: {
-      palette: { secondary, common }
+      palette: { primary, secondary, common }
     }
   } = useTheme();
 
@@ -162,24 +162,31 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
             </Typography>
           ) : (
             <Flexbox alignment="center" gap={8} customStyle={{ marginLeft: 'auto' }}>
-              {orderFee.fee === 0 && orderFee.discountFee === 0 && orderFee.totalFee === 0 && (
-                <Label text="무료" variant="solid" brandColor="primary" round={10} size="xsmall" />
+              {!orderFee.fee && !orderFee.discountFee && !orderFee.totalFee && (
+                <Label
+                  text="무료"
+                  variant="solid"
+                  brandColor="primary"
+                  round={10}
+                  size="xsmall"
+                  customStyle={{
+                    backgroundColor: primary.light
+                  }}
+                />
               )}
-              {!!(
-                orderFee.type === 2 &&
-                orderFee.fee &&
-                orderFee.discountFee &&
-                orderFee.fee - orderFee.discountFee === 0
-              ) && (
+              {orderFee.discountFee > 0 && !orderFee.totalFee && (
                 <Label
                   text="무료 이벤트"
                   variant="solid"
                   brandColor="primary"
                   round={10}
                   size="xsmall"
+                  customStyle={{
+                    backgroundColor: primary.light
+                  }}
                 />
               )}
-              {!!orderFee.discountFee && (
+              {orderFee.discountFee > 0 && (
                 <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
                   {commaNumber(orderFee.fee)}원
                 </Typography>

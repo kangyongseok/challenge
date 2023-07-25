@@ -296,7 +296,7 @@ function ProductCTAButton() {
             {isLoggedIn && isAllOperatorProduct && (
               <Flexbox gap={4} alignment="center">
                 <Typography variant="body2" weight="medium" color="uiWhite" noWrap>
-                  [카멜 구매대행으로] 판매자에게 즉시 문의하고 거래하세요!
+                  카멜 구매대행으로 판매자에게 즉시 문의하고 거래하세요!
                 </Typography>
               </Flexbox>
             )}

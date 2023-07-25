@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
+import { Box, Button, Chip, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
+import styled from '@emotion/styled';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -29,7 +30,7 @@ function AppFirstPayment() {
       header={
         <Header showRight={false}>
           <Typography variant="h3" weight="bold">
-            앱 첫 결제 이벤트
+            안전결제수수료 무료 이벤트
           </Typography>
         </Header>
       }
@@ -68,71 +69,118 @@ function AppFirstPayment() {
         alt="App First Event Main Img"
         disableAspectRatio
       />
-      <Flexbox
-        direction="vertical"
-        gap={52}
-        customStyle={{
-          padding: '73px 32px 53px'
-        }}
-      >
-        <Flexbox direction="vertical" gap={4}>
-          <Typography weight="bold" color="ui60">
-            이벤트 내용
-          </Typography>
-          <Typography
-            customStyle={{
-              '& > span': {
-                fontWeight: 700
-              }
-            }}
-          >
-            <span>APP 설치 및 가입 후</span>, 첫 결제 시 자동으로 할인 적용
-          </Typography>
+      {!checkAgent.isMobileApp() && (
+        <Flexbox
+          direction="vertical"
+          gap={52}
+          customStyle={{
+            padding: '73px 32px 53px'
+          }}
+        >
+          <Flexbox direction="vertical" gap={12} alignment="center">
+            <Chip variant="solid" brandColor="black">
+              <Typography
+                weight="bold"
+                color="uiWhite"
+                customStyle={{ textAlign: 'center', width: '100%' }}
+              >
+                이벤트 내용
+              </Typography>
+            </Chip>
+            <Typography weight="bold" variant="h2" customStyle={{ textAlign: 'center' }}>
+              APP 설치 및 가입 후,
+              <br />
+              결제 시 자동으로 할인 적용
+            </Typography>
+          </Flexbox>
+          <Flexbox direction="vertical" gap={12} alignment="center">
+            <Chip variant="solid" brandColor="black">
+              <Typography
+                weight="bold"
+                textAlign="center"
+                color="uiWhite"
+                customStyle={{ width: '100%' }}
+              >
+                이벤트 기간
+              </Typography>
+            </Chip>
+            <Typography weight="bold" variant="h2" textAlign="center">
+              7월 31일(월)까지
+            </Typography>
+          </Flexbox>
+          <Flexbox direction="vertical" gap={12} alignment="center">
+            <Chip variant="solid" brandColor="black">
+              <Typography
+                weight="bold"
+                color="uiWhite"
+                customStyle={{ textAlign: 'center', width: '100%' }}
+              >
+                혜택
+              </Typography>
+            </Chip>
+            <Typography weight="bold" variant="h2" customStyle={{ textAlign: 'center' }}>
+              안전결제수수료 무료
+            </Typography>
+            <Image
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/app-first-payment-event-benefit.png`,
+                w: 390
+              })}
+              alt="App First Event Main Img"
+              disableAspectRatio
+              customStyle={{
+                marginTop: 20
+              }}
+            />
+          </Flexbox>
+          <Box customStyle={{ borderTop: '1px solid #DCDDE0', paddingTop: 52 }}>
+            <Typography weight="bold">안내사항</Typography>
+            <InfoList>
+              <li>
+                <Typography variant="h4" color="ui60">
+                  결제가 판매자에 의해 취소된 경우, 본 이벤트가 자동으로 다시 적용됩니다.
+                </Typography>
+              </li>
+              <li>
+                <Typography variant="h4" color="ui60">
+                  부정한 방법으로 이벤트에 참여한 경우 결제가 취소되거나 계정이 정지될 수 있습니다.
+                </Typography>
+              </li>
+              <li>
+                <Typography variant="h4" color="ui60">
+                  내부 의사결정 및 상황에 따라 사전 공지 없이 종료될 수 있습니다. 늦지 않게
+                  참여해보세요!
+                </Typography>
+              </li>
+            </InfoList>
+            <Typography />
+          </Box>
         </Flexbox>
-        <Flexbox direction="vertical" gap={4}>
-          <Typography weight="bold" color="ui60">
-            혜택
-          </Typography>
-          <Typography
-            customStyle={{
-              '& > span': {
-                fontWeight: 700
-              }
-            }}
-          >
-            거래금액의 <span>3% 자동 할인 적용</span>
-            <br />
-            (최대 300,000원 한도)
-          </Typography>
-          <Image
-            src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/app-first-payment-event-benefit.png`,
-              w: 390
-            })}
-            alt="App First Payment Event Benefit Img"
-            disableAspectRatio
-            customStyle={{
-              marginTop: 16
-            }}
-          />
-        </Flexbox>
-        <Flexbox direction="vertical" gap={4}>
-          <Typography weight="bold" color="ui60">
-            걱정마세요!
-          </Typography>
-          <Typography
-            customStyle={{
-              '& > span': {
-                fontWeight: 700
-              }
-            }}
-          >
-            결제가 <span>판매자에 의해 취소</span>된 경우, 본 이벤트가 자동으로 다시 적용됩니다.
-          </Typography>
-        </Flexbox>
-      </Flexbox>
+      )}
     </GeneralTemplate>
   );
 }
+
+const InfoList = styled.ul`
+  /* text-indent: -1px; */
+  margin-top: 12px;
+  margin-left: 15px;
+  li {
+    padding-left: 5px;
+    position: relative;
+    margin-bottom: 5px;
+  }
+  li:before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #7b7d85;
+    position: absolute;
+    left: -10px;
+    top: 7px;
+  }
+`;
 
 export default AppFirstPayment;

@@ -98,6 +98,11 @@ function FixedProductInfo({
   );
 
   const orderStatus = useOrderStatus({ order: order as Order });
+  const safePaymentOrderFee = data?.orderInfo?.orderFees?.find(({ type }) => type === 0);
+  const isSafePaymentOrderFeeFree =
+    typeof safePaymentOrderFee?.discountFee === 'number' &&
+    safePaymentOrderFee?.discountFee > 0 &&
+    !safePaymentOrderFee?.totalFee;
 
   const [openPurchasingAgentBottomSheet, setOpenPurchasingAgentBottomSheet] = useState(false);
   const [openProductPaymentBottomSheet, setOpenProductPaymentBottomSheet] = useState(false);
@@ -259,7 +264,12 @@ function FixedProductInfo({
                   {commaNumber(getTenThousandUnitPrice(data?.orderInfo?.totalPrice || price))}
                   만원
                 </Typography>
-                {isAllOperatorProduct && (
+                {isSafePaymentOrderFeeFree && (
+                  <Typography variant="small2" color="ui60" customStyle={{ paddingBottom: 2 }}>
+                    안전결제수수료 무료
+                  </Typography>
+                )}
+                {!isSafePaymentOrderFeeFree && isAllOperatorProduct && (
                   <Typography variant="small2" color="ui60" customStyle={{ paddingBottom: 2 }}>
                     카멜 구매대행가
                   </Typography>

@@ -157,6 +157,11 @@ function ProductInfoOperator({
   }/assets/images/brands/fit/${productDetail?.product?.brand?.nameEng
     .toLowerCase()
     .replace(/\s/g, '')}.jpg`;
+  const safePaymentOrderFee = productDetail?.orderInfo?.orderFees?.find(({ type }) => type === 0);
+  const isSafePaymentOrderFeeFree =
+    typeof safePaymentOrderFee?.discountFee === 'number' &&
+    safePaymentOrderFee?.discountFee > 0 &&
+    !safePaymentOrderFee?.totalFee;
 
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
@@ -598,8 +603,18 @@ function ProductInfoOperator({
               {productDetail?.product?.title}
             </Typography>
             <Flexbox alignment="flex-end" gap={4} customStyle={{ alignItems: 'baseline' }}>
-              <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
-                {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo.totalPrice || 0))}
+              <Typography
+                variant="h2"
+                weight="bold"
+                color={isSafePaymentOrderFeeFree ? 'ui80' : undefined}
+                customStyle={{
+                  marginTop: 4,
+                  textDecoration: isSafePaymentOrderFeeFree ? 'line-through' : undefined
+                }}
+              >
+                {commaNumber(
+                  getTenThousandUnitPrice(productDetail?.orderInfo?.beforeTotalPrice || 0)
+                )}
                 만원
               </Typography>
               <Flexbox alignment="center" onClick={handleClickDropDownFeeOption}>
@@ -609,6 +624,17 @@ function ProductInfoOperator({
                 <Icon name="QuestionCircleOutlined" width={20} height={20} color="ui80" />
               </Flexbox>
             </Flexbox>
+            {isSafePaymentOrderFeeFree && (
+              <Flexbox alignment="flex-end" gap={4} customStyle={{ alignItems: 'baseline' }}>
+                <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
+                  {commaNumber(getTenThousandUnitPrice(productDetail?.orderInfo?.totalPrice || 0))}
+                  만원
+                </Typography>
+                <Typography weight="medium" color="red-light">
+                  안전결제수수료 무료
+                </Typography>
+              </Flexbox>
+            )}
           </Box>
           {!isMySelfProduct && (
             <Tooltip

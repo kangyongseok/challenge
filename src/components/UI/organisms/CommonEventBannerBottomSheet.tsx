@@ -4,14 +4,16 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { BottomSheet, Button, Flexbox, Image } from '@mrcamelhub/camel-ui';
 
+import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { EVENT_AD_BANNER_HIDE_DATE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
-function HomeEventBannerBottomSheet() {
+function CommonEventBannerBottomSheet() {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -19,19 +21,19 @@ function HomeEventBannerBottomSheet() {
   const handleClick = () => {
     logEvent(attrKeys.home.CLICK_MAIN_MODAL, {
       name: attrProperty.name.MAIN,
-      title: '2302_CAMEL_PRODUCT',
-      att: 'YES'
+      title: '2307_PRODUCT_FEE'
     });
 
-    router.push({
-      pathname: '/events/camelSellerEvent',
-      query: {
-        banner: true
-      }
-    });
+    SessionStorage.set(sessionStorageKeys.hideCommonEventBannerBottomSheet, true);
+    setOpen(false);
+
+    router.push('/events/appFirstPayment');
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    SessionStorage.set(sessionStorageKeys.hideCommonEventBannerBottomSheet, true);
+    setOpen(false);
+  };
 
   const handleClickTodayHide = () => {
     LocalStorage.set(EVENT_AD_BANNER_HIDE_DATE, dayjs().format('YYYY-MM-DD'));
@@ -39,33 +41,35 @@ function HomeEventBannerBottomSheet() {
   };
 
   useEffect(() => {
+    if (router.pathname === '/events/appFirstPayment') return;
+
+    const hide = SessionStorage.get<boolean>(sessionStorageKeys.hideCommonEventBannerBottomSheet);
     const hideDate = LocalStorage.get<string>(EVENT_AD_BANNER_HIDE_DATE);
 
-    // 이벤트 바텀시트 임시 비활성화
     if (hideDate) {
-      if (dayjs().diff(hideDate, 'days') >= 1) {
+      if (!hide && dayjs().diff(hideDate, 'days') >= 1) {
         LocalStorage.remove(EVENT_AD_BANNER_HIDE_DATE);
         setOpen(true);
       }
-    } else {
+    } else if (!hide) {
       setOpen(true);
     }
-  }, []);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (open) {
       logEvent(attrKeys.home.VIEW_MAIN_MODAL, {
         name: attrProperty.name.MAIN,
-        title: '2302_CAMEL_PRODUCT',
+        title: '2307_CAMEL_PRODUCT',
         att: 'JOIN'
       });
     }
   }, [open]);
 
   return (
-    <BottomSheet open={false} onClose={handleClose} disableSwipeable>
+    <BottomSheet open={open} onClose={handleClose} disableSwipeable>
       <Image
-        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/event-camel-seller-ad.png`}
+        src={`https://${process.env.IMAGE_DOMAIN}/assets/images/events/app-first-payment-pop-banner.png`}
         alt="Event Banner Img"
         disableAspectRatio
         onClick={handleClick}
@@ -86,4 +90,4 @@ function HomeEventBannerBottomSheet() {
   );
 }
 
-export default HomeEventBannerBottomSheet;
+export default CommonEventBannerBottomSheet;

@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
-import { Button, Flexbox, Icon, Tooltip, Typography } from '@mrcamelhub/camel-ui';
+import { Button, Flexbox, Icon, Label, Tooltip, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
 import { Gap } from '@components/UI/atoms';
 
@@ -22,6 +23,10 @@ import useOrderStatus from '@hooks/useOrderStatus';
 function OrdersDetailPaymentInfo() {
   const router = useRouter();
   const { id } = router.query;
+
+  const {
+    palette: { primary }
+  } = useTheme();
 
   const setOpenCancelDialogState = useSetRecoilState(ordersDetailOpenCancelDialogState);
   const setOpenCancelRequestDialogState = useSetRecoilState(
@@ -79,56 +84,89 @@ function OrdersDetailPaymentInfo() {
             <Typography color="ui60">매물가격</Typography>
             <Typography>{commaNumber(price || 0)}원</Typography>
           </Flexbox>
-          {orderFees.map(({ name, fee: orderFee, type: orderFeeType, feeRate }) => (
-            <Flexbox key={`order-fee-${name}`} justifyContent="space-between" alignment="center">
-              <Typography
-                color="ui60"
-                customStyle={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2
-                }}
-              >
-                {name}
-                <Tooltip
-                  open={openOrderFeeType === orderFeeType}
-                  message={
-                    <>
-                      {OrderFeeTooltipMessage({ safeFee: feeRate })[orderFeeType].map(
-                        (message: string) => (
-                          <TooltipText
-                            key={message}
-                            color="uiWhite"
-                            variant="body2"
-                            weight="medium"
-                          >
-                            {message}
-                          </TooltipText>
-                        )
-                      )}
-                    </>
-                  }
-                  placement="top"
-                  triangleLeft={33}
-                  spaceBetween={5}
+          {orderFees.map(
+            ({ name, fee: orderFee, type: orderFeeType, feeRate, discountFee, totalFee }) => (
+              <Flexbox key={`order-fee-${name}`} justifyContent="space-between" alignment="center">
+                <Typography
+                  color="ui60"
                   customStyle={{
                     display: 'flex',
-                    left: 100,
-                    zIndex: 5
+                    alignItems: 'center',
+                    gap: 2
                   }}
                 >
-                  <Icon
-                    name="QuestionCircleOutlined"
-                    width={16}
-                    height={16}
-                    color="ui80"
-                    onClick={handleClick(orderFeeType)}
-                  />
-                </Tooltip>
-              </Typography>
-              <Typography>{commaNumber(orderFee || 0)}원</Typography>
-            </Flexbox>
-          ))}
+                  {name}
+                  <Tooltip
+                    open={openOrderFeeType === orderFeeType}
+                    message={
+                      <>
+                        {OrderFeeTooltipMessage({ safeFee: feeRate })[orderFeeType].map(
+                          (message: string) => (
+                            <TooltipText
+                              key={message}
+                              color="uiWhite"
+                              variant="body2"
+                              weight="medium"
+                            >
+                              {message}
+                            </TooltipText>
+                          )
+                        )}
+                      </>
+                    }
+                    placement="top"
+                    triangleLeft={33}
+                    spaceBetween={5}
+                    customStyle={{
+                      display: 'flex',
+                      left: 100,
+                      zIndex: 5
+                    }}
+                  >
+                    <Icon
+                      name="QuestionCircleOutlined"
+                      width={16}
+                      height={16}
+                      color="ui80"
+                      onClick={handleClick(orderFeeType)}
+                    />
+                  </Tooltip>
+                </Typography>
+                <Flexbox alignment="center" gap={8}>
+                  {!orderFee && !discountFee && !totalFee && (
+                    <Label
+                      text="무료"
+                      variant="solid"
+                      brandColor="primary"
+                      round={10}
+                      size="xsmall"
+                      customStyle={{
+                        backgroundColor: primary.light
+                      }}
+                    />
+                  )}
+                  {discountFee > 0 && !totalFee && (
+                    <Label
+                      text="무료 이벤트"
+                      variant="solid"
+                      brandColor="primary"
+                      round={10}
+                      size="xsmall"
+                      customStyle={{
+                        backgroundColor: primary.light
+                      }}
+                    />
+                  )}
+                  {discountFee > 0 && (
+                    <Typography color="ui80" customStyle={{ textDecoration: 'line-through' }}>
+                      {commaNumber(orderFee)}원
+                    </Typography>
+                  )}
+                  <Typography>{commaNumber(totalFee || 0)}원</Typography>
+                </Flexbox>
+              </Flexbox>
+            )
+          )}
           {type !== 1 && (
             <Flexbox justifyContent="space-between" alignment="center">
               <Typography color="ui60">배송비</Typography>

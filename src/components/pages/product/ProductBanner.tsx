@@ -22,7 +22,6 @@ function ProductBanner({
     <Box
       onClick={handleClick}
       customStyle={{
-        margin: '0 -20px',
         borderBottom: `8px solid ${common.bg02}`,
         backgroundColor: bannerColor
       }}

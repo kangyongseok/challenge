@@ -8,6 +8,7 @@ const legitGuideEventProperties = 'legitGuideEventProperties';
 const hideMyPortfolioReservationAd = 'hideMyPortfolioReservationAd';
 const hideCamelSellerRecentPriceTooltip = 'hideCamelSellerRecentPriceTooltip';
 const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
+const hideCommonEventBannerBottomSheet = 'hideCommonEventBannerBottomSheet';
 const personalProductsCache = 'personalProductsCache';
 const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
 const savedCreateChannelParams = 'savedCreateChannelParams';
@@ -30,6 +31,7 @@ const sessionStorageKeys = {
   hideMyPortfolioReservationAd,
   hideCamelSellerRecentPriceTooltip,
   hideCrazyCurationEventBannerIds,
+  hideCommonEventBannerBottomSheet,
   personalProductsCache,
   pushToSavedRedirectChannel,
   savedCreateChannelParams,

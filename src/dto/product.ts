@@ -441,6 +441,7 @@ export type ProductResult = {
   sellerType?: (typeof productType)[keyof typeof productType];
   sellerUserId?: number;
   size: string | null;
+  orderInfo?: OrderInfo;
 };
 
 export type PageProduct = Paged<Product>;

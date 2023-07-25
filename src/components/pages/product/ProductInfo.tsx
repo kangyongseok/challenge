@@ -158,6 +158,11 @@ function ProductInfo({
   }/assets/images/brands/fit/${productDetail?.product?.brand?.nameEng
     .toLowerCase()
     .replace(/\s/g, '')}.jpg`;
+  const safePaymentOrderFee = productDetail?.orderInfo?.orderFees?.find(({ type }) => type === 0);
+  const isSafePaymentOrderFeeFree =
+    typeof safePaymentOrderFee?.discountFee === 'number' &&
+    safePaymentOrderFee?.discountFee > 0 &&
+    !safePaymentOrderFee?.totalFee;
 
   const convertedDescription = useMemo(() => {
     const newDescription = removeTagAndAddNewLine(
@@ -627,9 +632,16 @@ function ProductInfo({
             >
               {productDetail?.product?.title}
             </Typography>
-            <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
-              {commaNumber(getTenThousandUnitPrice(productDetail.product.price))}만원
-            </Typography>
+            <Flexbox alignment="baseline" gap={4}>
+              <Typography variant="h2" weight="bold" customStyle={{ marginTop: 4 }}>
+                {commaNumber(getTenThousandUnitPrice(productDetail.product.price))}만원
+              </Typography>
+              {isSafePaymentOrderFeeFree && (
+                <Typography weight="medium" color="ui60">
+                  안전결제수수료 무료
+                </Typography>
+              )}
+            </Flexbox>
             <Flexbox
               justifyContent="space-between"
               alignment="center"
