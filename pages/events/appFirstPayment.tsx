@@ -29,7 +29,15 @@ function AppFirstPayment() {
     <GeneralTemplate
       header={
         <Header showRight={false}>
-          <Typography variant="h3" weight="bold">
+          <Typography
+            variant="h3"
+            weight="bold"
+            textAlign="center"
+            noWrap
+            customStyle={{
+              wordBreak: 'keep-all'
+            }}
+          >
             안전결제수수료 무료 이벤트
           </Typography>
         </Header>
@@ -123,7 +131,7 @@ function AppFirstPayment() {
             </Typography>
             <Image
               src={getImageResizePath({
-                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/app-first-payment-event-benefit.png`,
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/events/app-first-payment-event-benefit-2.png`,
                 w: 390
               })}
               alt="App First Event Main Img"
