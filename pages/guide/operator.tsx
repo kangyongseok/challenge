@@ -17,8 +17,10 @@ import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { QnaList } from '@components/pages/qna';
 
+import SessionStorage from '@library/sessionStorage';
 import { logEvent } from '@library/amplitude';
 
+import sessionStorageKeys from '@constants/sessionStorageKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
@@ -30,6 +32,16 @@ function Operator() {
   } = useTheme();
 
   const router = useRouter();
+
+  const handleClick = () => {
+    const lastPageUrl = SessionStorage.get<string>(sessionStorageKeys.lastPageUrl);
+
+    if (lastPageUrl) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  };
 
   useEffect(() => {
     logEvent(attrKeys.guide.VIEW_CAMEL_GUIDE, {
@@ -53,11 +65,7 @@ function Operator() {
             hideTitle
             rightIcon={<div />}
             leftIcon={
-              <Icon
-                name="CloseOutlined"
-                customStyle={{ marginLeft: 16 }}
-                onClick={() => router.back()}
-              />
+              <Icon name="CloseOutlined" customStyle={{ marginLeft: 16 }} onClick={handleClick} />
             }
           />
         }
@@ -88,7 +96,7 @@ function Operator() {
                 variant="solid"
                 brandColor="primary"
                 size="xlarge"
-                onClick={() => router.back()}
+                onClick={handleClick}
               >
                 계속 거래하기
               </Button>
