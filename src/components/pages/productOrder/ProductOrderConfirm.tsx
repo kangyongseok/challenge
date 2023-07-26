@@ -365,7 +365,7 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
           disabled={
             !checkedAll ||
             (accessUser?.snsType === 'sms' ? !checked : false) ||
-            (Number(type) === 1 ? true : !deliveryInfo) ||
+            (Number(type) === 1 ? false : !deliveryInfo) ||
             !accessUser ||
             isLoading ||
             isLoadingProduct ||
