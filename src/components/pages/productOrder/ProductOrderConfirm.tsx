@@ -365,13 +365,13 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
           disabled={
             !checkedAll ||
             (accessUser?.snsType === 'sms' ? !checked : false) ||
+            (Number(type) === 1 ? true : !deliveryInfo) ||
             !accessUser ||
             isLoading ||
             isLoadingProduct ||
             !externalId ||
             !name ||
             !totalPrice ||
-            !deliveryInfo ||
             status !== 0 ||
             result !== 0 ||
             (isAllOperatorProduct ? !operatorChecked : false)
