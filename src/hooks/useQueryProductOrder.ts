@@ -19,14 +19,14 @@ function useQueryProductOrder({ productId, includeLegit, type = 0 }: UseQueryPro
     queryKeys.orders.productOrder({
       productId,
       isCreated: true,
-      includeLegit,
+      includeLegit: includeLegit === 'undefined' ? undefined : includeLegit,
       type
     }),
     () =>
       fetchProductOrder({
         productId,
         isCreated: true,
-        includeLegit,
+        includeLegit: includeLegit === 'undefined' ? undefined : includeLegit,
         type
       }),
     {
