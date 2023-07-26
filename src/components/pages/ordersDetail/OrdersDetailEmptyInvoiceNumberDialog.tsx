@@ -111,7 +111,7 @@ const RadioGroupWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 8px;
-  margin-top: 16px;
+  margin-top: 8px;
 
   & > div {
     height: 36px;

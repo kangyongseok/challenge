@@ -86,7 +86,7 @@ function OrdersDetailSalesCancelDialog() {
         direction="vertical"
         gap={16}
         customStyle={{
-          marginTop: 16
+          marginTop: 8
         }}
       >
         <RadioGroup
