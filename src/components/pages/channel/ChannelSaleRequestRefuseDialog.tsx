@@ -13,7 +13,7 @@ import { Button, Flexbox, RadioGroup, Typography } from '@mrcamelhub/camel-ui';
 import styled, { CSSObject } from '@emotion/styled';
 
 import type { ChannelUser } from '@dto/user';
-import { Order } from '@dto/order';
+import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
 
 import { logEvent } from '@library/amplitude';
@@ -90,7 +90,7 @@ function ChannelSaleRequestRefuseDialog({
   return (
     <Dialog open={open} onClose={handleClose} renderScope="component">
       <Typography variant="h3" weight="bold" textAlign="center">
-        주문을 취소할까요?
+        판매요청을 거절할까요?
       </Typography>
       <Typography
         variant="h4"
@@ -99,15 +99,19 @@ function ChannelSaleRequestRefuseDialog({
           marginTop: 8
         }}
       >
-        {channelTargetUser?.user?.nickName}님의 주문이 취소됩니다.
+        {channelTargetUser?.user?.nickName}님에게 거절사유가
+        <br />
+        전달되며 주문이 취소됩니다.
       </Typography>
       <Typography
         weight="medium"
+        textAlign="left"
+        color="ui60"
         customStyle={{
           marginTop: 32
         }}
       >
-        취소사유
+        거절사유
       </Typography>
       <Flexbox
         direction="vertical"
@@ -117,19 +121,10 @@ function ChannelSaleRequestRefuseDialog({
         }}
       >
         <RadioGroup
-          text="이미 판매된 매물"
+          text="품절 또는 예약된 매물"
           onChange={handleChange}
-          value="이미 판매된 매물"
-          checked={value === '이미 판매된 매물'}
-          customStyle={{
-            gap: 8
-          }}
-        />
-        <RadioGroup
-          text="다른 사람에게 예약됨"
-          onChange={handleChange}
-          value="다른 사람에게 예약됨"
-          checked={value === '다른 사람에게 예약됨'}
+          value="매물이 이미 판매되었습니다."
+          checked={value === '매물이 이미 판매되었습니다.'}
           customStyle={{
             gap: 8
           }}
@@ -145,7 +140,11 @@ function ChannelSaleRequestRefuseDialog({
         />
       </Flexbox>
       {value === '직접입력' && (
-        <TextArea onChange={handleChangeTextArea} value={reason} placeholder="취소사유 입력" />
+        <TextArea
+          onChange={handleChangeTextArea}
+          value={reason}
+          placeholder="구매자가 이해할 수 있도록 거절사유를 친절하게 입력해주세요."
+        />
       )}
       <Flexbox
         direction="vertical"

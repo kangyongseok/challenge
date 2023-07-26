@@ -42,7 +42,6 @@ function OrdersDetailPaymentInfo() {
       totalPrice = 0,
       orderPayments = [],
       orderFees = [],
-      type,
       hold,
       cancelReasons
     } = {}
@@ -167,7 +166,7 @@ function OrdersDetailPaymentInfo() {
               </Flexbox>
             )
           )}
-          {type !== 1 && (
+          {!orderStatus.otherDeliveryMethod && (
             <Flexbox justifyContent="space-between" alignment="center">
               <Typography color="ui60">배송비</Typography>
               <Typography>배송비 별도</Typography>
@@ -175,11 +174,9 @@ function OrdersDetailPaymentInfo() {
           )}
           <Flexbox justifyContent="space-between" alignment="center">
             <Typography color="ui60">결제방법</Typography>
-            <Typography>
-              {orderPayments[0]?.method === 1 ? '무통장입금' : orderPayments[0]?.agencyName}
-            </Typography>
+            <Typography>{orderStatus.paymentMethod}</Typography>
           </Flexbox>
-          {orderPayments[0]?.method === 1 && (
+          {orderStatus.paymentMethod === '무통장입금' && (
             <>
               <Flexbox justifyContent="space-between" alignment="center">
                 <Typography color="ui60">입금은행</Typography>
@@ -202,7 +199,7 @@ function OrdersDetailPaymentInfo() {
         </Flexbox>
         <Flexbox justifyContent="space-between">
           <Typography variant="h4" weight="medium">
-            {orderPayments[0]?.method === 1 && orderStatus.name === '결제진행'
+            {orderStatus.paymentMethod === '무통장입금' && orderStatus.name === '결제진행'
               ? '입금예정금액'
               : '총 결제금액'}
           </Typography>
@@ -222,9 +219,8 @@ function OrdersDetailPaymentInfo() {
           </Button>
         )}
         {!orderStatus.isSeller &&
-          !cancelReasons?.request &&
+          !cancelReasons?.response &&
           ['배송대기', '거래대기'].includes(orderStatus.name) &&
-          orderStatus.paymentMethod !== '카멜 구매대행' &&
           !hold && (
             <Button
               variant="ghost"

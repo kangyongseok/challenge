@@ -1,11 +1,21 @@
 import { useSetRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  useMutation
+} from '@tanstack/react-query';
 import type { AdminMessage } from '@sendbird/chat/message';
 import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import OrderSearchDelieryForm from '@components/pages/order/OrderSearchDelieryForm';
 
 import type { Order } from '@dto/order';
+import { ChannelDetail } from '@dto/channel';
+
+import { putProductUpdateStatus } from '@api/product';
 
 import { getOrderStatusText } from '@utils/common/getOrderStatusText';
 
@@ -15,16 +25,30 @@ import useSession from '@hooks/useSession';
 interface ChannelOrderDeliveryCompleteMessageProps {
   message: AdminMessage;
   order?: Order | null;
+  productId: number;
   isSeller: boolean;
+  targetUserId: number;
+  targetUserName: string;
+  hasUserReview: boolean;
+  refetchChannel: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ChannelDetail, unknown>>;
   onClickOrderDetail: () => void;
 }
 
 function ChannelOrderDeliveryCompleteMessage({
   message: { data, createdAt },
   order,
+  productId,
   isSeller,
+  targetUserId,
+  targetUserName,
+  hasUserReview,
+  refetchChannel,
   onClickOrderDetail
 }: ChannelOrderDeliveryCompleteMessageProps) {
+  const router = useRouter();
+
   const {
     theme: {
       palette: { common }
@@ -35,7 +59,31 @@ function ChannelOrderDeliveryCompleteMessage({
 
   const { data: accessUser } = useSession();
 
+  const { mutate } = useMutation(putProductUpdateStatus);
+
   if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
+
+  const handleClick = () => {
+    mutate(
+      { productId, status: 1, soldType: 1, targetUserId },
+      {
+        async onSuccess() {
+          await refetchChannel();
+          router.push({
+            pathname: '/user/reviews/form',
+            query: {
+              productId,
+              targetUserName,
+              targetUserId,
+              isTargetUserSeller: !isSeller,
+              orderId: order?.id,
+              channelId: order?.channelId
+            }
+          });
+        }
+      }
+    );
+  };
 
   const parcel = 1;
   const isParcel = order?.orderDelivery?.type === parcel;
@@ -87,47 +135,175 @@ function ChannelOrderDeliveryCompleteMessage({
           <Typography variant="h4" weight="bold">
             배송완료
           </Typography>
+          {order?.type === 2 ? (
+            <>
+              <Typography
+                customStyle={{
+                  marginTop: 8
+                }}
+              >
+                배송이 완료되었어요.
+              </Typography>
+              {isSeller && isParcel && (
+                <OrderSearchDelieryForm
+                  id={order.id}
+                  customButton={
+                    <Button
+                      fullWidth
+                      size="medium"
+                      variant="ghost"
+                      brandColor="black"
+                      customStyle={{ marginTop: 20 }}
+                      type="submit"
+                    >
+                      배송조회
+                    </Button>
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <Typography
+                customStyle={{
+                  marginTop: 8
+                }}
+              >
+                구매자가 구매확정하면 즉시 정산되며,{' '}
+                {dayjs(order?.dateExpired).format('M월 D일(ddd)')}
+                까지 구매확정하지 않아도 자동으로 정산됩니다.
+                {isParcel && (
+                  <>
+                    <br />
+                    배송현황은 배송조회를 클릭하여 확인해주세요.
+                  </>
+                )}
+              </Typography>
+              {isParcel ? (
+                <OrderSearchDelieryForm
+                  id={order.id}
+                  customButton={
+                    <Button
+                      fullWidth
+                      size="medium"
+                      variant="ghost"
+                      brandColor="black"
+                      customStyle={{ marginTop: 20 }}
+                      type="submit"
+                    >
+                      배송조회
+                    </Button>
+                  }
+                />
+              ) : (
+                <Flexbox
+                  customStyle={{
+                    background: common.bg02,
+                    padding: 8,
+                    borderRadius: 8,
+                    marginTop: 20
+                  }}
+                  direction="vertical"
+                  gap={8}
+                >
+                  <Typography variant="body2" color="ui60">
+                    배송방법
+                  </Typography>
+                  <Typography variant="body2">{getTypeText()}</Typography>
+                </Flexbox>
+              )}
+            </>
+          )}
+          <Flexbox
+            alignment="center"
+            gap={4}
+            onClick={onClickOrderDetail}
+            customStyle={{
+              margin: '20px -20px -20px',
+              padding: '12px 20px',
+              backgroundColor: common.bg02
+            }}
+          >
+            <Icon name="FileFilled" color="primary-light" />
+            <Typography weight="medium" color="primary-light">
+              주문상세보기
+            </Typography>
+          </Flexbox>
+        </Box>
+        <Typography
+          variant="small2"
+          customStyle={{
+            color: common.ui60
+          }}
+        >
+          {dayjs(createdAt).format('A hh:mm')}
+        </Typography>
+      </Flexbox>
+    );
+  }
+
+  if (!isSeller && order?.type === 2) {
+    return (
+      <Flexbox
+        gap={4}
+        alignment="flex-end"
+        customStyle={{
+          margin: '20px 0'
+        }}
+      >
+        <Box
+          customStyle={{
+            flexGrow: 1,
+            maxWidth: 265,
+            padding: 20,
+            border: `1px solid ${common.line01}`,
+            borderRadius: 20,
+            overflow: 'hidden'
+          }}
+        >
+          <Typography
+            variant="body3"
+            weight="bold"
+            color="primary-light"
+            customStyle={{
+              marginBottom: 4
+            }}
+          >
+            카멜 구매대행
+          </Typography>
+          <Typography variant="h4" weight="bold">
+            배송완료
+          </Typography>
           <Typography
             customStyle={{
               marginTop: 8
             }}
           >
-            구매자가 구매확정하면 즉시 정산되며, {dayjs(order?.dateExpired).format('M월 D일(ddd)')}
-            까지 구매확정하지 않아도 자동으로 정산됩니다.
-            {isParcel && (
-              <>
-                <br />
-                배송현황은 배송조회를 클릭하여 확인해주세요.
-              </>
-            )}
+            카멜 구매대행으로 구매한 매물의 배송이 완료되었어요.
           </Typography>
-          {isParcel ? (
-            <OrderSearchDelieryForm
-              id={order.id}
-              customButton={
-                <Button
-                  fullWidth
-                  size="medium"
-                  variant="ghost"
-                  brandColor="black"
-                  customStyle={{ marginTop: 20 }}
-                  type="submit"
-                >
-                  배송조회
-                </Button>
-              }
-            />
-          ) : (
-            <Flexbox
-              customStyle={{ background: common.bg02, padding: 8, borderRadius: 8, marginTop: 20 }}
-              direction="vertical"
-              gap={8}
+          {!hasUserReview && (
+            <Typography
+              customStyle={{
+                marginTop: 8
+              }}
             >
-              <Typography variant="body2" color="ui60">
-                배송방법
-              </Typography>
-              <Typography variant="body2">{getTypeText()}</Typography>
-            </Flexbox>
+              {targetUserName}님과 거래는 어떠셨나요?
+              <br />
+              거래후기를 남겨주세요.
+            </Typography>
+          )}
+          {!hasUserReview && (
+            <Button
+              variant="ghost"
+              brandColor="black"
+              fullWidth
+              onClick={handleClick}
+              customStyle={{
+                marginTop: 20
+              }}
+            >
+              후기 작성하기
+            </Button>
           )}
           <Flexbox
             alignment="center"
@@ -213,24 +389,25 @@ function ChannelOrderDeliveryCompleteMessage({
               </Button>
             }
           />
-          {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' && (
-            <Button
-              variant="solid"
-              brandColor="black"
-              fullWidth
-              onClick={() =>
-                setOpenState((prevState) => ({
-                  ...prevState,
-                  open: true
-                }))
-              }
-              customStyle={{
-                marginTop: 20
-              }}
-            >
-              구매확정
-            </Button>
-          )}
+          {order?.type !== 2 &&
+            getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' && (
+              <Button
+                variant="solid"
+                brandColor="black"
+                fullWidth
+                onClick={() =>
+                  setOpenState((prevState) => ({
+                    ...prevState,
+                    open: true
+                  }))
+                }
+                customStyle={{
+                  marginTop: 20
+                }}
+              >
+                구매확정
+              </Button>
+            )}
         </Flexbox>
         <Flexbox
           alignment="center"

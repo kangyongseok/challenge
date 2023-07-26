@@ -23,7 +23,7 @@ function OrdersDetailRefundInfo() {
   const setSalesCancelDialogState = useSetRecoilState(ordersDetailSalesCancelDialogState);
 
   const { isLoggedInWithSMS } = useSession();
-  const { data, data: { price = 0, type, hold } = {} } = useQueryOrder({ id: Number(id) });
+  const { data, data: { price = 0, hold } = {} } = useQueryOrder({ id: Number(id) });
   const orderStatus = useOrderStatus({ order: data });
 
   const { data: userAccounts = [] } = useQuery(
@@ -66,7 +66,7 @@ function OrdersDetailRefundInfo() {
             <Typography color="ui60">판매금액</Typography>
             <Typography>{commaNumber(price || 0)}원</Typography>
           </Flexbox>
-          {type !== 1 && (
+          {!orderStatus.otherDeliveryMethod && (
             <Flexbox justifyContent="space-between" alignment="center">
               <Typography color="ui60">배송비</Typography>
               <Typography>배송비 별도</Typography>
@@ -99,25 +99,26 @@ function OrdersDetailRefundInfo() {
               {commaNumber(price || 0)}원
             </Typography>
           </Flexbox>
-          {['결제완료', '배송대기', '거래대기'].includes(orderStatus.name) && !hold && (
-            <Button
-              variant="ghost"
-              brandColor="black"
-              size="large"
-              fullWidth
-              onClick={() =>
-                setSalesCancelDialogState({
-                  open: true,
-                  variant: orderStatus.name === '결제완료' ? 'refuse' : 'cancel'
-                })
-              }
-              customStyle={{
-                marginTop: 16
-              }}
-            >
-              주문취소
-            </Button>
-          )}
+          {['결제완료', '배송대기', '구매대행중', '거래대기'].includes(orderStatus.name) &&
+            !hold && (
+              <Button
+                variant="ghost"
+                brandColor="black"
+                size="large"
+                fullWidth
+                onClick={() =>
+                  setSalesCancelDialogState({
+                    open: true,
+                    variant: orderStatus.name === '결제완료' ? 'refuse' : 'cancel'
+                  })
+                }
+                customStyle={{
+                  marginTop: 16
+                }}
+              >
+                주문취소
+              </Button>
+            )}
         </Flexbox>
       </Flexbox>
     </>

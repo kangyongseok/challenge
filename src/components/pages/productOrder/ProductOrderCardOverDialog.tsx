@@ -8,15 +8,15 @@ import { getTenThousandUnitPrice } from '@utils/formats';
 
 import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
-function ProductOrderCardOverDialog({ includeLegit }: { includeLegit: boolean }) {
+function ProductOrderCardOverDialog() {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
   const { data: { price } = {} } = useQueryProductOrder({
     productId,
-    includeLegit,
+    includeLegit: String(includeLegit),
     type: Number(type)
   });
 

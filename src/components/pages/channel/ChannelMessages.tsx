@@ -32,7 +32,6 @@ interface ChannelMessagesProps {
   productId: number;
   targetUserId: number;
   targetUserName: string;
-  showNewMessageNotification: boolean;
   hasMorePrev: boolean;
   hasUserReview: boolean;
   hasTargetUserReview: boolean;
@@ -60,7 +59,6 @@ function ChannelMessages({
   productId,
   targetUserId,
   targetUserName,
-  showNewMessageNotification,
   hasMorePrev,
   hasUserReview,
   isSeller,
@@ -208,7 +206,7 @@ function ChannelMessages({
     return () => {
       window.flexibleContent.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchPrevMessages, hasMorePrev, sendbirdChannel, showNewMessageNotification, isPrevFetching]);
+  }, [fetchPrevMessages, hasMorePrev, sendbirdChannel, isPrevFetching]);
 
   useEffect(() => {
     const handleScroll = () => {

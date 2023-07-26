@@ -9,6 +9,7 @@ import {
   OrdersDetailCancelRequestDialog,
   OrdersDetailCancelRequestRefuseDialog,
   OrdersDetailCancelRequestWithdrawDialog,
+  OrdersDetailDeliveryCompleteConfirmDialog,
   OrdersDetailDeliveryInfo,
   OrdersDetailDeliveryStatusFrame,
   OrdersDetailEmptyInvoiceNumberDialog,
@@ -65,6 +66,7 @@ function OrdersDetail() {
       <OrdersDetailEmptyInvoiceNumberDialog />
       <OrdersDetailCancelRequestRefuseDialog />
       <OrdersDetailDeliveryStatusFrame />
+      <OrdersDetailDeliveryCompleteConfirmDialog />
     </>
   );
 }

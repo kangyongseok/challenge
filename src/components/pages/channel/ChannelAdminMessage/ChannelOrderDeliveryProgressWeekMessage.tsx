@@ -95,28 +95,30 @@ function ChannelOrderDeliveryProgressWeekMessage({
                   </Button>
                 }
               />
-              {getOrderStatusText({ status: order?.status, result: order?.result }) ===
-                '거래중' && (
-                <Button
-                  brandColor="black"
-                  variant="solid"
-                  fullWidth
-                  onClick={() =>
-                    setOpenState((prevState) => ({
-                      ...prevState,
-                      open: true
-                    }))
-                  }
-                  customStyle={{
-                    marginTop: 20
-                  }}
-                >
-                  구매확정
-                </Button>
-              )}
+              {order?.type !== 2 &&
+                getOrderStatusText({ status: order?.status, result: order?.result }) ===
+                  '거래중' && (
+                  <Button
+                    brandColor="black"
+                    variant="solid"
+                    fullWidth
+                    onClick={() =>
+                      setOpenState((prevState) => ({
+                        ...prevState,
+                        open: true
+                      }))
+                    }
+                    customStyle={{
+                      marginTop: 20
+                    }}
+                  >
+                    구매확정
+                  </Button>
+                )}
             </Flexbox>
           )}
-          {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
+          {order?.type !== 2 &&
+            getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
             !isParcel && (
               <Button
                 brandColor="black"

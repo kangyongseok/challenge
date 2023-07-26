@@ -92,8 +92,8 @@ function OrdersDetailSalesCancelDialog() {
         <RadioGroup
           text="품절 또는 예약된 매물"
           onChange={handleChange}
-          value="품절 또는 예약된 매물"
-          checked={value === '품절 또는 예약된 매물'}
+          value="매물이 이미 판매되었습니다."
+          checked={value === '매물이 이미 판매되었습니다.'}
         />
         <RadioGroup
           text="직접입력"

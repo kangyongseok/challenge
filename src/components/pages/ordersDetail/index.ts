@@ -20,3 +20,4 @@ export { default as OrdersDetailEmptyInvoiceNumberDialog } from './OrdersDetailE
 export { default as OrdersDetailCancelRequestRefuseDialog } from './OrdersDetailCancelRequestRefuseDialog';
 export { default as OrdersDetailDeliveryStatusFrame } from './OrdersDetailDeliveryStatusFrame';
 export { default as OrdersDetailHeader } from './OrdersDetailHeader';
+export { default as OrdersDetailDeliveryCompleteConfirmDialog } from './OrdersDetailDeliveryCompleteConfirmDialog';

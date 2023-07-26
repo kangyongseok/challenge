@@ -22,6 +22,7 @@ import {
   ChannelCamelAuthFixBanner,
   ChannelCancelRequestApproveDialog,
   ChannelCancelRequestRefuseDialog,
+  ChannelDeliveryCompleteConfirmDialog,
   ChannelHeader,
   ChannelMessageInput,
   ChannelMessages,
@@ -659,7 +660,6 @@ function Channel() {
             productId={productId}
             targetUserId={targetUserId}
             targetUserName={targetUserName}
-            showNewMessageNotification={unreadCount > 0}
             hasMorePrev={hasMorePrev}
             hasUserReview={!!userReview}
             hasTargetUserReview={!!targetUserReview}
@@ -754,6 +754,7 @@ function Channel() {
         isSeller={isSeller}
         refetchChannel={refetch}
       />
+      <ChannelDeliveryCompleteConfirmDialog order={orders[0]} refetchChannel={refetch} />
     </>
   );
 }

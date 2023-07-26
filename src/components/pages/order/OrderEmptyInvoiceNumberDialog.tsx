@@ -63,7 +63,7 @@ function OrderEmptyInvoiceNumberDialog({
         </Typography>
       </Flexbox>
       <Flexbox customStyle={{ marginTop: 32 }} direction="vertical">
-        <Typography weight="medium" color="ui60">
+        <Typography weight="medium" textAlign="left" color="ui60">
           전달방법
         </Typography>
         <Flexbox customStyle={{ flexWrap: 'wrap', marginTop: 16 }} gap={16}>

@@ -15,9 +15,9 @@ import { commaNumber } from '@utils/formats';
 import useQueryProductOrder from '@hooks/useQueryProductOrder';
 import useQueryProduct from '@hooks/useQueryProduct';
 
-function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
+function ProductOrderPaymentInfo() {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
   const [openTooltip, setOpenTooltip] = useState<0 | 1 | 2 | null>(null);
@@ -35,7 +35,7 @@ function ProductOrderPaymentInfo({ includeLegit }: { includeLegit: boolean }) {
 
   const { data: { totalPrice = 0, orderFees = [] } = {} } = useQueryProductOrder({
     productId,
-    includeLegit,
+    includeLegit: String(includeLegit),
     type: Number(type)
   });
 

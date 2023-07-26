@@ -5,9 +5,9 @@ import { Gap } from '@components/UI/atoms';
 
 import useQueryProductOrder from '@hooks/useQueryProductOrder';
 
-function ProductOrderDeliveryInfo({ includeLegit }: { includeLegit: boolean }) {
+function ProductOrderDeliveryInfo() {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
@@ -19,7 +19,7 @@ function ProductOrderDeliveryInfo({ includeLegit }: { includeLegit: boolean }) {
 
   const { data: { deliveryInfo, type: orderType } = {}, isLoading } = useQueryProductOrder({
     productId,
-    includeLegit,
+    includeLegit: String(includeLegit),
     type: Number(type)
   });
 

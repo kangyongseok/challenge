@@ -19,8 +19,9 @@ function OrdersDetailRefundInfo() {
     palette: { common }
   } = useTheme();
 
-  const { data, data: { price = 0, totalPrice = 0, fee = 0, orderPayments = [], reason } = {} } =
-    useQueryOrder({ id: Number(id) });
+  const { data, data: { price = 0, totalPrice = 0, fee = 0, reason } = {} } = useQueryOrder({
+    id: Number(id)
+  });
   const orderStatus = useOrderStatus({ order: data });
 
   const setOpenCancelRequestWithdrawDialogState = useSetRecoilState(
@@ -64,9 +65,7 @@ function OrdersDetailRefundInfo() {
           </Flexbox>
           <Flexbox justifyContent="space-between" alignment="center">
             <Typography color="ui60">결제방법</Typography>
-            <Typography>
-              {orderPayments[0]?.method === 0 ? orderPayments[0]?.agencyName : '무통장입금'}
-            </Typography>
+            <Typography>{orderStatus.paymentMethod}</Typography>
           </Flexbox>
           {reason && (
             <Box

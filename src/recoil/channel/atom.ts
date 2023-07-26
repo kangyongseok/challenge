@@ -56,6 +56,7 @@ export const channelDialogStateFamily = atomFamily<
   | 'reserving'
   | 'orderCancelRequestApprove'
   | 'orderCancelRequestRefuse'
+  | 'deliveryCompleteConfirm'
 >({
   key: 'channel/dialogStateFamily',
   default: {

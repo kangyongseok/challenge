@@ -17,10 +17,6 @@ import type { GroupChannel } from '@sendbird/chat/groupChannel';
 import { Box, Button, Flexbox, Icon, Image, Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-import ChannelOrderDirectWaitMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderDirectWaitMessage';
-import ChannelOrderCancelRequestWithdrawAdditionalMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderCancelRequestWithdrawAdditionalMessage';
-import ChannelOrderCancelRequestRefuseAdditionalMessage from '@components/pages/channel/ChannelAdminMessage/ChannelOrderCancelRequestRefuseAdditionalMessage';
-
 import type { ProductOffer } from '@dto/productOffer';
 import type { Order } from '@dto/order';
 import type { ChannelDetail } from '@dto/channel';
@@ -62,13 +58,17 @@ import ChannelOrderRefundCompleteMessage from './ChannelOrderRefundCompleteMessa
 import ChannelOrderPaymentProgressMessage from './ChannelOrderPaymentProgressMessage';
 import ChannelOrderPaymentCompleteMessage from './ChannelOrderPaymentCompleteMessage';
 import ChannelOrderPaymentCancelMessage from './ChannelOrderPaymentCancelMessage';
+import ChannelOrderOperatorProgressMessage from './ChannelOrderOperatorProgressMessage';
+import ChannelOrderDirectWaitMessage from './ChannelOrderDirectWaitMessage';
 import ChannelOrderDeliveryWaitMessage from './ChannelOrderDeliveryWaitMessage';
 import ChannelOrderDeliveryProgressWeekMessage from './ChannelOrderDeliveryProgressWeekMessage';
 import ChannelOrderDeliveryProgressRemindMessage from './ChannelOrderDeliveryProgressRemindMessage';
 import ChannelOrderDeliveryProgressMessage from './ChannelOrderDeliveryProgressMessage';
 import ChannelOrderDeliveryCompleteMessage from './ChannelOrderDeliveryCompleteMessage';
 import ChannelOrderCancelRequestWithdrawMessage from './ChannelOrderCancelRequestWithdrawMessage';
+import ChannelOrderCancelRequestWithdrawAdditionalMessage from './ChannelOrderCancelRequestWithdrawAdditionalMessage';
 import ChannelOrderCancelRequestRefuseMessage from './ChannelOrderCancelRequestRefuseMessage';
+import ChannelOrderCancelRequestRefuseAdditionalMessage from './ChannelOrderCancelRequestRefuseAdditionalMessage';
 import ChannelOrderCancelRequestMessage from './ChannelOrderCancelRequestMessage';
 import ChannelOfferRequestTipMessage from './ChannelOfferRequestTipMessage';
 import ChannelOfferRequestMessage from './ChannelOfferRequestMessage';
@@ -496,7 +496,12 @@ function ChannelAdminMessage({
       <ChannelOrderDeliveryCompleteMessage
         message={message}
         order={currentOrder}
+        productId={productId}
+        targetUserId={targetUserId}
+        targetUserName={targetUserName}
+        hasUserReview={hasUserReview}
         isSeller={isSeller}
+        refetchChannel={refetchChannel}
         onClickOrderDetail={handleClickOrderDetail}
       />
     );
@@ -631,6 +636,17 @@ function ChannelAdminMessage({
         message={message}
         isSeller={isSeller}
         order={currentOrder}
+        onClickOrderDetail={handleClickOrderDetail}
+      />
+    );
+  }
+
+  if (message.customType === 'orderOperatorProgress') {
+    return (
+      <ChannelOrderOperatorProgressMessage
+        message={message}
+        order={currentOrder}
+        isSeller={isSeller}
         onClickOrderDetail={handleClickOrderDetail}
       />
     );

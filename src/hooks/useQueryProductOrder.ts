@@ -6,13 +6,13 @@ import queryKeys from '@constants/queryKeys';
 
 import useSession from './useSession';
 
-interface QueryProps {
+interface UseQueryProductOrderProps {
   productId: number;
-  includeLegit?: boolean;
+  includeLegit?: string | boolean;
   type?: number;
 }
 
-function useQueryProductOrder({ productId, includeLegit, type = 0 }: QueryProps) {
+function useQueryProductOrder({ productId, includeLegit, type = 0 }: UseQueryProductOrderProps) {
   const { isLoggedInWithSMS } = useSession();
 
   return useQuery(

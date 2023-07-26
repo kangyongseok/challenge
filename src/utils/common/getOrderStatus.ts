@@ -18,7 +18,8 @@ export type OrderStatusName =
   | '정산완료'
   | '환불대기'
   | '환불진행'
-  | '환불완료';
+  | '환불완료'
+  | '구매대행중';
 
 export interface OrderStatus {
   name: OrderStatusName | '';
@@ -27,6 +28,7 @@ export interface OrderStatus {
   description: string;
   transactionMethod: '택배거래' | '직거래' | '카멜 구매대행' | '';
   paymentMethod: string;
+  otherDeliveryMethod: string;
   stepperValues: {
     name: 'ready' | 'active' | 'complete' | 'completeWithActive';
     text: string;
@@ -39,6 +41,7 @@ export interface OrderStatus {
   paymentDate: string;
   waitingSettlementDate: string;
   completeSettlementDate: string;
+  completeDeliveryDate: string;
 }
 
 // [status-result-type-hold]
@@ -58,7 +61,6 @@ export const orderStatusName: {
   '0-3-1-0': '결제취소',
   '0-3-2-0': '결제취소',
   '1-0-0-0': '배송대기',
-  '1-0-2-0': '배송대기',
   '1-0-1-0': '거래대기',
   '1-1-0-0': '배송진행',
   '1-1-1-0': '배송진행',
@@ -74,7 +76,6 @@ export const orderStatusName: {
   '2-0-2-0': '정산대기',
   '2-1-0-0': '정산진행',
   '2-1-1-0': '정산진행',
-  '2-1-2-0': '정산진행',
   '2-2-0-0': '정산완료',
   '2-2-1-0': '정산완료',
   '2-2-2-0': '정산완료',
@@ -86,10 +87,10 @@ export const orderStatusName: {
   '3-1-2-0': '환불진행',
   '3-2-0-0': '환불완료',
   '3-2-1-0': '환불완료',
-  '3-2-2-0': '환불완료'
+  '3-2-2-0': '환불완료',
+  '5-1-2-0': '구매대행중'
 };
 
-// TODO 오퍼레이터 주문 상태 분기 처리
 export default function getOrderStatus({
   id,
   status,
@@ -115,16 +116,19 @@ export default function getOrderStatus({
     description: '',
     transactionMethod: '',
     paymentMethod: '',
+    otherDeliveryMethod: '',
     stepperValues: [],
     isExpired: false,
+    isSeller,
     hasReview: false,
     orderDate: '',
     paymentDate: '',
     waitingSettlementDate: '',
     completeSettlementDate: '',
-    isSeller: false
+    completeDeliveryDate: ''
   };
 
+  const isDeliveryTransaction = type === 0;
   const isDirectTransaction = type === 1;
   const isOperatorTransaction = type === 2;
 
@@ -134,6 +138,9 @@ export default function getOrderStatus({
   );
   const completeSettlementHistory = orderHistories?.find(
     (orderHistory) => orderHistory.name === '정산완료'
+  );
+  const completeDeliveryHistory = orderHistories?.find(
+    (orderHistory) => orderHistory.name === '배송완료'
   );
 
   newOrderStatus.name = orderStatusName[`${status}-${result}-${type}-${hold}`];
@@ -145,6 +152,9 @@ export default function getOrderStatus({
   newOrderStatus.completeSettlementDate = dayjs(completeSettlementHistory?.dateCreated).format(
     'MM. DD. HH:mm'
   );
+  newOrderStatus.completeDeliveryDate = dayjs(completeDeliveryHistory?.dateCreated).format(
+    'MM. DD. HH:mm'
+  );
   newOrderStatus.hasReview = !!reviewFormInfo?.hasReview;
   newOrderStatus.transactionMethod = isDirectTransaction ? '직거래' : '택배거래';
   if (isOperatorTransaction) newOrderStatus.transactionMethod = '카멜 구매대행';
@@ -152,15 +162,28 @@ export default function getOrderStatus({
     orderPayments[0]?.method === 0 ? orderPayments[0]?.agencyName : '무통장입금';
   newOrderStatus.isExpired = dayjs(dateExpired).diff(dayjs(), 'minutes') < 0; // 무통장입금 시간초과 여부
 
-  const { name, paymentDate, waitingSettlementDate, completeSettlementDate, paymentMethod } =
-    newOrderStatus;
+  // 직접입력
+  if (orderDelivery?.type === 0) {
+    newOrderStatus.otherDeliveryMethod = orderDelivery?.contents;
+  } else if (orderDelivery?.type === 2) {
+    newOrderStatus.otherDeliveryMethod = '퀵 서비스';
+  } else if (orderDelivery?.type === 3) {
+    newOrderStatus.otherDeliveryMethod = '용달';
+  }
+
+  const {
+    name,
+    paymentDate,
+    waitingSettlementDate,
+    completeSettlementDate,
+    paymentMethod,
+    completeDeliveryDate,
+    otherDeliveryMethod
+  } = newOrderStatus;
 
   // 직거래 구매자
   if (!isSeller && isDirectTransaction) {
-    if (name === '결제대기') {
-      newOrderStatus.displayText = '결제대기';
-      newOrderStatus.overlayText = '결제대기';
-    } else if (name === '결제진행' && paymentMethod === '무통장입금') {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
       newOrderStatus.displayText = '입금을 완료해주세요.';
       newOrderStatus.overlayText = '입금요청';
       newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
@@ -265,12 +288,11 @@ export default function getOrderStatus({
       newOrderStatus.overlayText = '취소요청';
       newOrderStatus.description = '판매자가 요청을 승인하면 결제한 방법으로 환불됩니다.';
     }
-    // 직거래 판매자
-  } else if (isSeller && isDirectTransaction) {
-    if (name === '결제대기') {
-      newOrderStatus.displayText = '결제대기';
-      newOrderStatus.overlayText = '결제대기';
-    } else if (name === '결제진행' && paymentMethod === '무통장입금') {
+  }
+
+  // 직거래 판매자
+  if (isDirectTransaction && isSeller) {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
       newOrderStatus.displayText = '입금을 완료해주세요.';
       newOrderStatus.overlayText = '입금요청';
       newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
@@ -414,12 +436,11 @@ export default function getOrderStatus({
       newOrderStatus.overlayText = '취소요청';
       newOrderStatus.description = '판매자가 요청을 승인하면 결제한 방법으로 환불됩니다.';
     }
-    // 택배거래 구매자
-  } else if (!isSeller && !isDirectTransaction) {
-    if (name === '결제대기') {
-      newOrderStatus.displayText = '결제대기';
-      newOrderStatus.overlayText = '결제대기';
-    } else if (name === '결제진행' && paymentMethod === '무통장입금') {
+  }
+
+  // 택배거래 구매자
+  if (isDeliveryTransaction && !isSeller) {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
       newOrderStatus.displayText = '입금을 완료해주세요.';
       newOrderStatus.overlayText = '입금요청';
       newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
@@ -471,9 +492,7 @@ export default function getOrderStatus({
     } else if (name === '배송대기') {
       newOrderStatus.displayText = '배송준비';
       newOrderStatus.overlayText = '배송준비';
-      newOrderStatus.description = isOperatorTransaction
-        ? '카멜이 배송을 준비하고 있어요'
-        : '판매자가 배송을 준비하고 있어요.';
+      newOrderStatus.description = '판매자가 배송을 준비하고 있어요.';
 
       newOrderStatus.stepperValues = [
         {
@@ -493,17 +512,13 @@ export default function getOrderStatus({
     } else if (name === '배송진행') {
       newOrderStatus.displayText = '배송중';
       newOrderStatus.overlayText = '배송중';
+      newOrderStatus.description = !otherDeliveryMethod
+        ? '배송이 시작되었어요!<br />배송현황은 배송조회를 클릭하여 확인해주세요.'
+        : '배송이 시작되었어요!';
 
-      if (isOperatorTransaction) {
+      if (description === '배송중 7일 후 구매확정 문의') {
         newOrderStatus.description =
-          description === '배송중 7일 후 구매확정 문의'
-            ? '배송을 받으셨나요?<br />거래하셨다면 구매확정 버튼을 눌러주세요.'
-            : '배송이 시작되었어요!';
-      } else {
-        newOrderStatus.description =
-          orderDelivery?.type === 1
-            ? '배송이 시작되었어요!<br />배송현황은 배송조회를 클릭하여 확인해주세요.'
-            : '배송이 시작되었어요!';
+          '배송을 받으셨나요?<br />받으셨다면 구매확정 버튼을 눌러주세요.';
       }
 
       newOrderStatus.stepperValues = [
@@ -544,12 +559,7 @@ export default function getOrderStatus({
     } else if (['정산대기', '정산진행', '정산완료'].includes(name)) {
       newOrderStatus.displayText = '거래완료';
       newOrderStatus.overlayText = '거래완료';
-
-      if (isOperatorTransaction) {
-        newOrderStatus.description = '카멜 구매대행 거래가 완료되었어요.';
-      } else {
-        newOrderStatus.description = `${additionalInfo?.sellerName}님과 거래가 완료되었어요.`;
-      }
+      newOrderStatus.description = `${additionalInfo?.sellerName}님과 거래가 완료되었어요.`;
 
       newOrderStatus.stepperValues = [
         {
@@ -576,7 +586,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '환불완료';
       newOrderStatus.overlayText = '환불완료';
       newOrderStatus.description =
-        '거래가 취소되어 결제한 방법으로 환불되었어요.<br/><p class="mt-8">카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</p>';
+        '거래가 취소되어 결제한 방법으로 환불되었어요.<p class="mt-8">카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</p>';
     } else if (name === '환불대기') {
       newOrderStatus.displayText = '거래취소';
       newOrderStatus.overlayText = '거래취소';
@@ -600,17 +610,17 @@ export default function getOrderStatus({
       newOrderStatus.overlayText = '취소요청';
       newOrderStatus.description = '판매자가 요청을 승인하면 결제한 방법으로 환불됩니다.';
     }
-    // 택배거래 판매자
-  } else if (isSeller && !isDirectTransaction) {
-    if (name === '결제대기') {
-      newOrderStatus.displayText = '결제대기';
-      newOrderStatus.overlayText = '결제대기';
-    } else if (name === '결제진행' && paymentMethod === '무통장입금') {
+  }
+
+  // 택배거래 판매자
+  if (isDeliveryTransaction && isSeller) {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
       newOrderStatus.displayText = '입금을 완료해주세요.';
       newOrderStatus.overlayText = '입금요청';
       newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
         'MM월 DD일(ddd)'
       )}까지 결제금액을 입금해주세요.<br/>미입금시 주문이 취소됩니다.`;
+
       newOrderStatus.stepperValues = [
         {
           name: 'active',
@@ -629,7 +639,8 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '결제완료';
       newOrderStatus.overlayText = '결제완료';
       newOrderStatus.description =
-        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<br/><p class="mt-8">판매하려면 판매승인 버튼을 눌러주세요.</p>';
+        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<p class="mt-8">판매하려면 판매승인 버튼을 눌러주세요.</p>';
+
       newOrderStatus.stepperValues = [
         {
           name: 'completeWithActive',
@@ -653,6 +664,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '배송준비';
       newOrderStatus.overlayText = '배송준비';
       newOrderStatus.description = '택배를 보낸 뒤 송장번호를 입력해주세요.';
+
       newOrderStatus.stepperValues = [
         {
           name: 'complete',
@@ -675,6 +687,7 @@ export default function getOrderStatus({
         orderDelivery?.type === 1
           ? '배송이 시작되었어요!<br />배송현황은 배송조회를 클릭하여 확인해주세요.'
           : '배송이 시작되었어요!';
+
       newOrderStatus.stepperValues = [
         {
           name: 'complete',
@@ -696,6 +709,7 @@ export default function getOrderStatus({
       newOrderStatus.description = `구매자가 구매확정하면 영업일 기준 1일 후 정산되며, 구매확정하지 않아도 ${dayjs(
         dateCompleted
       ).format('MM월 DD일(ddd)')}까지 정산 완료됩니다.`;
+
       newOrderStatus.stepperValues = [
         {
           name: 'complete',
@@ -760,6 +774,7 @@ export default function getOrderStatus({
       newOrderStatus.displayText = '정산완료';
       newOrderStatus.overlayText = '정산완료';
       newOrderStatus.description = '정산계좌로 판매대금이 입금되었어요.';
+
       newOrderStatus.stepperValues = [
         {
           name: 'complete',
@@ -786,6 +801,319 @@ export default function getOrderStatus({
       newOrderStatus.description = `구매자의 취소요청을 확인해주세요.<p class="mt-8 b2 ui60">${dayjs(
         dateExpired
       ).format('MM월 DD일')}까지 미확인시 주문이 취소됩니다.</p>`;
+    }
+  }
+
+  // 구매대행 구매자
+  if (isOperatorTransaction && !isSeller) {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
+      newOrderStatus.displayText = '입금을 완료해주세요.';
+      newOrderStatus.overlayText = '입금요청';
+      newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
+        'MM월 DD일(ddd)'
+      )}까지 결제금액을 입금해주세요.<br/>미입금시 결제 및 구매대행 요청이 취소됩니다.`;
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'active',
+          text: '입금요청'
+        },
+        {
+          name: 'ready',
+          text: '구매대행준비'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '결제완료' || (name === '결제진행' && paymentMethod !== '무통장입금')) {
+      newOrderStatus.displayText = '결제완료';
+      newOrderStatus.overlayText = '결제완료';
+      newOrderStatus.description =
+        '결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.<p class="mt-8">판매자의 거래가능여부 확인 후 구매대행이 진행됩니다.</p>';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'completeWithActive',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'ready',
+          text: '구매대행준비'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '결제취소') {
+      newOrderStatus.displayText = '거래취소';
+      newOrderStatus.overlayText = '거래취소';
+
+      if (newOrderStatus.isExpired) {
+        newOrderStatus.description = '시간초과로 가상계좌 결제가 취소되었어요.';
+      }
+    } else if (name === '구매대행중') {
+      newOrderStatus.displayText = '구매대행중';
+      newOrderStatus.overlayText = '구매대행중';
+      newOrderStatus.description =
+        '판매자에게 매물을 구매하고 있어요.<p class="mt-8">카멜이 매물을 받아 확인 후 배송해드릴게요.</p>';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'active',
+          text: '구매대행중'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '배송진행') {
+      newOrderStatus.displayText = '배송중';
+      newOrderStatus.overlayText = '배송중';
+      newOrderStatus.description = !otherDeliveryMethod
+        ? '배송이 시작되었어요!<br />배송현황은 배송조회를 클릭하여 확인해주세요.'
+        : '배송이 시작되었어요!';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'active',
+          text: '배송중'
+        }
+      ];
+    } else if (name === '배송완료') {
+      newOrderStatus.displayText = '배송완료';
+      newOrderStatus.overlayText = '배송완료';
+      newOrderStatus.description = `카멜 구매대행으로 구매한 매물의 배송이 완료되었어요.${
+        !newOrderStatus.hasReview
+          ? `<p class="mt-8">${additionalInfo?.sellerName}님과 거래는 어떠셨나요?<br />거래후기도 남겨주세요.</p>`
+          : ''
+      }`;
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'completeWithActive',
+          text: '배송완료',
+          subText: completeDeliveryDate
+        }
+      ];
+    } else if (['정산대기', '정산진행', '정산완료'].includes(name)) {
+      newOrderStatus.displayText = '배송완료';
+      newOrderStatus.overlayText = '배송완료';
+      newOrderStatus.description = `카멜 구매대행으로 구매한 매물의 배송이 완료되었어요.${
+        !newOrderStatus.hasReview
+          ? `<p class="mt-8">${additionalInfo?.sellerName}님과 거래는 어떠셨나요?<br />거래후기도 남겨주세요.</p>`
+          : ''
+      }`;
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'completeWithActive',
+          text: '배송완료',
+          subText: completeDeliveryDate
+        }
+      ];
+      // 카드 결제 즉시 취소 케이스 대응 (가상계좌의 환불 프로세스를 타지 않도록)
+    } else if (
+      ['환불대기', '환불진행', '환불완료'].includes(name) &&
+      paymentMethod !== '무통장입금'
+    ) {
+      newOrderStatus.name = '환불완료';
+      newOrderStatus.displayText = '환불완료';
+      newOrderStatus.overlayText = '환불완료';
+      newOrderStatus.description =
+        '카멜 구매대행이 취소되어 결제한 방법으로 환불되었어요.<p class="mt-8">카드사에 따라 영업일 기준 2일까지 소요될 수 있어요.</p>';
+    } else if (name === '환불대기') {
+      newOrderStatus.displayText = '거래취소';
+      newOrderStatus.overlayText = '거래취소';
+    } else if (name === '환불진행') {
+      newOrderStatus.displayText = '환불진행';
+      newOrderStatus.overlayText = '환불예정';
+      newOrderStatus.description = `카멜 구매대행이 취소되어 등록된 정산계좌로 ${dayjs(
+        dateCompleted
+      ).format('MM월 DD일(ddd)')} 이내에 환불 예정입니다.`;
+    } else if (name === '환불완료') {
+      newOrderStatus.displayText = '환불완료';
+      newOrderStatus.overlayText = '환불완료';
+
+      if (orderPayments[0]?.method === 1) {
+        newOrderStatus.description = '등록된 정산계좌로 환불되었어요.';
+      } else if (orderPayments[0]?.method === 0) {
+        newOrderStatus.description = '카멜 구매대행이 취소되어 결제한 방법으로 환불되었어요.';
+      }
+    }
+  }
+
+  // 구매대행 판매자
+  if (isOperatorTransaction && isSeller) {
+    if (name === '결제진행' && paymentMethod === '무통장입금') {
+      newOrderStatus.displayText = '입금을 완료해주세요.';
+      newOrderStatus.overlayText = '입금요청';
+      newOrderStatus.description = `${dayjs(orderPayments[0]?.dateExpired).format(
+        'MM월 DD일(ddd)'
+      )}까지 결제금액을 입금해주세요.<br/>미입금시 주문이 취소됩니다.`;
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'active',
+          text: '입금요청'
+        },
+        {
+          name: 'ready',
+          text: '구매대행준비'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '결제완료' || (name === '결제진행' && paymentMethod !== '무통장입금')) {
+      newOrderStatus.displayText = '결제완료';
+      newOrderStatus.overlayText = '결제완료';
+      newOrderStatus.description = '판매하려면 판매승인 버튼을 눌러주세요.';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'completeWithActive',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'ready',
+          text: '구매대행준비'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '결제취소') {
+      newOrderStatus.displayText = '거래취소';
+      newOrderStatus.overlayText = '거래취소';
+      newOrderStatus.description = `${additionalInfo?.buyerName}님의 카멜 구매대행이 취소되었어요.`;
+    } else if (name === '구매대행중') {
+      newOrderStatus.displayText = '구매대행중';
+      newOrderStatus.overlayText = '구매대행중';
+      newOrderStatus.description = '구매대행이 완료되면 송장번호를 입력해주세요.';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'active',
+          text: '구매대행중'
+        },
+        {
+          name: 'ready',
+          text: '배송준비'
+        }
+      ];
+    } else if (name === '배송진행') {
+      newOrderStatus.displayText = '배송중';
+      newOrderStatus.overlayText = '배송중';
+      newOrderStatus.description = !otherDeliveryMethod
+        ? '배송이 시작되었어요!<br />배송현황은 배송조회를 클릭하여 확인해주세요.'
+        : '배송이 완료된 후 배송완료 버튼을 클릭해주세요.';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'active',
+          text: '배송중'
+        }
+      ];
+    } else if (name === '배송완료') {
+      newOrderStatus.displayText = '배송완료';
+      newOrderStatus.overlayText = '배송완료';
+      newOrderStatus.description = '배송이 완료되었어요.';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'completeWithActive',
+          text: '배송완료',
+          subText: completeDeliveryDate
+        }
+      ];
+    } else if (['정산대기', '정산진행', '정산완료'].includes(name)) {
+      newOrderStatus.displayText = '배송완료';
+      newOrderStatus.overlayText = '배송완료';
+      newOrderStatus.description = '배송이 완료되었어요.';
+
+      newOrderStatus.stepperValues = [
+        {
+          name: 'complete',
+          text: '결제완료',
+          subText: paymentDate
+        },
+        {
+          name: 'complete',
+          text: '구매대행완료'
+        },
+        {
+          name: 'completeWithActive',
+          text: '배송완료',
+          subText: completeDeliveryDate
+        }
+      ];
+    } else if (['환불대기', '환불진행', '환불완료'].includes(name)) {
+      newOrderStatus.displayText = '거래취소';
+      newOrderStatus.overlayText = '거래취소';
+      newOrderStatus.description = `${additionalInfo?.buyerName}님의 카멜 구매대행이 취소되었어요.`;
     }
   }
 

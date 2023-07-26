@@ -24,7 +24,7 @@ export interface Order {
   price: number;
   quantity: number;
   totalPrice: number;
-  status: 0 | 1 | 2 | 3 | 4; // 0: 결제, 1: 배송, 2: 정산, 3: 환불, 4: 취소
+  status: 0 | 1 | 2 | 3 | 4 | 5; // 0: 결제, 1: 배송, 2: 정산, 3: 환불, 4: 취소, 5: 구매대행
   result: 0 | 1 | 2 | 3; // 0: 대기, 1: 진행, 2: 완료, 3: 취소
   reason: string;
   hold: 0 | 1; // 0: 기본, 1: 취소 요청
@@ -123,5 +123,5 @@ export interface ProductOrderParams {
   productId: number;
   isCreated?: boolean;
   type?: number;
-  includeLegit?: boolean;
+  includeLegit?: string | boolean;
 }

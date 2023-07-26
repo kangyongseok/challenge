@@ -16,6 +16,7 @@ import type { ChannelAppointmentResult } from '@dto/channel';
 
 import StompJs from '@library/stompJs';
 import Sendbird from '@library/sendbird';
+import { logEvent } from '@library/amplitude';
 
 import { fetchChannel, postHistoryManage } from '@api/channel';
 
@@ -60,7 +61,7 @@ function useChannel() {
   const prevScrollHeightRef = useRef(0);
   const fetchingPrevMessagesRef = useRef(false);
   const initializedChannelRef = useRef(false);
-  const markAsReadTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const markAsReadingRef = useRef(false);
 
   const useQueryResult = useQuery(
     queryKeys.channels.channel(Number(id)),
@@ -83,17 +84,16 @@ function useChannel() {
 
         if (externalId) {
           const channel = await Sendbird.getInstance().groupChannel.getChannel(externalId);
-          if (!currentChannel) {
-            setCurrentChannel(channel);
-          }
-          const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-          if (channel.unreadMessageCount) {
-            await channel.markAsRead();
-          }
+
+          setCurrentChannel(channel);
+
+          const unreadMessagesCount = await Sendbird.unreadMessagesCount(externalId);
+
           setSendbirdState((prevState) => ({
             ...prevState,
             unreadMessagesCount
           }));
+
           setUnreadCount(0);
 
           const newMessages = await channel.getMessagesByTimestamp(new Date().getTime() + 5000, {
@@ -315,35 +315,38 @@ function useChannel() {
 
   // 메시지 목록 컨테이너의 스크롤이 최하단에 위치한 경우 읽음 처리
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = async () => {
       const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
 
       if (
         Math.ceil(scrollTop + clientHeight) >= scrollHeight &&
         currentChannel &&
         !pending &&
+        !markAsReadingRef.current &&
         document.visibilityState === 'visible'
       ) {
-        if (markAsReadTimerRef.current) {
-          clearTimeout(markAsReadTimerRef.current);
-        }
-        markAsReadTimerRef.current = setTimeout(async () => {
-          if (!currentChannel) return;
+        markAsReadingRef.current = true;
 
-          const channel = await Sendbird.getInstance().groupChannel.getChannel(
-            useQueryResult.data?.channel?.externalId || ''
-          );
-          if (channel.unreadMessageCount) {
-            currentChannel.markAsRead().then(async () => {
-              setUnreadCount(0);
-              const unreadMessagesCount = await Sendbird.unreadMessagesCount();
-              setSendbirdState((prevState) => ({
-                ...prevState,
-                unreadMessagesCount
-              }));
+        currentChannel
+          .markAsRead()
+          .then(async () => {
+            setUnreadCount(0);
+            const unreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount
+            }));
+          })
+          .catch((error) => {
+            logEvent('SUPPORT_ERROR', {
+              name: 'MARK_AS_READ_FAIL',
+              type: 'SENDBIRD',
+              error
             });
-          }
-        }, 500);
+          })
+          .finally(() => {
+            markAsReadingRef.current = false;
+          });
       }
     };
 
@@ -369,6 +372,13 @@ function useChannel() {
   }, [senderUserId, accessUser, useQueryResult.isFetching, filteredMessages]);
 
   useEffect(() => {
+    if (!accessUser?.userId || useQueryResult.isLoading || !useQueryResult.data) return;
+
+    Sendbird.getInstance().removeConnectionHandler(String(accessUser?.userId || ''));
+    Sendbird.getInstance().groupChannel?.removeGroupChannelHandler?.(
+      String(accessUser?.userId || '')
+    );
+
     Sendbird.getInstance().addConnectionHandler(
       String(accessUser?.userId || ''),
       new ConnectionHandler({
@@ -404,30 +414,10 @@ function useChannel() {
 
           if (!isProduction) console.log('Channel | onMessageReceived', message);
 
-          const { scrollTop, clientHeight, scrollHeight } = window.flexibleContent;
+          setUnreadCount(unreadCount + 1);
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           setSenderUserId((channel as GroupChannel).lastMessage.sender?.userId);
-
-          if (
-            Math.ceil(scrollTop + clientHeight) >= scrollHeight &&
-            document.visibilityState === 'visible'
-          ) {
-            setUnreadCount(0);
-            const getGroupChannel = await Sendbird.getInstance().groupChannel.getChannel(
-              useQueryResult.data?.channel?.externalId || ''
-            );
-            if (getGroupChannel.unreadMessageCount) {
-              (channel as GroupChannel).markAsRead().then(async () => {
-                const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
-                setSendbirdState((prevState) => ({
-                  ...prevState,
-                  unreadMessagesCount: newUnreadMessagesCount
-                }));
-              });
-            }
-          }
-
           setState((prevState) => ({
             ...prevState,
             messages: [
@@ -458,7 +448,6 @@ function useChannel() {
 
           if (compareIds(channel?.url, currentChannel?.url)) {
             if (!isProduction) console.log('Channel | onUnreadMemberStatusUpdated', channel);
-            setUnreadCount(channel.unreadMessageCount);
             mutatePostHistoryManage({
               channelId: Number(router.query.id || ''),
               event: 'LAST_CHECK'
@@ -489,7 +478,8 @@ function useChannel() {
     router.query.id,
     setSendbirdState,
     useQueryResult,
-    currentChannel
+    currentChannel,
+    unreadCount
   ]);
 
   useEffect(() => {

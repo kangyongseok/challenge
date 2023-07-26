@@ -84,7 +84,9 @@ function ChannelOrderPaymentProgressMessage({
             {dayjs(order?.orderPayments[0]?.dateExpired).format('MM월 DD일(ddd) HH:mm')}까지
             결제금액을 입금해주세요.
             <br />
-            미입금시 주문이 취소됩니다.
+            {order?.type === 2
+              ? '미입금 시 결제 및 구매대행 요청이 취소됩니다.'
+              : '미입금시 주문이 취소됩니다.'}
           </Typography>
           <Box
             customStyle={{

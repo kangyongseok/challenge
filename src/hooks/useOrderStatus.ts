@@ -13,26 +13,13 @@ interface UseOrderStatusProps {
 export default function useOrderStatus({ order }: UseOrderStatusProps) {
   const { data: accessUser } = useSession();
 
-  const [isSeller, setIsSeller] = useState(false);
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>({
-    name: '',
-    displayText: '',
-    overlayText: '',
-    description: '',
-    transactionMethod: '',
-    paymentMethod: '',
-    stepperValues: [],
-    isExpired: false,
-    hasReview: false,
-    orderDate: '',
-    paymentDate: '',
-    waitingSettlementDate: '',
-    completeSettlementDate: '',
-    isSeller: false
-  });
+  const [isSeller, setIsSeller] = useState(order?.userId !== accessUser?.userId);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
+    getOrderStatus({ ...((order || {}) as Order), isSeller })
+  );
 
   useEffect(() => {
-    if (!order) return;
+    if (!order || !accessUser) return;
 
     setIsSeller(order?.userId !== accessUser?.userId);
   }, [order, accessUser]);

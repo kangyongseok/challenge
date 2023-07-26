@@ -66,3 +66,8 @@ export const ordersDetailOpenDeliveryStatusFrameState = atom({
   key: 'ordersDetail/openDeliveryStatusFrameState',
   default: false
 });
+
+export const ordersDetailOpenDeliveryCompleteConfirmDialogState = atom({
+  key: 'ordersDetail/openDeliveryCompleteConfirmDialogState',
+  default: false
+});

@@ -118,9 +118,13 @@ function ChannelOrderPaymentCompleteMessage({
               marginTop: 8
             }}
           >
-            결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.
-            <br />
-            <br />
+            {order?.type !== 2 && (
+              <>
+                결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.
+                <br />
+                <br />
+              </>
+            )}
             판매하려면 판매승인 버튼을 눌러주세요.
             <br />
             <br />
@@ -225,7 +229,9 @@ function ChannelOrderPaymentCompleteMessage({
           결제 금액은 거래가 끝날때까지 카멜이 안전하게 보관하고 있어요.
           <br />
           <br />
-          판매자 승인 후 거래가 진행됩니다.
+          {order?.type === 2
+            ? '판매자의 거래가능여부 확인 후 구매대행이 진행됩니다.'
+            : '판매자 승인 후 거래가 진행됩니다.'}
         </Typography>
         <Box
           customStyle={{

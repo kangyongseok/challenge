@@ -16,16 +16,14 @@ interface ProductOrderPaymentMethodProps {
   paymentMethodsWidgetRef: MutableRefObject<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>;
-  includeLegit: boolean;
 }
 
 function ProductOrderPaymentMethod({
   paymentWidgetRef,
-  paymentMethodsWidgetRef,
-  includeLegit
+  paymentMethodsWidgetRef
 }: ProductOrderPaymentMethodProps) {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
@@ -33,7 +31,7 @@ function ProductOrderPaymentMethod({
 
   const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({
     productId,
-    includeLegit,
+    includeLegit: String(includeLegit),
     type: Number(type)
   });
 

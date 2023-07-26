@@ -28,6 +28,7 @@ import { settingsAccountData } from '@recoil/settingsAccount';
 import {
   ordersDetailOpenCancelRequestApproveDialogState,
   ordersDetailOpenCancelRequestRefuseDialogState,
+  ordersDetailOpenDeliveryCompleteConfirmDialogState,
   ordersDetailOpenDeliveryStatusFrameState,
   ordersDetailOpenEmptyInvoiceNumberDialogState,
   ordersDetailOpenInvoiceNumberDialogState,
@@ -66,13 +67,16 @@ function OrdersDetailStatus() {
   const setOpenDeliveryStatusFrameState = useSetRecoilState(
     ordersDetailOpenDeliveryStatusFrameState
   );
+  const setOpenDeliveryCompleteConfirmDialog = useSetRecoilState(
+    ordersDetailOpenDeliveryCompleteConfirmDialogState
+  );
   const resetAccountDataState = useResetRecoilState(settingsAccountData);
 
   const toastStack = useToastStack();
   const { isLoggedInWithSMS } = useSession();
   const {
     data,
-    data: { id: orderId, channelId, hold, type, orderDelivery, reviewFormInfo, additionalInfo } = {}
+    data: { id: orderId, channelId, hold, type, reviewFormInfo, additionalInfo } = {}
   } = useQueryOrder({ id: Number(id) });
   const orderStatus = useOrderStatus({ order: data });
 
@@ -107,7 +111,7 @@ function OrdersDetailStatus() {
     const { productId, targetUserName, targetUserId, isTargetUserSeller } = reviewFormInfo || {};
 
     logEvent(attrKeys.mypage.CLICK_REVIEW_SEND, {
-      name: attrProperty.name.ORDER_DETAIL,
+      name: attrProperty.name.ORDER_LIST,
       productId,
       orderId,
       channelId,
@@ -157,6 +161,7 @@ function OrdersDetailStatus() {
     if (typeof type !== 'number' || !orderStatus.name) return;
 
     logEvent(attrKeys.orderDetail.VIEW_ORDER_DETAIL, {
+      name: attrProperty.name.ORDER_DETAIL,
       orderId,
       productId: additionalInfo?.product?.id,
       type: getOrderType(type),
@@ -217,22 +222,24 @@ function OrdersDetailStatus() {
           }}
         />
       )}
-      {orderStatus.isSeller && orderStatus.name === '정산대기' && (
-        <Typography
-          variant="h4"
-          customStyle={{
-            marginTop: 12
-          }}
-        >
-          판매한 물건이 구매확정되었어요.
-          {userAccounts.length === 0 && (
-            <>
-              <br />
-              정산 받을 계좌를 입력해주세요.
-            </>
-          )}
-        </Typography>
-      )}
+      {orderStatus.isSeller &&
+        orderStatus.name === '정산대기' &&
+        orderStatus.transactionMethod !== '카멜 구매대행' && (
+          <Typography
+            variant="h4"
+            customStyle={{
+              marginTop: 12
+            }}
+          >
+            판매한 물건이 구매확정되었어요.
+            {userAccounts.length === 0 && (
+              <>
+                <br />
+                정산 받을 계좌를 입력해주세요.
+              </>
+            )}
+          </Typography>
+        )}
       {!orderStatus.isSeller && orderStatus.name === '환불대기' && !orderStatus.isExpired && (
         <Typography
           variant="h4"
@@ -276,6 +283,32 @@ function OrdersDetailStatus() {
           </Button>
         </Flexbox>
       )}
+      {!orderStatus.isSeller &&
+        orderStatus.name === '배송진행' &&
+        orderStatus.otherDeliveryMethod && (
+          <Flexbox
+            gap={8}
+            customStyle={{
+              marginTop: 12
+            }}
+          >
+            <Flexbox
+              direction="vertical"
+              gap={8}
+              customStyle={{
+                width: '100%',
+                padding: 12,
+                borderRadius: 7,
+                backgroundColor: common.bg02
+              }}
+            >
+              <Typography variant="body2" color="ui60">
+                배송방법
+              </Typography>
+              <Typography variant="h4">{orderStatus.otherDeliveryMethod}</Typography>
+            </Flexbox>
+          </Flexbox>
+        )}
       {orderStatus.stepperValues.length > 0 && (
         <Flexbox
           alignment="center"
@@ -378,7 +411,7 @@ function OrdersDetailStatus() {
           </Button>
         </Flexbox>
       )}
-      {orderStatus.isSeller && orderStatus.name === '배송대기' && (
+      {orderStatus.isSeller && ['배송대기', '구매대행중'].includes(orderStatus.name) && (
         <Flexbox
           direction="vertical"
           gap={16}
@@ -411,7 +444,7 @@ function OrdersDetailStatus() {
       )}
       {orderStatus.isSeller &&
         ['배송진행', '배송완료'].includes(orderStatus.name) &&
-        orderDelivery?.type === 1 && (
+        !orderStatus.otherDeliveryMethod && (
           <Button
             variant="ghost"
             brandColor="black"
@@ -425,14 +458,33 @@ function OrdersDetailStatus() {
             배송조회
           </Button>
         )}
-      {!orderStatus.isSeller && orderStatus.name === '배송진행' && orderDelivery && (
-        <Flexbox
-          gap={8}
-          customStyle={{
-            marginTop: 32
-          }}
-        >
-          {orderDelivery?.type === 1 && (
+      {orderStatus.isSeller &&
+        orderStatus.transactionMethod === '카멜 구매대행' &&
+        orderStatus.name === '배송진행' &&
+        orderStatus.otherDeliveryMethod && (
+          <Button
+            variant="solid"
+            brandColor="black"
+            size="xlarge"
+            fullWidth
+            onClick={() => setOpenDeliveryCompleteConfirmDialog(true)}
+            customStyle={{
+              marginTop: 32
+            }}
+          >
+            배송완료
+          </Button>
+        )}
+      {!orderStatus.isSeller &&
+        orderStatus.name === '배송진행' &&
+        !orderStatus.otherDeliveryMethod &&
+        orderStatus.transactionMethod !== '카멜 구매대행' && (
+          <Flexbox
+            gap={8}
+            customStyle={{
+              marginTop: 32
+            }}
+          >
             <Button
               variant="ghost"
               brandColor="black"
@@ -442,7 +494,26 @@ function OrdersDetailStatus() {
             >
               배송조회
             </Button>
-          )}
+            <Button
+              variant="solid"
+              brandColor="black"
+              size="xlarge"
+              fullWidth
+              onClick={() =>
+                setPurchaseConfirmDialogState({
+                  open: true,
+                  variant: 'delivery'
+                })
+              }
+            >
+              구매확정
+            </Button>
+          </Flexbox>
+        )}
+      {!orderStatus.isSeller &&
+        orderStatus.name === '배송진행' &&
+        orderStatus.otherDeliveryMethod &&
+        orderStatus.transactionMethod !== '카멜 구매대행' && (
           <Button
             variant="solid"
             brandColor="black"
@@ -454,11 +525,30 @@ function OrdersDetailStatus() {
                 variant: 'delivery'
               })
             }
+            customStyle={{
+              marginTop: 32
+            }}
           >
             구매확정
           </Button>
-        </Flexbox>
-      )}
+        )}
+      {!orderStatus.isSeller &&
+        orderStatus.name === '배송진행' &&
+        !orderStatus.otherDeliveryMethod &&
+        orderStatus.transactionMethod === '카멜 구매대행' && (
+          <Button
+            variant="ghost"
+            brandColor="black"
+            size="xlarge"
+            fullWidth
+            onClick={() => setOpenDeliveryStatusFrameState(true)}
+            customStyle={{
+              marginTop: 32
+            }}
+          >
+            배송조회
+          </Button>
+        )}
       {!orderStatus.isSeller && orderStatus.name === '거래대기' && (
         <Button
           variant="solid"
@@ -478,25 +568,27 @@ function OrdersDetailStatus() {
           구매확정
         </Button>
       )}
-      {!orderStatus.isSeller && orderStatus.name === '배송완료' && orderDelivery && (
-        <Button
-          variant="solid"
-          brandColor="black"
-          size="xlarge"
-          fullWidth
-          onClick={() =>
-            setPurchaseConfirmDialogState({
-              open: true,
-              variant: type === 1 ? 'direct' : 'delivery'
-            })
-          }
-          customStyle={{
-            marginTop: 32
-          }}
-        >
-          구매확정
-        </Button>
-      )}
+      {!orderStatus.isSeller &&
+        orderStatus.name === '배송완료' &&
+        orderStatus.transactionMethod !== '카멜 구매대행' && (
+          <Button
+            variant="solid"
+            brandColor="black"
+            size="xlarge"
+            fullWidth
+            onClick={() =>
+              setPurchaseConfirmDialogState({
+                open: true,
+                variant: orderStatus.transactionMethod === '직거래' ? 'direct' : 'delivery'
+              })
+            }
+            customStyle={{
+              marginTop: 32
+            }}
+          >
+            구매확정
+          </Button>
+        )}
       {orderStatus.isSeller &&
         ['배송준비 중 취소 요청', '거래준비 중 취소 요청'].includes(orderStatus.name) &&
         hold && (
@@ -527,11 +619,10 @@ function OrdersDetailStatus() {
           </Flexbox>
         )}
       {!orderStatus.isSeller &&
-        orderStatus.transactionMethod !== '카멜 구매대행' &&
-        orderStatus.name === '정산대기' &&
+        ['정산대기', '정산진행', '정산완료'].includes(orderStatus.name) &&
         !orderStatus.hasReview && (
           <Button
-            variant="solid"
+            variant={orderStatus.transactionMethod === '카멜 구매대행' ? 'ghost' : 'solid'}
             brandColor="black"
             size="xlarge"
             fullWidth

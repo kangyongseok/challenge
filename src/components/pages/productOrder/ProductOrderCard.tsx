@@ -7,9 +7,9 @@ import useQueryProductOrder from '@hooks/useQueryProductOrder';
 import useQueryProduct from '@hooks/useQueryProduct';
 import useProductType from '@hooks/useProductType';
 
-function ProductOrderCard({ includeLegit }: { includeLegit: boolean }) {
+function ProductOrderCard() {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
@@ -17,7 +17,7 @@ function ProductOrderCard({ includeLegit }: { includeLegit: boolean }) {
   const { isAllOperatorProduct } = useProductType(product?.sellerType);
   const { data: { totalPrice = 0 } = {} } = useQueryProductOrder({
     productId,
-    includeLegit,
+    includeLegit: String(includeLegit),
     type: Number(type)
   });
 

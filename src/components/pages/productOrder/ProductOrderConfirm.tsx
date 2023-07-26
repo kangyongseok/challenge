@@ -35,12 +35,11 @@ import useProductType from '@hooks/useProductType';
 
 interface ProductOrderConfirmProps {
   paymentWidgetRef: MutableRefObject<PaymentWidgetInstance | null>;
-  includeLegit: boolean;
 }
 
-function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderConfirmProps) {
+function ProductOrderConfirm({ paymentWidgetRef }: ProductOrderConfirmProps) {
   const router = useRouter();
-  const { id, type = 0 } = router.query;
+  const { id, includeLegit, type = 0 } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
 
@@ -62,7 +61,7 @@ function ProductOrderConfirm({ paymentWidgetRef, includeLegit }: ProductOrderCon
       result
     } = {},
     isLoading
-  } = useQueryProductOrder({ productId, includeLegit, type: Number(type) });
+  } = useQueryProductOrder({ productId, includeLegit: String(includeLegit), type: Number(type) });
 
   const { data: { product } = {}, isLoading: isLoadingProduct } = useQuery(
     queryKeys.products.product({ productId }),

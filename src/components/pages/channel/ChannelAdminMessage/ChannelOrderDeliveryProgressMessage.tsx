@@ -32,6 +32,9 @@ function ChannelOrderDeliveryProgressMessage({
   } = useTheme();
 
   const setOpenState = useSetRecoilState(channelDialogStateFamily('purchaseConfirm'));
+  const setOpenDeliveryCompleteConfirmDialogState = useSetRecoilState(
+    channelDialogStateFamily('deliveryCompleteConfirm')
+  );
 
   const { data: accessUser } = useSession();
 
@@ -92,11 +95,17 @@ function ChannelOrderDeliveryProgressMessage({
               marginTop: 8
             }}
           >
-            배송이 시작되었어요.
-            {isParcel && (
+            {!isParcel && order?.type === 2 ? (
+              '배송이 완료된 후 배송완료 버튼을 클릭해주세요.'
+            ) : (
               <>
-                <br />
-                배송현황은 배송조회를 클릭하여 확인해주세요.
+                배송이 시작되었어요.
+                {isParcel && (
+                  <>
+                    <br />
+                    배송현황은 배송조회를 클릭하여 확인해주세요.
+                  </>
+                )}
               </>
             )}
           </Typography>
@@ -127,6 +136,24 @@ function ChannelOrderDeliveryProgressMessage({
               </Typography>
               <Typography variant="body2">{getTypeText()}</Typography>
             </Flexbox>
+          )}
+          {!isParcel && order?.type === 2 && (
+            <Button
+              fullWidth
+              size="medium"
+              variant="solid"
+              brandColor="black"
+              customStyle={{ marginTop: 20 }}
+              type="submit"
+              onClick={() =>
+                setOpenDeliveryCompleteConfirmDialogState((prevState) => ({
+                  ...prevState,
+                  open: true
+                }))
+              }
+            >
+              배송완료
+            </Button>
           )}
           <Flexbox
             alignment="center"
@@ -224,7 +251,8 @@ function ChannelOrderDeliveryProgressMessage({
             }
           />
         )}
-        {getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
+        {order?.type !== 2 &&
+          getOrderStatusText({ status: order?.status, result: order?.result }) === '거래중' &&
           !isParcel && (
             <Button
               brandColor="black"

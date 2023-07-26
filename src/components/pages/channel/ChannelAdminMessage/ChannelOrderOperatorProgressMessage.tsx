@@ -3,7 +3,8 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import type { AdminMessage } from '@sendbird/chat/message';
 import Toast from '@mrcamelhub/camel-ui-toast';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import { useTheme } from '@emotion/react';
 
 import { OrderEmptyInvoiceNumberDialog, OrderInvoiceNumberDialog } from '@components/pages/order';
 
@@ -12,34 +13,26 @@ import type { Order } from '@dto/order';
 import { getFormatPhoneNumberDashParser } from '@utils/formats';
 import { copyToClipboard } from '@utils/common';
 
-import useSession from '@hooks/useSession';
-
-interface ChannelOrderDeliveryWaitMessageProps {
+interface ChannelOrderOperatorProgressMessageProps {
   message: AdminMessage;
   order?: Order | null;
   isSeller: boolean;
   onClickOrderDetail: () => void;
 }
 
-function ChannelOrderDeliveryWaitMessage({
-  message: { data, createdAt },
+function ChannelOrderOperatorProgressMessage({
+  message: { createdAt },
   order,
   isSeller,
   onClickOrderDetail
-}: ChannelOrderDeliveryWaitMessageProps) {
+}: ChannelOrderOperatorProgressMessageProps) {
   const {
-    theme: {
-      palette: { common }
-    }
+    palette: { common }
   } = useTheme();
-
-  const { data: accessUser } = useSession();
 
   const [openInvoiceDialog, setInvoiceDialog] = useState(false);
   const [openEmptyInvoiceDialog, setEmptyInvoiceDialog] = useState(false);
   const [open, setOpen] = useState(false);
-
-  if (data && accessUser?.userId !== Number(JSON.parse(data)?.userId)) return null;
 
   const handleCopyAddress = () => {
     if (!order?.deliveryInfo.address) return;
@@ -81,12 +74,14 @@ function ChannelOrderDeliveryWaitMessage({
               </Typography>
             )}
             <Typography variant="h4" weight="bold">
-              배송준비
+              구매대행중
             </Typography>
-            <Typography customStyle={{ marginTop: 8 }}>
-              택배를 보낸 뒤 송장번호를 입력해주세요.
-              <br />
-              미입력시 주문이 취소됩니다.
+            <Typography
+              customStyle={{
+                marginTop: 8
+              }}
+            >
+              구매대행이 완료되면 송장번호를 입력해주세요.
             </Typography>
             <Box
               customStyle={{ background: common.bg02, borderRadius: 8, padding: 8, marginTop: 20 }}
@@ -112,7 +107,7 @@ function ChannelOrderDeliveryWaitMessage({
               </Typography>
               <Typography variant="body2">{order?.deliveryInfo.address}</Typography>
             </Box>
-            {order?.status === 1 && order?.result === 0 && (
+            {order?.status === 5 && order?.result === 1 && (
               <>
                 <Button
                   size="medium"
@@ -148,12 +143,7 @@ function ChannelOrderDeliveryWaitMessage({
               </Typography>
             </Flexbox>
           </Box>
-          <Typography
-            variant="small2"
-            customStyle={{
-              color: common.ui60
-            }}
-          >
+          <Typography variant="small2" color="ui60">
             {dayjs(createdAt).format('A hh:mm')}
           </Typography>
         </Flexbox>
@@ -173,6 +163,7 @@ function ChannelOrderDeliveryWaitMessage({
       </>
     );
   }
+
   return (
     <Flexbox
       gap={4}
@@ -204,12 +195,21 @@ function ChannelOrderDeliveryWaitMessage({
           </Typography>
         )}
         <Typography variant="h4" weight="bold">
-          배송준비
+          구매대행중
         </Typography>
-        <Typography customStyle={{ marginTop: 8 }}>
-          {order?.type === 2
-            ? '카멜이 배송을 준비하고 있어요.'
-            : '판매자가 배송을 준비하고 있어요.'}
+        <Typography
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          판매자에게 매물을 구매하고 있어요.
+        </Typography>
+        <Typography
+          customStyle={{
+            marginTop: 8
+          }}
+        >
+          카멜이 매물을 받아 확인 후 배송해드릴게요.
         </Typography>
         <Flexbox
           alignment="center"
@@ -227,16 +227,11 @@ function ChannelOrderDeliveryWaitMessage({
           </Typography>
         </Flexbox>
       </Box>
-      <Typography
-        variant="small2"
-        customStyle={{
-          color: common.ui60
-        }}
-      >
+      <Typography variant="small2" color="ui60">
         {dayjs(createdAt).format('A hh:mm')}
       </Typography>
     </Flexbox>
   );
 }
 
-export default ChannelOrderDeliveryWaitMessage;
+export default ChannelOrderOperatorProgressMessage;

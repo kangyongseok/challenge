@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
+import { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import { Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import { useTheme } from '@emotion/react';
 
@@ -25,6 +26,8 @@ function OrdersDetailDeliveryInfo() {
   const {
     palette: { common }
   } = useTheme();
+
+  const toastStack = useToastStack();
 
   const [invoiceNumberInfo, setInvoiceNumberInfo] = useState<{
     description: string;
@@ -51,8 +54,12 @@ function OrdersDetailDeliveryInfo() {
 
   const handleClick =
     (text = '') =>
-    () =>
+    () => {
       copyToClipboard(text);
+      toastStack({
+        children: '배송정보가 복사되었어요!'
+      });
+    };
 
   useEffect(() => {
     if (!data || !orderDelivery) return;
@@ -164,13 +171,13 @@ function OrdersDetailDeliveryInfo() {
                 )}
               </Flexbox>
             </Flexbox>
-            {orderDelivery && invoiceNumberInfo && (
+            {invoiceNumberInfo && (
               <Flexbox justifyContent="space-between" alignment="center">
                 <Typography color="ui60">송장번호</Typography>
-                <Typography>{`${invoiceNumberInfo.description} ${invoiceNumberInfo.contents}`}</Typography>
+                <Typography>{`${invoiceNumberInfo?.description} ${invoiceNumberInfo?.contents}`}</Typography>
               </Flexbox>
             )}
-            {orderDelivery && deliveryMethod && (
+            {deliveryMethod && (
               <Flexbox justifyContent="space-between" alignment="center">
                 <Typography color="ui60">배송방법</Typography>
                 <Typography>{deliveryMethod}</Typography>
@@ -194,7 +201,7 @@ function OrdersDetailDeliveryInfo() {
             </Typography>
           </Flexbox>
         )}
-        {orderDelivery && invoiceNumberInfo && (
+        {!orderStatus.otherDeliveryMethod && invoiceNumberInfo && (
           <Button
             variant="ghost"
             brandColor="black"

@@ -13,3 +13,4 @@ export { default as ChannelReservingDialog } from './ChannelReservingDialog';
 export { default as ChannelCancelRequestRefuseDialog } from './ChannelCancelRequestRefuseDialog';
 export { default as ChannelCancelRequestApproveDialog } from './ChannelCancelRequestApproveDialog';
 export { default as ChannelSafePaymentGuideBanner } from './ChannelSafePaymentGuideBanner';
+export { default as ChannelDeliveryCompleteConfirmDialog } from './ChannelDeliveryCompleteConfirmDialog';
