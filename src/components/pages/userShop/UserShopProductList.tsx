@@ -7,11 +7,12 @@ import type {
   RefetchQueryFilters
 } from '@tanstack/react-query';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Box, Flexbox } from '@mrcamelhub/camel-ui';
+import { Box, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import SelectTargetUserBottomSheet from '@components/UI/organisms/SelectTargetUserBottomSheet';
 import NewProductListCardSkeleton from '@components/UI/molecules/Skeletons/NewProductListCardSkeleton';
 import { NewProductListCard } from '@components/UI/molecules';
+import { Empty } from '@components/UI/atoms';
 
 import type { UserInfo } from '@dto/user';
 import type { ProductResult } from '@dto/product';
@@ -26,6 +27,8 @@ import { productStatusCode } from '@constants/product';
 import { FIRST_CATEGORIES } from '@constants/category';
 import attrProperty from '@constants/attrProperty';
 
+import { getImageResizePath } from '@utils/common';
+
 import type { SavedLegitDataProps } from '@typings/product';
 import { userShopOpenStateFamily, userShopSelectedProductState } from '@recoil/userShop';
 import useSession from '@hooks/useSession';
@@ -34,7 +37,7 @@ import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 import UserShopProductSoldOutConfirmBottomSheet from './UserShopProductSoldOutConfirmBottomSheet';
 import UserShopProductManageBottomSheet from './UserShopProductManageBottomSheet';
 import UserShopProductActionBanner from './UserShopProductActionBanner';
-import UserShopEmpty from './UserShopEmpty';
+// import UserShopEmpty from './UserShopEmpty';
 
 interface UserShopProductListProps {
   tab: string;
@@ -71,7 +74,8 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    refetch: refetchUserProducts
+    refetch: refetchUserProducts,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.users.products(userProductsParams),
     ({ pageParam = 0 }) =>
@@ -131,9 +135,30 @@ function UserShopProductList({ tab, refreshInfoByUserId }: UserShopProductListPr
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
-  return !isLoading && contents.length === 0 ? (
-    <UserShopEmpty tab={tab} />
-  ) : (
+  if (fetchStatus === 'idle' && contents.length === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_face.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            판매중인 매물이 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
+
+  return (
     <>
       <Flexbox direction="vertical" component="section" gap={32} customStyle={{ padding: 20 }}>
         {isLoading ? (

@@ -431,7 +431,8 @@ const title = {
   APPROVE: 'APPROVE',
   REQUEST: 'REQUEST',
   WITHDRAW: 'WITHDRAW',
-  OPERATOR: 'OPERATOR'
+  OPERATOR: 'OPERATOR',
+  MYPAGE_ORDER: 'MYPAGE_ORDER'
 };
 
 const source = {

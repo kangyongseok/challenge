@@ -9,6 +9,8 @@ import { Box, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/cam
 import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
+import { Empty } from '@components/UI/atoms';
+
 import type { UserNoti } from '@dto/user';
 import type { SearchParams } from '@dto/product';
 
@@ -25,6 +27,7 @@ import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { getFormattedDistanceTime } from '@utils/formats';
+import { getImageResizePath } from '@utils/common';
 
 import { camelSellerIsMovedScrollState } from '@recoil/camelSeller';
 import useSession from '@hooks/useSession';
@@ -135,7 +138,7 @@ function ActivityNotificationPanel() {
   const [openToast, setOpenToast] = useState(false);
   const { mutate: productKeywordViewMutate } = useMutation(putProductKeywordView);
   const { mutate: productNotiReadMutate } = useMutation(postNotiRead);
-  const { data, fetchNextPage, refetch } = useInfiniteQuery(
+  const { data, fetchNextPage, refetch, fetchStatus } = useInfiniteQuery(
     queryKeys.userHistory.userNoti(params, accessUser?.userId),
     ({ pageParam = 0 }) => fetchUserNoti({ ...params, page: pageParam as number }),
     {
@@ -306,26 +309,32 @@ function ActivityNotificationPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  if (fetchStatus === 'idle' && data?.pages[0].totalPages === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_think.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            알림내역이 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
+
   return (
     <Flexbox direction="vertical" gap={32} customStyle={{ padding: '32px 20px' }}>
       {data?.pages.map((page, pageIndex) => {
-        if (!page) {
-          return (
-            <Flexbox
-              // eslint-disable-next-line react/no-array-index-key
-              key={`noti-${pageIndex}`}
-              direction="vertical"
-              gap={4}
-              alignment="center"
-              justifyContent="center"
-            >
-              <Typography variant="h0">😮</Typography>
-              <Typography variant="h3" weight="bold">
-                활동알림이 없습니다!
-              </Typography>
-            </Flexbox>
-          );
-        }
         return page.content?.map((activityInfo, i) => {
           const findLabel = find(labelData, { id: Number(activityInfo.label.name) }) as LabelData;
           if (process.env.NODE_ENV === 'development') {

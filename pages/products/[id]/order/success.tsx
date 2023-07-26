@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Icon } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -39,6 +39,7 @@ function ProductOrderSuccess() {
   const { id, camelOrderId, paymentKey, orderId, amount } = router.query;
   const splitId = String(id).split('-');
   const productId = Number(splitId[splitId.length - 1] || 0);
+  const queryClient = useQueryClient();
 
   const completedRef = useRef(false);
 
@@ -143,6 +144,14 @@ function ProductOrderSuccess() {
             response
           }
         });
+
+        queryClient.invalidateQueries(
+          queryKeys.orders.orderSearch({
+            type: 0,
+            isConfirmed: false,
+            page: 0
+          })
+        );
 
         const {
           issuerCode,
@@ -288,7 +297,8 @@ function ProductOrderSuccess() {
     router,
     channels,
     data,
-    type
+    type,
+    queryClient
   ]);
 
   return (

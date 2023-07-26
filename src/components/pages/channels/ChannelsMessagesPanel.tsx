@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
 
-import { Box, CustomStyle, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { useRouter } from 'next/router';
+import { Button, CustomStyle, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
+import { Empty } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
 import { channelType } from '@constants/channel';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImageResizePath } from '@utils/common';
 
 import useInfiniteQueryChannels from '@hooks/useInfiniteQueryChannels';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
@@ -27,16 +31,21 @@ function ChannelsMessagesPanel({
   customStyle,
   ...props
 }: ChannelsMessagesPanelProps) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
-
+  const router = useRouter();
   const { triggered } = useDetectScrollFloorTrigger();
 
-  const { channels, isInitialLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQueryChannels(props);
+  const {
+    channels,
+    isInitialLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    fetchStatus
+  } = useInfiniteQueryChannels(props);
+
+  const handleClickProductsList = () => {
+    router.push('/products');
+  };
 
   useEffect(() => {
     const { type, productId } = props;
@@ -54,29 +63,44 @@ function ChannelsMessagesPanel({
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
-  // const sortChannels = useMemo(() => {
-  //   return sortBy(channels, function (o) {
-  //     return o.sendbird?.lastMessage?.createdAt || o.sendbird?.createdAt;
-  //   }).reverse();
-  // }, [channels]);
-
-  if (!isInitialLoading && !channels.length) {
+  if (fetchStatus === 'idle' && !channels.length) {
+    const isChannels = router.pathname.split('/').includes('channels');
     return (
-      <Flexbox
-        component="section"
-        direction="vertical"
-        justifyContent="center"
-        alignment="center"
-        gap={20}
-        customStyle={{ padding: '84px 20px' }}
-      >
-        <Box customStyle={{ fontSize: 52 }}>💬</Box>
-        <Typography variant="h3" weight="bold" customStyle={{ color: common.ui60 }}>
-          채팅 내역이 없어요
-        </Typography>
-      </Flexbox>
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_${
+              isChannels ? 'think' : 'paper'
+            }.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            {isChannels ? '채팅 내역이' : '문의내역이'} 없어요
+          </Typography>
+          {!isChannels && (
+            <Typography variant="h4" color="ui60">
+              카멜에서 마음에 드는 매물을 찾아보세요
+            </Typography>
+          )}
+        </Flexbox>
+        {!isChannels && (
+          <Button variant="ghost" brandColor="gray" onClick={handleClickProductsList} size="large">
+            <Typography variant="h4" weight="medium">
+              매물 보러가기
+            </Typography>
+          </Button>
+        )}
+      </Empty>
     );
   }
+
   return (
     <Flexbox
       component="section"

@@ -3,9 +3,10 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Flexbox, Skeleton, Typography } from '@mrcamelhub/camel-ui';
+import { Flexbox, Image, Skeleton, Typography } from '@mrcamelhub/camel-ui';
 
 import { ReviewCard } from '@components/UI/organisms';
+import { Empty } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -15,6 +16,8 @@ import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImageResizePath } from '@utils/common';
 
 import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
@@ -48,7 +51,8 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isFetching
+    isFetching,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.users.reviewsByUserId(params),
     async ({ pageParam = 0 }) => fetchReviewsByUserId({ ...params, page: pageParam }),
@@ -186,22 +190,33 @@ function UserInfoReviewsPanel({ userId }: UserInfoReviewsPanelProps) {
     };
   }, []);
 
-  return !isLoading &&
-    (userReviews.length === 0 || (pages && typeof pages[0] === 'string' && pages.length === 0)) ? (
-    <Flexbox
-      direction="vertical"
-      alignment="center"
-      gap={20}
-      customStyle={{
-        margin: '84px 20px 0'
-      }}
-    >
-      <Typography customStyle={{ width: 52, height: 52, fontSize: 52 }}>🥲</Typography>
-      <Typography variant="h3" weight="bold">
-        작성된 후기가 없어요
-      </Typography>
-    </Flexbox>
-  ) : (
+  if (
+    (fetchStatus === 'idle' && userReviews.length === 0) ||
+    (pages && typeof pages[0] === 'string' && pages.length === 0)
+  ) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_paper.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            등록된 후기가 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
+
+  return (
     <Flexbox component="section" direction="vertical" gap={12} customStyle={{ padding: 20 }}>
       {isLoading
         ? Array.from({ length: 10 }).map((_, index) => (

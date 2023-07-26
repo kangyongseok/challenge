@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from 'react';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import { Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCard, NewProductListCardSkeleton } from '@components/UI/molecules';
+import { Empty } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
@@ -12,6 +13,8 @@ import { fetchSellerProducts } from '@api/product';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImageResizePath } from '@utils/common';
 
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
@@ -28,7 +31,8 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
+    isLoading,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.products.sellerProducts(params),
     async ({ pageParam = 0 }) => fetchSellerProducts({ ...params, page: pageParam }),
@@ -57,21 +61,30 @@ function SellerInfoProductsPanel({ sellerId }: SellerInfoProductsPanelProps) {
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
 
-  return !isLoading && sellerProducts.length === 0 ? (
-    <Flexbox
-      direction="vertical"
-      alignment="center"
-      gap={20}
-      customStyle={{
-        margin: '84px 20px 0'
-      }}
-    >
-      <Typography customStyle={{ width: 52, height: 52, fontSize: 52 }}>🥲</Typography>
-      <Typography variant="h3" weight="bold">
-        판매중인 매물이 없어요
-      </Typography>
-    </Flexbox>
-  ) : (
+  if (fetchStatus === 'idle' && sellerProducts.length === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_face.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            판매중인 매물이 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
+
+  return (
     <Flexbox
       component="section"
       direction="vertical"

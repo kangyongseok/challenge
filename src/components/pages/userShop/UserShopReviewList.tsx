@@ -13,16 +13,18 @@ import type { Index, ListRowProps } from 'react-virtualized';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
-import { Flexbox, Icon, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Flexbox, Icon, Image, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import ReviewCard from '@components/UI/organisms/ReviewCard';
-import UserShopEmpty from '@components/pages/userShop/UserShopEmpty';
+import { Empty } from '@components/UI/atoms';
 
 import { fetchReviewsByUserId, postReviewBlock, postReviewReport } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { REPORT_STATUS } from '@constants/product';
+
+import { getImageResizePath } from '@utils/common';
 
 import useSession from '@hooks/useSession';
 
@@ -60,7 +62,8 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
+    isLoading,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.users.reviewsByUserId(params),
     async ({ pageParam = 0 }) => fetchReviewsByUserId({ ...params, page: pageParam }),
@@ -208,9 +211,30 @@ function UserShopReviewList({ userId, reviewCount, curnScore, maxScore }: UserSh
     };
   }, [handleResize]);
 
-  return reviewCount === 0 ? (
-    <UserShopEmpty tab="2" />
-  ) : (
+  if (fetchStatus === 'idle' && reviewCount === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_paper.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            등록된 후기가 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
+
+  return (
     <Flexbox
       component="section"
       direction="vertical"

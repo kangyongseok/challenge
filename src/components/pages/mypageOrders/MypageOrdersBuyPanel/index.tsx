@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 
+import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import { Button, Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductListCardSkeleton } from '@components/UI/molecules';
+import { Empty } from '@components/UI/atoms';
 import { MypageOrdersCard } from '@components/pages/mypageOrders';
 
 import { fetchOrderSearch } from '@api/order';
@@ -11,11 +13,13 @@ import { fetchOrderSearch } from '@api/order';
 import queryKeys from '@constants/queryKeys';
 
 import { commaNumber } from '@utils/formats';
+import { getImageResizePath } from '@utils/common';
 
 import useSession from '@hooks/useSession';
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
 function MypageOrdersBuyPanel() {
+  const router = useRouter();
   const { triggered } = useDetectScrollFloorTrigger();
 
   const { isLoggedIn } = useSession();
@@ -25,7 +29,8 @@ function MypageOrdersBuyPanel() {
     isInitialLoading,
     hasNextPage,
     isFetchingNextPage,
-    fetchNextPage
+    fetchNextPage,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.orders.orderSearch({
       type: 0,
@@ -45,16 +50,51 @@ function MypageOrdersBuyPanel() {
         return number < totalPages - 1 ? number + 1 : undefined;
       },
       enabled: isLoggedIn,
-      refetchOnMount: true
+      staleTime: 5 * 60 * 1000
     }
   );
 
   const orders = pages.map(({ content = [] }) => content).flat();
   const { totalElements } = pages[pages.length - 1] || {};
 
+  const handleClickProductsList = () => {
+    router.push('/products');
+  };
+
   useEffect(() => {
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
+
+  if (fetchStatus === 'idle' && pages[0].totalPages === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_paper.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            구매내역이 없어요
+          </Typography>
+          <Typography variant="h4" color="ui60">
+            카멜에서 마음에 드는 매물을 찾아보세요
+          </Typography>
+        </Flexbox>
+        <Button variant="ghost" brandColor="gray" onClick={handleClickProductsList} size="large">
+          <Typography variant="h4" weight="medium">
+            매물 보러가기
+          </Typography>
+        </Button>
+      </Empty>
+    );
+  }
 
   return (
     <section>

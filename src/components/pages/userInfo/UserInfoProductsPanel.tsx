@@ -2,9 +2,10 @@ import { Fragment, useCallback, useEffect, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Flexbox, Grid, Typography } from '@mrcamelhub/camel-ui';
+import { Flexbox, Grid, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import { NewProductGridCard, ProductGridCardSkeleton } from '@components/UI/molecules';
+import { Empty } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 
@@ -18,6 +19,8 @@ import sessionStorageKeys from '@constants/sessionStorageKeys';
 import queryKeys from '@constants/queryKeys';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImageResizePath } from '@utils/common';
 
 import useDetectScrollFloorTrigger from '@hooks/useDetectScrollFloorTrigger';
 
@@ -36,7 +39,8 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
+    isLoading,
+    fetchStatus
   } = useInfiniteQuery(
     queryKeys.users.productsByUserId(params),
     async ({ pageParam = 0 }) => fetchProductsByUserId({ ...params, page: pageParam }),
@@ -94,6 +98,29 @@ function UserInfoProductsPanel({ userId }: UserInfoProductsPanelProps) {
   useEffect(() => {
     if (triggered && !isFetchingNextPage && hasNextPage) fetchNextPage().then();
   }, [fetchNextPage, triggered, hasNextPage, isFetchingNextPage]);
+
+  if (fetchStatus === 'idle' && groupedProducts.length === 0) {
+    return (
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_face.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            판매중인 매물이 없어요
+          </Typography>
+        </Flexbox>
+      </Empty>
+    );
+  }
 
   // eslint-disable-next-line no-nested-ternary
   return !isLoading && groupedProducts.length === 0 ? (

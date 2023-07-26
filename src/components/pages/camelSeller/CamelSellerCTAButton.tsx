@@ -197,7 +197,6 @@ function CamelSellerCTAButton() {
           if (!!userId && !initialized) {
             await initializeSendbird(userId.toString(), userNickName, userImageProfile);
           }
-
           LocalStorage.remove(SAVED_CAMEL_SELLER_PRODUCT_DATA);
           SessionStorage.remove(sessionStorageKeys.isFirstVisitCamelSellerRegisterConfirm);
           window.history.replaceState(null, '', '/user/shop');

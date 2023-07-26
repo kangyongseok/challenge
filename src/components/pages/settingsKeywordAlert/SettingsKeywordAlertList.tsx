@@ -2,7 +2,9 @@ import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Box, Chip, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Box, Chip, Flexbox, Icon, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
+
+import { Empty } from '@components/UI/atoms';
 
 import { UserKeywordInfo } from '@dto/user';
 
@@ -14,6 +16,7 @@ import queryKeys from '@constants/queryKeys';
 import attrKeys from '@constants/attrKeys';
 
 import { getTenThousandUnitPrice } from '@utils/formats';
+import { getImageResizePath } from '@utils/common';
 
 import {
   keywordAlertManageBottomSheetState,
@@ -34,14 +37,14 @@ function SettingsKeywordAlertList() {
 
   const {
     data = [],
-    isLoading,
+    fetchStatus,
     refetch
   } = useQuery(queryKeys.users.userKeywords(), () => fetchUserKeywords(), {
-    refetchOnMount: true
+    staleTime: 5 * 60 * 1000
   });
 
   const { data: { isNotiKeyword } = {} } = useQuery(queryKeys.users.alarms(), fetchAlarm, {
-    refetchOnMount: true
+    staleTime: 5 * 60 * 1000
   });
 
   const { mutate } = useMutation(deleteUserKeywords);
@@ -105,53 +108,80 @@ function SettingsKeywordAlertList() {
     return undefined;
   };
 
-  if (!isLoading && !data.length) {
+  if (fetchStatus === 'idle' && !data.length) {
     return (
-      <Flexbox
-        component="section"
-        direction="vertical"
-        alignment="center"
-        justifyContent="center"
-        customStyle={{
-          marginTop: 116
-        }}
-      >
-        <Flexbox
-          direction="vertical"
-          alignment="center"
-          justifyContent="center"
-          customStyle={{
-            maxWidth: 52,
-            maxHeight: 52,
-            fontSize: 52
-          }}
-        >
-          🫥
+      <Empty>
+        <Image
+          src={getImageResizePath({
+            imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_face.png`,
+            w: 52
+          })}
+          alt="empty img"
+          width={52}
+          height={52}
+          disableAspectRatio
+          disableSkeleton
+        />
+        <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+          <Typography variant="h3" weight="bold" color="ui60">
+            등록된 키워드가 없어요
+          </Typography>
+          <Typography variant="h4" color="ui60" customStyle={{ textAlign: 'center' }}>
+            관심있는 매물의 키워드를 등록해보세요.
+            <br />새 매물이 등록되면 알려드려요.
+          </Typography>
         </Flexbox>
-        <Typography
-          variant="h3"
-          weight="bold"
-          color="ui60"
-          textAlign="center"
-          customStyle={{
-            marginTop: 20
-          }}
-        >
-          등록된 키워드가 없어요.
-        </Typography>
-        <Typography
-          variant="h4"
-          color="ui60"
-          textAlign="center"
-          customStyle={{
-            marginTop: 8
-          }}
-        >
-          관심있는 매물의 키워드를 등록해보세요. 새 매물이 등록되면 알려드려요.
-        </Typography>
-      </Flexbox>
+      </Empty>
     );
   }
+
+  // if (!isLoading && !data.length) {
+  //   return (
+  //     <Flexbox
+  //       component="section"
+  //       direction="vertical"
+  //       alignment="center"
+  //       justifyContent="center"
+  //       customStyle={{
+  //         marginTop: 116
+  //       }}
+  //     >
+  //       <Flexbox
+  //         direction="vertical"
+  //         alignment="center"
+  //         justifyContent="center"
+  //         customStyle={{
+  //           maxWidth: 52,
+  //           maxHeight: 52,
+  //           fontSize: 52
+  //         }}
+  //       >
+  //         🫥
+  //       </Flexbox>
+  //       <Typography
+  //         variant="h3"
+  //         weight="bold"
+  //         color="ui60"
+  //         textAlign="center"
+  //         customStyle={{
+  //           marginTop: 20
+  //         }}
+  //       >
+  //         등록된 키워드가 없어요.
+  //       </Typography>
+  //       <Typography
+  //         variant="h4"
+  //         color="ui60"
+  //         textAlign="center"
+  //         customStyle={{
+  //           marginTop: 8
+  //         }}
+  //       >
+  //         관심있는 매물의 키워드를 등록해보세요. 새 매물이 등록되면 알려드려요.
+  //       </Typography>
+  //     </Flexbox>
+  //   );
+  // }
 
   return (
     <Box

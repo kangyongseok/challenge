@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { Box, Flexbox, Typography } from '@mrcamelhub/camel-ui';
+import { Flexbox, Image, Typography } from '@mrcamelhub/camel-ui';
 
 import ChannelListSkeleton from '@components/UI/molecules/Skeletons/ChannelListSkeleton';
+import { Empty } from '@components/UI/atoms';
 
 import type { ProductResult } from '@dto/product';
 import type { Channel } from '@dto/channel';
@@ -13,6 +14,8 @@ import { logEvent } from '@library/amplitude';
 import { PRODUCT_STATUS } from '@constants/product';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
+
+import { getImageResizePath } from '@utils/common';
 
 import { channelReceivedMessageFilteredState } from '@recoil/channel';
 import useQueryChannels from '@hooks/useQueryChannels';
@@ -96,19 +99,24 @@ function ChannelsFilteredMessagesPanel() {
       )}
     </>
   ) : (
-    <Flexbox
-      component="section"
-      direction="vertical"
-      justifyContent="center"
-      alignment="center"
-      gap={20}
-      customStyle={{ padding: '84px 20px' }}
-    >
-      <Box customStyle={{ fontSize: 52 }}>💬</Box>
-      <Typography variant="h3" weight="bold" color="ui60">
-        채팅 내역이 없어요
-      </Typography>
-    </Flexbox>
+    <Empty>
+      <Image
+        src={getImageResizePath({
+          imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/empty_think.png`,
+          w: 52
+        })}
+        alt="empty img"
+        width={52}
+        height={52}
+        disableAspectRatio
+        disableSkeleton
+      />
+      <Flexbox direction="vertical" alignment="center" justifyContent="center" gap={8}>
+        <Typography variant="h3" weight="bold" color="ui60">
+          채팅 내역이 없어요
+        </Typography>
+      </Flexbox>
+    </Empty>
   );
 }
 

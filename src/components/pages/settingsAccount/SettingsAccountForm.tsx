@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Box, Button, Flexbox, Icon, Input, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -33,6 +33,7 @@ function SettingsAccountForm() {
       palette: { common }
     }
   } = useTheme();
+  const queryClient = useQueryClient();
 
   const [bankName, setBankName] = useState('');
 
@@ -44,14 +45,14 @@ function SettingsAccountForm() {
 
   const { isLoggedInWithSMS } = useSession();
 
-  const {
-    data = [],
-    isLoading,
-    refetch
-  } = useQuery(queryKeys.users.userAccounts(), () => fetchUserAccounts(), {
-    enabled: isLoggedInWithSMS,
-    refetchOnMount: true
-  });
+  const { data = [], isLoading } = useQuery(
+    queryKeys.users.userAccounts(),
+    () => fetchUserAccounts(),
+    {
+      enabled: isLoggedInWithSMS,
+      staleTime: 5 * 60 * 1000
+    }
+  );
 
   const { data: userCerts = [], isLoading: isLoadingUserCerts } = useQuery(
     queryKeys.users.userCerts(),
@@ -100,7 +101,7 @@ function SettingsAccountForm() {
             }
           });
           if (response) {
-            await refetch();
+            queryClient.invalidateQueries(queryKeys.users.userAccounts());
             const lastPageUrl = SessionStorage.get<string>(sessionStorageKeys.lastPageUrl);
 
             if (lastPageUrl) {
