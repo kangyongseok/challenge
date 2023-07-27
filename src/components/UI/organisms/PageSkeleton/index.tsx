@@ -27,6 +27,7 @@ function PageSkeleton() {
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
+  const currentPathNameRef = useRef('/');
   const isLoadingTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const isVisibleTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const scrollTopTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -35,16 +36,29 @@ function PageSkeleton() {
     const handleRouteChangeStart = (url: string) => {
       const newPathName = getPathNameByAsPath(url);
 
-      if (!isGoBack) {
-        if (serverSideRenderPages.includes(newPathName)) {
-          setIsVisible(true);
-          setPathName(newPathName);
-          isLoadingTimerRef.current = setTimeout(() => setIsLoading(true));
-        }
+      if (isGoBack) return;
+
+      const productsPages = [...serverSideRenderPages];
+      productsPages.pop();
+
+      const isNextProductsPage = productsPages.some(
+        (productsPathName) => newPathName.indexOf(productsPathName) !== -1
+      );
+      const isCurrentProductsPage = productsPages.some(
+        (productsPathName) => currentPathNameRef.current.indexOf(productsPathName) !== -1
+      );
+
+      if (isNextProductsPage && isCurrentProductsPage) return;
+
+      if (serverSideRenderPages.includes(newPathName)) {
+        setIsVisible(true);
+        setPathName(newPathName);
+        isLoadingTimerRef.current = setTimeout(() => setIsLoading(true));
       }
     };
 
-    const handleRouteChangeComplete = () => {
+    const handleRouteChangeComplete = (url: string) => {
+      currentPathNameRef.current = getPathNameByAsPath(url);
       setIsLoading(false);
 
       if (!isGoBack) {
@@ -64,6 +78,10 @@ function PageSkeleton() {
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
     };
   }, [router.events, isGoBack]);
+
+  useEffect(() => {
+    currentPathNameRef.current = pathname;
+  }, [pathname]);
 
   useEffect(() => {
     return () => {

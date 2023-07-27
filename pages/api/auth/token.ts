@@ -44,14 +44,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else if (req.method === 'DELETE') {
     try {
-      const {
-        body: { accessToken, accessUser }
-      }: {
-        body: { accessToken: string; accessUser: Partial<AccessUser> };
-      } = req;
       const isProduction = process.env.NODE_ENV !== 'development';
 
-      setCookie('accessToken', accessToken, {
+      setCookie('accessToken', '', {
         req,
         res,
         domain: isProduction ? '.mrcamel.co.kr' : '',
@@ -62,7 +57,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         sameSite: 'lax'
       });
 
-      setCookie('accessUser', accessUser, {
+      setCookie('accessUser', '', {
         req,
         res,
         domain: isProduction ? '.mrcamel.co.kr' : '',

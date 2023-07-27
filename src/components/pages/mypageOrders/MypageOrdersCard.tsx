@@ -233,7 +233,7 @@ function MypageOrdersCard({
           {orderStatusText === '거래중' ? <span>거래중</span> : orderStatusText}
           {isSafePayment ? ' · 안전결제' : ''}
         </Typography>
-        {type === 0 && orderStatusText === '거래중' && (
+        {orderStatus.paymentMethod !== '카멜 구매대행' && orderStatusText === '거래중' && (
           <Button
             variant="ghost"
             brandColor="black"

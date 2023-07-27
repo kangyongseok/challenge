@@ -31,7 +31,7 @@ import useSignOut from '@hooks/useSignOut';
 import useSession from '@hooks/useSession';
 
 interface AuthProviderProps {
-  accessUser?: Partial<AccessUser>;
+  accessUser?: AccessUser;
 }
 
 function AuthProvider({ children, accessUser }: PropsWithChildren<AuthProviderProps>) {

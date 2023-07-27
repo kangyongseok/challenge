@@ -21,14 +21,12 @@ import { LoginErrorDialog } from '@components/UI/organisms';
 
 import type { FacebookAccount, FacebookLoginResponse, UserSnsLoginResult } from '@dto/userAuth';
 
-import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Axios from '@library/axios';
 import { logEvent } from '@library/amplitude';
 
 import { postDevLogin } from '@api/nextJs';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { LAST_LOGIN_TYPE } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -218,8 +216,6 @@ function LoginButtonList({
 
   const handleClickCancel = () => {
     logEvent(attrKeys.login.CLICK_NONLOGIN);
-
-    SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams);
 
     if (onClickNotLoginShow) {
       onClickNotLoginShow();

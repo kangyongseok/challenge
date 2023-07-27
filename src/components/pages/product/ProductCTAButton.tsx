@@ -158,8 +158,6 @@ function ProductCTAButton() {
       )?.id;
 
       if (!isLoggedIn) {
-        SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
-        // push({ pathname: '/login' });
         setLoginBottomSheet({ open: true, returnUrl: '' });
         return;
       }

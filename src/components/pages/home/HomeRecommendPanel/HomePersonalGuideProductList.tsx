@@ -50,22 +50,6 @@ function HomePersonalGuideProductList() {
     keepPreviousData: true
   });
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      const initTime = SessionStorage.get(sessionStorageKeys.personalProductsCache);
-      if (initTime) {
-        if (dayjs().diff(dayjs(initTime as string), 'minute') > 30) {
-          SessionStorage.set(
-            sessionStorageKeys.personalProductsCache,
-            dayjs().format('YYYY-MM-DD HH:mm')
-          );
-          refetch();
-        }
-      }
-    }, 3000);
-    return () => clearInterval(intervalRef.current);
-  }, [refetch]);
-
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const target = e.currentTarget;
     logEvent(attrKeys.home.CLICK_REFRESH_PRODUCT, {
@@ -137,6 +121,35 @@ function HomePersonalGuideProductList() {
       title: attrProperty.title.PERSONAL_GUIDE
     });
   }, 300);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      const initTime = SessionStorage.get(sessionStorageKeys.personalProductsCache);
+      if (initTime) {
+        if (dayjs().diff(dayjs(initTime as string), 'minute') > 30) {
+          SessionStorage.set(
+            sessionStorageKeys.personalProductsCache,
+            dayjs().format('YYYY-MM-DD HH:mm')
+          );
+          refetch();
+        }
+      }
+    }, 3000);
+    return () => clearInterval(intervalRef.current);
+  }, [refetch]);
+
+  useEffect(() => {
+    if (!SessionStorage.get(sessionStorageKeys.personalProductsCache)) {
+      SessionStorage.set(
+        sessionStorageKeys.personalProductsCache,
+        dayjs().format('YYYY-MM-DD HH:mm')
+      );
+    }
+
+    return () => {
+      SessionStorage.remove(sessionStorageKeys.personalProductsCache);
+    };
+  }, []);
 
   return (
     <section>

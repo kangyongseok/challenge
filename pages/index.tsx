@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import dayjs from 'dayjs';
 import { useMutation } from '@tanstack/react-query';
 
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
@@ -16,14 +15,11 @@ import {
   HomeWishAlertScreen
 } from '@components/pages/home';
 
-import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import Initializer from '@library/initializer';
 
 import { postManage } from '@api/userHistory';
-import { fetchProduct } from '@api/product';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 
@@ -31,33 +27,23 @@ import { getCookies } from '@utils/cookies';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
 import { checkAgent } from '@utils/common';
 
-import type { CreateChannelParams } from '@typings/channel';
 import useSession from '@hooks/useSession';
-import useMutationCreateChannel from '@hooks/useMutationCreateChannel';
 
 function Home() {
   const router = useRouter();
 
-  const { isLoggedIn, data: accessUser } = useSession();
+  const { isLoggedIn } = useSession();
 
   const { mutate: mutatePostManage } = useMutation(postManage);
-  const { mutate: mutateCreateChannel } = useMutationCreateChannel();
 
   useEffect(() => {
     const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
-    if (!SessionStorage.get(sessionStorageKeys.personalProductsCache)) {
-      SessionStorage.set(
-        sessionStorageKeys.personalProductsCache,
-        dayjs().format('YYYY-MM-DD HH:mm')
-      );
-    }
+
     if (checkAgent.isMobileApp() && !isNotFirstVisit) {
       LocalStorage.set(IS_NOT_FIRST_VISIT, true);
       router.replace('/appIntro/step');
     }
-    return () => SessionStorage.remove(sessionStorageKeys.personalProductsCache);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     // 가입 온보딩 완료하지 않은 유저의 경우 온보딩 페이지로 이동
@@ -67,48 +53,6 @@ function Home() {
       router.replace(`/onboarding?step=${signUpStep}`);
     }
   }, [isLoggedIn, router]);
-
-  useEffect(() => {
-    const isNotFirstVisit = LocalStorage.get<boolean>(IS_NOT_FIRST_VISIT);
-    const signUpStep = LocalStorage.get<number>(SIGN_UP_STEP);
-
-    const savedCreateChannelParams = SessionStorage.get<Omit<CreateChannelParams, 'userId'>>(
-      sessionStorageKeys.savedCreateChannelParams
-    );
-
-    if (
-      isLoggedIn &&
-      !(
-        (checkAgent.isMobileApp() && !isNotFirstVisit) ||
-        (!!accessUser && typeof signUpStep === 'number')
-      ) &&
-      !!accessUser &&
-      !!savedCreateChannelParams
-    ) {
-      SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams);
-
-      if (accessUser.userId !== +savedCreateChannelParams.targetUserId) return;
-
-      fetchProduct({ productId: +savedCreateChannelParams.productId }).then((resultProduct) => {
-        const channelId = (resultProduct.channels || []).find(
-          (channel) => channel.userId === accessUser.userId
-        )?.id;
-
-        if (channelId) {
-          router.push(`/channels/${channelId}`);
-        } else {
-          mutateCreateChannel({
-            userId: String(accessUser.userId || 0),
-            ...savedCreateChannelParams
-          });
-        }
-      });
-    } else {
-      setTimeout(() => SessionStorage.remove(sessionStorageKeys.savedCreateChannelParams), 1000);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     mutatePostManage({ event: 'VIEW_MAIN' });
@@ -144,7 +88,6 @@ function Home() {
 
 export async function getServerSideProps({ req }: GetServerSidePropsContext) {
   Initializer.initAccessTokenByCookies(getCookies({ req }));
-  Initializer.initABTestIdentifierByCookie(getCookies({ req }));
 
   return {
     props: {

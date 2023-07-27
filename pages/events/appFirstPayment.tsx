@@ -171,6 +171,11 @@ function AppFirstPayment() {
             </li>
             <li>
               <Typography variant="h4" color="ui60">
+                이벤트 기간동안 정산이 +3영업일 소요됩니다.
+              </Typography>
+            </li>
+            <li>
+              <Typography variant="h4" color="ui60">
                 내부 의사결정 및 상황에 따라 사전 공지 없이 종료될 수 있습니다. 늦지 않게
                 참여해보세요!
               </Typography>

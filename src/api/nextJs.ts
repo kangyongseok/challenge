@@ -33,7 +33,7 @@ export async function postDevLogin(params: { testUserId: string }) {
   return data;
 }
 
-export async function postToken(accessToken: string, accessUser: Partial<AccessUser>) {
+export async function postToken(accessToken: string, accessUser: AccessUser) {
   const { data } = await Axios.getInstance().post<string>(
     `${process.env.NEXT_JS_API_BASE_URL}/auth/token`,
     {
@@ -45,15 +45,9 @@ export async function postToken(accessToken: string, accessUser: Partial<AccessU
   return data;
 }
 
-export async function deleteToken(accessToken: string, accessUser: Partial<AccessUser>) {
+export async function deleteToken() {
   const { data } = await Axios.getInstance().delete<string>(
-    `${process.env.NEXT_JS_API_BASE_URL}/auth/token`,
-    {
-      data: {
-        accessToken,
-        accessUser
-      }
-    }
+    `${process.env.NEXT_JS_API_BASE_URL}/auth/token`
   );
 
   return data;

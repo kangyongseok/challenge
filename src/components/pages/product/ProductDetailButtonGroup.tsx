@@ -225,7 +225,6 @@ function ProductDetailButtonGroup({ blockUserDialog }: { blockUserDialog: () => 
     };
 
     if (!isLoggedInWithSMS) {
-      SessionStorage.set(sessionStorageKeys.savedCreateChannelParams, createChannelParams);
       setLoginBottomSheet({ open: true, returnUrl: '' });
       return;
     }

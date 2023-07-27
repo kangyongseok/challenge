@@ -11,7 +11,6 @@ const hideCrazyCurationEventBannerIds = 'hideCrazyCurationEventBannerIds';
 const hideCommonEventBannerBottomSheet = 'hideCommonEventBannerBottomSheet';
 const personalProductsCache = 'personalProductsCache';
 const pushToSavedRedirectChannel = 'pushToSavedRedirectChannel';
-const savedCreateChannelParams = 'savedCreateChannelParams';
 const camelSellerSelectBrandSource = 'camelSellerSelectBrandSource';
 const butlerSource = 'butlerSource';
 const submitLegitProcessName = 'submitLegitProcessName';
@@ -34,7 +33,6 @@ const sessionStorageKeys = {
   hideCommonEventBannerBottomSheet,
   personalProductsCache,
   pushToSavedRedirectChannel,
-  savedCreateChannelParams,
   camelSellerSelectBrandSource,
   submitLegitProcessName,
   legitIntroSource,

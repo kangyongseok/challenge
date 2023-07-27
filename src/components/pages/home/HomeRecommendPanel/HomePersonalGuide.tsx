@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { uniqBy } from 'lodash-es';
+import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { Flexbox, Image, Label, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
@@ -289,6 +290,16 @@ function HomePersonalGuide() {
   useEffect(() => {
     setSizes([tops || [], bottoms || [], shoes || []].flat());
   }, [tops, bottoms, shoes]);
+
+  useEffect(() => {
+    if (!SessionStorage.get(sessionStorageKeys.personalProductsCache)) {
+      SessionStorage.set(
+        sessionStorageKeys.personalProductsCache,
+        dayjs().format('YYYY-MM-DD HH:mm')
+      );
+    }
+    return () => SessionStorage.remove(sessionStorageKeys.personalProductsCache);
+  }, []);
 
   return (
     <List>

@@ -2,7 +2,7 @@ import { useResetRecoilState } from 'recoil';
 import amplitude from 'amplitude-js';
 import { useQueryClient } from '@tanstack/react-query';
 
-import type { AccessUser, FacebookLoginResponse } from '@dto/userAuth';
+import type { FacebookLoginResponse } from '@dto/userAuth';
 
 import Sendbird from '@library/sendbird';
 import LocalStorage from '@library/localStorage';
@@ -42,10 +42,7 @@ export default function useSignOut() {
         window.webkit?.messageHandlers?.callSetLogoutUser?.postMessage?.(`${accessUser.userId}`);
     }
 
-    await deleteToken(
-      LocalStorage.get<string>(ACCESS_TOKEN) || '',
-      LocalStorage.get<AccessUser>(ACCESS_USER) || {}
-    );
+    await deleteToken();
 
     amplitude.getInstance().setUserId(null);
     LocalStorage.remove(ACCESS_USER);

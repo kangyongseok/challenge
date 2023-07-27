@@ -16,7 +16,7 @@ function SessionProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const handleRouteChangeStart = async (url: string) => {
-      const accessUser = LocalStorage.get<Partial<AccessUser>>(ACCESS_USER) || {};
+      const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
       const accessToken = LocalStorage.get<string>(ACCESS_TOKEN);
 
       if (!accessToken || !accessUser || url === '/logout') return;
@@ -32,7 +32,7 @@ function SessionProvider({ children }: PropsWithChildren) {
   }, [router.events]);
 
   useEffect(() => {
-    const accessUser = LocalStorage.get<Partial<AccessUser>>(ACCESS_USER) || {};
+    const accessUser = LocalStorage.get<AccessUser>(ACCESS_USER);
     const accessToken = LocalStorage.get<string>(ACCESS_TOKEN);
 
     if (!accessToken || !accessUser) return;
