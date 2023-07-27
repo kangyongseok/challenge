@@ -233,18 +233,20 @@ function MypageOrdersCard({
           {orderStatusText === '거래중' ? <span>거래중</span> : orderStatusText}
           {isSafePayment ? ' · 안전결제' : ''}
         </Typography>
-        {orderStatus.paymentMethod !== '카멜 구매대행' && orderStatusText === '거래중' && (
-          <Button
-            variant="ghost"
-            brandColor="black"
-            onClick={handleClickPurchaseConfirm}
-            customStyle={{
-              marginTop: 12
-            }}
-          >
-            구매확정
-          </Button>
-        )}
+        {type === 0 &&
+          orderStatus.paymentMethod !== '카멜 구매대행' &&
+          orderStatusText === '거래중' && (
+            <Button
+              variant="ghost"
+              brandColor="black"
+              onClick={handleClickPurchaseConfirm}
+              customStyle={{
+                marginTop: 12
+              }}
+            >
+              구매확정
+            </Button>
+          )}
         {orderStatus.paymentMethod !== '카멜 구매대행' &&
           ['거래완료', '정산완료'].includes(orderStatusText) &&
           !hasReview && (
