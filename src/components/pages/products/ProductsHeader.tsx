@@ -34,7 +34,8 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     }
   } = useTheme();
 
-  const { keyword, title }: { keyword?: string; title?: string } = router.query;
+  const { keyword, title, notice }: { keyword?: string; title?: string; notice?: string } =
+    router.query;
   const { parentIds = [] } = convertSearchParamsByQuery(router.query);
   const atomParam = router.asPath.split('?')[0];
 
@@ -164,6 +165,32 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     );
   }
 
+  if (variant === 'camel') {
+    return (
+      <Box
+        customStyle={{
+          minHeight: SEARCH_BAR_HEIGHT,
+          position: 'relative'
+        }}
+      >
+        <Header isFixed>
+          <Flexbox gap={6} alignment="center">
+            {!notice && <Icon name="ShieldFilled" width={20} height={20} />}
+            <Typography
+              component="h1"
+              variant="h3"
+              weight="bold"
+              textAlign="center"
+              customStyle={{ whiteSpace: 'nowrap' }}
+            >
+              {notice || newTitle}
+            </Typography>
+          </Flexbox>
+        </Header>
+      </Box>
+    );
+  }
+
   return (
     <Box
       customStyle={{
@@ -173,7 +200,6 @@ function ProductsHeader({ variant }: ProductsHeaderProps) {
     >
       <Header isFixed>
         <Flexbox gap={6} alignment="center">
-          {variant === 'camel' && !title && <Icon name="ShieldFilled" width={20} height={20} />}
           <Typography
             component="h1"
             variant="h3"

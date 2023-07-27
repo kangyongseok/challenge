@@ -12,18 +12,21 @@ function AppFirstPayment() {
 
   const handleClick = () => {
     if (checkAgent.isMobileApp()) {
-      router.push({
-        pathname: '/products/camel/새로 올라왔어요!',
-        query: {
-          order: 'postedAllDesc'
-        }
-      });
+      router.push('/wishes');
     } else {
       handleClickAppDownload({
         name: 'APP_FIRST_PAYMENT_EVENT'
       });
     }
   };
+
+  const handleClickProducts = () =>
+    router.push({
+      pathname: '/products/camel/새로 올라왔어요!',
+      query: {
+        order: 'postedAllDesc'
+      }
+    });
 
   return (
     <GeneralTemplate
@@ -43,12 +46,7 @@ function AppFirstPayment() {
         </Header>
       }
       footer={
-        <Box
-          customStyle={{
-            width: '100%',
-            minHeight: 92
-          }}
-        >
+        <>
           <Button
             variant="solid"
             brandColor="primary"
@@ -56,16 +54,34 @@ function AppFirstPayment() {
             fullWidth
             onClick={handleClick}
             customStyle={{
-              position: 'fixed',
+              position: 'sticky',
               left: 0,
-              bottom: 0,
-              margin: 20,
+              bottom: 20,
+              margin: '0 20px',
               width: 'calc(100% - 40px)'
             }}
           >
-            {checkAgent.isMobileApp() ? '매물구경하기' : '앱 다운로드 하기'}
+            {checkAgent.isMobileApp() ? '내 찜/최근 보러가기' : '앱 다운로드 하기'}
           </Button>
-        </Box>
+          {checkAgent.isMobileApp() && (
+            <Box
+              customStyle={{
+                marginTop: 8,
+                padding: '0 20px 20px'
+              }}
+            >
+              <Button
+                variant="outline"
+                brandColor="primary"
+                size="xlarge"
+                fullWidth
+                onClick={handleClickProducts}
+              >
+                매물 구경하기
+              </Button>
+            </Box>
+          )}
+        </>
       }
       disablePadding
     >
