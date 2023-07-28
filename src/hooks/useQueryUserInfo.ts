@@ -11,7 +11,9 @@ function useQueryUserInfo() {
 
   return useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
     refetchOnMount: true,
-    enabled: isLoggedInWithSMS
+    enabled: isLoggedInWithSMS,
+    cacheTime: Infinity,
+    keepPreviousData: true
   });
 }
 

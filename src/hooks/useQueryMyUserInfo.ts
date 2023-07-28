@@ -19,7 +19,9 @@ function useQueryMyUserInfo(enabled = true) {
   const { isLoggedInWithSMS, data: accessUser, refetch } = useSession();
   const useQueryMyUserInfoResult = useQuery(queryKeys.users.myUserInfo(), fetchMyUserInfo, {
     refetchOnMount: true,
-    enabled: isLoggedInWithSMS && enabled
+    enabled: isLoggedInWithSMS && enabled,
+    cacheTime: Infinity,
+    keepPreviousData: true
   });
 
   const { userId, userNickName, userImageProfile, userImageBackground } = useMemo(() => {

@@ -151,21 +151,32 @@ function useInfiniteQueryChannels({
   );
 
   useEffect(() => {
-    Sendbird.getInstance().addConnectionHandler(
-      `${String(accessUser?.userId || '')}-channels`,
-      new ConnectionHandler({
-        onReconnectSucceeded: async () => {
-          groupChannelCollection.current?.dispose();
-          const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
-          setSendbirdState((prevState) => ({
-            ...prevState,
-            unreadMessagesCount: newUnreadMessagesCount
-          }));
-          await useInfiniteQueryResult.refetch();
-        }
-      })
-    );
-  }, [accessUser?.userId, setSendbirdState, useInfiniteQueryResult]);
+    if (accessUser?.userId) {
+      Sendbird.getInstance().addConnectionHandler(
+        `${String(accessUser?.userId || '')}-channels`,
+        new ConnectionHandler({
+          onReconnectSucceeded: async () => {
+            groupChannelCollection.current?.dispose();
+            const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+            setSendbirdState((prevState) => ({
+              ...prevState,
+              unreadMessagesCount: newUnreadMessagesCount
+            }));
+            await useInfiniteQueryResult.refetch();
+          }
+        })
+      );
+    }
+
+    return () => {
+      if (accessUser?.userId) {
+        Sendbird.getInstance().removeConnectionHandler(
+          `${String(accessUser?.userId || '')}-channels`
+        );
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessUser?.userId, setSendbirdState, useInfiniteQueryResult.refetch]);
 
   useEffect(() => {
     return () => {

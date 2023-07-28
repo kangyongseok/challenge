@@ -27,7 +27,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
   const decryptPending = useRecoilValue(decryptPendingState);
 
   const { data: userInfo } = useQueryUserInfo();
-  const { userId, userNickName, userImageProfile } = useQueryMyUserInfo();
+  const { userId, userNickName, userImageProfile, isInitialLoading } = useQueryMyUserInfo();
   const initialize = useInitializeSendbird();
 
   const initializingRef = useRef(false);
@@ -36,6 +36,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
 
   useEffect(() => {
     if (
+      !isInitialLoading &&
       !decryptPending &&
       !!userId &&
       (!!userInfo?.hasChannel ||
@@ -49,6 +50,7 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
       initialize(userId.toString(), userNickName, userImageProfile);
     }
   }, [
+    isInitialLoading,
     decryptPending,
     router.pathname,
     userId,
@@ -139,6 +141,21 @@ function SendbirdProvider({ children }: SendbirdProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  useEffect(() => {
+    const handleOnline = async () => {
+      if (userId) {
+        await Sendbird.getInstance().connect(String(userId));
+        Sendbird.getInstance().reconnect();
+      }
+    };
+
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [userId]);
 
   return children;
 }

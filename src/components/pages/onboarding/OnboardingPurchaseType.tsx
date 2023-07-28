@@ -2,21 +2,21 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import { find } from 'lodash-es';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Box, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
 import PurchaseType from '@components/UI/organisms/PurchaseType';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo, postUserStyle } from '@api/user';
+import { postUserStyle } from '@api/user';
 
-import queryKeys from '@constants/queryKeys';
 import { purchaseType } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { disabledState, purchaseTypeIdState } from '@recoil/onboarding';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import OnboardingStep from './OnboardingStep';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -31,10 +31,7 @@ function OnboardingPurchaseType({ onClick }: { onClick: () => void }) {
   const purchaseDisabledState = useRecoilValue(disabledState('purchase'));
   const { mutate: styleMutate } = useMutation(postUserStyle);
   const purchaseTypeId = useRecoilValue(purchaseTypeIdState);
-  const { data: { personalStyle: { purchaseTypes = [] } = {} } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo
-  );
+  const { data: { personalStyle: { purchaseTypes = [] } = {} } = {} } = useQueryUserInfo();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {

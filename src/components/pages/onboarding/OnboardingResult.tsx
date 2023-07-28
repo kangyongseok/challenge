@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { sortBy } from 'lodash-es';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BottomSheet, Box, Chip, Flexbox, Image, Typography, dark } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
-
-import { fetchUserInfo } from '@api/user';
 
 import queryKeys from '@constants/queryKeys';
 import { MODEL_CATEGORY_IDS, SELECTED_STYLE_CARD_IDS } from '@constants/localStorage';
@@ -19,6 +17,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { modelParentCategoryIdsState } from '@recoil/onboarding';
 import useSession from '@hooks/useSession';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import OnboardingPermission from './OnboardingPermission';
 import OnboardingBottomCTA from './OnboardingBottomCTA';
@@ -36,9 +35,7 @@ function OnboardingResult() {
     modelParentCategoryIdsState
   );
 
-  const { data: userInfo } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-    refetchOnMount: true
-  });
+  const { data: userInfo } = useQueryUserInfo();
 
   useEffect(() => {
     logEvent(attrKeys.welcome.VIEW_PERSONAL_INPUT, {

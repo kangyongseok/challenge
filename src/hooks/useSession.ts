@@ -14,7 +14,9 @@ export default function useSession() {
     queryKeys.userAuth.accessUser(),
     () => LocalStorage.get<AccessUser>(ACCESS_USER),
     {
-      refetchOnMount: true
+      refetchOnMount: true,
+      cacheTime: Infinity,
+      keepPreviousData: true
     }
   );
 

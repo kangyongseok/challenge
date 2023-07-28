@@ -89,6 +89,24 @@ function useChannel() {
 
           const unreadMessagesCount = await Sendbird.unreadMessagesCount(externalId);
 
+          channel
+            .markAsRead()
+            .then(async () => {
+              setUnreadCount(0);
+              const newUnreadMessagesCount = await Sendbird.unreadMessagesCount();
+              setSendbirdState((prevState) => ({
+                ...prevState,
+                unreadMessagesCount: newUnreadMessagesCount
+              }));
+            })
+            .catch((error) => {
+              logEvent('SUPPORT_ERROR', {
+                name: 'MARK_AS_READ_FAIL',
+                type: 'SENDBIRD',
+                error
+              });
+            });
+
           setSendbirdState((prevState) => ({
             ...prevState,
             unreadMessagesCount

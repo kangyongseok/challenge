@@ -2,7 +2,6 @@ import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useRouter } from 'next/router';
 import { find, uniq } from 'lodash-es';
 import { useQuery } from '@tanstack/react-query';
 import { useToastStack } from '@mrcamelhub/camel-ui-toast';
@@ -13,7 +12,6 @@ import { StyleDetails } from '@dto/common';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
 import { fetchStyles } from '@api/common';
 
 import queryKeys from '@constants/queryKeys';
@@ -23,6 +21,7 @@ import attrKeys from '@constants/attrKeys';
 
 import { LikeStyleSelectedModelDetail } from '@typings/common';
 import { openState, selectedModelCardState } from '@recoil/onboarding';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 import {
   ModelCardText,
@@ -35,7 +34,6 @@ import {
 const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/welcome`;
 
 function StylesCards({ themeType }: { themeType?: 'normal' }) {
-  const router = useRouter();
   const {
     theme: { palette }
   } = useTheme();
@@ -49,10 +47,7 @@ function StylesCards({ themeType }: { themeType?: 'normal' }) {
   const {
     data: { personalStyle: { styles: userStyles = [] } = {}, info } = {},
     isSuccess: userStyleLoad
-  } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-    refetchOnMount: true,
-    enabled: router.pathname === '/user/likeModelInput'
-  });
+  } = useQueryUserInfo();
 
   const { data: { styles: stylesList = [] } = {} } = useQuery(
     queryKeys.commons.styles(),

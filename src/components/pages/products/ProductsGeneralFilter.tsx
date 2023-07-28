@@ -4,7 +4,6 @@ import type { MutableRefObject } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import sortBy from 'lodash-es/sortBy';
-import { useQuery } from '@tanstack/react-query';
 import Toast, { useToastStack } from '@mrcamelhub/camel-ui-toast';
 import {
   Box,
@@ -23,9 +22,6 @@ import type { SearchParams } from '@dto/product';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import {
   filterCodeIds,
   filterCodes,
@@ -64,6 +60,7 @@ import {
 import { showAppDownloadBannerState, userOnBoardingTriggerState } from '@recoil/common';
 import useSession from '@hooks/useSession';
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 interface ProductsGeneralFilterProps {
   aiFilterGroupRef: MutableRefObject<HTMLDivElement | null>;
@@ -144,9 +141,7 @@ const ProductsGeneralFilter = forwardRef<HTMLDivElement, ProductsGeneralFilterPr
         area: { values: areaValues = [] } = {},
         size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
       } = {}
-    } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-      enabled: isLoggedIn
-    });
+    } = useQueryUserInfo();
 
     const triggered = useReverseScrollTrigger();
 

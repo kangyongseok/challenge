@@ -14,7 +14,6 @@ import type { SizeCode } from '@dto/common';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
 import { fetchSearch, fetchSearchOptions } from '@api/product';
 
 import queryKeys from '@constants/queryKeys';
@@ -52,6 +51,7 @@ import {
   userOnBoardingTriggerState
 } from '@recoil/common';
 import useSession from '@hooks/useSession';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 interface ProductsFilterProps {
   variant: ProductsVariant;
@@ -149,9 +149,7 @@ function ProductsFilter({ variant }: ProductsFilterProps) {
       info: { value: { gender = '' } = {} } = {},
       size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
     } = {}
-  } = useQuery(queryKeys.users.userInfo(), fetchUserInfo, {
-    enabled: isLoggedIn
-  });
+  } = useQueryUserInfo();
 
   const { categorySizes = [], genderCategories = [] } = baseSearchOptions;
   const hasBaseSearchParams = !!Object.keys(baseSearchParams).length;

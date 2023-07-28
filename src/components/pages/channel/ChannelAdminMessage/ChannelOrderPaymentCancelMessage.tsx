@@ -158,7 +158,7 @@ function ChannelOrderPaymentCancelMessage({
             wordBreak: 'keep-all'
           }}
         >
-          시간초과로 가상계좌 결제가 취소되었어요.
+          결제가 취소되었어요.
         </Typography>
       </Box>
       <Typography

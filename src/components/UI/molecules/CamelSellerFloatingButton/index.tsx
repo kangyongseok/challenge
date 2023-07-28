@@ -1,14 +1,10 @@
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import { Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import OsAlarmDialog from '@components/UI/organisms/OsAlarmDialog';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
-
 import useReverseScrollTrigger from '@hooks/useReverseScrollTrigger';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 import useMoveCamelSeller from '@hooks/useMoveCamelSeller';
 
 import { FloatingButton, Wrapper } from './CamelSellerFloatingButton.style';
@@ -29,10 +25,7 @@ function CamelSellerFloatingButton({ attributes }: CamelSellerFloatingButtonProp
     { attributes }
   );
 
-  const { data: { notProcessedLegitCount = 0 } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo
-  );
+  const { data: { notProcessedLegitCount = 0 } = {} } = useQueryUserInfo();
 
   return (
     <>

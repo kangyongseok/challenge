@@ -2,20 +2,17 @@ import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 
 import { useSetRecoilState } from 'recoil';
-import { useQuery } from '@tanstack/react-query';
 import { Box, Flexbox, Image, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import { logEvent } from '@library/amplitude';
 
-import { fetchUserInfo } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 import { purchaseType } from '@constants/common';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
 import { disabledState, purchaseTypeIdState } from '@recoil/onboarding';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 const BASE_URL = `https://${process.env.IMAGE_DOMAIN}/assets/images/onboarding`;
 
@@ -27,13 +24,7 @@ function PurchaseType() {
   const [selectedType, setSelectedType] = useState(0);
   const setDisabled = useSetRecoilState(disabledState('purchase'));
   const setPurchaseTypeId = useSetRecoilState(purchaseTypeIdState);
-  const { data: { personalStyle: { purchaseTypes = [] } = {} } = {} } = useQuery(
-    queryKeys.users.userInfo(),
-    fetchUserInfo,
-    {
-      refetchOnMount: true
-    }
-  );
+  const { data: { personalStyle: { purchaseTypes = [] } = {} } = {} } = useQueryUserInfo();
 
   useEffect(() => {
     if (purchaseTypes[0]) {

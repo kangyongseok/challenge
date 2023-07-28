@@ -276,6 +276,7 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+        if (onPending) onPending(message);
 
         if (sb.reconnect()) {
           channel
@@ -291,6 +292,7 @@ const SendBird = {
               if (onFailed) onFailed(reSendError, reSendMessage);
             });
         } else {
+          if (onFailed) onFailed(error, message);
           sendFailLog(error, message, 'RECONNECT FAIL');
         }
       });
@@ -320,6 +322,7 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+        if (onPending) onPending(message);
 
         if (sb.reconnect()) {
           channel
@@ -335,6 +338,7 @@ const SendBird = {
               if (onFailed) onFailed(reSendError, reSendMessage);
             });
         } else {
+          if (onFailed) onFailed(error, message);
           sendFailLog(error, message, 'RECONNECT FAIL');
         }
       });
@@ -365,6 +369,7 @@ const SendBird = {
       .onFailed((error, message) => {
         sendFailLog(error, message);
         if (onFailed) onFailed(error, message);
+        if (onPending) onPending(message);
 
         if (sb.reconnect()) {
           channel
@@ -380,6 +385,7 @@ const SendBird = {
               if (onFailed) onFailed(reSendError, reSendMessage);
             });
         } else {
+          if (onFailed) onFailed(error, message);
           sendFailLog(error, message, 'RECONNECT FAIL');
         }
       });

@@ -234,7 +234,7 @@ function MypageOrdersCard({
           {isSafePayment ? ' · 안전결제' : ''}
         </Typography>
         {type === 0 &&
-          orderStatus.paymentMethod !== '카멜 구매대행' &&
+          orderStatus.transactionMethod !== '카멜 구매대행' &&
           orderStatusText === '거래중' && (
             <Button
               variant="ghost"
@@ -247,7 +247,21 @@ function MypageOrdersCard({
               구매확정
             </Button>
           )}
-        {orderStatus.paymentMethod !== '카멜 구매대행' &&
+        {type === 0 && ['거래완료', '정산완료'].includes(orderStatusText) && !hasReview && (
+          <Button
+            variant="ghost"
+            brandColor="black"
+            onClick={handleClickReviewWrite}
+            disabled={isLoading}
+            customStyle={{
+              marginTop: 12
+            }}
+          >
+            후기 작성하기
+          </Button>
+        )}
+        {type === 1 &&
+          orderStatus.transactionMethod !== '카멜 구매대행' &&
           ['거래완료', '정산완료'].includes(orderStatusText) &&
           !hasReview && (
             <Button
