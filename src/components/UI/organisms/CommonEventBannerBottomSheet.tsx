@@ -41,7 +41,12 @@ function CommonEventBannerBottomSheet() {
   };
 
   useEffect(() => {
-    if (['/events/appFirstPayment', '/login', '/appIntro/step'].includes(router.pathname)) return;
+    if (
+      ['/events/appFirstPayment', '/login', '/appIntro/step', '/onboarding'].includes(
+        router.pathname
+      )
+    )
+      return;
 
     const hide = SessionStorage.get<boolean>(sessionStorageKeys.hideCommonEventBannerBottomSheet);
     const hideDate = LocalStorage.get<string>(EVENT_AD_BANNER_HIDE_DATE);
