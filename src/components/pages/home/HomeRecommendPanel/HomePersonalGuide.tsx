@@ -81,7 +81,7 @@ function HomePersonalGuide() {
       personalStyle: { styles = [], defaultStyles = [] } = {},
       size: { value: { tops = '', bottoms = '', shoes = '' } = {} } = {}
     } = {},
-    isLoading
+    isInitialLoading
   } = useQueryUserInfo();
 
   const handleClick =
@@ -303,7 +303,7 @@ function HomePersonalGuide() {
 
   return (
     <List>
-      {(isLoadingParentCategories || isLoading || !guides.length) &&
+      {(isLoadingParentCategories || isInitialLoading || !guides.length) &&
         Array.from({ length: 16 }).map((_, index) => (
           <Flexbox
             // eslint-disable-next-line react/no-array-index-key
@@ -318,7 +318,7 @@ function HomePersonalGuide() {
             <Skeleton width={42} height={16} round={8} disableAspectRatio />
           </Flexbox>
         ))}
-      {!isLoadingParentCategories && !isLoading && !!guides.length && (
+      {!isLoadingParentCategories && !isInitialLoading && !!guides.length && (
         <>
           <Flexbox
             direction="vertical"
@@ -434,7 +434,7 @@ function HomePersonalGuide() {
         </>
       )}
       {!isLoadingParentCategories &&
-        !isLoading &&
+        !isInitialLoading &&
         guides.map(({ name = '', src = '', ...guide }) => (
           <Flexbox
             key={`home-personal-guide-${name}`}
