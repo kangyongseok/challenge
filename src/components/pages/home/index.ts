@@ -1,5 +1,11 @@
 export { default as HomeFooter } from './HomeFooter';
-export { default as HomeRecommendPanel } from './HomeRecommendPanel';
 export { default as HomeSearchHeader } from './HomeSearchHeader';
 export { default as HomeLegitContinueDialog } from './HomeLegitContinueDialog';
 export { default as HomeWishAlertScreen } from './HomeWishAlertScreen';
+export { default as HomeDogHoneyProductGrid } from './HomeDogHoneyProductGrid';
+export { default as HomeErushaProductGrid } from './HomeErushaProductGrid';
+export { default as HomeMainBanner } from './HomeMainBanner';
+export { default as HomeNewCamelProductGrid } from './HomeNewCamelProductGrid';
+export { default as HomePersonalCuration } from './HomePersonalCuration';
+export { default as HomePersonalGuide } from './HomePersonalGuide';
+export { default as HomePersonalGuideProductList } from './HomePersonalGuideProductList';

@@ -9,11 +9,9 @@ import { useTheme } from '@emotion/react';
 
 import type { AccessUser } from '@dto/userAuth';
 
-import SessionStorage from '@library/sessionStorage';
 import LocalStorage from '@library/localStorage';
 import { logEvent } from '@library/amplitude';
 
-import sessionStorageKeys from '@constants/sessionStorageKeys';
 import { ACCESS_USER } from '@constants/localStorage';
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
@@ -42,18 +40,6 @@ function ProductDetailBannerGroup() {
   const handleChange = ({ activeIndex }: SwiperClass) => setCurrentIndex(activeIndex);
 
   const accessUser = LocalStorage.get<AccessUser | null>(ACCESS_USER);
-
-  const handleClickEvent = () => {
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      name: attrProperty.name.PRODUCT_DETAIL,
-      title: attrProperty.title.PRODUCT_DETAIL,
-      att: 'BUTLER'
-    });
-
-    SessionStorage.set(sessionStorageKeys.butlerSource, 'PRODUCT_DETAIL');
-
-    push('/events/appFirstPayment');
-  };
 
   const handleClickTransfer = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
@@ -87,14 +73,6 @@ function ProductDetailBannerGroup() {
     >
       <SwiperSlide>
         <ProductBanner
-          handleClick={handleClickEvent}
-          bannerColor="#2937FF"
-          src={`https://${process.env.IMAGE_DOMAIN}/assets/images/banners/app-first-payment-event-banner.png`}
-          alt="App 결제 시 최대 30만원 할인"
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <ProductBanner
           handleClick={handleClickTransfer}
           bannerColor="#111A3D"
           src={`https://${process.env.IMAGE_DOMAIN}/assets/images/my/transfer-banner.png`}
@@ -118,6 +96,7 @@ function ProductDetailBannerGroup() {
           variant="body2"
           weight="medium"
           customStyle={{
+            display: 'none',
             color: common.uiWhite,
             '& > span': {
               color: common.ui60
@@ -125,7 +104,7 @@ function ProductDetailBannerGroup() {
           }}
         >
           {currentIndex + 1}
-          <span>/2</span>
+          <span>/1</span>
         </Typography>
       </Flexbox>
     </Swiper>

@@ -50,6 +50,7 @@ const routers = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
+  productionBrowserSourceMaps: true,
   experimental: {
     scrollRestoration: true
   },

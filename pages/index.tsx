@@ -3,14 +3,22 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
 import { useMutation } from '@tanstack/react-query';
+import { Box } from '@mrcamelhub/camel-ui';
 
 import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
+import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  HomeDogHoneyProductGrid,
+  HomeErushaProductGrid,
   HomeFooter,
   HomeLegitContinueDialog,
-  HomeRecommendPanel,
+  HomeMainBanner,
+  HomeNewCamelProductGrid,
+  HomePersonalCuration,
+  HomePersonalGuide,
+  HomePersonalGuideProductList,
   HomeSearchHeader,
   HomeWishAlertScreen
 } from '@components/pages/home';
@@ -70,8 +78,31 @@ function Home() {
       />
       <GeneralTemplate footer={<BottomNavigation />} disablePadding>
         <HomeSearchHeader />
-        <HomeRecommendPanel />
-        {(checkAgent.isAndroidApp() || checkAgent.isIOSApp()) && <HomeFooter />}
+        {/* eslint-disable-next-line react/jsx-no-undef */}
+        <HomePersonalGuide />
+        <HomeMainBanner />
+        <Box
+          customStyle={{
+            width: '100%',
+            height: 32
+          }}
+        />
+        <HomePersonalGuideProductList />
+        <Box
+          customStyle={{
+            width: '100%',
+            height: 32
+          }}
+        />
+        <Gap height={8} />
+        <HomeErushaProductGrid />
+        <Gap height={8} />
+        <HomeNewCamelProductGrid />
+        <Gap height={8} />
+        <HomeDogHoneyProductGrid />
+        <Gap height={8} />
+        <HomePersonalCuration />
+        {checkAgent.isMobileApp() && <HomeFooter />}
       </GeneralTemplate>
       <CamelSellerFloatingButton
         attributes={{

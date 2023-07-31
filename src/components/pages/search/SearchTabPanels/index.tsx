@@ -37,6 +37,7 @@ function SearchTabPanels() {
     searchTabPanelsSwiperThresholdState
   );
 
+  const isInit = useRef(false);
   const updateAutoHeightTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const startXRef = useRef(0);
 
@@ -61,6 +62,8 @@ function SearchTabPanels() {
       queryTab = 'category';
     }
 
+    isInit.current = true;
+
     router
       .replace({
         pathname: '/search',
@@ -68,7 +71,10 @@ function SearchTabPanels() {
           tab: queryTab
         }
       })
-      .then(() => resetSearchTabPanelsSwiperThresholdState());
+      .then(() => {
+        resetSearchTabPanelsSwiperThresholdState();
+        isInit.current = false;
+      });
   };
 
   const handleSlideChangeTransitionEnd = ({ activeIndex, slides, touches }: SwiperClass) => {
@@ -88,7 +94,7 @@ function SearchTabPanels() {
   };
 
   useEffect(() => {
-    if (!router.isReady || !swiper || !tab) return;
+    if (!router.isReady || !swiper || !tab || isInit.current) return;
 
     try {
       if (tab === 'brand') {
@@ -104,7 +110,7 @@ function SearchTabPanels() {
         att: 'SLIDE_TO'
       });
     }
-  }, [tab, router.isReady, swiper]);
+  }, [router.isReady, swiper, tab]);
 
   useEffect(() => {
     if (value && updateAutoHeightTimerRef.current) {
@@ -113,11 +119,11 @@ function SearchTabPanels() {
   }, [value]);
 
   useEffect(() => {
-    if (!swiper) return;
-
     if (updateAutoHeightTimerRef.current) {
       clearTimeout(updateAutoHeightTimerRef.current);
     }
+
+    if (!swiper || (value && data && data.length > 0)) return;
 
     updateAutoHeightTimerRef.current = setTimeout(() => {
       try {
@@ -129,7 +135,7 @@ function SearchTabPanels() {
         });
       }
     }, 100);
-  }, [category, swiper]);
+  }, [value, data, category, swiper]);
 
   useEffect(() => {
     return () => {

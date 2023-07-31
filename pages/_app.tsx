@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
@@ -61,31 +61,29 @@ const CamelSellerAppUpdateDialog = dynamic(
   () => import('@components/UI/organisms/CamelSellerAppUpdateDialog')
 );
 
-if (global.navigator) {
+if (typeof window !== 'undefined') {
   Amplitude.init();
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+});
+
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-
-  const queryClient = useRef(
-    new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnMount: false,
-          refetchOnReconnect: false,
-          refetchOnWindowFocus: false,
-          retry: 1
-        }
-      }
-    })
-  );
 
   useEffect(() => {
     window.getLogEvent = (event: { eventName: string; eventParams: object }) => {
       logEvent(event.eventName, event.eventParams);
     };
-    Initializer.initAccessUserInQueryClient(queryClient.current);
+    Initializer.initAccessUserInQueryClient(queryClient);
     Initializer.initAccessUserInBraze();
     Initializer.initUtmParams();
     Initializer.initRum();
@@ -227,7 +225,7 @@ function App({ Component, pageProps }: AppProps) {
       <FacebookPixelProvider />
       <GoogleAnalyticsProvider />
       <GoogleTagManagerProvider />
-      <QueryClientProvider client={queryClient.current}>
+      <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
           <RecoilRoot>
             <ThemeModeProvider>

@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { Box, Flexbox, Typography, useTheme } from '@mrcamelhub/camel-ui';
 
-function HomeFooter({ isMoweb }: { isMoweb?: boolean }) {
+interface HomeFooterProps {
+  isMoweb?: boolean;
+}
+function HomeFooter({ isMoweb }: HomeFooterProps) {
   const {
     theme: {
       palette: { common }
