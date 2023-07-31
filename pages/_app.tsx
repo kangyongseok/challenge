@@ -47,9 +47,6 @@ import 'swiper/css/scrollbar';
 import 'swiper/css/effect-cards';
 import 'react-swipeable-list/dist/styles.css';
 
-const CommonEventBannerBottomSheet = dynamic(
-  () => import('@components/UI/organisms/CommonEventBannerBottomSheet')
-);
 const LoginBottomSheet = dynamic(() => import('@components/UI/organisms/LoginBottomSheet'));
 const LegitResultSurveyTypeform = dynamic(
   () => import('@components/UI/organisms/LegitResultSurveyTypeform')
@@ -241,7 +238,6 @@ function App({ Component, pageProps }: AppProps) {
                               <DialogProvider>
                                 <CamelSellerSavePopup />
                                 <CamelSellerAppUpdateDialog />
-                                <CommonEventBannerBottomSheet />
                                 <Component {...pageProps} />
                               </DialogProvider>
                             </ToastProvider>
