@@ -60,14 +60,6 @@ function HomeMainBanner() {
     router.push('/mypage/settings/transfer');
   };
 
-  const handleClickOperatorFee = () => {
-    logEvent(attrKeys.products.CLICK_BANNER, {
-      att: 'OPERATOR_FEE_LEGIT'
-    });
-
-    router.push('/guide/legitFree');
-  };
-
   const handleClickOperatorDaangn = () => {
     logEvent(attrKeys.products.CLICK_BANNER, {
       att: 'OPERATOR_FEE_DAANGN'
@@ -98,24 +90,6 @@ function HomeMainBanner() {
               imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/operator_carrot_banner.png`
             })}
             alt="카멜이 대신 거래해드려요. 전국 당근매물 구매대행하세요!"
-            disableAspectRatio
-          />
-        </Box>
-      </SwiperSlide>
-      <SwiperSlide>
-        <Box
-          onClick={handleClickOperatorFee}
-          customStyle={{
-            height: 104,
-            backgroundColor: '#313438'
-          }}
-        >
-          <Image
-            height={104}
-            src={getImageResizePath({
-              imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/my/legit_fee_free_banner2.png`
-            })}
-            alt="정품검수 무료로 받아보세요!"
             disableAspectRatio
           />
         </Box>
@@ -163,7 +137,7 @@ function HomeMainBanner() {
           }}
         >
           {currentIndex + 1}
-          <span>/3</span>
+          <span>/2</span>
         </Typography>
       </Flexbox>
     </Swiper>
