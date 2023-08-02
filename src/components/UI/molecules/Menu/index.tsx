@@ -1,6 +1,7 @@
-import { PropsWithChildren, ReactElement } from 'react';
+import type { PropsWithChildren, ReactElement } from 'react';
 
 import { Typography } from '@mrcamelhub/camel-ui';
+import type { CustomStyle } from '@mrcamelhub/camel-ui';
 
 import { StyledMenu, StyledMenuItem, Title } from './Menu.styles';
 
@@ -8,11 +9,12 @@ interface MenuProps {
   id?: string;
   title?: string;
   gap?: number;
+  customStyle?: CustomStyle;
 }
 
-function Menu({ id, title, children, gap }: PropsWithChildren<MenuProps>) {
+function Menu({ id, title, children, gap, customStyle }: PropsWithChildren<MenuProps>) {
   return (
-    <StyledMenu gap={gap}>
+    <StyledMenu gap={gap} css={customStyle}>
       {!!title && (
         <Title id={id} variant="body1" weight="bold">
           {title}
@@ -27,16 +29,18 @@ interface MenuItemProps {
   onClick?: () => void;
   action?: ReactElement;
   weight?: 'bold' | 'medium' | 'regular' | 'light';
+  customStyle?: CustomStyle;
 }
 
 function MenuItem({
   onClick,
   children,
   action,
-  weight = 'medium'
+  weight = 'medium',
+  customStyle
 }: PropsWithChildren<MenuItemProps>) {
   return (
-    <StyledMenuItem onClick={onClick}>
+    <StyledMenuItem onClick={onClick} css={customStyle}>
       <Typography variant="h4" weight={weight} customStyle={{ flex: 1, minWidth: 142 }}>
         {children}
       </Typography>

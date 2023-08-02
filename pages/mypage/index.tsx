@@ -9,6 +9,7 @@ import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   MypageActionBanner,
   MypageEtc,
+  MypageFooter,
   MypageIntro,
   MypageLegitInfo,
   MypageManage,
@@ -110,6 +111,8 @@ function MyPage() {
       <MypageManage />
       <Gap height={1} />
       <MypageEtc />
+      <Gap height={1} />
+      <MypageFooter />
     </GeneralTemplate>
   );
 }

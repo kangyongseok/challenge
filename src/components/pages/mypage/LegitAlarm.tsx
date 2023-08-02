@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flexbox, Switch } from '@mrcamelhub/camel-ui';
+import { Switch } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -53,11 +53,7 @@ function LegitAlarm({ alarm }: { alarm?: boolean }) {
     <Menu title="감정 알림" gap={12}>
       <MenuItem
         weight="regular"
-        action={
-          <Flexbox gap={4} alignment="center">
-            <Switch checked={isLegitAlarm} onChange={handleLegitSwitch} />
-          </Flexbox>
-        }
+        action={<Switch checked={isLegitAlarm} onChange={handleLegitSwitch} size="large" />}
       >
         감정 의뢰 알림
       </MenuItem>

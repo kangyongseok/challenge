@@ -48,7 +48,6 @@ function Header({
   showLeft = true,
   hideTitle = false,
   showRight = true,
-  hideHeart = false,
   leftIcon,
   rightIcon,
   onClickLeft,
@@ -271,7 +270,6 @@ function Header({
                   </IconBox>
                 )
               )}
-              <IconBox show={false} css={{ minWidth: showLeft ? 32 : 40 }} />
             </Flexbox>
             <Title show={!hideTitle} customHeight={customHeight} css={titleCustomStyle}>
               {children ||
@@ -284,23 +282,6 @@ function Header({
                 ))}
             </Title>
             <Flexbox alignment="center" customStyle={{ paddingRight: 8 }}>
-              {!rightIcon && (
-                <IconBox
-                  show={showRight}
-                  onClick={() => router.push('/wishes')}
-                  css={{ padding: showRight ? '16px 8px' : 0 }}
-                >
-                  {showRight && (
-                    <Icon
-                      name="HeartOutlined"
-                      customStyle={{
-                        visibility: hideHeart ? 'hidden' : 'visible',
-                        opacity: Number(!hideHeart)
-                      }}
-                    />
-                  )}
-                </IconBox>
-              )}
               {rightIcon || (
                 <IconBox
                   show={showRight}

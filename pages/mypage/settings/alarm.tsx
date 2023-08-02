@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 import type { GetServerSidePropsContext } from 'next';
-import { Box, Button, Typography } from '@mrcamelhub/camel-ui';
+import { Typography } from '@mrcamelhub/camel-ui';
 
 import { Header } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
@@ -20,14 +20,6 @@ import { checkAgent } from '@utils/common';
 function SettingsAlarm() {
   const router = useRouter();
   const [systemSetting, setSystemSetting] = useState(false);
-
-  useEffect(() => {
-    logEvent(attrKeys.mypage.VIEW_ALARM_MANAGE);
-  }, []);
-
-  useEffect(() => {
-    setSystemSetting(router.query.setting === 'true');
-  }, [router]);
 
   const handleClick = () => {
     if (checkAgent.isAndroidApp() && window.webview && window.webview.moveToSetting) {
@@ -64,7 +56,15 @@ function SettingsAlarm() {
     }, 5000);
   };
 
-  if (!systemSetting) {
+  useEffect(() => {
+    logEvent(attrKeys.mypage.VIEW_ALARM_MANAGE);
+  }, []);
+
+  useEffect(() => {
+    setSystemSetting(router.query.setting === 'true');
+  }, [router]);
+
+  if (systemSetting) {
     return (
       <GeneralTemplate
         header={
@@ -74,21 +74,8 @@ function SettingsAlarm() {
             </Typography>
           </Header>
         }
-        footer={
-          <Box customStyle={{ padding: '0 20px 40px' }}>
-            <Button
-              fullWidth
-              brandColor="primary"
-              variant="solid"
-              size="xlarge"
-              onClick={handleClick}
-            >
-              알림 켜기
-            </Button>
-          </Box>
-        }
       >
-        <MypageAlarmSettingOff />
+        <MypageAlarmSettingOff onClick={handleClick} />
       </GeneralTemplate>
     );
   }
@@ -97,7 +84,7 @@ function SettingsAlarm() {
     <GeneralTemplate
       disablePadding
       header={
-        <Header showRight={false}>
+        <Header showRight={false} hideLine={false}>
           <Typography variant="h3" weight="bold">
             알림 설정
           </Typography>

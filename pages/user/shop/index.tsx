@@ -6,10 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Flexbox } from '@mrcamelhub/camel-ui';
 
 import { MyShopAppDownloadDialog } from '@components/UI/organisms';
-import { CamelSellerFloatingButton } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
+  UserShopFloatingActionButton,
   UserShopHeader,
   UserShopLegitProfile,
   UserShopProductDeleteConfirmDialog,
@@ -177,13 +177,7 @@ function UserShop() {
         </Flexbox>
       </GeneralTemplate>
       <UserShopProductDeleteConfirmDialog />
-      <CamelSellerFloatingButton
-        attributes={{
-          name: attrProperty.name.MY_STORE,
-          title: attrProperty.title.MY_STORE_FLOATING,
-          source: 'SHOP'
-        }}
-      />
+      <UserShopFloatingActionButton />
       <MyShopAppDownloadDialog />
     </>
   );

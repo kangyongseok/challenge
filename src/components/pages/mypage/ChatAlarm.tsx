@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flexbox, Switch } from '@mrcamelhub/camel-ui';
+import { Switch } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -46,11 +46,7 @@ function ChatAlarm({ alarm }: { alarm?: boolean }) {
     <Menu title="채팅 알림" gap={12}>
       <MenuItem
         weight="regular"
-        action={
-          <Flexbox gap={4} alignment="center">
-            <Switch checked={isChatAlarm} onChange={handleChange} />
-          </Flexbox>
-        }
+        action={<Switch checked={isChatAlarm} onChange={handleChange} size="large" />}
       >
         메세지 받았을 때
       </MenuItem>

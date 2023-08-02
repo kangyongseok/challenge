@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flexbox, Switch } from '@mrcamelhub/camel-ui';
+import { Switch } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -31,6 +31,7 @@ function SellerProductAlarm({ alarm }: { alarm?: boolean }) {
       title: attrProperty.title.WISH,
       att: isSellerProductAlarm ? 'OFF' : 'ON'
     });
+
     setRecoilAllAlarmCheck({ ...recoilAllAlarmCheck, isNotiMyProductWish: !isSellerProductAlarm });
     switchAlarm(
       {
@@ -49,13 +50,21 @@ function SellerProductAlarm({ alarm }: { alarm?: boolean }) {
   };
 
   return (
-    <Menu title="판매 매물" gap={12}>
+    <Menu
+      title="판매 알림"
+      gap={12}
+      customStyle={{
+        padding: '32px 20px 52px'
+      }}
+    >
       <MenuItem
         weight="regular"
         action={
-          <Flexbox gap={4} alignment="center">
-            <Switch checked={isSellerProductAlarm} onChange={handleSellerProductSwitch} />
-          </Flexbox>
+          <Switch
+            checked={isSellerProductAlarm}
+            onChange={handleSellerProductSwitch}
+            size="large"
+          />
         }
       >
         내 매물 찜 되었을 때

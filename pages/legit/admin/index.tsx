@@ -3,11 +3,11 @@ import type { GetServerSidePropsContext } from 'next';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import { Box } from '@mrcamelhub/camel-ui';
 
-import { BottomNavigation, Header } from '@components/UI/molecules';
+import { Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import { LegitAdminRequestPanel, LegitAdminTabs } from '@components/pages/legitAdmin';
-import { LegitFloatingButton, LegitLivePanel, LegitMyPanel } from '@components/pages/legit';
+import { LegitFloatingActionButton, LegitLivePanel, LegitMyPanel } from '@components/pages/legit';
 
 import Initializer from '@library/initializer';
 
@@ -30,7 +30,6 @@ function LegitAdmin() {
       />
       <GeneralTemplate
         header={<Header />}
-        footer={tab !== 'profile' ? <BottomNavigation /> : undefined}
         disablePadding
         customStyle={{
           height: 'auto',
@@ -46,7 +45,7 @@ function LegitAdmin() {
           </Box>
         )}
         {tab === 'request' && <LegitAdminRequestPanel />}
-        {tab === 'home' && <LegitFloatingButton />}
+        {tab === 'home' && <LegitFloatingActionButton />}
       </GeneralTemplate>
     </>
   );

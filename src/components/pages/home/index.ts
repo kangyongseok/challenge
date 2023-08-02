@@ -9,3 +9,4 @@ export { default as HomeNewCamelProductGrid } from './HomeNewCamelProductGrid';
 export { default as HomePersonalCuration } from './HomePersonalCuration';
 export { default as HomePersonalGuide } from './HomePersonalGuide';
 export { default as HomePersonalGuideProductList } from './HomePersonalGuideProductList';
+export { default as HomeFloatingActionButton } from './HomeFloatingActionButton';

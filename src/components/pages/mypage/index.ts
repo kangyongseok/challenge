@@ -1,4 +1,3 @@
-export { default as MypageEtc } from './MypageEtc';
 export { default as MypageIntro } from './MypageIntro';
 export { default as MypageMyInfo } from './MypageMyInfo';
 export { default as MypageProfile } from './MypageProfile';
@@ -10,3 +9,5 @@ export { default as MypageAlarmSetting } from './MypageAlarmSetting';
 export { default as MypageNonMemberLogin } from './MypageNonMemberLogin';
 export { default as MypageEventBanner } from './MypageEventBanner';
 export { default as MypageManage } from './MypageManage';
+export { default as MypageEtc } from './MypageEtc';
+export { default as MypageFooter } from './MypageFooter';

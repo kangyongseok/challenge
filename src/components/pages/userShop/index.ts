@@ -7,3 +7,4 @@ export { default as UserShopLegitProfile } from './UserShopLegitProfile';
 export { default as UserShopHeader } from './UserShopHeader';
 export { default as UserShopProfile } from './UserShopProfile';
 export { default as UserShopReviewList } from './UserShopReviewList';
+export { default as UserShopFloatingActionButton } from './UserShopFloatingActionButton';

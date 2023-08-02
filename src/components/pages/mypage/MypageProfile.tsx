@@ -2,33 +2,41 @@ import { useMemo } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { Box, Button, Flexbox, Icon, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { useQueryClient } from '@tanstack/react-query';
+import { Box, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 import type { IconName } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
 import UserAvatar from '@components/UI/organisms/UserAvatar';
-import { Badge, CamelAuthLabel, Gap } from '@components/UI/atoms';
+import { CamelAuthLabel, Gap } from '@components/UI/atoms';
 
 import { logEvent } from '@library/amplitude';
 
 import attrProperty from '@constants/attrProperty';
 import attrKeys from '@constants/attrKeys';
 
+import {
+  settingsTransferDataState,
+  settingsTransferPlatformsState
+} from '@recoil/settingsTransfer';
 import { mypageOrdersIsConfirmedState } from '@recoil/mypageOrders';
+import { legitFilterGridParamsState } from '@recoil/legit';
 import useMyProfileInfo from '@hooks/userMyProfileInfo';
+import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
 function MypageProfile() {
   const router = useRouter();
-  const {
-    theme: {
-      palette: { common, secondary }
-    }
-  } = useTheme();
 
+  const queryClient = useQueryClient();
+
+  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetIsConfirmedState = useResetRecoilState(mypageOrdersIsConfirmedState);
+  const resetPlatformsState = useResetRecoilState(settingsTransferPlatformsState);
+  const resetDataState = useResetRecoilState(settingsTransferDataState);
 
   const { profileImage, snsType, isCertifiedSeller, isLegit, userId, nickName } =
     useMyProfileInfo();
+  const { data: { roles = [] } = {} } = useQueryUserInfo();
 
   const TAB_MENU: {
     iconName: IconName;
@@ -38,19 +46,6 @@ function MypageProfile() {
     onClick?: () => void;
   }[] = useMemo(
     () => [
-      {
-        iconName: 'HeartOutlined',
-        label: '찜/최근',
-        showBadge: false,
-        onClick: () => {
-          logEvent(attrKeys.mypage.CLICK_WISH_LIST, {
-            name: attrProperty.name.MY,
-            type: attrProperty.type.PROFILE_TAB
-          });
-
-          router.push('/wishes');
-        }
-      },
       {
         iconName: 'ShopOutlined',
         label: '내 상점',
@@ -64,16 +59,49 @@ function MypageProfile() {
         }
       },
       {
-        iconName: 'BnPortfolioOutlined',
-        label: '포트폴리오',
-        showBadge: true,
+        iconName: 'LegitOutlined',
+        label: '사진감정',
+        showBadge: false,
         onClick: () => {
-          logEvent(attrKeys.mypage.CLICK_MYPORTFOLIO, {
-            name: attrProperty.name.MY,
-            title: attrProperty.title.PROFILE_TAB
+          logEvent(attrKeys.mypage.CLICK_LEGIT_MAIN, {
+            name: attrProperty.name.MY
           });
 
-          router.push('/myPortfolio');
+          resetLegitFilterGridParamsState();
+
+          queryClient
+            .getQueryCache()
+            .getAll()
+            .forEach(({ queryKey }) => {
+              if (queryKey.includes('productLegits') && queryKey.length >= 3) {
+                queryClient.resetQueries(queryKey);
+              }
+            });
+
+          const hasLegitRole = (roles as string[]).some(
+            (role) => role.indexOf('PRODUCT_LEGIT') >= 0
+          );
+
+          if (hasLegitRole) {
+            router.push('/legit/admin');
+          } else {
+            router.push('/legit');
+          }
+        }
+      },
+      {
+        iconName: 'BoxDownOutlined',
+        label: '상품가져오기',
+        showBadge: false,
+        onClick: () => {
+          logEvent(attrKeys.mypage.CLICK_TRANSFER, {
+            name: attrProperty.name.MY
+          });
+
+          resetPlatformsState();
+          resetDataState();
+
+          router.push('/mypage/settings/transfer');
         }
       },
       {
@@ -90,7 +118,15 @@ function MypageProfile() {
         }
       }
     ],
-    [resetIsConfirmedState, router]
+    [
+      queryClient,
+      resetDataState,
+      resetIsConfirmedState,
+      resetLegitFilterGridParamsState,
+      resetPlatformsState,
+      roles,
+      router
+    ]
   );
 
   const handleClickEdit = () => {
@@ -113,12 +149,12 @@ function MypageProfile() {
         padding: 20
       }}
     >
-      <Flexbox gap={20} alignment="center">
+      <Flexbox gap={16} alignment="center">
         <Box customStyle={{ position: 'relative' }}>
           <UserAvatar
             src={profileImage || ''}
-            width={64}
-            height={64}
+            width={60}
+            height={60}
             iconCustomStyle={{ width: 32, height: 32 }}
           />
           {snsType === 'kakao' && (
@@ -143,65 +179,51 @@ function MypageProfile() {
           gap={4}
           customStyle={{ maxWidth: 'calc(100% - 172px)' }}
         >
-          <Flexbox alignment="center" gap={2} customStyle={{ flexWrap: 'nowrap' }}>
+          <Flexbox alignment="center" gap={4} customStyle={{ flexWrap: 'nowrap' }}>
             <EllipsisText variant="h3" weight="bold">
               {nickName}
             </EllipsisText>
             {isCertifiedSeller && !isLegit && <CamelAuthLabel />}
             {isLegit && (
               <LegitBedge alignment="center" justifyContent="center" gap={3}>
-                <Icon name="LegitFilled" color="uiWhite" customStyle={{ width: 10, height: 10 }} />
+                <Icon name="LegitFilled" width={10} height={10} color="uiWhite" />
                 <Typography variant="small2" weight="medium" color="uiWhite">
                   감정사
                 </Typography>
               </LegitBedge>
             )}
           </Flexbox>
-          <Typography variant="body1" customStyle={{ color: common.ui60 }}>
+          <Typography variant="body2" color="ui60">
             ID: {userId}
           </Typography>
         </Flexbox>
         <Button
-          startIcon={<Icon name="EditOutlined" />}
-          customStyle={{ borderRadius: 22, minWidth: 70, marginLeft: 'auto' }}
+          variant="ghost"
+          brandColor="black"
+          customStyle={{ marginLeft: 'auto' }}
           onClick={handleClickEdit}
         >
-          수정
+          수정하기
         </Button>
       </Flexbox>
-      <Gap height={1} customStyle={{ margin: '20px 0' }} />
+      <Gap height={1} customStyle={{ margin: '32px 0 20px' }} />
       <Flexbox>
-        {TAB_MENU.map(({ iconName, label, showBadge, url, onClick }) => (
+        {TAB_MENU.map(({ iconName, label, url, onClick }) => (
           <Flexbox
             key={`mypage-tab-menu-${label}`}
             direction="vertical"
             justifyContent="center"
             alignment="center"
-            customStyle={{ width: '100%', height: 60, cursor: 'pointer' }}
+            gap={4}
+            customStyle={{ width: '100%', height: 48, cursor: 'pointer' }}
             onClick={onClick || (() => router.push(url || ''))}
           >
-            <Flexbox alignment="center" customStyle={{ height: '100%', position: 'relative' }}>
-              <Icon name={iconName} customStyle={{ width: 24, height: 24 }} />
-              {showBadge && (
-                <Badge
-                  open
-                  type="alone"
-                  width={44}
-                  height={16}
-                  customStyle={{
-                    position: 'absolute',
-                    top: 2,
-                    left: 10,
-                    backgroundColor: secondary.purple.main
-                  }}
-                >
-                  <Typography variant="small2" weight="medium" customStyle={{ color: common.cmnW }}>
-                    오픈알림
-                  </Typography>
-                </Badge>
-              )}
+            <Flexbox alignment="center" customStyle={{ position: 'relative' }}>
+              <Icon name={iconName} width={28} />
             </Flexbox>
-            <Typography customStyle={{ whiteSpace: 'pre' }}>{label}</Typography>
+            <Typography variant="body2" customStyle={{ whiteSpace: 'pre' }}>
+              {label}
+            </Typography>
           </Flexbox>
         ))}
       </Flexbox>
@@ -237,7 +259,6 @@ const LegitBedge = styled(Flexbox)`
   background: ${({ theme: { palette } }) => palette.common.uiBlack};
   padding: 4px 7px;
   border-radius: 10px;
-  min-width: 60px;
 `;
 
 export default MypageProfile;

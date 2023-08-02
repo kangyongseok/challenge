@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 
-import { BottomNavigation, Header } from '@components/UI/molecules';
+import { Header } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
-  LegitFloatingButton,
+  LegitFloatingActionButton,
   LegitLivePanel,
   LegitMyPanel,
   LegitTabs
@@ -26,7 +26,6 @@ function Legit() {
       />
       <GeneralTemplate
         header={<Header isFixed />}
-        footer={<BottomNavigation />}
         customStyle={{
           height: 'auto',
           minHeight: '100%',
@@ -39,7 +38,7 @@ function Legit() {
         {tab === 'live' && <LegitLivePanel />}
         {tab === 'my' && <LegitMyPanel />}
       </GeneralTemplate>
-      {tab === 'live' && <LegitFloatingButton />}
+      {tab === 'live' && <LegitFloatingActionButton />}
     </>
   );
 }

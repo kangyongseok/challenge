@@ -1,17 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useResetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
 import Dialog from '@mrcamelhub/camel-ui-dialog';
-import { Badge, Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
+import { Button, Flexbox, Icon, Typography } from '@mrcamelhub/camel-ui';
 
 import { FeatureIsMobileAppDownDialog } from '@components/UI/organisms';
 import { Menu, MenuItem } from '@components/UI/molecules';
-
-import { fetchUserAccounts } from '@api/user';
-
-import queryKeys from '@constants/queryKeys';
 
 import { checkAgent } from '@utils/common';
 
@@ -19,7 +14,6 @@ import {
   nonMemberCertificationFormState,
   nonMemberCertificationReSendState
 } from '@recoil/nonMemberCertification/atom';
-import useSession from '@hooks/useSession';
 
 function MypageSetting() {
   const router = useRouter();
@@ -30,16 +24,6 @@ function MypageSetting() {
   const resetNonMemberCertificationFormState = useResetRecoilState(nonMemberCertificationFormState);
   const resetNonMemberCertificationReSendState = useResetRecoilState(
     nonMemberCertificationReSendState
-  );
-
-  const { isLoggedIn } = useSession();
-
-  const { data: userAccounts = [] } = useQuery(
-    queryKeys.users.userAccounts(),
-    () => fetchUserAccounts(),
-    {
-      enabled: isLoggedIn
-    }
   );
 
   const handleClickAlarmSetting = useCallback(() => {
@@ -67,15 +51,6 @@ function MypageSetting() {
     };
   }, [router]);
 
-  const handleClickKeywordAlert = useCallback(
-    () => router.push('/mypage/settings/keywordAlert'),
-    [router]
-  );
-
-  const handleClickFixMessage = useCallback(() => {
-    router.push('/mypage/settings/channelFixMessage');
-  }, [router]);
-
   const handleClickNonMemberOrderCheckConfirm = () => {
     resetNonMemberCertificationFormState();
     resetNonMemberCertificationReSendState();
@@ -83,52 +58,15 @@ function MypageSetting() {
     router.push('/mypage/nonMember/certification');
   };
 
-  const settingMenu = useMemo(
-    () => [
-      { label: '알림 설정', isNew: false, onClick: handleClickAlarmSetting },
-      { label: '키워드 알림', isNew: false, onClick: handleClickKeywordAlert },
-      { label: '채팅 고정 메시지 설정', isNew: false, onClick: handleClickFixMessage }
-    ],
-    [handleClickAlarmSetting, handleClickFixMessage, handleClickKeywordAlert]
-  );
-
   return (
     <>
-      <Menu id="mypage-setting" title="알림 및 설정">
-        {settingMenu.map(({ label, isNew, onClick }) => (
-          <MenuItem
-            key={`info-menu-${label}`}
-            action={
-              <Flexbox gap={4} alignment="center">
-                {label === '정산계좌' && (
-                  <Typography color="blue">{userAccounts[0]?.bankName}</Typography>
-                )}
-                <Icon name="Arrow2RightOutlined" size="small" />
-              </Flexbox>
-            }
-            onClick={onClick}
-          >
-            <Flexbox alignment="center" gap={2}>
-              {label}
-              <Badge
-                variant="solid"
-                open={isNew}
-                brandColor="red"
-                text="N"
-                size="xsmall"
-                disablePositionAbsolute
-                customStyle={{
-                  // TODO UI 라이브러리 개선
-                  width: 16,
-                  height: 16,
-                  fontWeight: 700,
-                  padding: '2px 0',
-                  justifyContent: 'center'
-                }}
-              />
-            </Flexbox>
-          </MenuItem>
-        ))}
+      <Menu id="mypage-setting" title="알림">
+        <MenuItem
+          action={<Icon name="Arrow2RightOutlined" size="small" />}
+          onClick={handleClickAlarmSetting}
+        >
+          알림 설정
+        </MenuItem>
       </Menu>
       <FeatureIsMobileAppDownDialog open={open} onClose={() => setOpen(false)} />
       <Dialog open={openNonMemberDialog} onClose={() => setOpenNonMemberDialog(false)}>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { uniqBy } from 'lodash-es';
 import dayjs from 'dayjs';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Flexbox, Image, Label, Skeleton, Typography, useTheme } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
@@ -26,6 +26,7 @@ import attrKeys from '@constants/attrKeys';
 import { getImageResizePath } from '@utils/common';
 
 import { activeMyFilterState } from '@recoil/productsFilter';
+import { legitFilterGridParamsState } from '@recoil/legit';
 import useSession from '@hooks/useSession';
 import useQueryUserInfo from '@hooks/useQueryUserInfo';
 
@@ -52,6 +53,7 @@ type PersonalNewGuide = {
 
 function HomePersonalGuide() {
   const router = useRouter();
+
   const {
     theme: {
       mode,
@@ -59,6 +61,9 @@ function HomePersonalGuide() {
     }
   } = useTheme();
 
+  const queryClient = useQueryClient();
+
+  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const setActiveMyFilterState = useSetRecoilState(activeMyFilterState);
 
   const [sizes, setSizes] = useState<SizeResult[]>([]);
@@ -73,6 +78,7 @@ function HomePersonalGuide() {
     }
   );
 
+  const { data: { roles = [] } = {} } = useQueryUserInfo();
   const { isLoggedIn } = useSession();
 
   const {
@@ -200,6 +206,30 @@ function HomePersonalGuide() {
     });
   };
 
+  const handleClickLegit = () => {
+    // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
+    // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
+    // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
+    resetLegitFilterGridParamsState();
+
+    queryClient
+      .getQueryCache()
+      .getAll()
+      .forEach(({ queryKey }) => {
+        if (queryKey.includes('productLegits') && queryKey.length >= 3) {
+          queryClient.resetQueries(queryKey);
+        }
+      });
+
+    const hasLegitRole = (roles as string[]).some((role) => role.indexOf('PRODUCT_LEGIT') >= 0);
+
+    if (hasLegitRole) {
+      router.push('/legit/admin');
+    } else {
+      router.push('/legit');
+    }
+  };
+
   useEffect(() => {
     const guideRenderCount = 13;
     const themeMode = mode === 'light' ? 'white' : 'black';
@@ -281,7 +311,7 @@ function HomePersonalGuide() {
           ...defaultStyleBrands
         ],
         'id'
-      ).slice(0, 8);
+      ).slice(0, 7);
 
       setGuides([...categories, ...brands]);
     }
@@ -429,6 +459,43 @@ function HomePersonalGuide() {
             />
             <Typography variant="body2" weight="bold" noWrap>
               에•루•샤
+            </Typography>
+          </Flexbox>
+          <Flexbox
+            direction="vertical"
+            gap={8}
+            alignment="center"
+            justifyContent="center"
+            onClick={handleClickLegit}
+            customStyle={{ position: 'relative', minWidth: 72, maxWidth: 72 }}
+          >
+            <Label
+              brandColor="red"
+              text="무료 정품감정"
+              size="xsmall"
+              round={9}
+              customStyle={{
+                position: 'absolute',
+                top: -18,
+                left: '50%',
+                zIndex: 1,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap'
+              }}
+            />
+            <Image
+              width={48}
+              height={48}
+              src={getImageResizePath({
+                imagePath: `https://${process.env.IMAGE_DOMAIN}/assets/images/home/legit.png`,
+                w: 48
+              })}
+              alt="Personal Guide Img"
+              round={12}
+              disableAspectRatio
+            />
+            <Typography variant="body2" weight="bold" noWrap>
+              사진감정
             </Typography>
           </Flexbox>
         </>

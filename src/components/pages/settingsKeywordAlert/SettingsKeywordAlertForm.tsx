@@ -62,7 +62,7 @@ function SettingsKeywordAlertForm() {
         size="large"
         onChange={(e) => setKeyword(e.currentTarget.value)}
         value={keyword}
-        placeholder="키워드를 입력해주세요. (예: 가방)"
+        placeholder="키워드를 입력하세요. (예: 샤넬 클러치)"
         fullWidth
         maxLength={20}
       />

@@ -105,8 +105,8 @@ function HomeSearchHeader() {
       >
         <Icon
           name="LogoText_96_20"
-          width={93.48}
-          height={20}
+          width={86.4}
+          height={24}
           customStyle={{
             marginLeft: 4
           }}
@@ -125,7 +125,7 @@ function HomeSearchHeader() {
           customStyle={{
             flexGrow: 1,
             transition: 'max-width 0.2s',
-            maxWidth: triggered ? 'calc(100% - 80px)' : '100%'
+            maxWidth: triggered ? 'calc(100% - 40px)' : '100%'
           }}
         >
           <Input

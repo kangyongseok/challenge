@@ -31,7 +31,6 @@ import { getUnreadMessagesCount } from '@utils/channel';
 
 import { searchAutoFocusState, searchCategoryState, searchValueState } from '@recoil/search';
 import { legitRequestParamsState } from '@recoil/legitRequest';
-import { legitFilterGridParamsState } from '@recoil/legit';
 import { homeLegitResultTooltipCloseState, homePersonalCurationBannersState } from '@recoil/home';
 import { sendbirdState } from '@recoil/channel';
 import useSession from '@hooks/useSession';
@@ -62,11 +61,11 @@ const data: {
     logName: 'HOME'
   },
   {
-    title: '사진감정',
-    defaultIcon: 'LegitOutlined',
-    activeIcon: 'LegitFilled',
-    href: '/legit',
-    logName: 'LEGIT'
+    title: '찜/최근',
+    defaultIcon: 'BnWishOutlined',
+    activeIcon: 'BnWishFilled',
+    href: '/wishes',
+    logName: 'WISH'
   },
   {
     title: '검색',
@@ -112,7 +111,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
 
   const [{ initialized, unreadMessagesCount }, setSendbirdState] = useRecoilState(sendbirdState);
 
-  const resetLegitFilterGridParamsState = useResetRecoilState(legitFilterGridParamsState);
   const resetLegitRequestParamsState = useResetRecoilState(legitRequestParamsState);
   const resetHomePersonalCurationBannersState = useResetRecoilState(
     homePersonalCurationBannersState
@@ -123,12 +121,7 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
   const resetSearchValueState = useResetRecoilState(searchValueState);
   const setLegitResultTooltipCloseState = useSetRecoilState(homeLegitResultTooltipCloseState);
   const {
-    data: {
-      roles = [],
-      priceNotiProducts = [],
-      notViewedLegitCount = 0,
-      notProcessedLegitCount = 0
-    } = {},
+    data: { priceNotiProducts = [], notViewedLegitCount = 0, notProcessedLegitCount = 0 } = {},
     isLoading
   } = useQueryUserInfo();
   const initializeSendbird = useInitializeSendbird();
@@ -194,22 +187,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
             }
           });
       }
-
-      // TODO 관련 정책 정립 및 좀 더 좋은 방법 강구
-      // 페이지 진입 시 fresh 한 데이터를 렌더링 해야하는 케이스, 앞으로도 계속 생길 수 있다고 판단 됨
-      // https://www.figma.com/file/UOrCQ8651AXqQrtNeidfPk?node-id=1332:21420#238991618
-      if (href === '/legit') {
-        resetLegitFilterGridParamsState();
-
-        queryClient
-          .getQueryCache()
-          .getAll()
-          .forEach(({ queryKey }) => {
-            if (queryKey.includes('productLegits') && queryKey.length >= 3) {
-              queryClient.resetQueries(queryKey);
-            }
-          });
-      }
     };
 
   const handleClickTooltip = () => {
@@ -251,14 +228,6 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
       return { tab: 'my' };
     }
     return undefined;
-  };
-
-  const getPathName = (href: string) => {
-    if (href === '/legit') {
-      const hasLegitRole = (roles as string[]).some((role) => role.indexOf('PRODUCT_LEGIT') >= 0);
-      return hasLegitRole ? '/legit/admin' : href;
-    }
-    return href;
   };
 
   useEffect(() => {
@@ -385,8 +354,8 @@ function BottomNavigation({ display, disableHideOnScroll = true }: BottomNavigat
                 ref={href === '/legit' ? legitNavRef : undefined}
               >
                 <Link
-                  href={{ pathname: getPathName(href), query: getQuery(href) }}
-                  as={{ pathname: getPathName(href), query: getQuery(href) }}
+                  href={{ pathname: href, query: getQuery(href) }}
+                  as={{ pathname: href, query: getQuery(href) }}
                   passHref
                   prefetch={false}
                 >

@@ -5,13 +5,14 @@ import type { GetServerSidePropsContext } from 'next';
 import { useMutation } from '@tanstack/react-query';
 import { Box } from '@mrcamelhub/camel-ui';
 
-import { BottomNavigation, CamelSellerFloatingButton } from '@components/UI/molecules';
+import { BottomNavigation } from '@components/UI/molecules';
 import PageHead from '@components/UI/atoms/PageHead';
 import { Gap } from '@components/UI/atoms';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   HomeDogHoneyProductGrid,
   HomeErushaProductGrid,
+  HomeFloatingActionButton,
   HomeFooter,
   HomeLegitContinueDialog,
   HomeMainBanner,
@@ -29,7 +30,6 @@ import Initializer from '@library/initializer';
 import { postManage } from '@api/userHistory';
 
 import { IS_NOT_FIRST_VISIT, SIGN_UP_STEP } from '@constants/localStorage';
-import attrProperty from '@constants/attrProperty';
 
 import { getCookies } from '@utils/cookies';
 import getAccessUserByCookies from '@utils/common/getAccessUserByCookies';
@@ -78,7 +78,6 @@ function Home() {
       />
       <GeneralTemplate footer={<BottomNavigation />} disablePadding>
         <HomeSearchHeader />
-        {/* eslint-disable-next-line react/jsx-no-undef */}
         <HomePersonalGuide />
         <HomeMainBanner />
         <Box
@@ -104,13 +103,7 @@ function Home() {
         <HomePersonalCuration />
         {checkAgent.isMobileApp() && <HomeFooter />}
       </GeneralTemplate>
-      <CamelSellerFloatingButton
-        attributes={{
-          name: attrProperty.name.MAIN,
-          title: attrProperty.title.MAIN_FLOATING,
-          source: 'MAIN'
-        }}
-      />
+      <HomeFloatingActionButton />
       <HomeLegitContinueDialog />
       <HomeWishAlertScreen />
     </>

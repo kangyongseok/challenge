@@ -16,7 +16,6 @@ import SellerProductAlarm from './SellerProductAlarm';
 import LegitAlarm from './LegitAlarm';
 import ChatAlarm from './ChatAlarm';
 import BasicAlarm from './BasicAlarm';
-import AllAlarmState from './AllAlarmState';
 
 function MypageAlarmSetting() {
   const { data: alarmsInfo } = useQuery(queryKeys.users.alarms(), fetchAlarm, {
@@ -39,22 +38,20 @@ function MypageAlarmSetting() {
   }, [queryClient]);
 
   return (
-    <Box customStyle={{ paddingTop: 32 }}>
-      <AllAlarmState alarmsInfo={alarmsInfo} />
-      <Gap height={8} />
+    <Box>
       <BasicAlarm
         eventAlarm={exactFalse(alarmsInfo?.isNotiEvent)}
         nightAlarm={exactFalse(alarmsInfo?.isNotiNotNight)}
         date={alarmsInfo?.dateIsNotiEventAgree}
       />
       <Gap height={1} />
-      <ChatAlarm alarm={exactFalse(alarmsInfo?.isNotiChannel)} />
-      <Gap height={1} />
       <WishProductAlarm
         wishAlarm={exactFalse(alarmsInfo?.isNotiProductWish)}
         saveProductAlarm={exactFalse(alarmsInfo?.isNotiProductList)}
         keywordAlarm={exactFalse(alarmsInfo?.isNotiKeyword)}
       />
+      <Gap height={1} />
+      <ChatAlarm alarm={exactFalse(alarmsInfo?.isNotiChannel)} />
       {(myUserInfo?.roles?.includes('PRODUCT_LEGIT') ||
         myUserInfo?.roles?.includes('PRODUCT_LEGIT_HEAD')) && (
         <>

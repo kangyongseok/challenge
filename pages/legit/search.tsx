@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { useTheme } from '@mrcamelhub/camel-ui';
 
-import { BottomNavigation } from '@components/UI/molecules';
 import GeneralTemplate from '@components/templates/GeneralTemplate';
 import {
   LegitSearchFilter,
@@ -34,7 +33,6 @@ function LegitSearch() {
   return (
     <GeneralTemplate
       header={<LegitSearchHeader />}
-      footer={<BottomNavigation />}
       disablePadding
       customStyle={{
         height: 'auto',

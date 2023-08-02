@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flexbox, Switch } from '@mrcamelhub/camel-ui';
+import { Flexbox, Icon, Label, Switch } from '@mrcamelhub/camel-ui';
+import { useTheme } from '@emotion/react';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -24,7 +26,14 @@ function WishProductAlarm({
   saveProductAlarm?: boolean;
   keywordAlarm?: boolean;
 }) {
+  const router = useRouter();
+
+  const {
+    palette: { secondary }
+  } = useTheme();
+
   const queryClient = useQueryClient();
+
   const [isWishAlarm, setIsWishAlarm] = useState(false);
   const [isSaveAlarm, setIsSaveAlarm] = useState(false);
   const [isKeywordAlarm, setIsKeywordAlarm] = useState(false);
@@ -91,14 +100,16 @@ function WishProductAlarm({
     );
   };
 
+  const handleClickKeywordAlert = () => router.push('/mypage/settings/keywordAlert');
+
   const infoMenu = [
     {
-      label: '저장한 매물 관련 알림',
+      label: '저장한 매물 알림',
       check: isSaveAlarm,
       onSwitch: handleSaveProductsSwitch
     },
     {
-      label: '찜한 매물 관련 알림',
+      label: '찜한 매물 알림',
       check: isWishAlarm,
       onSwitch: handleWishSwitch
     },
@@ -108,21 +119,39 @@ function WishProductAlarm({
       onSwitch: handleClickKeywordSwitch
     }
   ];
+
   return (
     <Menu title="관심 매물 알림" gap={12}>
-      {infoMenu.map(({ label, check, onSwitch }) => (
+      {infoMenu.map(({ label, check, onSwitch }, index) => (
         <MenuItem
           key={`info-menu-${label}`}
-          weight="regular"
-          action={
-            <Flexbox gap={4} alignment="center">
-              <Switch checked={check} onChange={onSwitch} />
-            </Flexbox>
-          }
+          weight="medium"
+          action={<Switch checked={check} onChange={onSwitch} size="large" />}
+          customStyle={{
+            marginTop: index === 0 ? 8 : undefined
+          }}
         >
           {label}
         </MenuItem>
       ))}
+      <MenuItem
+        action={<Icon name="Arrow2RightOutlined" size="small" />}
+        onClick={handleClickKeywordAlert}
+      >
+        <Flexbox gap={4} alignment="center">
+          키워드 알림 설정
+          <Label
+            variant="solid"
+            size="xsmall"
+            brandColor="red"
+            text="NEW"
+            round={9}
+            customStyle={{
+              backgroundColor: secondary.red.light
+            }}
+          />
+        </Flexbox>
+      </MenuItem>
     </Menu>
   );
 }

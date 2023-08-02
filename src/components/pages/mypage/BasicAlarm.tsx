@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flexbox, Switch, Typography, useTheme } from '@mrcamelhub/camel-ui';
+import { Flexbox, Switch, Typography } from '@mrcamelhub/camel-ui';
 
 import { Menu, MenuItem } from '@components/UI/molecules';
 
@@ -25,12 +25,8 @@ function BasicAlarm({
   nightAlarm?: boolean;
   date?: string;
 }) {
-  const {
-    theme: {
-      palette: { common }
-    }
-  } = useTheme();
   const queryClient = useQueryClient();
+
   const [isAgree, setIsAgree] = useState(false);
   const [isNight, setIsNight] = useState(false);
   const [recoilAllAlarmCheck, setRecoilAllAlarmCheck] = useRecoilState(AllAlarmControllState);
@@ -104,18 +100,21 @@ function BasicAlarm({
 
   return (
     <Menu title="기본 알림" gap={12}>
-      {infoMenu.map(({ label, check, onSwitch, infoText }) => (
+      {infoMenu.map(({ label, check, onSwitch, infoText }, index) => (
         <MenuItem
           key={`info-menu-${label}`}
-          weight="regular"
+          weight="medium"
           action={
             <Flexbox gap={4} alignment="center" customStyle={{ marginTop: -20 }}>
-              <Switch checked={check} onChange={onSwitch} />
+              <Switch checked={check} onChange={onSwitch} size="large" />
             </Flexbox>
           }
+          customStyle={{
+            marginTop: index === 0 ? 8 : undefined
+          }}
         >
           {label}
-          <Typography variant="body2" customStyle={{ color: common.ui60, marginTop: 6 }}>
+          <Typography variant="body2" color="ui60" customStyle={{ marginTop: 4 }}>
             {infoText}
           </Typography>
         </MenuItem>

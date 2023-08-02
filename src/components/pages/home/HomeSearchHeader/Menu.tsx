@@ -36,17 +36,8 @@ function Menu({ reverseAnimation }: MenuProps) {
     router.push('/notices');
   };
 
-  const handleClickWish = () => {
-    logEvent(attrKeys.home.CLICK_TAB_WISH);
-
-    router.push('/wishes');
-  };
-
   return (
     <Flexbox gap={16} alignment="center">
-      <SlideDown delay={0.5} reverseAnimation={reverseAnimation}>
-        <Icon name="HeartOutlined" onClick={handleClickWish} />
-      </SlideDown>
       <SlideDown reverseAnimation={reverseAnimation}>
         <Badge
           open={!!notViewedHistoryCount}

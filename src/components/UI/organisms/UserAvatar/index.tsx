@@ -58,7 +58,7 @@ function UserAvatar({
           height={height}
           isActive={isActive}
           isRound={isRound}
-          round={isRound ? '50%' : 16}
+          round={isRound ? '50%' : 12}
           showBorder={showBorder}
           onError={() => setLoadFail(true)}
         />
