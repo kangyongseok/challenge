@@ -130,7 +130,8 @@ export const AUTH_PATH_NAMES = [
   '/mypage/settings/transfer',
   '/mypage/settings/account',
   '/mypage/settings/account/certification',
-  '/mypage/nonMember/orders'
+  '/mypage/nonMember/orders',
+  '/wishes'
 ];
 
 export const SMS_LOGIN_AUTH_PASS_PATH_NAMES = [
