@@ -206,7 +206,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
             )}
           </ProductImage>
           <ProductContents direction="vertical">
-            <Typography weight="bold" variant="body3">
+            <Typography weight="bold" variant="body2">
               {nameEng
                 ?.split(' ')
                 .map(
@@ -218,7 +218,7 @@ const ProductWishesCard = forwardRef<HTMLDivElement, ProductWishesCardProps>(
                 )
                 .join(' ')}
             </Typography>
-            <Typography color="ui60" variant="body3">
+            <Typography color="ui60" variant="body2">
               {quoteTitle}
             </Typography>
             <Typography weight="bold" variant="h3" customStyle={{ marginTop: 4 }}>
