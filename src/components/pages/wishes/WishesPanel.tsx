@@ -327,7 +327,7 @@ function WishesPanel({
       {data && (
         <Box customStyle={{ margin: '20px 0' }}>
           <WishesFilter order={order} userWishCount={userWishCount} />
-          <Flexbox direction="vertical" gap={20}>
+          <Flexbox direction="vertical" gap={32}>
             {userWishes.map((wishItem, index) => (
               <ProductWishesCard
                 data-id={wishItem.product.id}
