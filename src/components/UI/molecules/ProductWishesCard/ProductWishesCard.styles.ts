@@ -1,9 +1,9 @@
 import { Typography } from '@mrcamelhub/camel-ui';
 import styled from '@emotion/styled';
 
-export const Content = styled.div<{ size: number; isTimeline: boolean }>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
+export const Content = styled.div<{ isTimeline: boolean }>`
+  width: 120px;
+  height: 144px;
   position: relative;
   border-radius: ${({ theme: { box } }) => box.round['8']};
   &::before {

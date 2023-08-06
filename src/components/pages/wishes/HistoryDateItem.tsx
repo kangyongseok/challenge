@@ -59,12 +59,11 @@ function HistoryDateItem({ date, userHistories }: HistoryDateItemProps) {
             if (type === 'PV') {
               return (
                 <ProductWishesCard
-                  iconType="heart"
                   key={`user-history-product-PV-${product.id}`}
                   product={product}
                   wishAtt={handleWishAtt(product, i)}
                   source={attrProperty.productSource.RECENT_LIST}
-                  name={attrProperty.productName.RECENT_LIST}
+                  // name={attrProperty.productName.RECENT_LIST}
                   productAtt={{
                     name: attrProperty.productName.RECENT_LIST,
                     index: i + 1,

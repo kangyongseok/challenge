@@ -333,7 +333,7 @@ function WishesPanel({
                 data-id={wishItem.product.id}
                 key={`wish-product-card-${wishItem.product.id}`}
                 product={wishItem.product}
-                name={attrProperty.productName.WISH_LIST}
+                // name={attrProperty.productName.WISH_LIST}
                 source={attrProperty.productSource.WISH_LIST}
                 onWishAfterChangeCallback={refetch}
                 ref={(ref) => {
